@@ -3,17 +3,247 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AffiliatePro</title>
+    <title>LazShotok - AffiliatePro และเครื่องมือสำหรับ Affiliate Marketing</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome สำหรับไอคอน -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; text-align: center; }
-        h1 { color: #333; }
-        a { color: #1E90FF; text-decoration: none; }
-        a:hover { text-decoration: underline; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #F5F7FA; /* Soft Gray */
+        }
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #FF6F61, #40C4FF); /* Vibrant Coral to Ocean Blue */
+            color: white;
+            padding: 120px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/cubes.png');
+            opacity: 0.1;
+        }
+        .hero-section h1 {
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .btn-hero {
+            background-color: #FFD740; /* Sunny Yellow */
+            color: #2D3436; /* Deep Charcoal */
+            font-weight: 600;
+            padding: 12px 30px;
+            border: none;
+            transition: transform 0.3s ease;
+        }
+        .btn-hero:hover {
+            background-color: #FFCA28;
+            transform: scale(1.05);
+        }
+
+        /* AffiliatePro Section */
+        .affiliatepro-section {
+            background-color: #FFFFFF;
+            padding: 80px 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        .affiliatepro-section h2 {
+            color: #FF6F61; /* Vibrant Coral */
+        }
+        .affiliatepro-section .btn-custom {
+            background-color: #40C4FF; /* Ocean Blue */
+            color: white;
+            font-weight: 500;
+        }
+        .affiliatepro-section .btn-custom:hover {
+            background-color: #0288D1;
+        }
+        .affiliatepro-section ul li {
+            color: #2D3436;
+            margin-bottom: 10px;
+        }
+        .affiliatepro-section ul li i {
+            color: #FF6F61;
+            margin-right: 10px;
+        }
+
+        /* Services Section */
+        .services-section {
+            padding: 80px 0;
+            background-color: #F5F7FA;
+        }
+        .services-section h2 {
+            color: #2D3436;
+        }
+        .service-card {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .service-card i {
+            color: #FF6F61;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        .service-card h4 {
+            color: #40C4FF;
+        }
+
+        /* Testimonials Section */
+        .testimonials-section {
+            background: linear-gradient(135deg, #40C4FF, #0288D1);
+            color: white;
+            padding: 80px 0;
+        }
+        .testimonials-section h2 {
+            color: white;
+        }
+        .testimonial-card {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+        }
+        .testimonial-card img {
+            border: 3px solid #FFD740;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background: linear-gradient(135deg, #2D3436, #636E72); /* Deep Charcoal to Gray */
+            color: white;
+            padding: 50px 0;
+            text-align: center;
+        }
+        .contact-section a {
+            color: #FFD740;
+            text-decoration: none;
+        }
+        .contact-section a:hover {
+            color: #FFCA28;
+        }
     </style>
 </head>
 <body>
-    <h1>ยินดีต้อนรับสู่ AffiliatePro</h1>
-    <p>แอปที่ช่วยคุณสร้างลิงก์ Affiliate จาก TikTok Shop, Shopee และ Lazada ได้อย่างง่ายดาย</p>
-    <p><a href="/terms">เงื่อนไขการให้บริการ</a> | <a href="/privacy">นโยบายความเป็นส่วนตัว</a></p>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="display-4">ยินดีต้อนรับสู่ LazShotok</h1>
+            <p class="lead">เครื่องมือและแอปสำหรับ Affiliate Marketing ที่ช่วยให้คุณสร้างรายได้จาก TikTok Shop, Shopee และ Lazada ได้ง่าย ๆ</p>
+            <a href="#affiliatepro" class="btn btn-hero btn-lg mt-3">เรียนรู้เกี่ยวกับ AffiliatePro</a>
+        </div>
+    </section>
+
+    <!-- AffiliatePro Section -->
+    <section id="affiliatepro" class="affiliatepro-section">
+        <div class="container">
+            <h2 class="text-center mb-5">AffiliatePro - แอปสำหรับ Affiliate Marketing</h2>
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <img src="https://via.placeholder.com/500x300" class="img-fluid rounded" alt="AffiliatePro App">
+                </div>
+                <div class="col-md-6">
+                    <p class="lead">AffiliatePro คือแอปที่ช่วยคุณสร้างลิงก์ Affiliate จาก TikTok Shop, Shopee และ Lazada ได้ในที่เดียว</p>
+                    <ul>
+                        <li><i class="fas fa-check-circle"></i>เชื่อมต่อบัญชี TikTok, Shopee และ Lazada ได้ง่าย ๆ</li>
+                        <li><i class="fas fa-check-circle"></i>สร้างลิงก์ Affiliate ได้ในไม่กี่คลิก</li>
+                        <li><i class="fas fa-check-circle"></i>จัดการสินค้าและลิงก์ทั้งหมดในแอปเดียว</li>
+                        <li><i class="fas fa-check-circle"></i>ออกแบบสำหรับผู้ใช้ในประเทศไทยและเอเชียตะวันออกเฉียงใต้</li>
+                    </ul>
+                    <a href="https://www.youtube.com/watch?v=your-video-id" target="_blank" class="btn btn-custom">ดูวิธีใช้งานใน YouTube</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services-section">
+        <div class="container">
+            <h2 class="text-center mb-5">บริการและเครื่องมืออื่น ๆ</h2>
+            <div class="row">
+                <div class="col-md-4 text-center">
+                    <div class="service-card">
+                        <i class="fas fa-link"></i>
+                        <h4>ตัวย่อลิงก์</h4>
+                        <p>ย่อลิงก์ Affiliate ของคุณให้สั้นและสวยงาม เพื่อให้แชร์ได้ง่ายขึ้น</p>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="service-card">
+                        <i class="fas fa-search"></i>
+                        <h4>ค้นหาสินค้าฮิต</h4>
+                        <p>ค้นหาสินค้าที่กำลังเป็นเทรนด์ใน TikTok Shop, Shopee และ Lazada</p>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="service-card">
+                        <i class="fas fa-chart-line"></i>
+                        <h4>วิเคราะห์ผลลัพธ์</h4>
+                        <p>ดูสถิติการคลิกและยอดขายจากลิงก์ Affiliate ของคุณ</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section">
+        <div class="container">
+            <h2 class="text-center mb-5">รีวิวจากผู้ใช้</h2>
+            <div class="row">
+                <div class="col-md-4 text-center">
+                    <div class="testimonial-card">
+                        <img src="https://via.placeholder.com/100" class="rounded-circle mb-3" alt="User 1">
+                        <p>"AffiliatePro ช่วยให้ฉันสร้างลิงก์ Affiliate ได้ง่ายมาก! ใช้เวลาไม่ถึง 5 นาทีก็เริ่มทำเงินได้แล้ว"</p>
+                        <h5>คุณอร - ผู้ใช้ TikTok Shop</h5>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="testimonial-card">
+                        <img src="https://via.placeholder.com/100" class="rounded-circle mb-3" alt="User 2">
+                        <p>"แอปนี้รวมทุกอย่างไว้ในที่เดียว ไม่ต้องสลับไปมาระหว่าง Shopee กับ Lazada อีกต่อไป"</p>
+                        <h5>คุณแบงค์ - Affiliate Marketer</h5>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="testimonial-card">
+                        <img src="https://via.placeholder.com/100" class="rounded-circle mb-3" alt="User 3">
+                        <p>"การจัดการลิงก์และสินค้าสะดวกมาก ๆ แนะนำสำหรับคนที่เริ่มต้นทำ Affiliate"</p>
+                        <h5>คุณมิ้น - มือใหม่ Affiliate</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <h3>ติดต่อเรา</h3>
+            <p>มีคำถามหรือต้องการความช่วยเหลือ? ติดต่อเราที่ <a href="mailto:support@lazshotok.biz">support@lazshotok.biz</a></p>
+            <p>
+                <a href="terms.html">เงื่อนไขการให้บริการ</a> | 
+                <a href="privacy.html">นโยบายความเป็นส่วนตัว</a>
+            </p>
+            <p>© 2025 LazShotok. All rights reserved.</p>
+        </div>
+    </section>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
