@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Injection Molding Thailand - เรียนรู้เกี่ยวกับเทคโนโลยีการผลิตด้วย Injection Molding ในประเทศไทย">
+    <meta name="keywords" content="Injection Molding, Thailand, Wizmobiz, Kruwitkub">
+    <title>Injection Molding Thailand - Wizmobiz</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome สำหรับไอคอน -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #FF6F61;
+            --secondary-color: #40C4FF;
+            --accent-color: #FFD740;
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: linear-gradient(180deg, #F5F7FA 0%, #FFFFFF 100%);
+        }
+
+        /* Navbar */
+        .navbar {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .navbar-brand:hover {
+            color: var(--primary-color);
+        }
+        .nav-link {
+            color: #2D3436;
+            font-weight: 500;
+        }
+        .nav-link:hover {
+            color: var(--secondary-color);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            position: relative;
+            overflow: hidden;
+            padding: 120px 0 80px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .parallax-bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); }
+        }
+
+        .text-glow {
+            text-shadow: 0 0 15px rgba(255,111,97,0.5);
+        }
+
+        /* Content Section */
+        .content-section {
+            padding: 80px 0;
+            background-color: #FFFFFF;
+        }
+
+        .process-step {
+            position: relative;
+            padding-left: 80px;
+            margin-bottom: 40px;
+        }
+
+        .step-number {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 60px;
+            height: 60px;
+            background: var(--secondary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .feature-card {
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            border: none;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            color: white;
+            border-radius: 20px;
+            transform: skewY(-3deg);
+            margin: 80px 0;
+        }
+
+        .cta-content {
+            transform: skewY(3deg);
+            padding: 60px 0;
+        }
+
+        .btn-gradient {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            transition: transform 0.3s;
+        }
+
+        .btn-gradient:hover {
+            transform: scale(1.05);
+            color: white;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #2D3436;
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+        .footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+        .footer a:hover {
+            color: #FFCA28;
+        }
+        .footer .social-links a {
+            color: var(--accent-color);
+            margin: 0 10px;
+            font-size: 1.5rem;
+        }
+        .footer .social-links a:hover {
+            color: #FFCA28;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Wizmobiz</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">หน้าแรก</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.html">เกี่ยวกับ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="injection-molding.html">Injection Molding</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="mobile-learning.html">Mobile Learning</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="affiliatepro.html">AffiliatePro</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html#contact">ติดต่อเรา</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section" data-aos="fade-down">
+        <div class="parallax-bubble" style="width: 300px; height: 300px; top: 20%; left: 10%;"></div>
+        <div class="parallax-bubble" style="width: 200px; height: 200px; top: 60%; right: 15%;"></div>
+        
+        <div class="container hero-content text-center">
+            <h1 class="text-glow" data-aos="zoom-in">Injection Molding</h1>
+            <p class="lead fs-4 mt-4" data-aos="fade-up">เทคโนโลยีการผลิตที่ทันสมัยสำหรับธุรกิจไทย</p>
+        </div>
+    </section>
+
+    <!-- Content Section -->
+    <section class="content-section">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h2 class="display-5 fw-bold mb-4" data-aos="fade-up">เทคโนโลยี Injection Molding</h2>
+                    <p class="lead" data-aos="fade-up" data-aos-delay="100">กระบวนการผลิตที่ช่วยให้ธุรกิจของคุณเติบโตและมีประสิทธิภาพมากยิ่งขึ้น</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <img src="https://via.placeholder.com/600x400" alt="Injection Molding" class="img-fluid rounded-4 shadow mb-4">
+                </div>
+                <div class="col-lg-6" data-aos="fade-left">
+                    <div class="process-step">
+                        <div class="step-number">1</div>
+                        <h4>การออกแบบแม่พิมพ์</h4>
+                        <p>ขั้นตอนแรกของการผลิตด้วยเทคโนโลยี Injection Molding คือการออกแบบแม่พิมพ์ที่แม่นยำและเหมาะสมกับผลิตภัณฑ์</p>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">2</div>
+                        <h4>การฉีดพลาสติก</h4>
+                        <p>พลาสติกที่ถูกหลอมละลายจะถูกฉีดเข้าไปในแม่พิมพ์ภายใต้ความดันสูง</p>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">3</div>
+                        <h4>การทำความเย็นและนำชิ้นงานออก</h4>
+                        <p>หลังจากพลาสติกแข็งตัวแล้ว ชิ้นงานจะถูกนำออกจากแม่พิมพ์</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-5">
+                <div class="col-lg-8 mx-auto text-center">
+                    <div class="card border-0 shadow-sm mt-4" data-aos="fade-up">
+                        <div class="card-body p-4">
+                            <h4 class="mb-3">ต้องการเรียนรู้เพิ่มเติม?</h4>
+                            <p>ติดต่อเราเพื่อรับข้อมูลเกี่ยวกับเทคโนโลยี Injection Molding</p>
+                            <a href="index.html#contact" class="btn btn-gradient mt-3">ติดต่อเรา</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container cta-content text-center">
+            <h2 class="display-5 fw-bold mb-4">พร้อมยกระดับการผลิตด้วยเทคโนโลยี Injection Molding แล้วหรือยัง?</h2>
+            <a href="index.html#contact" class="btn btn-gradient btn-lg px-5">ปรึกษาผู้เชี่ยวชาญ</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>ติดต่อเรา: <a href="mailto:support@wizmobiz.com">support@wizmobiz.com</a></p>
+            <div class="social-links">
+                <a href="https://facebook.com/kruwitkub" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://tiktok.com/@kruwitkub" target="_blank"><i class="fab fa-tiktok"></i></a>
+                <a href="https://line.me/kruwitkub" target="_blank"><i class="fab fa-line"></i></a>
+                <a href="https://youtube.com/kruwitkub" target="_blank"><i class="fab fa-youtube"></i></a>
+            </div>
+            <p>
+                <a href="terms.html">เงื่อนไขการให้บริการ</a> | 
+                <a href="privacy.html">นโยบายความเป็นส่วนตัว</a>
+            </p>
+            <p>© 2025 Wizmobiz by Kruwitkub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init();
+    </script>
+</body>
+</html>
