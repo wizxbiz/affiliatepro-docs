@@ -453,18 +453,216 @@
 
     <!-- Hero Section -->
     <section class="hero-section">
-        <!-- เอฟเฟกต์พารัลแลกซ์ -->
-        <div class="parallax-bubble" style="width: 300px; height: 300px; top: 20%; left: 10%; animation-duration: 25s;"></div>
-        <div class="parallax-bubble" style="width: 200px; height: 200px; top: 60%; right: 15%; animation-duration: 30s;"></div>
-        <div class="parallax-bubble" style="width: 150px; height: 150px; top: 30%; right: 20%; animation-duration: 35s;"></div>
+        <!-- เอฟเฟกต์พารัลแลกซ์แบบใหม่ -->
+        <div class="parallax-bubble bubble-1" style="
+            width: 300px; height: 300px; 
+            top: 20%; left: 10%; 
+            background: radial-gradient(circle, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 70%);
+            animation: floatBubble 15s ease-in-out infinite alternate;
+        "></div>
         
-        <div class="container hero-content" data-aos="fade-up">
-            <h1 class="text-glow">ยินดีต้อนรับสู่ Wizmobiz</h1>
-            <p class="lead">แหล่งรวมความรู้และเครื่องมือเพื่อการเรียนรู้และธุรกิจออนไลน์</p>
+        <div class="parallax-bubble bubble-2" style="
+            width: 200px; height: 200px; 
+            top: 60%; right: 15%;
+            background: radial-gradient(circle, rgba(255,215,64,0.2) 0%, rgba(255,215,64,0) 70%);
+            animation: floatBubble 18s ease-in-out infinite alternate-reverse;
+        "></div>
+        
+        <div class="parallax-bubble bubble-3" style="
+            width: 150px; height: 150px; 
+            top: 30%; right: 20%;
+            background: radial-gradient(circle, rgba(64,196,255,0.2) 0%, rgba(64,196,255,0) 70%);
+            animation: floatBubble 20s ease-in-out infinite alternate 2s;
+        "></div>
+        
+        <!-- เอฟเฟกต์อนุภาค -->
+        <div class="particles-container" style="
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        ">
+            <!-- อนุภาคจะถูกสร้างด้วย JavaScript -->
+        </div>
+        
+        <div class="container hero-content" data-aos="fade-up" style="position: relative; z-index: 2;">
+            <!-- ข้อความที่มีเอฟเฟกต์เงาแสง -->
+            <h1 class="text-glow" style="
+                text-shadow: 0 0 10px rgba(255, 255, 255, 0.7),
+                             0 0 20px rgba(255, 111, 97, 0.5),
+                             0 0 30px rgba(255, 215, 64, 0.3);
+                animation: pulseGlow 2s ease-in-out infinite alternate;
+            ">ยินดีต้อนรับสู่ Wizmobiz</h1>
+            
+            <!-- ข้อความย่อยที่มีเอฟเฟกต์พิมพ์ดีด -->
+            <p class="lead typing-text" style="
+                border-right: 2px solid white;
+                white-space: nowrap;
+                overflow: hidden;
+                display: inline-block;
+            ">แหล่งรวมความรู้และเครื่องมือเพื่อการเรียนรู้และธุรกิจออนไลน์</p>
+            
+            <!-- ปุ่มที่มีเอฟเฟกต์ลอยตัว -->
             <div class="mt-4">
-                <a href="#channels" class="btn btn-gradient btn-lg px-5 py-3">เริ่มต้นสำรวจ</a>
+                <a href="#channels" class="btn btn-gradient btn-lg px-5 py-3 floating-btn" style="
+                    background: linear-gradient(135deg, #FF6F61, #FFD740);
+                    border: none;
+                    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <span class="btn-text">เริ่มต้นสำรวจ</span>
+                    <span class="btn-hover-effect" style="
+                        position: absolute;
+                        top: -50%;
+                        left: -50%;
+                        width: 200%;
+                        height: 200%;
+                        background: linear-gradient(
+                            to right,
+                            rgba(255, 255, 255, 0) 20%,
+                            rgba(255, 255, 255, 0.3) 50%,
+                            rgba(255, 255, 255, 0) 80%
+                        );
+                        transform: rotate(30deg);
+                        animation: btnShine 3s infinite linear;
+                    "></span>
+                </a>
+            </div>
+            
+            <!-- ลูกศรเลื่อนลง -->
+            <div class="scroll-down-arrow" style="
+                position: absolute;
+                bottom: 30px;
+                left: 50%;
+                transform: translateX(-50%);
+                animation: bounce 2s infinite;
+            ">
+                <i class="fas fa-chevron-down" style="
+                    font-size: 2rem;
+                    color: white;
+                    opacity: 0.8;
+                "></i>
             </div>
         </div>
+    
+        <!-- เพิ่ม CSS Animation ใน style หรือแยกไฟล์ CSS -->
+        <style>
+            /* อนิเมชันฟองสบู่ลอย */
+            @keyframes floatBubble {
+                0% { transform: translate(0, 0) rotate(0deg); }
+                50% { transform: translate(50px, -30px) rotate(180deg); }
+                100% { transform: translate(0, 0) rotate(360deg); }
+            }
+            
+            /* อนิเมชันแสงกระพริบ */
+            @keyframes pulseGlow {
+                0% { text-shadow: 0 0 10px rgba(255, 255, 255, 0.7),
+                                 0 0 20px rgba(255, 111, 97, 0.5),
+                                 0 0 30px rgba(255, 215, 64, 0.3); }
+                100% { text-shadow: 0 0 15px rgba(255, 255, 255, 0.9),
+                                   0 0 30px rgba(255, 111, 97, 0.7),
+                                   0 0 45px rgba(255, 215, 64, 0.5); }
+            }
+            
+            /* อนิเมชันพิมพ์ดีด */
+            @keyframes typing {
+                from { width: 0 }
+                to { width: 100% }
+            }
+            
+            @keyframes blinkCursor {
+                from, to { border-color: transparent }
+                50% { border-color: white }
+            }
+            
+            /* อนิเมชันปุ่มเป็นประกาย */
+            @keyframes btnShine {
+                0% { transform: translateX(-100%) rotate(30deg); }
+                100% { transform: translateX(100%) rotate(30deg); }
+            }
+            
+            /* อนิเมชันลูกศรเด้ง */
+            @keyframes bounce {
+                0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); }
+                40% { transform: translateY(-20px) translateX(-50%); }
+                60% { transform: translateY(-10px) translateX(-50%); }
+            }
+            
+            /* อนิเมชันปุ่มลอย */
+            @keyframes float {
+                0% { transform: translateY(0); }
+                50% { transform: translateY(-10px); }
+                100% { transform: translateY(0); }
+            }
+        </style>
+    
+        <!-- JavaScript สำหรับสร้างอนุภาคและควบคุมอนิเมชัน -->
+        <script>
+            // สร้างอนุภาค
+            function createParticles() {
+                const container = document.querySelector('.particles-container');
+                const particleCount = 30;
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.style.position = 'absolute';
+                    particle.style.width = `${Math.random() * 10 + 5}px`;
+                    particle.style.height = particle.style.width;
+                    particle.style.background = `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.1})`;
+                    particle.style.borderRadius = '50%';
+                    particle.style.top = `${Math.random() * 100}%`;
+                    particle.style.left = `${Math.random() * 100}%`;
+                    
+                    // กำหนดอนิเมชันแบบสุ่ม
+                    const duration = Math.random() * 20 + 10;
+                    const delay = Math.random() * 5;
+                    particle.style.animation = `floatParticle ${duration}s linear ${delay}s infinite`;
+                    
+                    container.appendChild(particle);
+                }
+            }
+            
+            // อนิเมชันอนุภาค
+            document.head.insertAdjacentHTML('beforeend', `
+                <style>
+                    @keyframes floatParticle {
+                        0% { 
+                            transform: translate(0, 0);
+                            opacity: 0;
+                        }
+                        10% { opacity: 1; }
+                        90% { opacity: 1; }
+                        100% { 
+                            transform: translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px);
+                            opacity: 0;
+                        }
+                    }
+                </style>
+            `);
+            
+            // เริ่มอนิเมชันพิมพ์ดีดเมื่อโหลดหน้าเว็บ
+            document.addEventListener('DOMContentLoaded', function() {
+                createParticles();
+                
+                const typingText = document.querySelector('.typing-text');
+                const text = typingText.textContent;
+                typingText.textContent = '';
+                typingText.style.width = '0';
+                typingText.style.animation = `typing 3s steps(${text.length}) 1s 1 normal both, 
+                                             blinkCursor 0.75s step-end infinite`;
+                
+                setTimeout(() => {
+                    typingText.textContent = text;
+                    typingText.style.borderRight = 'none';
+                }, 4000);
+                
+                // อนิเมชันปุ่มลอย
+                const floatingBtn = document.querySelector('.floating-btn');
+                floatingBtn.style.animation = 'float 3s ease-in-out infinite';
+            });
+        </script>
     </section>
 
     <!-- About Section -->
@@ -531,6 +729,7 @@
                         </div>
                         <h4>AffiliatePro</h4>
                         <p>โปรแกรมขายออนไลน์อัจฉริยะสำหรับ TikTok Shop, Shopee และ Lazada</p>
+                        <img src="images/affilate.png" alt="AffiliatePro" class="logo-img" style="height: 200px;">
                         <a href="affiliatepro.html" class="btn btn-outline-primary mt-3">ดูรายละเอียด</a>
                     </div>
                 </div>
@@ -541,6 +740,7 @@
                         </div>
                         <h4>ตลาดช๊อปฟิน</h4>
                         <p>ตลาดสินค้าดีราคาถูกจากผู้ขายที่เชื่อถือได้</p>
+                        <img src="images/shopfin-logo2.jpeg" alt="ตลาดช๊อปฟิน" class="logo-img" style="height: 200px;">
                         <a href="market.html" class="btn btn-outline-primary mt-3">ดูรายละเอียด</a>
                     </div>
                 </div>
@@ -551,58 +751,256 @@
     <!-- Market Products Section -->
     <section class="market-section" data-aos="fade-up">
         <div class="container">
-            <h2 class="text-center">ตลาดช๊อปฟิน</h2>
-            <p class="lead text-center mb-5">
+            <h2 class="text-center mb-3" style="
+                color: white;
+                font-size: 2.5rem;
+                text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+                position: relative;
+                z-index: 2;
+            ">ตลาดช๊อปฟิน</h2>
+            <p class="lead text-center mb-0" style="
+                color: rgba(255, 255, 255, 0.9);
+                font-size: 1.2rem;
+                position: relative;
+                z-index: 2;
+            ">
                 สินค้าคุณภาพในราคาสุดพิเศษจากผู้ขายที่เชื่อถือได้
             </p>
+        </div>
+
+        <!-- ตัวครอบสินค้าแบบใหม่ -->
+        <div class="market-container" style="
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        ">
             <div class="row">
                 <div class="col-md-4 col-sm-6 mb-4">
-                    <div class="product-card" data-aos="fade-up">
-                        <img src="images/shopfin-product1.jpg" alt="สินค้าแนะนำจากตลาดช๊อปฟิน">
-                        <div class="card-body">
-                            <h5>สินค้าชิ้นพิเศษ</h5>
-                            <p>สินค้าคุณภาพสูงจากผู้ผลิตโดยตรง รับประกันความพึงพอใจ</p>
-                            <div class="price">ราคา: 299 บาท</div>
-                            <div class="contact">
-                                <i class="fas fa-user"></i> ผู้ขาย: คุณสมชาย
+                    <div class="product-card" data-aos="fade-up" style="
+                        border: none;
+                        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+                        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                    ">
+                        <div style="
+                            height: 200px;
+                            overflow: hidden;
+                            border-top-left-radius: 10px;
+                            border-top-right-radius: 10px;
+                        ">
+                            <img src="images/shopfin-product1.jpg" alt="สินค้าแนะนำจากตลาดช๊อปฟิน" style="
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                                transition: transform 0.5s ease;
+                            ">
+                        </div>
+                        <div class="card-body" style="padding: 25px;">
+                            <div style="
+                                background-color: #FF6F61;
+                                color: white;
+                                display: inline-block;
+                                padding: 3px 12px;
+                                border-radius: 20px;
+                                font-size: 0.8rem;
+                                margin-bottom: 10px;
+                            ">สินค้าแนะนำ</div>
+                            <h5 style="
+                                color: #2D3436;
+                                font-size: 1.3rem;
+                                margin-bottom: 12px;
+                            ">สินค้าชิ้นพิเศษ</h5>
+                            <p style="
+                                color: #666;
+                                font-size: 0.95rem;
+                                margin-bottom: 15px;
+                            ">สินค้าคุณภาพสูงจากผู้ผลิตโดยตรง รับประกันความพึงพอใจ</p>
+                            <div style="
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                margin-bottom: 15px;
+                            ">
+                                <div class="price" style="
+                                    color: #FF6F61;
+                                    font-size: 1.3rem;
+                                    font-weight: 700;
+                                ">299 บาท</div>
+                                <div class="contact" style="
+                                    color: #666;
+                                    font-size: 0.85rem;
+                                ">
+                                    <i class="fas fa-user" style="color: #40C4FF;"></i> คุณสมชาย
+                                </div>
                             </div>
-                            <a href="market.html" class="btn btn-primary btn-sm">ดูสินค้าเพิ่มเติม</a>
+                            <a href="market.html" class="btn btn-primary btn-sm" style="
+                                width: 100%;
+                                border-radius: 8px;
+                                padding: 8px;
+                                background: linear-gradient(135deg, #FF6F61, #FFD740);
+                                border: none;
+                            ">ดูสินค้าเพิ่มเติม</a>
                         </div>
                     </div>
                 </div>
+                
+                <!-- สินค้าชิ้นที่ 2 -->
                 <div class="col-md-4 col-sm-6 mb-4">
-                    <div class="product-card" data-aos="fade-up" data-aos-delay="100">
-                        <img src="images/shopfin-product2.jpg" alt="สินค้ายอดนิยมจากตลาดช๊อปฟิน">
-                        <div class="card-body">
-                            <h5>สินค้ายอดนิยม</h5>
-                            <p>สินค้าขายดีประจำสัปดาห์ รับประกันคุณภาพ</p>
-                            <div class="price">ราคา: 499 บาท</div>
-                            <div class="contact">
-                                <i class="fas fa-user"></i> ผู้ขาย: คุณสมหญิง
+                    <div class="product-card" data-aos="fade-up" data-aos-delay="100" style="
+                        border: none;
+                        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+                        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                    ">
+                        <div style="
+                            height: 200px;
+                            overflow: hidden;
+                            border-top-left-radius: 10px;
+                            border-top-right-radius: 10px;
+                        ">
+                            <img src="images/shopfin-product2.jpg" alt="สินค้ายอดนิยมจากตลาดช๊อปฟิน" style="
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                                transition: transform 0.5s ease;
+                            ">
+                        </div>
+                        <div class="card-body" style="padding: 25px;">
+                            <div style="
+                                background-color: #40C4FF;
+                                color: white;
+                                display: inline-block;
+                                padding: 3px 12px;
+                                border-radius: 20px;
+                                font-size: 0.8rem;
+                                margin-bottom: 10px;
+                            ">ขายดี</div>
+                            <h5 style="
+                                color: #2D3436;
+                                font-size: 1.3rem;
+                                margin-bottom: 12px;
+                            ">สินค้ายอดนิยม</h5>
+                            <p style="
+                                color: #666;
+                                font-size: 0.95rem;
+                                margin-bottom: 15px;
+                            ">สินค้าขายดีประจำสัปดาห์ รับประกันคุณภาพ</p>
+                            <div style="
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                margin-bottom: 15px;
+                            ">
+                                <div class="price" style="
+                                    color: #FF6F61;
+                                    font-size: 1.3rem;
+                                    font-weight: 700;
+                                ">499 บาท</div>
+                                <div class="contact" style="
+                                    color: #666;
+                                    font-size: 0.85rem;
+                                ">
+                                    <i class="fas fa-user" style="color: #40C4FF;"></i> คุณสมหญิง
+                                </div>
                             </div>
-                            <a href="market.html" class="btn btn-primary btn-sm">ดูสินค้าเพิ่มเติม</a>
+                            <a href="market.html" class="btn btn-primary btn-sm" style="
+                                width: 100%;
+                                border-radius: 8px;
+                                padding: 8px;
+                                background: linear-gradient(135deg, #FF6F61, #FFD740);
+                                border: none;
+                            ">ดูสินค้าเพิ่มเติม</a>
                         </div>
                     </div>
                 </div>
+                
+                <!-- สินค้าชิ้นที่ 3 -->
                 <div class="col-md-4 col-sm-6 mb-4">
-                    <div class="product-card" data-aos="fade-up" data-aos-delay="200">
-                        <img src="images/shopfin-product3.jpg" alt="สินค้าใหม่จากตลาดช๊อปฟิน">
-                        <div class="card-body">
-                            <h5>สินค้าใหม่ล่าสุด</h5>
-                            <p>สินค้ามาใหม่ประจำเดือน รับประกันความทันสมัย</p>
-                            <div class="price">ราคา: 799 บาท</div>
-                            <div class="contact">
-                                <i class="fas fa-user"></i> ผู้ขาย: คุณสมหมาย
+                    <div class="product-card" data-aos="fade-up" data-aos-delay="200" style="
+                        border: none;
+                        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+                        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                    ">
+                        <div style="
+                            height: 200px;
+                            overflow: hidden;
+                            border-top-left-radius: 10px;
+                            border-top-right-radius: 10px;
+                        ">
+                            <img src="images/shopfin-product3.jpg" alt="สินค้าใหม่จากตลาดช๊อปฟิน" style="
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                                transition: transform 0.5s ease;
+                            ">
+                        </div>
+                        <div class="card-body" style="padding: 25px;">
+                            <div style="
+                                background-color: #FFD740;
+                                color: #2D3436;
+                                display: inline-block;
+                                padding: 3px 12px;
+                                border-radius: 20px;
+                                font-size: 0.8rem;
+                                margin-bottom: 10px;
+                            ">ใหม่ล่าสุด</div>
+                            <h5 style="
+                                color: #2D3436;
+                                font-size: 1.3rem;
+                                margin-bottom: 12px;
+                            ">สินค้าใหม่ล่าสุด</h5>
+                            <p style="
+                                color: #666;
+                                font-size: 0.95rem;
+                                margin-bottom: 15px;
+                            ">สินค้ามาใหม่ประจำเดือน รับประกันความทันสมัย</p>
+                            <div style="
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                margin-bottom: 15px;
+                            ">
+                                <div class="price" style="
+                                    color: #FF6F61;
+                                    font-size: 1.3rem;
+                                    font-weight: 700;
+                                ">799 บาท</div>
+                                <div class="contact" style="
+                                    color: #666;
+                                    font-size: 0.85rem;
+                                ">
+                                    <i class="fas fa-user" style="color: #40C4FF;"></i> คุณสมหมาย
+                                </div>
                             </div>
-                            <a href="market.html" class="btn btn-primary btn-sm">ดูสินค้าเพิ่มเติม</a>
+                            <a href="market.html" class="btn btn-primary btn-sm" style="
+                                width: 100%;
+                                border-radius: 8px;
+                                padding: 8px;
+                                background: linear-gradient(135deg, #FF6F61, #FFD740);
+                                border: none;
+                            ">ดูสินค้าเพิ่มเติม</a>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="text-center mt-4">
-                <a href="market.html" class="btn btn-primary btn-lg">ดูสินค้าทั้งหมดในตลาดช๊อปฟิน</a>
             </div>
         </div>
+
+        <!-- ปุ่มดูสินค้าทั้งหมด -->
+        <div class="text-center">
+            <a href="market.html" class="btn btn-primary btn-lg" style="
+                padding: 12px 30px;
+                border-radius: 50px;
+                background: linear-gradient(135deg, #FF6F61, #FFD740);
+                border: none;
+                box-shadow: 0 5px 15px rgba(255, 111, 97, 0.3);
+                transition: all 0.3s ease;
+                font-weight: 500;
+            ">
+                <i class="fas fa-store me-2"></i> ดูสินค้าทั้งหมดในตลาดช๊อปฟิน
+            </a>
+        </div>
+    </section>
     </section>
 
     <!-- CTA Section -->
@@ -627,7 +1025,7 @@
                     <p><i class="fas fa-envelope me-2"></i> <a href="mailto:support@wizmobiz.com">support@wizmobiz.com</a></p>
                     <div class="social-links mt-3">
                         <a href="https://facebook.com/kruwitkub" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                        <a href="https://tiktok.com/@kruwitkub" target="_blank"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://www.tiktok.com/@kruwitkub?lang=th-TH" target="_blank"><i class="fab fa-tiktok"></i></a>
                         <a href="https://line.me/kruwitkub" target="_blank"><i class="fab fa-line"></i></a>
                         <a href="https://youtube.com/kruwitkub" target="_blank"><i class="fab fa-youtube"></i></a>
                     </div>
