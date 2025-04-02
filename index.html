@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Wizmobiz by Kruwitkub - แหล่งความรู้และข้อมูลรอบด้าน รวมถึง Injection Molding, Mobile Learning และ AffiliatePro">
-    <meta name="keywords" content="Wizmobiz, Kruwitkub, Injection Molding, Mobile Learning, AffiliatePro, Affiliate Marketing">
+    <meta name="description" content="Wizmobiz by Kruwitkub - แหล่งความรู้และข้อมูลรอบด้าน รวมถึง Injection Molding, Mobile Learning, AffiliatePro และ ตลาดช๊อปฟิน">
+    <meta name="keywords" content="Wizmobiz, Kruwitkub, Injection Molding, Mobile Learning, AffiliatePro, ตลาดช๊อปฟิน, สินค้าราคาถูก">
     <meta name="author" content="Wizmobiz Team">
     <title>Wizmobiz by Kruwitkub</title>
     <!-- Bootstrap CSS -->
@@ -175,6 +175,77 @@
             margin: 20px 0 15px;
         }
 
+        /* Market Section */
+        .market-section {
+            padding: 80px 0;
+            background-color: #FFFFFF;
+        }
+
+        .market-section h2 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .market-section p.lead {
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        .product-card {
+            background-color: #FFFFFF;
+            border: 1px solid #E0E0E0;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 30px;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .product-card .card-body {
+            padding: 20px;
+        }
+
+        .product-card h5 {
+            color: var(--dark-color);
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .product-card p {
+            color: #666;
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        .product-card .price {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .product-card .contact {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+        }
+
+        .product-card .contact i {
+            color: var(--secondary-color);
+            margin-right: 5px;
+        }
+
         /* CTA Section */
         .cta-section {
             background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
@@ -306,6 +377,26 @@
             .navbar-brand {
                 font-size: 1.3rem;
             }
+
+            .market-section h2 {
+                font-size: 2rem;
+            }
+
+            .market-section p.lead {
+                font-size: 1rem;
+            }
+
+            .product-card h5 {
+                font-size: 1.1rem;
+            }
+
+            .product-card p, .product-card .contact {
+                font-size: 0.9rem;
+            }
+
+            .product-card .price {
+                font-size: 1.1rem;
+            }
         }
 
         @media (max-width: 576px) {
@@ -348,6 +439,9 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="affiliatepro.html">AffiliatePro</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="market.html">ตลาดช๊อปฟิน</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#contact">ติดต่อเรา</a>
@@ -410,7 +504,7 @@
         <div class="container">
             <h2 class="text-center mb-5" data-aos="fade-up">ช่องทางของเรา</h2>
             <div class="row g-4">
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
                     <div class="channel-card">
                         <div class="feature-icon">
                             <i class="fas fa-industry"></i>
@@ -420,7 +514,7 @@
                         <a href="injection-molding.html" class="btn btn-outline-primary mt-3">ดูรายละเอียด</a>
                     </div>
                 </div>
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
                     <div class="channel-card">
                         <div class="feature-icon">
                             <i class="fas fa-mobile-alt"></i>
@@ -430,7 +524,7 @@
                         <a href="mobile-learning.html" class="btn btn-outline-primary mt-3">ดูรายละเอียด</a>
                     </div>
                 </div>
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
                     <div class="channel-card">
                         <div class="feature-icon">
                             <i class="fas fa-link"></i>
@@ -440,6 +534,73 @@
                         <a href="affiliatepro.html" class="btn btn-outline-primary mt-3">ดูรายละเอียด</a>
                     </div>
                 </div>
+                <div class="col-md-3" data-aos="fade-up" data-aos-delay="400">
+                    <div class="channel-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <h4>ตลาดช๊อปฟิน</h4>
+                        <p>ตลาดสินค้าดีราคาถูกจากผู้ขายที่เชื่อถือได้</p>
+                        <a href="market.html" class="btn btn-outline-primary mt-3">ดูรายละเอียด</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Market Products Section -->
+    <section class="market-section" data-aos="fade-up">
+        <div class="container">
+            <h2 class="text-center">ตลาดช๊อปฟิน</h2>
+            <p class="lead text-center mb-5">
+                สินค้าคุณภาพในราคาสุดพิเศษจากผู้ขายที่เชื่อถือได้
+            </p>
+            <div class="row">
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="product-card" data-aos="fade-up">
+                        <img src="images/shopfin-product1.jpg" alt="สินค้าแนะนำจากตลาดช๊อปฟิน">
+                        <div class="card-body">
+                            <h5>สินค้าชิ้นพิเศษ</h5>
+                            <p>สินค้าคุณภาพสูงจากผู้ผลิตโดยตรง รับประกันความพึงพอใจ</p>
+                            <div class="price">ราคา: 299 บาท</div>
+                            <div class="contact">
+                                <i class="fas fa-user"></i> ผู้ขาย: คุณสมชาย
+                            </div>
+                            <a href="market.html" class="btn btn-primary btn-sm">ดูสินค้าเพิ่มเติม</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="product-card" data-aos="fade-up" data-aos-delay="100">
+                        <img src="images/shopfin-product2.jpg" alt="สินค้ายอดนิยมจากตลาดช๊อปฟิน">
+                        <div class="card-body">
+                            <h5>สินค้ายอดนิยม</h5>
+                            <p>สินค้าขายดีประจำสัปดาห์ รับประกันคุณภาพ</p>
+                            <div class="price">ราคา: 499 บาท</div>
+                            <div class="contact">
+                                <i class="fas fa-user"></i> ผู้ขาย: คุณสมหญิง
+                            </div>
+                            <a href="market.html" class="btn btn-primary btn-sm">ดูสินค้าเพิ่มเติม</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="product-card" data-aos="fade-up" data-aos-delay="200">
+                        <img src="images/shopfin-product3.jpg" alt="สินค้าใหม่จากตลาดช๊อปฟิน">
+                        <div class="card-body">
+                            <h5>สินค้าใหม่ล่าสุด</h5>
+                            <p>สินค้ามาใหม่ประจำเดือน รับประกันความทันสมัย</p>
+                            <div class="price">ราคา: 799 บาท</div>
+                            <div class="contact">
+                                <i class="fas fa-user"></i> ผู้ขาย: คุณสมหมาย
+                            </div>
+                            <a href="market.html" class="btn btn-primary btn-sm">ดูสินค้าเพิ่มเติม</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <a href="market.html" class="btn btn-primary btn-lg">ดูสินค้าทั้งหมดในตลาดช๊อปฟิน</a>
             </div>
         </div>
     </section>
@@ -459,7 +620,7 @@
             <div class="row">
                 <div class="col-lg-4 mb-4 mb-lg-0">
                     <h4>Wizmobiz</h4>
-                    <p>แหล่งความรู้และเครื่องมือเพื่อการเรียนรู้และธุรกิจออนไลน์</p>
+                    <p>แหล่งข้อมูลความรู้และเครื่องมือเพื่อการเข้าถึงและตลาดธุรกิจออนไลน์</p>
                 </div>
                 <div class="col-lg-4 mb-4 mb-lg-0">
                     <h4>ติดต่อเรา</h4>
@@ -476,6 +637,10 @@
                     <p>
                         <a href="terms.html">เงื่อนไขการให้บริการ</a> | 
                         <a href="privacy.html">นโยบายความเป็นส่วนตัว</a>
+                    </p>
+                    <p>
+                        <a href="market.html">ตลาดช๊อปฟิน</a> | 
+                        <a href="affiliatepro.html">AffiliatePro</a>
                     </p>
                 </div>
             </div>
