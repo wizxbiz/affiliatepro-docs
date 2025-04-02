@@ -3,77 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="เงื่อนไขการให้บริการของ Wizmobiz by Kruwitkub">
-    <meta name="keywords" content="Wizmobiz, Kruwitkub, Terms of Service">
-    <title>เงื่อนไขการให้บริการ - Wizmobiz</title>
+    <meta name="description" content="นโยบายความเป็นส่วนตัวของ Wizmobiz by Kruwitkub และ AffiliatePro">
+    <meta name="keywords" content="Wizmobiz, Kruwitkub, AffiliatePro, Privacy Policy">
+    <title>นโยบายความเป็นส่วนตัว - Wizmobiz</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome สำหรับไอคอน -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- AOS CSS -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
     <style>
+        :root {
+            --primary-color: #FF6F61;
+            --secondary-color: #40C4FF;
+            --accent-color: #FFD740;
+            --dark-color: #2D3436;
+            --light-color: #F5F7FA;
+        }
+
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #F5F7FA;
+            font-family: 'Kanit', sans-serif;
+            background: linear-gradient(180deg, var(--light-color) 0%, #FFFFFF 100%);
+            color: var(--dark-color);
         }
+
+        /* Navbar */
         .navbar {
-            background-color: #FFFFFF;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
         }
+
         .navbar-brand {
             font-weight: 700;
-            color: #FF6F61;
+            color: var(--primary-color);
+            font-size: 1.5rem;
         }
+
         .navbar-brand:hover {
-            color: #FF6F61;
+            color: var(--primary-color);
         }
+
         .nav-link {
-            color: #2D3436;
+            color: var(--dark-color);
             font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
         }
-        .nav-link:hover {
-            color: #40C4FF;
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--secondary-color);
+            background-color: rgba(64, 196, 255, 0.1);
         }
+
+        /* Content Section */
         .content-section {
             padding: 80px 0;
             background-color: #FFFFFF;
         }
-        .content-section h2 {
-            color: #FF6F61;
-            margin-bottom: 20px;
-        }
-        .content-section p {
-            color: #666;
-            font-size: 1.1rem;
-        }
-        .footer {
-            background-color: #2D3436;
-            color: white;
-            padding: 40px 0;
+
+        .content-section h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 30px;
             text-align: center;
         }
-        .footer a {
-            color: #FFD740;
-            text-decoration: none;
+
+        .content-section h2 {
+            color: var(--dark-color);
+            font-size: 1.8rem;
+            margin-top: 40px;
+            margin-bottom: 20px;
         }
+
+        .content-section p, .content-section li {
+            color: #666;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .content-section ul {
+            padding-left: 20px;
+        }
+
+        .content-section li {
+            margin-bottom: 10px;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 60px 0 30px;
+            text-align: center;
+        }
+
+        .footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
         .footer a:hover {
             color: #FFCA28;
+            text-decoration: underline;
         }
+
         .footer .social-links a {
-            color: #FFD740;
-            margin: 0 10px;
-            font-size: 1.5rem;
+            color: var(--accent-color);
+            margin: 0 15px;
+            font-size: 1.8rem;
+            display: inline-block;
+            transition: transform 0.3s;
         }
+
         .footer .social-links a:hover {
             color: #FFCA28;
+            transform: translateY(-5px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content-section h1 {
+                font-size: 2rem;
+            }
+
+            .content-section h2 {
+                font-size: 1.5rem;
+            }
+
+            .content-section p, .content-section li {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Header -->
-    <nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
         <div class="container">
             <a class="navbar-brand" href="index.html">Wizmobiz</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -107,52 +179,108 @@
     <!-- Content Section -->
     <section class="content-section" data-aos="fade-up">
         <div class="container">
-            <h2 class="text-center">เงื่อนไขการให้บริการ</h2>
+            <h1>นโยบายความเป็นส่วนตัว</h1>
             <p>
-                Wizmobiz by Kruwitkub เป็นแหล่งความรู้และเครื่องมือที่ช่วยให้คุณเติบโตในด้านการเรียนรู้และธุรกิจออนไลน์ 
-                เราให้บริการในหลากหลายด้าน ไม่ว่าจะเป็นเทคโนโลยีการผลิตด้วย Injection Molding, 
-                การเรียนรู้ผ่าน Mobile Learning, และเครื่องมือสำหรับ Affiliate Marketing อย่าง AffiliatePro.
+                นโยบายความเป็นส่วนตัวนี้ ("นโยบาย") อธิบายวิธีที่ Wizmobiz by Kruwitkub ("เรา" หรือ "Wizmobiz") และแอปพลิเคชัน AffiliatePro จัดการข้อมูลส่วนบุคคลของคุณเมื่อคุณใช้งานเว็บไซต์ <a href="https://wizmobiz.com">https://wizmobiz.com</a> และบริการของเรา
             </p>
-            <h1>นโยบายความเป็นส่วนตัว AffiliatePro</h1>
-    <p>นโยบายความเป็นส่วนตัวนี้อธิบายวิธีที่ AffiliatePro จัดการข้อมูลของคุณ</p>
-    <h2>1. ข้อมูลที่เก็บ</h2>
-    <p>- AffiliatePro เก็บข้อมูล เช่น URL สินค้า, Access Token จาก TikTok, Shopee, และ Lazada<br>
-    - ข้อมูลทั้งหมดถูกเก็บในเครื่องของผู้ใช้และเข้ารหัส</p>
-    <h2>2. การใช้งานข้อมูล</h2>
-    <p>ใช้เพื่อดึงข้อมูลสินค้าและสร้างโพสต์ Affiliate</p>
-    <h2>3. การเก็บรักษา</h2>
-    <p>ข้อมูลถูกเก็บในเครื่องของผู้ใช้ในไฟล์ api_config.json และ product_list.json</p>
-    <h2>4. สิทธิของผู้ใช้</h2>
-    <p>ผู้ใช้สามารถลบข้อมูลได้โดยการลบไฟล์ดังกล่าว</p>
-    <p>วันที่แก้ไขล่าสุด: 1 เมษายน 2568</p>
-            <!-- เพิ่มเนื้อหาเงื่อนไขการให้บริการตามที่คุณต้องการ -->
+
+            <h2>1. ข้อมูลที่เราเก็บรวบรวม</h2>
+            <p>
+                เราเก็บข้อมูลที่จำเป็นเพื่อให้บริการของเราดำเนินการได้อย่างราบรื่น ดังนี้:
+            </p>
+            <ul>
+                <li><strong>ข้อมูลที่ผู้ใช้ให้:</strong> เช่น อีเมลที่ใช้ในการติดต่อ (support@wizmobiz.com)</li>
+                <li><strong>ข้อมูลจาก AffiliatePro:</strong> URL สินค้า, Access Token จาก TikTok, Shopee, และ Lazada ซึ่งใช้ในการสร้างลิงก์ Affiliate</li>
+                <li><strong>ข้อมูลการใช้งาน:</strong> ข้อมูลเกี่ยวกับการใช้งานเว็บไซต์ เช่น หน้าเว็บที่เข้าชม, ระยะเวลาการใช้งาน (เก็บผ่านเครื่องมือวิเคราะห์ เช่น Google Analytics)</li>
+            </ul>
+
+            <h2>2. วิธีที่เราใช้ข้อมูล</h2>
+            <p>
+                เราใช้ข้อมูลเพื่อ:
+            </p>
+            <ul>
+                <li>ให้บริการและปรับปรุงประสบการณ์ผู้ใช้บนเว็บไซต์และแอป AffiliatePro</li>
+                <li>ดึงข้อมูลสินค้าและสร้างโพสต์ Affiliate ผ่านแอป AffiliatePro</li>
+                <li>วิเคราะห์การใช้งานเพื่อพัฒนาเนื้อหาและบริการ</li>
+                <li>ตอบคำถามและให้การสนับสนุนผ่านอีเมล support@wizmobiz.com</li>
+            </ul>
+
+            <h2>3. การเก็บรักษาข้อมูล</h2>
+            <p>
+                ข้อมูลที่เก็บผ่าน AffiliatePro จะถูกเก็บในเครื่องของผู้ใช้ในรูปแบบไฟล์:
+            </p>
+            <ul>
+                <li><code>api_config.json</code>: เก็บ Access Token และข้อมูลการเชื่อมต่อ</li>
+                <li><code>product_list.json</code>: เก็บข้อมูลสินค้าที่ผู้ใช้เลือก</li>
+            </ul>
+            <p>
+                ข้อมูลทั้งหมดถูกเข้ารหัสเพื่อความปลอดภัย และ Wizmobiz ไม่เก็บข้อมูลนี้ไว้ในเซิร์ฟเวอร์ของเรา
+            </p>
+
+            <h2>4. การแบ่งปันข้อมูล</h2>
+            <p>
+                เราไม่แบ่งปันข้อมูลส่วนบุคคลของคุณกับบุคคลที่สาม ยกเว้น:
+            </p>
+            <ul>
+                <li>เมื่อได้รับความยินยอมจากคุณ</li>
+                <li>เมื่อจำเป็นต้องปฏิบัติตามกฎหมายหรือคำสั่งศาล</li>
+                <li>เมื่อใช้บริการของผู้ให้บริการบุคคลที่สาม เช่น Google Analytics (โดยข้อมูลจะถูกทำให้ไม่ระบุตัวตน)</li>
+            </ul>
+
+            <h2>5. สิทธิของผู้ใช้</h2>
+            <p>
+                ผู้ใช้มีสิทธิ์ดังต่อไปนี้:
+            </p>
+            <ul>
+                <li>เข้าถึงและตรวจสอบข้อมูลส่วนบุคคลที่เราเก็บ</li>
+                <li>ขอให้แก้ไขหรือลบข้อมูลส่วนบุคคล</li>
+                <li>ลบไฟล์ <code>api_config.json</code> และ <code>product_list.json</code> เพื่อลบข้อมูลที่เก็บในเครื่อง</li>
+            </ul>
+            <p>
+                หากต้องการใช้สิทธิ์ กรุณาติดต่อเราที่ <a href="mailto:support@wizmobiz.com">support@wizmobiz.com</a>
+            </p>
+
+            <h2>6. การรักษาความปลอดภัย</h2>
+            <p>
+                เราใช้มาตรการรักษาความปลอดภัยที่เหมาะสม เช่น การเข้ารหัสข้อมูลใน AffiliatePro เพื่อปกป้องข้อมูลของคุณ อย่างไรก็ตาม ไม่มีระบบใดที่ปลอดภัย 100% ผู้ใช้ควรระมัดระวังในการรักษาความปลอดภัยของอุปกรณ์ของตน
+            </p>
+
+            <h2>7. การเปลี่ยนแปลงนโยบาย</h2>
+            <p>
+                เราขอสงวนสิทธิ์ในการเปลี่ยนแปลงนโยบายความเป็นส่วนตัวนี้ โดยจะแจ้งให้ผู้ใช้ทราบผ่านหน้าเว็บไซต์ การใช้งานต่อไปหลังจากการเปลี่ยนแปลงถือว่าคุณยอมรับนโยบายใหม่
+            </p>
+
+            <h2>8. การติดต่อเรา</h2>
+            <p>
+                หากคุณมีคำถามเกี่ยวกับนโยบายความเป็นส่วนตัวนี้ กรุณาติดต่อเราที่ <a href="mailto:support@wizmobiz.com">support@wizmobiz.com</a>
+            </p>
+
+            <p class="mt-5"><strong>วันที่แก้ไขล่าสุด:</strong> 1 เมษายน 2568</p>
+            <p><a href="index.html">กลับสู่หน้าหลัก</a></p>
         </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer" data-aos="fade-up">
         <div class="container">
-            <p>ติดต่อเรา: <a href="mailto:support@wizmobiz.com">support@wizmobiz.com</a></p>
-            <div class="social-links">
-                <a href="https://facebook.com/kruwitkub" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                <a href="https://tiktok.com/@kruwitkub" target="_blank"><i class="fab fa-tiktok"></i></a>
-                <a href="https://line.me/kruwitkub" target="_blank"><i class="fab fa-line"></i></a>
-                <a href="https://youtube.com/kruwitkub" target="_blank"><i class="fab fa-youtube"></i></a>
-            </div>
-            <p>
-                <a href="terms.html">เงื่อนไขการให้บริการ</a> | 
-                <a href="privacy.html">นโยบายความเป็นส่วนตัว</a>
-            </p>
-            <p>© 2025 Wizmobiz by Kruwitkub. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- AOS JS -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>
-        AOS.init();
-    </script>
-</body>
-</html>
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0 text-start">
+                    <h4>Wizmobiz</h4>
+                    <p>แหล่งความรู้และเครื่องมือเพื่อการเรียนรู้และธุรกิจออนไลน์</p>
+                </div>
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h4>ลิงก์ด่วน</h4>
+                    <p>
+                        <a href="about.html">เกี่ยวกับเรา</a> | 
+                        <a href="index.html#contact">ติดต่อเรา</a>
+                    </p>
+                    <p>
+                        <a href="terms.html">เงื่อนไขการให้บริการ</a> | 
+                        <a href="privacy.html">นโยบายความเป็นส่วนตัว</a>
+                    </p>
+                </div>
+                <div class="col-lg-4">
+                    <h4>ติดตามเรา</h4>
+                    <div class="social-links">
+                        <a href="https://facebook.com/kruwitkub" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://tiktok.com/@kruwitkub" target="_blank"><i class="fab fa-tiktok
