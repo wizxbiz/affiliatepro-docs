@@ -16,9 +16,7 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
+    
     <style>
         :root {
             --primary-color: #FF6F61;
@@ -199,213 +197,6 @@
         .social-links a:hover {
             color: #FFCA28;
         }
-
-        /* Chatbot Styles */
-        .chatbot-widget {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 9999;
-        }
-
-        .chatbot-icon {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 28px;
-            cursor: pointer;
-            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .chatbot-icon:hover {
-            transform: scale(1.1) rotate(10deg);
-        }
-
-        .chatbot-badge {
-            font-size: 10px;
-            margin-top: 3px;
-        }
-
-        .remaining-questions {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            background: #FF6F61;
-            color: white;
-            border-radius: 50%;
-            width: 25px;
-            height: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .chatbot-container {
-            position: absolute;
-            bottom: 90px;
-            right: 0;
-            width: 380px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
-            display: none;
-            transform: translateY(20px);
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-
-        .chatbot-container.show {
-            display: block;
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        .chatbot-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .chatbot-body {
-            height: 350px;
-            overflow-y: auto;
-            padding: 15px;
-            background: #f8f9fa;
-        }
-
-        .chatbot-input {
-            display: flex;
-            padding: 15px;
-            background: white;
-            border-top: 1px solid #eee;
-        }
-
-        .chatbot-input input {
-            flex: 1;
-            margin-right: 10px;
-            border: 1px solid #ddd;
-            padding: 10px 15px;
-        }
-
-        .chatbot-message {
-            margin-bottom: 15px;
-            max-width: 80%;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .user-message {
-            margin-left: auto;
-        }
-
-        .bot-message {
-            margin-right: auto;
-        }
-
-        .message-content {
-            padding: 12px 15px;
-            border-radius: 18px;
-            word-wrap: break-word;
-        }
-
-        .user-message .message-content {
-            background: #e3f2fd;
-            border-bottom-right-radius: 5px;
-        }
-
-        .bot-message .message-content {
-            background: #f1f1f1;
-            border-bottom-left-radius: 5px;
-        }
-
-        .message-time {
-            font-size: 11px;
-            color: #777;
-            margin-top: 5px;
-            text-align: right;
-        }
-
-        .quick-questions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .quick-question {
-            background: #e9f5ff;
-            border-radius: 15px;
-            padding: 5px 12px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .quick-question:hover {
-            background: #d0e8ff;
-            transform: translateY(-2px);
-        }
-
-        .auth-container {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 10000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .auth-box {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-        }
-
-        .institute-logo img {
-            width: 80px;
-            height: 80px;
-            object-fit: contain;
-            background: white;
-            padding: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }
-
-        .institute-logo:hover img {
-            transform: scale(1.1) rotate(5deg);
-        }
     </style>
 </head>
 
@@ -416,14 +207,13 @@
             <a class="navbar-brand" href="index.html">Wizmobiz</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+                <i class="fas fa-bars"></i>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="index.html">หน้าแรก</a></li>
                     <li class="nav-item"><a class="nav-link" href="about.html">เกี่ยวกับ</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="injection-molding.html">Injection Molding</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link active" href="injection-molding.html">Injection Molding</a></li>
                     <li class="nav-item"><a class="nav-link" href="mobile-learning.html">Mobile Learning</a></li>
                     <li class="nav-item"><a class="nav-link" href="affiliatepro.html">AffiliatePro</a></li>
                     <li class="nav-item"><a class="nav-link" href="index.html#contact">ติดต่อเรา</a></li>
@@ -432,39 +222,37 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero-section" data-aos="fade-down">
-        <div class="parallax-bubble" style="width: 300px; height: 300px; top: 20%; left: 10%;"></div>
-        <div class="parallax-bubble" style="width: 200px; height: 200px; top: 60%; right: 15%;"></div>
-        <div class="container hero-content text-center">
-            <h1 class="text-glow mb-4" data-aos="zoom-in">เทคโนโลยีการฉีดพลาสติกแบบมืออาชีพ</h1>
-            <p class="lead fs-4 mb-5" data-aos="fade-up">ให้คำปรึกษาและฝึกอบรมโดยผู้เชี่ยวชาญด้านการผลิตพลาสติกมากกว่า
-                15 ปี</p>
-            <div class="d-flex justify-content-center gap-4" data-aos="fade-up" data-aos-delay="200">
-                <a href="#consultation" class="btn btn-light btn-lg px-4 py-3 rounded-pill">
-                    <i class="fas fa-calendar-check me-2"></i>จองคำปรึกษา
-                </a>
-                <a href="#courses" class="btn btn-outline-light btn-lg px-4 py-3 rounded-pill">
-                    <i class="fas fa-graduation-cap me-2"></i>หลักสูตรฝึกอบรม
-                </a>
-            </div>
-            <div class="institute-logo mt-5" data-aos="fade-up" data-aos-delay="400">
-                <img src="images/logo.png" alt="สถาบันเรียนรู้การฉีดพลาสติก"
-                    class="img-fluid rounded-circle border border-4 border-white">
-                <p class="mt-3 mb-0 fs-5 fw-bold">สถาบันเรียนรู้การฉีดพลาสติก</p>
-                <p class="text-white-50">ได้รับการยอมรับจากอุตสาหกรรมพลาสติกไทย</p>
-            </div>
+  <!-- Hero Section -->
+  <section class="hero-section" data-aos="fade-down">
+    <div class="parallax-bubble" style="width: 300px; height: 300px; top: 20%; left: 10%;"></div>
+    <div class="parallax-bubble" style="width: 200px; height: 200px; top: 60%; right: 15%;"></div>
+    <div class="container hero-content text-center">
+        <h1 class="text-glow mb-4" data-aos="zoom-in">เทคโนโลยีการฉีดพลาสติกแบบมืออาชีพ</h1>
+        <p class="lead fs-4 mb-5" data-aos="fade-up">ให้คำปรึกษาและฝึกอบรมโดยผู้เชี่ยวชาญด้านการผลิตพลาสติกมากกว่า
+            15 ปี</p>
+        <div class="d-flex justify-content-center gap-4" data-aos="fade-up" data-aos-delay="200">
+            <a href="#consultation" class="btn btn-light btn-lg px-4 py-3 rounded-pill">
+                <i class="fas fa-calendar-check me-2"></i>จองเรียนออนไลน์
+            </a>
+            <a href="#courses" class="btn btn-outline-light btn-lg px-4 py-3 rounded-pill">
+                <i class="fas fa-graduation-cap me-2"></i>หลักสูตรฝึกอบรม
+            </a>
         </div>
-    </section>
-
+        <div class="institute-logo mt-5" data-aos="fade-up" data-aos-delay="400">
+            <img src="images/logo.png" alt="สถาบันเรียนรู้การฉีดพลาสติก"
+                class="img-fluid rounded-circle border border-4 border-white">
+            <p class="mt-3 mb-0 fs-5 fw-bold">สถาบันเรียนรู้การฉีดพลาสติก</p>
+            <p class="text-white-50">ได้รับการยอมรับจากอุตสาหกรรมพลาสติกไทย</p>
+        </div>
+    </div>
+</section>
     <!-- Benefits Section -->
     <section class="content-section" id="benefits">
         <div class="container">
             <div class="row mb-5">
                 <div class="col-12 text-center">
                     <h2 class="section-title" data-aos="fade-up">ประโยชน์ของเทคโนโลยี Injection Molding</h2>
-                    <p class="lead text-muted" data-aos="fade-up" data-aos-delay="100">การผลิตที่แม่นยำ ประหยัดต้นทุน
-                        และมีประสิทธิภาพสูง</p>
+                    <p class="lead text-muted" data-aos="fade-up" data-aos-delay="100">การผลิตที่แม่นยำ ประหยัดต้นทุน และมีประสิทธิภาพสูง</p>
                 </div>
             </div>
             <div class="row g-4">
@@ -533,20 +321,17 @@
                     <div class="process-step">
                         <div class="step-number">1</div>
                         <h4>การออกแบบแม่พิมพ์</h4>
-                        <p>ขั้นตอนแรกที่สำคัญที่สุดคือการออกแบบแม่พิมพ์ที่แม่นยำและเหมาะสมกับผลิตภัณฑ์
-                            โดยคำนึงถึงปัจจัยต่างๆ เช่น การหดตัวของวัสดุ</p>
+                        <p>ขั้นตอนแรกที่สำคัญที่สุดคือการออกแบบแม่พิมพ์ที่แม่นยำและเหมาะสมกับผลิตภัณฑ์ โดยคำนึงถึงปัจจัยต่างๆ เช่น การหดตัวของวัสดุ</p>
                     </div>
                     <div class="process-step">
                         <div class="step-number">2</div>
                         <h4>การฉีดพลาสติก</h4>
-                        <p>พลาสติกเม็ดจะถูกหลอมละลายในกระบอกฉีดที่อุณหภูมิที่เหมาะสม
-                            แล้วถูกฉีดเข้าไปในแม่พิมพ์ภายใต้ความดันสูง</p>
+                        <p>พลาสติกเม็ดจะถูกหลอมละลายในกระบอกฉีดที่อุณหภูมิที่เหมาะสม แล้วถูกฉีดเข้าไปในแม่พิมพ์ภายใต้ความดันสูง</p>
                     </div>
                     <div class="process-step">
                         <div class="step-number">3</div>
                         <h4>การทำความเย็น</h4>
-                        <p>ระบบน้ำหล่อเย็นจะทำงานเพื่อทำให้พลาสติกแข็งตัวเร็วขึ้น
-                            โดยใช้เวลาตั้งแต่ไม่กี่วินาทีถึงหลายนาที</p>
+                        <p>ระบบน้ำหล่อเย็นจะทำงานเพื่อทำให้พลาสติกแข็งตัวเร็วขึ้น โดยใช้เวลาตั้งแต่ไม่กี่วินาทีถึงหลายนาที</p>
                     </div>
                     <div class="process-step">
                         <div class="step-number">4</div>
@@ -570,7 +355,7 @@
             </div>
             <div class="row g-4">
                 <div class="col-md-4" data-aos="fade-up" data-aos-delay="0">
-                    <div class="feature-card">
+                    <div class="feature-card material-card">
                         <img src="https://images.unsplash.com/photo-1581093450021-4a7360e9a9e5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
                             class="card-img-top" alt="ABS Plastic" loading="lazy">
                         <div class="card-body p-4">
@@ -584,7 +369,7 @@
                     </div>
                 </div>
                 <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="feature-card">
+                    <div class="feature-card material-card">
                         <img src="https://images.unsplash.com/photo-1581094271901-8022df4466f9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
                             class="card-img-top" alt="PP Plastic" loading="lazy">
                         <div class="card-body p-4">
@@ -598,7 +383,7 @@
                     </div>
                 </div>
                 <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-                    <div class="feature-card">
+                    <div class="feature-card material-card">
                         <img src="https://images.unsplash.com/photo-1581094271901-8022df4466f9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
                             class="card-img-top" alt="PC Plastic" loading="lazy">
                         <div class="card-body p-4">
@@ -702,294 +487,155 @@
         </div>
     </section>
 
+   <!-- Consultation Form -->
+<section class="content-section" id="consultation">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="contact-form" data-aos="fade-up">
+                    <h3 class="text-center mb-4">ส่งข้อมูลเพื่อติดต่อ</h3>
+                    <form id="consultationForm"  action="https://formspree.io/f/xpwpygzv" method="POST">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="name" class="form-label">ชื่อ-นามสกุล</label>
+                                    <input type="text" class="form-control" id="name" name="name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="company" class="form-label">บริษัท</label>
+                                    <input type="text" class="form-control" id="company" name="company">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="email" class="form-label">อีเมล</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="phone" class="form-label">โทรศัพท์</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone" required>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="interest" class="form-label">หัวข้อที่สนใจ</label>
+                                    <select class="form-select" id="interest" name="interest">
+                                        <option value="training">หลักสูตรฝึกอบรม</option>
+                                        <option value="consulting">บริการให้คำปรึกษา</option>
+                                        <option value="mold-design">การออกแบบแม่พิมพ์</option>
+                                        <option value="other">อื่นๆ</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="message" class="form-label">รายละเอียดเพิ่มเติม</label>
+                                    <textarea class="form-control" id="message" name="message" rows="4"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-12 text-center">
+                                <button type="submit" class="btn btn-gradient px-5">ส่งคำขอ</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
     <!-- CTA Section -->
     <section class="cta-section">
         <div class="container cta-content text-center">
-            <h2 class="display-5 fw-bold mb-4" data-aos="fade-up">พร้อมยกระดับการผลิตด้วยเทคโนโลยี Injection Molding
-                แล้วหรือยัง?</h2>
-            <a href="index.html#contact" class="btn btn-gradient btn-lg px-5" data-aos="fade-up"
-                data-aos-delay="100">ปรึกษาผู้เชี่ยวชาญ</a>
+            <h2 class="display-5 fw-bold mb-4" data-aos="fade-up">พร้อมยกระดับการผลิตด้วยเทคโนโลยี Injection Molding แล้วหรือยัง?</h2>
+            <a href="#consultation" class="btn btn-gradient btn-lg px-5" data-aos="fade-up" data-aos-delay="100">ปรึกษาผู้เชี่ยวชาญ</a>
         </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>ติดต่อเรา: <a href="mailto:info@injectionmolding.com">info@injectionmolding.com</a></p>
-            <div class="social-links">
-                <a href="https://facebook.com/kruwitkub" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                <a href="https://tiktok.com/@kruwitkub" target="_blank"><i class="fab fa-tiktok"></i></a>
-                <a href="https://line.me/kruwitkub" target="_blank"><i class="fab fa-line"></i></a>
-                <a href="https://youtube.com/kruwitkub" target="_blank"><i class="fab fa-youtube"></i></a>
+            <div class="row">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5>เกี่ยวกับเรา</h5>
+                    <p>ให้คำปรึกษาและฝึกอบรมด้านเทคโนโลยีการฉีดพลาสติกโดยผู้เชี่ยวชาญมากประสบการณ์</p>
+                </div>
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5>ติดต่อเรา</h5>
+                    <p><i class="fas fa-envelope me-2"></i> <a href="mailto:info@injectionmolding.com">info@injectionmolding.com</a></p>
+                    <p><i class="fas fa-phone me-2"></i> <a href="tel:+6621234567">02-123-4567</a></p>
+                </div>
+                <div class="col-md-4">
+                    <h5>ติดตามเรา</h5>
+                    <div class="social-links">
+                        <a href="https://facebook.com/kruwitkub" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://tiktok.com/@kruwitkub" target="_blank"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://line.me/kruwitkub" target="_blank"><i class="fab fa-line"></i></a>
+                        <a href="https://youtube.com/kruwitkub" target="_blank"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
             </div>
-            <p>
-                <a href="terms.html">เงื่อนไขการให้บริการ</a> |
-                <a href="privacy.html">นโยบายความเป็นส่วนตัว</a>
-            </p>
-            <p>© 2025 Wizmobiz by Kruwitkub. All rights reserved.</p>
+            <hr class="my-4 bg-light">
+            <div class="row">
+                <div class="col-12">
+                    <p class="mb-0">
+                        <a href="terms.html">เงื่อนไขการให้บริการ</a> |
+                        <a href="privacy.html">นโยบายความเป็นส่วนตัว</a> |
+                        <a href="sitemap.html">แผนผังเว็บไซต์</a>
+                    </p>
+                    <p class="mb-0">© 2025 Wizmobiz by Kruwitkub. All rights reserved.</p>
+                </div>
+            </div>
         </div>
     </footer>
 
-    <!-- Chatbot Widget -->
-    <div class="chatbot-widget">
-        <div class="chatbot-icon" id="chatbotToggle">
-            <i class="fas fa-robot"></i>
-            <span class="chatbot-badge">ช่วยเหลือ</span>
-            <div class="remaining-questions" id="remainingQuestions">5</div>
-        </div>
-        <div class="chatbot-container" id="chatbotContainer">
-            <div class="chatbot-header">
-                <div class="d-flex align-items-center">
-                    <img src="https://cdn-icons-png.flaticon.com/512/1973/1973743.png" alt="Chatbot Icon"
-                        style="width: 30px; height: 30px; margin-right: 10px;">
-                    <h5 class="mb-0">ผู้ช่วยงานฉีดพลาสติก</h5>
-                </div>
-                <button class="btn-close btn-close-white" id="chatbotClose"></button>
-            </div>
-            <div class="chatbot-body" id="chatbotMessages"></div>
-            <div class="chatbot-input">
-                <input type="text" id="chatbotInput" placeholder="พิมพ์คำถามของคุณ..."
-                    class="form-control rounded-pill">
-                <button id="chatbotSend" class="btn btn-primary rounded-circle">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-        </div>
-        <div class="auth-container" id="authContainer">
-            <div class="auth-box">
-                <h4>กรุณากรอกรหัสผ่าน</h4>
-                <p>คุณใช้คำถามครบ 5 ครั้งแล้ว กรุณากรอกรหัสผ่านเพื่อใช้งานต่อ<br>(รหัสผ่านสามารถขอได้ที่ <a
-                        href="https://www.facebook.com/injectionmoldingthailand" target="_blank">Facebook Page</a>)</p>
-                <input type="password" id="activationCodeInput" class="form-control mb-3"
-                    placeholder="รหัสผ่าน (เช่น imtxxx)">
-                <button id="submitActivationCode" class="btn btn-primary w-100">ยืนยัน</button>
-                <button id="closeAuthBtn" class="btn btn-outline-secondary w-100 mt-2">ปิด</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Scripts -->
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- AOS JS -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- Custom JS -->
     <script>
+        // Initialize AOS animation
         AOS.init({
-            duration: 1000,
+            duration: 800,
+            easing: 'ease-in-out',
             once: true
         });
 
-        // Chatbot Logic
-        let questionCount = 0;
-        const maxQuestions = 5;
-        let isLoggedIn = false;
-        let isWelcomeMessageShown = false;
-        const activationCodes = Array.from({ length: 100 }, (_, i) => `imt${(i + 1).toString().padStart(3, '0')}n`);
-        const responses = {
-            greeting: 'สวัสดีครับ! ผมเป็นผู้ช่วยงานฉีดพลาสติกของสถาบันเรียนรู้การฉีดพลาสติก มีอะไรให้ช่วยไหมครับ?',
-            default: 'ขอโทษด้วยครับ ผมไม่เข้าใจคำถามของคุณ กรุณาถามใหม่หรือให้รายละเอียดเพิ่มเติมครับ',
-            limitReached: 'คุณใช้คำถามครบ 5 ครั้งแล้ว กรุณากรอกรหัสผ่านเพื่อใช้งานต่อ (รหัสผ่านสามารถขอได้ที่ <a href="https://www.facebook.com/injectionmoldingthailand" target="_blank">Facebook Page</a>)',
-            problem: 'ปัญหาที่พบบ่อยในงานฉีดพลาสติกมีดังนี้:',
-            mold_damage: 'ปัญหาแม่พิมพ์เสียหายมักเกิดจาก:<br>1. การสึกหรอจากการใช้งาน<br>2. การออกแบบไม่เหมาะสม<br>3. วัสดุไม่แข็งแรงพอ<br>กรุณาตรวจสอบและบำรุงรักษาแม่พิมพ์เป็นประจำ',
-            temperature: 'การตั้งอุณหภูมิไม่เหมาะสมอาจทำให้:<br>1. พลาสติกไหลไม่ดี (อุณหภูมิต่ำเกินไป)<br>2. พลาสติกเสื่อมสภาพ (อุณหภูมิสูงเกินไป)<br>ควรตั้งค่าตามคำแนะนำของผู้ผลิตวัสดุ',
-            pressure: 'ปัญหาความดันไม่พอดี:<br>1. ความดันสูงเกินไป: ทำให้ชิ้นงานบิดเบี้ยว<br>2. ความดันต่ำเกินไป: ทำให้ชิ้นงานไม่เต็มแบบ<br>ควรปรับความดันให้เหมาะสมกับวัสดุและแบบพิมพ์',
-            technique: 'เทคนิคการฉีดพลาสติกที่สำคัญ:<br>1. การตั้งค่าเครื่องที่เหมาะสม<br>2. การออกแบบแม่พิมพ์ที่ดี<br>3. การเลือกวัสดุที่ถูกต้อง<br>4. การควบคุมกระบวนการผลิต',
-            material: 'วัสดุที่ใช้ในงานฉีดพลาสติก:<br>1. ABS - แข็งแรง ทนแรงกระแทก<br>2. PP - ทนสารเคมี ราคาถูก<br>3. PC - แข็งแรง ใสเหมือนกระจก<br>4. Nylon - ทนความร้อนและแรงเสียดทาน',
-            course: 'หลักสูตรการเรียนฉีดพลาสติกของเรา:<br>1. หลักสูตรพื้นฐาน (2 วัน)<br>2. หลักสูตรออกแบบแม่พิมพ์ (5 วัน)<br>3. หลักสูตรเทคนิคขั้นสูง (3 วัน)',
-            contact: 'ติดต่อเราได้ที่:<br>โทร: 02-123-4567<br>อีเมล: info@injectionmolding.com<br>ที่อยู่: อาคารวิศวกรรมพลาสติก ชั้น 5 กรุงเทพฯ'
-        };
+        // Form submission handling
+        document.getElementById('consultationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            
+            // Here you would typically send the form data to a server
+            // For now, we'll just show an alert
+            alert(`ขอบคุณ ${name} เราได้รับคำขอปรึกษาของคุณแล้ว! เราจะติดต่อกลับไปที่ ${email} ในเร็วๆ นี้`);
+            
+            // Reset form
+            this.reset();
+        });
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const chatbotToggle = document.getElementById('chatbotToggle');
-            const chatbotContainer = document.getElementById('chatbotContainer');
-            const chatbotClose = document.getElementById('chatbotClose');
-            const chatbotSend = document.getElementById('chatbotSend');
-            const chatbotInput = document.getElementById('chatbotInput');
-            const chatbotMessages = document.getElementById('chatbotMessages');
-            const authContainer = document.getElementById('authContainer');
-            const submitActivationCode = document.getElementById('submitActivationCode');
-            const closeAuthBtn = document.getElementById('closeAuthBtn');
-            const activationCodeInput = document.getElementById('activationCodeInput');
-            const remainingQuestions = document.getElementById('remainingQuestions');
-
-            // อัปเดต UI เริ่มต้นจากข้อมูลใน localStorage
-            updateRemainingQuestions();
-
-            chatbotToggle.addEventListener('click', toggleChatbot);
-            chatbotClose.addEventListener('click', closeChatbot);
-            chatbotSend.addEventListener('click', sendMessage);
-            chatbotInput.addEventListener('keypress', (e) => e.key === 'Enter' && sendMessage());
-            submitActivationCode.addEventListener('click', verifyActivationCode);
-            closeAuthBtn.addEventListener('click', closeAuthModal);
-
-            function toggleChatbot() {
-                chatbotContainer.classList.toggle('show');
-                if (!isWelcomeMessageShown) {
-                    showWelcomeMessage();
-                    isWelcomeMessageShown = true;
-                }
-            }
-
-            function closeChatbot() {
-                chatbotContainer.classList.remove('show');
-            }
-
-            function sendMessage() {
-                const message = chatbotInput.value.trim();
-                if (!message) return;
-
-                if (!isLoggedIn && questionCount >= maxQuestions) {
-                    addMessage(responses.limitReached, 'bot-message');
-                    showAuthModal();
-                    return;
-                }
-
-                addMessage(message, 'user-message');
-                chatbotInput.value = '';
-                if (!isLoggedIn) {
-                    questionCount++;
-                    localStorage.setItem('questionCount', questionCount); // บันทึกการนับคำถาม
-                    updateRemainingQuestions();
-                }
-
-                setTimeout(() => {
-                    const botResponse = getBotResponse(message);
-                    addMessage(botResponse, 'bot-message');
-                }, 800);
-            }
-
-            function showAuthModal() {
-                authContainer.style.display = 'flex';
-                activationCodeInput.focus();
-            }
-
-            function closeAuthModal() {
-                authContainer.style.display = 'none';
-            }
-
-            function verifyActivationCode() {
-                const code = activationCodeInput.value.trim();
-                if (activationCodes.includes(code)) {
-                    isLoggedIn = true;
-                    questionCount = 0;
-                    localStorage.setItem('isLoggedIn', 'true'); // บันทึกสถานะล็อกอิน
-                    localStorage.setItem('questionCount', questionCount); // รีเซ็ตการนับ
-                    addMessage('ยินดีต้อนรับ! คุณสามารถถามคำถามได้ไม่จำกัด', 'bot-message');
-                    closeAuthModal();
-                    activationCodeInput.value = '';
-                    updateRemainingQuestions();
-                } else {
-                    alert('รหัสผ่านไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง');
-                }
-            }
-
-            function updateRemainingQuestions() {
-                const remaining = isLoggedIn ? '∞' : maxQuestions - questionCount;
-                remainingQuestions.textContent = remaining;
-                if (!isLoggedIn) {
-                    if (remaining <= 2) remainingQuestions.style.backgroundColor = '#ff4757';
-                    else if (remaining <= 0) remainingQuestions.style.backgroundColor = '#dc3545';
-                    else remainingQuestions.style.backgroundColor = '#28a745';
-                } else {
-                    remainingQuestions.style.backgroundColor = '#28a745';
-                }
-            }
-
-            function addMessage(text, className) {
-                const now = new Date();
-                const timeString = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('chatbot-message', className);
-
-                if (className === 'bot-message' && text.includes('ปัญหาที่พบบ่อย')) {
-                    messageDiv.innerHTML = `
-                        <div class="message-content">
-                            ${text}
-                            <div class="quick-questions">
-                                <div class="quick-question" onclick="askQuickQuestion('แก้ไขปัญหาแม่พิมพ์เสียหาย')">แม่พิมพ์เสียหาย</div>
-                                <div class="quick-question" onclick="askQuickQuestion('อุณหภูมิไม่เหมาะสม')">อุณหภูมิไม่เหมาะสม</div>
-                                <div class="quick-question" onclick="askQuickQuestion('ความดันไม่พอดี')">ความดันไม่พอดี</div>
-                            </div>
-                        </div>
-                        <div class="message-time">${timeString}</div>
-                    `;
-                } else {
-                    messageDiv.innerHTML = `
-                        <div class="message-content">${text}</div>
-                        <div class="message-time">${timeString}</div>
-                    `;
-                }
-                chatbotMessages.appendChild(messageDiv);
-                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-            }
-
-            function showWelcomeMessage() {
-                const welcomeMessage = `
-                    ${responses.greeting}
-                    <div class="quick-questions">
-                        <div class="quick-question" onclick="askQuickQuestion('ปัญหาที่พบบ่อย')">ปัญหาที่พบบ่อย</div>
-                        <div class="quick-question" onclick="askQuickQuestion('เทคนิคการฉีดพลาสติก')">เทคนิคการฉีดพลาสติก</div>
-                        <div class="quick-question" onclick="askQuickQuestion('หลักสูตรการเรียน')">หลักสูตรการเรียน</div>
-                    </div>
-                `;
-                addMessage(welcomeMessage, 'bot-message');
-            }
-
-            function getBotResponse(userMessage) {
-                const lowerMessage = userMessage.toLowerCase();
-                if (lowerMessage.includes('สวัสดี') || lowerMessage.includes('hello')) return responses.greeting;
-                if (lowerMessage.includes('ปัญหา') || lowerMessage.includes('error')) return responses.problem;
-                if (lowerMessage.includes('แม่พิมพ์เสียหาย')) return responses.mold_damage;
-                if (lowerMessage.includes('อุณหภูมิ')) return responses.temperature;
-                if (lowerMessage.includes('ความดัน')) return responses.pressure;
-                if (lowerMessage.includes('เทคนิค')) return responses.technique;
-                if (lowerMessage.includes('วัสดุ')) return responses.material;
-                if (lowerMessage.includes('เรียน') || lowerMessage.includes('course')) return responses.course;
-                if (lowerMessage.includes('ติดต่อ')) return responses.contact;
-                return responses.default;
-            }
-
-            window.askQuickQuestion = function (question) {
-                if (!isLoggedIn && questionCount >= maxQuestions) {
-                    addMessage(responses.limitReached, 'bot-message');
-                    showAuthModal();
-                    return;
-                }
-                addMessage(question, 'user-message');
-                if (!isLoggedIn) {
-                    questionCount++;
-                    updateRemainingQuestions();
-                }
-                setTimeout(() => {
-                    const botResponse = getBotResponse(question);
-                    addMessage(botResponse, 'bot-message');
-                }, 500);
-            };
-
-            // Smooth scrolling for anchor links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
                         behavior: 'smooth'
                     });
-                });
-            });
-            // ฟังก์ชันรีเซ็ตข้อมูล (ถ้าต้องการให้ผู้ใช้รีเซ็ตเอง)
-            function resetChatbot() {
-                localStorage.removeItem('questionCount');
-                localStorage.removeItem('isLoggedIn');
-                questionCount = 0;
-                isLoggedIn = false;
-                updateRemainingQuestions();
-            }
-            // Navbar collapse on mobile
-            const navLinks = document.querySelectorAll('.nav-link');
-            const navbarCollapse = document.querySelector('.navbar-collapse');
-            navLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    if (window.innerWidth <= 991) {
-                        navbarCollapse.classList.remove('show');
-                    }
-                });
+                }
             });
         });
     </script>
