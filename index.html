@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="Wizmobiz by Kruwitkub - แหล่งความรู้และข้อมูลรอบด้าน รวมถึง Injection Molding, Mobile Learning, AffiliatePro และ ตลาดช๊อปฟิน">
-    <meta name="keywords"
-        content="Wizmobiz, Kruwitkub, Injection Molding, Mobile Learning, AffiliatePro, ตลาดช๊อปฟิน, สินค้าราคาถูก">
+    <meta name="description" content="Wizmobiz by Kruwitkub - แหล่งความรู้และข้อมูลรอบด้าน รวมถึง Injection Molding, Mobile Learning และ AffiliatePro">
+    <meta name="keywords" content="Wizmobiz, Kruwitkub, Injection Molding, Mobile Learning, AffiliatePro, Affiliate Marketing">
     <meta name="author" content="Wizmobiz Team">
     <title>Wizmobiz by Kruwitkub</title>
     <!-- Bootstrap CSS -->
@@ -19,9 +16,6 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
-
-
-
     <style>
         :root {
             --primary-color: #FF6F61;
@@ -37,11 +31,9 @@
             color: var(--dark-color);
         }
 
+        /* Navbar */
         .navbar {
-            -webkit-backdrop-filter: blur(10px);
-            /* ใส่ก่อน */
             backdrop-filter: blur(10px);
-            /* ตามด้วย property มาตรฐาน */
             background: rgba(255, 255, 255, 0.95);
             box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
             padding: 15px 0;
@@ -65,8 +57,7 @@
             transition: all 0.3s ease;
         }
 
-        .nav-link:hover,
-        .nav-link.active {
+        .nav-link:hover, .nav-link.active {
             color: var(--secondary-color);
             background-color: rgba(64, 196, 255, 0.1);
         }
@@ -95,13 +86,8 @@
         }
 
         @keyframes float {
-            0% {
-                transform: translateY(0) rotate(0deg);
-            }
-
-            100% {
-                transform: translateY(-100vh) rotate(360deg);
-            }
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); }
         }
 
         .hero-section h1 {
@@ -189,77 +175,6 @@
             margin: 20px 0 15px;
         }
 
-        /* Market Section */
-        .market-section {
-            padding: 80px 0;
-            background-color: #FFFFFF;
-        }
-
-        .market-section h2 {
-            color: var(--primary-color);
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-        }
-
-        .market-section p.lead {
-            color: #666;
-            font-size: 1.2rem;
-        }
-
-        .product-card {
-            background-color: #FFFFFF;
-            border: 1px solid #E0E0E0;
-            border-radius: 10px;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            margin-bottom: 30px;
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .product-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-
-        .product-card .card-body {
-            padding: 20px;
-        }
-
-        .product-card h5 {
-            color: var(--dark-color);
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-        }
-
-        .product-card p {
-            color: #666;
-            font-size: 1rem;
-            margin-bottom: 10px;
-        }
-
-        .product-card .price {
-            color: var(--primary-color);
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .product-card .contact {
-            color: #666;
-            font-size: 0.95rem;
-            margin-bottom: 10px;
-        }
-
-        .product-card .contact i {
-            color: var(--secondary-color);
-            margin-right: 5px;
-        }
-
         /* CTA Section */
         .cta-section {
             background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
@@ -279,19 +194,14 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.15));
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.15));
             transform: rotate(45deg);
             animation: cta-shine 6s infinite linear;
         }
 
         @keyframes cta-shine {
-            0% {
-                transform: translateX(-100%) rotate(45deg);
-            }
-
-            100% {
-                transform: translateX(100%) rotate(45deg);
-            }
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
         }
 
         .cta-content {
@@ -374,7 +284,7 @@
             .hero-section h1 {
                 font-size: 2.8rem;
             }
-
+            
             .hero-section .lead {
                 font-size: 1.2rem;
             }
@@ -384,38 +294,17 @@
             .hero-section {
                 padding: 120px 0 80px;
             }
-
+            
             .hero-section h1 {
                 font-size: 2.3rem;
             }
-
+            
             .cta-section h2 {
                 font-size: 2rem;
             }
-
+            
             .navbar-brand {
                 font-size: 1.3rem;
-            }
-
-            .market-section h2 {
-                font-size: 2rem;
-            }
-
-            .market-section p.lead {
-                font-size: 1rem;
-            }
-
-            .product-card h5 {
-                font-size: 1.1rem;
-            }
-
-            .product-card p,
-            .product-card .contact {
-                font-size: 0.9rem;
-            }
-
-            .product-card .price {
-                font-size: 1.1rem;
             }
         }
 
@@ -423,661 +312,24 @@
             .hero-section h1 {
                 font-size: 2rem;
             }
-
+            
             .hero-section .lead {
                 font-size: 1.1rem;
             }
-
+            
             .cta-section {
                 margin: 60px 0;
                 padding: 60px 0;
             }
         }
-
-        /* Chatbot Widget */
-        .chatbot-widget {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 9999;
-            perspective: 1000px;
-        }
-
-        .chatbot-icon {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 28px;
-            cursor: pointer;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            transform-style: preserve-3d;
-            will-change: transform;
-        }
-
-        .chatbot-icon:hover {
-            transform: scale(1.1) rotate(10deg) translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .chatbot-icon:active {
-            transform: scale(0.95) rotate(5deg);
-        }
-
-        .chatbot-icon::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: 50%;
-            background: radial-gradient(circle at center,
-                    rgba(255, 255, 255, 0.8) 0%,
-                    rgba(255, 255, 255, 0) 70%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .chatbot-icon:hover::before {
-            opacity: 0.3;
-        }
-
-        .chatbot-badge {
-            font-size: 10px;
-            margin-top: 3px;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-        }
-
-        .remaining-questions {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            background: #FF6F61;
-            color: white;
-            border-radius: 50%;
-            width: 25px;
-            height: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.1);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        /* Chatbot Container */
-        .chatbot-container {
-            position: fixed;
-            bottom: 120px;
-            right: 30px;
-            width: 400px;
-            max-height: 550px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            display: none;
-            transform: translateY(20px) scale(0.95);
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 9998;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            -webkit-backdrop-filter: blur(15px);
-            /* เพิ่มก่อน */
-            backdrop-filter: blur(15px);
-            /* ตามด้วย */
-            will-change: transform, opacity;
-        }
-
-        .chatbot-container.show {
-            display: block;
-            transform: translateY(0) scale(1);
-            opacity: 1;
-        }
-
-        /* Header */
-        .chatbot-header {
-            background: linear-gradient(135deg, #FF6F61, #40C4FF);
-            color: white;
-            padding: 18px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .chatbot-header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg,
-                    rgba(255, 111, 97, 0.8) 0%,
-                    rgba(64, 196, 255, 0.8) 50%,
-                    rgba(255, 215, 64, 0.8) 100%);
-        }
-
-        .chatbot-header h5 {
-            font-weight: 600;
-            font-size: 1.3rem;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            margin: 0;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .chatbot-header .close-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .chatbot-header .close-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: rotate(90deg) scale(1.1);
-        }
-
-        /* Body */
-        .chatbot-body {
-            height: 380px;
-            overflow-y: auto;
-            padding: 20px;
-            background: rgba(249, 250, 251, 0.8);
-            font-size: 0.95rem;
-            scroll-behavior: smooth;
-            background-image:
-                radial-gradient(circle at 10% 20%, rgba(255, 111, 97, 0.03) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(64, 196, 255, 0.03) 0%, transparent 20%);
-        }
-
-        /* Custom Scrollbar */
-        .chatbot-body::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .chatbot-body::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.05);
-            border-radius: 4px;
-        }
-
-        .chatbot-body::-webkit-scrollbar-thumb {
-            background: rgba(0, 0, 0, 0.1);
-            border-radius: 4px;
-            transition: background 0.3s;
-        }
-
-        .chatbot-body::-webkit-scrollbar-thumb:hover {
-            background: rgba(0, 0, 0, 0.2);
-        }
-
-        /* Input Area */
-        .chatbot-input {
-            display: flex;
-            padding: 22px;
-            background: rgba(255, 255, 255, 0.9);
-            border-top: 1px solid rgba(233, 236, 239, 0.7);
-            align-items: center;
-            position: relative;
-        }
-
-        .chatbot-input input {
-            flex: 1;
-            margin-right: 12px;
-            border: 1px solid rgba(206, 212, 218, 0.7);
-            padding: 12px 20px;
-            border-radius: 25px;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            background: rgba(248, 249, 250, 0.8);
-            -webkit-backdrop-filter: blur(5px);
-            /* เพิ่มก่อน */
-            backdrop-filter: blur(5px);
-            /* ตามด้วย */
-        }
-
-        .chatbot-input::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg,
-                    rgba(255, 111, 97, 0.1) 0%,
-                    rgba(64, 196, 255, 0.3) 50%,
-                    rgba(255, 215, 64, 0.1) 100%);
-        }
-
-        .chatbot-input input {
-            flex: 1;
-            margin-right: 15px;
-            padding: 14px 22px;
-            border: 1px solid rgba(206, 212, 218, 0.7);
-            border-radius: 25px;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            background: rgba(248, 249, 250, 0.8);
-            backdrop-filter: blur(5px);
-            min-height: 48px;
-            /* เพิ่มความสูงขั้นต่ำ */
-            max-width: calc(100% - 60px);
-            /* จำกัดความกว้างเพื่อให้ปุ่มมีพื้นที่ */
-        }
-
-        .chatbot-input input:focus {
-            border-color: #40C4FF;
-            outline: none;
-            box-shadow: 0 0 10px rgba(64, 196, 255, 0.3);
-            background: rgba(255, 255, 255, 0.9);
-        }
-
-        .chatbot-input button {
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(45deg, #FF6F61, #FFD740);
-            border: none;
-            border-radius: 50%;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(255, 111, 97, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .chatbot-input button::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(to bottom right,
-                    rgba(255, 255, 255, 0) 45%,
-                    rgba(255, 255, 255, 0.8) 50%,
-                    rgba(255, 255, 255, 0) 55%);
-            transform: rotate(30deg);
-            animation: btnShine 3s infinite;
-        }
-
-        @keyframes btnShine {
-            0% {
-                transform: translateX(-100%) rotate(30deg);
-            }
-
-            100% {
-                transform: translateX(100%) rotate(30deg);
-            }
-        }
-
-        .chatbot-input button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 18px rgba(255, 111, 97, 0.4);
-        }
-
-        .chatbot-input button:active {
-            transform: scale(0.95);
-        }
-
-        /* Messages */
-        .chatbot-message {
-            margin-bottom: 18px;
-            max-width: 80%;
-            animation: messageIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            opacity: 0;
-            transform: translateY(10px);
-        }
-
-        @keyframes messageIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .user-message {
-            margin-left: auto;
-        }
-
-        .bot-message {
-            margin-right: auto;
-        }
-
-        .message-content {
-            padding: 14px 18px;
-            border-radius: 20px;
-            word-wrap: break-word;
-            line-height: 1.5;
-            position: relative;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s ease;
-        }
-
-        .user-message .message-content {
-            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-            border-bottom-right-radius: 5px;
-            color: #0d47a1;
-            box-shadow: 0 3px 10px rgba(64, 196, 255, 0.1);
-        }
-
-        .bot-message .message-content {
-            background: linear-gradient(135deg, #f1f1f1, #e0e0e0);
-            border-bottom-left-radius: 5px;
-            color: #212121;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .message-content:hover {
-            transform: translateY(-2px);
-        }
-
-        .message-time {
-            font-size: 11px;
-            color: rgba(136, 136, 136, 0.8);
-            margin-top: 6px;
-            text-align: right;
-            font-style: italic;
-        }
-
-        /* Quick Questions */
-        .quick-questions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 12px;
-        }
-
-        .quick-question {
-            background: linear-gradient(135deg, #e9f5ff, #d0e8ff);
-            border-radius: 18px;
-            padding: 8px 16px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(64, 196, 255, 0.3);
-            color: #0077cc;
-            box-shadow: 0 2px 5px rgba(0, 119, 204, 0.05);
-        }
-
-        .quick-question:hover {
-            background: linear-gradient(135deg, #d0e8ff, #b7d9f7);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 119, 204, 0.1);
-            color: #005fa3;
-        }
-
-        /* Typing Indicator */
-        .typing-indicator {
-            display: flex;
-            padding: 12px 18px;
-            background: #f1f1f1;
-            border-radius: 20px;
-            width: fit-content;
-            margin-bottom: 15px;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .typing-text {
-            font-size: 13px;
-            color: #666;
-        }
-
-        .typing-dots {
-            display: flex;
-            gap: 5px;
-        }
-
-        .typing-dot {
-            width: 8px;
-            height: 8px;
-            background: #888;
-            border-radius: 50%;
-            animation: typingDot 1.4s infinite ease-in-out;
-        }
-
-        @keyframes typingDot {
-
-            0%,
-            60%,
-            100% {
-                transform: translateY(0);
-                opacity: 0.6;
-            }
-
-            30% {
-                transform: translateY(-5px);
-                opacity: 1;
-            }
-        }
-
-        .typing-dot:nth-child(1) {
-            animation-delay: 0s;
-        }
-
-        .typing-dot:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing-dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 599px) {
-            .chatbot-widget {
-                bottom: 20px;
-                right: 20px;
-            }
-
-            .chatbot-icon {
-                width: 60px;
-                height: 60px;
-                font-size: 24px;
-            }
-
-            .chatbot-container {
-                width: calc(100% - 40px);
-                right: 20px;
-                bottom: 90px;
-                max-height: 65vh;
-            }
-
-            .chatbot-body {
-                height: calc(65vh - 120px);
-                padding: 15px;
-            }
-
-            .message-content {
-                padding: 14px 18px;
-                font-size: 0.9rem;
-            }
-
-            .chatbot-input {
-                padding: 15px;
-            }
-
-            .chatbot-input input {
-                padding: 10px 16px;
-            }
-
-            .quick-question {
-                font-size: 12px;
-                padding: 6px 12px;
-            }
-        }
-
-        /* Special Effects */
-        @keyframes float {
-            0% {
-                transform: translateY(0px);
-            }
-
-            50% {
-                transform: translateY(-10px);
-            }
-
-            100% {
-                transform: translateY(0px);
-            }
-        }
-
-        @keyframes glow {
-            0% {
-                box-shadow: 0 0 10px rgba(255, 111, 97, 0.5);
-            }
-
-            50% {
-                box-shadow: 0 0 20px rgba(255, 111, 97, 0.8);
-            }
-
-            100% {
-                box-shadow: 0 0 10px rgba(255, 111, 97, 0.5);
-            }
-        }
-
-        /* Loading Animation */
-        .loading-animation {
-            display: inline-block;
-            position: relative;
-            width: 80px;
-            height: 20px;
-        }
-
-        .loading-dot {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            animation-timing-function: cubic-bezier(0, 1, 1, 0);
-        }
-
-        .loading-dot:nth-child(1) {
-            left: 8px;
-            animation: loadingDot1 0.6s infinite;
-        }
-
-        .loading-dot:nth-child(2) {
-            left: 8px;
-            animation: loadingDot2 0.6s infinite;
-        }
-
-        .loading-dot:nth-child(3) {
-            left: 32px;
-            animation: loadingDot2 0.6s infinite;
-        }
-
-        .loading-dot:nth-child(4) {
-            left: 56px;
-            animation: loadingDot3 0.6s infinite;
-        }
-
-        @keyframes loadingDot1 {
-            0% {
-                transform: scale(0);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        @keyframes loadingDot3 {
-            0% {
-                transform: scale(1);
-            }
-
-            100% {
-                transform: scale(0);
-            }
-        }
-
-        @keyframes loadingDot2 {
-            0% {
-                transform: translate(0, 0);
-            }
-
-            100% {
-                transform: translate(24px, 0);
-            }
-        }
-
-        /* เพิ่มในไฟล์ CSS ของคุณ */
-        .visually-hidden {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
-        }
-
-        /* ปรับปรุง focus styles */
-        .chatbot-icon:focus,
-        #chatbotInput:focus,
-        #chatbotSend:focus,
-        #chatbotClose:focus {
-            outline: 2px solid var(--secondary-color);
-            outline-offset: 2px;
-        }
-
-        /* ปรับปรุงสำหรับ screen readers */
-        [aria-hidden="true"] {
-            pointer-events: none;
-        }
     </style>
 </head>
-
 <body>
     <!-- Header -->
     <nav class="navbar navbar-expand-lg navbar-light sticky-top">
         <div class="container">
             <a class="navbar-brand" href="index.html">Wizmobiz</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -1098,9 +350,6 @@
                         <a class="nav-link" href="affiliatepro.html">AffiliatePro</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="market.html">ตลาดช๊อปฟิน</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="#contact">ติดต่อเรา</a>
                     </li>
                 </ul>
@@ -1110,97 +359,16 @@
 
     <!-- Hero Section -->
     <section class="hero-section">
-        <!-- เอฟเฟกต์พารัลแลกซ์แบบใหม่ -->
-        <div class="parallax-bubble bubble-1" style="
-            width: 300px; height: 300px; 
-            top: 20%; left: 10%; 
-            background: radial-gradient(circle, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 70%);
-            animation: floatBubble 15s ease-in-out infinite alternate;
-        "></div>
-
-        <div class="parallax-bubble bubble-2" style="
-            width: 200px; height: 200px; 
-            top: 60%; right: 15%;
-            background: radial-gradient(circle, rgba(255,215,64,0.2) 0%, rgba(255,215,64,0) 70%);
-            animation: floatBubble 18s ease-in-out infinite alternate-reverse;
-        "></div>
-
-        <div class="parallax-bubble bubble-3" style="
-            width: 150px; height: 150px; 
-            top: 30%; right: 20%;
-            background: radial-gradient(circle, rgba(64,196,255,0.2) 0%, rgba(64,196,255,0) 70%);
-            animation: floatBubble 20s ease-in-out infinite alternate 2s;
-        "></div>
-
-        <!-- เอฟเฟกต์อนุภาค -->
-        <div class="particles-container" style="
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: 1;
-        ">
-            <!-- อนุภาคจะถูกสร้างด้วย JavaScript -->
-        </div>
-
-        <div class="container hero-content" data-aos="fade-up" style="position: relative; z-index: 2;">
-            <!-- ข้อความที่มีเอฟเฟกต์เงาแสง -->
-            <h1 class="text-glow" style="
-                text-shadow: 0 0 10px rgba(255, 255, 255, 0.7),
-                             0 0 20px rgba(255, 111, 97, 0.5),
-                             0 0 30px rgba(255, 215, 64, 0.3);
-                animation: pulseGlow 2s ease-in-out infinite alternate;
-            ">ยินดีต้อนรับสู่ Wizmobiz</h1>
-
-            <!-- ข้อความย่อยที่มีเอฟเฟกต์พิมพ์ดีด -->
-            <p class="lead typing-text" style="
-                border-right: 2px solid white;
-                white-space: nowrap;
-                overflow: hidden;
-                display: inline-block;
-            ">แหล่งรวมความรู้และเครื่องมือเพื่อการเรียนรู้และตลาดขายสินค้าออนไลน์</p>
-
-            <!-- ปุ่มที่มีเอฟเฟกต์ลอยตัว -->
+        <!-- เอฟเฟกต์พารัลแลกซ์ -->
+        <div class="parallax-bubble" style="width: 300px; height: 300px; top: 20%; left: 10%; animation-duration: 25s;"></div>
+        <div class="parallax-bubble" style="width: 200px; height: 200px; top: 60%; right: 15%; animation-duration: 30s;"></div>
+        <div class="parallax-bubble" style="width: 150px; height: 150px; top: 30%; right: 20%; animation-duration: 35s;"></div>
+        
+        <div class="container hero-content" data-aos="fade-up">
+            <h1 class="text-glow">ยินดีต้อนรับสู่ Wizmobiz</h1>
+            <p class="lead">แหล่งรวมความรู้และเครื่องมือเพื่อการเรียนรู้และธุรกิจออนไลน์</p>
             <div class="mt-4">
-                <a href="#channels" class="btn btn-gradient btn-lg px-5 py-3 floating-btn" style="
-                    background: linear-gradient(135deg, #FF6F61, #FFD740);
-                    border: none;
-                    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-                    position: relative;
-                    overflow: hidden;
-                ">
-                    <span class="btn-text">เริ่มต้นสำรวจ</span>
-                    <span class="btn-hover-effect" style="
-                        position: absolute;
-                        top: -50%;
-                        left: -50%;
-                        width: 200%;
-                        height: 200%;
-                        background: linear-gradient(
-                            to right,
-                            rgba(255, 255, 255, 0) 20%,
-                            rgba(255, 255, 255, 0.3) 50%,
-                            rgba(255, 255, 255, 0) 80%
-                        );
-                        transform: rotate(30deg);
-                        animation: btnShine 3s infinite linear;
-                    "></span>
-                </a>
-            </div>
-
-            <!-- ลูกศรเลื่อนลง -->
-            <div class="scroll-down-arrow" style="
-                position: absolute;
-                bottom: 30px;
-                left: 50%;
-                transform: translateX(-50%);
-                animation: bounce 2s infinite;
-            ">
-                <i class="fas fa-chevron-down" style="
-                    font-size: 2rem;
-                    color: white;
-                    opacity: 0.8;
-                "></i>
+                <a href="#channels" class="btn btn-gradient btn-lg px-5 py-3">เริ่มต้นสำรวจ</a>
             </div>
         </div>
     </section>
@@ -1214,9 +382,8 @@
                 </div>
                 <div class="col-lg-6 mt-5 mt-lg-0" data-aos="fade-left">
                     <h2>เกี่ยวกับเรา</h2>
-                    <p class="lead">Wizmobiz by Kruwitkub
-                        เป็นแหล่งความรู้และเครื่องมือที่ช่วยให้คุณเติบโตในด้านการเรียนรู้และธุรกิจออนไลน์</p>
-
+                    <p class="lead">Wizmobiz by Kruwitkub เป็นแหล่งความรู้และเครื่องมือที่ช่วยให้คุณเติบโตในด้านการเรียนรู้และธุรกิจออนไลน์</p>
+                    
                     <div class="row mt-4">
                         <div class="col-md-6 feature-item" data-aos="fade-up" data-aos-delay="100">
                             <div class="feature-icon">
@@ -1243,7 +410,7 @@
         <div class="container">
             <h2 class="text-center mb-5" data-aos="fade-up">ช่องทางของเรา</h2>
             <div class="row g-4">
-                <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
                     <div class="channel-card">
                         <div class="feature-icon">
                             <i class="fas fa-industry"></i>
@@ -1253,7 +420,7 @@
                         <a href="injection-molding.html" class="btn btn-outline-primary mt-3">ดูรายละเอียด</a>
                     </div>
                 </div>
-                <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="channel-card">
                         <div class="feature-icon">
                             <i class="fas fa-mobile-alt"></i>
@@ -1263,7 +430,7 @@
                         <a href="mobile-learning.html" class="btn btn-outline-primary mt-3">ดูรายละเอียด</a>
                     </div>
                 </div>
-                <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
                     <div class="channel-card">
                         <div class="feature-icon">
                             <i class="fas fa-link"></i>
@@ -1273,165 +440,6 @@
                         <a href="affiliatepro.html" class="btn btn-outline-primary mt-3">ดูรายละเอียด</a>
                     </div>
                 </div>
-                <div class="col-md-3" data-aos="fade-up" data-aos-delay="400">
-                    <div class="channel-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-shopping-cart"></i>
-                        </div>
-                        <h4>ตลาดช๊อปฟิน</h4>
-                        <p>ตลาดสินค้าดีราคาถูกจากผู้ขายที่เชื่อถือได้</p>
-                        <a href="market.html" class="btn btn-outline-primary mt-3">ดูรายละเอียด</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Market Products Section -->
-    <section class="market-section" data-aos="fade-up">
-        <div class="container">
-            <!-- ตัวครอบหัวข้อแบบใหม่ -->
-            <div class="section-header" style="
-                background: linear-gradient(135deg, #FF6F61, #FFD740);
-                border-radius: 15px;
-                padding: 20px;
-                margin-bottom: 40px;
-                box-shadow: 0 10px 20px rgba(255, 111, 97, 0.2);
-                position: relative;
-                overflow: hidden;
-            ">
-                <div style="
-                    position: absolute;
-                    top: -50px;
-                    right: -50px;
-                    width: 200px;
-                    height: 200px;
-                    background: rgba(255, 255, 255, 0.15);
-                    border-radius: 50%;
-                "></div>
-                <div style="
-                    position: absolute;
-                    bottom: -30px;
-                    left: -30px;
-                    width: 150px;
-                    height: 150px;
-                    background: rgba(255, 255, 255, 0.1);
-                    border-radius: 50%;
-                "></div>
-
-                <h2 class="text-center mb-3" style="
-                    color: white;
-                    font-size: 2.5rem;
-                    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
-                    position: relative;
-                    z-index: 2;
-                ">ตลาดช๊อปฟิน</h2>
-                <p class="lead text-center mb-0" style="
-                    color: rgba(255, 255, 255, 0.9);
-                    font-size: 1.2rem;
-                    position: relative;
-                    z-index: 2;
-                ">
-                    สินค้าคุณภาพในราคาสุดพิเศษจากผู้ขายที่เชื่อถือได้
-                </p>
-            </div>
-
-            <!-- ตัวครอบสินค้าแบบใหม่ -->
-            <div class="market-container" style="
-                background-color: white;
-                border-radius: 15px;
-                box-shadow: 0 5px 30px rgba(0, 0, 0, 0.08);
-                padding: 30px;
-                margin-bottom: 40px;
-                border: 1px solid rgba(0, 0, 0, 0.05);
-            ">
-                <div class="row">
-                    <div class="col-md-4 col-sm-6 mb-4">
-                        <div class="product-card" data-aos="fade-up">
-                            <div style="
-                                height: 200px;
-                                overflow: hidden;
-                                border-top-left-radius: 10px;
-                                border-top-right-radius: 10px;
-                            ">
-                                <img src="images/shopfin-product1.jpg" alt="สินค้าแนะนำจากตลาดช๊อปฟิน"
-                                    class="img-fluid">
-                            </div>
-                            <div class="card-body" style="padding: 25px;">
-                                <div class="badge bg-primary mb-2">สินค้าแนะนำ</div>
-                                <h5>สินค้าชิ้นพิเศษ</h5>
-                                <p>สินค้าคุณภาพสูงจากผู้ผลิตโดยตรง รับประกันความพึงพอใจ</p>
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <div class="price">299 บาท</div>
-                                    <div class="contact">
-                                        <i class="fas fa-user me-1"></i> คุณสมชาย
-                                    </div>
-                                </div>
-                                <a href="market.html" class="btn btn-primary btn-sm w-100">ดูสินค้าเพิ่มเติม</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- สินค้าชิ้นที่ 2 -->
-                    <div class="col-md-4 col-sm-6 mb-4">
-                        <div class="product-card" data-aos="fade-up" data-aos-delay="100">
-                            <div style="
-                                height: 200px;
-                                overflow: hidden;
-                                border-top-left-radius: 10px;
-                                border-top-right-radius: 10px;
-                            ">
-                                <img src="images/shopfin-product2.jpg" alt="สินค้ายอดนิยมจากตลาดช๊อปฟิน"
-                                    class="img-fluid">
-                            </div>
-                            <div class="card-body" style="padding: 25px;">
-                                <div class="badge bg-info mb-2">ขายดี</div>
-                                <h5>สินค้ายอดนิยม</h5>
-                                <p>สินค้าขายดีประจำสัปดาห์ รับประกันคุณภาพ</p>
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <div class="price">499 บาท</div>
-                                    <div class="contact">
-                                        <i class="fas fa-user me-1"></i> คุณสมหญิง
-                                    </div>
-                                </div>
-                                <a href="market.html" class="btn btn-primary btn-sm w-100">ดูสินค้าเพิ่มเติม</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- สินค้าชิ้นที่ 3 -->
-                    <div class="col-md-4 col-sm-6 mb-4">
-                        <div class="product-card" data-aos="fade-up" data-aos-delay="200">
-                            <div style="
-                                height: 200px;
-                                overflow: hidden;
-                                border-top-left-radius: 10px;
-                                border-top-right-radius: 10px;
-                            ">
-                                <img src="images/shopfin-product3.jpg" alt="สินค้าใหม่จากตลาดช๊อปฟิน" class="img-fluid">
-                            </div>
-                            <div class="card-body" style="padding: 25px;">
-                                <div class="badge bg-warning text-dark mb-2">ใหม่ล่าสุด</div>
-                                <h5>สินค้าใหม่ล่าสุด</h5>
-                                <p>สินค้ามาใหม่ประจำเดือน รับประกันความทันสมัย</p>
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <div class="price">799 บาท</div>
-                                    <div class="contact">
-                                        <i class="fas fa-user me-1"></i> คุณสมหมาย
-                                    </div>
-                                </div>
-                                <a href="market.html" class="btn btn-primary btn-sm w-100">ดูสินค้าเพิ่มเติม</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ปุ่มดูสินค้าทั้งหมด -->
-            <div class="text-center">
-                <a href="market.html" class="btn btn-primary btn-lg px-4 py-2">
-                    <i class="fas fa-store me-2"></i> ดูสินค้าทั้งหมดในตลาดช๊อปฟิน
-                </a>
             </div>
         </div>
     </section>
@@ -1445,39 +453,29 @@
         </div>
     </section>
 
+    <!-- Footer -->
     <footer class="footer" id="contact">
         <div class="container">
             <div class="row">
                 <div class="col-lg-4 mb-4 mb-lg-0">
                     <h4>Wizmobiz</h4>
-                    <p>แหล่งข้อมูลความรู้และเครื่องมือเพื่อการเข้าถึงและตลาดธุรกิจออนไลน์</p>
+                    <p>แหล่งความรู้และเครื่องมือเพื่อการเรียนรู้และธุรกิจออนไลน์</p>
                 </div>
                 <div class="col-lg-4 mb-4 mb-lg-0">
                     <h4>ติดต่อเรา</h4>
-                    <p><i class="fas fa-envelope me-2"></i> <a href="/cdn-cgi/l/email-protection" class="__cf_email__"
-                            data-cfemail="bfd6d1d9d0ffc8d6c5d2d0ddd6c591dcd0d2">[email&#160;protected]</a></p>
+                    <p><i class="fas fa-envelope me-2"></i> <a href="mailto:support@wizmobiz.com">support@wizmobiz.com</a></p>
                     <div class="social-links mt-3">
-                        <a href="https://www.facebook.com/injectionmoldingthailand" target="_blank" rel="noopener"><i
-                                class="fab fa-facebook-f"></i> Facebook Page</a>
-                        <a href="https://facebook.com/kruwitkub" target="_blank" rel="noopener"><i
-                                class="fab fa-facebook-f"></i></a>
-                        <a href="https://www.tiktok.com/@kruwitkub?lang=th-TH" target="_blank" rel="noopener"><i
-                                class="fab fa-tiktok"></i></a>
-                        <a href="https://line.me/kruwitkub" target="_blank" rel="noopener"><i
-                                class="fab fa-line"></i></a>
-                        <a href="https://youtube.com/kruwitkub" target="_blank" rel="noopener"><i
-                                class="fab fa-youtube"></i></a>
+                        <a href="https://facebook.com/kruwitkub" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://tiktok.com/@kruwitkub" target="_blank"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://line.me/kruwitkub" target="_blank"><i class="fab fa-line"></i></a>
+                        <a href="https://youtube.com/kruwitkub" target="_blank"><i class="fab fa-youtube"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-4">
                     <h4>ลิงก์สำคัญ</h4>
                     <p>
-                        <a href="terms.html" target="_blank" rel="noopener">เงื่อนไขการให้บริการ</a> |
-                        <a href="privacy.html" target="_blank" rel="noopener">นโยบายความเป็นส่วนตัว</a>
-                    </p>
-                    <p>
-                        <a href="market.html" target="_blank" rel="noopener">ตลาดช๊อปฟิน</a> |
-                        <a href="affiliatepro.html" target="_blank" rel="noopener">AffiliatePro</a>
+                        <a href="terms.html">เงื่อนไขการให้บริการ</a> | 
+                        <a href="privacy.html">นโยบายความเป็นส่วนตัว</a>
                     </p>
                 </div>
             </div>
@@ -1485,931 +483,24 @@
             <p class="mb-0">© 2025 Wizmobiz by Kruwitkub. All rights reserved.</p>
         </div>
     </footer>
-    //////////chatbot-widget//////
-    <div class="chatbot-widget">
-        <div class="chatbot-icon" id="chatbotToggle">
-            <i class="fas fa-robot"></i>
-            <span class="chatbot-badge">wiz support</span>
-            <div class="remaining-questions" id="remainingQuestions">5</div>
-        </div>
-        <div class="chatbot-container" id="chatbotContainer">
-            <div class="chatbot-header">
-                <div class="d-flex align-items-center">
-                    <img src="https://cdn-icons-png.flaticon.com/512/1973/1973743.png" alt="Chatbot Icon"
-                        style="width: 30px; height: 30px; margin-right: 10px;">
-                    <h5 class="mb-0">ถาม WizKub</h5>
-                </div>
-                <button class="btn-close btn-close-white" id="chatbotClose" aria-label="ปิดแชทบอท"></button>
-            </div>
-            <div class="chatbot-body" id="chatbotMessages"></div>
-            <div class="chatbot-input">
-                <input type="text" id="chatbotInput" placeholder="พิมพ์ถาม wiz เลยครับ..."
-                    class="form-control rounded-pill">
-                <button id="chatbotSend" class="btn btn-primary rounded-circle" aria-label="ส่งข้อความ">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-        </div>
-        <div class="auth-container" id="authContainer">
-            <div class="auth-box">
-                <h4>ขอรหัสถามได้ไม่จำกัดที่ wiz mobiz ได้เลย</h4>
-                <p>พี่ใช้คำถามครบจำนวนแล้วครับ กรุณากรอกรหัสผ่านเพื่อใช้งานต่อ<br>(รหัสผ่านสามารถขอได้ที่ <a
-                        href="https://www.facebook.com/mobizzx" target="_blank" rel="noopener">Facebook
-                        wiz mobiz</a>)</p>
 
-                <input type="password" id="activationCodeInput" class="form-control mb-3"
-                    placeholder="รหัสผ่าน (เช่น imtxxx)">
-                <button id="submitActivationCode" class="btn btn-primary w-100"
-                    aria-label="ยืนยันรหัสผ่าน">ยืนยัน</button>
-                <button id="closeAuthBtn" class="btn btn-outline-secondary w-100 mt-2"
-                    aria-label="ปิดหน้าต่างรหัสผ่าน">ปิด</button>
-            </div>
-        </div>
+    <!-- Floating Action Button -->
+    <div class="fab">
+        <a href="#contact" class="btn">
+            <i class="fas fa-comment-dots fs-4"></i>
+        </a>
     </div>
-    <!-- Scripts -->
+
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- AOS JS -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        // เริ่มต้น AOS Animation
         AOS.init({
-            duration: 1000,
+            duration: 800,
+            easing: 'ease-in-out',
             once: true
         });
-
-        // ระบบ NLP Service
-        class NLPService {
-            constructor() {
-                this.intentMappings = {
-                    'greeting': ['สวัสดี', 'hello', 'hi', 'หวัดดี', 'สวัสดีครับ', 'สวัสดีค่ะ'],
-                    'problem': ['ปัญหา', 'error', 'issue', 'ผิดปกติ', 'เสีย', 'ไม่ดี'],
-                    'injection_problem': ['injection problem', 'ปัญหาการฉีด', 'ฉีดพลาสติก'],
-                    'mold_damage': ['แม่พิมพ์เสียหาย', 'mold damage', 'แม่พิมพ์เสีย'],
-                    'temperature': ['อุณหภูมิ', 'ร้อน', 'เย็น', 'temperature', 'ความร้อน', 'อุ่น'],
-                    'pressure': ['ความดัน', 'pressure', 'แรงดัน', 'กด', 'ฉีด'],
-                    'technique': ['เทคนิค', 'technique', 'วิธีทำ', 'วิธีการ', 'เคล็ดลับ'],
-                    'material': ['วัสดุ', 'material', 'พลาสติก', 'resin', 'เม็ดพลาสติก'],
-                    'course': ['เรียน', 'course', 'ฝึกอบรม', 'หลักสูตร', 'อบรม', 'คอร์ส'],
-                    'product': ['สินค้า', 'product', 'ของ', 'item', 'ชิ้นงาน'],
-                    'price': ['ราคา', 'price', 'ค่าใช้จ่าย', 'cost', 'ถูก'],
-                    'service': ['บริการ', 'service', 'ช่วยเหลือ', 'support', 'consult'],
-                    'order': ['สั่งซื้อ', 'order', 'ซื้อ', 'จัดส่ง', 'delivery'],
-                    'contact': ['ติดต่อ', 'contact', 'ที่อยู่', 'เบอร์โทร', 'โทรศัพท์', 'อีเมล'],
-                    'mobile_learning': ['mobile learning', 'เรียนผ่านมือถือ', 'คอร์สออนไลน์มือถือ'],
-                    'affiliatepro': ['affiliatepro', 'พันธมิตร', 'ขายออนไลน์'],
-                    'market': ['ตลาดช๊อปฟิน', 'shopfin', 'ตลาดสินค้า'],
-                    'license_process': ['ใบขับขี่', 'driver license', 'ทำใบขับขี่'],
-                    'id_card': ['บัตรประชาชน', 'id card', 'ทำบัตร'],
-                    'welfare': ['บัตรสวัสดิการ', 'welfare', 'สวัสดิการ', 'บัตรคนจน'],
-                    'tax': ['ภาษี', 'tax', 'ยื่นภาษี'],
-                    'legal_rights': ['กฎหมาย', 'สิทธิ', 'แจ้งความ'],
-                    'healthcare': ['สุขภาพ', 'โรงพยาบาล', 'ประกันสุขภาพ'],
-                    'emergency': ['ฉุกเฉิน', 'emergency', '1669'],
-                    'education': ['การศึกษา', 'เรียน', 'ทุนการศึกษา'],
-                    'elderly_disability': ['ผู้สูงอายุ', 'ผู้พิการ', 'เบี้ยยังชีพ'],
-                    'labor_law': ['กฎหมายแรงงาน', 'สิทธิลูกจ้าง', 'วันหยุด'],
-                    // ในส่วนของ intentMappings
-                    'travel': ['ท่องเที่ยว', 'เที่ยว', 'พักผ่อน', 'ไปเที่ยว', 'ทริป'],
-                    'travel_benefits': ['ประโยชน์การท่องเที่ยว', 'เที่ยวแล้วได้อะไร', 'ดีต่อใจ'],
-                    'travel_tips': ['เคล็ดลับท่องเที่ยว', 'วิธีเที่ยว', 'เตรียมตัวเที่ยว'],
-
-                    'life_balance': ['สมดุลชีวิต', 'บาลานซ์', 'จัดการชีวิต'],
-                    'life_challenges': ['ปัญหาชีวิต', 'เจอปัญหา', 'ชีวิตยาก'],
-                    'philosophy': ['ปรัชญา', 'ความหมายชีวิต', 'แนวคิด', 'ปรัชญาชีวิต'],
-                    'ikigai': ['อิคิไก', 'ikigai', 'เหตุผลตื่นเช้า'],
-                    'stoicism': ['สโตอิก', 'stoicism', 'ปล่อยวาง'],
-                    'encouragement': ['กำลังใจ', 'เหนื่อย', 'ท้อ', 'สู้', 'เชียร์'],
-                    'overcome_failure': ['ล้มแล้วลุก', 'ความล้มเหลว', 'เริ่มใหม่'],
-                    'self_motivation': ['ให้กำลังใจตัวเอง', 'มีแรงใจ', 'เป้าหมาย'],
-                    'online_business': ['ธุรกิจออนไลน์', 'ขายของออนไลน์', 'ค้าขายในเน็ต'],
-                    'online_sales_channels': ['ช่องทางขาย', 'แพลตฟอร์ม', 'Marketplace'],
-                    'online_business_start': ['เริ่มธุรกิจ', 'เริ่มขาย', 'ตั้งร้านออนไลน์'],
-                    'product_selection': ['เลือกสินค้า', 'ขายอะไร', 'สินค้าออนไลน์'],
-                    'platform_setup': ['ตั้งร้าน', 'ตั้งค่าแพลตฟอร์ม', 'ลงสินค้า'],
-                    'online_marketing': ['การตลาด', 'โฆษณา', 'SEO', 'โปรโมท'],
-                    'scaling_online_business': ['ขยายธุรกิจ', 'เพิ่มยอด', 'โตออนไลน์'],
-                    'lottery_analysis': ['หวย', 'วิ่งบน', 'รูด 19', 'แทงโต๊ด', 'เลข'],
-                    'daily_life': ['ดูแลตัวเอง', 'ชีวิตประจำวัน', 'ใช้ชีวิต', 'การใช้ชีวิต', 'สุขภาพประจำวัน', 'กิจวัตร'],
-                    'reel_creation': ['ทำคลิป reel', 'สร้าง reel', 'ทำรีล', 'วิธีทำ reel'],
-                    'reel_tips': ['เคล็ดลับ reel', 'รีลดัง', 'ทำ reel ให้ปัง', 'เพิ่มยอด reel'],
-                    'reel_tools': ['เครื่องมือ reel', 'แอปทำ reel', 'ตัดต่อ reel'],
-                    'monetize_clips': ['หาเงินจากคลิป', 'สร้างรายได้คลิป', 'คลิปได้เงิน'],
-                    'monetize_tips': ['เคล็ดลับหาเงินคลิป', 'ทำคลิปให้ได้ตังค์', 'เพิ่มรายได้คลิป'],
-                    'monetize_platforms': ['แพลตฟอร์มทำเงิน', 'คลิปได้เงินที่ไหน', 'หาเงินจากแพลตฟอร์ม'],
-                    'youtube_start': ['เริ่มทำ youtube', 'สร้างช่อง youtube', 'youtube', 'ทำยูทูบ'],
-                    'youtube_growth': ['โตใน youtube', 'เพิ่มยอด youtube', 'ดังในยูทูบ'],
-                    'youtube_monetization': ['หาเงิน youtube', 'monetize youtube', 'ยูทูบได้เงิน'],
-                    'youtube_monetization': ['หาเงิน youtube', 'monetize youtube', 'ยูทูบได้เงิน'],
-                    'youtube_subscriber_time': ['ถึง 1,000 ซับ', 'ได้ซับนานไหม', 'เพิ่มซับกี่เดือน'],
-                    'youtube_affiliate_setup': ['ใส่ affiliate', 'ลิงก์ affiliate', 'ตั้งค่า affiliate youtube'],
-                    'youtube_streaming_income': ['สตรีมสดได้เงิน', 'super chat', 'สตรีม youtube']
-                };
-
-                this.entityMappings = {
-                    'material': ['pp', 'pe', 'abs', 'pc', 'nylon', 'polypropylene', 'polyethylene'],
-                    'machine': ['sumitomo', 'toshiba', 'porcheson', 'haitian', 'engel'],
-                    'problem_type': ['แม่พิมพ์เสียหาย', 'อุณหภูมิไม่เหมาะสม', 'ความดันไม่พอดี', 'ชิ้นงานบกพร่อง', 'รอยไหม้'],
-                    'product_type': ['แม่พิมพ์', 'เครื่องฉีด', 'ชิ้นงาน', 'mold', 'machine'],
-                    'brand': ['haitian', 'toshiba', 'sumitomo', 'engel', 'arburg'],
-                    'welfare_type': ['บัตรสวัสดิการ', 'บัตรคนจน', 'สวัสดิการรัฐ'],
-                    'healthcare_type': ['สิทธิบัตรทอง', 'ประกันสังคม', 'สปสช'],
-                    'travel_type': ['ธรรมชาติ', 'เมือง', 'ทะเล', 'ภูเขา', 'ต่างประเทศ'],
-                    'philosophy_type': ['อิคิไก', 'สโตอิก', 'Ikigai', 'Stoicism'],
-                    'encouragement_type': ['เหนื่อย', 'ท้อ', 'ล้ม', 'สู้', 'เริ่มใหม่'],
-                    'online_platform': ['Shopee', 'Lazada', 'Amazon', 'Facebook', 'TikTok', 'Shopify', 'Wix'],
-                    'marketing_type': ['SEO', 'โฆษณา', 'Ads', 'Influencer', 'คอนเทนต์'],
-                    'business_model': ['Dropshipping', 'Digital Product', 'สินค้าฮิต', 'เฉพาะกลุ่ม'],
-                    'lottery_type': ['วิ่งบน', 'วิ่งล่าง', 'รูด 19', 'โต๊ด'],
-                    'reel_type': ['How-to', 'ตลก', 'สอน', 'Vlog', 'รีวิว'],
-                    'platform': ['YouTube', 'Instagram', 'TikTok', 'Facebook', 'Twitch'],
-                    'tool': ['CapCut', 'Canva', 'InShot', 'FlexClip', 'DaVinci'],
-                    'monetization_type': ['โฆษณา', 'Affiliate', 'สปอนเซอร์', 'ขายของ'],
-                    'youtube_content': ['สอน', 'รีวิว', 'Vlog', 'เกม', 'ไลฟ์']
-                };
-            }
-
-            parseInput(input) {
-                const lowerInput = input.toLowerCase();
-                const result = { intent: 'unknown', entities: {}, original: input };
-                let maxMatches = 0;
-
-                // หา Intent โดยนับจำนวนคำที่ตรง
-                for (const [intent, keywords] of Object.entries(this.intentMappings)) {
-                    const matches = keywords.filter(keyword => lowerInput.includes(keyword)).length;
-                    if (matches > maxMatches) {
-                        maxMatches = matches;
-                        result.intent = intent;
-                    }
-                }
-
-                // หา Entities
-                for (const [entityType, values] of Object.entries(this.entityMappings)) {
-                    for (const value of values) {
-                        if (lowerInput.includes(value)) {
-                            result.entities[entityType] = value;
-                            break;
-                        }
-                    }
-                }
-
-                // ถ้า Intent ยังเป็น 'unknown' ลองหาคำใกล้เคียงจากคำถามยอดนิยม
-                if (result.intent === 'unknown' && lowerInput) {
-                    const popularKeywords = ['thumbnail', 'รักษา', 'ฉีด', 'youtube', 'ออนไลน์'];
-                    for (const keyword of popularKeywords) {
-                        if (lowerInput.includes(keyword)) {
-                            if (keyword === 'thumbnail') result.intent = 'youtube_thumbnail';
-                            if (keyword === 'รักษา') result.intent = 'healthcare';
-                            break;
-                        }
-                    }
-                }
-
-                return result;
-            }
-            findSimilarQuestion(input, questions) {
-                const lowerInput = input.toLowerCase();
-                let minDistance = Infinity;
-                let mostSimilar = '';
-                for (const question of questions) {
-                    const distance = this.levenshteinDistance(lowerInput, question.toLowerCase());
-                    if (distance < minDistance) {
-                        minDistance = distance;
-                        mostSimilar = question;
-                    }
-                }
-                return minDistance < lowerInput.length * 0.4 ? mostSimilar : '';
-            }
-
-            levenshteinDistance(str1, str2) {
-                const dp = Array(str1.length + 1).fill(null).map(() => Array(str2.length + 1).fill(0));
-                for (let i = 0; i <= str1.length; i++) dp[i][0] = i;
-                for (let j = 0; j <= str2.length; j++) dp[0][j] = j;
-
-                for (let i = 1; i <= str1.length; i++) {
-                    for (let j = 1; j <= str2.length; j++) {
-                        const cost = str1[i - 1] === str2[j - 1] ? 0 : 1;
-                        dp[i][j] = Math.min(
-                            dp[i - 1][j] + 1,
-                            dp[i][j - 1] + 1,
-                            dp[i - 1][j - 1] + cost
-                        );
-                    }
-                }
-                return dp[str1.length][str2.length];
-            }
-        }
-
-        // ระบบ Knowledge Base
-        class KnowledgeBase {
-            constructor(responses) {
-                this.responses = responses;
-                this.learnedResponses = {};
-                this.feedback = [];
-            }
-
-            async getResponse(intent, entities = {}) {
-                const learnedKey = `${intent}_${JSON.stringify(entities)}`;
-                let response;
-
-                // ตรวจสอบคำตอบที่เรียนรู้มาแล้ว
-                response = localStorage.getItem(learnedKey);
-                if (response) {
-                    console.log("Response from localStorage:", response);
-                    return response;
-                }
-
-                // หาคำตอบจากฐานความรู้
-                let responseKey = intent;
-                if (entities.material && this.responses[`${intent}_${entities.material}`]) {
-                    responseKey = `${intent}_${entities.material}`;
-                } else if (entities.problem_type && this.responses[entities.problem_type]) {
-                    responseKey = entities.problem_type;
-                }
-
-                response = this.responses[responseKey] || this.responses.default || 'ขออภัย ไม่พบข้อมูลที่เกี่ยวข้อง';
-                console.log("Response from base:", response);
-                return response;
-            }
-
-            async addLearnedResponse(intent, entities, response) {
-                const key = `${intent}_${JSON.stringify(entities)}`;
-                localStorage.setItem(key, response);
-                console.log("Added to localStorage:", key, response);
-                this.learnedResponses[key] = response;
-            }
-
-            async addFeedback(question, response, isHelpful) {
-                this.feedback.push({ question, response, isHelpful, timestamp: new Date() });
-                console.log("Feedback added locally:", { question, response, isHelpful });
-            }
-        }
-
-        // ระบบวิเคราะห์การใช้งาน
-        class Analytics {
-            constructor() {
-                this.usageData = JSON.parse(localStorage.getItem('chatbotAnalytics')) || {
-                    totalQuestions: 0,
-                    popularIntents: {},
-                    failedQuestions: []
-                };
-            }
-
-            trackQuestion(intent, question, responseSuccessful) {
-                this.usageData.totalQuestions++;
-
-                if (!responseSuccessful) {
-                    this.usageData.failedQuestions.push({
-                        question,
-                        timestamp: new Date().toISOString()
-                    });
-                }
-
-                if (intent !== 'unknown') {
-                    this.usageData.popularIntents[intent] = (this.usageData.popularIntents[intent] || 0) + 1;
-                }
-
-                localStorage.setItem('chatbotAnalytics', JSON.stringify(this.usageData));
-            }
-
-            getPopularIntents() {
-                return Object.entries(this.usageData.popularIntents)
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 5);
-            }
-        }
-
-        // ข้อมูลเริ่มต้น
-        let questionCount = parseInt(localStorage.getItem('questionCount')) || 0;
-        const maxQuestions = 5;
-        let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-        let isWelcomeMessageShown = false;
-        const activationCodes = Array.from({ length: 100 }, (_, i) => `imt${(i + 1).toString().padStart(3, '0')}n`);
-
-        const responses = {
-            // ส่วนการทักทายและการตอบกลับพื้นฐาน
-            greeting: 'สวัสดีครับ! ผมเป็นผู้ช่วยพี่ Wiz มีอะไรให้ช่วยไหมครับ? ถามผมได้เลยเกี่ยวกับ Injection Molding, Mobile Learning, AffiliatePro, หรือตลาดช๊อปฟิน หรือเกี่ยวกับชีวิตประจำวัน เช่น บัตรประชาชน, ใบขับขี่, สวัสดิการ, ฯลฯ!',
-            default: 'ขอโทษด้วยครับ ผมไม่เข้าใจคำถามของคุณ กรุณาถามใหม่หรือเลือกคำถามจากตัวเลือกด้านล่าง',
-            limitReached: 'พี่ใช้ครบจำนวนแล้วครับ ทักขอรหัสถามไม่จำกัดที่ wiz mobiz ได้เลย กรุณากรอกรหัสผ่านเพื่อใช้งานต่อ (รหัสผ่านสามารถขอได้ที่ <a href="https://www.facebook.com/injectionmoldingthailand" target="_blank" rel="noopener">Facebook Page</a>)',
-
-            // ส่วนงานฉีดพลาสติก
-            injection_problem: 'ปัญหาที่พบบ่อยในงานฉีดพลาสติกมีดังนี้: 1. แม่พิมพ์เสียหาย 2. อุณหภูมิไม่เหมาะสม 3. ความดันไม่พอดี คุณต้องการรายละเอียดเกี่ยวกับหัวข้อไหนเพิ่มเติม?',
-            mold_damage: 'ปัญหาแม่พิมพ์เสียหายมักเกิดจาก: 1. การสึกหรอจากการใช้งาน 2. การออกแบบไม่เหมาะสม 3. วัสดุไม่แข็งแรงพอ แนะนำให้ตรวจสอบและบำรุงรักษาแม่พิมพ์เป็นประจำ',
-            temperature: 'การตั้งอุณหภูมิไม่เหมาะสมอาจทำให้: 1. พลาสติกไหลไม่ดี (อุณหภูมิต่ำเกินไป) 2. พลาสติกเสื่อมสภาพ (อุณหภูมิสูงเกินไป) ควรตั้งค่าตามคำแนะนำของผู้ผลิตวัสดุ เช่น ABS 200-240°C',
-            pressure: 'ปัญหาความดันไม่พอดี: 1. ความดันสูงเกินไปทำให้ชิ้นงานบิดเบี้ยว 2. ความดันต่ำเกินไปทำให้ชิ้นงานไม่เต็มแบบ ควรปรับความดันให้เหมาะสมกับวัสดุและแบบพิมพ์',
-            technique: 'เทคนิคการฉีดพลาสติกที่สำคัญ: 1. การตั้งค่าเครื่องที่เหมาะสม 2. การออกแบบแม่พิมพ์ที่ดี 3. การเลือกวัสดุที่ถูกต้อง 4. การควบคุมกระบวนการผลิต',
-            material: 'วัสดุที่ใช้ในงานฉีดพลาสติก: 1. ABS - แข็งแรง ทนแรงกระแทก 2. PP - ทนสารเคมี ราคาถูก 3. PC - แข็งแรง ใสเหมือนกระจก 4. Nylon - ทนความร้อนและแรงเสียดทาน',
-            material_pp: 'PP (Polypropylene) เหมาะสำหรับภาชนะ ราคาถูก ทนสารเคมี',
-            material_abs: 'ABS แข็งแรง ทนแรงกระแทก เหมาะสำหรับชิ้นส่วนเครื่องใช้',
-            course: 'หลักสูตรการเรียนฉีดพลาสติกของเรา: 1. หลักสูตรพื้นฐาน (2 วัน) 2. หลักสูตรออกแบบแม่พิมพ์ (5 วัน) 3. หลักสูตรเทคนิคขั้นสูง (3 วัน)',
-            contact: 'ติดต่อเราได้ที่: โทร: 02-123-4567 อีเมล: info@wizmobiz.com ที่อยู่: อาคารวิศวกรรมพลาสติก ชั้น 5 กรุงเทพฯ',
-            product: 'เรามีสินค้าหลักๆ 3 ประเภท: 1. แม่พิมพ์ฉีดพลาสติก 2. เครื่องฉีดพลาสติก 3. ชิ้นงานพลาสติกสำเร็จรูป',
-            price: 'ราคาขึ้นอยู่กับประเภทสินค้าและขนาด โดยทั่วไปเริ่มต้นที่: แม่พิมพ์ 50,000 บาท, เครื่องฉีด 1,000,000 บาท',
-            order: 'คุณสามารถสั่งซื้อได้โดย: 1. ติดต่อทางไลน์ @wizmobiz 2. โทร 02-123-4567 3. สั่งผ่านเว็บไซต์',
-            service: 'เรามีบริการ: 1. ให้คำปรึกษา 2. ออกแบบแม่พิมพ์ 3. ซ่อมบำรุงเครื่องจักร',
-
-            // ส่วนชีวิตประจำวัน
-            license_process: '🚗 <b>ขั้นตอนการทำใบขับขี่ใหม่ (เบื้องต้น)</b><br><br>1️⃣ <b>ตรวจสุขภาพ</b><br>  - ขอใบรับรองแพทย์จากคลินิกหรือโรงพยาบาล<br>2️⃣ <b>เตรียมเอกสาร</b><br>  - บัตรประชาชนตัวจริง<br>  - ใบรับรองแพทย์<br>3️⃣ <b>จองคิวออนไลน์ผ่าน DLT Smart Queue</b><br>  🔗 <a href="https://gecc.dlt.go.th/" target="_blank" rel="noopener">https://gecc.dlt.go.th/</a><br>4️⃣ <b>อบรม + ทดสอบ</b><br>  - เข้ารับการอบรมตามประเภทใบขับขี่<br>  - ทดสอบข้อเขียน (E-exam)<br>  - ทดสอบภาคปฏิบัติ<br>5️⃣ <b>รับใบขับขี่</b><br>  - หากผ่านทุกขั้นตอน จะได้รับใบขับขี่ทันที<br><br>📌 หมายเหตุ: กรณีต่ออายุใบขับขี่ หรือขอใหม่หลังหมดอายุขั้นตอนอาจต่างกัน<br><br>📚 <b>อ้างอิง:</b><br>- กรมการขนส่งทางบก: <a href="https://www.dlt.go.th/" target="_blank" rel="noopener">https://www.dlt.go.th/</a><br>- จองคิวออนไลน์: <a href="https://gecc.dlt.go.th/" target="_blank" rel="noopener">https://gecc.dlt.go.th/</a>',
-            id_card: '📄 <b>ขั้นตอนการทำ/ต่ออายุ/แจ้งบัตรประชาชนหาย</b>:<br><br>1️⃣ <b>เตรียมเอกสาร</b><br>  - สำเนาทะเบียนบ้าน<br>  - บัตรเก่า (ถ้ามี)<br>  - ถ้าหาย → แจ้งความหรือใบรับแจ้งจากตำรวจ<br>2️⃣ <b>ไปที่สำนักงานเขต/อำเภอ/เทศบาล</b><br>  - ไม่จำเป็นต้องไปที่ทะเบียนบ้านตนเอง<br>  - บางแห่งสามารถจองคิวออนไลน์ได้<br>3️⃣ <b>ถ่ายรูปและทำรายการ</b><br>  - เจ้าหน้าที่จะถ่ายภาพ, ตรวจสอบข้อมูล<br>  - ใช้เวลาประมาณ 10–20 นาที<br><br>💰 <b>ค่าธรรมเนียม</b><br>  - ทำใหม่ / ต่ออายุ: <b>ฟรี</b><br>  - บัตรหาย / ชำรุด: <b>20 บาท</b>',
-            welfare: '💵 <b>ข้อมูลบัตรสวัสดิการแห่งรัฐ / สวัสดิการภาครัฐ</b>:<br><br>1️⃣ <b>คุณสมบัติผู้ลงทะเบียน</b><br>  - สัญชาติไทย อายุ 18 ปีขึ้นไป<br>  - รายได้ต่อปีไม่เกิน 100,000 – 200,000 บาท<br>  - ไม่มีทรัพย์สินเกินเกณฑ์กำหนด<br>2️⃣ <b>สิทธิ์ที่ได้รับ</b><br>  - เงินช่วยค่าไฟฟ้า / น้ำประปา<br>  - เงินซื้อของผ่านร้านธงฟ้า<br>  - ค่าเดินทางรถเมล์ รถไฟ<br>3️⃣ <b>วิธีลงทะเบียน</b><br>  - ผ่านธนาคารกรุงไทย, สำนักงานคลัง หรือออนไลน์<br>  - ตรวจสอบผลผ่านแอป "เป๋าตัง" หรือเว็บไซต์ govwelfare<br><br>📌 <b>ติดตามข่าวสารจากกระทรวงการคลัง หรือเพจสำนักงานคลัง</b>',
-            tax: '📜 <b>ข้อมูลการยื่นภาษีเงินได้บุคคลธรรมดา (ภ.ง.ด. 90/91)</b><br><br>1️⃣ <b>กำหนดยื่นภาษี</b><br>  - ทุกปีระหว่าง <b>1 ม.ค. – 31 มี.ค.</b><br>  - ยื่นผ่านเว็บไซต์ <a href="https://www.rd.go.th/" target="_blank" rel="noopener">rd.go.th</a><br>2️⃣ <b>เอกสารที่ใช้</b><br>  - หนังสือรับรองเงินเดือน (50 ทวิ)<br>  - รายการลดหย่อนต่างๆ เช่น ประกันชีวิต, กองทุน, บริจาค<br>3️⃣ <b>ช่องทางยื่น</b><br>  - ยื่นออนไลน์<br>  - หรือไปสำนักงานสรรพากรเขต<br><br>💡 <b>ระบบมีคำนวณอัตโนมัติ แนะนำยื่นผ่านออนไลน์สะดวกที่สุด</b>',
-            legal_rights: '⚖️ <b>ข้อมูลด้านกฎหมายและสิทธิประชาชนเบื้องต้น</b><br><br>1️⃣ <b>การแจ้งความ</b><br>  - แจ้งได้ที่สถานีตำรวจใกล้บ้าน<br>  - เก็บใบแจ้งความไว้เป็นหลักฐาน<br>2️⃣ <b>สิทธิพื้นฐานเมื่อถูกจับกุม</b><br>  - แจ้งเหตุผลการจับ<br>  - โทรหาญาติ / ทนายความ<br>  - มีสิทธิประกันตัว<br>3️⃣ <b>ช่องทางขอความช่วยเหลือทางกฎหมาย</b><br>  - สำนักงานกฎหมายช่วยเหลือประชาชน (สภาทนายความ)<br>  - โทร. <b>1111</b> ต่อ กรมคุ้มครองสิทธิฯ<br><br>📌 <b>ข้อมูลเพิ่มเติม: กรมคุ้มครองสิทธิและเสรีภาพ, กระทรวงยุติธรรม</b>',
-            healthcare: '🏥 <b>ข้อมูลเกี่ยวกับการรักษาพยาบาลและสิทธิของประชาชนในประเทศไทย</b><br><br>🔹 <b>1. สิทธิหลักที่ใช้ในการรักษา:</b><br>  - <b>สิทธิบัตรทอง (สปสช):</b> ใช้บัตรประชาชนเข้ารับบริการได้ที่โรงพยาบาลที่ลงทะเบียนไว้<br>  - <b>สิทธิประกันสังคม:</b> ผู้ที่ทำงานและส่งเงินเข้าประกันสังคม (มาตรา 33/39/40) มีสิทธิเลือกโรงพยาบาล<br>  - <b>สิทธิข้าราชการ:</b> ใช้เบิกค่ารักษาผ่านระบบกรมบัญชีกลาง<br>🔹 <b>2. การใช้สิทธิบัตรทอง:</b><br>  - ไม่ต้องสำรองจ่าย<br>  - ใช้ได้เฉพาะโรงพยาบาลที่ลงทะเบียน<br>  - เปลี่ยนสถานพยาบาลได้ปีละ 4 ครั้ง<br>🔹 <b>3. การใช้สิทธิประกันสังคม:</b><br>  - เปลี่ยนโรงพยาบาลได้ปีละ 2 ครั้ง (ม.ค. - มี.ค. และ ก.ค. - ก.ย.)<br>  - กรณีฉุกเฉินใช้สิทธิเข้าโรงพยาบาลใกล้เคียงได้<br>🔹 <b>4. กรณีฉุกเฉินวิกฤต (UCEP):</b><br>  - เข้ารักษาโรงพยาบาลไหนก็ได้ฟรี 72 ชั่วโมง<br>  - โทร 1669 เพื่อติดต่อเคลื่อนย้ายฉุกเฉิน<br><br>📞 <b>สายด่วนสำคัญ:</b><br>  - สปสช: 1330<br>  - ประกันสังคม: 1506<br>  - ฉุกเฉิน: 1669',
-            emergency: '🚨 <b>บริการฉุกเฉิน</b><br><br>- <b>1669:</b> รถพยาบาลฟรีทั่วประเทศ<br>- <b>191:</b> ตำรวจ<br>- <b>1155:</b> ช่วยเหลือชาวต่างชาติ (มีล่าม)<br>- <b>กู้ภัย:</b> มูลนิธิป่อเต็กตึ๊ง หรือ ร่วมกตัญญู (โทรผ่าน 1669)<br><br>📌 บอกตำแหน่งชัดเจนเมื่อโทร!',
-            education: '📚 <b>บริการด้านการศึกษาและพัฒนาตนเองในประเทศไทย</b><br><br>🎓 <b>1. แหล่งเรียนรู้ออนไลน์ฟรี:</b><br>- <b>Thai MOOC (thaimooc.org):</b><br>  รวมคอร์สฟรีจากมหาวิทยาลัยทั่วประเทศ เช่น จิตวิทยา ภาษา AI วิทยาศาสตร์<br>- <b>DLTV (dltv.ac.th):</b><br>  ช่องการศึกษาทางไกลระดับประถม-มัธยม<br>- <b>SkillLane / Coursera / edX:</b><br>  มีทั้งคอร์สฟรีและเสียเงิน (บางคอร์สมีทุนเรียนฟรี)<br>🧑‍🏫 <b>2. ทุนการศึกษา / การสนับสนุนทางการเงิน:</b><br>- ทุน กยศ. (กองทุนเงินให้กู้ยืมเพื่อการศึกษา): <a href="https://www.studentloan.or.th/" target="_blank" rel="noopener">www.studentloan.or.th</a><br>- ทุนรัฐบาลไทย ทุนมูลนิธิ เอกชนต่างๆ ติดตามได้จากเว็บไซต์มหาวิทยาลัย<br>📞 <b>3. ช่องทางร้องเรียน / ปัญหาด้านการศึกษา:</b><br>- สภาผู้บริโภค: รับร้องเรียนกรณีค่าเทอมไม่เป็นธรรม, เรียนแล้วไม่ได้ตามที่โฆษณา<br>- สายด่วนการศึกษา: ☎️ 1579 (กระทรวงศึกษาธิการ)<br>- สำนักงาน ก.พ. โทร 02-547-1000 (กรณีทุนราชการ)<br>🖥️ <b>4. หน่วยงานที่เกี่ยวข้อง:</b><br>- กระทรวงศึกษาธิการ (<a href="https://www.moe.go.th/" target="_blank" rel="noopener">moe.go.th</a>)<br>- สำนักงานคณะกรรมการการอุดมศึกษา (<a href="https://www.mhesi.go.th/" target="_blank" rel="noopener">www.mhesi.go.th</a>)<br>- กศน. สำหรับผู้ที่ต้องการเรียนต่อเทียบเท่า / อาชีวะ / เรียนผู้ใหญ่<br><br>📌 <b>เคล็ดลับ:</b><br>- หมั่นเข้าเว็บ ThaiMOOC หรือ Facebook ของกระทรวงศึกษาฯ เพื่ออัปเดตคอร์สฟรีและทุนใหม่<br>- ผู้ว่างงาน / เปลี่ยนอาชีพ ควรลองคอร์สทักษะใหม่ เช่น Data, Coding, ภาษาอังกฤษ ฯลฯ<br><br>✅ <b>เริ่มเรียนออนไลน์วันนี้ ฟรี ไม่มีค่าใช้จ่ายที่:</b><br>👉 <a href="https://www.thaimooc.org/" target="_blank" rel="noopener">thaimooc.org</a>',
-            elderly_disability: '👵👴 <b>บริการสำหรับผู้สูงอายุและผู้พิการในประเทศไทย</b><br><br>🧓 <b>1. เบี้ยยังชีพผู้สูงอายุ:</b><br>- ได้รับเงินช่วยเหลือ <b>600 – 1,000 บาท/เดือน</b> ตามช่วงอายุ<br>  อายุ 60-69 ปี ➡️ 600 บาท<br>  อายุ 70-79 ปี ➡️ 700 บาท<br>  อายุ 80-89 ปี ➡️ 800 บาท<br>  อายุ 90 ปีขึ้นไป ➡️ 1,000 บาท<br>- <b>ลงทะเบียนได้ที่:</b> อบต. / เทศบาล / เขตพื้นที่ทุกแห่ง<br>♿ <b>2. สิทธิผู้พิการ:</b><br>- <b>เบี้ยความพิการ 800 บาท/เดือน</b><br>- <b>ขึ้นรถเมล์ ขสมก. ฟรี</b>, รถไฟฟรี<br>- เข้ารักษาโรงพยาบาลของรัฐฟรี<br>- ได้รับสิทธิเรียนฟรี/ทุนการศึกษา/อุปกรณ์ช่วยเหลือ<br>- <b>ลงทะเบียน:</b> ผ่าน อบต. หรือ สำนักงานพัฒนาสังคมและความมั่นคงของมนุษย์ (พม.)<br>🏠 <b>3. สวัสดิการอื่นที่เกี่ยวข้อง:</b><br>- <b>บัตรสวัสดิการแห่งรัฐ (บัตรคนจน)</b> – หากมีรายได้น้อย<br>- <b>สิทธิประกันสุขภาพ (บัตรทอง / สปสช)</b> – เข้ารักษาโรงพยาบาลได้โดยไม่เสียค่าใช้จ่าย<br>- <b>บ้านพักผู้สูงอายุ / ศูนย์ดูแลกลางวัน / รถรับส่งผู้พิการ</b> – ตรวจสอบกับ อบต. หรือเขต<br><br>📞 <b>สายด่วนสำคัญ:</b><br>- กรมกิจการผู้สูงอายุ: ☎️ 1300<br>- ศูนย์ช่วยเหลือผู้พิการ: ☎️ 1479<br>- สำนักงานพัฒนาสังคมฯ (ทุกจังหวัด)<br>- สอบถามที่ อบต./เขตใกล้บ้านได้เลย<br><br>📌 <b>แนะนำ:</b><br>- หากยังไม่ได้ลงทะเบียน ให้พาญาติไปยื่นเอกสารสำเนาบัตรประชาชน + ทะเบียนบ้าน<br>- ผู้พิการที่มีข้อจำกัดในการเดินทาง สามารถให้เจ้าหน้าที่ไปเยี่ยมถึงบ้านในบางพื้นที่<br>- ข้อมูลจะถูกเชื่อมกับระบบของ พม., กรมบัญชีกลาง และสปสช เพื่อประมวลสิทธิ<br><br>✅ <b>สิทธิทุกอย่างลงทะเบียนได้ฟรี ไม่เสียค่าใช้จ่าย</b>',
-            labor_law: '💼 <b>ข้อมูลกฎหมายแรงงานและสิทธิลูกจ้างในประเทศไทย</b><br><br>📅 <b>วันหยุดตามกฎหมายแรงงาน:</b><br>- <b>วันหยุดประจำสัปดาห์:</b> อย่างน้อย 1 วัน/สัปดาห์ (ปกติวันอาทิตย์ หรือตกลงกันได้)<br>- <b>วันหยุดนักขัตฤกษ์:</b> อย่างน้อย 13 วัน/ปี เช่น วันสงกรานต์ (13-15 เม.ย.), วันแม่ (12 ส.ค.)<br>- <b>วันหยุดกรณีพิเศษ:</b> ถ้าทำงานในวันหยุดนักขัตฤกษ์ ต้องได้ค่าจ้าง 3 เท่า<br>💰 <b>ค่าจ้างตามกฎหมาย:</b><br>- <b>ค่าจ้างขั้นต่ำ:</b> 328-354 บาท/วัน (ขึ้นอยู่กับจังหวัด เช่น กรุงเทพฯ สูงสุด 354 บาท ในปี 2568)<br>- <b>การจ่ายเงิน:</b> ต้องจ่ายอย่างน้อยเดือนละครั้ง<br>- <b>ทำงานล่วงเวลา (OT):</b> อย่างน้อย 1.5 เท่าของค่าจ้างปกติ (3 เท่าในวันหยุด)<br>🕒 <b>ชั่วโมงทำงาน:</b><br>- ไม่เกิน 8 ชม./วัน หรือ 48 ชม./สัปดาห์ (งานอันตรายไม่เกิน 7 ชม./วัน)<br>🌴 <b>วันลา:</b><br>- <b>ลาป่วย:</b> 30 วัน/ปี (มีใบแพทย์ได้ค่าจ้าง)<br>- <b>ลาคลอด:</b> 98 วัน (ได้ค่าจ้าง 45 วัน)<br>- <b>ลากิจ:</b> 3 วัน/ปี (ขึ้นกับนายจ้าง)<br>❌ <b>การเลิกจ้าง:</b><br>- ต้องจ่ายค่าชดเชยตามอายุงาน (เช่น 1-3 ปี = 90 วัน)<br>👴 <b>เงินชราภาพ/เกษียณ:</b><br>- ประกันสังคมจ่ายบำนาญ (ต้องส่งเงิน 180 เดือนขึ้นไป)<br>- กองทุนสำรองเลี้ยงชีพ (ถ้ามี) ขึ้นกับข้อตกลง<br><br>📌 <b>หมายเหตุ:</b> วันพระ เช่น 1 ส.ค. 2568 ไม่ใช่วันหยุดตามกฎหมาย เว้นแต่ตกลงกับนายจ้าง<br>📞 <b>สอบถามเพิ่มเติม:</b> กรมสวัสดิการและคุ้มครองแรงงาน โทร 1506',
-
-            // ส่วนการท่องเที่ยว
-            travel: 'การท่องเที่ยวช่วยให้เราได้พักผ่อน เปิดมุมมองใหม่ๆ และสร้างความทรงจำดีๆ เช่น เที่ยวธรรมชาติช่วยลดความเครียด หรือเที่ยวเมืองใหม่ๆ ช่วยเพิ่มความคิดสร้างสรรค์ คุณชอบเที่ยวแบบไหนครับ?',
-            travel_benefits: 'ประโยชน์ของการท่องเที่ยว:<br>• ลดความเครียด ผ่อนคลายจิตใจ<br>• เรียนรู้วัฒนธรรมใหม่ๆ<br>• เพิ่มความมั่นใจจากการแก้ปัญหาระหว่างทาง<br>อยากรู้เรื่องไหนเพิ่มไหมครับ?',
-            travel_tips: 'เคล็ดลับการท่องเที่ยว:<br>• วางแผนล่วงหน้าแต่ยืดหยุ่นได้<br>• พกของจำเป็น เช่น น้ำ ยา เงินสำรอง<br>• ลองอาหารท้องถิ่นและพูดคุยกับคนในพื้นที่<br>มีทริปในใจรึยังครับ?',
-
-            // ส่วนการใช้ชีวิต
-            daily_life: 'การใช้ชีวิตให้ดีคือการหาสมดุลระหว่างงานและความสุข เช่น นอนให้พอ ออกกำลังกาย กินอาหารดีๆ และใช้เวลากับคนที่รัก คุณมีวิธีดูแลตัวเองยังไงบ้างครับ?',
-            life_balance: 'วิธีสร้างสมดุลในชีวิต:<br>• จัดลำดับความสำคัญของงานและเวลาส่วนตัว<br>• หาเวลาพัก 5-10 นาทีทุกวัน<br>• ตั้งเป้าหมายเล็กๆ ที่ทำได้จริง<br>ลองปรับใช้ดูไหมครับ?',
-            life_challenges: 'เจอปัญหาชีวิตไม่ต้องกลัว:<br>• ทุกปัญหามีทางออก แค่ค่อยๆ คิด<br>• ขอคำแนะนำจากคนใกล้ชิด<br>• มองเป็นบทเรียน ไม่ใช่จุดจบ<br>มีอะไรอยากระบายไหมครับ?',
-
-            // ส่วนปรัชญา
-            philosophy: 'ปรัชญาช่วยให้เราเข้าใจชีวิต เช่น "อิคิไก" (Ikigai) จากญี่ปุ่น หมายถึงการหาเหตุผลในการตื่นเช้ามาทุกวัน หรือ "ลัทธิสโตอิก" ที่สอนให้ยอมรับสิ่งที่ควบคุมไม่ได้ คุณสนใจปรัชญาแบบไหนครับ?',
-            ikigai: 'อิคิไกคือการค้นหาคุณค่าชีวิต:<br>• สิ่งที่คุณรัก<br>• สิ่งที่คุณถนัด<br>• สิ่งที่โลกต้องการ<br>• สิ่งที่สร้างรายได้<br>ลองหาคำตอบ 4 ข้อนี้ดูครับ',
-            stoicism: 'ลัทธิสโตอิกสอนว่า:<br>• โฟกัสที่ควบคุมได้ เช่น ความคิดและการกระทำ<br>• ปล่อยวางสิ่งที่ควบคุมไม่ได้ เช่น ความคิดเห็นคนอื่น<br>• ทุกปัญหาคือโอกาสพัฒนาตัวเอง<br>เห็นด้วยไหมครับ?',
-
-            // ส่วนการให้กำลังใจ
-            encouragement: 'ไม่ว่าวันนี้จะเหนื่อยแค่ไหน พรุ่งนี้ยังมีโอกาสใหม่เสมอ คุณเก่งมากที่ผ่านมาถึงจุดนี้ได้ มีอะไรอยากให้ช่วยเชียร์ไหมครับ?',
-            overcome_failure: 'ล้มแล้วลุกได้คือคนเข้มแข็ง:<br>• ความล้มเหลวคือครูที่ดี<br>• เริ่มใหม่ได้ทุกวัน<br>• ทุกคนเคยล้ม คุณไม่ใช่คนเดียว<br>สู้ต่อนะครับ!',
-            self_motivation: 'วิธีให้กำลังใจตัวเอง:<br>• ชมตัวเองเมื่อทำสำเร็จเล็กๆ น้อยๆ<br>• เขียนเป้าหมายไว้เตือนใจ<br>• จำไว้ว่าคุณมีค่าไม่ว่าผลจะเป็นยังไง<br>ลองทำดูไหมครับ?',
-
-            // ส่วนธุรกิจออนไลน์
-            online_business: 'การสร้างธุรกิจจากการขายออนไลน์ทุกช่องทางเริ่มจาก:<br>• หาไอเดียสินค้าที่มีคนต้องการ<br>• เลือกแพลตฟอร์ม เช่น เว็บไซต์ส่วนตัว, Shopee, Lazada, Amazon, หรือโซเชียลมีเดีย<br>• วางแผนการตลาดให้ถึงกลุ่มลูกค้า<br>คุณอยากเริ่มด้วยช่องทางไหนครับ?',
-            online_sales_channels: 'ช่องทางการขายออนไลน์มีหลายแบบ:<br>• เว็บไซต์ส่วนตัว - ควบคุมได้เต็มที่<br>• Marketplace (Shopee, Lazada, Amazon) - เข้าถึงลูกค้าเยอะ<br>• โซเชียลมีเดีย (Facebook, Instagram, TikTok) - เน้นภาพและวิดีโอ<br>• อีเมล - สร้างความสัมพันธ์ลูกค้า<br>สนใจช่องทางไหนเป็นพิเศษไหมครับ?',
-            online_business_start: 'วิธีเริ่มธุรกิจออนไลน์:<br>1. หาสินค้าหรือบริการที่ถนัด<br>2. วิเคราะห์คู่แข่งและตลาด<br>3. สร้างแบรนด์และตัวตนออนไลน์<br>4. เลือกแพลตฟอร์มขาย<br>5. ทำการตลาด เช่น โฆษณา SEO หรือ Influencer<br>พร้อมเริ่มขั้นไหนแล้วครับ?',
-            product_selection: 'เลือกสินค้าขายออนไลน์:<br>• สินค้าฮิต เช่น เสื้อผ้า Gadget<br>• สินค้าเฉพาะกลุ่ม เช่น ออร์แกนิก งานคราฟต์<br>• Dropshipping - ไม่ต้องสต็อกเอง<br>• Digital Product - เช่น คอร์สออนไลน์<br>คุณมีไอเดียสินค้าในใจรึยังครับ?',
-            platform_setup: 'ตั้งค่าแพลตฟอร์มขาย:<br>• เว็บไซต์ - ใช้ Shopify, Wix<br>• Marketplace - ลงทะเบียน Shopee, Lazada<br>• โซเชียล - ตั้งร้านบน Facebook Shop, IG Shopping<br>ใส่รูปสินค้า+คำอธิบายให้ชัดเจน<br>อยากลองตั้งค่าแบบไหนครับ?',
-            online_marketing: 'การตลาดออนไลน์:<br>• โฆษณา Google/Facebook Ads<br>• SEO - ทำให้คนค้นเจอใน Google<br>• โพสต์คอนเทนต์ใน TikTok/IG<br>• ส่งอีเมลหาลูกค้าเก่า<br>วิธีไหนน่าสนใจสำหรับคุณครับ?',
-            scaling_online_business: 'ขยายธุรกิจออนไลน์:<br>• เพิ่มช่องทางขายใหม่<br>• ใช้ข้อมูลลูกค้าปรับสินค้า<br>• ลดต้นทุนด้วยระบบอัตโนมัติ<br>• ขายข้ามประเทศผ่าน Amazon หรือ Etsy<br>อยากขยายด้านไหนครับ?',
-
-            // ส่วนหวย
-            lottery_analysis: '🎰 <b>วิเคราะห์โอกาสถูกรางวัลหวย</b><br><br>' +
-                '1️⃣ <b>วิ่งบน-ล่าง (3,9)</b> → 100 บาท<br>' +
-                '✅ โอกาสถูก: <b>10%</b> (เลข 3 หรือ 9 ในหลักใดหลักหนึ่ง)<br>' +
-                '✅ ผลตอบแทน: 70-300 บาท<br><br>' +
-                '2️⃣ <b>รูด 19 ประตู (3)</b> → 190 บาท<br>' +
-                '✅ โอกาสถูก: <b>20%</b> (มีเลข 3 ใน 2 ตัวล่าง)<br>' +
-                '✅ ผลตอบแทน: 190-1,000 บาท<br><br>' +
-                '3️⃣ <b>แทงโต๊ด (908, 928)</b> → 10 บาท<br>' +
-                '✅ โอกาสถูก: <b>1%</b> (แต่จ่ายสูง)<br>' +
-                '✅ ผลตอบแทน: 500-1,500 บาท<br><br>' +
-                '🎯 <b>กลยุทธ์เพิ่มโอกาสชนะ</b><br>' +
-                '🔹 รูด 19 ประตู: เพิ่มเลขรูดเป็น 2-3 ตัว (โอกาสเพิ่มเป็น 36%)<br>' +
-                '🔹 แทงโต๊ด: เลือก 3-5 ชุดจากสถิติเลขย้อนหลัง<br>' +
-                '🔹 วิ่งบน-ล่าง: สลับตำแหน่งเลข (3,9 และ 9,3)<br><br>' +
-                '📢 <b>สรุป</b><br>' +
-                '- เล่นรูด 19 ประตู → ดีที่สุดสำหรับความมั่นคง<br>' +
-                '- เล่นโต๊ด → กำไรสูงแต่เสี่ยง<br>' +
-                '- วิ่งบน-ล่าง → เน้นคืนทุนแน่นอน',
-            reel_creation: 'การทำคลิป Reel ให้ปัง:<br>• เลือกหัวข้อที่คนสนใจ เช่น How-to, สอนสั้นๆ หรือตลก<br>• ถ่ายคลิปแนวตั้ง (9:16) ความยาว 15-90 วินาที<br>• ใช้เพลงหรือเทรนด์ที่กำลังฮิตใน Instagram/TikTok<br>• เพิ่มข้อความสั้นๆ บนคลิปให้ชัดเจน<br>• ตัดต่อให้กระชับ ใส่เอฟเฟกต์หรือทรานซิชันนิดหน่อย<br>ลองทำคลิปแรกเรื่องอะไรดีครับ?',
-            reel_tips: 'เคล็ดลับทำ Reel ให้คนดูเยอะ:<br>• โพสต์ตอนคนออนเยอะ (เย็น-ค่ำ)<br>• ใช้แฮชแท็กที่เกี่ยวข้อง 5-10 อัน เช่น #Reels #HowTo<br>• เริ่มคลิปด้วย Hook แรงๆ ใน 3 วินาทีแรก<br>• ทดลองใช้เครื่องมือในแอป เช่น ฟิลเตอร์ เสียงพากย์<br>• เช็กเทรนด์ใน Reels Tab บ่อยๆ<br>อยากให้ช่วยคิดไอเดียคลิปไหมครับ?',
-            reel_tools: 'เครื่องมือช่วยทำ Reel:<br>• Instagram Reels - ฟรี ครบในแอป<br>• CapCut - ตัดต่อง่าย มีเอฟเฟกต์เยอะ<br>• Canva - ใส่ข้อความหรือกราฟิก<br>• InShot - ปรับแต่งคลิปได้หลากหลาย<br>• FlexClip - ทำออนไลน์ไม่ต้องโหลดแอป<br>เคยลองใช้ตัวไหนมาบ้างครับ?',
-            monetize_clips: 'วิธีสร้างรายได้จากคลิป:<br>• โพสต์ในแพลตฟอร์มที่จ่าย เช่น YouTube Shorts, Instagram Reels (ถ้ามีโบนัส), Facebook Reels<br>• สมัครโปรแกรมพันธมิตร (Affiliate) แปะลิงก์สินค้า<br>• รับสปอนเซอร์จากแบรนด์เมื่อมีผู้ติดตามเยอะ<br>• ขายสินค้าหรือคอร์สของตัวเองผ่านคลิป<br>• เปิดรับ捐款 (เช่น Patreon, Buy Me a Coffee)<br>สนใจวิธีไหนเป็นพิเศษไหมครับ?',
-            monetize_tips: 'เคล็ดลับทำคลิปให้ได้เงิน:<br>• โพสต์สม่ำเสมอ 3-5 คลิปต่อสัปดาห์<br>• เน้นคุณภาพ คลิปชัด เสียงดี<br>• วิเคราะห์ว่าคลิปไหนคนดูเยอะ แล้วทำเพิ่ม<br>• สร้างแบรนด์ส่วนตัวให้ชัดเจน<br>• อย่าลืมใส่ Call-to-Action เช่น "คลิกลิงก์ใน bio"<br>เริ่มทำคลิปมากี่เดือนแล้วครับ?',
-            monetize_platforms: 'แพลตฟอร์มที่ทำเงินได้:<br>• YouTube - รายได้จากโฆษณา (ต้อง 1,000 ซับ+4,000 ชม.)<br>• Instagram - โบนัส Reels (บางประเทศ) หรือสปอนเซอร์<br>• TikTok - Creator Fund (บางภูมิภาค)<br>• Facebook - รายได้จากยอดวิว Reels<br>• Twitch - สตรีมมิ่ง+รับ捐款<br>อยากลองแพลตฟอร์มไหนก่อนครับ?',
-            youtube_start: 'เริ่มทำ YouTube ยังไง:<br>1. สร้างช่อง - ตั้งชื่อให้จำง่าย<br>2. วางแผนคอนเทนต์ - เลือก niche ที่ถนัด (เช่น สอน, รีวิว, Vlog)<br>3. ถ่ายคลิป - ใช้กล้องหรือมือถือก็ได้<br>4. ตัดต่อ - ลองใช้โปรแกรมฟรี เช่น CapCut, DaVinci Resolve<br>5. อัปโหลด - ใส่ชื่อคลิป+คำอธิบาย+แท็กให้คนเจอ<br>อยากทำช่องเกี่ยวกับอะไรครับ?',
-            youtube_growth: 'วิธีโตใน YouTube:<br>• ทำคลิปสม่ำเสมอ (เช่น สัปดาห์ละ 1-2 คลิป)<br>• ใช้ Thumbnail ที่สะดุดตา<br>• ตั้งชื่อคลิปให้คนอยากคลิก (เช่น "วิธีทำ X ใน 5 นาที")<br>• โปรโมทในโซเชียลอื่น เช่น IG, Facebook<br>• ตอบคอมเมนต์เพื่อสร้าง社区<br>มีช่องแล้วหรือยังครับ?',
-            youtube_monetization: 'สร้างรายได้จาก YouTube มีหลายวิธี:<br>' +
-                '• <b>เปิด Monetization</b> - ต้องมี 1,000 ซับและ 4,000 ชั่วโมงรับชมใน 12 เดือน รายได้จากโฆษณาขึ้นกับยอดวิวและ CPM (เฉลี่ย $0.5-$5 ต่อ 1,000 วิว)<br>' +
-                '• <b>Affiliate Links</b> - แปะลิงก์สินค้าในคำอธิบายคลิป ได้ค่าคอมมิชชันเมื่อซื้อ<br>' +
-                '• <b>สปอนเซอร์</b> - แบรนด์จ้างทำคลิป เริ่มได้เมื่อมีผู้ติดตามหลักพัน<br>' +
-                '• <b>Super Chat</b> - รับเงินจากผู้ชมระหว่างสตรีมสด<br>' +
-                'อยากรู้วิธีไหนเพิ่มเติมไหมครับ?',
-            // Intent ย่อยเพื่อตอบคำถามเฉพาะ
-            youtube_subscriber_time: 'ถึง 1,000 ซับใช้เวลานานแค่ไหนขึ้นกับ:<br>' +
-                '• ความถี่โพสต์ - สัปดาห์ละ 1-2 คลิปช่วยได้<br>' +
-                '• คุณภาพคลิป - Thumbnail ดึงดูด คอนเทนต์น่าสนใจ<br>' +
-                '• โปรโมท - แชร์ในโซเชียลหรือ collab กับช่องอื่น<br>' +
-                'เฉลี่ยแล้วใช้เวลา 3-12 เดือน ถ้าทำต่อเนื่องอาจถึงเป้าไวขึ้น คุณโพสต์คลิปกี่คลิปแล้วครับ?',
-            youtube_affiliate_setup: 'วิธีใส่ Affiliate Links ใน YouTube:<br>' +
-                '1. สมัครโปรแกรม Affiliate เช่น Amazon Associates, Shopee Affiliate<br>' +
-                '2. เลือกสินค้าที่เกี่ยวข้องกับคอนเทนต์<br>' +
-                '3. คัดลอกลิงก์วางในคำอธิบายคลิป (Description)<br>' +
-                '4. บอกผู้ชมให้คลิกลิงก์ เช่น "ลิงก์ซื้อของอยู่ในคำอธิบายนะ"<br>' +
-                'เคยลอง Affiliate กับแพลตฟอร์มไหนรึยังครับ?',
-            youtube_streaming_income: 'สตรีมสดใน YouTube หาเงินได้:<br>' +
-                '• <b>Super Chat</b> - ผู้ชมจ่ายเงินเพื่อไฮไลต์ข้อความ เริ่มต้น $1-$500 ต่อครั้ง<br>' +
-                '• <b>Super Stickers</b> - ขายสติกเกอร์ในแชท<br>' +
-                '• ต้องเปิด Monetization ก่อน และมีผู้ชมสม่ำเสมอ<br>' +
-                'เคล็ดลับ: สตรีมตอนคนว่าง (เย็น-ค่ำ) และชวนคนดูมีส่วนร่วม<br>' +
-                'อยากลองสตรีมเรื่องอะไรครับ?'
-
-        };
-
-        const suggestionQuestions = {
-            problem: ['แม่พิมพ์เสียหายเกิดจากอะไร', 'อุณหภูมิไม่เหมาะสมแก้ยังไง', 'ความดันไม่พอดียังไง'],
-            injection_problem: ['แม่พิมพ์เสียหายเกิดจากอะไร', 'แก้ปัญหาอุณหภูมิไม่เหมาะสมยังไง', 'ความดันไม่พอดียังไง'],
-            mold_damage: ['ทำไมแม่พิมพ์ถึงเสียหาย', 'วิธีบำรุงรักษาแม่พิมพ์', 'สาเหตุการสึกหรอของแม่พิมพ์'],
-            temperature: ['อุณหภูมิต่ำเกินไปแก้ยังไง', 'อุณหภูมิสูงเกินไปมีผลอะไร', 'ตั้งอุณหภูมิสำหรับ ABS ยังไง'],
-            pressure: ['ความดันสูงเกินไปแก้ยังไง', 'ความดันต่ำเกินไปทำให้ชิ้นงานยังไง', 'ปรับความดันให้เหมาะสมยังไง'],
-            material: ['วัสดุ ABS เหมาะกับอะไร', 'PP ใช้ทำอะไรได้บ้าง', 'Nylon ต่างจาก PC ยังไง'],
-            technique: ['เทคนิคการฉีดพลาสติกมีอะไรบ้าง', 'การตั้งค่าเครื่องฉีด', 'ออกแบบแม่พิมพ์ยังไง'],
-            course: ['หลักสูตรพื้นฐานสอนอะไร', 'หลักสูตรออกแบบแม่พิมพ์', 'หลักสูตรขั้นสูงเหมาะกับใคร'],
-            product: ['มีสินค้าประเภทไหนบ้าง', 'อยากดูแม่พิมพ์ฉีดพลาสติก', 'เครื่องฉีดพลาสติกรุ่นไหนดี'],
-            price: ['ราคาแม่พิมพ์เริ่มต้นที่เท่าไหร่', 'เครื่องฉีดราคาเท่าไหร่', 'ค่าบริการออกแบบแม่พิมพ์'],
-            service: ['บริการให้คำปรึกษามีอะไรบ้าง', 'ออกแบบแม่พิมพ์ใช้เวลานานไหม', 'ซ่อมเครื่องจักรราคาเท่าไหร่'],
-            order: ['สั่งซื้อผ่านไลน์ยังไง', 'โทรสั่งซื้อได้ที่เบอร์ไหน', 'สั่งผ่านเว็บไซต์ต้องทำยังไง'],
-            contact: ['ติดต่อผ่านโทรศัพท์เบอร์อะไร', 'อีเมลติดต่อคืออะไร', 'ที่อยู่สำนักงานอยู่ที่ไหน'],
-            // การท่องเที่ยว
-            travel: ['ชอบเที่ยวแบบไหน', 'การท่องเที่ยวมีประโยชน์ยังไง', 'มีเคล็ดลับเที่ยวดีๆ ไหม'],
-            travel_benefits: ['เที่ยวแล้วลดความเครียดจริงไหม', 'เรียนรู้วัฒนธรรมจากการเที่ยวได้ยังไง', 'เที่ยวช่วยเพิ่มความมั่นใจยังไง'],
-            travel_tips: ['วางแผนเที่ยวต้องทำยังไง', 'พกอะไรไปเที่ยวบ้าง', 'คุยกับคนท้องถิ่นดีไหม'],
-
-            // การใช้ชีวิต
-            daily_life: ['ดูแลตัวเองยังไงทุกวัน', 'จัดการงานกับชีวิตส่วนตัวยังไง', 'กินอะไรดี'],
-            life_balance: ['หาสมดุลชีวิตยังไง', 'พักระหว่างวันทำยังไง', 'ตั้งเป้าหมายชีวิตยังไง'],
-            life_challenges: ['เจอปัญหาชีวิตแก้ยังไง', 'ขอคำแนะนำจากใครดี', 'มองปัญหายังไงให้เป็นบวก'],
-
-            // ปรัชญา
-            philosophy: ['ปรัชญาชีวิตคืออะไร', 'อิคิไกคืออะไร', 'ลัทธิสโตอิกช่วยชีวิตยังไง'],
-            ikigai: ['หาสิ่งที่รักยังไง', 'รู้ได้ยังไงว่าถนัดอะไร', 'อิคิไกช่วยชีวิตยังไง'],
-            stoicism: ['ควบคุมอะไรในชีวิตได้บ้าง', 'ปล่อยวางยังไง', 'มองปัญหาเป็นโอกาสยังไง'],
-
-            // การให้กำลังใจ
-            encouragement: ['ให้กำลังใจตัวเองยังไง', 'วันนี้เหนื่อยทำยังไงดี', 'มีคำพูดดีๆ ไหม'],
-            overcome_failure: ['ล้มแล้วลุกยังไง', 'ความล้มเหลวสอนอะไร', 'เริ่มใหม่ต้องทำยังไง'],
-            self_motivation: ['ชมตัวเองยังไง', 'ตั้งเป้าหมายยังไงให้สำเร็จ', 'รู้สึกมีค่าทำยังไง'],
-            unknown: [
-                ////'ฉีดพลาสติกแล้วชิ้นงานบิดเบี้ยว แก้ยังไงดี?',
-                'ทำคลิป Reel สั้นๆ ให้ปังต้องเริ่มยังไง?',
-                'ธุรกิจออนไลน์อะไรกำลังมาแรงในปี 2025?',
-                'มีวิธีให้กำลังใจตัวเองตอนท้อบ้างไหม?',
-                'เที่ยวไหนดีให้ผ่อนคลายสุดๆ?',
-                'สิทธิบัตรทองใช้ทำอะไรได้บ้างในชีวิตจริง?',
-                'หาคอร์สฟรีสอนทำ YouTube ได้ที่ไหน?',
-                'ปรัชญาชีวิตแบบไหนช่วยให้มีความสุข?'
-            ],
-            // เพิ่มหัวข้อใหม่ตาม greeting
-            mobile_learning: ['Mobile Learning เรียนอะไรได้บ้าง', 'คอร์ส Mobile Learning ใช้เวลานานไหม', 'Mobile Learning เหมาะกับใคร'],
-            affiliatepro: ['AffiliatePro ทำงานยังไง', 'สมัคร AffiliatePro ได้ที่ไหน', 'รายได้จาก AffiliatePro เฉลี่ยเท่าไหร่'],
-            market: ['ตลาดช๊อปฟินมีสินค้าอะไรบ้าง', 'วิธีซื้อของในตลาดช๊อปฟิน', 'สินค้าในตลาดช๊อปฟินราคาเท่าไหร่'],
-            // หัวข้อชีวิตประจำวัน
-            license_process: ['ขั้นตอนทำใบขับขี่ใหม่คืออะไร', 'ต้องตรวจสุขภาพที่ไหน', 'จองคิวออนไลน์ยังไง'],
-            id_card: ['วิธีทำบัตรประชาชนหายทำยังไง', 'ต่ออายุบัตรประชาชนต้องใช้เอกสารอะไร', 'ทำบัตรประชาชนฟรีไหม'],
-            welfare: ['บัตรสวัสดิการแห่งรัฐมีสิทธิอะไรบ้าง', 'ลงทะเบียนบัตรคนจนยังไง', 'ตรวจสอบผลบัตรสวัสดิการที่ไหน'],
-            tax: ['ยื่นภาษีเงินได้ต้องใช้เอกสารอะไร', 'ยื่นภาษีออนไลน์ยังไง', 'กำหนดยื่นภาษีคือเมื่อไหร่'],
-            legal_rights: ['แจ้งความต้องไปที่ไหน', 'สิทธิเมื่อถูกจับกุมมีอะไรบ้าง', 'ขอความช่วยเหลือทางกฎหมายได้ที่ไหน'],
-            healthcare: ['สิทธิบัตรทองใช้ยังไง', 'ประกันสังคมเปลี่ยนโรงพยาบาลได้ไหม', 'กรณีฉุกเฉินโทรสายไหน'],
-            emergency: ['เบอร์ฉุกเฉินรถพยาบาลคืออะไร', 'โทรหาตำรวจได้ที่เบอร์ไหน', 'เบอร์ช่วยเหลือชาวต่างชาติคืออะไร'],
-            education: ['เรียนออนไลน์ฟรีมีที่ไหนบ้าง', 'ทุนการศึกษาจากรัฐบาลมีไหม', 'สายด่วนกระทรวงศึกษาคืออะไร'],
-            elderly_disability: ['เบี้ยยังชีพผู้สูงอายุได้เท่าไหร่', 'สิทธิผู้พิการมีอะไรบ้าง', 'ลงทะเบียนผู้พิการต้องไปที่ไหน'],
-            lottery: ['วิ่งบน-ล่างเล่นยังไงให้ได้กำไร', 'อะไรคือรูด 19', 'รูด 19 ประตูดีกว่าวิ่งบน-ล่างไหม', 'แทงโต๊ดกี่ชุดถึงจะคุ้มค่า'],
-
-            labor_law: ['วันหยุดตามกฎหมายแรงงานมีกี่วัน', 'ค่าจ้างขั้นต่ำเท่าไหร่', 'ลาป่วยได้กี่วัน'],
-
-            online_business: ['เริ่มธุรกิจออนไลน์ต้องทำอะไรบ้าง', 'ช่องทางไหนเหมาะกับมือใหม่', 'ขายอะไรดีในออนไลน์'],
-            online_sales_bulletins_channels: ['ช่องทางขายไหนดีสุด', 'Marketplace กับเว็บไซต์ต่างกันยังไง', 'ขายใน TikTok ทำยังไง'],
-            online_business_start: ['หาสินค้าขายยังไง', 'วิเคราะห์คู่แข่งทำยังไง', 'ทำการตลาดครั้งแรกเริ่มยังไง'],
-            product_selection: ['สินค้าอะไรขายดีในออนไลน์', 'Dropshipping คืออะไร', 'ขายคอร์สออนไลน์ดีไหม'],
-            platform_setup: ['ตั้งค่าเว็บไซต์ยังไง', 'ลงสินค้าใน Shopee ทำยังไง', 'ตั้งร้านใน Facebook ต้องทำอะไรบ้าง'],
-            online_marketing: ['โฆษณา Facebook Ads ยังไง', 'ทำ SEO เริ่มตรงไหน', 'ใช้ Influencer คุ้มไหม'],
-            scaling_online_business: ['เพิ่มช่องทางขายยังไง', 'ขายไปต่างประเทศทำยังไง', 'ลดต้นทุนธุรกิจได้ยังไง'],
-            // การทำคลิป Reel
-            reel_creation: [
-                'อยากให้ช่วยคิดไอเดียคลิป Reel ไหมครับ?', 'ทำคลิป Reel ความยาวเท่าไหร่ดี?', 'ใช้เพลงไหนใน Reel ถึงจะปัง?'],
-            reel_tips: ['โพสต์ Reel ตอนไหนคนดูเยอะสุด?', 'แฮชแท็กไหนช่วยเพิ่มยอดวิว Reel บ้าง?', 'ทำยังไงให้คลิป Reel เข้าเทรนด์?'],
-            reel_tools: [
-                'แอปตัดต่อ Reel ตัวไหนดีที่สุด?',
-                'ใช้ Canva ทำ Reel ได้ยังไง?',
-                'อยากลองตัดต่อด้วย CapCut ต้องเริ่มยังไง?'
-            ],
-
-            // การสร้างรายได้จากคลิป
-            monetize_clips: [
-                'แพลตฟอร์มไหนจ่ายเงินให้คลิปดีสุด?',
-                'รับสปอนเซอร์ต้องมีผู้ติดตามกี่คน?',
-                'ขายของในคลิปเริ่มยังไงดี?'
-            ],
-            monetize_tips: [
-                'ทำยังไงให้คลิปมีคุณภาพสูง?',
-                'Call-to-Action ในคลิปใส่ยังไงดี?',
-                'วิเคราะห์ยอดวิวคลิปดูตรงไหน?'
-            ],
-            monetize_platforms: [
-                'YouTube จ่ายเงินยังไงบ้าง?',
-                'TikTok Creator Fund เข้าร่วมยังไง?',
-                'Facebook Reels ได้เงินจริงไหม?'
-            ],
-
-            // การทำ YouTube
-            youtube_start: [
-                'ทำช่อง YouTube เกี่ยวกับอะไรดี?',
-                'ถ่ายคลิปด้วยมือถือได้ไหม?',
-                'ตั้งชื่อช่อง YouTube ยังไงให้คนจำ?'
-            ],
-            youtube_growth: [
-                'ทำ Thumbnail ยังไงให้คนคลิก?',
-                'โปรโมทช่อง YouTube ใน TikTok ได้ไหม?',
-                'ตอบคอมเมนต์ช่วยเพิ่มยอดวิวจริงหรือ?'
-            ],
-            youtube_monetization: [
-                'ถึง 1,000 ซับต้องใช้เวลากี่เดือน?',
-                'ใส่ Affiliate Links ใน YouTube ยังไง?',
-                'สตรีมสดใน YouTube หาเงินได้ไหม?'
-            ]
-        };
-        // สร้างอินสแตนซ์
-        const nlpService = new NLPService();
-        const knowledgeBase = new KnowledgeBase(responses);
-        const analytics = new Analytics();
-
-        // เริ่มทำงานเมื่อหน้าเว็บโหลดเสร็จ
-        document.addEventListener('DOMContentLoaded', function () {
-            // สร้างอนุภาคสำหรับ Hero Section
-            createParticles();
-
-            // ตั้งค่าอนิเมชันพิมพ์ดีด
-            setupTypingAnimation();
-
-            // ตั้งค่า Chatbot
-            setupChatbot();
-
-            // ตั้งค่าการเลื่อนแบบนุ่มนวล
-            setupSmoothScrolling();
-
-            // ตั้งค่าปุ่มลอย
-            setupFloatingButton();
-        });
-        function getSuggestions(intent) {
-            try {
-                if (!suggestionQuestions[intent] || !Array.isArray(suggestionQuestions[intent])) {
-                    return suggestionQuestions['unknown'] || [];
-                }
-                return suggestionQuestions[intent];
-            } catch (e) {
-                console.error("Error getting suggestions:", e);
-                return [];
-            }
-        }
-        // ฟังก์ชันสร้างอนุภาค
-        function createParticles() {
-            const container = document.querySelector('.particles-container');
-            const particleCount = 30;
-
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.style.position = 'absolute';
-                particle.style.width = `${Math.random() * 10 + 5}px`;
-                particle.style.height = particle.style.width;
-                particle.style.background = `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.1})`;
-                particle.style.borderRadius = '50%';
-                particle.style.top = `${Math.random() * 100}%`;
-                particle.style.left = `${Math.random() * 100}%`;
-
-                const duration = Math.random() * 20 + 10;
-                const delay = Math.random() * 5;
-                particle.style.animation = `floatParticle ${duration}s linear ${delay}s infinite`;
-
-                container.appendChild(particle);
-            }
-
-            // เพิ่ม CSS สำหรับอนุภาค
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes floatParticle {
-                    0% { 
-                        transform: translate(0, 0);
-                        opacity: 0;
-                    }
-                    10% { opacity: 1; }
-                    90% { opacity: 1; }
-                    100% { 
-                        transform: translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px);
-                        opacity: 0;
-                    }
-                }
-            `;
-            document.head.appendChild(style);
-        }
-
-        // ฟังก์ชันตั้งค่าอนิเมชันพิมพ์ดีด
-        function setupTypingAnimation() {
-            const typingText = document.querySelector('.typing-text');
-            const text = typingText.textContent;
-            typingText.textContent = '';
-            typingText.style.width = '0';
-            typingText.style.animation = `typing 3s steps(${text.length}) 1s 1 normal both, 
-                                         blinkCursor 0.75s step-end infinite`;
-
-            setTimeout(() => {
-                typingText.textContent = text;
-                typingText.style.borderRight = 'none';
-            }, 4000);
-        }
-
-        // ฟังก์ชันตั้งค่า Chatbot
-        function setupChatbot() {
-            const chatbotToggle = document.getElementById('chatbotToggle');
-            const chatbotContainer = document.getElementById('chatbotContainer');
-            const chatbotClose = document.getElementById('chatbotClose');
-            const chatbotSend = document.getElementById('chatbotSend');
-            const chatbotInput = document.getElementById('chatbotInput');
-            const chatbotMessages = document.getElementById('chatbotMessages');
-            const authContainer = document.getElementById('authContainer');
-            const submitActivationCode = document.getElementById('submitActivationCode');
-            const closeAuthBtn = document.getElementById('closeAuthBtn');
-            const activationCodeInput = document.getElementById('activationCodeInput');
-            const remainingQuestions = document.getElementById('remainingQuestions');
-
-            // อัพเดตจำนวนคำถามที่เหลือ
-            updateRemainingQuestions();
-
-            // ตั้งค่าอีเวนต์
-            chatbotToggle.addEventListener('click', toggleChatbot);
-            chatbotClose.addEventListener('click', closeChatbot);
-            chatbotSend.addEventListener('click', sendMessage);
-            chatbotInput.addEventListener('keypress', (e) => e.key === 'Enter' && sendMessage());
-            submitActivationCode.addEventListener('click', verifyActivationCode);
-            closeAuthBtn.addEventListener('click', closeAuthModal);
-
-            // ฟังก์ชันเปิด/ปิด Chatbot
-            function toggleChatbot() {
-                chatbotContainer.classList.toggle('show');
-                if (!isWelcomeMessageShown) {
-                    showWelcomeMessage();
-                    isWelcomeMessageShown = true;
-                }
-            }
-
-            function closeChatbot() {
-                chatbotContainer.classList.remove('show');
-            }
-
-            // ฟังก์ชันส่งข้อความ
-            function sendMessage() {
-                const message = chatbotInput.value.trim();
-                if (!message) return;
-
-                if (!isLoggedIn && questionCount >= maxQuestions) {
-                    addMessage(responses.limitReached, 'bot-message');
-                    showAuthModal();
-                    return;
-                }
-
-                addMessage(message, 'user-message');
-                chatbotInput.value = '';
-                if (!isLoggedIn) {
-                    questionCount++;
-                    localStorage.setItem('questionCount', questionCount);
-                    updateRemainingQuestions();
-                }
-
-                setTimeout(async () => {
-                    const nlpResult = nlpService.parseInput(message);
-                    const botResponse = await getBotResponse(nlpResult);
-                    const suggestions = getSuggestions(nlpResult.intent);
-                    addMessageWithSuggestions(botResponse, suggestions, 'bot-message');
-
-                    // บันทึกสถิติ
-                    analytics.trackQuestion(nlpResult.intent, message, botResponse !== responses.default);
-                }, 800);
-            }
-            async function sendMessage() {
-                const message = chatbotInput.value.trim();
-                if (!message) return;
-
-                if (!isLoggedIn && questionCount >= maxQuestions) {
-                    addMessage(responses.limitReached, 'bot-message');
-                    showAuthModal();
-                    return;
-                }
-
-                addMessage(message, 'user-message');
-                chatbotInput.value = '';
-
-                if (!isLoggedIn) {
-                    questionCount++;
-                    localStorage.setItem('questionCount', questionCount);
-                    updateRemainingQuestions();
-                }
-
-                const botResponse = await getBotResponse(nlpService.parseInput(message));
-                const suggestions = getSuggestions(nlpService.parseInput(message).intent);
-                addMessageWithSuggestions(botResponse, suggestions, 'bot-message');
-
-                analytics.trackQuestion(nlpService.parseInput(message).intent, message, botResponse !== responses.default);
-            }
-            // ฟังก์ชันรับคำตอบจากระบบ
-            async function getBotResponse(nlpResult) {
-                const { intent, entities } = nlpResult;
-                let response;
-
-                const similarQuestion = nlpService.findSimilarQuestion(nlpResult.original, Object.keys(responses));
-                if (similarQuestion) {
-                    response = responses[similarQuestion] || responses.default;
-                } else {
-                    response = await knowledgeBase.getResponse(intent, entities);
-                }
-
-                if (response === responses.default && !isLoggedIn) {
-                    response += ' ถ้าคุณต้องการคำตอบที่แม่นยำยิ่งขึ้น กรุณากรอกรหัสผ่านเพื่อใช้งานฟีเจอร์ขั้นสูง';
-                }
-
-                if (response !== responses.default && !responses[`${intent}_${JSON.stringify(entities)}`]) {
-                    await knowledgeBase.addLearnedResponse(intent, entities, response);
-                }
-
-                return response;
-            }
-
-            // ฟังก์ชันหาคำถามแนะนำ
-            function getSuggestions(intent) {
-                const baseSuggestions = suggestionQuestions[intent] || suggestionQuestions['unknown'];
-
-                // เพิ่มคำถามที่เกี่ยวข้องจากสถิติ
-                const popularIntents = analytics.getPopularIntents();
-                if (popularIntents.length > 0 && intent === 'unknown') {
-                    return [...baseSuggestions, ...popularIntents.map(i => suggestionQuestions[i.key][0])];
-                }
-
-                return baseSuggestions;
-            }
-
-            // ฟังก์ชันเพิ่มข้อความพร้อมคำถามแนะนำ
-            function addMessageWithSuggestions(text, suggestions, className) {
-                const now = new Date();
-                const timeString = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('chatbot-message', className);
-
-                let suggestionHtml = '';
-                if (suggestions && suggestions.length > 0) {
-                    suggestionHtml = '<div class="quick-questions">';
-                    suggestions.forEach(suggestion => {
-                        suggestionHtml += `<div class="quick-question" onclick="askQuickQuestion('${suggestion}')">${suggestion}</div>`;
-                    });
-                    suggestionHtml += '</div>';
-                }
-
-                messageDiv.innerHTML = `
-                    <div class="message-content">${text}${suggestionHtml}</div>
-                    <div class="message-time">${timeString}</div>
-                `;
-                chatbotMessages.appendChild(messageDiv);
-                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-
-                // เพิ่มปุ่ม Feedback
-                if (className === 'bot-message' && text !== responses.greeting) {
-                    addFeedbackButtons(messageDiv, text);
-                }
-            }
-
-            // ฟังก์ชันเพิ่มปุ่ม Feedback
-            function addFeedbackButtons(messageDiv, response) {
-                const feedbackDiv = document.createElement('div');
-                feedbackDiv.className = 'feedback-buttons mt-2';
-                feedbackDiv.innerHTML = `
-                    <span class="feedback-text">คำตอบนี้มีประโยชน์ไหม?</span>
-                    <button class="btn btn-sm btn-success me-1 feedback-btn" data-helpful="true">
-                        <i class="fas fa-thumbs-up"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger feedback-btn" data-helpful="false">
-                        <i class="fas fa-thumbs-down"></i>
-                    </button>
-                `;
-
-                messageDiv.querySelector('.message-content').appendChild(feedbackDiv);
-
-                feedbackDiv.querySelectorAll('.feedback-btn').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const isHelpful = btn.getAttribute('data-helpful') === 'true';
-                        knowledgeBase.addFeedback(chatbotMessages.lastChild.textContent, response, isHelpful);
-                        feedbackDiv.innerHTML = '<span class="text-muted">ขอบคุณสำหรับ Feedback!</span>';
-                    });
-                });
-            }
-
-            // ฟังก์ชันแสดงหน้าต่าง Authentication
-            function showAuthModal() {
-                authContainer.style.display = 'flex';
-                activationCodeInput.focus();
-            }
-
-            function closeAuthModal() {
-                authContainer.style.display = 'none';
-            }
-
-            function verifyActivationCode() {
-                const code = activationCodeInput.value.trim();
-                if (!code) {
-                    alert('กรุณากรอกรหัสผ่าน');
-                    return;
-                }
-
-                if (!code.match(/^imt\d{3}n$/)) {
-                    alert('รูปแบบรหัสไม่ถูกต้อง กรุณากรอกในรูปแบบ "imtxxxn');
-                    return;
-                }
-
-                if (activationCodes.includes(code)) {
-                    isLoggedIn = true;
-                    questionCount = 0;
-                    localStorage.setItem('isLoggedIn', 'true');
-                    localStorage.setItem('questionCount', '0');
-                    addMessage('ยินดีต้อนรับ! คุณสามารถถามคำถามได้ไม่จำกัด', 'bot-message');
-                    closeAuthModal();
-                    activationCodeInput.value = '';
-                    updateRemainingQuestions();
-                } else {
-                    alert('รหัสผ่านไม่ถูกต้อง กรุณาตรวจสอบอีกครั้งหรือติดต่อผู้ดูแลระบบ');
-                }
-            }
-
-            // ฟังก์ชันอัพเดตจำนวนคำถามที่เหลือ
-            function updateRemainingQuestions() {
-                const remaining = isLoggedIn ? '∞' : maxQuestions - questionCount;
-                remainingQuestions.textContent = remaining;
-                if (!isLoggedIn) {
-                    if (remaining <= 2) remainingQuestions.style.backgroundColor = '#ff4757';
-                    else if (remaining <= 0) remainingQuestions.style.backgroundColor = '#dc3545';
-                    else remainingQuestions.style.backgroundColor = '#28a745';
-                } else {
-                    remainingQuestions.style.backgroundColor = '#28a745';
-                }
-            }
-
-            // ฟังก์ชันเพิ่มข้อความใน Chat
-            function addMessage(text, className) {
-                const now = new Date();
-                const timeString = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('chatbot-message', className);
-
-                messageDiv.innerHTML = `
-                    <div class="message-content">${text}</div>
-                    <div class="message-time">${timeString}</div>
-                `;
-                chatbotMessages.appendChild(messageDiv);
-                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-            }
-
-            function showWelcomeMessage() {
-                let welcomeMessage = responses.greeting;
-                if (!isLoggedIn) {
-                    welcomeMessage += ' พี่มีคำถามเหลือ ' + (maxQuestions - questionCount) + ' คำถามครับ';
-                } else {
-                    welcomeMessage += ' ถ้าพี่รู้จักพี่ wiz ได้ code มาสามารถถามได้ไม่จำกัดเลยครับ!';
-                }
-
-                welcomeMessage += `
-                            
-                <div class="quick-questions">
-                    <div class="quick-question" onclick="askQuickQuestion('ทำ YouTube หาเงินยังไงในปี 2025?')">ทำ YouTube หาเงินยังไงในปี 2025?</div>
-                    <div class="quick-question" onclick="askQuickQuestion('เริ่มธุรกิจออนไลน์ง่ายๆ ทำไง?')">เริ่มธุรกิจออนไลน์ง่ายๆ ทำไง?</div>
-                    <div class="quick-question" onclick="askQuickQuestion('ลดความเครียดจากงานได้ยังไงบ้าง?')">ลดความเครียดจากงานได้ยังไงบ้าง?</div>
-                </div>
-            `;
-                addMessage(welcomeMessage, 'bot-message');
-            }
-
-            // ฟังก์ชันสำหรับคำถามด่วน
-            window.askQuickQuestion = async function (question) {
-                if (!isLoggedIn && questionCount >= maxQuestions) {
-                    addMessage(responses.limitReached, 'bot-message');
-                    showAuthModal();
-                    return;
-                }
-                addMessage(question, 'user-message');
-                if (!isLoggedIn) {
-                    questionCount++;
-                    localStorage.setItem('questionCount', questionCount);
-                    updateRemainingQuestions();
-                }
-                setTimeout(async () => {
-                    const nlpResult = nlpService.parseInput(question);
-                    const botResponse = await getBotResponse(nlpResult);
-                    const suggestions = getSuggestions(nlpResult.intent);
-                    addMessageWithSuggestions(botResponse, suggestions, 'bot-message');
-
-                    // บันทึกสถิติ
-                    analytics.trackQuestion(nlpResult.intent, question, botResponse !== responses.default);
-                }, 500);
-            };
-        }
-
-        // ฟังก์ชันตั้งค่าการเลื่อนแบบนุ่มนวล
-        function setupSmoothScrolling() {
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    document.querySelector(this.getAttribute('href')).scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                });
-            });
-        }
-
-        // ฟังก์ชันตั้งค่าปุ่มลอย
-        function setupFloatingButton() {
-            const floatingBtn = document.querySelector('.floating-btn');
-            floatingBtn.style.animation = 'float 3s ease-in-out infinite';
-        }
     </script>
 </body>
-
 </html>
