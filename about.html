@@ -3,423 +3,260 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="เรียนรู้เพิ่มเติมเกี่ยวกับ Wizmobiz by Kruwitkub - แหล่งความรู้และเครื่องมือสำหรับการเรียนรู้และธุรกิจออนไลน์">
-    <meta name="keywords" content="Wizmobiz, Kruwitkub, Injection Molding, Mobile Learning, AffiliatePro">
-    <title>เกี่ยวกับ Wizmobiz</title>
+    <meta name="description" content="เกี่ยวกับ Wizmobiz - ผู้พัฒนา AI Assistant สำหรับงานฉีดพลาสติก โดย อ.วิทยา ครูวิทคับ">
+    <meta name="keywords" content="Wizmobiz, Injection Molding, AI, LINE Bot, ครูวิทคับ, วิทยา">
+    <title>เกี่ยวกับเรา | Wizmobiz - Injection Molding AI</title>
+    
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome สำหรับไอคอน -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- AOS CSS -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
-    <!-- Custom CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --primary-color: #FF6F61;
-            --secondary-color: #40C4FF;
-            --accent-color: #FFD740;
+            --line-green: #00B900;
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-color: #06C755;
             --dark-color: #2D3436;
-            --light-color: #F5F7FA;
+            --light-color: #F8F9FA;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Kanit', sans-serif;
-            background: linear-gradient(180deg, var(--light-color) 0%, #FFFFFF 100%);
+            background: var(--light-color);
             color: var(--dark-color);
         }
 
         /* Navbar */
         .navbar {
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 2px 30px rgba(0, 0, 0, 0.1);
             padding: 15px 0;
         }
 
         .navbar-brand {
             font-weight: 700;
-            color: var(--primary-color);
             font-size: 1.5rem;
-        }
-
-        .navbar-brand:hover {
-            color: var(--primary-color);
+            background: linear-gradient(135deg, var(--line-green), var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .nav-link {
             color: var(--dark-color);
             font-weight: 500;
-            padding: 8px 15px;
-            border-radius: 20px;
+            padding: 10px 20px;
+            border-radius: 25px;
             transition: all 0.3s ease;
         }
 
         .nav-link:hover, .nav-link.active {
-            color: var(--secondary-color);
-            background-color: rgba(64, 196, 255, 0.1);
+            color: var(--line-green);
+            background: rgba(0, 185, 0, 0.1);
         }
 
         /* Hero Section */
         .hero-section {
-            position: relative;
-            overflow: hidden;
-            padding: 150px 0 100px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            padding: 120px 0 80px;
             color: white;
             text-align: center;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-        }
-
-        .parallax-bubble {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 50%;
-            animation: float 20s infinite linear;
-            opacity: 0.8;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0) rotate(0deg); }
-            100% { transform: translateY(-100vh) rotate(360deg); }
         }
 
         .hero-section h1 {
+            font-size: 3rem;
             font-weight: 700;
-            font-size: 3.5rem;
             margin-bottom: 20px;
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
         }
 
-        .hero-section .lead {
-            font-size: 1.3rem;
-            max-width: 700px;
-            margin: 0 auto 30px;
+        /* About Content */
+        .about-content {
+            padding: 80px 0;
         }
 
-        /* About Section */
-        .about-section {
-            padding: 100px 0;
-            background-color: #FFFFFF;
+        .founder-card {
+            background: white;
+            border-radius: 30px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
         }
 
-        .about-section h2 {
-            color: var(--primary-color);
-            font-size: 2.5rem;
-            margin-bottom: 30px;
-        }
-
-        .about-section img {
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }
-
-        .about-section img:hover {
-            transform: scale(1.02);
-        }
-
-        .feature-icon {
-            width: 80px;
-            height: 80px;
-            background: var(--secondary-color);
-            border-radius: 20px;
+        .founder-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--line-green), var(--primary-color));
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 20px;
-            transition: all 0.3s ease;
-        }
-
-        .feature-icon i {
+            margin: 0 auto 30px;
+            font-size: 5rem;
             color: white;
+        }
+
+        .founder-name {
             font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 10px;
         }
 
-        .feature-item:hover .feature-icon {
-            transform: rotate(15deg) scale(1.1);
-            background: var(--primary-color);
+        .founder-title {
+            font-size: 1.1rem;
+            color: var(--line-green);
+            font-weight: 600;
+            margin-bottom: 25px;
         }
 
-        /* Values Section */
-        .values-section {
+        .founder-bio {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #555;
+        }
+
+        /* Stats */
+        .stats-section {
+            background: linear-gradient(135deg, var(--line-green), #06C755);
+            padding: 60px 0;
+            color: white;
+        }
+
+        .stat-item { text-align: center; padding: 20px; }
+        .stat-number { font-size: 3rem; font-weight: 700; }
+        .stat-label { font-size: 1rem; opacity: 0.9; }
+
+        /* Mission Section */
+        .mission-section {
             padding: 80px 0;
-            background-color: var(--light-color);
+            background: white;
         }
 
-        .value-card {
-            background-color: #FFFFFF;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            height: 100%;
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 50px;
             text-align: center;
-            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
-        .value-card:hover {
+        .mission-card {
+            background: var(--light-color);
+            border-radius: 20px;
+            padding: 40px;
+            height: 100%;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .mission-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-            border-color: var(--secondary-color);
+            border-color: var(--line-green);
+            box-shadow: 0 20px 40px rgba(0, 185, 0, 0.15);
         }
 
-        /* Team Section */
-        .team-section {
-            padding: 80px 0;
-            background-color: #FFFFFF;
+        .mission-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--line-green), var(--primary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            font-size: 2rem;
+            color: white;
         }
 
-        .team-card {
-            transition: transform 0.3s;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .team-card:hover {
-            transform: translateY(-10px);
-        }
+        .mission-card h4 { font-weight: 700; margin-bottom: 15px; }
+        .mission-card p { color: #666; line-height: 1.7; }
 
         /* CTA Section */
         .cta-section {
-            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
-            color: white;
-            border-radius: 20px;
-            margin: 80px 0;
+            background: linear-gradient(135deg, var(--line-green) 0%, #06C755 100%);
             padding: 80px 0;
             text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cta-section::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.15));
-            transform: rotate(45deg);
-            animation: cta-shine 6s infinite linear;
-        }
-
-        @keyframes cta-shine {
-            0% { transform: translateX(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) rotate(45deg); }
-        }
-
-        .cta-content {
-            position: relative;
-            z-index: 2;
-        }
-
-        .cta-section h2 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-gradient {
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            border: none;
-            color: white;
-            padding: 12px 30px;
-            border-radius: 30px;
-            transition: transform 0.3s;
-        }
-
-        .btn-gradient:hover {
-            transform: scale(1.05);
             color: white;
         }
 
-        /* Social Media Section */
-        .social-media-section {
-            padding: 80px 0;
-            background-color: #FFFFFF;
-            text-align: center;
-        }
-        
-        .social-media-container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .social-media-title {
-            color: var(--primary-color);
-            margin-bottom: 30px;
-            font-size: 1.8rem;
-        }
-        
-        .social-links-large {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            margin-top: 30px;
-        }
-        
-        .social-links-large a {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .social-links-large a:hover {
-            transform: translateY(-5px) scale(1.1);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-        
-        .email-contact {
-            margin-top: 30px;
+        .cta-section h2 { font-size: 2.5rem; font-weight: 700; margin-bottom: 20px; }
+
+        .btn-line {
+            background: white;
+            color: var(--line-green);
+            padding: 18px 50px;
+            border-radius: 50px;
+            font-weight: 700;
             font-size: 1.2rem;
-        }
-        
-        .email-contact a {
-            color: var(--dark-color);
             text-decoration: none;
-            transition: color 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
-        
-        .email-contact a:hover {
-            color: var(--primary-color);
-            text-decoration: underline;
-        }
-        
-        .email-contact i {
-            margin-right: 10px;
-            color: var(--secondary-color);
+
+        .btn-line:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            color: var(--line-green);
         }
 
         /* Footer */
         .footer {
-            background-color: var(--dark-color);
+            background: var(--dark-color);
             color: white;
-            padding: 60px 0 30px;
-            text-align: center;
+            padding: 50px 0 30px;
         }
 
-        .footer a {
-            color: var(--accent-color);
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
             text-decoration: none;
+            margin: 0 15px;
             transition: color 0.3s;
         }
 
-        .footer a:hover {
-            color: #FFCA28;
-            text-decoration: underline;
-        }
+        .footer-links a:hover { color: var(--line-green); }
 
-        .footer .social-links a {
-            color: var(--accent-color);
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
             margin: 0 15px;
-            font-size: 1.8rem;
-            display: inline-block;
-            transition: transform 0.3s;
+            transition: all 0.3s;
         }
 
-        .footer .social-links a:hover {
-            color: #FFCA28;
-            transform: translateY(-5px);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 992px) {
-            .hero-section h1 {
-                font-size: 2.8rem;
-            }
-            
-            .hero-section .lead {
-                font-size: 1.2rem;
-            }
-        }
+        .social-links a:hover { color: var(--line-green); transform: translateY(-3px); }
 
         @media (max-width: 768px) {
-            .hero-section {
-                padding: 120px 0 80px;
-            }
-            
-            .hero-section h1 {
-                font-size: 2.3rem;
-            }
-            
-            .cta-section h2 {
-                font-size: 2rem;
-            }
-            
-            .navbar-brand {
-                font-size: 1.3rem;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .hero-section h1 {
-                font-size: 2rem;
-            }
-            
-            .hero-section .lead {
-                font-size: 1.1rem;
-            }
-            
-            .cta-section {
-                margin: 60px 0;
-                padding: 60px 0;
-            }
-
-            .social-links-large {
-                gap: 15px;
-            }
-            
-            .social-links-large a {
-                width: 50px;
-                height: 50px;
-                font-size: 1.5rem;
-            }
+            .hero-section h1 { font-size: 2rem; }
+            .founder-card { padding: 30px; }
         }
     </style>
 </head>
+
 <body>
-    <!-- Header -->
-    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="index.html">Wizmobiz</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand" href="index.html">
+                <i class="fab fa-line me-2"></i>Wizmobiz
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html">หน้าแรก</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="about.html">เกี่ยวกับ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="injection-molding.html">Injection Molding</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="mobile-learning.html">Mobile Learning</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="affiliatepro.html">AffiliatePro</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html#contact">ติดต่อเรา</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="index.html">หน้าแรก</a></li>
+                    <li class="nav-item"><a class="nav-link" href="injection-molding.html">LINE Bot</a></li>
+                    <li class="nav-item"><a class="nav-link" href="calculator.html">เครื่องคิดเลข</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="about.html">เกี่ยวกับเรา</a></li>
                 </ul>
             </div>
         </div>
@@ -427,115 +264,93 @@
 
     <!-- Hero Section -->
     <section class="hero-section">
-        <!-- เอฟเฟกต์พารัลแลกซ์ -->
-        <div class="parallax-bubble" style="width: 300px; height: 300px; top: 20%; left: 10%; animation-duration: 25s;"></div>
-        <div class="parallax-bubble" style="width: 200px; height: 200px; top: 60%; right: 15%; animation-duration: 30s;"></div>
-        <div class="parallax-bubble" style="width: 150px; height: 150px; top: 30%; right: 20%; animation-duration: 35s;"></div>
-        
-        <div class="container hero-content" data-aos="fade-up">
-            <h1 class="text-glow">เกี่ยวกับ Wizmobiz</h1>
-            <p class="lead">พันธกิจและวิสัยทัศน์ของเราในการสร้างนวัตกรรมการเรียนรู้</p>
+        <div class="container">
+            <h1 data-aos="fade-up">🙋‍♂️ เกี่ยวกับเรา</h1>
+            <p data-aos="fade-up" data-aos-delay="100" style="font-size: 1.3rem; opacity: 0.9;">พัฒนา AI เพื่อทำให้ชีวิตการทำงานฉีดพลาสติกง่ายขึ้น</p>
         </div>
     </section>
 
-    <!-- About Section -->
-    <section class="about-section">
+    <!-- Founder Section -->
+    <section class="about-content">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6" data-aos="fade-right">
-                    <img src="https://via.placeholder.com/600x400" alt="About Us" class="img-fluid">
-                </div>
-                <div class="col-lg-6 mt-5 mt-lg-0" data-aos="fade-left">
-                    <h2>Wizmobiz by Kruwitkub</h2>
-                    <p class="lead">แหล่งความรู้และเครื่องมือที่ช่วยให้คุณเติบโตในด้านการเรียนรู้และธุรกิจออนไลน์</p>
-                    
-                    <div class="row mt-4">
-                        <div class="col-md-6 feature-item" data-aos="fade-up" data-aos-delay="100">
-                            <div class="feature-icon">
-                                <i class="fas fa-rocket"></i>
-                            </div>
-                            <h4>พันธกิจ</h4>
-                            <p>สร้างนวัตกรรมการเรียนรู้ที่เข้าถึงได้ง่ายสำหรับทุกคน</p>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="founder-card text-center" data-aos="fade-up">
+                        <div class="founder-image">
+                            <i class="fas fa-user-tie"></i>
                         </div>
-                        <div class="col-md-6 feature-item" data-aos="fade-up" data-aos-delay="200">
-                            <div class="feature-icon">
-                                <i class="fas fa-eye"></i>
-                            </div>
-                            <h4>วิสัยทัศน์</h4>
-                            <p>เป็นผู้นำด้านการเรียนรู้ดิจิทัลในภูมิภาค</p>
-                        </div>
+                        <h2 class="founder-name">อ.วิทยา (ครูวิทคับ)</h2>
+                        <p class="founder-title">Founder & Developer | Injection Molding Expert</p>
+                        <p class="founder-bio">
+                            ผู้เชี่ยวชาญด้านงานฉีดพลาสติกกว่า 15 ปี และเป็นผู้พัฒนา AI Assistant 
+                            ที่ช่วยให้วิศวกรและช่างเทคนิคสามารถแก้ปัญหาการผลิตได้อย่างรวดเร็ว
+                            <br><br>
+                            ด้วยความเชื่อว่า <strong>"เทคโนโลยีควรทำให้ชีวิตง่ายขึ้น"</strong> 
+                            จึงพัฒนา LINE Bot ที่รวมความรู้และเครื่องมือคำนวณทั้งหมดไว้ในที่เดียว
+                            ให้ทุกคนสามารถเข้าถึงได้ตลอด 24 ชั่วโมง
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Values Section -->
-    <section class="values-section">
+    <!-- Stats Section -->
+    <section class="stats-section">
         <div class="container">
-            <h2 class="text-center mb-5" data-aos="fade-up">ค่านิยมของเรา</h2>
-            <div class="row g-4">
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="value-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-lightbulb"></i>
-                        </div>
-                        <h4>นวัตกรรม</h4>
-                        <p>เรามุ่งมั่นสร้างสรรค์สิ่งใหม่ๆ อยู่เสมอเพื่อพัฒนาประสบการณ์การเรียนรู้</p>
+            <div class="row">
+                <div class="col-6 col-md-3" data-aos="fade-up">
+                    <div class="stat-item">
+                        <div class="stat-number">15+</div>
+                        <div class="stat-label">ปีประสบการณ์</div>
                     </div>
                 </div>
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-                    <div class="value-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <h4>ความร่วมมือ</h4>
-                        <p>เราเชื่อในพลังของ teamwork และชุมชนการเรียนรู้ที่แข็งแกร่ง</p>
+                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="100">
+                    <div class="stat-item">
+                        <div class="stat-number">10+</div>
+                        <div class="stat-label">เครื่องมือคำนวณ</div>
                     </div>
                 </div>
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
-                    <div class="value-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-graduation-cap"></i>
-                        </div>
-                        <h4>การเรียนรู้</h4>
-                        <p>เราเรียนรู้และพัฒนาตนเองอย่างต่อเนื่องเพื่อนำเสนอสิ่งที่ดีที่สุด</p>
+                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="200">
+                    <div class="stat-item">
+                        <div class="stat-number">9</div>
+                        <div class="stat-label">ประเภทปัญหาวินิจฉัย</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="300">
+                    <div class="stat-item">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">พร้อมให้บริการ</div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Team Section -->
-    <section class="team-section">
+    <!-- Mission Section -->
+    <section class="mission-section">
         <div class="container">
-            <h2 class="text-center mb-5" data-aos="fade-up">ทีมงานของเรา</h2>
+            <h2 class="section-title" data-aos="fade-up">🎯 พันธกิจของเรา</h2>
             <div class="row g-4">
+                <div class="col-md-4" data-aos="fade-up">
+                    <div class="mission-card">
+                        <div class="mission-icon"><i class="fas fa-lightbulb"></i></div>
+                        <h4>ทำให้ง่ายขึ้น</h4>
+                        <p>ลดความซับซ้อนในการแก้ปัญหาการผลิต ให้ทุกคนสามารถเข้าใจและปรับแต่งพารามิเตอร์ได้อย่างมั่นใจ</p>
+                    </div>
+                </div>
                 <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="team-card">
-                        <img src="https://via.placeholder.com/400x300" class="img-fluid" alt="Team Member">
-                        <div class="p-4">
-                            <h4>คุณครูวิทกร</h4>
-                            <p class="text-muted">ผู้ก่อตั้งและผู้สอนหลัก</p>
-                        </div>
+                    <div class="mission-card">
+                        <div class="mission-icon"><i class="fas fa-clock"></i></div>
+                        <h4>ประหยัดเวลา</h4>
+                        <p>ลดเวลาในการค้นหาข้อมูลและคำนวณ จากหลายชั่วโมงเหลือเพียงไม่กี่วินาที ด้วย AI ที่พร้อมตอบทันที</p>
                     </div>
                 </div>
                 <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-                    <div class="team-card">
-                        <img src="https://via.placeholder.com/400x300" class="img-fluid" alt="Team Member">
-                        <div class="p-4">
-                            <h4>ทีมพัฒนา</h4>
-                            <p class="text-muted">ผู้สร้างและพัฒนาระบบการเรียนรู้</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
-                    <div class="team-card">
-                        <img src="https://via.placeholder.com/400x300" class="img-fluid" alt="Team Member">
-                        <div class="p-4">
-                            <h4>ทีมสนับสนุน</h4>
-                            <p class="text-muted">ช่วยเหลือและตอบคำถามผู้เรียน</p>
-                        </div>
+                    <div class="mission-card">
+                        <div class="mission-icon"><i class="fas fa-graduation-cap"></i></div>
+                        <h4>แบ่งปันความรู้</h4>
+                        <p>รวบรวมความรู้และประสบการณ์กว่า 15 ปี ให้คนรุ่นใหม่สามารถเรียนรู้และพัฒนาได้เร็วขึ้น</p>
                     </div>
                 </div>
             </div>
@@ -544,86 +359,36 @@
 
     <!-- CTA Section -->
     <section class="cta-section">
-        <div class="container cta-content" data-aos="fade-up">
-            <h2>พร้อมเริ่มต้นเรียนรู้กับเราแล้วหรือยัง?</h2>
-            <p>เข้าร่วมชุมชนผู้เรียนมากกว่า 10,000 คนที่กำลังพัฒนาทักษะของพวกเขาอยู่ตอนนี้</p>
-            <a href="index.html#contact" class="btn btn-light btn-lg px-5 py-3 mt-3">ติดต่อเรา</a>
-        </div>
-    </section>
-
-    <!-- Social Media Section -->
-    <section class="social-media-section" data-aos="fade-up">
         <div class="container">
-            <div class="social-media-container">
-                <h3 class="social-media-title">ติดตามเราบนโซเชียลมีเดีย</h3>
-                <p>ร่วมเป็นส่วนหนึ่งของชุมชนและติดตามอัปเดตล่าสุดจากเรา</p>
-                
-                <div class="social-links-large">
-                    <a href="https://facebook.com/kruwitkub" target="_blank" title="Facebook">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="https://tiktok.com/@kruwitkub" target="_blank" title="TikTok">
-                        <i class="fab fa-tiktok"></i>
-                    </a>
-                    <a href="https://line.me/kruwitkub" target="_blank" title="Line">
-                        <i class="fab fa-line"></i>
-                    </a>
-                    <a href="https://youtube.com/kruwitkub" target="_blank" title="YouTube">
-                        <i class="fab fa-youtube"></i>
-                    </a>
-                </div>
-                
-                <div class="email-contact">
-                    <p><i class="fas fa-envelope"></i> <a href="mailto:support@wizmobiz.com">support@wizmobiz.com</a></p>
-                </div>
-            </div>
+            <h2 data-aos="fade-up">🚀 พร้อมทำให้ชีวิตง่ายขึ้น?</h2>
+            <p data-aos="fade-up" data-aos-delay="100" style="font-size: 1.2rem; margin-bottom: 30px;">เพิ่มเพื่อน LINE Bot วันนี้ ใช้งานฟรี!</p>
+            <a href="https://lin.ee/TipxyCa" target="_blank" class="btn-line" data-aos="fade-up" data-aos-delay="200">
+                <i class="fab fa-line"></i> เพิ่มเพื่อน LINE
+            </a>
         </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4 mb-4 mb-lg-0 text-start">
-                    <h4>Wizmobiz</h4>
-                    <p>แหล่งความรู้และเครื่องมือเพื่อการเรียนรู้และธุรกิจออนไลน์</p>
-                </div>
-                <div class="col-lg-4 mb-4 mb-lg-0">
-                    <h4>ลิงก์ด่วน</h4>
-                    <p>
-                        <a href="about.html">เกี่ยวกับเรา</a> | 
-                        <a href="index.html#contact">ติดต่อเรา</a>
-                    </p>
-                    <p>
-                        <a href="terms.html">เงื่อนไขการให้บริการ</a> | 
-                        <a href="privacy.html">นโยบายความเป็นส่วนตัว</a>
-                    </p>
-                </div>
-                <div class="col-lg-4">
-                    <h4>ติดตามเรา</h4>
-                    <div class="social-links">
-                        <a href="https://facebook.com/kruwitkub" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                        <a href="https://tiktok.com/@kruwitkub" target="_blank"><i class="fab fa-tiktok"></i></a>
-                        <a href="https://line.me/kruwitkub" target="_blank"><i class="fab fa-line"></i></a>
-                        <a href="https://youtube.com/kruwitkub" target="_blank"><i class="fab fa-youtube"></i></a>
-                    </div>
-                </div>
+        <div class="container text-center">
+            <div class="social-links mb-4">
+                <a href="https://lin.ee/TipxyCa" target="_blank"><i class="fab fa-line"></i></a>
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
             </div>
-            <hr class="mt-4 mb-4" style="border-color: rgba(255,255,255,0.1);">
-            <p class="mb-0">© 2025 Wizmobiz by Kruwitkub. All rights reserved.</p>
+            <div class="footer-links mb-4">
+                <a href="index.html">หน้าแรก</a>
+                <a href="about.html">เกี่ยวกับเรา</a>
+                <a href="terms.html">ข้อกำหนด</a>
+                <a href="privacy.html">นโยบายความเป็นส่วนตัว</a>
+            </div>
+            <p style="opacity: 0.7;">© 2025 Wizmobiz by ครูวิทคับ. All Rights Reserved.</p>
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- AOS JS -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true
-        });
-    </script>
+    <script>AOS.init({ duration: 800, once: true });</script>
 </body>
 </html>

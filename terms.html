@@ -3,291 +3,272 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="เงื่อนไขการให้บริการของ Wizmobiz by Kruwitkub และ AffiliatePro">
-    <meta name="keywords" content="Wizmobiz, Kruwitkub, AffiliatePro, Terms of Service">
-    <title>เงื่อนไขการให้บริการ - Wizmobiz</title>
+    <meta name="description" content="ข้อกำหนดการใช้งาน LINE Bot และบริการของ Wizmobiz - Injection Molding AI Assistant">
+    <title>ข้อกำหนดการใช้งาน | Wizmobiz</title>
+    
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome สำหรับไอคอน -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- AOS CSS -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
-    <!-- Custom CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --primary-color: #FF6F61;
-            --secondary-color: #40C4FF;
-            --accent-color: #FFD740;
+            --line-green: #00B900;
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
             --dark-color: #2D3436;
-            --light-color: #F5F7FA;
+            --light-color: #F8F9FA;
         }
 
         body {
             font-family: 'Kanit', sans-serif;
-            background: linear-gradient(180deg, var(--light-color) 0%, #FFFFFF 100%);
+            background: var(--light-color);
             color: var(--dark-color);
         }
 
-        /* Navbar */
         .navbar {
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 2px 30px rgba(0, 0, 0, 0.1);
             padding: 15px 0;
         }
 
         .navbar-brand {
             font-weight: 700;
-            color: var(--primary-color);
             font-size: 1.5rem;
-        }
-
-        .navbar-brand:hover {
-            color: var(--primary-color);
+            background: linear-gradient(135deg, var(--line-green), var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .nav-link {
             color: var(--dark-color);
             font-weight: 500;
-            padding: 8px 15px;
-            border-radius: 20px;
+            padding: 10px 20px;
+            border-radius: 25px;
             transition: all 0.3s ease;
         }
 
-        .nav-link:hover, .nav-link.active {
-            color: var(--secondary-color);
-            background-color: rgba(64, 196, 255, 0.1);
-        }
+        .nav-link:hover { color: var(--line-green); background: rgba(0, 185, 0, 0.1); }
 
-        /* Content Section */
-        .content-section {
-            padding: 80px 0;
-            background-color: #FFFFFF;
-        }
-
-        .content-section h1 {
-            color: var(--primary-color);
-            font-size: 2.5rem;
-            margin-bottom: 30px;
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            padding: 120px 0 60px;
+            color: white;
             text-align: center;
         }
 
-        .content-section h2 {
-            color: var(--dark-color);
-            font-size: 1.8rem;
-            margin-top: 40px;
-            margin-bottom: 20px;
+        .hero-section h1 { font-size: 2.5rem; font-weight: 700; }
+
+        .content-section {
+            padding: 60px 0;
         }
 
-        .content-section p, .content-section li {
-            color: #666;
-            font-size: 1.1rem;
+        .content-card {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .content-card h2 {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin: 30px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-color);
+        }
+
+        .content-card h2:first-child { margin-top: 0; }
+
+        .content-card p, .content-card li {
+            color: #555;
             line-height: 1.8;
+            font-size: 1rem;
         }
 
-        .content-section ul {
+        .content-card ul {
             padding-left: 20px;
         }
 
-        .content-section li {
+        .content-card li {
             margin-bottom: 10px;
         }
 
-        /* Footer */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(0, 185, 0, 0.1), rgba(102, 126, 234, 0.1));
+            border-left: 4px solid var(--line-green);
+            padding: 20px 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .last-updated {
+            text-align: center;
+            color: #888;
+            margin-top: 30px;
+            font-size: 0.9rem;
+        }
+
         .footer {
-            background-color: var(--dark-color);
+            background: var(--dark-color);
             color: white;
-            padding: 60px 0 30px;
+            padding: 40px 0 20px;
             text-align: center;
         }
 
-        .footer a {
-            color: var(--accent-color);
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
             text-decoration: none;
+            margin: 0 15px;
             transition: color 0.3s;
         }
 
-        .footer a:hover {
-            color: #FFCA28;
-            text-decoration: underline;
-        }
+        .footer-links a:hover { color: var(--line-green); }
 
-        .footer .social-links a {
-            color: var(--accent-color);
-            margin: 0 15px;
-            font-size: 1.8rem;
-            display: inline-block;
-            transition: transform 0.3s;
-        }
-
-        .footer .social-links a:hover {
-            color: #FFCA28;
-            transform: translateY(-5px);
-        }
-
-        /* Responsive Design */
         @media (max-width: 768px) {
-            .content-section h1 {
-                font-size: 2rem;
-            }
-
-            .content-section h2 {
-                font-size: 1.5rem;
-            }
-
-            .content-section p, .content-section li {
-                font-size: 1rem;
-            }
+            .content-card { padding: 30px 20px; }
+            .hero-section h1 { font-size: 2rem; }
         }
     </style>
 </head>
+
 <body>
-    <!-- Header -->
-    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="index.html">Wizmobiz</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand" href="index.html">
+                <i class="fab fa-line me-2"></i>Wizmobiz
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html">หน้าแรก</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="about.html">เกี่ยวกับ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="injection-molding.html">Injection Molding</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="mobile-learning.html">Mobile Learning</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="affiliatepro.html">AffiliatePro</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html#contact">ติดต่อเรา</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="index.html">หน้าแรก</a></li>
+                    <li class="nav-item"><a class="nav-link" href="injection-molding.html">LINE Bot</a></li>
+                    <li class="nav-item"><a class="nav-link" href="calculator.html">เครื่องคิดเลข</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">เกี่ยวกับเรา</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Content Section -->
-    <section class="content-section" data-aos="fade-up">
+    <!-- Hero Section -->
+    <section class="hero-section">
         <div class="container">
-            <h1>เงื่อนไขการให้บริการ</h1>
-            <p>
-                ยินดีต้อนรับสู่ Wizmobiz by Kruwitkub! เงื่อนไขการให้บริการนี้ ("เงื่อนไข") เป็นข้อตกลงระหว่างคุณ ("ผู้ใช้") และ Wizmobiz by Kruwitkub ("เรา" หรือ "Wizmobiz") ในการใช้งานเว็บไซต์ <a href="https://wizmobiz.com">https://wizmobiz.com</a> และบริการของเรา รวมถึงแอปพลิเคชัน AffiliatePro การใช้งานเว็บไซต์และบริการของเราถือว่าคุณยอมรับเงื่อนไขนี้
-            </p>
+            <h1>📜 ข้อกำหนดการใช้งาน</h1>
+            <p>Terms of Service</p>
+        </div>
+    </section>
 
-            <h2>1. การยอมรับเงื่อนไข</h2>
-            <p>
-                ผู้ใช้ต้องอ่านและยอมรับเงื่อนไขการให้บริการนี้ก่อนใช้งานเว็บไซต์หรือแอปพลิเคชันของเรา หากคุณไม่ยอมรับเงื่อนไขนี้ กรุณาหยุดใช้งานทันที
-            </p>
+    <!-- Content Section -->
+    <section class="content-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="content-card">
+                        
+                        <div class="highlight-box">
+                            <strong>📌 สำคัญ:</strong> การใช้งาน LINE Bot และบริการของ Wizmobiz 
+                            ถือว่าท่านยอมรับข้อกำหนดและเงื่อนไขทั้งหมดที่ระบุไว้ในหน้านี้
+                        </div>
 
-            <h2>2. บริการของ Wizmobiz</h2>
-            <p>
-                Wizmobiz ให้บริการในหลากหลายด้าน ได้แก่:
-            </p>
-            <ul>
-                <li>แหล่งความรู้เกี่ยวกับเทคโนโลยีการผลิตด้วย Injection Molding</li>
-                <li>การเรียนรู้ผ่าน Mobile Learning</li>
-                <li>เครื่องมือสำหรับ Affiliate Marketing ผ่านแอป AffiliatePro</li>
-            </ul>
+                        <h2>1. ขอบเขตการให้บริการ</h2>
+                        <p>Wizmobiz ให้บริการดังต่อไปนี้:</p>
+                        <ul>
+                            <li><strong>LINE Bot AI Assistant:</strong> ระบบ AI ตอบคำถามด้านงานฉีดพลาสติก</li>
+                            <li><strong>เครื่องคิดเลขวิศวกร:</strong> เครื่องมือคำนวณต่างๆ เช่น Clamping Force, Cooling Time</li>
+                            <li><strong>ระบบวินิจฉัยปัญหา:</strong> วิเคราะห์และแนะนำการแก้ไขปัญหาการผลิต</li>
+                            <li><strong>Digital Logbook:</strong> ระบบบันทึกพารามิเตอร์และรายงานการผลิต</li>
+                        </ul>
 
-            <h2>3. การใช้งาน AffiliatePro</h2>
-            <p>
-                AffiliatePro เป็นแอปพลิเคชันที่ช่วยผู้ใช้สร้างลิงก์ Affiliate จากแพลตฟอร์ม TikTok Shop, Shopee และ Lazada โดยมีเงื่อนไขดังนี้:
-            </p>
-            <ul>
-                <li>ผู้ใช้ต้องเชื่อมต่อบัญชี TikTok, Shopee หรือ Lazada เพื่อใช้งาน</li>
-                <li>ห้ามใช้แอปในทางที่ผิดกฎหมายหรือละเมิดนโยบายของแพลตฟอร์มที่เกี่ยวข้อง</li>
-                <li>ผู้ใช้ต้องรับผิดชอบต่อเนื้อหาที่สร้างผ่านลิงก์ Affiliate</li>
-            </ul>
+                        <h2>2. การลงทะเบียนและบัญชีผู้ใช้</h2>
+                        <ul>
+                            <li>ผู้ใช้สามารถเข้าถึงบริการผ่านการเพิ่มเพื่อน LINE Official Account</li>
+                            <li>ข้อมูลที่ได้รับจาก LINE API จะถูกใช้เพื่อปรับปรุงการให้บริการเท่านั้น</li>
+                            <li>แพ็คเกจ Premium ต้องลงทะเบียนและชำระเงินตามเงื่อนไขที่กำหนด</li>
+                        </ul>
 
-            <h2>4. ความรับผิดชอบของผู้ใช้</h2>
-            <p>
-                ผู้ใช้ตกลงที่จะ:
-            </p>
-            <ul>
-                <li>ใช้งานบริการของเราด้วยความรับผิดชอบและไม่ละเมิดกฎหมาย</li>
-                <li>ไม่ใช้บริการของเราเพื่อวัตถุประสงค์ที่ผิดกฎหมายหรือไม่เหมาะสม</li>
-                <li>รักษาความปลอดภัยของบัญชีและข้อมูลส่วนตัวของตนเอง</li>
-            </ul>
+                        <h2>3. แพ็คเกจและการชำระเงิน</h2>
+                        <ul>
+                            <li><strong>ฟรี:</strong> ใช้งานพื้นฐานได้ไม่จำกัด</li>
+                            <li><strong>Starter (฿99/เดือน):</strong> AI Query 100 ครั้ง/เดือน</li>
+                            <li><strong>Popular (฿259/3 เดือน):</strong> AI Query 500 ครั้ง/เดือน</li>
+                            <li><strong>Best Value (฿699/ปี):</strong> AI Query ไม่จำกัด</li>
+                            <li><strong>Team (฿2,490/ปี):</strong> สำหรับทีม 5 คน, AI Query ไม่จำกัด</li>
+                        </ul>
+                        <p>การชำระเงินผ่านช่องทางที่กำหนด จะไม่สามารถขอคืนเงินได้เมื่อเริ่มใช้บริการแล้ว</p>
 
-            <h2>5. ข้อจำกัดความรับผิด</h2>
-            <p>
-                Wizmobiz และทีมงานจะไม่รับผิดชอบต่อความเสียหายใด ๆ ที่เกิดจากการใช้งานเว็บไซต์หรือแอปพลิเคชันของเรา รวมถึงแต่ไม่จำกัดเพียง:
-            </p>
-            <ul>
-                <li>ความเสียหายจากข้อมูลสูญหาย</li>
-                <li>ความเสียหายจากการหยุดชะงักของบริการ</li>
-                <li>ความเสียหายจากพฤติกรรมของผู้ใช้หรือบุคคลที่สาม</li>
-            </ul>
+                        <h2>4. การใช้งานที่เหมาะสม</h2>
+                        <p>ผู้ใช้ตกลงที่จะ:</p>
+                        <ul>
+                            <li>ใช้บริการเพื่อวัตถุประสงค์ที่ถูกกฎหมายเท่านั้น</li>
+                            <li>ไม่พยายามเข้าถึงระบบโดยไม่ได้รับอนุญาต</li>
+                            <li>ไม่ส่งข้อมูลที่เป็นอันตรายหรือไม่เหมาะสม</li>
+                            <li>ไม่ใช้บริการในทางที่ทำให้เกิดความเสียหายแก่ผู้อื่น</li>
+                        </ul>
 
-            <h2>6. การเปลี่ยนแปลงเงื่อนไข</h2>
-            <p>
-                เราขอสงวนสิทธิ์ในการเปลี่ยนแปลงเงื่อนไขการให้บริการนี้ได้ทุกเมื่อ โดยจะแจ้งให้ผู้ใช้ทราบผ่านหน้าเว็บไซต์ การใช้งานต่อไปหลังจากการเปลี่ยนแปลงถือว่าคุณยอมรับเงื่อนไขใหม่
-            </p>
+                        <h2>5. ข้อจำกัดความรับผิดชอบ</h2>
+                        <div class="highlight-box">
+                            <p><strong>⚠️ คำเตือน:</strong> ผลลัพธ์จาก AI และเครื่องคิดเลขเป็นเพียง "คำแนะนำ" เท่านั้น 
+                            ไม่ใช่คำตอบสุดท้าย ผู้ใช้ควรใช้วิจารณญาณและปรึกษาผู้เชี่ยวชาญก่อนนำไปใช้จริงในการผลิต</p>
+                        </div>
+                        <ul>
+                            <li>Wizmobiz ไม่รับผิดชอบต่อความเสียหายที่เกิดจากการใช้ข้อมูลจากบริการ</li>
+                            <li>ผลการคำนวณเป็นค่าประมาณการตามทฤษฎี ค่าจริงอาจแตกต่าง</li>
+                            <li>AI อาจให้คำตอบที่ไม่ถูกต้อง 100% ผู้ใช้ควรตรวจสอบก่อนนำไปใช้</li>
+                        </ul>
 
-            <h2>7. การติดต่อเรา</h2>
-            <p>
-                หากคุณมีคำถามเกี่ยวกับเงื่อนไขการให้บริการนี้ กรุณาติดต่อเราที่ <a href="mailto:support@wizmobiz.com">support@wizmobiz.com</a>
-            </p>
+                        <h2>6. ทรัพย์สินทางปัญญา</h2>
+                        <ul>
+                            <li>เนื้อหา, โค้ด, และทรัพย์สินทางปัญญาทั้งหมดเป็นของ Wizmobiz</li>
+                            <li>ห้ามคัดลอก, ดัดแปลง, หรือแจกจ่ายโดยไม่ได้รับอนุญาตเป็นลายลักษณ์อักษร</li>
+                        </ul>
 
-            <p class="mt-5"><strong>วันที่แก้ไขล่าสุด:</strong> 1 เมษายน 2568</p>
-            <p><a href="index.html">กลับสู่หน้าหลัก</a></p>
+                        <h2>7. การยกเลิกบริการ</h2>
+                        <ul>
+                            <li>Wizmobiz สงวนสิทธิ์ในการยกเลิกบริการแก่ผู้ใช้ที่ละเมิดข้อกำหนด</li>
+                            <li>ผู้ใช้สามารถยกเลิกการใช้งานได้ตลอดเวลาโดยลบการเพิ่มเพื่อน LINE</li>
+                        </ul>
+
+                        <h2>8. การแก้ไขข้อกำหนด</h2>
+                        <p>Wizmobiz สงวนสิทธิ์ในการแก้ไขข้อกำหนดเหล่านี้ได้ตลอดเวลา 
+                        โดยจะแจ้งให้ผู้ใช้ทราบผ่าน LINE Official Account หรือเว็บไซต์</p>
+
+                        <h2>9. การติดต่อ</h2>
+                        <p>หากมีคำถามเกี่ยวกับข้อกำหนดการใช้งาน สามารถติดต่อได้ที่:</p>
+                        <ul>
+                            <li><strong>LINE:</strong> <a href="https://lin.ee/TipxyCa" target="_blank" rel="noopener">@wizmobiz</a></li>
+                            <li><strong>Website:</strong> <a href="index.html">wizmobiz.com</a></li>
+                        </ul>
+
+                        <p class="last-updated">อัปเดตล่าสุด: 8 ธันวาคม 2025</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="footer" data-aos="fade-up">
+    <footer class="footer">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-4 mb-4 mb-lg-0 text-start">
-                    <h4>Wizmobiz</h4>
-                    <p>แหล่งความรู้และเครื่องมือเพื่อการเรียนรู้และธุรกิจออนไลน์</p>
-                </div>
-                <div class="col-lg-4 mb-4 mb-lg-0">
-                    <h4>ลิงก์ด่วน</h4>
-                    <p>
-                        <a href="about.html">เกี่ยวกับเรา</a> | 
-                        <a href="index.html#contact">ติดต่อเรา</a>
-                    </p>
-                    <p>
-                        <a href="terms.html">เงื่อนไขการให้บริการ</a> | 
-                        <a href="privacy.html">นโยบายความเป็นส่วนตัว</a>
-                    </p>
-                </div>
-                <div class="col-lg-4">
-                    <h4>ติดตามเรา</h4>
-                    <div class="social-links">
-                        <a href="https://facebook.com/kruwitkub" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                        <a href="https://tiktok.com/@kruwitkub" target="_blank"><i class="fab fa-tiktok"></i></a>
-                        <a href="https://line.me/kruwitkub" target="_blank"><i class="fab fa-line"></i></a>
-                        <a href="https://youtube.com/kruwitkub" target="_blank"><i class="fab fa-youtube"></i></a>
-                    </div>
-                </div>
+            <div class="footer-links mb-3">
+                <a href="index.html">หน้าแรก</a>
+                <a href="about.html">เกี่ยวกับเรา</a>
+                <a href="terms.html">ข้อกำหนด</a>
+                <a href="privacy.html">นโยบายความเป็นส่วนตัว</a>
             </div>
-            <hr class="mt-4 mb-4" style="border-color: rgba(255,255,255,0.1);">
-            <p class="mb-0">© 2025 Wizmobiz by Kruwitkub. All rights reserved.</p>
+            <p style="opacity: 0.7; margin: 0;">© 2025 Wizmobiz by ครูวิทคับ. All Rights Reserved.</p>
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- AOS JS -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true
-        });
-    </script>
 </body>
 </html>
