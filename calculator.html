@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="เครื่องคิดเลขวิศวกรสำหรับงานฉีดพลาสติก - คำนวณแรงปิด, Cooling Time, Shot Size และอื่นๆ">
-    <title>🧮 เครื่องคิดเลขวิศวกร - Injection Molding Calculator</title>
+    <meta name="description" content="เครื่องคิดเลขวิศวกรสำหรับงานฉีดพลาสติก - ฟรี 5 ครั้ง! คำนวณแรงปิด, Cooling Time, Shot Size">
+    <title>🧮 เครื่องคิดเลขวิศวกร - ฟรี 5 ครั้ง!</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -53,6 +53,30 @@
             background-clip: text;
         }
 
+        /* Trial Counter Badge */
+        .trial-badge {
+            background: linear-gradient(135deg, var(--warning-color), #FFA000);
+            color: var(--dark-color);
+            padding: 8px 15px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(255, 215, 64, 0.4);
+        }
+
+        .trial-badge.premium {
+            background: linear-gradient(135deg, var(--line-green), #06C755);
+            color: white;
+        }
+
+        .trial-badge.exhausted {
+            background: linear-gradient(135deg, var(--danger-color), #ff4757);
+            color: white;
+        }
+
         /* Calculator Tabs */
         .calc-tabs {
             display: flex;
@@ -60,6 +84,7 @@
             padding: 15px;
             gap: 10px;
             background: rgba(255, 255, 255, 0.1);
+            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
         }
 
@@ -79,9 +104,7 @@
             white-space: nowrap;
         }
 
-        .calc-tab:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
+        .calc-tab:hover { background: rgba(255, 255, 255, 0.3); }
 
         .calc-tab.active {
             background: white;
@@ -119,9 +142,7 @@
         }
 
         /* Form Styles */
-        .form-group {
-            margin-bottom: 20px;
-        }
+        .form-group { margin-bottom: 20px; }
 
         .form-label {
             font-weight: 600;
@@ -164,9 +185,7 @@
             color: #666;
         }
 
-        .input-group .form-control {
-            border-radius: 15px 0 0 15px;
-        }
+        .input-group .form-control { border-radius: 15px 0 0 15px; }
 
         /* Calculate Button */
         .btn-calculate {
@@ -188,8 +207,11 @@
             color: white;
         }
 
-        .btn-calculate:active {
-            transform: translateY(0);
+        .btn-calculate:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         /* Result Section */
@@ -240,9 +262,37 @@
         }
 
         .result-row:last-child { border-bottom: none; }
-
         .result-label { color: #666; }
         .result-data { font-weight: 600; color: var(--dark-color); }
+
+        /* Material Pills */
+        .material-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .material-pill {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: var(--light-color);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .material-pill:hover { border-color: var(--primary-color); }
+
+        .material-pill.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Calculator Hidden */
+        .calculator-panel { display: none; }
+        .calculator-panel.active { display: block; }
 
         /* Recommendation */
         .recommendation {
@@ -253,8 +303,6 @@
             color: white;
             text-align: center;
         }
-
-        .recommendation i { margin-right: 8px; }
 
         /* Quick Tips */
         .quick-tip {
@@ -277,51 +325,138 @@
             margin: 0;
         }
 
-        /* Material Pills */
-        .material-pills {
+        /* LINE Login Modal */
+        .line-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+
+        .line-modal-overlay.show { display: flex; }
+
+        .line-modal {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .line-modal-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--line-green), #06C755);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 3rem;
+            color: white;
+        }
+
+        .line-modal h3 {
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--dark-color);
+        }
+
+        .line-modal p {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.7;
+        }
+
+        .btn-line-login {
+            background: linear-gradient(135deg, var(--line-green), #06C755);
+            color: white;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 185, 0, 0.4);
+        }
+
+        .btn-line-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 185, 0, 0.5);
+            color: white;
+        }
+
+        .modal-benefits {
+            background: var(--light-color);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .modal-benefits h5 {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--line-green);
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            font-size: 0.95rem;
+        }
+
+        .benefit-item i {
+            color: var(--line-green);
+            width: 20px;
+        }
+
+        /* Kaizen Feature Card */
+        .kaizen-card {
+            background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 25px;
+            color: white;
+        }
+
+        .kaizen-card h5 {
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .kaizen-features {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            margin-bottom: 20px;
         }
 
-        .material-pill {
-            padding: 8px 16px;
+        .kaizen-tag {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
             border-radius: 20px;
-            background: var(--light-color);
-            border: 2px solid transparent;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-        }
-
-        .material-pill:hover {
-            border-color: var(--primary-color);
-        }
-
-        .material-pill.active {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        /* Calculator Hidden */
-        .calculator-panel { display: none; }
-        .calculator-panel.active { display: block; }
-
-        /* LINE CTA */
-        .line-cta {
-            margin-top: 25px;
-            padding: 20px;
-            background: linear-gradient(135deg, #00B900, #06C755);
-            border-radius: 20px;
-            text-align: center;
-            color: white;
-        }
-
-        .line-cta a {
-            color: white;
-            text-decoration: none;
-            font-weight: 600;
+            font-size: 0.85rem;
         }
 
         /* Footer */
@@ -332,12 +467,12 @@
             font-size: 0.9rem;
         }
 
-        /* Responsive */
         @media (max-width: 576px) {
             .calc-container { padding: 10px; }
             .calc-card { padding: 20px; }
             .calc-title { font-size: 1.3rem; }
             .result-value { font-size: 2rem; }
+            .line-modal { padding: 25px; }
         }
     </style>
 </head>
@@ -349,9 +484,10 @@
             <span class="app-title">
                 <i class="fas fa-calculator me-2"></i>เครื่องคิดเลขวิศวกร
             </span>
-            <a href="injection-molding.html" class="btn btn-sm btn-outline-primary" style="border-radius: 20px;">
-                <i class="fas fa-home me-1"></i>หน้าหลัก
-            </a>
+            <div id="trialBadge" class="trial-badge">
+                <i class="fas fa-gift"></i>
+                <span id="trialText">ฟรี <span id="trialCount">5</span>/5 ครั้ง</span>
+            </div>
         </div>
     </header>
 
@@ -626,7 +762,7 @@
                     </select>
                 </div>
 
-                <div class="result-section show" id="result-moldtemp" style="display: none;">
+                <div class="result-section" id="result-moldtemp">
                     <h5 class="result-title"><i class="fas fa-thermometer-half me-2"></i>ค่าแนะนำ</h5>
                     
                     <div class="result-details">
@@ -640,7 +776,7 @@
                         </div>
                         <div class="result-row">
                             <span class="result-label">🎯 แนะนำ</span>
-                            <span class="result-data" id="mold-rec" style="color: var(--success-color); font-size: 1.2rem;">-</span>
+                            <span class="result-data" id="mold-rec">-</span>
                         </div>
                         <div class="result-row">
                             <span class="result-label">อุณหภูมิหลอม (Barrel)</span>
@@ -742,7 +878,7 @@
                         </div>
                     </div>
 
-                    <div class="recommendation" id="machine-recommend">
+                    <div class="recommendation">
                         <i class="fas fa-check-circle"></i>
                         <span>เครื่องขนาด <span id="machine-size">-</span> ton เหมาะสม</span>
                     </div>
@@ -750,13 +886,64 @@
             </div>
         </div>
 
-        <!-- LINE CTA -->
-        <div class="line-cta">
-            <i class="fab fa-line" style="font-size: 2rem; margin-bottom: 10px;"></i>
-            <p style="margin-bottom: 10px;"><strong>ต้องการความช่วยเหลือเพิ่มเติม?</strong></p>
-            <a href="https://lin.ee/kruwitkub" target="_blank">
-                <i class="fas fa-comment-dots me-2"></i>แชทกับ AI ผู้เชี่ยวชาญ
+        <!-- Kaizen Feature Card -->
+        <div class="kaizen-card">
+            <h5>🔧 ใหม่! WiT Kaizen Expert</h5>
+            <p>AI ที่ปรึกษาด้าน Kaizen ช่วยปรับปรุงงานหน้างานจริง</p>
+            <div class="kaizen-features">
+                <span class="kaizen-tag">🔍 3-Mu's Analysis</span>
+                <span class="kaizen-tag">📊 4M Checklist</span>
+                <span class="kaizen-tag">🔧 TPM Guide</span>
+                <span class="kaizen-tag">📋 5S / 5ส</span>
+                <span class="kaizen-tag">⚡ JIT</span>
+            </div>
+            <a href="https://lin.ee/TipxyCa" target="_blank" rel="noopener" class="btn btn-light btn-sm mt-3" style="border-radius: 20px;">
+                <i class="fab fa-line me-1"></i> ลองใช้ Kaizen Expert
             </a>
+        </div>
+    </div>
+
+    <!-- LINE Login Modal -->
+    <div class="line-modal-overlay" id="lineModal">
+        <div class="line-modal">
+            <div class="line-modal-icon">
+                <i class="fab fa-line"></i>
+            </div>
+            <h3>🎉 ใช้ครบ 5 ครั้งแล้ว!</h3>
+            <p>เพิ่มเพื่อน LINE เพื่อใช้งานต่อได้ <strong>ไม่จำกัด</strong><br>
+            พร้อมฟีเจอร์พิเศษอีกมากมาย!</p>
+
+            <div class="modal-benefits">
+                <h5>✨ สิทธิพิเศษสำหรับเพื่อน LINE:</h5>
+                <div class="benefit-item">
+                    <i class="fas fa-infinity"></i>
+                    <span>คำนวณได้ไม่จำกัด</span>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-robot"></i>
+                    <span>AI ผู้เชี่ยวชาญตอบคำถาม 24/7</span>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-tools"></i>
+                    <span>วินิจฉัยปัญหาฉีดพลาสติก</span>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Digital Logbook บันทึกข้อมูล</span>
+                </div>
+                <div class="benefit-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Kaizen Expert ปรับปรุงงาน</span>
+                </div>
+            </div>
+
+            <a href="https://lin.ee/TipxyCa" target="_blank" rel="noopener" class="btn-line-login">
+                <i class="fab fa-line"></i> เพิ่มเพื่อน LINE ฟรี!
+            </a>
+
+            <p style="margin-top: 15px; font-size: 0.85rem; color: #888;">
+                <i class="fas fa-shield-alt me-1"></i> ปลอดภัย ไม่มีค่าใช้จ่าย
+            </p>
         </div>
     </div>
 
@@ -770,7 +957,106 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
+        // ==========================================
+        // 🎁 FREE TRIAL SYSTEM
+        // ==========================================
+        const TRIAL_KEY = 'wizmobiz_calc_trial';
+        const MAX_FREE_TRIALS = 5;
+        const LINE_FRIEND_KEY = 'wizmobiz_line_friend';
+
+        // Get trial count from localStorage
+        function getTrialCount() {
+            const stored = localStorage.getItem(TRIAL_KEY);
+            if (!stored) {
+                localStorage.setItem(TRIAL_KEY, MAX_FREE_TRIALS.toString());
+                return MAX_FREE_TRIALS;
+            }
+            return parseInt(stored, 10);
+        }
+
+        // Check if user is LINE friend (simulated)
+        function isLineFriend() {
+            return localStorage.getItem(LINE_FRIEND_KEY) === 'true';
+        }
+
+        // Decrement trial count
+        function useTrialCredit() {
+            if (isLineFriend()) return true; // Unlimited for LINE friends
+
+            const current = getTrialCount();
+            if (current <= 0) {
+                showLineModal();
+                return false;
+            }
+
+            const newCount = current - 1;
+            localStorage.setItem(TRIAL_KEY, newCount.toString());
+            updateTrialBadge();
+            
+            if (newCount === 0) {
+                setTimeout(showLineModal, 500);
+            }
+
+            return true;
+        }
+
+        // Update trial badge UI
+        function updateTrialBadge() {
+            const badge = document.getElementById('trialBadge');
+            const text = document.getElementById('trialText');
+            const count = document.getElementById('trialCount');
+
+            if (isLineFriend()) {
+                badge.className = 'trial-badge premium';
+                text.innerHTML = '<i class="fas fa-crown me-1"></i> Premium Member';
+            } else {
+                const remaining = getTrialCount();
+                count.textContent = remaining;
+
+                if (remaining <= 0) {
+                    badge.className = 'trial-badge exhausted';
+                    text.innerHTML = '❌ หมดสิทธิ์ฟรี';
+                } else if (remaining <= 2) {
+                    badge.className = 'trial-badge';
+                    badge.style.background = 'linear-gradient(135deg, #f5576c, #ff4757)';
+                    badge.style.color = 'white';
+                }
+            }
+        }
+
+        // Show LINE login modal
+        function showLineModal() {
+            document.getElementById('lineModal').classList.add('show');
+        }
+
+        // Hide LINE modal
+        function hideLineModal() {
+            document.getElementById('lineModal').classList.remove('show');
+        }
+
+        // Close modal on overlay click
+        document.getElementById('lineModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideLineModal();
+            }
+        });
+
+        // Check URL params for LINE callback
+        function checkLineCallback() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('line_friend') === 'true') {
+                localStorage.setItem(LINE_FRIEND_KEY, 'true');
+                updateTrialBadge();
+                hideLineModal();
+                alert('🎉 ขอบคุณที่เพิ่มเพื่อน! คุณสามารถใช้งานได้ไม่จำกัดแล้ว');
+                // Clean URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        }
+
+        // ==========================================
         // Material Database
+        // ==========================================
         const materialData = {
             PP: { pressure: 30, mold: [20, 50, 35], melt: "200-280", alpha: 0.096 },
             PE: { pressure: 25, mold: [10, 50, 30], melt: "180-280", alpha: 0.11 },
@@ -786,7 +1072,9 @@
 
         const machineSizes = [50, 80, 100, 120, 150, 180, 200, 250, 300, 350, 400, 450, 500, 550, 650, 850, 1000, 1300, 1600, 2000];
 
+        // ==========================================
         // Tab Switching
+        // ==========================================
         document.querySelectorAll('.calc-tab').forEach(tab => {
             tab.addEventListener('click', function() {
                 document.querySelectorAll('.calc-tab').forEach(t => t.classList.remove('active'));
@@ -820,8 +1108,13 @@
             document.getElementById('fill-value').textContent = this.value;
         });
 
-        // Clamping Force Calculator
+        // ==========================================
+        // CALCULATORS (with trial check)
+        // ==========================================
+        
         function calculateClamping() {
+            if (!useTrialCredit()) return;
+
             const area = parseFloat(document.getElementById('clamp-area').value);
             const pressure = parseFloat(document.getElementById('clamp-pressure').value);
             const safety = parseFloat(document.getElementById('clamp-safety').value);
@@ -847,8 +1140,9 @@
             document.getElementById('result-clamping').classList.add('show');
         }
 
-        // Cooling Time Calculator
         function calculateCooling() {
+            if (!useTrialCredit()) return;
+
             const thickness = parseFloat(document.getElementById('cooling-thickness').value);
             const meltTemp = parseFloat(document.getElementById('cooling-melt').value);
             const moldTemp = parseFloat(document.getElementById('cooling-mold').value);
@@ -878,8 +1172,9 @@
             document.getElementById('result-cooling').classList.add('show');
         }
 
-        // Shot Size Calculator
         function calculateShot() {
+            if (!useTrialCredit()) return;
+
             const partWeight = parseFloat(document.getElementById('shot-weight').value);
             const cavities = parseInt(document.getElementById('shot-cavity').value) || 1;
             const runnerWeight = parseFloat(document.getElementById('shot-runner').value) || 0;
@@ -904,8 +1199,9 @@
             document.getElementById('result-shot').classList.add('show');
         }
 
-        // Mold Temperature Reference
         function showMoldTemp() {
+            if (!useTrialCredit()) return;
+
             const material = document.getElementById('moldtemp-material').value;
             
             if (!material) {
@@ -921,10 +1217,12 @@
             document.getElementById('mold-melt').textContent = data.melt + '°C';
             
             document.getElementById('result-moldtemp').style.display = 'block';
+            document.getElementById('result-moldtemp').classList.add('show');
         }
 
-        // V-P Switchover Calculator
         function calculateVP() {
+            if (!useTrialCredit()) return;
+
             const shotSize = parseFloat(document.getElementById('vp-shotsize').value);
             const fillPercent = parseFloat(document.getElementById('vp-fill').value);
 
@@ -944,8 +1242,9 @@
             document.getElementById('result-vp').classList.add('show');
         }
 
-        // Machine Selection Calculator
         function calculateMachine() {
+            if (!useTrialCredit()) return;
+
             const force = parseFloat(document.getElementById('machine-force').value);
 
             if (!force || force <= 0) {
@@ -964,8 +1263,15 @@
             document.getElementById('result-machine').classList.add('show');
         }
 
-        console.log('%c🧮 Injection Molding Calculator', 'color: #667eea; font-size: 18px; font-weight: bold;');
-        console.log('%cPowered by Wizmobiz', 'color: #00B900; font-size: 12px;');
+        // ==========================================
+        // INITIALIZATION
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLineCallback();
+            updateTrialBadge();
+            console.log('%c🧮 Injection Molding Calculator', 'color: #667eea; font-size: 18px; font-weight: bold;');
+            console.log('%c🎁 Free Trial: ' + getTrialCount() + '/' + MAX_FREE_TRIALS, 'color: #FFD740; font-size: 14px;');
+        });
     </script>
 </body>
 </html>
