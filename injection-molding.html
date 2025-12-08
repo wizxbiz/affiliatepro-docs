@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="Injection Molding Thailand - เรียนรู้เกี่ยวกับเทคโนโลยีการผลิตด้วย Injection Molding ในประเทศไทย">
-    <meta name="keywords" content="Injection Molding, Thailand, Wizmobiz, Kruwitkub">
-    <title>Injection Molding Thailand - Wizmobiz</title>
+    <meta name="description" content="ผู้ช่วย AI ด้านการฉีดพลาสติกครบวงจร - LINE Bot + App เครื่องคิดเลขวิศวกร พร้อมแพ็คเกจสมาชิกรายเดือน 99/259/699 บาท">
+    <meta name="keywords" content="Injection Molding, AI Assistant, LINE Bot, Calculator, ฉีดพลาสติก, เครื่องคิดเลขวิศวกร, Kruwitkub">
+    <title>🏭 Injection Molding AI Assistant - LINE Bot & Calculator App</title>
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="🏭 Injection Molding AI Assistant - LINE Bot & Calculator">
+    <meta property="og:description" content="ผู้ช่วย AI ด้านการฉีดพลาสติก 24/7 พร้อมเครื่องคิดเลขวิศวกรครบทุกสูตร">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://wizmobiz.com/injection-molding.html">
+    
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -15,544 +20,824 @@
     <!-- AOS CSS -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
+            --line-green: #00B900;
+            --line-dark: #06C755;
             --primary-color: #FF6F61;
             --secondary-color: #40C4FF;
             --accent-color: #FFD740;
+            --success-color: #4CAF50;
+            --dark-color: #2D3436;
+            --light-color: #F5F7FA;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-line: linear-gradient(135deg, #00B900 0%, #06C755 100%);
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Kanit', sans-serif;
-            background: linear-gradient(180deg, #F5F7FA 0%, #FFFFFF 100%);
-            line-height: 1.6;
+            background: linear-gradient(180deg, var(--light-color) 0%, #FFFFFF 100%);
+            color: var(--dark-color);
+            line-height: 1.7;
+            overflow-x: hidden;
         }
 
         /* Navbar */
         .navbar {
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 1rem 0;
+            backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
         }
 
         .navbar-brand {
             font-weight: 700;
-            color: var(--primary-color);
-        }
-
-        .navbar-brand:hover {
-            color: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.6rem;
         }
 
         .nav-link {
-            color: #2D3436;
+            color: var(--dark-color);
             font-weight: 500;
-            padding: 0.5rem 1rem;
+            padding: 10px 18px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
         }
 
-        .nav-link:hover,
-        .nav-link.active {
-            color: var(--secondary-color);
+        .nav-link:hover, .nav-link.active {
+            color: var(--line-green);
+            background-color: rgba(0, 185, 0, 0.1);
         }
 
-        /* Hero Section */
+        /* Hero Section - LINE Focus */
         .hero-section {
             position: relative;
             overflow: hidden;
-            padding: 120px 0 80px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 140px 0 100px;
+            background: var(--gradient-line);
             color: white;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
+            text-align: center;
         }
 
         .parallax-bubble {
             position: absolute;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15);
             border-radius: 50%;
-            animation: float 20s infinite linear;
+            animation: float 25s infinite ease-in-out;
+            opacity: 0.6;
         }
 
         @keyframes float {
-            0% {
-                transform: translateY(0) rotate(0deg);
-            }
-
-            100% {
-                transform: translateY(-100vh) rotate(360deg);
-            }
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-50px) rotate(180deg); }
         }
 
-        .text-glow {
-            text-shadow: 0 0 15px rgba(255, 111, 97, 0.5);
-        }
-
-        /* Content Section */
-        .content-section {
-            padding: 80px 0;
-        }
-
-        .section-title {
-            font-size: 2.5rem;
+        .hero-section h1 {
+            font-size: 3rem;
             font-weight: 700;
-            margin-bottom: 1.5rem;
+            margin-bottom: 25px;
+            text-shadow: 3px 3px 12px rgba(0, 0, 0, 0.3);
         }
 
-        .process-step {
-            position: relative;
-            padding-left: 80px;
-            margin-bottom: 40px;
+        .hero-section .lead {
+            font-size: 1.3rem;
+            max-width: 800px;
+            margin: 0 auto 30px;
         }
 
-        .step-number {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 60px;
-            height: 60px;
-            background: var(--secondary-color);
+        .btn-line {
+            background: white;
+            color: var(--line-green);
+            padding: 18px 45px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            border: none;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .btn-line:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            color: var(--line-dark);
+        }
+
+        .btn-app {
+            background: transparent;
             color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: bold;
+            padding: 18px 45px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: 3px solid white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-app:hover {
+            background: white;
+            color: var(--line-green);
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: var(--gradient-3);
+            padding: 60px 0;
+            margin-top: -50px;
+            position: relative;
+            z-index: 1;
+            color: white;
+        }
+
+        .stat-item { text-align: center; padding: 20px; }
+        .stat-number { font-size: 2.8rem; font-weight: 700; margin-bottom: 10px; }
+
+        /* LINE Bot Features (70%) */
+        .line-section {
+            padding: 100px 0;
+            background: linear-gradient(180deg, #ffffff 0%, var(--light-color) 100%);
+        }
+
+        .section-title { text-align: center; margin-bottom: 60px; }
+
+        .section-title h2 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: var(--gradient-line);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
         }
 
         .feature-card {
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-            border: none;
+            background: white;
+            border-radius: 20px;
+            padding: 35px 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s ease;
+            height: 100%;
+            border: 2px solid transparent;
+            text-align: center;
         }
 
         .feature-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-15px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            border-color: var(--line-green);
         }
 
-        .material-card img {
-            height: 200px;
-            object-fit: cover;
-        }
-
-        /* CTA Section */
-        .cta-section {
-            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-line);
             color: white;
             border-radius: 20px;
-            transform: skewY(-3deg);
-            margin: 80px 0;
-            padding: 60px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 20px;
+            transition: all 0.4s ease;
         }
 
-        .cta-content {
-            transform: skewY(3deg);
+        .feature-card:hover .feature-icon {
+            transform: rotate(10deg) scale(1.1);
         }
 
-        .btn-gradient {
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            border: none;
+        /* Calculator Section (30% App) */
+        .calculator-section {
+            padding: 100px 0;
+            background: var(--gradient-1);
             color: white;
-            padding: 12px 30px;
-            border-radius: 30px;
-            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
         }
 
-        .btn-gradient:hover {
+        .calc-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            height: 100%;
+        }
+
+        .calc-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .calc-icon { font-size: 3rem; margin-bottom: 15px; }
+
+        /* Pricing Section */
+        .pricing-section {
+            padding: 100px 0;
+            background: linear-gradient(180deg, var(--light-color) 0%, #ffffff 100%);
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 25px;
+            padding: 40px 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .pricing-card.popular {
+            border: 3px solid var(--line-green);
             transform: scale(1.05);
+        }
+
+        .pricing-card.popular::before {
+            content: '🔥 ยอดนิยม';
+            position: absolute;
+            top: 20px;
+            right: -35px;
+            background: var(--gradient-line);
             color: white;
+            padding: 5px 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transform: rotate(45deg);
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .pricing-card.popular:hover { transform: scale(1.08); }
+
+        .price-tag { font-size: 3rem; font-weight: 700; color: var(--line-green); }
+        .price-period { font-size: 1rem; color: #666; }
+
+        .pricing-features {
+            list-style: none;
+            padding: 0;
+            margin: 25px 0;
+            text-align: left;
+        }
+
+        .pricing-features li {
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+            color: #555;
+        }
+
+        .pricing-features li i {
+            color: var(--line-green);
+            margin-right: 10px;
+            width: 20px;
+        }
+
+        .btn-subscribe {
+            width: 100%;
+            padding: 15px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-subscribe.primary {
+            background: var(--gradient-line);
+            color: white;
+            border: none;
+        }
+
+        .btn-subscribe.secondary {
+            background: transparent;
+            color: var(--line-green);
+            border: 2px solid var(--line-green);
+        }
+
+        .btn-subscribe:hover { transform: scale(1.05); }
+
+        /* LINE Connect CTA */
+        .line-cta {
+            background: var(--gradient-line);
+            border-radius: 30px;
+            padding: 60px 40px;
+            margin: 80px 0;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .line-cta::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1));
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        /* QR Code Section */
+        .qr-section { text-align: center; padding: 30px; }
+
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            background: white;
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin: 0 auto 20px;
         }
 
         /* Footer */
         .footer {
-            background-color: #2D3436;
+            background: linear-gradient(135deg, #2D3436 0%, #1e272e 100%);
             color: white;
-            padding: 40px 0;
-            text-align: center;
+            padding: 60px 0 30px;
         }
 
-        .footer a {
-            color: var(--accent-color);
-            text-decoration: none;
-        }
-
-        .footer a:hover {
-            color: #FFCA28;
-        }
+        .social-links { display: flex; gap: 15px; margin-top: 20px; }
 
         .social-links a {
-            color: var(--accent-color);
-            margin: 0 15px;
-            font-size: 1.5rem;
-            transition: color 0.3s;
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
         }
 
         .social-links a:hover {
-            color: #FFCA28;
+            background: var(--line-green);
+            transform: translateY(-5px);
+        }
+
+        /* Floating LINE Button */
+        .fab-line {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+
+        .fab-line .btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--gradient-line);
+            box-shadow: 0 8px 25px rgba(0, 185, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            border: none;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .fab-line .btn:hover {
+            transform: scale(1.15) rotate(10deg);
+            box-shadow: 0 12px 35px rgba(0, 185, 0, 0.6);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .hero-section h1 { font-size: 2.5rem; }
+            .pricing-card.popular { transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            .hero-section { padding: 120px 0 80px; }
+            .hero-section h1 { font-size: 2rem; }
+            .section-title h2 { font-size: 2rem; }
+            .price-tag { font-size: 2.5rem; }
         }
     </style>
 </head>
 
 <body>
-    <!-- Header -->
-    <nav class="navbar navbar-expand-lg">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="index.html">Wizmobiz</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <i class="fas fa-bars"></i>
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-bolt me-2"></i>Wizmobiz
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="index.html">หน้าแรก</a></li>
-                    <li class="nav-item"><a class="nav-link" href="about.html">เกี่ยวกับ</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="injection-molding.html">Injection Molding</a></li>
-                    <li class="nav-item"><a class="nav-link" href="mobile-learning.html">Mobile Learning</a></li>
-                    <li class="nav-item"><a class="nav-link" href="affiliatepro.html">AffiliatePro</a></li>
-                    <li class="nav-item"><a class="nav-link" href="index.html#contact">ติดต่อเรา</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="injection-molding.html">🏭 AI Assistant</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#pricing">💎 แพ็คเกจ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#calculator">🧮 เครื่องคิดเลข</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#line-connect"><i class="fab fa-line me-1"></i>เพิ่มเพื่อน</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-  <!-- Hero Section -->
-  <section class="hero-section" data-aos="fade-down">
-    <div class="parallax-bubble" style="width: 300px; height: 300px; top: 20%; left: 10%;"></div>
-    <div class="parallax-bubble" style="width: 200px; height: 200px; top: 60%; right: 15%;"></div>
-    <div class="container hero-content text-center">
-        <h1 class="text-glow mb-4" data-aos="zoom-in">เทคโนโลยีการฉีดพลาสติกแบบมืออาชีพ</h1>
-        <p class="lead fs-4 mb-5" data-aos="fade-up">ให้คำปรึกษาและฝึกอบรมโดยผู้เชี่ยวชาญด้านการผลิตพลาสติกมากกว่า
-            15 ปี</p>
-        <div class="d-flex justify-content-center gap-4" data-aos="fade-up" data-aos-delay="200">
-            <a href="#consultation" class="btn btn-light btn-lg px-4 py-3 rounded-pill">
-                <i class="fas fa-calendar-check me-2"></i>จองเรียนออนไลน์
-            </a>
-            <a href="#courses" class="btn btn-outline-light btn-lg px-4 py-3 rounded-pill">
-                <i class="fas fa-graduation-cap me-2"></i>หลักสูตรฝึกอบรม
-            </a>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="parallax-bubble" style="width: 300px; height: 300px; top: 15%; left: 8%;"></div>
+        <div class="parallax-bubble" style="width: 200px; height: 200px; top: 55%; right: 12%;"></div>
+        <div class="parallax-bubble" style="width: 150px; height: 150px; top: 25%; right: 18%;"></div>
+        
+        <div class="container" data-aos="fade-up">
+            <div style="font-size: 4rem; margin-bottom: 20px;"><i class="fab fa-line"></i></div>
+            <h1>🏭 ผู้ช่วย AI งานฉีดพลาสติก</h1>
+            <p class="lead">
+                <strong>LINE Bot + App</strong> ครบครันทุกเครื่องมือ<br>
+                💬 ถาม-ตอบ AI 24/7 | 🧮 เครื่องคิดเลขวิศวกร | 📊 วินิจฉัยปัญหา | 📋 สร้างใบงาน
+            </p>
+            
+            <div class="d-flex justify-content-center gap-3 flex-wrap mt-4">
+                <a href="https://lin.ee/kruwitkub" target="_blank" class="btn btn-line">
+                    <i class="fab fa-line me-2"></i>เพิ่มเพื่อน LINE (ฟรี!)
+                </a>
+                <a href="#calculator" class="btn btn-app">
+                    <i class="fas fa-calculator me-2"></i>ทดลองเครื่องคิดเลข
+                </a>
+            </div>
+            
+            <p class="mt-4" style="opacity: 0.9;">
+                <i class="fas fa-users me-2"></i>ผู้ใช้งานแล้ว 1,000+ คน | 
+                <i class="fas fa-star me-2"></i>พัฒนาโดยอาจารย์วิทยา 15+ ปี
+            </p>
         </div>
-        <div class="institute-logo mt-5" data-aos="fade-up" data-aos-delay="400">
-            <img src="images/logo.png" alt="สถาบันเรียนรู้การฉีดพลาสติก"
-                class="img-fluid rounded-circle border border-4 border-white">
-            <p class="mt-3 mb-0 fs-5 fw-bold">สถาบันเรียนรู้การฉีดพลาสติก</p>
-            <p class="text-white-50">ได้รับการยอมรับจากอุตสาหกรรมพลาสติกไทย</p>
-        </div>
-    </div>
-</section>
-    <!-- Benefits Section -->
-    <section class="content-section" id="benefits">
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
         <div class="container">
-            <div class="row mb-5">
-                <div class="col-12 text-center">
-                    <h2 class="section-title" data-aos="fade-up">ประโยชน์ของเทคโนโลยี Injection Molding</h2>
-                    <p class="lead text-muted" data-aos="fade-up" data-aos-delay="100">การผลิตที่แม่นยำ ประหยัดต้นทุน และมีประสิทธิภาพสูง</p>
+            <div class="row">
+                <div class="col-md-3 col-6 stat-item" data-aos="fade-up" data-aos-delay="100">
+                    <div class="stat-number">🤖 AI</div>
+                    <div class="stat-label">ตอบคำถาม 24/7</div>
+                </div>
+                <div class="col-md-3 col-6 stat-item" data-aos="fade-up" data-aos-delay="200">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">สูตรคำนวณ</div>
+                </div>
+                <div class="col-md-3 col-6 stat-item" data-aos="fade-up" data-aos-delay="300">
+                    <div class="stat-number">9</div>
+                    <div class="stat-label">ปัญหาวินิจฉัย</div>
+                </div>
+                <div class="col-md-3 col-6 stat-item" data-aos="fade-up" data-aos-delay="400">
+                    <div class="stat-number">70%</div>
+                    <div class="stat-label">LINE + 30% App</div>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- LINE Bot Features (70%) -->
+    <section class="line-section" id="line-features">
+        <div class="container">
+            <div class="section-title" data-aos="fade-up">
+                <h2><i class="fab fa-line me-3"></i>LINE Bot Features (70%)</h2>
+                <p>เครื่องมือทำมาหากินสำหรับช่างฉีดพลาสติกมืออาชีพ ใช้งานง่ายผ่าน LINE</p>
+            </div>
+            
             <div class="row g-4">
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="0">
-                    <div class="feature-card p-4">
-                        <div class="step-number">1</div>
-                        <h4>ประสิทธิภาพการผลิตสูง</h4>
-                        <p>สามารถผลิตชิ้นงานได้จำนวนมากในเวลาอันสั้น ด้วยความแม่นยำและคุณภาพที่สม่ำเสมอ</p>
+                <!-- AI Chat -->
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-robot"></i></div>
+                        <h4>💬 AI Chat Assistant</h4>
+                        <p>ถามได้ทุกเรื่องการฉีดพลาสติก AI ตอบทันที 24/7 ด้วยความรู้จากผู้เชี่ยวชาญ</p>
+                        <small class="text-muted">พิมพ์: "Short shot เกิดจากอะไร?"</small>
                     </div>
                 </div>
+
+                <!-- Defect Diagnosis -->
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: var(--gradient-2);"><i class="fas fa-search-plus"></i></div>
+                        <h4>🔍 วินิจฉัยปัญหา</h4>
+                        <p>บอกปัญหาชิ้นงาน ได้สาเหตุและวิธีแก้ไขทันที รองรับ 9 ปัญหาหลัก</p>
+                        <small class="text-muted">พิมพ์: "ชิ้นงานไม่เต็ม" หรือ "flash"</small>
+                    </div>
+                </div>
+
+                <!-- Clamping Force -->
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: var(--gradient-3);"><i class="fas fa-compress-arrows-alt"></i></div>
+                        <h4>🔧 คำนวณแรงปิด</h4>
+                        <p>คำนวณแรงปิดแม่พิมพ์และขนาดเครื่องที่เหมาะสม</p>
+                        <small class="text-muted">พิมพ์: "คำนวณแรงปิด 1000 cm² PP"</small>
+                    </div>
+                </div>
+
+                <!-- Cooling Time -->
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);"><i class="fas fa-snowflake"></i></div>
+                        <h4>⏱️ Cooling Time</h4>
+                        <p>คำนวณเวลาหล่อเย็นจากความหนาและวัสดุ</p>
+                        <small class="text-muted">พิมพ์: "cooling 3mm PP"</small>
+                    </div>
+                </div>
+
+                <!-- Mold Temperature -->
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #FFD740 0%, #FFA726 100%);"><i class="fas fa-thermometer-half"></i></div>
+                        <h4>🌡️ อุณหภูมิแม่พิมพ์</h4>
+                        <p>แนะนำอุณหภูมิที่เหมาะสมตามวัสดุ</p>
+                        <small class="text-muted">พิมพ์: "อุณหภูมิ ABS"</small>
+                    </div>
+                </div>
+
+                <!-- Setup Sheet -->
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);"><i class="fas fa-file-alt"></i></div>
+                        <h4>📋 สร้างใบตั้งค่า</h4>
+                        <p>สร้าง Setup Sheet และ Digital Logbook อัตโนมัติ</p>
+                        <small class="text-muted">พิมพ์: "/setup" หรือ "/report"</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Calculator App Section (30%) -->
+    <section class="calculator-section" id="calculator">
+        <div class="container">
+            <div class="section-title" data-aos="fade-up">
+                <h2 style="color: white;"><i class="fas fa-calculator me-3"></i>🧮 เครื่องคิดเลขวิศวกร (App 30%)</h2>
+                <p style="color: rgba(255,255,255,0.9);">เครื่องมือคำนวณครบทุกสูตร สำหรับใช้งานผ่าน LIFF App</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="calc-card">
+                        <div class="calc-icon">🔧</div>
+                        <h5>Clamping Force</h5>
+                        <p>แรงปิดแม่พิมพ์</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="calc-card">
+                        <div class="calc-icon">⏱️</div>
+                        <h5>Cooling Time</h5>
+                        <p>เวลาหล่อเย็น</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                    <div class="calc-card">
+                        <div class="calc-icon">💉</div>
+                        <h5>Shot Size</h5>
+                        <p>ปริมาณฉีด</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                    <div class="calc-card">
+                        <div class="calc-icon">⚡</div>
+                        <h5>V-P Switchover</h5>
+                        <p>จุดเปลี่ยน V-P</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="calc-card">
+                        <div class="calc-icon">🌡️</div>
+                        <h5>Mold Temp</h5>
+                        <p>อุณหภูมิแม่พิมพ์</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="calc-card">
+                        <div class="calc-icon">🏭</div>
+                        <h5>Machine Size</h5>
+                        <p>เลือกขนาดเครื่อง</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                    <div class="calc-card">
+                        <div class="calc-icon">💰</div>
+                        <h5>Production Cost</h5>
+                        <p>ต้นทุนการผลิต</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                    <div class="calc-card">
+                        <div class="calc-icon">📊</div>
+                        <h5>ROI Calculator</h5>
+                        <p>คำนวณผลตอบแทน</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-5" data-aos="fade-up">
+                <a href="https://appinjproject.web.app/calculator.html" target="_blank" class="btn btn-light btn-lg px-5 py-3" style="border-radius: 50px; font-weight: 600;">
+                    <i class="fas fa-external-link-alt me-2"></i>เปิดเครื่องคิดเลข (Web App)
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section" id="pricing">
+        <div class="container">
+            <div class="section-title" data-aos="fade-up">
+                <h2>💎 แพ็คเกจสมาชิก</h2>
+                <p>เลือกแพ็คเกจที่เหมาะกับความต้องการของคุณ</p>
+            </div>
+            
+            <div class="row g-4 justify-content-center">
+                <!-- Starter -->
+                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="pricing-card">
+                        <div class="text-center mb-4">
+                            <span style="font-size: 3rem;">🌱</span>
+                            <h4 class="mt-2">Starter</h4>
+                            <p class="text-muted">รายเดือน</p>
+                        </div>
+                        <div class="text-center mb-4">
+                            <span class="price-tag">฿99</span>
+                            <span class="price-period">/เดือน</span>
+                        </div>
+                        <ul class="pricing-features">
+                            <li><i class="fas fa-check"></i> AI ถามได้ 100 ครั้ง/เดือน</li>
+                            <li><i class="fas fa-check"></i> เครื่องคิดเลขครบทุกสูตร</li>
+                            <li><i class="fas fa-check"></i> วินิจฉัยปัญหา 9 ประเภท</li>
+                            <li><i class="fas fa-check"></i> ส่งรูปวิเคราะห์ได้</li>
+                            <li><i class="fas fa-times" style="color: #ccc;"></i> LINE Support</li>
+                        </ul>
+                        <a href="https://lin.ee/kruwitkub" class="btn btn-subscribe secondary">
+                            <i class="fab fa-line me-2"></i>สมัครเลย
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Popular -->
+                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="pricing-card popular">
+                        <div class="text-center mb-4">
+                            <span style="font-size: 3rem;">🚀</span>
+                            <h4 class="mt-2">Popular</h4>
+                            <p class="text-muted">3 เดือน</p>
+                        </div>
+                        <div class="text-center mb-4">
+                            <span class="price-tag">฿259</span>
+                            <span class="price-period">/3 เดือน</span>
+                            <div class="badge bg-danger mt-2">ประหยัด 38%</div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li><i class="fas fa-check"></i> AI ถามได้ 500 ครั้ง/เดือน</li>
+                            <li><i class="fas fa-check"></i> เครื่องคิดเลขครบทุกสูตร</li>
+                            <li><i class="fas fa-check"></i> วินิจฉัยปัญหา 9 ประเภท</li>
+                            <li><i class="fas fa-check"></i> ส่งรูป/เสียงวิเคราะห์</li>
+                            <li><i class="fas fa-check"></i> LINE Support 24 ชม.</li>
+                        </ul>
+                        <a href="https://lin.ee/kruwitkub" class="btn btn-subscribe primary">
+                            <i class="fab fa-line me-2"></i>สมัครเลย
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Best Value -->
+                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                    <div class="pricing-card">
+                        <div class="text-center mb-4">
+                            <span style="font-size: 3rem;">👑</span>
+                            <h4 class="mt-2">Best Value</h4>
+                            <p class="text-muted">รายปี</p>
+                        </div>
+                        <div class="text-center mb-4">
+                            <span class="price-tag">฿699</span>
+                            <span class="price-period">/ปี</span>
+                            <div class="badge bg-success mt-2">ประหยัด 41%</div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li><i class="fas fa-check"></i> <strong>AI ไม่จำกัด!</strong></li>
+                            <li><i class="fas fa-check"></i> เครื่องคิดเลขครบทุกสูตร</li>
+                            <li><i class="fas fa-check"></i> วินิจฉัย + รูป/เสียง</li>
+                            <li><i class="fas fa-check"></i> Digital Logbook</li>
+                            <li><i class="fas fa-check"></i> VIP Support ทันที</li>
+                        </ul>
+                        <a href="https://lin.ee/kruwitkub" class="btn btn-subscribe secondary">
+                            <i class="fab fa-line me-2"></i>สมัครเลย
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Team -->
+                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                    <div class="pricing-card">
+                        <div class="text-center mb-4">
+                            <span style="font-size: 3rem;">🏢</span>
+                            <h4 class="mt-2">Team</h4>
+                            <p class="text-muted">ทีม 5 คน/ปี</p>
+                        </div>
+                        <div class="text-center mb-4">
+                            <span class="price-tag">฿2,490</span>
+                            <span class="price-period">/ปี</span>
+                            <div class="badge bg-primary mt-2">5 สมาชิก</div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li><i class="fas fa-check"></i> ทุกฟีเจอร์ Best Value</li>
+                            <li><i class="fas fa-check"></i> 5 บัญชีผู้ใช้</li>
+                            <li><i class="fas fa-check"></i> Admin Dashboard</li>
+                            <li><i class="fas fa-check"></i> Team Reporting</li>
+                            <li><i class="fas fa-check"></i> Priority Support</li>
+                        </ul>
+                        <a href="https://lin.ee/kruwitkub" class="btn btn-subscribe secondary">
+                            <i class="fab fa-line me-2"></i>สมัครเลย
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LINE Connect CTA -->
+    <section class="container" id="line-connect">
+        <div class="line-cta" data-aos="zoom-in">
+            <div class="row align-items-center">
+                <div class="col-lg-6 text-center text-lg-start mb-4 mb-lg-0">
+                    <h2 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 20px;">
+                        <i class="fab fa-line me-3"></i>เพิ่มเพื่อน LINE เลย!
+                    </h2>
+                    <p style="font-size: 1.2rem; margin-bottom: 25px; opacity: 0.95;">
+                        เริ่มใช้งานฟรี! ได้ทดลอง AI Chat และเครื่องคิดเลขทุกสูตร<br>
+                        <strong>🎁 สมาชิกใหม่รับ 50 เครดิตฟรี!</strong>
+                    </p>
+                    <div class="d-flex gap-3 justify-content-center justify-content-lg-start flex-wrap">
+                        <a href="https://lin.ee/kruwitkub" target="_blank" class="btn btn-light btn-lg px-5 py-3" style="border-radius: 50px; font-weight: 700; color: var(--line-green);">
+                            <i class="fab fa-line me-2"></i>เพิ่มเพื่อนเลย
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="qr-section">
+                        <div class="qr-code">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=https://lin.ee/kruwitkub" alt="LINE QR Code" style="width: 100%; height: 100%; object-fit: contain;">
+                        </div>
+                        <p style="font-size: 1.1rem; opacity: 0.95;">สแกน QR Code เพื่อเพิ่มเพื่อน</p>
+                        <p style="font-size: 0.9rem; opacity: 0.8;">หรือค้นหา @kruwitkub ใน LINE</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How to Use -->
+    <section class="content-section" style="padding: 80px 0;">
+        <div class="container">
+            <div class="section-title" data-aos="fade-up">
+                <h2>📖 วิธีใช้งาน</h2>
+                <p>เริ่มต้นง่ายๆ ใน 3 ขั้นตอน</p>
+            </div>
+            
+            <div class="row g-4">
                 <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="feature-card p-4">
-                        <div class="step-number">2</div>
-                        <h4>ลดต้นทุนการผลิต</h4>
-                        <p>เมื่อผลิตในปริมาณมาก ต้นทุนต่อชิ้นจะลดลงอย่างมากเมื่อเทียบกับวิธีการผลิตอื่นๆ</p>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-user-plus"></i></div>
+                        <h4>1. เพิ่มเพื่อน LINE</h4>
+                        <p>สแกน QR Code หรือค้นหา @kruwitkub แล้วกดเพิ่มเพื่อน</p>
                     </div>
                 </div>
                 <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-                    <div class="feature-card p-4">
-                        <div class="step-number">3</div>
-                        <h4>ความหลากหลายของวัสดุ</h4>
-                        <p>สามารถใช้พลาสติกหลายประเภทได้ตามความต้องการของคุณสมบัติชิ้นงาน</p>
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: var(--gradient-2);"><i class="fas fa-comment-dots"></i></div>
+                        <h4>2. พิมพ์คำถาม</h4>
+                        <p>พิมพ์คำถาม หรือคำสั่งคำนวณได้เลย เช่น "short shot เกิดจากอะไร?"</p>
                     </div>
                 </div>
                 <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
-                    <div class="feature-card p-4">
-                        <div class="step-number">4</div>
-                        <h4>ความแม่นยำสูง</h4>
-                        <p>ได้ชิ้นงานที่มีขนาดและรูปร่างตรงตามแบบทุกประการ ด้วยความคลาดเคลื่อนต่ำ</p>
-                    </div>
-                </div>
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="400">
-                    <div class="feature-card p-4">
-                        <div class="step-number">5</div>
-                        <h4>ลดของเสีย</h4>
-                        <p>กระบวนการผลิตที่ควบคุมได้ดีจะทำให้เกิดของเสียน้อยที่สุด</p>
-                    </div>
-                </div>
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="500">
-                    <div class="feature-card p-4">
-                        <div class="step-number">6</div>
-                        <h4>เหมาะสำหรับการผลิตจำนวนมาก</h4>
-                        <p>เป็นวิธีการผลิตที่คุ้มค่าสำหรับการผลิตชิ้นงานจำนวนมาก</p>
+                    <div class="feature-card">
+                        <div class="feature-icon" style="background: var(--gradient-3);"><i class="fas fa-magic"></i></div>
+                        <h4>3. รับคำตอบทันที</h4>
+                        <p>AI จะตอบคำถามและให้คำแนะนำจากผู้เชี่ยวชาญทันที!</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- Process Section -->
-    <section class="content-section bg-light" id="process">
-        <div class="container">
-            <div class="row mb-5">
-                <div class="col-12 text-center">
-                    <h2 class="section-title" data-aos="fade-up">ขั้นตอนการทำงานของ Injection Molding</h2>
-                    <p class="lead text-muted" data-aos="fade-up" data-aos-delay="100">
-                        กระบวนการผลิตที่ทันสมัยและมีประสิทธิภาพ</p>
-                </div>
-            </div>
-            <div class="row align-items-center">
-                <div class="col-lg-6 mb-4" data-aos="fade-right">
-                    <img src="https://images.unsplash.com/photo-1581093196277-1c8d47ab5b2b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-                        alt="Injection Molding Process" class="img-fluid rounded-4 shadow" loading="lazy">
-                </div>
-                <div class="col-lg-6" data-aos="fade-left">
-                    <div class="process-step">
-                        <div class="step-number">1</div>
-                        <h4>การออกแบบแม่พิมพ์</h4>
-                        <p>ขั้นตอนแรกที่สำคัญที่สุดคือการออกแบบแม่พิมพ์ที่แม่นยำและเหมาะสมกับผลิตภัณฑ์ โดยคำนึงถึงปัจจัยต่างๆ เช่น การหดตัวของวัสดุ</p>
-                    </div>
-                    <div class="process-step">
-                        <div class="step-number">2</div>
-                        <h4>การฉีดพลาสติก</h4>
-                        <p>พลาสติกเม็ดจะถูกหลอมละลายในกระบอกฉีดที่อุณหภูมิที่เหมาะสม แล้วถูกฉีดเข้าไปในแม่พิมพ์ภายใต้ความดันสูง</p>
-                    </div>
-                    <div class="process-step">
-                        <div class="step-number">3</div>
-                        <h4>การทำความเย็น</h4>
-                        <p>ระบบน้ำหล่อเย็นจะทำงานเพื่อทำให้พลาสติกแข็งตัวเร็วขึ้น โดยใช้เวลาตั้งแต่ไม่กี่วินาทีถึงหลายนาที</p>
-                    </div>
-                    <div class="process-step">
-                        <div class="step-number">4</div>
-                        <h4>การนำชิ้นงานออก</h4>
-                        <p>เมื่อพลาสติกแข็งตัว แม่พิมพ์จะเปิดออกและชิ้นงานจะถูกดันออกโดยระบบ ejector pin</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Materials Section -->
-    <section class="content-section" id="materials">
-        <div class="container">
-            <div class="row mb-5">
-                <div class="col-12 text-center">
-                    <h2 class="section-title" data-aos="fade-up">วัสดุที่ใช้ในงานฉีดพลาสติก</h2>
-                    <p class="lead text-muted" data-aos="fade-up" data-aos-delay="100">
-                        เลือกวัสดุที่เหมาะสมสำหรับผลิตภัณฑ์ของคุณ</p>
-                </div>
-            </div>
-            <div class="row g-4">
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="0">
-                    <div class="feature-card material-card">
-                        <img src="https://images.unsplash.com/photo-1581093450021-4a7360e9a9e5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-                            class="card-img-top" alt="ABS Plastic" loading="lazy">
-                        <div class="card-body p-4">
-                            <h5 class="card-title">ABS</h5>
-                            <p class="card-text">มีความแข็งแรง ทนทานต่อการกระแทกดี ใช้ทำชิ้นส่วนรถยนต์ ของเล่น</p>
-                            <ul class="list-unstyled">
-                                <li><strong>อุณหภูมิการฉีด:</strong> 210-250°C</li>
-                                <li><strong>จุดแข็ง:</strong> ทนแรงกระแทก</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="feature-card material-card">
-                        <img src="https://images.unsplash.com/photo-1581094271901-8022df4466f9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-                            class="card-img-top" alt="PP Plastic" loading="lazy">
-                        <div class="card-body p-4">
-                            <h5 class="card-title">PP</h5>
-                            <p class="card-text">น้ำหนักเบา ทนสารเคมีดี ใช้ทำภาชนะบรรจุอาหาร ฝาขวด</p>
-                            <ul class="list-unstyled">
-                                <li><strong>อุณหภูมิการฉีด:</strong> 200-260°C</li>
-                                <li><strong>จุดแข็ง:</strong> ทนสารเคมี</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-                    <div class="feature-card material-card">
-                        <img src="https://images.unsplash.com/photo-1581094271901-8022df4466f9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-                            class="card-img-top" alt="PC Plastic" loading="lazy">
-                        <div class="card-body p-4">
-                            <h5 class="card-title">PC</h5>
-                            <p class="card-text">มีความใสสูง แข็งแรง ทนแรงกระแทกได้ดี ใช้ทำเลนส์ แว่นตานิรภัย</p>
-                            <ul class="list-unstyled">
-                                <li><strong>อุณหภูมิการฉีด:</strong> 280-320°C</li>
-                                <li><strong>จุดแข็ง:</strong> ความใสสูง</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="text-center mt-5" data-aos="fade-up">
-                <a href="#contact" class="btn btn-gradient btn-lg px-5 py-3">ไม่แน่ใจว่าควรใช้วัสดุอะไร? ติดต่อเรา</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Training Courses -->
-    <section class="content-section bg-light" id="courses">
-        <div class="container">
-            <div class="row mb-5">
-                <div class="col-12 text-center">
-                    <h2 class="section-title" data-aos="fade-up">หลักสูตรฝึกอบรมการฉีดพลาสติก</h2>
-                    <p class="lead text-muted" data-aos="fade-up" data-aos-delay="100">
-                        เรียนรู้จากผู้เชี่ยวชาญมากประสบการณ์</p>
-                </div>
-            </div>
-            <div class="row g-4">
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="0">
-                    <div class="feature-card h-100">
-                        <div class="card-header bg-primary text-white py-3">
-                            <h4 class="mb-0">หลักสูตรพื้นฐาน</h4>
-                        </div>
-                        <div class="card-body p-4">
-                            <h5 class="card-title text-primary">2 วัน</h5>
-                            <p class="card-text">เหมาะสำหรับผู้เริ่มต้น เรียนรู้พื้นฐานการฉีดพลาสติกทั้งหมด</p>
-                            <ul class="list-group list-group-flush mb-3">
-                                <li class="list-group-item">• หลักการทำงานของเครื่อง</li>
-                                <li class="list-group-item">• การตั้งค่าเครื่องเบื้องต้น</li>
-                                <li class="list-group-item">• การแก้ไขปัญหาพื้นฐาน</li>
-                            </ul>
-                            <div class="d-grid">
-                                <a href="#" class="btn btn-outline-primary">ดูรายละเอียด</a>
-                            </div>
-                        </div>
-                        <div class="card-footer bg-transparent border-top-0">
-                            <small class="text-muted">ราคา 3,900 บาท</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="feature-card h-100">
-                        <div class="card-header bg-success text-white py-3">
-                            <h4 class="mb-0">หลักสูตรออกแบบแม่พิมพ์</h4>
-                        </div>
-                        <div class="card-body p-4">
-                            <h5 class="card-title text-success">5 วัน</h5>
-                            <p class="card-text">เรียนรู้เทคนิคการออกแบบแม่พิมพ์ที่ถูกต้องและมีประสิทธิภาพ</p>
-                            <ul class="list-group list-group-flush mb-3">
-                                <li class="list-group-item">• หลักการออกแบบแม่พิมพ์</li>
-                                <li class="list-group-item">• การคำนวณการหดตัว</li>
-                                <li class="list-group-item">• ระบบน้ำหล่อเย็น</li>
-                            </ul>
-                            <div class="d-grid">
-                                <a href="#" class="btn btn-outline-success">ดูรายละเอียด</a>
-                            </div>
-                        </div>
-                        <div class="card-footer bg-transparent border-top-0">
-                            <small class="text-muted">ราคา 12,900 บาท</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-                    <div class="feature-card h-100">
-                        <div class="card-header bg-warning text-dark py-3">
-                            <h4 class="mb-0">หลักสูตรเทคนิคขั้นสูง</h4>
-                        </div>
-                        <div class="card-body p-4">
-                            <h5 class="card-title text-warning">3 วัน</h5>
-                            <p class="card-text">เทคนิคการแก้ไขปัญหาที่ซับซ้อนและการปรับปรุงประสิทธิภาพ</p>
-                            <ul class="list-group list-group-flush mb-3">
-                                <li class="list-group-item">• การวิเคราะห์ปัญหาชิ้นงาน</li>
-                                <li class="list-group-item">• การตั้งค่าเครื่องขั้นสูง</li>
-                                <li class="list-group-item">• การลดของเสีย</li>
-                            </ul>
-                            <div class="d-grid">
-                                <a href="#" class="btn btn-outline-warning">ดูรายละเอียด</a>
-                            </div>
-                        </div>
-                        <div class="card-footer bg-transparent border-top-0">
-                            <small class="text-muted">ราคา 2,900 บาท</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="text-center mt-5" data-aos="fade-up">
-                <a href="#" class="btn btn-gradient btn-lg px-5 py-3">ดูตารางอบรมทั้งหมด</a>
-            </div>
-        </div>
-    </section>
-
-   <!-- Consultation Form -->
-<section class="content-section" id="consultation">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="contact-form" data-aos="fade-up">
-                    <h3 class="text-center mb-4">ส่งข้อมูลเพื่อติดต่อ</h3>
-                    <form id="consultationForm"  action="https://formspree.io/f/xpwpygzv" method="POST">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="name" class="form-label">ชื่อ-นามสกุล</label>
-                                    <input type="text" class="form-control" id="name" name="name" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="company" class="form-label">บริษัท</label>
-                                    <input type="text" class="form-control" id="company" name="company">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="email" class="form-label">อีเมล</label>
-                                    <input type="email" class="form-control" id="email" name="email" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="phone" class="form-label">โทรศัพท์</label>
-                                    <input type="tel" class="form-control" id="phone" name="phone" required>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label for="interest" class="form-label">หัวข้อที่สนใจ</label>
-                                    <select class="form-select" id="interest" name="interest">
-                                        <option value="training">หลักสูตรฝึกอบรม</option>
-                                        <option value="consulting">บริการให้คำปรึกษา</option>
-                                        <option value="mold-design">การออกแบบแม่พิมพ์</option>
-                                        <option value="other">อื่นๆ</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label for="message" class="form-label">รายละเอียดเพิ่มเติม</label>
-                                    <textarea class="form-control" id="message" name="message" rows="4"></textarea>
-                                </div>
-                            </div>
-                            <div class="col-12 text-center">
-                                <button type="submit" class="btn btn-gradient px-5">ส่งคำขอ</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-    <!-- CTA Section -->
-    <section class="cta-section">
-        <div class="container cta-content text-center">
-            <h2 class="display-5 fw-bold mb-4" data-aos="fade-up">พร้อมยกระดับการผลิตด้วยเทคโนโลยี Injection Molding แล้วหรือยัง?</h2>
-            <a href="#consultation" class="btn btn-gradient btn-lg px-5" data-aos="fade-up" data-aos-delay="100">ปรึกษาผู้เชี่ยวชาญ</a>
         </div>
     </section>
 
@@ -560,85 +845,84 @@
     <footer class="footer">
         <div class="container">
             <div class="row">
-                <div class="col-md-4 mb-4 mb-md-0">
-                    <h5>เกี่ยวกับเรา</h5>
-                    <p>ให้คำปรึกษาและฝึกอบรมด้านเทคโนโลยีการฉีดพลาสติกโดยผู้เชี่ยวชาญมากประสบการณ์</p>
-                </div>
-                <div class="col-md-4 mb-4 mb-md-0">
-                    <h5>ติดต่อเรา</h5>
-                    <p><i class="fas fa-envelope me-2"></i> <a href="mailto:info@injectionmolding.com">info@injectionmolding.com</a></p>
-                    <p><i class="fas fa-phone me-2"></i> <a href="tel:+6621234567">02-123-4567</a></p>
-                </div>
-                <div class="col-md-4">
-                    <h5>ติดตามเรา</h5>
-                    <div class="social-links">
-                        <a href="https://facebook.com/kruwitkub" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                        <a href="https://tiktok.com/@kruwitkub" target="_blank"><i class="fab fa-tiktok"></i></a>
-                        <a href="https://line.me/kruwitkub" target="_blank"><i class="fab fa-line"></i></a>
-                        <a href="https://youtube.com/kruwitkub" target="_blank"><i class="fab fa-youtube"></i></a>
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h4><i class="fas fa-bolt me-2"></i>Wizmobiz</h4>
+                    <p>ผู้ช่วย AI ด้านการฉีดพลาสติก ผ่าน LINE Bot และ Calculator App พัฒนาโดยอาจารย์วิทยา ผู้เชี่ยวชาญ 15+ ปี</p>
+                    <div class="social-links mt-4">
+                        <a href="https://lin.ee/kruwitkub" target="_blank" title="LINE"><i class="fab fa-line"></i></a>
+                        <a href="https://facebook.com/kruwitkub" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://youtube.com/kruwitkub" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
+                        <a href="https://tiktok.com/@kruwitkub" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
                     </div>
                 </div>
-            </div>
-            <hr class="my-4 bg-light">
-            <div class="row">
-                <div class="col-12">
-                    <p class="mb-0">
-                        <a href="terms.html">เงื่อนไขการให้บริการ</a> |
-                        <a href="privacy.html">นโยบายความเป็นส่วนตัว</a> |
-                        <a href="sitemap.html">แผนผังเว็บไซต์</a>
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h4>🏭 บริการ</h4>
+                    <p>
+                        <a href="#line-features" style="color: white; text-decoration: none;"><i class="fas fa-angle-right me-2"></i>LINE AI Assistant</a><br>
+                        <a href="#calculator" style="color: white; text-decoration: none;"><i class="fas fa-angle-right me-2"></i>เครื่องคิดเลขวิศวกร</a><br>
+                        <a href="#pricing" style="color: white; text-decoration: none;"><i class="fas fa-angle-right me-2"></i>แพ็คเกจสมาชิก</a><br>
+                        <a href="mobile-learning.html" style="color: white; text-decoration: none;"><i class="fas fa-angle-right me-2"></i>คอร์สเรียนออนไลน์</a>
                     </p>
-                    <p class="mb-0">© 2025 Wizmobiz by Kruwitkub. All rights reserved.</p>
                 </div>
+                <div class="col-lg-4">
+                    <h4>📞 ติดต่อ</h4>
+                    <p>
+                        <i class="fab fa-line me-2"></i>@kruwitkub<br>
+                        <i class="fas fa-envelope me-2"></i>contact@wizmobiz.com<br>
+                        <i class="fas fa-map-marker-alt me-2"></i>Rayong, Thailand
+                    </p>
+                </div>
+            </div>
+            <hr class="mt-5 mb-4" style="border-color: rgba(255,255,255,0.1);">
+            <div class="text-center">
+                <p class="mb-0">© 2025 Wizmobiz by Kruwitkub. All rights reserved.</p>
+                <p class="mb-0" style="font-size: 0.9rem; opacity: 0.8; margin-top: 10px;">
+                    Made with <i class="fas fa-heart" style="color: var(--line-green);"></i> for Injection Molding Professionals
+                </p>
             </div>
         </div>
     </footer>
+
+    <!-- Floating LINE Button -->
+    <div class="fab-line">
+        <a href="https://lin.ee/kruwitkub" target="_blank" class="btn" title="เพิ่มเพื่อน LINE">
+            <i class="fab fa-line"></i>
+        </a>
+    </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- AOS JS -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <!-- Custom JS -->
+    
     <script>
-        // Initialize AOS animation
-        AOS.init({
-            duration: 800,
-            easing: 'ease-in-out',
-            once: true
-        });
+        AOS.init({ duration: 1000, once: true, offset: 100 });
 
-        // Form submission handling
-        document.getElementById('consultationForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Get form values
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            
-            // Here you would typically send the form data to a server
-            // For now, we'll just show an alert
-            alert(`ขอบคุณ ${name} เราได้รับคำขอปรึกษาของคุณแล้ว! เราจะติดต่อกลับไปที่ ${email} ในเร็วๆ นี้`);
-            
-            // Reset form
-            this.reset();
-        });
-
-        // Smooth scrolling for anchor links
+        // Smooth scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                
                 const targetId = this.getAttribute('href');
                 if (targetId === '#') return;
-                
                 const targetElement = document.querySelector(targetId);
                 if (targetElement) {
-                    targetElement.scrollIntoView({
-                        behavior: 'smooth'
-                    });
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             });
         });
+
+        // Parallax effect
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const bubbles = document.querySelectorAll('.parallax-bubble');
+            bubbles.forEach((bubble, index) => {
+                const speed = 0.5 + (index * 0.1);
+                bubble.style.transform = `translateY(${scrolled * speed}px) rotate(${scrolled * 0.1}deg)`;
+            });
+        });
+
+        console.log('%c🏭 Injection Molding AI Assistant', 'color: #00B900; font-size: 20px; font-weight: bold;');
+        console.log('%c70% LINE Bot + 30% Calculator App', 'color: #40C4FF; font-size: 14px;');
     </script>
 </body>
-
 </html>
