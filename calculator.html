@@ -1,427 +1,953 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Injection Molding Calculator</title>
-    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <meta name="description" content="เน€เธเธฃเธทเนเธญเธเธเธดเธ”เน€เธฅเธเธงเธดเธจเธงเธเธฃเธชเธณเธซเธฃเธฑเธเธเธฒเธเธเธตเธ”เธเธฅเธฒเธชเธ•เธดเธ - เธเธฃเธต 5 เธเธฃเธฑเนเธ! เธเธณเธเธงเธ“เนเธฃเธเธเธดเธ”, Cooling Time, Shot Size">
+    <title>๐งฎ เน€เธเธฃเธทเนเธญเธเธเธดเธ”เน€เธฅเธเธงเธดเธจเธงเธเธฃ - เธเธฃเธต 5 เธเธฃเธฑเนเธ!</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
+        :root {
+            --line-green: #00B900;
+            --primary-color: #667eea;
+            --secondary-color: #40C4FF;
+            --success-color: #4CAF50;
+            --warning-color: #FFD740;
+            --danger-color: #f5576c;
+            --dark-color: #2D3436;
+            --light-color: #F5F7FA;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            background-color: #1a1a1a;
-            color: #e0e0e0;
-            font-family: 'Sarabun', sans-serif;
-            padding-bottom: 80px;
+            font-family: 'Kanit', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark-color);
         }
-        .card {
-            background-color: #2d2d2d;
-            border: 1px solid #404040;
+
+        .app-header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 20px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .app-title {
+            font-weight: 700;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, var(--primary-color), #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sub-title {
+            font-size: 0.9rem;
+        }
+
+        .trial-badge {
+            background: linear-gradient(135deg, var(--warning-color), #FFA000);
+            color: var(--dark-color);
+            padding: 8px 15px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(255, 215, 64, 0.4);
+        }
+
+        .trial-badge.premium {
+            background: linear-gradient(135deg, var(--line-green), #06C755);
+            color: #fff;
+        }
+
+        .trial-badge.exhausted {
+            background: linear-gradient(135deg, var(--danger-color), #ff4757);
+            color: #fff;
+        }
+
+        .main-container {
+            padding: 20px 15px 110px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .calc-tabs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
             margin-bottom: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
-        .form-control, .form-select {
-            background-color: #3d3d3d;
-            border-color: #505050;
-            color: #fff;
+
+        @media (min-width: 768px) {
+            .calc-tabs {
+                grid-template-columns: repeat(6, 1fr);
+            }
         }
-        .form-control:focus, .form-select:focus {
-            background-color: #454545;
-            color: #fff;
-            border-color: #00b900;
-            box-shadow: 0 0 0 0.25rem rgba(0, 185, 0, 0.25);
-        }
-        .btn-primary {
-            background-color: #00b900;
-            border-color: #00b900;
-            font-weight: bold;
-        }
-        .btn-primary:hover {
-            background-color: #009900;
-            border-color: #009900;
-        }
-        .nav-tabs .nav-link {
-            color: #aaa;
+
+        .calc-tab {
             border: none;
-            border-bottom: 2px solid transparent;
+            border-radius: 14px;
+            padding: 10px 8px;
+            background: rgba(255, 255, 255, 0.92);
+            color: #444;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
         }
-        .nav-tabs .nav-link.active {
-            background-color: transparent;
-            color: #00b900;
-            border-color: transparent;
-            border-bottom: 2px solid #00b900;
-            font-weight: bold;
+
+        .calc-tab.active {
+            outline: 3px solid rgba(102, 126, 234, 0.35);
+            color: var(--dark-color);
         }
-        .nav-tabs {
-            border-bottom: 1px solid #404040;
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            overflow-y: hidden;
-            -webkit-overflow-scrolling: touch;
+
+        .calc-tab i {
+            font-size: 1.2rem;
+            color: var(--primary-color);
         }
-        .nav-tabs::-webkit-scrollbar {
+
+        .calculator-panel {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 18px;
+            padding: 18px;
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .calculator-panel.active {
+            display: block;
+        }
+
+        .calc-title {
+            font-weight: 700;
+            font-size: 1.15rem;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .calc-title i {
+            color: var(--primary-color);
+        }
+
+        .btn-calculate {
+            width: 100%;
+            border-radius: 14px;
+            padding: 12px 14px;
+            background: linear-gradient(135deg, var(--primary-color), #764ba2);
+            border: none;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .result-section {
+            margin-top: 14px;
+            padding: 14px;
+            border-radius: 14px;
+            background: rgba(102, 126, 234, 0.08);
             display: none;
         }
-        h5 {
-            color: #00b900;
-            margin-bottom: 20px;
+
+        .result-section.show {
+            display: block;
         }
-        .input-group-text {
-            background-color: #505050;
-            border-color: #505050;
+
+        .result-title {
+            font-weight: 700;
+            margin: 0 0 8px;
+        }
+
+        .result-value {
+            font-weight: 800;
+            font-size: 2rem;
+            line-height: 1;
+            color: var(--primary-color);
+        }
+
+        .result-unit {
+            font-weight: 700;
+            opacity: 0.75;
+        }
+
+        .result-details {
+            margin-top: 10px;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 6px 0;
+            border-bottom: 1px dashed rgba(0, 0, 0, 0.12);
+        }
+
+        .result-row:last-child {
+            border-bottom: none;
+        }
+
+        .recommendation {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .recommendation i {
+            color: var(--success-color);
+        }
+
+        .material-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .material-pill {
+            border: 1px solid rgba(0, 0, 0, 0.12);
+            background: #fff;
+            border-radius: 999px;
+            padding: 6px 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .material-pill.active {
+            border-color: rgba(102, 126, 234, 0.4);
+            background: rgba(102, 126, 234, 0.08);
+        }
+
+        .range-readout {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .kaizen-card {
+            margin-top: 16px;
+            border-radius: 18px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .kaizen-card h5 {
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .kaizen-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .kaizen-tag {
+            background: rgba(64, 196, 255, 0.12);
+            border: 1px solid rgba(64, 196, 255, 0.28);
+            color: #1b3a4a;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .btn-kaizen {
+            border-radius: 12px;
+            font-weight: 700;
+        }
+
+        .line-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+        }
+
+        .line-modal {
+            width: 100%;
+            max-width: 520px;
+            background: #fff;
+            border-radius: 18px;
+            padding: 18px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+        }
+
+        .line-modal-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--line-green), #06C755);
+            display: grid;
+            place-items: center;
             color: #fff;
+            font-size: 26px;
+            margin-bottom: 12px;
         }
-        /* Modal Styles */
-        .modal-content {
-            background-color: #2d2d2d;
+
+        .btn-line-login {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            border-radius: 14px;
+            padding: 12px 14px;
+            background: linear-gradient(135deg, var(--line-green), #06C755);
+            border: none;
             color: #fff;
-            border: 1px solid #404040;
+            font-weight: 800;
+            text-decoration: none;
+            margin-top: 12px;
         }
-        .modal-header {
-            border-bottom: 1px solid #404040;
+
+        .modal-benefits {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 14px;
+            background: rgba(0, 185, 0, 0.08);
         }
-        .modal-footer {
-            border-top: 1px solid #404040;
+
+        .benefit-item {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 6px 0;
+            font-weight: 600;
         }
-        .qr-code {
-            max-width: 200px;
-            border-radius: 10px;
-            border: 5px solid #fff;
+
+        .benefit-item i {
+            color: var(--line-green);
+        }
+
+        .modal-smallprint {
+            margin-top: 10px;
+            opacity: 0.75;
+            font-size: 0.9rem;
+        }
+
+        .app-footer {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px 14px;
+            text-align: center;
+            box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .app-footer p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .footer-link {
+            color: var(--primary-color);
+            font-weight: 700;
+            text-decoration: none;
         }
     </style>
 </head>
-<body class="p-3">
-    <div class="container">
-        <h4 class="text-center mb-4">🧮 เครื่องคำนวณงานฉีด</h4>
 
-        <!-- Navigation Tabs -->
-        <ul class="nav nav-tabs mb-4" id="calcTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#clamp" type="button">🔧 Clamp</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#cooling" type="button">❄️ Cooling</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#shot" type="button">💉 Shot</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#moldtemp" type="button">🌡️ Temp</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#machine" type="button">🏭 Machine</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#vp" type="button">⚡ V-P</button>
-            </li>
-        </ul>
+<body>
+    <header class="app-header">
+        <div class="d-flex align-items-center justify-content-between gap-3">
+            <div>
+                <div class="app-title">๐งฎ เน€เธเธฃเธทเนเธญเธเธเธดเธ”เน€เธฅเธเธงเธดเธจเธงเธเธฃ</div>
+                <div class="text-muted sub-title">Injection Molding โ€ข 6 เน€เธเธฃเธทเนเธญเธเธกเธทเธญ</div>
+            </div>
+            <div id="trialBadge" class="trial-badge">
+                <i class="fas fa-gift"></i>
+                <span id="trialText">เธเธฃเธต 5/5</span>
+            </div>
+        </div>
+    </header>
 
-        <div class="tab-content" id="calcTabContent">
-            <!-- 1. Clamp Force Tab -->
-            <div class="tab-pane fade show active" id="clamp" role="tabpanel">
-                <div class="card">
-                    <div class="card-body">
-                        <h5>🔧 แรงปิดแม่พิมพ์ (Clamping Force)</h5>
-                        <form id="formClamp">
-                            <div class="mb-3">
-                                <label class="form-label">พื้นที่ฉายภาพ (Projected Area)</label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" id="clampArea" placeholder="เช่น 400" required>
-                                    <span class="input-group-text">cm²</span>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">ความดันในโพรง (Cavity Pressure)</label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" id="clampPressure" placeholder="ปกติ 30-60" value="40" required>
-                                    <span class="input-group-text">MPa</span>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Safety Factor</label>
-                                <select class="form-select" id="clampSafety">
-                                    <option value="1.1">1.1 (มาตรฐาน)</option>
-                                    <option value="1.2">1.2 (เผื่อมาก)</option>
-                                    <option value="1.0">1.0 (ไม่เผื่อ)</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">คำนวณ</button>
-                        </form>
-                    </div>
+    <main class="main-container">
+        <div class="calc-tabs">
+            <button type="button" class="calc-tab active" data-calc="clamp">
+                <i class="fas fa-lock"></i>
+                <span>เนเธฃเธเธเธดเธ”</span>
+            </button>
+            <button type="button" class="calc-tab" data-calc="cool">
+                <i class="fas fa-snowflake"></i>
+                <span>Cooling</span>
+            </button>
+            <button type="button" class="calc-tab" data-calc="shot">
+                <i class="fas fa-fill-drip"></i>
+                <span>Shot</span>
+            </button>
+            <button type="button" class="calc-tab" data-calc="moldtemp">
+                <i class="fas fa-temperature-high"></i>
+                <span>Temp</span>
+            </button>
+            <button type="button" class="calc-tab" data-calc="vp">
+                <i class="fas fa-ruler-combined"></i>
+                <span>V-P</span>
+            </button>
+            <button type="button" class="calc-tab" data-calc="machine">
+                <i class="fas fa-industry"></i>
+                <span>เน€เธเธฃเธทเนเธญเธ</span>
+            </button>
+        </div>
+
+        <section class="calculator-panel active" id="calc-clamp">
+            <div class="calc-title"><i class="fas fa-lock"></i>เธเธณเธเธงเธ“เนเธฃเธเธเธดเธ” (Clamping Force)</div>
+
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-vector-square me-1"></i>เธเธทเนเธเธ—เธตเนเธเธฒเธข (Projected Area)</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="clamp-area" placeholder="เน€เธเนเธ 350" title="เธเธทเนเธเธ—เธตเนเธเธฒเธข" inputmode="decimal">
+                    <span class="input-group-text">cmยฒ</span>
                 </div>
             </div>
 
-            <!-- 2. Cooling Time Tab -->
-            <div class="tab-pane fade" id="cooling" role="tabpanel">
-                <div class="card">
-                    <div class="card-body">
-                        <h5>❄️ เวลาเย็นตัว (Cooling Time)</h5>
-                        <form id="formCooling">
-                            <div class="mb-3">
-                                <label class="form-label">ความหนาชิ้นงาน (Thickness)</label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" id="coolThick" step="0.1" placeholder="เช่น 2.5" required>
-                                    <span class="input-group-text">mm</span>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">วัสดุ (Material)</label>
-                                <select class="form-select" id="coolMat">
-                                    <option value="PP">PP</option>
-                                    <option value="PE">PE</option>
-                                    <option value="ABS">ABS</option>
-                                    <option value="PC">PC</option>
-                                    <option value="PA6">PA6</option>
-                                    <option value="POM">POM</option>
-                                    <option value="PS">PS</option>
-                                    <option value="PMMA">PMMA</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">อุณหภูมิแม่พิมพ์ (Mold Temp)</label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" id="coolMoldTemp" placeholder="เช่น 40" value="40">
-                                    <span class="input-group-text">°C</span>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">คำนวณ</button>
-                        </form>
-                    </div>
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-tachometer-alt me-1"></i>เนเธฃเธเธ”เธฑเธเธเธตเธ”เธเธฃเธฐเธกเธฒเธ“</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="clamp-pressure" placeholder="เน€เธเนเธ 40" title="เนเธฃเธเธ”เธฑเธเธเธตเธ”" inputmode="decimal">
+                    <span class="input-group-text">kg/cmยฒ</span>
+                </div>
+                <div class="mt-2 material-pills">
+                    <button type="button" class="material-pill" data-pressure="35">PP</button>
+                    <button type="button" class="material-pill" data-pressure="40">ABS</button>
+                    <button type="button" class="material-pill" data-pressure="45">PC</button>
+                    <button type="button" class="material-pill" data-pressure="45">PA</button>
                 </div>
             </div>
 
-            <!-- 3. Shot Size Tab -->
-            <div class="tab-pane fade" id="shot" role="tabpanel">
-                <div class="card">
-                    <div class="card-body">
-                        <h5>💉 ขนาดการฉีด (Shot Size)</h5>
-                        <form id="formShot">
-                            <div class="mb-3">
-                                <label class="form-label">น้ำหนักชิ้นงาน (Part Weight)</label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" id="shotPartWeight" placeholder="เช่น 150" required>
-                                    <span class="input-group-text">g</span>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">จำนวน Cavity</label>
-                                <input type="number" class="form-control" id="shotCavities" value="1" min="1" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">น้ำหนัก Runner (g)</label>
-                                <input type="number" class="form-control" id="shotRunner" value="0" min="0">
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">คำนวณ</button>
-                        </form>
-                    </div>
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-shield-alt me-1"></i>Safety Factor</label>
+                <select class="form-select" id="clamp-safety" title="Safety factor">
+                    <option value="1.1">1.10 (เธเธฒเธเธเธดเนเธ)</option>
+                    <option value="1.2" selected>1.20 (เธ—เธฑเนเธงเนเธ)</option>
+                    <option value="1.3">1.30 (เธเธฒเธเธขเธฒเธ)</option>
+                </select>
+            </div>
+
+            <button class="btn btn-calculate" type="button" onclick="calculateClamping()">
+                <i class="fas fa-calculator me-2"></i>เธเธณเธเธงเธ“
+            </button>
+
+            <div class="result-section" id="result-clamp">
+                <h5 class="result-title"><i class="fas fa-lock me-2"></i>เนเธฃเธเธเธดเธ”เธ—เธตเนเธ•เนเธญเธเนเธเน</h5>
+                <div class="result-value" id="clamp-result">-</div>
+                <div class="result-unit">ton</div>
+
+                <div class="result-details">
+                    <div class="result-row"><span>Area</span><span id="clamp-area-out">-</span></div>
+                    <div class="result-row"><span>Pressure</span><span id="clamp-pressure-out">-</span></div>
+                    <div class="result-row"><span>Safety</span><span id="clamp-safety-out">-</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="calculator-panel" id="calc-cool">
+            <div class="calc-title"><i class="fas fa-snowflake"></i>เธเธณเธเธงเธ“ Cooling Time</div>
+
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-layer-group me-1"></i>เธเธงเธฒเธกเธซเธเธฒเธเธดเนเธเธเธฒเธ</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="cool-thickness" placeholder="เน€เธเนเธ 2.5" title="เธเธงเธฒเธกเธซเธเธฒเธเธดเนเธเธเธฒเธ" inputmode="decimal">
+                    <span class="input-group-text">mm</span>
                 </div>
             </div>
 
-            <!-- 4. Mold Temperature Tab -->
-            <div class="tab-pane fade" id="moldtemp" role="tabpanel">
-                <div class="card">
-                    <div class="card-body">
-                        <h5>🌡️ อุณหภูมิแม่พิมพ์ (Mold Temp)</h5>
-                        <form id="formMoldTemp">
-                            <div class="mb-3">
-                                <label class="form-label">วัสดุ (Material)</label>
-                                <select class="form-select" id="tempMat">
-                                    <option value="PP">PP</option>
-                                    <option value="PE">PE</option>
-                                    <option value="ABS">ABS</option>
-                                    <option value="PC">PC</option>
-                                    <option value="PA6">PA6</option>
-                                    <option value="POM">POM</option>
-                                    <option value="PET">PET</option>
-                                    <option value="PBT">PBT</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">ผิวชิ้นงาน (Surface)</label>
-                                <select class="form-select" id="tempSurface">
-                                    <option value="standard">มาตรฐาน (Standard)</option>
-                                    <option value="glossy">เงา (Glossy)</option>
-                                    <option value="matte">ด้าน (Matte/Texture)</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">คำนวณ</button>
-                        </form>
-                    </div>
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-vial me-1"></i>เธงเธฑเธชเธ”เธธ</label>
+                <select class="form-select" id="cool-material" title="เธงเธฑเธชเธ”เธธ">
+                    <option value="PP">PP</option>
+                    <option value="ABS" selected>ABS</option>
+                    <option value="PC">PC</option>
+                    <option value="PA">PA</option>
+                    <option value="POM">POM</option>
+                    <option value="PET">PET</option>
+                    <option value="PS">PS</option>
+                    <option value="PMMA">PMMA</option>
+                    <option value="PVC">PVC</option>
+                </select>
+                <div class="form-text">เธเธณเธเธงเธ“เนเธเธเธเธฃเธฐเธกเธฒเธ“เธเธฒเธฃ เน€เธเธทเนเธญเนเธเนเธเธฒเธเธซเธเนเธฒเธเธฒเธเน€เธฃเนเธง</div>
+            </div>
+
+            <button class="btn btn-calculate" type="button" onclick="calculateCooling()">
+                <i class="fas fa-calculator me-2"></i>เธเธณเธเธงเธ“
+            </button>
+
+            <div class="result-section" id="result-cool">
+                <h5 class="result-title"><i class="fas fa-snowflake me-2"></i>Cooling Time (เธเธฃเธฐเธกเธฒเธ“)</h5>
+                <div class="result-value" id="cool-result">-</div>
+                <div class="result-unit">sec</div>
+
+                <div class="result-details">
+                    <div class="result-row"><span>Thickness</span><span id="cool-thickness-out">-</span></div>
+                    <div class="result-row"><span>Material</span><span id="cool-material-out">-</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="calculator-panel" id="calc-shot">
+            <div class="calc-title"><i class="fas fa-fill-drip"></i>เธเธณเธเธงเธ“ Shot Size</div>
+
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-weight-hanging me-1"></i>เธเนเธณเธซเธเธฑเธเธเธดเนเธเธเธฒเธ</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="shot-part" placeholder="เน€เธเนเธ 35" title="เธเนเธณเธซเธเธฑเธเธเธดเนเธเธเธฒเธ" inputmode="decimal">
+                    <span class="input-group-text">g</span>
                 </div>
             </div>
 
-            <!-- 5. Machine Selection Tab -->
-            <div class="tab-pane fade" id="machine" role="tabpanel">
-                <div class="card">
-                    <div class="card-body">
-                        <h5>🏭 เลือกขนาดเครื่อง (Machine Selection)</h5>
-                        <form id="formMachine">
-                            <div class="mb-3">
-                                <label class="form-label">พื้นที่ฉายภาพ (Projected Area)</label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" id="machineArea" placeholder="เช่น 500" required>
-                                    <span class="input-group-text">cm²</span>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">น้ำหนัก Shot รวม (Shot Weight)</label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" id="machineWeight" placeholder="เช่น 200">
-                                    <span class="input-group-text">g</span>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">วิเคราะห์</button>
-                        </form>
-                    </div>
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-project-diagram me-1"></i>เธเนเธณเธซเธเธฑเธ Runner/Sprue</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="shot-runner" placeholder="เน€เธเนเธ 10" title="เธเนเธณเธซเธเธฑเธ runner" inputmode="decimal">
+                    <span class="input-group-text">g</span>
                 </div>
             </div>
 
-            <!-- 6. V-P Switchover Tab -->
-            <div class="tab-pane fade" id="vp" role="tabpanel">
-                <div class="card">
-                    <div class="card-body">
-                        <h5>⚡ จุดสลับ V-P (Switchover)</h5>
-                        <form id="formVP">
-                            <div class="mb-3">
-                                <label class="form-label">ระยะ Shot Size</label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" id="vpShotSize" placeholder="เช่น 150" required>
-                                    <span class="input-group-text">mm</span>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">ต้องการฉีดเต็มกี่ % (Fill %)</label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" id="vpFill" value="95" max="99" min="50" required>
-                                    <span class="input-group-text">%</span>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">คำนวณ</button>
-                        </form>
-                    </div>
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-tint me-1"></i>เธเธงเธฒเธกเธซเธเธฒเนเธเนเธ (Density)</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="shot-density" placeholder="เน€เธเนเธ 1.05" title="เธเธงเธฒเธกเธซเธเธฒเนเธเนเธ" inputmode="decimal" value="1.05">
+                    <span class="input-group-text">g/cc</span>
                 </div>
             </div>
+
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-expand-arrows-alt me-1"></i>Cushion (%) <span class="range-readout" id="cushion-value">10</span>%</label>
+                <input type="range" class="form-range" id="shot-cushion" min="0" max="30" value="10">
+            </div>
+
+            <button class="btn btn-calculate" type="button" onclick="calculateShot()">
+                <i class="fas fa-calculator me-2"></i>เธเธณเธเธงเธ“
+            </button>
+
+            <div class="result-section" id="result-shot">
+                <h5 class="result-title"><i class="fas fa-fill-drip me-2"></i>Shot Size</h5>
+                <div class="result-value" id="shot-result">-</div>
+                <div class="result-unit">cc</div>
+
+                <div class="result-details">
+                    <div class="result-row"><span>Total weight</span><span id="shot-weight">-</span></div>
+                    <div class="result-row"><span>Density</span><span id="shot-density-out">-</span></div>
+                    <div class="result-row"><span>Cushion</span><span id="shot-cushion-out">-</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="calculator-panel" id="calc-moldtemp">
+            <div class="calc-title"><i class="fas fa-temperature-high"></i>เธเนเธญเธกเธนเธฅเธญเธธเธ“เธซเธ เธนเธกเธดเนเธเธฐเธเธณ</div>
+
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-vial me-1"></i>เน€เธฅเธทเธญเธเธงเธฑเธชเธ”เธธ</label>
+                <select class="form-select" id="temp-material" title="เน€เธฅเธทเธญเธเธงเธฑเธชเธ”เธธ">
+                    <option value="PP">PP</option>
+                    <option value="ABS" selected>ABS</option>
+                    <option value="PC">PC</option>
+                    <option value="PA">PA</option>
+                    <option value="POM">POM</option>
+                    <option value="PET">PET</option>
+                    <option value="PS">PS</option>
+                    <option value="PMMA">PMMA</option>
+                    <option value="PVC">PVC</option>
+                </select>
+            </div>
+
+            <button class="btn btn-calculate" type="button" onclick="showMoldTemp()">
+                <i class="fas fa-info-circle me-2"></i>เนเธชเธ”เธเธเนเธญเธกเธนเธฅ
+            </button>
+
+            <div class="result-section" id="result-temp">
+                <h5 class="result-title"><i class="fas fa-temperature-high me-2"></i>เธเนเธงเธเธญเธธเธ“เธซเธ เธนเธกเธดเนเธเธฐเธเธณ</h5>
+                <div class="result-details">
+                    <div class="result-row"><span>Material</span><span id="temp-mat">-</span></div>
+                    <div class="result-row"><span>Mold temp</span><span id="temp-mold">-</span></div>
+                    <div class="result-row"><span>Melt temp</span><span id="temp-melt">-</span></div>
+                    <div class="result-row"><span>Pressure (approx)</span><span id="temp-press">-</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="calculator-panel" id="calc-vp">
+            <div class="calc-title"><i class="fas fa-ruler-combined"></i>เธเธณเธเธงเธ“ V-P Position</div>
+
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-arrows-alt-v me-1"></i>Shot size (Stroke)</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="vp-shot-size" placeholder="เน€เธเนเธ 60" title="Shot stroke" inputmode="decimal">
+                    <span class="input-group-text">mm</span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-percentage me-1"></i>% Fill <span class="range-readout" id="fill-value">95</span>%</label>
+                <input type="range" class="form-range" id="vp-fill" min="80" max="99" value="95">
+            </div>
+
+            <button class="btn btn-calculate" type="button" onclick="calculateVP()">
+                <i class="fas fa-calculator me-2"></i>เธเธณเธเธงเธ“
+            </button>
+
+            <div class="result-section" id="result-vp">
+                <h5 class="result-title"><i class="fas fa-ruler-combined me-2"></i>V-P Position</h5>
+                <div class="result-value" id="vp-result">-</div>
+                <div class="result-unit">mm</div>
+
+                <div class="result-details">
+                    <div class="result-row"><span>Shot</span><span id="vp-shot">-</span></div>
+                    <div class="result-row"><span>% Fill</span><span id="vp-percent">-</span></div>
+                    <div class="result-row"><span>Cushion (5%)</span><span id="vp-cushion">-</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="calculator-panel" id="calc-machine">
+            <div class="calc-title"><i class="fas fa-industry"></i>เนเธเธฐเธเธณเธเธเธฒเธ”เน€เธเธฃเธทเนเธญเธ</div>
+
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-compress-arrows-alt me-1"></i>เนเธฃเธเธเธดเธ”เธ—เธตเนเธ•เนเธญเธเธเธฒเธฃ</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="machine-force" placeholder="เน€เธเนเธ 150" title="เนเธฃเธเธเธดเธ”เธ—เธตเนเธ•เนเธญเธเธเธฒเธฃ" inputmode="decimal">
+                    <span class="input-group-text">ton</span>
+                </div>
+            </div>
+
+            <button class="btn btn-calculate" type="button" onclick="calculateMachine()">
+                <i class="fas fa-calculator me-2"></i>เนเธเธฐเธเธณเน€เธเธฃเธทเนเธญเธ
+            </button>
+
+            <div class="result-section" id="result-machine">
+                <h5 class="result-title"><i class="fas fa-industry me-2"></i>เธเธเธฒเธ”เน€เธเธฃเธทเนเธญเธเนเธเธฐเธเธณ</h5>
+                <div class="result-value" id="machine-result">-</div>
+                <div class="result-unit">ton</div>
+
+                <div class="result-details">
+                    <div class="result-row"><span>เนเธฃเธเธเธดเธ”เธ—เธตเนเธ•เนเธญเธเธเธฒเธฃ</span><span id="machine-need">-</span></div>
+                    <div class="result-row"><span>% เธเธฒเธฃเนเธเนเธเธฒเธ</span><span id="machine-usage">-</span></div>
+                </div>
+
+                <div class="recommendation">
+                    <i class="fas fa-check-circle"></i>
+                    <span>เน€เธเธฃเธทเนเธญเธเธเธเธฒเธ” <span id="machine-size">-</span> ton เน€เธซเธกเธฒเธฐเธชเธก</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="kaizen-card">
+            <h5>๐”ง เนเธซเธกเน! WiT Kaizen Expert</h5>
+            <p class="mb-2">AI เธ—เธตเนเธเธฃเธถเธเธฉเธฒเธ”เนเธฒเธ Kaizen เธเนเธงเธขเธเธฃเธฑเธเธเธฃเธธเธเธเธฒเธเธซเธเนเธฒเธเธฒเธเธเธฃเธดเธ</p>
+            <div class="kaizen-features">
+                <span class="kaizen-tag">๐” 3-Mu's Analysis</span>
+                <span class="kaizen-tag">๐“ 4M Checklist</span>
+                <span class="kaizen-tag">๐”ง TPM Guide</span>
+                <span class="kaizen-tag">๐“ 5S / 5เธช</span>
+                <span class="kaizen-tag">โก JIT</span>
+            </div>
+            <a href="https://lin.ee/TipxyCa" target="_blank" rel="noopener" class="btn btn-light btn-sm mt-3 btn-kaizen">
+                <i class="fab fa-line me-1"></i> เธฅเธญเธเนเธเน Kaizen Expert
+            </a>
+        </div>
+    </main>
+
+    <div class="line-modal-overlay" id="lineModal">
+        <div class="line-modal">
+            <div class="line-modal-icon"><i class="fab fa-line"></i></div>
+            <h3 class="mb-2">๐ เนเธเนเธเธฃเธ 5 เธเธฃเธฑเนเธเนเธฅเนเธง!</h3>
+            <p class="mb-2">เน€เธเธดเนเธกเน€เธเธทเนเธญเธ LINE เน€เธเธทเนเธญเนเธเนเธเธฒเธเธ•เนเธญเนเธ”เน <strong>เนเธกเนเธเธณเธเธฑเธ”</strong><br>เธเธฃเนเธญเธกเธเธตเน€เธเธญเธฃเนเธเธดเน€เธจเธฉเธญเธตเธเธกเธฒเธเธกเธฒเธข!</p>
+
+            <div class="modal-benefits">
+                <h5 class="mb-2">โจ เธชเธดเธ—เธเธดเธเธดเน€เธจเธฉเธชเธณเธซเธฃเธฑเธเน€เธเธทเนเธญเธ LINE:</h5>
+                <div class="benefit-item"><i class="fas fa-infinity"></i><span>เธเธณเธเธงเธ“เนเธ”เนเนเธกเนเธเธณเธเธฑเธ”</span></div>
+                <div class="benefit-item"><i class="fas fa-robot"></i><span>AI เธเธนเนเน€เธเธตเนเธขเธงเธเธฒเธเธ•เธญเธเธเธณเธ–เธฒเธก 24/7</span></div>
+                <div class="benefit-item"><i class="fas fa-tools"></i><span>เธงเธดเธเธดเธเธเธฑเธขเธเธฑเธเธซเธฒเธเธตเธ”เธเธฅเธฒเธชเธ•เธดเธ</span></div>
+                <div class="benefit-item"><i class="fas fa-file-alt"></i><span>Digital Logbook เธเธฑเธเธ—เธถเธเธเนเธญเธกเธนเธฅ</span></div>
+                <div class="benefit-item"><i class="fas fa-chart-line"></i><span>Kaizen Expert เธเธฃเธฑเธเธเธฃเธธเธเธเธฒเธ</span></div>
+            </div>
+
+            <a href="https://lin.ee/TipxyCa" target="_blank" rel="noopener" class="btn-line-login">
+                <i class="fab fa-line"></i> เน€เธเธดเนเธกเน€เธเธทเนเธญเธ LINE เธเธฃเธต!
+            </a>
+
+            <p class="modal-smallprint"><i class="fas fa-shield-alt me-1"></i> เธเธฅเธญเธ”เธ เธฑเธข เนเธกเนเธกเธตเธเนเธฒเนเธเนเธเนเธฒเธข</p>
         </div>
     </div>
 
-    <!-- Friend Add Modal -->
-    <div class="modal fade" id="friendModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title w-100 text-center">🔒 ปลดล็อคฟีเจอร์เต็มรูปแบบ</h5>
-                </div>
-                <div class="modal-body text-center">
-                    <p class="mb-3">กรุณาเพิ่มเพื่อน WiT AI เพื่อใช้งานเครื่องคำนวณและฟีเจอร์อื่นๆ ได้ไม่จำกัด</p>
-                    <img src="line_wit.jpg" alt="WiT AI QR Code" class="qr-code mb-3 img-fluid">
-                    <div class="d-grid gap-2">
-                        <a href="https://lin.ee/TipxyCa" class="btn btn-success btn-lg fw-bold">
-                            <i class="bi bi-line"></i> เพิ่มเพื่อนเลย!
-                        </a>
-                    </div>
-                </div>
-                <div class="modal-footer border-0 justify-content-center">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal" id="skipBtn">ลองใช้งานก่อน (จำกัดฟีเจอร์)</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <footer class="app-footer">
+        <p>ยฉ 2025 Wizmobiz | เธเธฑเธ’เธเธฒเนเธ”เธข เธญ.เธงเธดเธ—เธขเธฒ</p>
+        <p><a href="injection-molding.html" class="footer-link">เธเธฅเธฑเธเธซเธเนเธฒเธซเธฅเธฑเธ</a></p>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // ⚠️ REPLACE WITH YOUR LIFF ID
-        const LIFF_ID = "2006625438-k8dmrmdl"; 
+        const TRIAL_KEY = 'wizmobiz_calc_trial';
+        const MAX_FREE_TRIALS = 5;
+        const LINE_FRIEND_KEY = 'wizmobiz_line_friend';
 
-        async function main() {
-            try {
-                await liff.init({ liffId: LIFF_ID });
-                
-                if (!liff.isLoggedIn()) {
-                    liff.login();
-                    return;
-                }
+        const materials = {
+            PP: { pressure: 35, mold: [20, 60, 40], melt: '180-230', alpha: 0.12 },
+            ABS: { pressure: 40, mold: [40, 80, 60], melt: '220-260', alpha: 0.095 },
+            PC: { pressure: 50, mold: [80, 120, 100], melt: '280-320', alpha: 0.073 },
+            PA: { pressure: 45, mold: [60, 100, 80], melt: '250-300', alpha: 0.09 },
+            POM: { pressure: 45, mold: [60, 120, 90], melt: '180-210', alpha: 0.085 },
+            PET: { pressure: 45, mold: [15, 50, 30], melt: '260-280', alpha: 0.08 },
+            PS: { pressure: 35, mold: [20, 50, 35], melt: '180-260', alpha: 0.075 },
+            PMMA: { pressure: 45, mold: [50, 80, 65], melt: '220-260', alpha: 0.073 },
+            PVC: { pressure: 35, mold: [20, 60, 40], melt: '160-200', alpha: 0.08 },
+        };
 
-                // Check Friendship
-                const friend = await liff.getFriendship();
-                if (!friend.friendFlag) {
-                    const modal = new bootstrap.Modal(document.getElementById('friendModal'));
-                    modal.show();
-                }
+        const machineSizes = [50, 80, 100, 120, 150, 180, 200, 250, 300, 350, 400, 450, 500, 550, 650, 850, 1000, 1300, 1600, 2000];
 
-            } catch (err) {
-                console.error("LIFF Init failed", err);
+        function getTrialCount() {
+            const stored = localStorage.getItem(TRIAL_KEY);
+            if (!stored) {
+                localStorage.setItem(TRIAL_KEY, MAX_FREE_TRIALS.toString());
+                return MAX_FREE_TRIALS;
+            }
+            const parsed = parseInt(stored, 10);
+            return Number.isFinite(parsed) ? parsed : MAX_FREE_TRIALS;
+        }
+
+        function setTrialCount(count) {
+            const safe = Math.max(0, Math.floor(count));
+            localStorage.setItem(TRIAL_KEY, safe.toString());
+        }
+
+        function checkLineCallback() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('line_friend') === 'true') {
+                localStorage.setItem(LINE_FRIEND_KEY, 'true');
             }
         }
-        main();
 
-        function sendCommand(text) {
-            if (liff.isInClient()) {
-                liff.sendMessages([{
-                    type: 'text',
-                    text: text
-                }]).then(() => {
-                    liff.closeWindow();
-                }).catch((err) => {
-                    console.error('Error sending message:', err);
-                    alert('Error sending message: ' + err.message);
+        function isLineFriend() {
+            return localStorage.getItem(LINE_FRIEND_KEY) === 'true';
+        }
+
+        function showLineModal() {
+            const modal = document.getElementById('lineModal');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function updateTrialBadge() {
+            const badge = document.getElementById('trialBadge');
+            const text = document.getElementById('trialText');
+            if (!badge || !text) return;
+
+            badge.classList.remove('premium', 'exhausted');
+
+            if (isLineFriend()) {
+                badge.classList.add('premium');
+                text.textContent = 'LINE Friend (เนเธกเนเธเธณเธเธฑเธ”)';
+                return;
+            }
+
+            const remaining = getTrialCount();
+            text.textContent = `เธเธฃเธต ${remaining}/${MAX_FREE_TRIALS}`;
+            if (remaining <= 0) badge.classList.add('exhausted');
+        }
+
+        function useTrialCredit() {
+            if (isLineFriend()) return true;
+
+            const remaining = getTrialCount();
+            if (remaining <= 0) {
+                updateTrialBadge();
+                showLineModal();
+                return false;
+            }
+
+            setTrialCount(remaining - 1);
+            updateTrialBadge();
+            if (remaining - 1 <= 0) showLineModal();
+            return true;
+        }
+
+        function calculateClamping() {
+            if (!useTrialCredit()) return;
+
+            const area = parseFloat(document.getElementById('clamp-area').value);
+            const pressure = parseFloat(document.getElementById('clamp-pressure').value);
+            const safety = parseFloat(document.getElementById('clamp-safety').value);
+
+            if (!area || area <= 0 || !pressure || pressure <= 0 || !safety || safety <= 0) {
+                alert('เธเธฃเธธเธ“เธฒเธเธฃเธญเธเธเนเธญเธกเธนเธฅเนเธซเนเธเธฃเธเธ–เนเธงเธ');
+                return;
+            }
+
+            const ton = (area * pressure * safety) / 1000;
+            document.getElementById('clamp-result').textContent = ton.toFixed(1);
+            document.getElementById('clamp-area-out').textContent = `${area} cmยฒ`;
+            document.getElementById('clamp-pressure-out').textContent = `${pressure} kg/cmยฒ`;
+            document.getElementById('clamp-safety-out').textContent = safety.toFixed(2);
+            document.getElementById('result-clamp').classList.add('show');
+        }
+
+        function calculateCooling() {
+            if (!useTrialCredit()) return;
+
+            const thicknessMm = parseFloat(document.getElementById('cool-thickness').value);
+            const materialKey = document.getElementById('cool-material').value;
+            const mat = materials[materialKey];
+
+            if (!thicknessMm || thicknessMm <= 0 || !mat) {
+                alert('เธเธฃเธธเธ“เธฒเธเธฃเธญเธเธเนเธญเธกเธนเธฅเนเธซเนเธเธฃเธเธ–เนเธงเธ');
+                return;
+            }
+
+            const thicknessM = thicknessMm / 1000;
+            const alpha = mat.alpha;
+            const moldAvg = mat.mold[2];
+            const meltParts = mat.melt.split('-').map(v => parseFloat(v));
+            const meltMid = (meltParts[0] + meltParts[1]) / 2;
+            const ejectTemp = moldAvg + 20;
+            const numerator = Math.max(1e-6, meltMid - moldAvg);
+            const denominator = Math.max(1e-6, ejectTemp - moldAvg);
+            const lnTerm = Math.log(numerator / denominator);
+            const seconds = ((thicknessM * thicknessM) / (Math.PI * Math.PI * alpha)) * Math.max(0.2, lnTerm);
+            const out = Math.max(0, seconds);
+
+            document.getElementById('cool-result').textContent = out.toFixed(1);
+            document.getElementById('cool-thickness-out').textContent = `${thicknessMm} mm`;
+            document.getElementById('cool-material-out').textContent = materialKey;
+            document.getElementById('result-cool').classList.add('show');
+        }
+
+        function calculateShot() {
+            if (!useTrialCredit()) return;
+
+            const part = parseFloat(document.getElementById('shot-part').value);
+            const runner = parseFloat(document.getElementById('shot-runner').value);
+            const density = parseFloat(document.getElementById('shot-density').value);
+            const cushionPct = parseFloat(document.getElementById('shot-cushion').value);
+
+            if (!part || part <= 0 || runner < 0 || !density || density <= 0) {
+                alert('เธเธฃเธธเธ“เธฒเธเธฃเธญเธเธเนเธญเธกเธนเธฅเนเธซเนเธเธฃเธเธ–เนเธงเธ');
+                return;
+            }
+
+            const totalWeight = part + (runner || 0);
+            const baseCc = totalWeight / density;
+            const cc = baseCc * (1 + (cushionPct / 100));
+
+            document.getElementById('shot-result').textContent = cc.toFixed(1);
+            document.getElementById('shot-weight').textContent = `${totalWeight.toFixed(1)} g`;
+            document.getElementById('shot-density-out').textContent = `${density} g/cc`;
+            document.getElementById('shot-cushion-out').textContent = `${cushionPct}%`;
+            document.getElementById('result-shot').classList.add('show');
+        }
+
+        function showMoldTemp() {
+            if (!useTrialCredit()) return;
+
+            const key = document.getElementById('temp-material').value;
+            const mat = materials[key];
+            if (!mat) return;
+
+            document.getElementById('temp-mat').textContent = key;
+            document.getElementById('temp-mold').textContent = `${mat.mold[0]}-${mat.mold[1]} ยฐC (เนเธเธฐเธเธณ ~${mat.mold[2]}ยฐC)`;
+            document.getElementById('temp-melt').textContent = `${mat.melt} ยฐC`;
+            document.getElementById('temp-press').textContent = `${mat.pressure} kg/cmยฒ`;
+            document.getElementById('result-temp').classList.add('show');
+        }
+
+        function calculateVP() {
+            if (!useTrialCredit()) return;
+
+            const shotSize = parseFloat(document.getElementById('vp-shot-size').value);
+            const fillPercent = parseFloat(document.getElementById('vp-fill').value);
+
+            if (!shotSize || shotSize <= 0 || !fillPercent || fillPercent <= 0) {
+                alert('เธเธฃเธธเธ“เธฒเธเธฃเธญเธเธเนเธญเธกเธนเธฅเนเธซเนเธเธฃเธเธ–เนเธงเธ');
+                return;
+            }
+
+            const vpPosition = shotSize * (fillPercent / 100);
+            const cushion = shotSize * 0.05;
+
+            document.getElementById('vp-result').textContent = vpPosition.toFixed(1);
+            document.getElementById('vp-shot').textContent = `${shotSize} mm`;
+            document.getElementById('vp-percent').textContent = `${fillPercent}%`;
+            document.getElementById('vp-cushion').textContent = `${cushion.toFixed(1)} mm`;
+            document.getElementById('result-vp').classList.add('show');
+        }
+
+        function calculateMachine() {
+            if (!useTrialCredit()) return;
+
+            const force = parseFloat(document.getElementById('machine-force').value);
+            if (!force || force <= 0) {
+                alert('เธเธฃเธธเธ“เธฒเธเธฃเธญเธเนเธฃเธเธเธดเธ”เธ—เธตเนเธ•เนเธญเธเธเธฒเธฃ');
+                return;
+            }
+
+            const recommendedMachine = machineSizes.find(size => size >= force) || 2000;
+            const usage = ((force / recommendedMachine) * 100).toFixed(0);
+
+            document.getElementById('machine-result').textContent = recommendedMachine;
+            document.getElementById('machine-need').textContent = `${force} ton`;
+            document.getElementById('machine-usage').textContent = `${usage}%`;
+            document.getElementById('machine-size').textContent = recommendedMachine;
+            document.getElementById('result-machine').classList.add('show');
+        }
+
+        document.querySelectorAll('.calc-tab').forEach(tab => {
+            tab.addEventListener('click', function () {
+                document.querySelectorAll('.calc-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+
+                document.querySelectorAll('.calculator-panel').forEach(p => p.classList.remove('active'));
+                document.getElementById('calc-' + this.dataset.calc).classList.add('active');
+            });
+        });
+
+        document.querySelectorAll('.material-pills').forEach(container => {
+            container.querySelectorAll('.material-pill').forEach(pill => {
+                pill.addEventListener('click', function () {
+                    container.querySelectorAll('.material-pill').forEach(p => p.classList.remove('active'));
+                    this.classList.add('active');
+                    if (this.dataset.pressure) {
+                        document.getElementById('clamp-pressure').value = this.dataset.pressure;
+                    }
                 });
-            } else {
-                // Fallback for external browser
-                console.log('Command:', text);
-                alert('ส่งคำสั่ง: ' + text + '\n(ใน LINE จะส่งข้อความอัตโนมัติ)');
-            }
-        }
-
-        // 1. Clamp Form
-        document.getElementById('formClamp').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const area = document.getElementById('clampArea').value;
-            const pressure = document.getElementById('clampPressure').value;
-            const safety = document.getElementById('clampSafety').value;
-            sendCommand(`/clamp area=${area} pressure=${pressure} safety=${safety}`);
+            });
         });
 
-        // 2. Cooling Form
-        document.getElementById('formCooling').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const thick = document.getElementById('coolThick').value;
-            const mat = document.getElementById('coolMat').value;
-            const moldTemp = document.getElementById('coolMoldTemp').value;
-            sendCommand(`/cooling thick=${thick} mat=${mat} mold=${moldTemp}`);
+        document.getElementById('shot-cushion').addEventListener('input', function () {
+            document.getElementById('cushion-value').textContent = this.value;
         });
 
-        // 3. Shot Form
-        document.getElementById('formShot').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const weight = document.getElementById('shotPartWeight').value;
-            const cavities = document.getElementById('shotCavities').value;
-            const runner = document.getElementById('shotRunner').value;
-            sendCommand(`/shot weight=${weight} cav=${cavities} runner=${runner}`);
+        document.getElementById('vp-fill').addEventListener('input', function () {
+            document.getElementById('fill-value').textContent = this.value;
         });
 
-        // 4. Mold Temp Form
-        document.getElementById('formMoldTemp').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const mat = document.getElementById('tempMat').value;
-            const surface = document.getElementById('tempSurface').value;
-            sendCommand(`/moldtemp mat=${mat} surface=${surface}`);
-        });
-
-        // 5. Machine Form
-        document.getElementById('formMachine').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const area = document.getElementById('machineArea').value;
-            const weight = document.getElementById('machineWeight').value;
-            sendCommand(`/machine area=${area} weight=${weight}`);
-        });
-
-        // 6. V-P Form
-        document.getElementById('formVP').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const size = document.getElementById('vpShotSize').value;
-            const fill = document.getElementById('vpFill').value;
-            sendCommand(`/vp size=${size} fill=${fill}`);
+        document.addEventListener('DOMContentLoaded', function () {
+            checkLineCallback();
+            updateTrialBadge();
         });
     </script>
 </body>
+
 </html>
