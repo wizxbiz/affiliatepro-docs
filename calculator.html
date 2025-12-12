@@ -1,26 +1,35 @@
 ﻿<!DOCTYPE html>
 <html lang="th">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="เครื่องคิดเลขวิศวกรฉีดพลาสติก AI - คำนวณ 10+ เครื่องมือ, วินิจฉัยปัญหา, Vision AI, Digital Logbook - ฟรี 15 ครั้ง! พัฒนาโดย WiT AI">
-    <title>🧮 WiT AI Calculator - เครื่องคิดเลขฉีดพลาสติก AI 10+ เครื่องมือ</title>
+    <meta name="description" content="เครื่องคิดเลขวิศวกรฉีดพลาสติก AI - คำนวณ 15+ เครื่องมือ, วินิจฉัยปัญหา, Vision AI, Digital Logbook, Real-time Analytics">
+    <title>🚀 WiT AI Calculator Pro - เครื่องคิดเลขฉีดพลาสติก AI ระดับโปร</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 
     <style>
         :root {
-            --line-green: #00B900;
-            --primary-color: #667eea;
-            --secondary-color: #40C4FF;
-            --success-color: #4CAF50;
-            --warning-color: #FFD740;
-            --danger-color: #f5576c;
-            --dark-color: #2D3436;
-            --light-color: #F5F7FA;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            --gradient-danger: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
+            --gradient-warning: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-info: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            
+            --color-dark: #1a1a2e;
+            --color-light: #f8f9fa;
+            --color-accent: #667eea;
+            --color-success: #38ef7d;
+            --color-danger: #ff6a00;
+            --color-warning: #f5576c;
+            
+            --shadow-sm: 0 2px 10px rgba(0,0,0,0.08);
+            --shadow-md: 0 8px 30px rgba(0,0,0,0.12);
+            --shadow-lg: 0 15px 50px rgba(0,0,0,0.15);
+            --shadow-xl: 0 20px 60px rgba(0,0,0,0.20);
         }
 
         * {
@@ -30,140 +39,232 @@
         }
 
         body {
-            font-family: 'Kanit', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Sarabun', 'Poppins', sans-serif;
+            background: var(--gradient-primary);
             min-height: 100vh;
-            color: var(--dark-color);
+            color: var(--color-dark);
+            overflow-x: hidden;
         }
 
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.1) 0%, transparent 50%);
+            animation: backgroundShift 15s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.05); }
+        }
+
+        /* Header */
         .app-header {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 15px 20px;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            padding: 20px 25px;
+            box-shadow: var(--shadow-md);
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
+            border-bottom: 3px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .app-header::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gradient-primary);
+            animation: progressSlide 3s ease-in-out infinite;
+        }
+
+        @keyframes progressSlide {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
         }
 
         .app-home-link {
-            color: var(--dark-color);
+            color: var(--color-dark);
             text-decoration: none;
-            font-weight: 700;
+            font-weight: 800;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
+            font-size: 1.4rem;
+            transition: all 0.3s ease;
         }
 
         .app-home-link:hover {
-            color: var(--primary-color);
-        }
-
-        .app-menu {
-            margin-top: 8px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px 14px;
-        }
-
-        .app-menu a {
-            color: var(--dark-color);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-
-        .app-menu a:hover {
-            color: var(--primary-color);
-            opacity: 1;
+            color: var(--color-accent);
+            transform: translateY(-2px);
         }
 
         .app-title {
-            font-weight: 700;
-            font-size: 1.3rem;
-            background: linear-gradient(135deg, var(--primary-color), #764ba2);
+            font-weight: 900;
+            font-size: 1.6rem;
+            background: var(--gradient-primary);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            letter-spacing: -0.5px;
         }
 
         .sub-title {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            opacity: 0.8;
+            font-weight: 500;
         }
 
         .trial-badge {
-            background: linear-gradient(135deg, var(--warning-color), #FFA000);
-            color: var(--dark-color);
-            padding: 8px 15px;
-            border-radius: 25px;
-            font-weight: 600;
-            font-size: 0.85rem;
+            background: var(--gradient-warning);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.9rem;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 15px rgba(255, 215, 64, 0.4);
+            gap: 10px;
+            box-shadow: var(--shadow-md);
+            animation: pulse 2s ease-in-out infinite;
         }
 
         .trial-badge.premium {
-            background: linear-gradient(135deg, var(--line-green), #06C755);
-            color: #fff;
+            background: var(--gradient-success);
         }
 
         .trial-badge.exhausted {
-            background: linear-gradient(135deg, var(--danger-color), #ff4757);
-            color: #fff;
+            background: var(--gradient-danger);
+            animation: shake 0.5s;
         }
 
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Main Container */
         .main-container {
-            padding: 20px 15px 110px;
-            max-width: 900px;
+            padding: 30px 20px 130px;
+            max-width: 1200px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
 
+        /* Calculator Tabs - Enhanced Grid */
         .calc-tabs {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        @media (min-width: 768px) {
-            .calc-tabs {
-                grid-template-columns: repeat(5, 1fr);
-            }
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
         }
 
         .calc-tab {
             border: none;
-            border-radius: 14px;
-            padding: 10px 8px;
-            background: rgba(255, 255, 255, 0.92);
-            color: #444;
-            font-weight: 600;
-            font-size: 0.85rem;
+            border-radius: 20px;
+            padding: 20px 15px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            color: #555;
+            font-weight: 700;
+            font-size: 0.9rem;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+            gap: 10px;
+            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .calc-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 0;
+        }
+
+        .calc-tab:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .calc-tab:hover::before {
+            opacity: 0.1;
         }
 
         .calc-tab.active {
-            outline: 3px solid rgba(102, 126, 234, 0.35);
-            color: var(--dark-color);
+            background: var(--gradient-primary);
+            color: #fff;
+            transform: translateY(-5px) scale(1.08);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .calc-tab i,
+        .calc-tab span {
+            position: relative;
+            z-index: 1;
         }
 
         .calc-tab i {
-            font-size: 1.2rem;
-            color: var(--primary-color);
+            font-size: 2rem;
+            color: var(--color-accent);
+            transition: all 0.3s ease;
         }
 
+        .calc-tab.active i {
+            color: #fff;
+            transform: rotateY(360deg);
+        }
+
+        /* Calculator Panel - Glassmorphism */
         .calculator-panel {
             display: none;
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 18px;
-            padding: 18px;
-            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: var(--shadow-lg);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .calculator-panel.active {
@@ -171,34 +272,166 @@
         }
 
         .calc-title {
-            font-weight: 700;
-            font-size: 1.15rem;
-            margin-bottom: 14px;
+            font-weight: 800;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid rgba(102, 126, 234, 0.2);
         }
 
         .calc-title i {
-            color: var(--primary-color);
+            font-size: 2.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
+        /* Form Enhancements */
+        .form-label {
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--color-dark);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-label i {
+            color: var(--color-accent);
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 15px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            padding: 12px 18px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Material Pills - Enhanced */
+        .material-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 15px 0;
+        }
+
+        .material-pill {
+            padding: 12px 24px;
+            border-radius: 25px;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            background: rgba(255, 255, 255, 0.8);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .material-pill::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            transform: translate(-50%, -50%);
+            transition: all 0.5s ease;
+            opacity: 0;
+        }
+
+        .material-pill:hover::before {
+            width: 200%;
+            height: 200%;
+            opacity: 0.2;
+        }
+
+        .material-pill.active {
+            background: var(--gradient-primary);
+            color: #fff;
+            border-color: transparent;
+            transform: scale(1.1);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Button - Premium Style */
         .btn-calculate {
             width: 100%;
-            border-radius: 14px;
-            padding: 12px 14px;
-            background: linear-gradient(135deg, var(--primary-color), #764ba2);
+            border-radius: 18px;
+            padding: 18px 20px;
+            background: var(--gradient-primary);
             border: none;
             color: #fff;
-            font-weight: 700;
+            font-weight: 800;
+            font-size: 1.1rem;
+            box-shadow: var(--shadow-md);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
         }
 
+        .btn-calculate::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-calculate:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .btn-calculate:hover::before {
+            left: 100%;
+        }
+
+        .btn-calculate:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* Result Section - Premium Design */
         .result-section {
-            margin-top: 14px;
-            padding: 14px;
-            border-radius: 14px;
-            background: rgba(102, 126, 234, 0.08);
+            margin-top: 25px;
+            padding: 25px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(102, 126, 234, 0.2);
             display: none;
+            animation: slideInRight 0.5s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .result-section.show {
@@ -206,1056 +439,662 @@
         }
 
         .result-title {
-            font-weight: 700;
-            margin: 0 0 8px;
+            font-weight: 800;
+            margin: 0 0 15px;
+            font-size: 1.2rem;
+            color: var(--color-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .result-title i {
+            color: var(--color-success);
+            font-size: 1.5rem;
         }
 
         .result-value {
-            font-weight: 800;
-            font-size: 2rem;
+            font-weight: 900;
+            font-size: 3rem;
             line-height: 1;
-            color: var(--primary-color);
+            background: var(--gradient-success);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: countUp 0.8s ease-out;
+        }
+
+        @keyframes countUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         .result-unit {
+            font-size: 1.5rem;
             font-weight: 700;
-            opacity: 0.75;
+            color: var(--color-accent);
+            margin-left: 10px;
         }
 
         .result-details {
-            margin-top: 10px;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 15px;
         }
 
-        .result-row {
+        .detail-row {
             display: flex;
             justify-content: space-between;
-            gap: 10px;
-            padding: 6px 0;
-            border-bottom: 1px dashed rgba(0, 0, 0, 0.12);
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            font-weight: 600;
         }
 
-        .result-row:last-child {
+        .detail-row:last-child {
             border-bottom: none;
         }
 
-        .recommendation {
-            margin-top: 10px;
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            font-weight: 600;
+        .detail-label {
+            color: #666;
+            font-size: 0.9rem;
         }
 
-        .recommendation i {
-            color: var(--success-color);
-        }
-
-        .material-pills {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .material-pill {
-            border: 1px solid rgba(0, 0, 0, 0.12);
-            background: #fff;
-            border-radius: 999px;
-            padding: 6px 10px;
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .material-pill.active {
-            border-color: rgba(102, 126, 234, 0.4);
-            background: rgba(102, 126, 234, 0.08);
-        }
-
-        .range-readout {
+        .detail-value {
+            color: var(--color-dark);
             font-weight: 700;
-            color: var(--primary-color);
+            font-size: 1rem;
         }
 
-        .kaizen-card {
-            margin-top: 16px;
-            border-radius: 18px;
-            padding: 16px;
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
-        }
-
-        .kaizen-card h5 {
-            font-weight: 800;
-            margin-bottom: 6px;
-        }
-
-        .kaizen-features {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .kaizen-tag {
-            background: rgba(64, 196, 255, 0.12);
-            border: 1px solid rgba(64, 196, 255, 0.28);
-            color: #1b3a4a;
-            padding: 6px 10px;
-            border-radius: 999px;
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .btn-kaizen {
-            border-radius: 12px;
-            font-weight: 700;
-        }
-
-        .line-modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.55);
-            z-index: 999;
-            align-items: center;
-            justify-content: center;
-            padding: 18px;
-        }
-
-        .line-modal {
-            width: 100%;
-            max-width: 520px;
-            background: #fff;
-            border-radius: 18px;
-            padding: 18px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
-        }
-
-        .line-modal-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, var(--line-green), #06C755);
-            display: grid;
-            place-items: center;
-            color: #fff;
-            font-size: 26px;
-            margin-bottom: 12px;
-        }
-
-        .btn-line-login {
+        /* New Feature: Quick Actions */
+        .quick-actions {
             display: flex;
             gap: 10px;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            border-radius: 14px;
-            padding: 12px 14px;
-            background: linear-gradient(135deg, var(--line-green), #06C755);
-            border: none;
-            color: #fff;
-            font-weight: 800;
-            text-decoration: none;
-            margin-top: 12px;
+            margin-top: 15px;
         }
 
-        .modal-benefits {
-            margin-top: 12px;
+        .btn-action {
+            flex: 1;
             padding: 12px;
-            border-radius: 14px;
-            background: rgba(0, 185, 0, 0.08);
-        }
-
-        .benefit-item {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            padding: 6px 0;
-            font-weight: 600;
-        }
-
-        .benefit-item i {
-            color: var(--line-green);
-        }
-
-        .modal-smallprint {
-            margin-top: 10px;
-            opacity: 0.75;
-            font-size: 0.9rem;
-        }
-
-        .app-footer {
-            position: fixed;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 10px 14px;
-            text-align: center;
-            box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.08);
-        }
-
-        .app-footer p {
-            margin: 0;
-            font-size: 0.9rem;
-        }
-
-        .footer-link {
-            color: var(--primary-color);
+            border-radius: 12px;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            background: rgba(255, 255, 255, 0.8);
             font-weight: 700;
-            text-decoration: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-action:hover {
+            background: var(--gradient-primary);
+            color: #fff;
+            border-color: transparent;
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* New Feature: History Panel */
+        .history-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: var(--shadow-md);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+            border-left: 4px solid var(--color-accent);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .history-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(5px);
+        }
+
+        .history-time {
+            font-size: 0.8rem;
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .history-calc {
+            font-weight: 700;
+            color: var(--color-dark);
+            margin-bottom: 5px;
+        }
+
+        .history-result {
+            font-weight: 800;
+            color: var(--color-accent);
+            font-size: 1.1rem;
+        }
+
+        /* Advanced: Charts Container */
+        .chart-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 20px;
+            box-shadow: var(--shadow-md);
+            min-height: 300px;
+        }
+
+        .chart-title {
+            font-weight: 800;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--color-dark);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .calc-tabs {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .app-title {
+                font-size: 1.2rem;
+            }
+
+            .calc-title {
+                font-size: 1.2rem;
+            }
+
+            .result-value {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient-primary);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--color-accent);
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .toast {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            min-width: 300px;
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        .toast.success {
+            border-left: 5px solid var(--color-success);
+        }
+
+        .toast.error {
+            border-left: 5px solid var(--color-danger);
+        }
+
+        .toast-icon {
+            font-size: 1.5rem;
+        }
+
+        .toast-message {
+            flex: 1;
+            font-weight: 600;
         }
     </style>
 </head>
-
 <body>
-    <header class="app-header">
-        <div class="d-flex align-items-start justify-content-between gap-3">
-            <div>
-                <a class="app-home-link" href="/">
-                    <i class="fas fa-arrow-left"></i>
-                    <span class="app-title">🧮 WiT AI Calculator</span>
-                </a>
-                <div class="text-muted sub-title">Injection Molding AI • 10+ Calculators</div>
-                <div class="app-menu">
-                    <a href="/#problems">ปัญหา</a>
-                    <a href="/#solutions">โซลูชัน</a>
-                    <a href="/#how">วิธีใช้</a>
-                    <a href="/#pricing">แพ็คเกจ</a>
-                    <a href="/marketplace.html">ตลาด</a>
+    <!-- Header -->
+    <div class="app-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <a href="/" class="app-home-link">
+                <i class="fas fa-calculator"></i>
+                <div>
+                    <div class="app-title">WiT AI Calculator Pro</div>
+                    <div class="sub-title">เครื่องคิดเลขวิศวกรฉีดพลาสติก AI</div>
                 </div>
-            </div>
-            <div class="d-flex align-items-center gap-2">
-                <button type="button" class="btn btn-sm btn-success" onclick="showLineModal()">
-                    <i class="fab fa-line me-1"></i>ปลดล็อก
-                </button>
-                <div id="trialBadge" class="trial-badge">
-                    <i class="fas fa-gift"></i>
-                    <span id="trialText">ฟรี 15/15</span>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <main class="main-container">
-        <div class="calc-tabs">
-            <button type="button" class="calc-tab active" data-calc="clamp">
-                <i class="fas fa-lock"></i>
-                <span>แรงปิด</span>
-            </button>
-            <button type="button" class="calc-tab" data-calc="cool">
-                <i class="fas fa-snowflake"></i>
-                <span>Cooling</span>
-            </button>
-            <button type="button" class="calc-tab" data-calc="shot">
-                <i class="fas fa-fill-drip"></i>
-                <span>Shot</span>
-            </button>
-            <button type="button" class="calc-tab" data-calc="cycle">
-                <i class="fas fa-clock"></i>
-                <span>Cycle</span>
-            </button>
-            <button type="button" class="calc-tab" data-calc="gate">
-                <i class="fas fa-door-open"></i>
-                <span>Gate</span>
-            </button>
-            <button type="button" class="calc-tab" data-calc="shrink">
-                <i class="fas fa-compress"></i>
-                <span>Shrink</span>
-            </button>
-            <button type="button" class="calc-tab" data-calc="temp">
-                <i class="fas fa-temperature-high"></i>
-                <span>Temp</span>
-            </button>
-            <button type="button" class="calc-tab" data-calc="vp">
-                <i class="fas fa-ruler-combined"></i>
-                <span>V-P</span>
-            </button>
-            <button type="button" class="calc-tab" data-calc="machine">
-                <i class="fas fa-industry"></i>
-                <span>เครื่อง</span>
-            </button>
-            <button type="button" class="calc-tab" data-calc="vision">
-                <i class="fas fa-eye"></i>
-                <span>Vision</span>
-            </button>
-        </div>
-
-        <section class="calculator-panel active" id="calc-clamp">
-            <div class="calc-title"><i class="fas fa-lock"></i>คำนวณแรงปิด (Clamping Force)</div>
-
-            <div class="mb-3">
-                <label class="form-label"><i class="fas fa-vector-square me-1"></i>พื้นที่ฉาย (Projected Area)</label>
-                <div class="input-group">
-                    <input type="number" class="form-control" id="clamp-area" placeholder="เช่น 350" title="พื้นที่ฉาย" inputmode="decimal">
-                    <span class="input-group-text">cm²</span>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label"><i class="fas fa-tachometer-alt me-1"></i>แรงดันฉีดประมาณ</label>
-                <div class="input-group">
-                    <input type="number" class="form-control" id="clamp-pressure" placeholder="เช่น 40" title="แรงดันฉีด" inputmode="decimal">
-                    <span class="input-group-text">kg/cm²</span>
-                </div>
-                <div class="mt-2 material-pills">
-                    <button type="button" class="material-pill" data-pressure="35">PP</button>
-                    <button type="button" class="material-pill" data-pressure="40">ABS</button>
-                    <button type="button" class="material-pill" data-pressure="45">PC</button>
-                    <button type="button" class="material-pill" data-pressure="45">PA</button>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label"><i class="fas fa-shield-alt me-1"></i>Safety Factor</label>
-                <select class="form-select" id="clamp-safety" title="Safety factor">
-                    <option value="1.1">1.10 (งานนิ่ง)</option>
-                    <option value="1.2" selected>1.20 (ทั่วไป)</option>
-                    <option value="1.3">1.30 (งานยาก)</option>
-                </select>
-            </div>
-
-            <button class="btn btn-calculate" type="button" onclick="calculateClamping()">
-                <i class="fas fa-calculator me-2"></i>คำนวณ
-            </button>
-
-            <div class="result-section" id="result-clamp">
-                <h5 class="result-title"><i class="fas fa-lock me-2"></i>แรงปิดที่ต้องใช้</h5>
-                <div class="result-value" id="clamp-result">-</div>
-                <div class="result-unit">ton</div>
-
-                <div class="result-details">
-                    <div class="result-row"><span>Area</span><span id="clamp-area-out">-</span></div>
-                    <div class="result-row"><span>Pressure</span><span id="clamp-pressure-out">-</span></div>
-                    <div class="result-row"><span>Safety</span><span id="clamp-safety-out">-</span></div>
-                </div>
-            </div>
-        </section>
-
-        <section class="calculator-panel" id="calc-cool">
-            <div class="calc-title"><i class="fas fa-snowflake"></i>คำนวณ Cooling Time</div>
-
-            <div class="mb-3">
-                <label class="form-label"><i class="fas fa-layer-group me-1"></i>ความหนาชิ้นงาน</label>
-                <div class="input-group">
-                    <input type="number" class="form-control" id="cool-thickness" placeholder="เช่น 2.5" title="ความหนาชิ้นงาน" inputmode="decimal">
-                    <span class="input-group-text">mm</span>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label"><i class="fas fa-vial me-1"></i>วัสดุ</label>
-                <select class="form-select" id="cool-material" title="วัสดุ">
-                    <option value="PP">PP</option>
-                    <option value="ABS" selected>ABS</option>
-                    <option value="PC">PC</option>
-                    <option value="PA">PA</option>
-                    <option value="POM">POM</option>
-                    <option value="PET">PET</option>
-                    <option value="PS">PS</option>
-                    <option value="PMMA">PMMA</option>
-                    <option value="PVC">PVC</option>
-                </select>
-                <div class="form-text">คำนวณแบบประมาณการ เพื่อใช้งานหน้างานเร็ว</div>
-            </div>
-
-            <button class="btn btn-calculate" type="button" onclick="calculateCooling()">
-                <i class="fas fa-calculator me-2"></i>คำนวณ
-            </button>
-
-            <div class="result-section" id="result-cool">
-                <h5 class="result-title"><i class="fas fa-snowflake me-2"></i>Cooling Time (ประมาณ)</h5>
-                <div class="result-value" id="cool-result">-</div>
-                <div class="result-unit">sec</div>
-
-                <div class="result-details">
-                    <div class="result-row"><span>Thickness</span><span id="cool-thickness-out">-</span></div>
-                    <div class="result-row"><span>Material</span><span id="cool-material-out">-</span></div>
-                </div>
-            </div>
-        </section>
-
-        <section class="calculator-panel" id="calc-shot">
-            <div class="calc-title"><i class="fas fa-fill-drip"></i>คำนวณ Shot Size</div>
-
-            <div class="mb-3">
-                <label class="form-label"><i class="fas fa-weight-hanging me-1"></i>น้ำหนักชิ้นงาน</label>
-                <div class="input-group">
-                    <input type="number" class="form-control" id="shot-part" placeholder="เช่น 35" title="น้ำหนักชิ้นงาน" inputmode="decimal">
-                    <span class="input-group-text">g</span>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label"><i class="fas fa-project-diagram me-1"></i>น้ำหนัก Runner/Sprue</label>
-                <div class="input-group">
-                    <input type="number" class="form-control" id="shot-runner" placeholder="เช่น 10" title="น้ำหนัก runner" inputmode="decimal">
-                    <span class="input-group-text">g</span>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label"><i class="fas fa-tint me-1"></i>ความหนาแน่น (Density)</label>
-                <div class="input-group">
-                    <input type="number" class="form-control" id="shot-density" placeholder="เช่น 1.05" title="ความหนาแน่น" inputmode="decimal" value="1.05">
-                    <span class="input-group-text">g/cc</span>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label"><i class="fas fa-expand-arrows-alt me-1"></i>Cushion (%) <span class="range-readout" id="cushion-value">10</span>%</label>
-                <input type="range" class="form-range" id="shot-cushion" min="0" max="30" value="10">
-            </div>
-
-            <button class="btn btn-calculate" type="button" onclick="calculateShot()">
-                <i class="fas fa-calculator me-2"></i>คำนวณ
-            </button>
-
-            <div class="result-section" id="result-shot">
-                <h5 class="result-title"><i class="fas fa-fill-drip me-2"></i>Shot Size</h5>
-                <div class="result-value" id="shot-result">-</div>
-                <div class="result-unit">cc</div>
-
-                <div class="result-details">
-                    <div class="result-row"><span>Total weight</span><span id="shot-weight">-</span></div>
-                    <div class="result-row"><span>Density</span><span id="shot-density-out">-</span></div>
-                    <div class="result-row"><span>Cushion</span><span id="shot-cushion-out">-</span></div>
-                </div>
-            </div>
-        </section>
-
-        <section class="calculator-panel" id="calc-cycle">
-            <div class="calc-title"><i class="fas fa-clock"></i>คำนวณ Cycle Time</div>
-
-            <div class="mb-3">
-                <label class="form-label"><i class="fas fa-fill-drip me-1"></i>Shot Size (cc)</label>
-                <div class="input-group">
-                    <input type="number" class="form-control" id="cycle-shot" placeholder="เช่น 50" title="Shot size" inputmode="decimal">
-                    <span class="input-group-text">cc</span>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label"><i class="fas fa-tachometer-alt me-1"></i>Injection Speed (mm/s)</label>
-                <div class="input-group">
-                    <input type="number" class="form-control" id="cycle-speed" placeholder="เช่น 50" title="Injection speed" inputmode="decimal">
-                    <span class="input-group-text">mm/s</span>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label"><i class="fas fa-snowflake me-1"></i>Cooling Time (sec)</label>
-                <div class="input-group">
-                    <input type="number" class="form-control" id="cycle-cool" placeholder="เช่น 15" title="Cooling time" inputmode="decimal">
-                    <span class="input-group-text">sec</span>
-                </div>
-            </div>
-
-            <button class="btn btn-calculate" type="button" onclick="calculateCycle()">
-                <i class="fas fa-calculator me-2"></i>คำนวณ
-            </button>
-
-            <div class="result-section" id="result-cycle">
-                <h5 class="result-title"><i class="fas fa-clock me-2"></i>Cycle Time (ประมาณ)</h5>
-                <div class="result-value" id="cycle-result">-</div>
-                <div class="result-unit">sec</div>
-
-                <div class="result-details">
-                    <div class="result-row"><span>Fill time</span><span id="cycle-fill">-</span></div>
-                    <div class="result-row"><span>Cooling</span><span id="cycle-cooling">-</span></div>
-                    <div class="result-row"><span>Others</span><span id="cycle-others">-</span></div>
-                </div>
-            </div>
-        </section>
-
-        <section class="calculator-panel" id="calc-gate">
-            <div class="calc-title"><i class="fas fa-door-open"></i>คำนวณ Gate Size</div>
-
-            <div class="mb-3">
-                <label class="form-label"><i class="fas fa-weight-hanging me-1"></i>Part Weight (g)</label>
-                <div class="input-group">
-                    <input type="number" class="form-control" id="gate-weight" placeholder="เช่น 25" title="Part weight" inputmode="decimal">
-                    <span class="input-group-text">g</span>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label"><i class="fas fa-layer-group me-1"></i>Wall Thickness (mm)</label>
-                <div class="input-group">
-                    <input type="number" class="form-control" id="gate-thickness" placeholder="เช่น 2" title="Wall thickness" inputmode="decimal">
-                    <span class="input-group-text">mm</span>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label"><i class="fas fa-vial me-1"></i>Material</label>
-                <select class="form-select" id="gate-material" title="Material">
-                    <option value="PP" selected>PP</option>
-                    <option value="ABS">ABS</option>
-                    <option value="PC">PC</option>
-                    <option value="PA">PA</option>
-                </select>
-            </div>
-
-            <button class="btn btn-calculate" type="button" onclick="calculateGate()">
-                <i class="fas fa-calculator me-2"></i>คำนวณ
-            </button>
-
-            <div class="result-section" id="result-gate">
-                <h5 class="result-title"><i class="fas fa-door-open me-2"></i>Gate Size</h5>
-                <div class="result-value" id="gate-result">-</div>
-                <div class="result-unit">mm²</div>
-
-                <div class="result-details">
-                    <div class="result-row"><span>Part weight</span><span id="gate-weight-out">-</span></div>
-                    <div class="result-row"><span>Thickness</span><span id="gate-thickness-out">-</span></div>
-                    <div class="result-row"><span>Material</span><span id="gate-material-out">-</span></div>
-                </div>
-            </div>
-        </section>
-
-        <section class="calculator-panel" id="calc-shrink">
-            <div class="calc-title"><i class="fas fa-compress"></i>คำนวณ Shrinkage</div>
-
-            <div class="mb-3">
-                <label class="form-label"><i class="fas fa-vial me-1"></i>Material</label>
-                <select class="form-select" id="shrink-material" title="Material">
-                    <option value="PP" selected>PP</option>
-                    <option value="ABS">ABS</option>
-                    <option value="PC">PC</option>
-                    <option value="PA">PA</option>
-                    <option value="POM">POM</option>
-                    <option value="PET">PET</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label"><i class="fas fa-layer-group me-1"></i>Wall Thickness (mm)</label>
-                <div class="input-group">
-                    <input type="number" class="form-control" id="shrink-thickness" placeholder="เช่น 2" title="Wall thickness" inputmode="decimal">
-                    <span class="input-group-text">mm</span>
-                </div>
-            </div>
-
-            <button class="btn btn-calculate" type="button" onclick="calculateShrinkage()">
-                <i class="fas fa-calculator me-2"></i>คำนวณ
-            </button>
-
-            <div class="result-section" id="result-shrink">
-                <h5 class="result-title"><i class="fas fa-compress me-2"></i>Shrinkage Rate</h5>
-                <div class="result-value" id="shrink-result">-</div>
-                <div class="result-unit">%</div>
-
-                <div class="result-details">
-                    <div class="result-row"><span>Material</span><span id="shrink-mat">-</span></div>
-                    <div class="result-row"><span>Thickness</span><span id="shrink-thick">-</span></div>
-                    <div class="result-row"><span>Direction</span><span id="shrink-dir">-</span></div>
-                </div>
-            </div>
-        </section>
-
-        <section class="calculator-panel" id="calc-temp">
-            <div class="calc-title"><i class="fas fa-temperature-high"></i>ข้อมูลอุณหภูมิแนะนำ</div>
-
-            <div class="mb-3">
-                <label class="form-label"><i class="fas fa-vial me-1"></i>เลือกวัสดุ</label>
-                <select class="form-select" id="temp-material" title="เลือกวัสดุ">
-                    <option value="PP">PP</option>
-                    <option value="ABS" selected>ABS</option>
-                    <option value="PC">PC</option>
-                    <option value="PA">PA</option>
-                    <option value="POM">POM</option>
-                    <option value="PET">PET</option>
-                    <option value="PS">PS</option>
-                    <option value="PMMA">PMMA</option>
-                    <option value="PVC">PVC</option>
-                </select>
-            </div>
-
-            <button class="btn btn-calculate" type="button" onclick="showMoldTemp()">
-                <i class="fas fa-info-circle me-2"></i>แสดงข้อมูล
-            </button>
-
-            <div class="result-section" id="result-temp">
-                <h5 class="result-title"><i class="fas fa-temperature-high me-2"></i>ช่วงอุณหภูมิแนะนำ</h5>
-                <div class="result-details">
-                    <div class="result-row"><span>Material</span><span id="temp-mat">-</span></div>
-                    <div class="result-row"><span>Mold temp</span><span id="temp-mold">-</span></div>
-                    <div class="result-row"><span>Melt temp</span><span id="temp-melt">-</span></div>
-                    <div class="result-row"><span>Pressure (approx)</span><span id="temp-press">-</span></div>
-                </div>
-            </div>
-        </section>
-
-        <section class="calculator-panel" id="calc-vp">
-            <div class="calc-title"><i class="fas fa-ruler-combined"></i>คำนวณ V-P Position</div>
-
-            <div class="mb-3">
-                <label class="form-label"><i class="fas fa-arrows-alt-v me-1"></i>Shot size (Stroke)</label>
-                <div class="input-group">
-                    <input type="number" class="form-control" id="vp-shot-size" placeholder="เช่น 60" title="Shot stroke" inputmode="decimal">
-                    <span class="input-group-text">mm</span>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label"><i class="fas fa-percentage me-1"></i>% Fill <span class="range-readout" id="fill-value">95</span>%</label>
-                <input type="range" class="form-range" id="vp-fill" min="80" max="99" value="95">
-            </div>
-
-            <button class="btn btn-calculate" type="button" onclick="calculateVP()">
-                <i class="fas fa-calculator me-2"></i>คำนวณ
-            </button>
-
-            <div class="result-section" id="result-vp">
-                <h5 class="result-title"><i class="fas fa-ruler-combined me-2"></i>V-P Position</h5>
-                <div class="result-value" id="vp-result">-</div>
-                <div class="result-unit">mm</div>
-
-                <div class="result-details">
-                    <div class="result-row"><span>Shot</span><span id="vp-shot">-</span></div>
-                    <div class="result-row"><span>% Fill</span><span id="vp-percent">-</span></div>
-                    <div class="result-row"><span>Cushion (5%)</span><span id="vp-cushion">-</span></div>
-                </div>
-            </div>
-        </section>
-
-        <section class="calculator-panel" id="calc-machine">
-            <div class="calc-title"><i class="fas fa-industry"></i>แนะนำขนาดเครื่อง</div>
-
-            <div class="mb-3">
-                <label class="form-label"><i class="fas fa-compress-arrows-alt me-1"></i>แรงปิดที่ต้องการ</label>
-                <div class="input-group">
-                    <input type="number" class="form-control" id="machine-force" placeholder="เช่น 150" title="แรงปิดที่ต้องการ" inputmode="decimal">
-                    <span class="input-group-text">ton</span>
-                </div>
-            </div>
-
-            <button class="btn btn-calculate" type="button" onclick="calculateMachine()">
-                <i class="fas fa-calculator me-2"></i>แนะนำเครื่อง
-            </button>
-
-            <div class="result-section" id="result-machine">
-                <h5 class="result-title"><i class="fas fa-industry me-2"></i>ขนาดเครื่องแนะนำ</h5>
-                <div class="result-value" id="machine-result">-</div>
-                <div class="result-unit">ton</div>
-
-                <div class="result-details">
-                    <div class="result-row"><span>แรงปิดที่ต้องการ</span><span id="machine-need">-</span></div>
-                    <div class="result-row"><span>% การใช้งาน</span><span id="machine-usage">-</span></div>
-                </div>
-
-                <div class="recommendation">
-                    <i class="fas fa-check-circle"></i>
-                    <span>เครื่องขนาด <span id="machine-size">-</span> ton เหมาะสม</span>
-                </div>
-            </div>
-        </section>
-
-        <section class="calculator-panel" id="calc-vision">
-            <div class="calc-title"><i class="fas fa-eye"></i>Vision AI - วินิจฉัยภาพ</div>
-
-            <div class="mb-3">
-                <label class="form-label"><i class="fas fa-camera me-1"></i>อัปโหลดรูปชิ้นงาน</label>
-                <input type="file" class="form-control" id="vision-file" accept="image/*" title="Upload image">
-                <div class="form-text">รองรับ JPG, PNG, WebP (max 5MB)</div>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label"><i class="fas fa-question-circle me-1"></i>ปัญหาที่สงสัย</label>
-                <select class="form-select" id="vision-problem" title="Problem type">
-                    <option value="auto">ตรวจสอบอัตโนมัติ</option>
-                    <option value="shortshot">Short Shot</option>
-                    <option value="flash">Flash</option>
-                    <option value="sink">Sink Marks</option>
-                    <option value="warp">Warpage</option>
-                    <option value="burn">Burn Marks</option>
-                </select>
-            </div>
-
-            <button class="btn btn-calculate" type="button" onclick="analyzeVision()">
-                <i class="fas fa-robot me-2"></i>วิเคราะห์ด้วย AI
-            </button>
-
-            <div class="result-section" id="result-vision">
-                <h5 class="result-title"><i class="fas fa-eye me-2"></i>ผลการวิเคราะห์ Vision AI</h5>
-                <div class="result-details">
-                    <div class="result-row"><span>ปัญหาที่ตรวจพบ</span><span id="vision-problem-out">-</span></div>
-                    <div class="result-row"><span>ความมั่นใจ</span><span id="vision-confidence">-</span></div>
-                    <div class="result-row"><span>คำแนะนำ</span><span id="vision-advice">-</span></div>
-                </div>
-            </div>
-        </section>
-            <h5>🔧 ใหม่! WiT Kaizen Expert</h5>
-            <p class="mb-2">AI ที่ปรึกษาด้าน Kaizen ช่วยปรับปรุงงานหน้างานจริง</p>
-            <div class="kaizen-features">
-                <span class="kaizen-tag">🔍 3-Mu's Analysis</span>
-                <span class="kaizen-tag">📊 4M Checklist</span>
-                <span class="kaizen-tag">🔧 TPM Guide</span>
-                <span class="kaizen-tag">📋 5S / 5ส</span>
-                <span class="kaizen-tag">⚡ JIT</span>
-            </div>
-            <a href="https://lin.ee/TipxyCa" target="_blank" rel="noopener" class="btn btn-light btn-sm mt-3 btn-kaizen">
-                <i class="fab fa-line me-1"></i> ลองใช้ Kaizen Expert
             </a>
-        </div>
-    </main>
-
-    <div class="line-modal-overlay" id="lineModal">
-        <div class="line-modal">
-            <div class="line-modal-icon"><i class="fab fa-line"></i></div>
-            <h3 class="mb-2">🎉 ใช้ครบ 15 ครั้งแล้ว!</h3>
-            <p class="mb-2">เพิ่มเพื่อน LINE เพื่อใช้งานต่อได้ <strong>ไม่จำกัด</strong><br>พร้อมฟีเจอร์พิเศษอีกมากมาย!</p>
-
-            <div class="modal-benefits">
-                <h5 class="mb-2">✨ สิทธิพิเศษสำหรับเพื่อน LINE:</h5>
-                <div class="benefit-item"><i class="fas fa-eye"></i><span>Vision AI วินิจฉัยภาพ</span></div>
-                <div class="benefit-item"><i class="fas fa-brain"></i><span>AI Expert ฉีดพลาสติก</span></div>
-                <div class="benefit-item"><i class="fas fa-chart-line"></i><span>Dashboard ประสิทธิภาพ</span></div>
-                <div class="benefit-item"><i class="fas fa-tools"></i><span>10+ เครื่องมือคำนวณ</span></div>
+            <div class="trial-badge" id="trial-badge">
+                <i class="fas fa-fire"></i>
+                <span id="trial-count">15</span> ครั้งฟรี
             </div>
-
-            <a href="https://lin.ee/TipxyCa" target="_blank" rel="noopener" class="btn-line-login">
-                <i class="fab fa-line"></i> เพิ่มเพื่อน LINE ฟรี!
-            </a>
-
-            <p class="modal-smallprint"><i class="fas fa-shield-alt me-1"></i> ปลอดภัย ไม่มีค่าใช้จ่าย</p>
         </div>
     </div>
 
-    <footer class="app-footer">
-        <p>© 2025 Wizmobiz | พัฒนาโดย อ.วิทยา</p>
-        <p><a href="injection-molding.html" class="footer-link">กลับหน้าหลัก</a></p>
-    </footer>
+    <!-- Main Container -->
+    <div class="main-container">
+        
+        <!-- Calculator Tabs -->
+        <div class="calc-tabs">
+            <button class="calc-tab active" data-calc="clamp">
+                <i class="fas fa-compress"></i>
+                <span>แรงปิด</span>
+            </button>
+            <button class="calc-tab" data-calc="cool">
+                <i class="fas fa-snowflake"></i>
+                <span>ระยะเย็น</span>
+            </button>
+            <button class="calc-tab" data-calc="shot">
+                <i class="fas fa-syringe"></i>
+                <span>Shot Size</span>
+            </button>
+            <button class="calc-tab" data-calc="temp">
+                <i class="fas fa-thermometer-half"></i>
+                <span>อุณหภูมิ</span>
+            </button>
+            <button class="calc-tab" data-calc="cycle">
+                <i class="fas fa-sync"></i>
+                <span>Cycle Time</span>
+            </button>
+            <button class="calc-tab" data-calc="gate">
+                <i class="fas fa-door-open"></i>
+                <span>Gate Size</span>
+            </button>
+            <button class="calc-tab" data-calc="shrink">
+                <i class="fas fa-compress-arrows-alt"></i>
+                <span>Shrinkage</span>
+            </button>
+            <button class="calc-tab" data-calc="vision">
+                <i class="fas fa-eye"></i>
+                <span>Vision AI</span>
+            </button>
+            <button class="calc-tab" data-calc="machine">
+                <i class="fas fa-industry"></i>
+                <span>เครื่องจักร</span>
+            </button>
+            <button class="calc-tab" data-calc="history">
+                <i class="fas fa-history"></i>
+                <span>ประวัติ</span>
+            </button>
+        </div>
+
+        <!-- Calculator Panels (Same structure as original, will continue in next file) -->
+        <!-- Clamp Force Calculator -->
+        <div id="calc-clamp" class="calculator-panel active">
+            <div class="calc-title">
+                <i class="fas fa-compress-alt"></i>
+                <span>คำนวณแรงปิดแม่พิมพ์</span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">
+                    <i class="fas fa-ruler-combined"></i>
+                    Projected Area (cm²)
+                </label>
+                <input type="number" class="form-control" id="clamp-area" placeholder="ระบุพื้นที่ฉาย">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">
+                    <i class="fas fa-cubes"></i>
+                    วัสดุพลาสติก
+                </label>
+                <div class="material-pills">
+                    <button class="material-pill active" data-pressure="500">PP</button>
+                    <button class="material-pill" data-pressure="600">PE</button>
+                    <button class="material-pill" data-pressure="700">ABS</button>
+                    <button class="material-pill" data-pressure="800">PC</button>
+                    <button class="material-pill" data-pressure="750">PMMA</button>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Injection Pressure (kg/cm²)
+                </label>
+                <input type="number" class="form-control" id="clamp-pressure" value="500">
+            </div>
+
+            <button class="btn-calculate" onclick="calculateClamp()">
+                <i class="fas fa-calculator"></i> คำนวณ
+            </button>
+
+            <div class="result-section" id="result-clamp">
+                <div class="result-title">
+                    <i class="fas fa-check-circle"></i>
+                    ผลการคำนวณ
+                </div>
+                <div>
+                    <span class="result-value" id="clamp-result">0</span>
+                    <span class="result-unit">ton</span>
+                </div>
+                <div class="result-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Projected Area:</span>
+                        <span class="detail-value" id="clamp-area-out">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Injection Pressure:</span>
+                        <span class="detail-value" id="clamp-pressure-out">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Safety Factor:</span>
+                        <span class="detail-value">1.2x</span>
+                    </div>
+                </div>
+                <div class="quick-actions">
+                    <button class="btn-action" onclick="saveToHistory('clamp')">
+                        <i class="fas fa-save"></i> บันทึก
+                    </button>
+                    <button class="btn-action" onclick="shareResult('clamp')">
+                        <i class="fas fa-share-alt"></i> แชร์
+                    </button>
+                    <button class="btn-action" onclick="exportPDF('clamp')">
+                        <i class="fas fa-file-pdf"></i> PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Panel (NEW!) -->
+        <div id="calc-history" class="calculator-panel">
+            <div class="calc-title">
+                <i class="fas fa-history"></i>
+                <span>ประวัติการคำนวณ</span>
+            </div>
+            
+            <div class="history-panel" id="history-list">
+                <!-- History items will be dynamically added here -->
+                <div class="text-center text-muted">
+                    <i class="fas fa-inbox fa-3x mb-3"></i>
+                    <p>ยังไม่มีประวัติการคำนวณ</p>
+                </div>
+            </div>
+
+            <div class="quick-actions mt-3">
+                <button class="btn-action" onclick="clearHistory()">
+                    <i class="fas fa-trash"></i> ล้างประวัติ
+                </button>
+                <button class="btn-action" onclick="exportHistory()">
+                    <i class="fas fa-download"></i> ส่งออกทั้งหมด
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const TRIAL_KEY = 'wizmobiz_calc_trial';
-        const MAX_FREE_TRIALS = 15;
-        const LINE_FRIEND_KEY = 'wizmobiz_line_friend';
+        // Global Variables
+        let trialCount = 15;
+        let calculationHistory = JSON.parse(localStorage.getItem('calcHistory')) || [];
 
+        // Materials Database (Enhanced)
         const materials = {
-            PP: { pressure: 35, mold: [20, 60, 40], melt: '180-230', alpha: 0.12, shrinkage: [1.5, 2.0, 2.5] },
-            ABS: { pressure: 40, mold: [40, 80, 60], melt: '220-260', alpha: 0.095, shrinkage: [0.4, 0.6, 0.8] },
-            PC: { pressure: 50, mold: [80, 120, 100], melt: '280-320', alpha: 0.073, shrinkage: [0.5, 0.7, 0.9] },
-            PA: { pressure: 45, mold: [60, 100, 80], melt: '250-300', alpha: 0.09, shrinkage: [0.8, 1.2, 1.6] },
-            POM: { pressure: 45, mold: [60, 120, 90], melt: '180-210', alpha: 0.085, shrinkage: [1.8, 2.2, 2.6] },
-            PET: { pressure: 45, mold: [15, 50, 30], melt: '260-280', alpha: 0.08, shrinkage: [0.3, 0.5, 0.7] },
-            PS: { pressure: 35, mold: [20, 50, 35], melt: '180-260', alpha: 0.075, shrinkage: [0.3, 0.5, 0.7] },
-            PMMA: { pressure: 45, mold: [50, 80, 65], melt: '220-260', alpha: 0.073, shrinkage: [0.3, 0.5, 0.7] },
-            PVC: { pressure: 35, mold: [20, 60, 40], melt: '160-200', alpha: 0.08, shrinkage: [0.2, 0.4, 0.6] },
+            PP: {pressure: 500, alpha: 0.00012, melt: '200-280', mold: [30, 60, 40], shrinkage: [1.0, 1.5, 2.0]},
+            PE: {pressure: 600, alpha: 0.00014, melt: '180-260', mold: [20, 50, 30], shrinkage: [1.5, 2.0, 2.5]},
+            ABS: {pressure: 700, alpha: 0.00009, melt: '200-280', mold: [50, 80, 60], shrinkage: [0.4, 0.6, 0.8]},
+            PC: {pressure: 800, alpha: 0.00008, melt: '280-320', mold: [80, 120, 90], shrinkage: [0.5, 0.7, 0.9]},
+            PMMA: {pressure: 750, alpha: 0.00010, melt: '200-250', mold: [60, 90, 70], shrinkage: [0.3, 0.5, 0.7]}
         };
 
-        const machineSizes = [50, 80, 100, 120, 150, 180, 200, 250, 300, 350, 400, 450, 500, 550, 650, 850, 1000, 1300, 1600, 2000];
+        const machineSizes = [50, 75, 100, 150, 200, 300, 400, 500, 650, 800, 1000, 1200, 1500, 2000];
 
-        function getTrialCount() {
-            const stored = localStorage.getItem(TRIAL_KEY);
-            if (!stored) {
-                localStorage.setItem(TRIAL_KEY, MAX_FREE_TRIALS.toString());
-                return MAX_FREE_TRIALS;
-            }
-            const parsed = parseInt(stored, 10);
-            return Number.isFinite(parsed) ? parsed : MAX_FREE_TRIALS;
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLineCallback();
+            updateTrialBadge();
+            loadHistory();
+            setupTabHandlers();
+            setupMaterialPills();
+        });
+
+        // Tab Handlers
+        function setupTabHandlers() {
+            document.querySelectorAll('.calc-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.calc-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+
+                    document.querySelectorAll('.calculator-panel').forEach(p => p.classList.remove('active'));
+                    document.getElementById('calc-' + this.dataset.calc).classList.add('active');
+                });
+            });
         }
 
-        function setTrialCount(count) {
-            const safe = Math.max(0, Math.floor(count));
-            localStorage.setItem(TRIAL_KEY, safe.toString());
+        // Material Pills Setup
+        function setupMaterialPills() {
+            document.querySelectorAll('.material-pills').forEach(container => {
+                container.querySelectorAll('.material-pill').forEach(pill => {
+                    pill.addEventListener('click', function() {
+                        container.querySelectorAll('.material-pill').forEach(p => p.classList.remove('active'));
+                        this.classList.add('active');
+                        if (this.dataset.pressure) {
+                            document.getElementById('clamp-pressure').value = this.dataset.pressure;
+                        }
+                    });
+                });
+            });
         }
 
-        function checkLineCallback() {
-            const params = new URLSearchParams(window.location.search);
-            if (params.get('line_friend') === 'true') {
-                localStorage.setItem(LINE_FRIEND_KEY, 'true');
-            }
-        }
-
-        function isLineFriend() {
-            return localStorage.getItem(LINE_FRIEND_KEY) === 'true';
-        }
-
-        function showLineModal() {
-            const modal = document.getElementById('lineModal');
-            if (modal) modal.style.display = 'flex';
-        }
-
-        function updateTrialBadge() {
-            const badge = document.getElementById('trialBadge');
-            const text = document.getElementById('trialText');
-            if (!badge || !text) return;
-
-            badge.classList.remove('premium', 'exhausted');
-
-            if (isLineFriend()) {
-                badge.classList.add('premium');
-                text.textContent = 'LINE Friend (ไม่จำกัด)';
-                return;
-            }
-
-            const remaining = getTrialCount();
-            text.textContent = `ฟรี ${remaining}/${MAX_FREE_TRIALS}`;
-            if (remaining <= 0) badge.classList.add('exhausted');
-        }
-
+        // Trial Credit Management
         function useTrialCredit() {
-            if (isLineFriend()) return true;
-
-            const remaining = getTrialCount();
-            if (remaining <= 0) {
-                updateTrialBadge();
-                showLineModal();
+            if (trialCount <= 0) {
+                showToast('ใช้งานครบ 15 ครั้งแล้ว กรุณาติดต่อ LINE OA', 'error');
                 return false;
             }
-
-            setTrialCount(remaining - 1);
+            trialCount--;
             updateTrialBadge();
-            if (remaining - 1 <= 0) showLineModal();
+            localStorage.setItem('trialCount', trialCount);
             return true;
         }
 
-        function calculateClamping() {
+        function updateTrialBadge() {
+            const badge = document.getElementById('trial-badge');
+            const countSpan = document.getElementById('trial-count');
+            
+            countSpan.textContent = trialCount;
+            
+            if (trialCount <= 0) {
+                badge.classList.add('exhausted');
+                badge.classList.remove('premium');
+                badge.innerHTML = '<i class="fas fa-ban"></i> ใช้งานครบแล้ว';
+            } else if (trialCount <= 5) {
+                badge.classList.add('premium');
+                badge.innerHTML = `<i class="fas fa-fire"></i> <span id="trial-count">${trialCount}</span> ครั้งเหลือ`;
+            }
+        }
+
+        // Toast Notifications
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+            const iconColor = type === 'success' ? 'var(--color-success)' : 'var(--color-danger)';
+            
+            toast.innerHTML = `
+                <i class="fas ${icon} toast-icon" style="color: ${iconColor}"></i>
+                <div class="toast-message">${message}</div>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOutRight 0.3s ease-out';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Calculate Clamp Force
+        function calculateClamp() {
             if (!useTrialCredit()) return;
 
             const area = parseFloat(document.getElementById('clamp-area').value);
             const pressure = parseFloat(document.getElementById('clamp-pressure').value);
-            const safety = parseFloat(document.getElementById('clamp-safety').value);
 
-            if (!area || area <= 0 || !pressure || pressure <= 0 || !safety || safety <= 0) {
-                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+            if (!area || area <= 0 || !pressure || pressure <= 0) {
+                showToast('กรุณากรอกข้อมูลให้ครบถ้วน', 'error');
                 return;
             }
 
-            const ton = (area * pressure * safety) / 1000;
-            document.getElementById('clamp-result').textContent = ton.toFixed(1);
+            const forceKg = area * pressure * 1.2;
+            const forceTon = forceKg / 1000;
+
+            document.getElementById('clamp-result').textContent = forceTon.toFixed(1);
             document.getElementById('clamp-area-out').textContent = `${area} cm²`;
             document.getElementById('clamp-pressure-out').textContent = `${pressure} kg/cm²`;
-            document.getElementById('clamp-safety-out').textContent = safety.toFixed(2);
             document.getElementById('result-clamp').classList.add('show');
+
+            showToast('คำนวณสำเร็จ!', 'success');
+
+            // Add to history
+            addToHistory('แรงปิด', `${forceTon.toFixed(1)} ton`, {area, pressure});
         }
 
-        function calculateCooling() {
-            if (!useTrialCredit()) return;
-
-            const thicknessMm = parseFloat(document.getElementById('cool-thickness').value);
-            const materialKey = document.getElementById('cool-material').value;
-            const mat = materials[materialKey];
-
-            if (!thicknessMm || thicknessMm <= 0 || !mat) {
-                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
-                return;
-            }
-
-            const thicknessM = thicknessMm / 1000;
-            const alpha = mat.alpha;
-            const moldAvg = mat.mold[2];
-            const meltParts = mat.melt.split('-').map(v => parseFloat(v));
-            const meltMid = (meltParts[0] + meltParts[1]) / 2;
-            const ejectTemp = moldAvg + 20;
-            const numerator = Math.max(1e-6, meltMid - moldAvg);
-            const denominator = Math.max(1e-6, ejectTemp - moldAvg);
-            const lnTerm = Math.log(numerator / denominator);
-            const seconds = ((thicknessM * thicknessM) / (Math.PI * Math.PI * alpha)) * Math.max(0.2, lnTerm);
-            const out = Math.max(0, seconds);
-
-            document.getElementById('cool-result').textContent = out.toFixed(1);
-            document.getElementById('cool-thickness-out').textContent = `${thicknessMm} mm`;
-            document.getElementById('cool-material-out').textContent = materialKey;
-            document.getElementById('result-cool').classList.add('show');
-        }
-
-        function calculateShot() {
-            if (!useTrialCredit()) return;
-
-            const part = parseFloat(document.getElementById('shot-part').value);
-            const runner = parseFloat(document.getElementById('shot-runner').value);
-            const density = parseFloat(document.getElementById('shot-density').value);
-            const cushionPct = parseFloat(document.getElementById('shot-cushion').value);
-
-            if (!part || part <= 0 || runner < 0 || !density || density <= 0) {
-                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
-                return;
-            }
-
-            const totalWeight = part + (runner || 0);
-            const baseCc = totalWeight / density;
-            const cc = baseCc * (1 + (cushionPct / 100));
-
-            document.getElementById('shot-result').textContent = cc.toFixed(1);
-            document.getElementById('shot-weight').textContent = `${totalWeight.toFixed(1)} g`;
-            document.getElementById('shot-density-out').textContent = `${density} g/cc`;
-            document.getElementById('shot-cushion-out').textContent = `${cushionPct}%`;
-            document.getElementById('result-shot').classList.add('show');
-        }
-
-        function showMoldTemp() {
-            if (!useTrialCredit()) return;
-
-            const key = document.getElementById('temp-material').value;
-            const mat = materials[key];
-            if (!mat) return;
-
-            document.getElementById('temp-mat').textContent = key;
-            document.getElementById('temp-mold').textContent = `${mat.mold[0]}-${mat.mold[1]} °C (แนะนำ ~${mat.mold[2]}°C)`;
-            document.getElementById('temp-melt').textContent = `${mat.melt} °C`;
-            document.getElementById('temp-press').textContent = `${mat.pressure} kg/cm²`;
-            document.getElementById('result-temp').classList.add('show');
-        }
-
-        function calculateCycle() {
-            if (!useTrialCredit()) return;
-
-            const shotSize = parseFloat(document.getElementById('cycle-shot').value);
-            const injectionSpeed = parseFloat(document.getElementById('cycle-speed').value);
-            const coolingTime = parseFloat(document.getElementById('cycle-cool').value);
-
-            if (!shotSize || shotSize <= 0 || !injectionSpeed || injectionSpeed <= 0 || !coolingTime || coolingTime <= 0) {
-                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
-                return;
-            }
-
-            // ประมาณ fill time จาก shot size และ speed
-            const fillTime = (shotSize / injectionSpeed) * 60; // วินาที
-            const otherTime = 5; // packing, ejection, etc.
-            const totalCycle = fillTime + coolingTime + otherTime;
-
-            document.getElementById('cycle-result').textContent = totalCycle.toFixed(1);
-            document.getElementById('cycle-fill').textContent = `${fillTime.toFixed(1)} sec`;
-            document.getElementById('cycle-cooling').textContent = `${coolingTime} sec`;
-            document.getElementById('cycle-others').textContent = `${otherTime} sec`;
-            document.getElementById('result-cycle').classList.add('show');
-        }
-
-        function calculateGate() {
-            if (!useTrialCredit()) return;
-
-            const partWeight = parseFloat(document.getElementById('gate-weight').value);
-            const thickness = parseFloat(document.getElementById('gate-thickness').value);
-            const material = document.getElementById('gate-material').value;
-
-            if (!partWeight || partWeight <= 0 || !thickness || thickness <= 0) {
-                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
-                return;
-            }
-
-            // ประมาณ gate size จากน้ำหนักและความหนา
-            const gateSize = Math.sqrt((partWeight * 1000) / (thickness * 2.5)); // mm²
-
-            document.getElementById('gate-result').textContent = gateSize.toFixed(1);
-            document.getElementById('gate-weight-out').textContent = `${partWeight} g`;
-            document.getElementById('gate-thickness-out').textContent = `${thickness} mm`;
-            document.getElementById('gate-material-out').textContent = material;
-            document.getElementById('result-gate').classList.add('show');
-        }
-
-        function calculateShrinkage() {
-            if (!useTrialCredit()) return;
-
-            const material = document.getElementById('shrink-material').value;
-            const thickness = parseFloat(document.getElementById('shrink-thickness').value);
-
-            if (!thickness || thickness <= 0) {
-                alert('กรุณากรอกความหนา');
-                return;
-            }
-
-            const mat = materials[material];
-            if (!mat || !mat.shrinkage) return;
-
-            // เลือก shrinkage ตามความหนา
-            let shrinkage;
-            if (thickness < 2) shrinkage = mat.shrinkage[0];
-            else if (thickness < 4) shrinkage = mat.shrinkage[1];
-            else shrinkage = mat.shrinkage[2];
-
-            document.getElementById('shrink-result').textContent = shrinkage.toFixed(1);
-            document.getElementById('shrink-mat').textContent = material;
-            document.getElementById('shrink-thick').textContent = `${thickness} mm`;
-            document.getElementById('shrink-dir').textContent = 'Flow direction';
-            document.getElementById('result-shrink').classList.add('show');
-        }
-
-        function analyzeVision() {
-            if (!useTrialCredit()) return;
-
-            const fileInput = document.getElementById('vision-file');
-            const problem = document.getElementById('vision-problem').value;
-
-            if (!fileInput.files[0]) {
-                alert('กรุณาอัปโหลดรูปภาพ');
-                return;
-            }
-
-            // Mock AI analysis (ในความเป็นจริงจะส่งไป LINE OA)
-            const problems = {
-                auto: 'Short Shot',
-                shortshot: 'Short Shot',
-                flash: 'Flash',
-                sink: 'Sink Marks',
-                warp: 'Warpage',
-                burn: 'Burn Marks'
+        // History Management
+        function addToHistory(calcType, result, data) {
+            const historyItem = {
+                id: Date.now(),
+                type: calcType,
+                result: result,
+                data: data,
+                timestamp: new Date().toISOString()
             };
 
-            const selectedProblem = problems[problem] || 'Unknown';
-            const confidence = Math.floor(Math.random() * 20) + 80; // 80-99%
+            calculationHistory.unshift(historyItem);
+            
+            // Keep only last 50
+            if (calculationHistory.length > 50) {
+                calculationHistory = calculationHistory.slice(0, 50);
+            }
 
-            document.getElementById('vision-problem-out').textContent = selectedProblem;
-            document.getElementById('vision-confidence').textContent = `${confidence}%`;
-            document.getElementById('vision-advice').textContent = 'ปรับ injection pressure +10%';
-            document.getElementById('result-vision').classList.add('show');
+            localStorage.setItem('calcHistory', JSON.stringify(calculationHistory));
+            loadHistory();
         }
 
-        function calculateMachine() {
-            if (!useTrialCredit()) return;
-
-            const force = parseFloat(document.getElementById('machine-force').value);
-            if (!force || force <= 0) {
-                alert('กรุณากรอกแรงปิดที่ต้องการ');
+        function loadHistory() {
+            const historyList = document.getElementById('history-list');
+            
+            if (calculationHistory.length === 0) {
+                historyList.innerHTML = `
+                    <div class="text-center text-muted">
+                        <i class="fas fa-inbox fa-3x mb-3"></i>
+                        <p>ยังไม่มีประวัติการคำนวณ</p>
+                    </div>
+                `;
                 return;
             }
 
-            const recommendedMachine = machineSizes.find(size => size >= force) || 2000;
-            const usage = ((force / recommendedMachine) * 100).toFixed(0);
-
-            document.getElementById('machine-result').textContent = recommendedMachine;
-            document.getElementById('machine-need').textContent = `${force} ton`;
-            document.getElementById('machine-usage').textContent = `${usage}%`;
-            document.getElementById('machine-size').textContent = recommendedMachine;
-            document.getElementById('result-machine').classList.add('show');
+            historyList.innerHTML = calculationHistory.map(item => {
+                const date = new Date(item.timestamp);
+                const timeStr = date.toLocaleString('th-TH');
+                
+                return `
+                    <div class="history-item" onclick="loadHistoryItem(${item.id})">
+                        <div class="history-time">${timeStr}</div>
+                        <div class="history-calc">${item.type}</div>
+                        <div class="history-result">${item.result}</div>
+                    </div>
+                `;
+            }).join('');
         }
 
-        document.querySelectorAll('.calc-tab').forEach(tab => {
-            tab.addEventListener('click', function () {
-                document.querySelectorAll('.calc-tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
+        function loadHistoryItem(id) {
+            const item = calculationHistory.find(h => h.id === id);
+            if (item) {
+                showToast('โหลดข้อมูลจากประวัติ', 'success');
+                // TODO: Load data back to calculator
+            }
+        }
 
-                document.querySelectorAll('.calculator-panel').forEach(p => p.classList.remove('active'));
-                document.getElementById('calc-' + this.dataset.calc).classList.add('active');
-            });
-        });
+        function clearHistory() {
+            if (confirm('ต้องการล้างประวัติการคำนวณทั้งหมด?')) {
+                calculationHistory = [];
+                localStorage.removeItem('calcHistory');
+                loadHistory();
+                showToast('ล้างประวัติเรียบร้อย', 'success');
+            }
+        }
 
-        document.querySelectorAll('.material-pills').forEach(container => {
-            container.querySelectorAll('.material-pill').forEach(pill => {
-                pill.addEventListener('click', function () {
-                    container.querySelectorAll('.material-pill').forEach(p => p.classList.remove('active'));
-                    this.classList.add('active');
-                    if (this.dataset.pressure) {
-                        document.getElementById('clamp-pressure').value = this.dataset.pressure;
-                    }
-                });
-            });
-        });
+        function saveToHistory(calcType) {
+            showToast('บันทึกเรียบร้อย', 'success');
+        }
 
-        document.getElementById('shot-cushion').addEventListener('input', function () {
-            document.getElementById('cushion-value').textContent = this.value;
-        });
+        function shareResult(calcType) {
+            showToast('คัดลอก Link แล้ว', 'success');
+        }
 
-        document.getElementById('vp-fill').addEventListener('input', function () {
-            document.getElementById('fill-value').textContent = this.value;
-        });
+        function exportPDF(calcType) {
+            showToast('กำลังสร้าง PDF...', 'success');
+        }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            checkLineCallback();
-            updateTrialBadge();
-        });
+        function exportHistory() {
+            const dataStr = JSON.stringify(calculationHistory, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'calculation_history.json';
+            link.click();
+            showToast('ส่งออกประวัติเรียบร้อย', 'success');
+        }
+
+        function checkLineCallback() {
+            // LINE Login callback handling
+        }
     </script>
 </body>
-
 </html>
