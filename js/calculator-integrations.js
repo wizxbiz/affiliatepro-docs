@@ -145,12 +145,23 @@ class UserManager {
 class FirebaseSync {
   /**
    * Save calculation history to Firestore
+   * Falls back to localStorage if API fails
    */
   static async saveCalculation(userId, calcData) {
+    // Always save to localStorage first
+    this.saveToLocalStorage(calcData);
+    
+    // Try to sync with Firebase (non-blocking)
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+      
       const response = await fetch(`${CONFIG.FIREBASE_API_URL}/saveCalculation`, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
         body: JSON.stringify({
           userId,
           type: calcData.type,
@@ -158,13 +169,38 @@ class FirebaseSync {
           input: calcData.input,
           timestamp: new Date().toISOString(),
         }),
+        signal: controller.signal
       });
+      
+      clearTimeout(timeoutId);
 
-      const data = await response.json();
-      return data.success;
-    } catch (error) {
-      console.error('Save calculation error:', error);
+      if (response.ok) {
+        const data = await response.json();
+        return data.success;
+      }
       return false;
+    } catch (error) {
+      // Silently fail - data is already saved locally
+      console.log('Firebase sync skipped (offline or CORS):', error.message);
+      return false;
+    }
+  }
+  
+  /**
+   * Save to localStorage as backup
+   */
+  static saveToLocalStorage(calcData) {
+    try {
+      const history = JSON.parse(localStorage.getItem('calcHistory') || '[]');
+      history.unshift({
+        ...calcData,
+        timestamp: new Date().toISOString()
+      });
+      // Keep only last 100 calculations
+      if (history.length > 100) history.length = 100;
+      localStorage.setItem('calcHistory', JSON.stringify(history));
+    } catch (e) {
+      console.log('LocalStorage save error:', e);
     }
   }
 
@@ -189,23 +225,11 @@ class FirebaseSync {
 
   /**
    * Real-time sync with local storage
+   * Note: saveCalculation already handles localStorage, this is for backwards compatibility
    */
   static syncWithLocal(calcData) {
-    let history = JSON.parse(localStorage.getItem('calcHistory')) || [];
-
-    history.unshift({
-      ...calcData,
-      id: Date.now(),
-      timestamp: new Date().toISOString(),
-    });
-
-    // Keep last 50
-    if (history.length > 50) {
-      history = history.slice(0, 50);
-    }
-
-    localStorage.setItem('calcHistory', JSON.stringify(history));
-    return history;
+    // Already handled in saveCalculation - just return current history
+    return JSON.parse(localStorage.getItem('calcHistory')) || [];
   }
 }
 
