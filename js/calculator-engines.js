@@ -529,6 +529,231 @@ function calculateFlowRatio(flowLength, wallThickness) {
 }
 
 // =====================================================
+// 16. 🎯 MACHINE SIZE SELECTOR
+// =====================================================
+
+function selectMachineSize(requiredClamp, requiredShot) {
+  // Machine database with specifications
+  const machines = [
+    { size: 50, maxShot: 35, shotAt80: 28 },
+    { size: 75, maxShot: 55, shotAt80: 44 },
+    { size: 100, maxShot: 80, shotAt80: 64 },
+    { size: 150, maxShot: 130, shotAt80: 104 },
+    { size: 200, maxShot: 180, shotAt80: 144 },
+    { size: 300, maxShot: 290, shotAt80: 232 },
+    { size: 400, maxShot: 400, shotAt80: 320 },
+    { size: 500, maxShot: 520, shotAt80: 416 },
+    { size: 650, maxShot: 700, shotAt80: 560 },
+    { size: 800, maxShot: 900, shotAt80: 720 },
+    { size: 1000, maxShot: 1200, shotAt80: 960 },
+    { size: 1200, maxShot: 1500, shotAt80: 1200 },
+    { size: 1500, maxShot: 2000, shotAt80: 1600 },
+    { size: 2000, maxShot: 2800, shotAt80: 2240 },
+  ];
+
+  // Find suitable machine
+  const suitable = machines.find(m => m.size >= requiredClamp && m.shotAt80 >= requiredShot);
+  
+  if (!suitable) {
+    return {
+      recommendedSize: machines[machines.length - 1].size,
+      maxShotSize: machines[machines.length - 1].maxShot,
+      utilization: 100,
+      warning: 'ชิ้นงานใหญ่เกินเครื่องจักรมาตรฐาน'
+    };
+  }
+
+  const clampUtilization = (requiredClamp / suitable.size * 100).toFixed(1);
+  const shotUtilization = (requiredShot / suitable.maxShot * 100).toFixed(1);
+
+  return {
+    recommendedSize: suitable.size,
+    maxShotSize: suitable.maxShot,
+    utilization: Math.max(clampUtilization, shotUtilization),
+    clampUtilization,
+    shotUtilization,
+    recommendation: `เครื่องจักรขนาด ${suitable.size} ตัน เหมาะสมกับงาน`
+  };
+}
+
+// =====================================================
+// 17. 📊 ROI CALCULATOR
+// =====================================================
+
+function calculateROI(moldCost, sellingPrice, costPerPart, monthlyVolume) {
+  if (!moldCost || !sellingPrice || !costPerPart || !monthlyVolume) {
+    throw new Error('กรุณากรอกข้อมูลให้ครบถ้วน');
+  }
+
+  const profitPerPart = sellingPrice - costPerPart;
+  const monthlyProfit = profitPerPart * monthlyVolume;
+  const monthsToPayback = moldCost / monthlyProfit;
+  const yearlyProfit = monthlyProfit * 12;
+  const roiPercent = ((yearlyProfit - moldCost) / moldCost) * 100;
+
+  // Projection for 24 months
+  const projection = [];
+  for (let month = 0; month <= 24; month++) {
+    projection.push({
+      month,
+      cumulativeProfit: (monthlyProfit * month) - moldCost,
+      revenue: sellingPrice * monthlyVolume * month,
+      cost: costPerPart * monthlyVolume * month + moldCost
+    });
+  }
+
+  return {
+    profitPerPart,
+    monthlyProfit,
+    monthsToPayback: monthsToPayback.toFixed(1),
+    yearlyProfit,
+    roiPercent: roiPercent.toFixed(1),
+    projection,
+    status: roiPercent > 50 ? '🟢 คุ้มค่ามาก' : roiPercent > 20 ? '🟡 คุ้มค่าปานกลาง' : '🔴 ควรพิจารณาใหม่'
+  };
+}
+
+// =====================================================
+// 18. 💰 COMPREHENSIVE COST CALCULATOR
+// =====================================================
+
+function calculateComprehensiveCost(params) {
+  const {
+    partWeight,
+    materialPrice,
+    cycleTime,
+    machineRate,
+    laborRate,
+    overhead = 15,
+    qualityReject = 2,
+    setupCost = 0,
+    batchSize = 1000
+  } = params;
+
+  const partsPerHour = 3600 / cycleTime;
+  const partsPerShift = partsPerHour * 8;
+  
+  // Material cost
+  const materialCost = (partWeight / 1000) * materialPrice;
+  const materialWithScrap = materialCost * (1 + qualityReject / 100);
+
+  // Machine cost
+  const machineCostPerPart = machineRate / partsPerHour;
+
+  // Labor cost
+  const laborCostPerPart = laborRate / partsPerHour;
+
+  // Setup cost amortized
+  const setupCostPerPart = setupCost / batchSize;
+
+  // Subtotal
+  const directCost = materialWithScrap + machineCostPerPart + laborCostPerPart + setupCostPerPart;
+
+  // Overhead
+  const overheadCost = directCost * (overhead / 100);
+
+  // Total
+  const totalCost = directCost + overheadCost;
+
+  return {
+    totalCost: totalCost.toFixed(2),
+    breakdown: {
+      material: materialWithScrap.toFixed(2),
+      machine: machineCostPerPart.toFixed(2),
+      labor: laborCostPerPart.toFixed(2),
+      setup: setupCostPerPart.toFixed(4),
+      overhead: overheadCost.toFixed(2)
+    },
+    production: {
+      partsPerHour: partsPerHour.toFixed(0),
+      partsPerShift: partsPerShift.toFixed(0),
+      partsPerDay: (partsPerShift * 3).toFixed(0)
+    }
+  };
+}
+
+// =====================================================
+// 19. 🔥 MELT FLOW INDEX ESTIMATOR
+// =====================================================
+
+function estimateMFI(material, processingTemp) {
+  const baseMFI = {
+    PP: 12,
+    PE: 8,
+    ABS: 5,
+    PC: 10,
+    PMMA: 3,
+    PA: 25,
+    POM: 9
+  };
+
+  const materialData = MATERIALS[material];
+  if (!materialData) return null;
+
+  const avgMeltTemp = (materialData.meltTemp[0] + materialData.meltTemp[1]) / 2;
+  const tempDiff = processingTemp - avgMeltTemp;
+  
+  // MFI approximately doubles for every 20-25°C increase
+  const mfiMultiplier = Math.pow(2, tempDiff / 22);
+  const estimatedMFI = (baseMFI[material] || 10) * mfiMultiplier;
+
+  return {
+    material,
+    baseMFI: baseMFI[material],
+    estimatedMFI: estimatedMFI.toFixed(1),
+    processingTemp,
+    recommendedMeltTemp: avgMeltTemp,
+    status: estimatedMFI > 30 ? '⚠️ MFI สูง - ระวัง flash' : estimatedMFI < 2 ? '⚠️ MFI ต่ำ - ยากต่อการไหล' : '✅ เหมาะสม'
+  };
+}
+
+// =====================================================
+// 20. 📐 DRAFT ANGLE CALCULATOR
+// =====================================================
+
+function calculateDraftAngle(depth, material, surfaceFinish = 'polished') {
+  if (!depth) {
+    throw new Error('กรุณาระบุความลึก');
+  }
+
+  // Base draft angles by material
+  const baseDraft = {
+    PP: 0.5,
+    PE: 0.5,
+    ABS: 1.0,
+    PC: 1.5,
+    PMMA: 1.5,
+    PA: 0.5,
+    POM: 0.5
+  };
+
+  // Surface finish multipliers
+  const finishMultiplier = {
+    polished: 1.0,
+    textured: 1.5,
+    matte: 1.3,
+    heavy_texture: 2.0
+  };
+
+  const base = baseDraft[material] || 1.0;
+  const multiplier = finishMultiplier[surfaceFinish] || 1.0;
+  
+  // Additional angle for deep draws (0.5° per 25mm depth)
+  const depthAdditional = Math.floor(depth / 25) * 0.5;
+  
+  const recommendedDraft = (base * multiplier) + depthAdditional;
+
+  return {
+    recommendedDraft: recommendedDraft.toFixed(1),
+    minimumDraft: base.toFixed(1),
+    depth,
+    material,
+    surfaceFinish,
+    note: depth > 50 ? 'ความลึกมาก ควรเพิ่ม draft angle' : 'ความลึกปกติ'
+  };
+}
+
+// =====================================================
 // EXPORT ALL CALCULATORS
 // =====================================================
 
@@ -549,4 +774,9 @@ window.CalculatorEngines = {
   calculateCostPerPart,
   calculateColorMixing,
   calculateFlowRatio,
+  selectMachineSize,
+  calculateROI,
+  calculateComprehensiveCost,
+  estimateMFI,
+  calculateDraftAngle,
 };

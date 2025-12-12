@@ -3,13 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="เครื่องคิดเลขวิศวกรฉีดพลาสติก AI - คำนวณ 15+ เครื่องมือ, วินิจฉัยปัญหา, Vision AI, Digital Logbook, Real-time Analytics">
+    <meta name="description" content="เครื่องคิดเลขวิศวกรฉีดพลาสติก AI - คำนวณ 20+ เครื่องมือ, วินิจฉัยปัญหา, Vision AI, Digital Logbook, Real-time Analytics, Cost & ROI Calculator">
+    <meta name="keywords" content="Injection Molding Calculator, AI Calculator, Plastic Calculator, เครื่องคิดเลขฉีดพลาสติก, คำนวณแรงปิด, Clamp Force, Cooling Time">
+    <meta name="author" content="Wizmobiz by อ.วิทยา">
+    <meta property="og:title" content="WiT AI Calculator Pro - เครื่องคิดเลขฉีดพลาสติก AI">
+    <meta property="og:description" content="เครื่องมือคำนวณครบวงจรสำหรับวิศวกรฉีดพลาสติก 20+ เครื่องมือ พร้อม AI วิเคราะห์ปัญหา">
+    <meta property="og:image" content="https://wizmobiz.com/images/calculator-og.jpg">
+    <meta property="og:url" content="https://wizmobiz.com/calculator.html">
+    <meta name="twitter:card" content="summary_large_image">
+    
+    <!-- PWA Meta -->
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="images/icon-192.png">
+    
     <title>🚀 WiT AI Calculator Pro - เครื่องคิดเลขฉีดพลาสติก AI ระดับโปร</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Chart.js for Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jsPDF for PDF Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <style>
         :root {
@@ -70,6 +89,7 @@
         /* Header */
         .app-header {
             background: rgba(255, 255, 255, 0.98);
+            -webkit-backdrop-filter: blur(20px);
             backdrop-filter: blur(20px);
             padding: 20px 25px;
             box-shadow: var(--shadow-md);
@@ -183,6 +203,7 @@
             border-radius: 20px;
             padding: 20px 15px;
             background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             color: #555;
             font-weight: 700;
@@ -248,6 +269,7 @@
         .calculator-panel {
             display: none;
             background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter: blur(20px);
             backdrop-filter: blur(20px);
             border-radius: 25px;
             padding: 30px;
@@ -417,6 +439,7 @@
             padding: 25px;
             border-radius: 20px;
             background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             border: 2px solid rgba(102, 126, 234, 0.2);
             display: none;
@@ -548,6 +571,7 @@
         /* New Feature: History Panel */
         .history-panel {
             background: rgba(255, 255, 255, 0.9);
+            -webkit-backdrop-filter: blur(20px);
             backdrop-filter: blur(20px);
             border-radius: 20px;
             padding: 20px;
@@ -670,6 +694,7 @@
 
         .toast {
             background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter: blur(20px);
             backdrop-filter: blur(20px);
             border-radius: 15px;
             padding: 15px 20px;
@@ -698,13 +723,493 @@
             flex: 1;
             font-weight: 600;
         }
+
+        /* =============== NEW ENHANCED STYLES =============== */
+        
+        /* Vision Preview Styles */
+        .vision-preview-container {
+            display: none;
+        }
+        
+        .vision-preview-container.show {
+            display: block;
+        }
+        
+        .vision-preview-image {
+            max-width: 100%;
+            border-radius: 15px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Quick Navigation Bar */
+        .quick-nav {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+        
+        .quick-nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: rgba(102, 126, 234, 0.1);
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--color-dark);
+        }
+        
+        .quick-nav-btn:hover {
+            background: var(--gradient-primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .quick-nav-btn i {
+            font-size: 1rem;
+        }
+        
+        /* Analytics Dashboard */
+        .analytics-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-radius: 18px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            border: 2px solid rgba(102, 126, 234, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--color-accent);
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 1.5rem;
+        }
+        
+        .stat-icon.primary { background: rgba(102, 126, 234, 0.15); color: #667eea; }
+        .stat-icon.success { background: rgba(56, 239, 125, 0.15); color: #38ef7d; }
+        .stat-icon.warning { background: rgba(245, 87, 108, 0.15); color: #f5576c; }
+        .stat-icon.info { background: rgba(79, 172, 254, 0.15); color: #4facfe; }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+        
+        /* Cost Calculator Styles */
+        .cost-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .cost-item {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            border-left: 4px solid var(--color-accent);
+        }
+        
+        .cost-item-value {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--color-dark);
+        }
+        
+        .cost-item-label {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        /* AI Troubleshooting Panel */
+        .troubleshoot-card {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(78, 205, 196, 0.1));
+            border: 2px solid rgba(255, 107, 53, 0.2);
+            border-radius: 18px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+        
+        .troubleshoot-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .troubleshoot-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--gradient-danger);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+        }
+        
+        .troubleshoot-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .solution-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .solution-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .solution-item:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateX(5px);
+        }
+        
+        .solution-number {
+            width: 28px;
+            height: 28px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        
+        /* Marketplace Products Section */
+        .marketplace-section {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 18px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .marketplace-section h5 {
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .product-card:hover {
+            border-color: var(--color-accent);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .product-card img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .product-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .product-price {
+            color: var(--color-accent);
+            font-weight: 700;
+        }
+        
+        /* Chart Container */
+        .chart-wrapper {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 18px;
+            padding: 25px;
+            margin-top: 20px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .chart-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .chart-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .chart-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(102, 126, 234, 0.1);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .chart-btn.active, .chart-btn:hover {
+            background: var(--gradient-primary);
+            color: white;
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            padding: 10px 20px;
+            box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+            color: #666;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 8px 15px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            color: var(--color-accent);
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        .nav-item i {
+            font-size: 1.3rem;
+        }
+        
+        /* Floating Action Button */
+        .fab-container {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            z-index: 999;
+        }
+        
+        .fab-main {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .fab-main:hover {
+            transform: scale(1.1) rotate(45deg);
+        }
+        
+        .fab-menu {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .fab-container.open .fab-menu {
+            display: flex;
+        }
+        
+        .fab-item {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            box-shadow: var(--shadow-md);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .fab-item:hover {
+            transform: scale(1.1);
+        }
+        
+        .fab-item.marketplace { background: var(--gradient-success); }
+        .fab-item.line { background: #00B900; }
+        .fab-item.support { background: var(--gradient-warning); }
+        
+        /* Offline Indicator */
+        .offline-banner {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--gradient-danger);
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-weight: 600;
+            z-index: 10000;
+        }
+        
+        .offline-banner.show {
+            display: block;
+        }
+        
+        /* Print Styles */
+        @media print {
+            .app-header, .calc-tabs, .quick-nav, .bottom-nav, .fab-container, .quick-actions {
+                display: none !important;
+            }
+            
+            .calculator-panel {
+                display: block !important;
+                page-break-inside: avoid;
+            }
+            
+            .result-section {
+                display: block !important;
+                border: 2px solid #000;
+            }
+        }
+
+        /* Dark Mode Support */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            }
+            
+            .calculator-panel, .stat-card, .quick-nav {
+                background: rgba(30, 30, 50, 0.95);
+                color: #fff;
+            }
+            
+            .form-control, .form-select {
+                background: rgba(255, 255, 255, 0.1);
+                border-color: rgba(255, 255, 255, 0.2);
+                color: #fff;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Offline Indicator -->
+    <div class="offline-banner" id="offline-banner">
+        <i class="fas fa-wifi-slash"></i> คุณกำลังออฟไลน์ - บางฟีเจอร์อาจไม่สามารถใช้งานได้
+    </div>
+
     <!-- Header -->
     <div class="app-header">
         <div class="d-flex justify-content-between align-items-center">
-            <a href="/" class="app-home-link">
+            <a href="index.html" class="app-home-link">
                 <i class="fas fa-calculator"></i>
                 <div>
                     <div class="app-title">WiT AI Calculator Pro</div>
@@ -721,6 +1226,60 @@
     <!-- Main Container -->
     <div class="main-container">
         
+        <!-- Quick Navigation -->
+        <div class="quick-nav">
+            <a href="index.html" class="quick-nav-btn">
+                <i class="fas fa-home"></i> หน้าหลัก
+            </a>
+            <a href="marketplace.html" class="quick-nav-btn">
+                <i class="fas fa-store"></i> Marketplace
+            </a>
+            <a href="injection-molding.html" class="quick-nav-btn">
+                <i class="fas fa-cogs"></i> คู่มือฉีด
+            </a>
+            <a href="mobile-learning.html" class="quick-nav-btn">
+                <i class="fas fa-graduation-cap"></i> เรียนรู้
+            </a>
+            <a href="https://lin.ee/yourline" class="quick-nav-btn" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-line"></i> LINE Bot
+            </a>
+            <button class="quick-nav-btn" onclick="openAIAssistant()">
+                <i class="fas fa-robot"></i> AI ช่วยเหลือ
+            </button>
+        </div>
+
+        <!-- Analytics Dashboard -->
+        <div class="analytics-dashboard" id="analytics-dashboard">
+            <div class="stat-card">
+                <div class="stat-icon primary">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <div class="stat-value" id="stat-total">0</div>
+                <div class="stat-label">การคำนวณทั้งหมด</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-value" id="stat-today">0</div>
+                <div class="stat-label">วันนี้</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon warning">
+                    <i class="fas fa-fire"></i>
+                </div>
+                <div class="stat-value" id="stat-popular">แรงปิด</div>
+                <div class="stat-label">ใช้บ่อยสุด</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon info">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-value" id="stat-saved">0</div>
+                <div class="stat-label">ชม.ที่ประหยัด</div>
+            </div>
+        </div>
+
         <!-- Calculator Tabs -->
         <div class="calc-tabs">
             <button class="calc-tab active" data-calc="clamp">
@@ -751,6 +1310,18 @@
                 <i class="fas fa-compress-arrows-alt"></i>
                 <span>Shrinkage</span>
             </button>
+            <button class="calc-tab" data-calc="cost">
+                <i class="fas fa-coins"></i>
+                <span>ต้นทุน</span>
+            </button>
+            <button class="calc-tab" data-calc="roi">
+                <i class="fas fa-chart-line"></i>
+                <span>ROI</span>
+            </button>
+            <button class="calc-tab" data-calc="troubleshoot">
+                <i class="fas fa-wrench"></i>
+                <span>แก้ปัญหา</span>
+            </button>
             <button class="calc-tab" data-calc="vision">
                 <i class="fas fa-eye"></i>
                 <span>Vision AI</span>
@@ -758,6 +1329,10 @@
             <button class="calc-tab" data-calc="machine">
                 <i class="fas fa-industry"></i>
                 <span>เครื่องจักร</span>
+            </button>
+            <button class="calc-tab" data-calc="analytics">
+                <i class="fas fa-chart-bar"></i>
+                <span>Analytics</span>
             </button>
             <button class="calc-tab" data-calc="history">
                 <i class="fas fa-history"></i>
@@ -800,7 +1375,7 @@
                     <i class="fas fa-tachometer-alt"></i>
                     Injection Pressure (kg/cm²)
                 </label>
-                <input type="number" class="form-control" id="clamp-pressure" value="500">
+                <input type="number" class="form-control" id="clamp-pressure" value="500" placeholder="ความดัน" aria-label="Injection Pressure">
             </div>
 
             <button class="btn-calculate" onclick="calculateClamp()">
@@ -1122,8 +1697,8 @@
                 <input type="file" class="form-control" id="vision-image" accept="image/*" onchange="previewImage(this)">
             </div>
 
-            <div class="mb-3" id="vision-preview" style="display:none;">
-                <img id="vision-preview-img" style="max-width:100%; border-radius:15px; box-shadow:var(--shadow-md);">
+            <div class="mb-3 vision-preview-container" id="vision-preview">
+                <img id="vision-preview-img" class="vision-preview-image" alt="Preview Image">
             </div>
 
             <button class="btn-calculate" onclick="analyzeDefect()">
@@ -1167,7 +1742,228 @@
             </div>
         </div>
 
-        <!-- History Panel (NEW!) -->
+        <!-- ============== NEW CALCULATOR PANELS ============== -->
+
+        <!-- Cost Per Part Calculator -->
+        <div id="calc-cost" class="calculator-panel">
+            <div class="calc-title">
+                <i class="fas fa-coins"></i>
+                <span>คำนวณต้นทุนต่อชิ้น</span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label"><i class="fas fa-weight"></i> น้ำหนักชิ้นงาน (g)</label>
+                    <input type="number" class="form-control" id="cost-weight" placeholder="ระบุน้ำหนัก">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label"><i class="fas fa-dollar-sign"></i> ราคาวัสดุ (บาท/kg)</label>
+                    <input type="number" class="form-control" id="cost-material-price" placeholder="ระบุราคาวัสดุ">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label"><i class="fas fa-clock"></i> Cycle Time (วินาที)</label>
+                    <input type="number" class="form-control" id="cost-cycle" placeholder="ระบุ Cycle Time">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label"><i class="fas fa-industry"></i> ค่าเครื่องจักร (บาท/ชม.)</label>
+                    <input type="number" class="form-control" id="cost-machine-rate" placeholder="ระบุค่าเครื่องจักร">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label"><i class="fas fa-users"></i> ค่าแรงงาน (บาท/ชม.)</label>
+                    <input type="number" class="form-control" id="cost-labor" placeholder="ระบุค่าแรง">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label"><i class="fas fa-percentage"></i> Overhead (%)</label>
+                    <input type="number" class="form-control" id="cost-overhead" value="15" placeholder="ระบุ Overhead">
+                </div>
+            </div>
+
+            <button class="btn-calculate" onclick="calculateCostPerPart()">
+                <i class="fas fa-calculator"></i> คำนวณต้นทุน
+            </button>
+
+            <div class="result-section" id="result-cost">
+                <div class="result-title"><i class="fas fa-check-circle"></i> ต้นทุนต่อชิ้น</div>
+                <div>
+                    <span class="result-value" id="cost-result">0</span>
+                    <span class="result-unit">บาท</span>
+                </div>
+                <div class="cost-breakdown" id="cost-breakdown">
+                    <!-- Cost breakdown will be dynamically added -->
+                </div>
+                <div class="quick-actions">
+                    <button class="btn-action" onclick="saveCalculation('cost')"><i class="fas fa-save"></i> บันทึก</button>
+                    <button class="btn-action" onclick="shareCalculation('cost')"><i class="fas fa-share-alt"></i> แชร์</button>
+                    <button class="btn-action" onclick="exportCalculationPDF('cost')"><i class="fas fa-file-pdf"></i> PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROI Calculator -->
+        <div id="calc-roi" class="calculator-panel">
+            <div class="calc-title">
+                <i class="fas fa-chart-line"></i>
+                <span>คำนวณ ROI - ผลตอบแทนการลงทุน</span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label"><i class="fas fa-money-bill"></i> ต้นทุนแม่พิมพ์ (บาท)</label>
+                    <input type="number" class="form-control" id="roi-mold-cost" placeholder="ระบุต้นทุนแม่พิมพ์">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label"><i class="fas fa-tag"></i> ราคาขายต่อชิ้น (บาท)</label>
+                    <input type="number" class="form-control" id="roi-selling-price" placeholder="ระบุราคาขาย">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label"><i class="fas fa-coins"></i> ต้นทุนต่อชิ้น (บาท)</label>
+                    <input type="number" class="form-control" id="roi-cost-per-part" placeholder="ระบุต้นทุน">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label"><i class="fas fa-boxes"></i> จำนวนผลิตต่อเดือน (ชิ้น)</label>
+                    <input type="number" class="form-control" id="roi-monthly-volume" placeholder="ระบุจำนวนผลิต">
+                </div>
+            </div>
+
+            <button class="btn-calculate" onclick="calculateROI()">
+                <i class="fas fa-calculator"></i> คำนวณ ROI
+            </button>
+
+            <div class="result-section" id="result-roi">
+                <div class="result-title"><i class="fas fa-check-circle"></i> ผลการวิเคราะห์ ROI</div>
+                <div class="result-details" id="roi-details"></div>
+                
+                <!-- ROI Chart -->
+                <div class="chart-wrapper mt-3">
+                    <canvas id="roi-chart"></canvas>
+                </div>
+                
+                <div class="quick-actions">
+                    <button class="btn-action" onclick="saveCalculation('roi')"><i class="fas fa-save"></i> บันทึก</button>
+                    <button class="btn-action" onclick="shareCalculation('roi')"><i class="fas fa-share-alt"></i> แชร์</button>
+                    <button class="btn-action" onclick="exportCalculationPDF('roi')"><i class="fas fa-file-pdf"></i> PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Troubleshooting Panel -->
+        <div id="calc-troubleshoot" class="calculator-panel">
+            <div class="calc-title">
+                <i class="fas fa-wrench"></i>
+                <span>AI ช่วยแก้ปัญหาการฉีด</span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-exclamation-triangle"></i> เลือกปัญหาที่พบ</label>
+                <select class="form-select" id="troubleshoot-problem">
+                    <option value="">-- เลือกปัญหา --</option>
+                    <optgroup label="ปัญหาเกี่ยวกับรูปร่าง">
+                        <option value="short-shot">Short Shot - ชิ้นงานไม่เต็ม</option>
+                        <option value="flash">Flash - พลาสติกล้น</option>
+                        <option value="sink-mark">Sink Mark - รอยยุบ</option>
+                        <option value="warpage">Warpage - ชิ้นงานบิดโก่ง</option>
+                    </optgroup>
+                    <optgroup label="ปัญหาผิวหน้า">
+                        <option value="burn-mark">Burn Mark - รอยไหม้</option>
+                        <option value="silver-streak">Silver Streak - เส้นสีเงิน</option>
+                        <option value="weld-line">Weld Line - รอยเชื่อม</option>
+                        <option value="flow-mark">Flow Mark - รอยการไหล</option>
+                        <option value="jetting">Jetting - รอยพุ่ง</option>
+                    </optgroup>
+                    <optgroup label="ปัญหาภายใน">
+                        <option value="void">Void - ฟองอากาศภายใน</option>
+                        <option value="brittleness">Brittleness - ชิ้นงานเปราะ</option>
+                        <option value="stress-crack">Stress Crack - รอยร้าวจากความเค้น</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-cubes"></i> วัสดุที่ใช้</label>
+                <select class="form-select" id="troubleshoot-material">
+                    <option value="PP">PP</option>
+                    <option value="PE">PE</option>
+                    <option value="ABS">ABS</option>
+                    <option value="PC">PC</option>
+                    <option value="PMMA">PMMA</option>
+                    <option value="PA">PA</option>
+                    <option value="POM">POM</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-edit"></i> รายละเอียดเพิ่มเติม (ไม่บังคับ)</label>
+                <textarea class="form-control" id="troubleshoot-details" rows="3" placeholder="อธิบายปัญหาเพิ่มเติม..."></textarea>
+            </div>
+
+            <button class="btn-calculate" onclick="analyzeProblem()">
+                <i class="fas fa-robot"></i> AI วิเคราะห์ปัญหา
+            </button>
+
+            <div class="result-section" id="result-troubleshoot">
+                <div id="troubleshoot-results"></div>
+            </div>
+        </div>
+
+        <!-- Analytics Dashboard Panel -->
+        <div id="calc-analytics" class="calculator-panel">
+            <div class="calc-title">
+                <i class="fas fa-chart-bar"></i>
+                <span>Analytics Dashboard</span>
+            </div>
+
+            <div class="chart-wrapper">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <i class="fas fa-chart-pie"></i> สถิติการใช้งาน Calculator
+                    </div>
+                    <div class="chart-actions">
+                        <button class="chart-btn active" onclick="updateChartPeriod('week')">7 วัน</button>
+                        <button class="chart-btn" onclick="updateChartPeriod('month')">30 วัน</button>
+                        <button class="chart-btn" onclick="updateChartPeriod('all')">ทั้งหมด</button>
+                    </div>
+                </div>
+                <canvas id="usage-chart"></canvas>
+            </div>
+
+            <div class="chart-wrapper">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <i class="fas fa-calculator"></i> Calculator ที่ใช้บ่อย
+                    </div>
+                </div>
+                <canvas id="calculator-popularity-chart"></canvas>
+            </div>
+
+            <div class="chart-wrapper">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <i class="fas fa-cubes"></i> วัสดุที่ใช้บ่อย
+                    </div>
+                </div>
+                <canvas id="material-usage-chart"></canvas>
+            </div>
+
+            <div class="quick-actions mt-3">
+                <button class="btn-action" onclick="exportAnalyticsReport()">
+                    <i class="fas fa-file-export"></i> ส่งออกรายงาน
+                </button>
+                <button class="btn-action" onclick="resetAnalytics()">
+                    <i class="fas fa-redo"></i> รีเซ็ตสถิติ
+                </button>
+            </div>
+        </div>
+
+        <!-- History Panel -->
         <div id="calc-history" class="calculator-panel">
             <div class="calc-title">
                 <i class="fas fa-history"></i>
@@ -1194,6 +1990,48 @@
 
     </div>
 
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>หน้าหลัก</span>
+        </a>
+        <a href="calculator.html" class="nav-item active">
+            <i class="fas fa-calculator"></i>
+            <span>เครื่องคิดเลข</span>
+        </a>
+        <a href="marketplace.html" class="nav-item">
+            <i class="fas fa-store"></i>
+            <span>Marketplace</span>
+        </a>
+        <a href="mobile-learning.html" class="nav-item">
+            <i class="fas fa-graduation-cap"></i>
+            <span>เรียนรู้</span>
+        </a>
+        <a href="about.html" class="nav-item">
+            <i class="fas fa-user"></i>
+            <span>เกี่ยวกับ</span>
+        </a>
+    </nav>
+
+    <!-- Floating Action Button -->
+    <div class="fab-container" id="fab-container">
+        <div class="fab-menu">
+            <button class="fab-item marketplace" onclick="window.location.href='marketplace.html'" title="Marketplace">
+                <i class="fas fa-store"></i>
+            </button>
+            <button class="fab-item line" onclick="window.open('https://lin.ee/yourline', '_blank')" title="LINE Bot">
+                <i class="fab fa-line"></i>
+            </button>
+            <button class="fab-item support" onclick="openSupportChat()" title="ติดต่อสนับสนุน">
+                <i class="fas fa-headset"></i>
+            </button>
+        </div>
+        <button class="fab-main" onclick="toggleFab()" title="เมนูลัด" aria-label="เปิดเมนูลัด">
+            <i class="fas fa-plus"></i>
+        </button>
+    </div>
+
     <!-- Toast Container -->
     <div class="toast-container" id="toast-container"></div>
 
@@ -1205,6 +2043,7 @@
         const { UserManager, FirebaseSync, MarketplaceIntegration, VisionAI, RealtimeSync, UIHelpers } = window.Integrations;
         const userManager = new UserManager();
         let calculationHistory = JSON.parse(localStorage.getItem('calcHistory')) || [];
+        let usageChart, popularityChart, materialChart, roiChart;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', async function() {
@@ -1215,7 +2054,185 @@
             loadHistory();
             setupTabHandlers();
             setupMaterialPills();
+            updateAnalyticsDashboard();
+            initializeCharts();
+            setupOfflineDetection();
+            registerServiceWorker();
         });
+
+        // Service Worker Registration
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker registration failed:', err));
+            }
+        }
+
+        // Offline Detection
+        function setupOfflineDetection() {
+            const offlineBanner = document.getElementById('offline-banner');
+            
+            window.addEventListener('online', () => {
+                offlineBanner.classList.remove('show');
+                UIHelpers.showToast('กลับมาออนไลน์แล้ว!', 'success');
+            });
+            
+            window.addEventListener('offline', () => {
+                offlineBanner.classList.add('show');
+            });
+            
+            if (!navigator.onLine) {
+                offlineBanner.classList.add('show');
+            }
+        }
+
+        // Update Analytics Dashboard Stats
+        function updateAnalyticsDashboard() {
+            const history = JSON.parse(localStorage.getItem('calcHistory')) || [];
+            const today = new Date().toDateString();
+            const todayCalcs = history.filter(h => new Date(h.timestamp).toDateString() === today);
+            
+            // Calculate most popular calculator
+            const calcCounts = {};
+            history.forEach(h => {
+                calcCounts[h.type] = (calcCounts[h.type] || 0) + 1;
+            });
+            const popular = Object.keys(calcCounts).sort((a, b) => calcCounts[b] - calcCounts[a])[0] || 'N/A';
+            
+            // Update stats
+            document.getElementById('stat-total').textContent = history.length;
+            document.getElementById('stat-today').textContent = todayCalcs.length;
+            document.getElementById('stat-popular').textContent = popular;
+            document.getElementById('stat-saved').textContent = Math.round(history.length * 0.5); // Estimated hours saved
+        }
+
+        // Initialize Charts
+        function initializeCharts() {
+            // Usage Chart
+            const usageCtx = document.getElementById('usage-chart');
+            if (usageCtx) {
+                usageChart = new Chart(usageCtx, {
+                    type: 'line',
+                    data: {
+                        labels: getLast7Days(),
+                        datasets: [{
+                            label: 'การใช้งาน',
+                            data: getUsageData(7),
+                            borderColor: '#667eea',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+
+            // Popularity Chart
+            const popularityCtx = document.getElementById('calculator-popularity-chart');
+            if (popularityCtx) {
+                popularityChart = new Chart(popularityCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['แรงปิด', 'ระยะเย็น', 'Shot Size', 'อุณหภูมิ', 'Cycle Time', 'อื่นๆ'],
+                        datasets: [{
+                            data: getPopularityData(),
+                            backgroundColor: ['#667eea', '#38ef7d', '#f5576c', '#4facfe', '#764ba2', '#ff6a00']
+                        }]
+                    },
+                    options: { responsive: true }
+                });
+            }
+
+            // Material Usage Chart
+            const materialCtx = document.getElementById('material-usage-chart');
+            if (materialCtx) {
+                materialChart = new Chart(materialCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['PP', 'PE', 'ABS', 'PC', 'PMMA', 'PA', 'POM'],
+                        datasets: [{
+                            label: 'จำนวนครั้งที่ใช้',
+                            data: getMaterialUsageData(),
+                            backgroundColor: ['#667eea', '#38ef7d', '#f5576c', '#4facfe', '#764ba2', '#ff6a00', '#11998e']
+                        }]
+                    },
+                    options: { responsive: true }
+                });
+            }
+        }
+
+        // Helper functions for charts
+        function getLast7Days() {
+            const days = [];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                days.push(d.toLocaleDateString('th-TH', { weekday: 'short' }));
+            }
+            return days;
+        }
+
+        function getUsageData(days) {
+            const history = JSON.parse(localStorage.getItem('calcHistory')) || [];
+            const data = new Array(days).fill(0);
+            
+            history.forEach(h => {
+                const daysDiff = Math.floor((Date.now() - new Date(h.timestamp)) / (1000 * 60 * 60 * 24));
+                if (daysDiff < days) {
+                    data[days - 1 - daysDiff]++;
+                }
+            });
+            
+            return data;
+        }
+
+        function getPopularityData() {
+            const history = JSON.parse(localStorage.getItem('calcHistory')) || [];
+            const types = { clamp: 0, cooling: 0, shot: 0, temperature: 0, cycle: 0, other: 0 };
+            
+            history.forEach(h => {
+                if (types.hasOwnProperty(h.type)) {
+                    types[h.type]++;
+                } else {
+                    types.other++;
+                }
+            });
+            
+            return Object.values(types);
+        }
+
+        function getMaterialUsageData() {
+            const history = JSON.parse(localStorage.getItem('calcHistory')) || [];
+            const materials = { PP: 0, PE: 0, ABS: 0, PC: 0, PMMA: 0, PA: 0, POM: 0 };
+            
+            history.forEach(h => {
+                if (h.input && h.input.material && materials.hasOwnProperty(h.input.material)) {
+                    materials[h.input.material]++;
+                }
+            });
+            
+            return Object.values(materials);
+        }
+
+        // FAB Toggle
+        function toggleFab() {
+            document.getElementById('fab-container').classList.toggle('open');
+        }
+
+        // Open AI Assistant
+        function openAIAssistant() {
+            document.querySelector('[data-calc="troubleshoot"]').click();
+        }
+
+        // Open Support Chat
+        function openSupportChat() {
+            window.open('https://lin.ee/yourline', '_blank');
+        }
 
         // Tab Handlers
         function setupTabHandlers() {
@@ -1226,6 +2243,11 @@
 
                     document.querySelectorAll('.calculator-panel').forEach(p => p.classList.remove('active'));
                     document.getElementById('calc-' + this.dataset.calc).classList.add('active');
+                    
+                    // Initialize charts when analytics tab is opened
+                    if (this.dataset.calc === 'analytics') {
+                        setTimeout(initializeCharts, 100);
+                    }
                 });
             });
         }
@@ -1489,7 +2511,7 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     document.getElementById('vision-preview-img').src = e.target.result;
-                    document.getElementById('vision-preview').style.display = 'block';
+                    document.getElementById('vision-preview').classList.add('show');
                 };
                 reader.readAsDataURL(input.files[0]);
             }
@@ -1630,6 +2652,493 @@
             link.download = 'calculation_history.json';
             link.click();
             UIHelpers.showToast('ส่งออกประวัติเรียบร้อย', 'success');
+        }
+
+        // ===== NEW CALCULATOR FUNCTIONS =====
+
+        // Calculate Cost Per Part
+        async function calculateCostPerPart() {
+            const trialResult = await userManager.useTrial();
+            if (!trialResult.success) {
+                UIHelpers.showToast(trialResult.message, 'error');
+                return;
+            }
+
+            const weight = parseFloat(document.getElementById('cost-weight').value);
+            const materialPrice = parseFloat(document.getElementById('cost-material-price').value);
+            const cycleTime = parseFloat(document.getElementById('cost-cycle').value);
+            const machineRate = parseFloat(document.getElementById('cost-machine-rate').value);
+            const laborRate = parseFloat(document.getElementById('cost-labor').value);
+            const overhead = parseFloat(document.getElementById('cost-overhead').value) || 15;
+
+            if (!weight || !materialPrice || !cycleTime || !machineRate || !laborRate) {
+                UIHelpers.showToast('กรุณากรอกข้อมูลให้ครบถ้วน', 'error');
+                return;
+            }
+
+            // Calculate costs
+            const partsPerHour = 3600 / cycleTime;
+            const materialCost = (weight / 1000) * materialPrice;
+            const machineCost = machineRate / partsPerHour;
+            const laborCost = laborRate / partsPerHour;
+            const subtotal = materialCost + machineCost + laborCost;
+            const overheadCost = subtotal * (overhead / 100);
+            const totalCost = subtotal + overheadCost;
+
+            document.getElementById('cost-result').textContent = totalCost.toFixed(2);
+            document.getElementById('cost-breakdown').innerHTML = `
+                <div class="cost-item">
+                    <div class="cost-item-value">${materialCost.toFixed(2)}</div>
+                    <div class="cost-item-label">ค่าวัสดุ</div>
+                </div>
+                <div class="cost-item">
+                    <div class="cost-item-value">${machineCost.toFixed(2)}</div>
+                    <div class="cost-item-label">ค่าเครื่องจักร</div>
+                </div>
+                <div class="cost-item">
+                    <div class="cost-item-value">${laborCost.toFixed(2)}</div>
+                    <div class="cost-item-label">ค่าแรงงาน</div>
+                </div>
+                <div class="cost-item">
+                    <div class="cost-item-value">${overheadCost.toFixed(2)}</div>
+                    <div class="cost-item-label">Overhead ${overhead}%</div>
+                </div>
+            `;
+            document.getElementById('result-cost').classList.add('show');
+
+            UIHelpers.showToast('คำนวณสำเร็จ!', 'success');
+
+            const result = { totalCost, materialCost, machineCost, laborCost, overheadCost, partsPerHour };
+            const calcData = { type: 'cost', result, input: { weight, materialPrice, cycleTime, machineRate, laborRate, overhead } };
+            FirebaseSync.syncWithLocal(calcData);
+            await FirebaseSync.saveCalculation(userManager.userId, calcData);
+            updateAnalyticsDashboard();
+        }
+
+        // Calculate ROI
+        async function calculateROI() {
+            const trialResult = await userManager.useTrial();
+            if (!trialResult.success) {
+                UIHelpers.showToast(trialResult.message, 'error');
+                return;
+            }
+
+            const moldCost = parseFloat(document.getElementById('roi-mold-cost').value);
+            const sellingPrice = parseFloat(document.getElementById('roi-selling-price').value);
+            const costPerPart = parseFloat(document.getElementById('roi-cost-per-part').value);
+            const monthlyVolume = parseFloat(document.getElementById('roi-monthly-volume').value);
+
+            if (!moldCost || !sellingPrice || !costPerPart || !monthlyVolume) {
+                UIHelpers.showToast('กรุณากรอกข้อมูลให้ครบถ้วน', 'error');
+                return;
+            }
+
+            // Calculate ROI
+            const profitPerPart = sellingPrice - costPerPart;
+            const monthlyProfit = profitPerPart * monthlyVolume;
+            const monthsToPayback = Math.ceil(moldCost / monthlyProfit);
+            const yearlyProfit = monthlyProfit * 12;
+            const roiPercent = ((yearlyProfit - moldCost) / moldCost) * 100;
+
+            document.getElementById('roi-details').innerHTML = `
+                <div class="detail-row"><span class="detail-label">กำไรต่อชิ้น:</span><span class="detail-value" style="color:var(--color-success);">฿${profitPerPart.toFixed(2)}</span></div>
+                <div class="detail-row"><span class="detail-label">กำไรต่อเดือน:</span><span class="detail-value" style="color:var(--color-success);">฿${monthlyProfit.toLocaleString()}</span></div>
+                <div class="detail-row"><span class="detail-label">คืนทุนภายใน:</span><span class="detail-value" style="color:var(--color-accent);">${monthsToPayback} เดือน</span></div>
+                <div class="detail-row"><span class="detail-label">กำไรต่อปี:</span><span class="detail-value" style="color:var(--color-success);">฿${yearlyProfit.toLocaleString()}</span></div>
+                <div class="detail-row"><span class="detail-label">ROI:</span><span class="detail-value" style="font-size:1.3rem;color:${roiPercent > 0 ? 'var(--color-success)' : 'var(--color-danger)'};">${roiPercent.toFixed(1)}%</span></div>
+            `;
+            document.getElementById('result-roi').classList.add('show');
+
+            // Update ROI Chart
+            const roiCtx = document.getElementById('roi-chart');
+            if (roiCtx) {
+                if (roiChart) roiChart.destroy();
+                
+                const months = [];
+                const cumulativeProfit = [];
+                for (let i = 0; i <= 24; i++) {
+                    months.push(`เดือน ${i}`);
+                    cumulativeProfit.push((monthlyProfit * i) - moldCost);
+                }
+
+                roiChart = new Chart(roiCtx, {
+                    type: 'line',
+                    data: {
+                        labels: months,
+                        datasets: [{
+                            label: 'กำไรสะสม (บาท)',
+                            data: cumulativeProfit,
+                            borderColor: '#38ef7d',
+                            backgroundColor: 'rgba(56, 239, 125, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }, {
+                            label: 'จุดคุ้มทุน',
+                            data: new Array(25).fill(0),
+                            borderColor: '#f5576c',
+                            borderDash: [5, 5],
+                            pointRadius: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        },
+                        scales: {
+                            y: {
+                                ticks: {
+                                    callback: value => '฿' + value.toLocaleString()
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            UIHelpers.showToast('คำนวณสำเร็จ!', 'success');
+
+            const result = { profitPerPart, monthlyProfit, monthsToPayback, yearlyProfit, roiPercent };
+            const calcData = { type: 'roi', result, input: { moldCost, sellingPrice, costPerPart, monthlyVolume } };
+            FirebaseSync.syncWithLocal(calcData);
+            await FirebaseSync.saveCalculation(userManager.userId, calcData);
+            updateAnalyticsDashboard();
+        }
+
+        // AI Troubleshooting
+        const TROUBLESHOOT_DATABASE = {
+            'short-shot': {
+                title: 'Short Shot - ชิ้นงานไม่เต็ม',
+                causes: [
+                    'Injection pressure ต่ำเกินไป',
+                    'Melt temperature ต่ำเกินไป',
+                    'Shot size ไม่เพียงพอ',
+                    'Gate ขนาดเล็กเกินไป',
+                    'Venting ไม่เพียงพอ'
+                ],
+                solutions: [
+                    'เพิ่ม Injection Pressure 10-20%',
+                    'เพิ่ม Melt Temperature 10-20°C',
+                    'ตรวจสอบและเพิ่ม Shot Size',
+                    'ขยาย Gate ให้ใหญ่ขึ้น',
+                    'เพิ่ม Venting ที่ท้ายทางเดิน',
+                    'ลด Injection Speed เพื่อให้พลาสติกไหลได้ดีขึ้น'
+                ]
+            },
+            'flash': {
+                title: 'Flash - พลาสติกล้น',
+                causes: [
+                    'Clamp force ไม่เพียงพอ',
+                    'Injection pressure สูงเกินไป',
+                    'Mold สึกหรอ/เสียหาย',
+                    'Mold temperature สูงเกินไป'
+                ],
+                solutions: [
+                    'เพิ่ม Clamp Force',
+                    'ลด Injection Pressure 10-15%',
+                    'ตรวจสอบสภาพ Mold และซ่อมแซม',
+                    'ลด Mold Temperature',
+                    'ลด Packing Pressure'
+                ]
+            },
+            'sink-mark': {
+                title: 'Sink Mark - รอยยุบ',
+                causes: [
+                    'Packing pressure/time ไม่เพียงพอ',
+                    'Gate แข็งตัวเร็วเกินไป',
+                    'Cooling time สั้นเกินไป',
+                    'ผนังหนาไม่สม่ำเสมอ'
+                ],
+                solutions: [
+                    'เพิ่ม Packing Pressure และ Time',
+                    'ขยาย Gate size',
+                    'เพิ่ม Cooling Time',
+                    'ลด Melt Temperature',
+                    'ปรับการออกแบบให้ผนังหนาสม่ำเสมอ'
+                ]
+            },
+            'warpage': {
+                title: 'Warpage - ชิ้นงานบิดโก่ง',
+                causes: [
+                    'การหดตัวไม่สม่ำเสมอ',
+                    'Mold temperature ไม่สม่ำเสมอ',
+                    'Ejection ไม่สมดุล',
+                    'Cooling ไม่เพียงพอ'
+                ],
+                solutions: [
+                    'ปรับ Mold Temperature ให้สม่ำเสมอทั้ง 2 ฝั่ง',
+                    'เพิ่ม Cooling Time',
+                    'ปรับตำแหน่ง Ejector Pin ให้สมดุล',
+                    'ลด Injection Speed',
+                    'ใช้ Jig fixture หลัง Ejection'
+                ]
+            },
+            'burn-mark': {
+                title: 'Burn Mark - รอยไหม้',
+                causes: [
+                    'Venting ไม่เพียงพอ',
+                    'Injection speed เร็วเกินไป',
+                    'Melt temperature สูงเกินไป',
+                    'พลาสติกค้างใน Barrel นานเกินไป'
+                ],
+                solutions: [
+                    'เพิ่ม Venting',
+                    'ลด Injection Speed',
+                    'ลด Melt Temperature',
+                    'ลด Back Pressure',
+                    'ตรวจสอบ Residence Time'
+                ]
+            },
+            'silver-streak': {
+                title: 'Silver Streak - เส้นสีเงิน',
+                causes: [
+                    'วัสดุมีความชื้น',
+                    'อากาศติดในพลาสติก',
+                    'Melt temperature สูงเกินไป',
+                    'Back pressure ต่ำเกินไป'
+                ],
+                solutions: [
+                    'อบวัสดุให้แห้งก่อนใช้งาน',
+                    'เพิ่ม Back Pressure',
+                    'ลด Melt Temperature',
+                    'ลด Injection Speed',
+                    'ตรวจสอบ Hopper และระบบดูดวัสดุ'
+                ]
+            },
+            'weld-line': {
+                title: 'Weld Line - รอยเชื่อม',
+                causes: [
+                    'Melt temperature ต่ำเกินไป',
+                    'Injection speed ช้าเกินไป',
+                    'Mold temperature ต่ำเกินไป',
+                    'ตำแหน่ง Gate ไม่เหมาะสม'
+                ],
+                solutions: [
+                    'เพิ่ม Melt Temperature',
+                    'เพิ่ม Injection Speed',
+                    'เพิ่ม Mold Temperature',
+                    'ย้ายตำแหน่ง Gate',
+                    'เพิ่ม Venting ตรงจุด Weld Line'
+                ]
+            },
+            'flow-mark': {
+                title: 'Flow Mark - รอยการไหล',
+                causes: [
+                    'Injection speed ช้าเกินไป',
+                    'Melt temperature ต่ำเกินไป',
+                    'Mold temperature ต่ำเกินไป',
+                    'Gate ขนาดเล็กเกินไป'
+                ],
+                solutions: [
+                    'เพิ่ม Injection Speed',
+                    'เพิ่ม Melt Temperature',
+                    'เพิ่ม Mold Temperature',
+                    'ขยาย Gate size',
+                    'ใช้ Hot Runner'
+                ]
+            },
+            'jetting': {
+                title: 'Jetting - รอยพุ่ง',
+                causes: [
+                    'Injection speed เร็วเกินไปช่วงแรก',
+                    'Gate ขนาดเล็กเกินไป',
+                    'Gate อยู่ตรงข้ามผนังที่ใหญ่'
+                ],
+                solutions: [
+                    'ลด Initial Injection Speed',
+                    'ขยาย Gate size',
+                    'เปลี่ยนตำแหน่ง Gate ให้ชน Rib หรือ Wall',
+                    'ใช้ Multi-stage Injection'
+                ]
+            },
+            'void': {
+                title: 'Void - ฟองอากาศภายใน',
+                causes: [
+                    'Packing pressure/time ไม่เพียงพอ',
+                    'Melt temperature สูงเกินไป',
+                    'ผนังหนาเกินไป',
+                    'Cooling ไม่สม่ำเสมอ'
+                ],
+                solutions: [
+                    'เพิ่ม Packing Pressure และ Time',
+                    'ลด Melt Temperature',
+                    'ปรับให้ผนังบางลง หรือใช้ Core Pin',
+                    'ปรับ Mold Cooling ให้สม่ำเสมอ'
+                ]
+            },
+            'brittleness': {
+                title: 'Brittleness - ชิ้นงานเปราะ',
+                causes: [
+                    'วัสดุเสื่อมสภาพ (Degradation)',
+                    'Melt temperature สูงเกินไป',
+                    'Residence time นานเกินไป',
+                    'ใช้ Regrind มากเกินไป'
+                ],
+                solutions: [
+                    'ลด Melt Temperature',
+                    'ลด Residence Time',
+                    'จำกัด % Regrind (ไม่เกิน 25%)',
+                    'ตรวจสอบคุณภาพวัสดุ',
+                    'เพิ่ม Mold Temperature'
+                ]
+            },
+            'stress-crack': {
+                title: 'Stress Crack - รอยร้าวจากความเค้น',
+                causes: [
+                    'Residual stress ในชิ้นงาน',
+                    'Ejection รุนแรงเกินไป',
+                    'Mold temperature ต่ำเกินไป',
+                    'Draft angle ไม่เพียงพอ'
+                ],
+                solutions: [
+                    'เพิ่ม Mold Temperature',
+                    'ลดความเร็ว Ejection',
+                    'เพิ่ม Draft Angle',
+                    'ใช้ Mold Release Agent',
+                    'Annealing ชิ้นงานหลังฉีด'
+                ]
+            }
+        };
+
+        async function analyzeProblem() {
+            const trialResult = await userManager.useTrial();
+            if (!trialResult.success) {
+                UIHelpers.showToast(trialResult.message, 'error');
+                return;
+            }
+
+            const problem = document.getElementById('troubleshoot-problem').value;
+            const material = document.getElementById('troubleshoot-material').value;
+
+            if (!problem) {
+                UIHelpers.showToast('กรุณาเลือกปัญหา', 'error');
+                return;
+            }
+
+            const data = TROUBLESHOOT_DATABASE[problem];
+            if (!data) {
+                UIHelpers.showToast('ไม่พบข้อมูลปัญหานี้', 'error');
+                return;
+            }
+
+            const resultsDiv = document.getElementById('troubleshoot-results');
+            resultsDiv.innerHTML = `
+                <div class="troubleshoot-card">
+                    <div class="troubleshoot-header">
+                        <div class="troubleshoot-icon">
+                            <i class="fas fa-bug"></i>
+                        </div>
+                        <div>
+                            <div class="troubleshoot-title">${data.title}</div>
+                            <div class="text-muted">วัสดุ: ${material}</div>
+                        </div>
+                    </div>
+
+                    <h6 class="mb-3"><i class="fas fa-search text-danger"></i> สาเหตุที่เป็นไปได้:</h6>
+                    <ul class="solution-list mb-4">
+                        ${data.causes.map((cause, i) => `
+                            <li class="solution-item">
+                                <span class="solution-number">${i + 1}</span>
+                                <span>${cause}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+
+                    <h6 class="mb-3"><i class="fas fa-lightbulb text-success"></i> วิธีแก้ไขที่แนะนำ:</h6>
+                    <ul class="solution-list">
+                        ${data.solutions.map((solution, i) => `
+                            <li class="solution-item">
+                                <span class="solution-number">${i + 1}</span>
+                                <span>${solution}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+
+                <div class="marketplace-section" id="recommended-products">
+                    <!-- Products will be loaded here -->
+                </div>
+            `;
+
+            document.getElementById('result-troubleshoot').classList.add('show');
+            UIHelpers.showToast('วิเคราะห์สำเร็จ!', 'success');
+
+            // Load recommended products
+            const products = await MarketplaceIntegration.getRecommendedProducts('troubleshoot', problem);
+            MarketplaceIntegration.displayProducts(products, 'recommended-products');
+
+            const calcData = { type: 'troubleshoot', result: { problem, material, ...data } };
+            FirebaseSync.syncWithLocal(calcData);
+            updateAnalyticsDashboard();
+        }
+
+        // Chart period update
+        function updateChartPeriod(period) {
+            document.querySelectorAll('.chart-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const days = period === 'week' ? 7 : period === 'month' ? 30 : 365;
+            
+            if (usageChart) {
+                usageChart.data.labels = period === 'week' ? getLast7Days() : 
+                    period === 'month' ? getLast30Days() : getLast12Months();
+                usageChart.data.datasets[0].data = getUsageData(days);
+                usageChart.update();
+            }
+        }
+
+        function getLast30Days() {
+            const days = [];
+            for (let i = 29; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                days.push(d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short' }));
+            }
+            return days;
+        }
+
+        function getLast12Months() {
+            const months = [];
+            for (let i = 11; i >= 0; i--) {
+                const d = new Date();
+                d.setMonth(d.getMonth() - i);
+                months.push(d.toLocaleDateString('th-TH', { month: 'short', year: '2-digit' }));
+            }
+            return months;
+        }
+
+        // Export Analytics Report
+        function exportAnalyticsReport() {
+            const history = JSON.parse(localStorage.getItem('calcHistory')) || [];
+            const report = {
+                generatedAt: new Date().toISOString(),
+                totalCalculations: history.length,
+                calculationsByType: getPopularityData(),
+                materialUsage: getMaterialUsageData(),
+                history: history
+            };
+            
+            const dataStr = JSON.stringify(report, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `analytics_report_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            UIHelpers.showToast('ส่งออกรายงานสำเร็จ', 'success');
+        }
+
+        // Reset Analytics
+        function resetAnalytics() {
+            if (confirm('ต้องการรีเซ็ตสถิติทั้งหมด? การดำเนินการนี้จะลบประวัติการคำนวณทั้งหมด')) {
+                localStorage.removeItem('calcHistory');
+                calculationHistory = [];
+                loadHistory();
+                updateAnalyticsDashboard();
+                initializeCharts();
+                UIHelpers.showToast('รีเซ็ตสถิติเรียบร้อย', 'success');
+            }
         }
 
         // Legacy functions (for backward compatibility)
