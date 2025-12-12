@@ -25,8 +25,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <!-- Chart.js for Analytics -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js for Analytics (using cdnjs with proper source map) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <!-- jsPDF for PDF Export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -2040,8 +2040,20 @@
     <script src="js/calculator-integrations.js"></script>
     <script>
         // Initialize Integration Modules
-        const { UserManager, FirebaseSync, MarketplaceIntegration, VisionAI, RealtimeSync, UIHelpers } = window.Integrations;
-        const userManager = new UserManager();
+        (function() {
+            const modules = window.Integrations || {};
+            const userMgr = new modules.UserManager();
+            window.appUserManager = userMgr;
+            window.appModules = modules;
+            // Create global shortcuts
+            window.UIHelpers = modules.UIHelpers;
+            window.FirebaseSync = modules.FirebaseSync;
+            window.VisionAI = modules.VisionAI;
+            window.MarketplaceIntegration = modules.MarketplaceIntegration;
+        })();
+        
+        // Access modules via window to avoid redeclaration
+        const userManager = window.appUserManager;
         let calculationHistory = JSON.parse(localStorage.getItem('calcHistory')) || [];
         let usageChart, popularityChart, materialChart, roiChart;
 
