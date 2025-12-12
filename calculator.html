@@ -2,1275 +2,425 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="เครื่องคิดเลขวิศวกรสำหรับงานฉีดพลาสติก - ฟรี 5 ครั้ง! คำนวณแรงปิด, Cooling Time, Shot Size">
-    <title>🧮 เครื่องคิดเลขวิศวกร - ฟรี 5 ครั้ง!</title>
-    
-    <!-- Bootstrap CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Injection Molding Calculator</title>
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --line-green: #00B900;
-            --primary-color: #667eea;
-            --secondary-color: #40C4FF;
-            --success-color: #4CAF50;
-            --warning-color: #FFD740;
-            --danger-color: #f5576c;
-            --dark-color: #2D3436;
-            --light-color: #F5F7FA;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
-            font-family: 'Kanit', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: var(--dark-color);
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            font-family: 'Sarabun', sans-serif;
+            padding-bottom: 80px;
         }
-
-        /* Header */
-        .app-header {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 15px 20px;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+        .card {
+            background-color: #2d2d2d;
+            border: 1px solid #404040;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
-
-        .app-title {
-            font-weight: 700;
-            font-size: 1.3rem;
-            background: linear-gradient(135deg, var(--primary-color), #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .form-control, .form-select {
+            background-color: #3d3d3d;
+            border-color: #505050;
+            color: #fff;
         }
-
-        /* Trial Counter Badge */
-        .trial-badge {
-            background: linear-gradient(135deg, var(--warning-color), #FFA000);
-            color: var(--dark-color);
-            padding: 8px 15px;
-            border-radius: 25px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 15px rgba(255, 215, 64, 0.4);
+        .form-control:focus, .form-select:focus {
+            background-color: #454545;
+            color: #fff;
+            border-color: #00b900;
+            box-shadow: 0 0 0 0.25rem rgba(0, 185, 0, 0.25);
         }
-
-        .trial-badge.premium {
-            background: linear-gradient(135deg, var(--line-green), #06C755);
-            color: white;
+        .btn-primary {
+            background-color: #00b900;
+            border-color: #00b900;
+            font-weight: bold;
         }
-
-        .trial-badge.exhausted {
-            background: linear-gradient(135deg, var(--danger-color), #ff4757);
-            color: white;
+        .btn-primary:hover {
+            background-color: #009900;
+            border-color: #009900;
         }
-
-        /* Calculator Tabs */
-        .calc-tabs {
-            display: flex;
+        .nav-tabs .nav-link {
+            color: #aaa;
+            border: none;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-tabs .nav-link.active {
+            background-color: transparent;
+            color: #00b900;
+            border-color: transparent;
+            border-bottom: 2px solid #00b900;
+            font-weight: bold;
+        }
+        .nav-tabs {
+            border-bottom: 1px solid #404040;
+            flex-wrap: nowrap;
             overflow-x: auto;
-            padding: 15px;
-            gap: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            -webkit-backdrop-filter: blur(10px);
-            backdrop-filter: blur(10px);
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
         }
-
-        .calc-tabs::-webkit-scrollbar { display: none; }
-
-        .calc-tab {
-            flex: 0 0 auto;
-            padding: 12px 20px;
-            border-radius: 25px;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: none;
-            font-family: 'Kanit', sans-serif;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            white-space: nowrap;
+        .nav-tabs::-webkit-scrollbar {
+            display: none;
         }
-
-        .calc-tab:hover { background: rgba(255, 255, 255, 0.3); }
-
-        .calc-tab.active {
-            background: white;
-            color: var(--primary-color);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        h5 {
+            color: #00b900;
+            margin-bottom: 20px;
         }
-
-        /* Calculator Container */
-        .calc-container {
-            padding: 20px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .calc-card {
-            background: white;
-            border-radius: 25px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        .calc-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--dark-color);
-            margin-bottom: 5px;
-            text-align: center;
-        }
-
-        .calc-subtitle {
-            font-size: 0.9rem;
-            color: #666;
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        /* Form Styles */
-        .form-group { margin-bottom: 20px; }
-
-        .form-label {
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .form-label i {
-            margin-right: 8px;
-            color: var(--primary-color);
-        }
-
-        .form-control {
-            border: 2px solid #e0e0e0;
-            border-radius: 15px;
-            padding: 15px;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-        }
-
-        .form-select {
-            border: 2px solid #e0e0e0;
-            border-radius: 15px;
-            padding: 15px;
-            font-size: 1rem;
-        }
-
         .input-group-text {
-            background: var(--light-color);
-            border: 2px solid #e0e0e0;
-            border-left: none;
-            border-radius: 0 15px 15px 0;
-            font-weight: 600;
-            color: #666;
+            background-color: #505050;
+            border-color: #505050;
+            color: #fff;
         }
-
-        .input-group .form-control { border-radius: 15px 0 0 15px; }
-
-        /* Calculate Button */
-        .btn-calculate {
-            width: 100%;
-            padding: 18px;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 1.2rem;
-            background: linear-gradient(135deg, var(--primary-color), #764ba2);
-            color: white;
-            border: none;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-            transition: all 0.3s ease;
+        /* Modal Styles */
+        .modal-content {
+            background-color: #2d2d2d;
+            color: #fff;
+            border: 1px solid #404040;
         }
-
-        .btn-calculate:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.5);
-            color: white;
+        .modal-header {
+            border-bottom: 1px solid #404040;
         }
-
-        .btn-calculate:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
+        .modal-footer {
+            border-top: 1px solid #404040;
         }
-
-        /* Result Section */
-        .result-section {
-            margin-top: 25px;
-            padding: 25px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
-            border-radius: 20px;
-            display: none;
-        }
-
-        .result-section.show { display: block; }
-
-        .result-title {
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: var(--dark-color);
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .result-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            text-align: center;
-            margin-bottom: 5px;
-        }
-
-        .result-unit {
-            font-size: 1rem;
-            color: #666;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .result-details {
-            background: white;
-            border-radius: 15px;
-            padding: 15px;
-        }
-
-        .result-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .result-row:last-child { border-bottom: none; }
-        .result-label { color: #666; }
-        .result-data { font-weight: 600; color: var(--dark-color); }
-
-        /* Material Pills */
-        .material-pills {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .material-pill {
-            padding: 8px 16px;
-            border-radius: 20px;
-            background: var(--light-color);
-            border: 2px solid transparent;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-        }
-
-        .material-pill:hover { border-color: var(--primary-color); }
-
-        .material-pill.active {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        /* Calculator Hidden */
-        .calculator-panel { display: none; }
-        .calculator-panel.active { display: block; }
-
-        /* Recommendation */
-        .recommendation {
-            margin-top: 15px;
-            padding: 15px;
-            background: linear-gradient(135deg, var(--success-color), #38ef7d);
-            border-radius: 15px;
-            color: white;
-            text-align: center;
-        }
-
-        /* Quick Tips */
-        .quick-tip {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(64, 196, 255, 0.1);
-            border-left: 4px solid var(--secondary-color);
+        .qr-code {
+            max-width: 200px;
             border-radius: 10px;
-        }
-
-        .quick-tip h6 {
-            color: var(--secondary-color);
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .quick-tip p {
-            color: #555;
-            font-size: 0.9rem;
-            margin: 0;
-        }
-
-        /* LINE Login Modal */
-        .line-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            padding: 20px;
-        }
-
-        .line-modal-overlay.show { display: flex; }
-
-        .line-modal {
-            background: white;
-            border-radius: 30px;
-            padding: 40px;
-            max-width: 400px;
-            width: 100%;
-            text-align: center;
-            animation: modalSlideIn 0.3s ease;
-        }
-
-        @keyframes modalSlideIn {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .line-modal-icon {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, var(--line-green), #06C755);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 25px;
-            font-size: 3rem;
-            color: white;
-        }
-
-        .line-modal h3 {
-            font-weight: 700;
-            margin-bottom: 15px;
-            color: var(--dark-color);
-        }
-
-        .line-modal p {
-            color: #666;
-            margin-bottom: 25px;
-            line-height: 1.7;
-        }
-
-        .btn-line-login {
-            background: linear-gradient(135deg, var(--line-green), #06C755);
-            color: white;
-            padding: 18px 40px;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(0, 185, 0, 0.4);
-        }
-
-        .btn-line-login:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(0, 185, 0, 0.5);
-            color: white;
-        }
-
-        .modal-benefits {
-            background: var(--light-color);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-            text-align: left;
-        }
-
-        .modal-benefits h5 {
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: var(--line-green);
-        }
-
-        .benefit-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 0;
-            font-size: 0.95rem;
-        }
-
-        .benefit-item i {
-            color: var(--line-green);
-            width: 20px;
-        }
-
-        /* Kaizen Feature Card */
-        .kaizen-card {
-            background: linear-gradient(135deg, #FF6B6B, #FF8E53);
-            border-radius: 20px;
-            padding: 25px;
-            margin-top: 25px;
-            color: white;
-        }
-
-        .kaizen-card h5 {
-            font-weight: 700;
-            margin-bottom: 15px;
-        }
-
-        .kaizen-features {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .kaizen-tag {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-        }
-
-        /* Footer */
-        .app-footer {
-            text-align: center;
-            padding: 20px;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9rem;
-        }
-
-        @media (max-width: 576px) {
-            .calc-container { padding: 10px; }
-            .calc-card { padding: 20px; }
-            .calc-title { font-size: 1.3rem; }
-            .result-value { font-size: 2rem; }
-            .line-modal { padding: 25px; }
+            border: 5px solid #fff;
         }
     </style>
 </head>
+<body class="p-3">
+    <div class="container">
+        <h4 class="text-center mb-4">🧮 เครื่องคำนวณงานฉีด</h4>
 
-<body>
-    <!-- Header -->
-    <header class="app-header">
-        <div class="d-flex justify-content-between align-items-center">
-            <span class="app-title">
-                <i class="fas fa-calculator me-2"></i>เครื่องคิดเลขวิศวกร
-            </span>
-            <div id="trialBadge" class="trial-badge">
-                <i class="fas fa-gift"></i>
-                <span id="trialText">ฟรี <span id="trialCount">5</span>/5 ครั้ง</span>
-            </div>
-        </div>
-    </header>
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-tabs mb-4" id="calcTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#clamp" type="button">🔧 Clamp</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#cooling" type="button">❄️ Cooling</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#shot" type="button">💉 Shot</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#moldtemp" type="button">🌡️ Temp</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#machine" type="button">🏭 Machine</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#vp" type="button">⚡ V-P</button>
+            </li>
+        </ul>
 
-    <!-- Calculator Tabs -->
-    <div class="calc-tabs">
-        <button class="calc-tab active" data-calc="clamping">🔧 แรงปิด</button>
-        <button class="calc-tab" data-calc="cooling">⏱️ Cooling</button>
-        <button class="calc-tab" data-calc="shot">💉 Shot Size</button>
-        <button class="calc-tab" data-calc="moldtemp">🌡️ Mold Temp</button>
-        <button class="calc-tab" data-calc="vp">⚡ V-P Switch</button>
-        <button class="calc-tab" data-calc="machine">🏭 เลือกเครื่อง</button>
-    </div>
-
-    <!-- Calculator Container -->
-    <div class="calc-container">
-        <!-- Clamping Force Calculator -->
-        <div class="calculator-panel active" id="calc-clamping">
-            <div class="calc-card">
-                <h2 class="calc-title">🔧 คำนวณแรงปิดแม่พิมพ์</h2>
-                <p class="calc-subtitle">Clamping Force Calculator</p>
-
-                <div class="form-group">
-                    <label class="form-label"><i class="fas fa-cube"></i>วัสดุ (Material)</label>
-                    <div class="material-pills">
-                        <span class="material-pill active" data-material="PP" data-pressure="30">PP</span>
-                        <span class="material-pill" data-material="PE" data-pressure="25">PE</span>
-                        <span class="material-pill" data-material="ABS" data-pressure="40">ABS</span>
-                        <span class="material-pill" data-material="PC" data-pressure="50">PC</span>
-                        <span class="material-pill" data-material="PA" data-pressure="45">PA</span>
-                        <span class="material-pill" data-material="POM" data-pressure="45">POM</span>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label"><i class="fas fa-expand"></i>พื้นที่ฉายภาพ (Projected Area)</label>
-                    <div class="input-group">
-                        <input type="number" class="form-control" id="clamp-area" placeholder="เช่น 1000">
-                        <span class="input-group-text">cm²</span>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label class="form-label"><i class="fas fa-tachometer-alt"></i>ความดัน</label>
-                            <div class="input-group">
-                                <input type="number" class="form-control" id="clamp-pressure" value="30">
-                                <span class="input-group-text">MPa</span>
+        <div class="tab-content" id="calcTabContent">
+            <!-- 1. Clamp Force Tab -->
+            <div class="tab-pane fade show active" id="clamp" role="tabpanel">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>🔧 แรงปิดแม่พิมพ์ (Clamping Force)</h5>
+                        <form id="formClamp">
+                            <div class="mb-3">
+                                <label class="form-label">พื้นที่ฉายภาพ (Projected Area)</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="clampArea" placeholder="เช่น 400" required>
+                                    <span class="input-group-text">cm²</span>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label class="form-label"><i class="fas fa-shield-alt"></i>Safety</label>
-                            <select class="form-select" id="clamp-safety">
-                                <option value="1.1">1.1x (ปกติ)</option>
-                                <option value="1.15">1.15x</option>
-                                <option value="1.2">1.2x (สูง)</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <button class="btn btn-calculate" onclick="calculateClamping()">
-                    <i class="fas fa-calculator me-2"></i>คำนวณ
-                </button>
-
-                <div class="result-section" id="result-clamping">
-                    <h5 class="result-title"><i class="fas fa-chart-bar me-2"></i>ผลการคำนวณ</h5>
-                    <div class="result-value" id="clamp-result">-</div>
-                    <div class="result-unit">ton (แรงปิดแม่พิมพ์)</div>
-                    
-                    <div class="result-details">
-                        <div class="result-row">
-                            <span class="result-label">พื้นที่ฉายภาพ</span>
-                            <span class="result-data" id="clamp-detail-area">-</span>
-                        </div>
-                        <div class="result-row">
-                            <span class="result-label">ความดันในโพรง</span>
-                            <span class="result-data" id="clamp-detail-pressure">-</span>
-                        </div>
-                        <div class="result-row">
-                            <span class="result-label">แรงปิดขั้นต่ำ</span>
-                            <span class="result-data" id="clamp-detail-min">-</span>
-                        </div>
-                    </div>
-
-                    <div class="recommendation" id="clamp-recommend">
-                        <i class="fas fa-check-circle"></i>
-                        <span id="clamp-machine-text">แนะนำเครื่อง: - ton</span>
-                    </div>
-                </div>
-
-                <div class="quick-tip">
-                    <h6><i class="fas fa-lightbulb me-2"></i>เคล็ดลับ</h6>
-                    <p>ควรเลือกเครื่องที่ใช้แรงปิด 70-80% ของ Max Tonnage เพื่อความปลอดภัยและยืดอายุเครื่อง</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Cooling Time Calculator -->
-        <div class="calculator-panel" id="calc-cooling">
-            <div class="calc-card">
-                <h2 class="calc-title">⏱️ คำนวณเวลา Cooling</h2>
-                <p class="calc-subtitle">Cooling Time Calculator</p>
-
-                <div class="form-group">
-                    <label class="form-label"><i class="fas fa-cube"></i>วัสดุ (Material)</label>
-                    <div class="material-pills" id="cooling-materials">
-                        <span class="material-pill active" data-material="PP" data-alpha="0.096">PP</span>
-                        <span class="material-pill" data-material="PE" data-alpha="0.11">PE</span>
-                        <span class="material-pill" data-material="ABS" data-alpha="0.08">ABS</span>
-                        <span class="material-pill" data-material="PC" data-alpha="0.073">PC</span>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label"><i class="fas fa-ruler"></i>ความหนาผนัง (Wall Thickness)</label>
-                    <div class="input-group">
-                        <input type="number" class="form-control" id="cooling-thickness" placeholder="เช่น 2.5" step="0.1">
-                        <span class="input-group-text">mm</span>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-4">
-                        <div class="form-group">
-                            <label class="form-label">อุณหภูมิหลอม</label>
-                            <div class="input-group">
-                                <input type="number" class="form-control" id="cooling-melt" value="230">
-                                <span class="input-group-text">°C</span>
+                            <div class="mb-3">
+                                <label class="form-label">ความดันในโพรง (Cavity Pressure)</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="clampPressure" placeholder="ปกติ 30-60" value="40" required>
+                                    <span class="input-group-text">MPa</span>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="form-group">
-                            <label class="form-label">อุณหภูมิแม่พิมพ์</label>
-                            <div class="input-group">
-                                <input type="number" class="form-control" id="cooling-mold" value="50">
-                                <span class="input-group-text">°C</span>
+                            <div class="mb-3">
+                                <label class="form-label">Safety Factor</label>
+                                <select class="form-select" id="clampSafety">
+                                    <option value="1.1">1.1 (มาตรฐาน)</option>
+                                    <option value="1.2">1.2 (เผื่อมาก)</option>
+                                    <option value="1.0">1.0 (ไม่เผื่อ)</option>
+                                </select>
                             </div>
-                        </div>
+                            <button type="submit" class="btn btn-primary w-100">คำนวณ</button>
+                        </form>
                     </div>
-                    <div class="col-4">
-                        <div class="form-group">
-                            <label class="form-label">อุณหภูมิปลด</label>
-                            <div class="input-group">
-                                <input type="number" class="form-control" id="cooling-eject" value="80">
-                                <span class="input-group-text">°C</span>
+                </div>
+            </div>
+
+            <!-- 2. Cooling Time Tab -->
+            <div class="tab-pane fade" id="cooling" role="tabpanel">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>❄️ เวลาเย็นตัว (Cooling Time)</h5>
+                        <form id="formCooling">
+                            <div class="mb-3">
+                                <label class="form-label">ความหนาชิ้นงาน (Thickness)</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="coolThick" step="0.1" placeholder="เช่น 2.5" required>
+                                    <span class="input-group-text">mm</span>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <button class="btn btn-calculate" onclick="calculateCooling()">
-                    <i class="fas fa-calculator me-2"></i>คำนวณ
-                </button>
-
-                <div class="result-section" id="result-cooling">
-                    <h5 class="result-title"><i class="fas fa-clock me-2"></i>ผลการคำนวณ</h5>
-                    <div class="result-value" id="cooling-result">-</div>
-                    <div class="result-unit">วินาที (Cooling Time)</div>
-                    
-                    <div class="result-details">
-                        <div class="result-row">
-                            <span class="result-label">เวลาทางทฤษฎี</span>
-                            <span class="result-data" id="cooling-theory">-</span>
-                        </div>
-                        <div class="result-row">
-                            <span class="result-label">เวลาแนะนำ (+20%)</span>
-                            <span class="result-data" id="cooling-practical">-</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="quick-tip">
-                    <h6><i class="fas fa-lightbulb me-2"></i>เคล็ดลับ</h6>
-                    <p>ผนังหนา → เพิ่มเวลา cooling | อุณหภูมิแม่พิมพ์ต่ำ → ลดเวลาได้ | ระวัง warpage ถ้า cooling ไม่พอ</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Shot Size Calculator -->
-        <div class="calculator-panel" id="calc-shot">
-            <div class="calc-card">
-                <h2 class="calc-title">💉 คำนวณปริมาณฉีด</h2>
-                <p class="calc-subtitle">Shot Size / Dosage Calculator</p>
-
-                <div class="form-group">
-                    <label class="form-label"><i class="fas fa-weight"></i>น้ำหนักชิ้นงาน (Part Weight)</label>
-                    <div class="input-group">
-                        <input type="number" class="form-control" id="shot-weight" placeholder="เช่น 50">
-                        <span class="input-group-text">กรัม</span>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label class="form-label"><i class="fas fa-th"></i>จำนวน Cavity</label>
-                            <input type="number" class="form-control" id="shot-cavity" value="1" min="1">
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label class="form-label"><i class="fas fa-route"></i>น้ำหนัก Runner</label>
-                            <div class="input-group">
-                                <input type="number" class="form-control" id="shot-runner" value="10">
-                                <span class="input-group-text">g</span>
+                            <div class="mb-3">
+                                <label class="form-label">วัสดุ (Material)</label>
+                                <select class="form-select" id="coolMat">
+                                    <option value="PP">PP</option>
+                                    <option value="PE">PE</option>
+                                    <option value="ABS">ABS</option>
+                                    <option value="PC">PC</option>
+                                    <option value="PA6">PA6</option>
+                                    <option value="POM">POM</option>
+                                    <option value="PS">PS</option>
+                                    <option value="PMMA">PMMA</option>
+                                </select>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label"><i class="fas fa-percentage"></i>Cushion (%)</label>
-                    <input type="range" class="form-range" id="shot-cushion" min="3" max="10" value="5">
-                    <div class="text-center"><span id="cushion-value">5</span>%</div>
-                </div>
-
-                <button class="btn btn-calculate" onclick="calculateShot()">
-                    <i class="fas fa-calculator me-2"></i>คำนวณ
-                </button>
-
-                <div class="result-section" id="result-shot">
-                    <h5 class="result-title"><i class="fas fa-syringe me-2"></i>ผลการคำนวณ</h5>
-                    <div class="result-value" id="shot-result">-</div>
-                    <div class="result-unit">กรัม (Shot Weight รวม)</div>
-                    
-                    <div class="result-details">
-                        <div class="result-row">
-                            <span class="result-label">น้ำหนักชิ้นงานรวม</span>
-                            <span class="result-data" id="shot-parts">-</span>
-                        </div>
-                        <div class="result-row">
-                            <span class="result-label">รวม Runner</span>
-                            <span class="result-data" id="shot-total">-</span>
-                        </div>
-                        <div class="result-row">
-                            <span class="result-label">รวม Cushion</span>
-                            <span class="result-data" id="shot-cushion-result">-</span>
-                        </div>
-                        <div class="result-row">
-                            <span class="result-label">ปริมาตรโดยประมาณ</span>
-                            <span class="result-data" id="shot-volume">-</span>
-                        </div>
+                            <div class="mb-3">
+                                <label class="form-label">อุณหภูมิแม่พิมพ์ (Mold Temp)</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="coolMoldTemp" placeholder="เช่น 40" value="40">
+                                    <span class="input-group-text">°C</span>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">คำนวณ</button>
+                        </form>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Mold Temperature Calculator -->
-        <div class="calculator-panel" id="calc-moldtemp">
-            <div class="calc-card">
-                <h2 class="calc-title">🌡️ อุณหภูมิแม่พิมพ์</h2>
-                <p class="calc-subtitle">Mold Temperature Reference</p>
-
-                <div class="form-group">
-                    <label class="form-label"><i class="fas fa-cube"></i>เลือกวัสดุ</label>
-                    <select class="form-select" id="moldtemp-material" onchange="showMoldTemp()">
-                        <option value="">-- เลือกวัสดุ --</option>
-                        <option value="PP">PP (Polypropylene)</option>
-                        <option value="PE">PE (Polyethylene)</option>
-                        <option value="ABS">ABS</option>
-                        <option value="PC">PC (Polycarbonate)</option>
-                        <option value="PA">PA / Nylon</option>
-                        <option value="POM">POM (Acetal)</option>
-                        <option value="PET">PET</option>
-                        <option value="PS">PS (Polystyrene)</option>
-                        <option value="PMMA">PMMA (Acrylic)</option>
-                        <option value="PVC">PVC</option>
-                    </select>
-                </div>
-
-                <div class="result-section" id="result-moldtemp">
-                    <h5 class="result-title"><i class="fas fa-thermometer-half me-2"></i>ค่าแนะนำ</h5>
-                    
-                    <div class="result-details">
-                        <div class="result-row">
-                            <span class="result-label">อุณหภูมิแม่พิมพ์ (ต่ำสุด)</span>
-                            <span class="result-data" id="mold-min">-</span>
-                        </div>
-                        <div class="result-row">
-                            <span class="result-label">อุณหภูมิแม่พิมพ์ (สูงสุด)</span>
-                            <span class="result-data" id="mold-max">-</span>
-                        </div>
-                        <div class="result-row">
-                            <span class="result-label">🎯 แนะนำ</span>
-                            <span class="result-data" id="mold-rec">-</span>
-                        </div>
-                        <div class="result-row">
-                            <span class="result-label">อุณหภูมิหลอม (Barrel)</span>
-                            <span class="result-data" id="mold-melt">-</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="quick-tip">
-                    <h6><i class="fas fa-lightbulb me-2"></i>เคล็ดลับ</h6>
-                    <p>• ผิวมันวาว → เพิ่มอุณหภูมิแม่พิมพ์<br>• ลดรอบเวลา → ลดอุณหภูมิ (ระวัง warpage)</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- V-P Switchover Calculator -->
-        <div class="calculator-panel" id="calc-vp">
-            <div class="calc-card">
-                <h2 class="calc-title">⚡ V-P Switchover</h2>
-                <p class="calc-subtitle">คำนวณจุดเปลี่ยน Velocity → Pressure</p>
-
-                <div class="form-group">
-                    <label class="form-label"><i class="fas fa-arrows-alt-v"></i>Shot Size (ระยะสกรู)</label>
-                    <div class="input-group">
-                        <input type="number" class="form-control" id="vp-shotsize" placeholder="เช่น 100">
-                        <span class="input-group-text">mm</span>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label"><i class="fas fa-percentage"></i>Fill Percentage</label>
-                    <input type="range" class="form-range" id="vp-fill" min="90" max="99" value="95">
-                    <div class="text-center"><span id="fill-value">95</span>%</div>
-                </div>
-
-                <button class="btn btn-calculate" onclick="calculateVP()">
-                    <i class="fas fa-calculator me-2"></i>คำนวณ
-                </button>
-
-                <div class="result-section" id="result-vp">
-                    <h5 class="result-title"><i class="fas fa-crosshairs me-2"></i>ผลการคำนวณ</h5>
-                    <div class="result-value" id="vp-result">-</div>
-                    <div class="result-unit">mm (V-P Position)</div>
-                    
-                    <div class="result-details">
-                        <div class="result-row">
-                            <span class="result-label">Shot Size</span>
-                            <span class="result-data" id="vp-shot">-</span>
-                        </div>
-                        <div class="result-row">
-                            <span class="result-label">Fill %</span>
-                            <span class="result-data" id="vp-percent">-</span>
-                        </div>
-                        <div class="result-row">
-                            <span class="result-label">Cushion แนะนำ</span>
-                            <span class="result-data" id="vp-cushion">-</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="quick-tip">
-                    <h6><i class="fas fa-lightbulb me-2"></i>วิธีปรับแต่ง</h6>
-                    <p>1. เริ่มที่ 95% fill<br>2. ชิ้นงานไม่เต็ม → เพิ่ม fill%<br>3. มี flash → ลด fill%<br>4. Cushion ควร 3-10 mm</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Machine Selection Calculator -->
-        <div class="calculator-panel" id="calc-machine">
-            <div class="calc-card">
-                <h2 class="calc-title">🏭 เลือกขนาดเครื่อง</h2>
-                <p class="calc-subtitle">Machine Selection Calculator</p>
-
-                <div class="form-group">
-                    <label class="form-label"><i class="fas fa-compress-arrows-alt"></i>แรงปิดที่ต้องการ</label>
-                    <div class="input-group">
-                        <input type="number" class="form-control" id="machine-force" placeholder="เช่น 150">
-                        <span class="input-group-text">ton</span>
-                    </div>
-                </div>
-
-                <button class="btn btn-calculate" onclick="calculateMachine()">
-                    <i class="fas fa-calculator me-2"></i>แนะนำเครื่อง
-                </button>
-
-                <div class="result-section" id="result-machine">
-                    <h5 class="result-title"><i class="fas fa-industry me-2"></i>ขนาดเครื่องแนะนำ</h5>
-                    <div class="result-value" id="machine-result">-</div>
-                    <div class="result-unit">ton</div>
-                    
-                    <div class="result-details">
-                        <div class="result-row">
-                            <span class="result-label">แรงปิดที่ต้องการ</span>
-                            <span class="result-data" id="machine-need">-</span>
-                        </div>
-                        <div class="result-row">
-                            <span class="result-label">% การใช้งาน</span>
-                            <span class="result-data" id="machine-usage">-</span>
-                        </div>
-                    </div>
-
-                    <div class="recommendation">
-                        <i class="fas fa-check-circle"></i>
-                        <span>เครื่องขนาด <span id="machine-size">-</span> ton เหมาะสม</span>
+            <!-- 3. Shot Size Tab -->
+            <div class="tab-pane fade" id="shot" role="tabpanel">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>💉 ขนาดการฉีด (Shot Size)</h5>
+                        <form id="formShot">
+                            <div class="mb-3">
+                                <label class="form-label">น้ำหนักชิ้นงาน (Part Weight)</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="shotPartWeight" placeholder="เช่น 150" required>
+                                    <span class="input-group-text">g</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">จำนวน Cavity</label>
+                                <input type="number" class="form-control" id="shotCavities" value="1" min="1" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">น้ำหนัก Runner (g)</label>
+                                <input type="number" class="form-control" id="shotRunner" value="0" min="0">
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">คำนวณ</button>
+                        </form>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Kaizen Feature Card -->
-        <div class="kaizen-card">
-            <h5>🔧 ใหม่! WiT Kaizen Expert</h5>
-            <p>AI ที่ปรึกษาด้าน Kaizen ช่วยปรับปรุงงานหน้างานจริง</p>
-            <div class="kaizen-features">
-                <span class="kaizen-tag">🔍 3-Mu's Analysis</span>
-                <span class="kaizen-tag">📊 4M Checklist</span>
-                <span class="kaizen-tag">🔧 TPM Guide</span>
-                <span class="kaizen-tag">📋 5S / 5ส</span>
-                <span class="kaizen-tag">⚡ JIT</span>
+            <!-- 4. Mold Temperature Tab -->
+            <div class="tab-pane fade" id="moldtemp" role="tabpanel">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>🌡️ อุณหภูมิแม่พิมพ์ (Mold Temp)</h5>
+                        <form id="formMoldTemp">
+                            <div class="mb-3">
+                                <label class="form-label">วัสดุ (Material)</label>
+                                <select class="form-select" id="tempMat">
+                                    <option value="PP">PP</option>
+                                    <option value="PE">PE</option>
+                                    <option value="ABS">ABS</option>
+                                    <option value="PC">PC</option>
+                                    <option value="PA6">PA6</option>
+                                    <option value="POM">POM</option>
+                                    <option value="PET">PET</option>
+                                    <option value="PBT">PBT</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">ผิวชิ้นงาน (Surface)</label>
+                                <select class="form-select" id="tempSurface">
+                                    <option value="standard">มาตรฐาน (Standard)</option>
+                                    <option value="glossy">เงา (Glossy)</option>
+                                    <option value="matte">ด้าน (Matte/Texture)</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">คำนวณ</button>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <a href="https://lin.ee/TipxyCa" target="_blank" rel="noopener" class="btn btn-light btn-sm mt-3" style="border-radius: 20px;">
-                <i class="fab fa-line me-1"></i> ลองใช้ Kaizen Expert
-            </a>
+
+            <!-- 5. Machine Selection Tab -->
+            <div class="tab-pane fade" id="machine" role="tabpanel">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>🏭 เลือกขนาดเครื่อง (Machine Selection)</h5>
+                        <form id="formMachine">
+                            <div class="mb-3">
+                                <label class="form-label">พื้นที่ฉายภาพ (Projected Area)</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="machineArea" placeholder="เช่น 500" required>
+                                    <span class="input-group-text">cm²</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">น้ำหนัก Shot รวม (Shot Weight)</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="machineWeight" placeholder="เช่น 200">
+                                    <span class="input-group-text">g</span>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">วิเคราะห์</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. V-P Switchover Tab -->
+            <div class="tab-pane fade" id="vp" role="tabpanel">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>⚡ จุดสลับ V-P (Switchover)</h5>
+                        <form id="formVP">
+                            <div class="mb-3">
+                                <label class="form-label">ระยะ Shot Size</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="vpShotSize" placeholder="เช่น 150" required>
+                                    <span class="input-group-text">mm</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">ต้องการฉีดเต็มกี่ % (Fill %)</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="vpFill" value="95" max="99" min="50" required>
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">คำนวณ</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- LINE Login Modal -->
-    <div class="line-modal-overlay" id="lineModal">
-        <div class="line-modal">
-            <div class="line-modal-icon">
-                <i class="fab fa-line"></i>
-            </div>
-            <h3>🎉 ใช้ครบ 5 ครั้งแล้ว!</h3>
-            <p>เพิ่มเพื่อน LINE เพื่อใช้งานต่อได้ <strong>ไม่จำกัด</strong><br>
-            พร้อมฟีเจอร์พิเศษอีกมากมาย!</p>
-
-            <div class="modal-benefits">
-                <h5>✨ สิทธิพิเศษสำหรับเพื่อน LINE:</h5>
-                <div class="benefit-item">
-                    <i class="fas fa-infinity"></i>
-                    <span>คำนวณได้ไม่จำกัด</span>
+    <!-- Friend Add Modal -->
+    <div class="modal fade" id="friendModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title w-100 text-center">🔒 ปลดล็อคฟีเจอร์เต็มรูปแบบ</h5>
                 </div>
-                <div class="benefit-item">
-                    <i class="fas fa-robot"></i>
-                    <span>AI ผู้เชี่ยวชาญตอบคำถาม 24/7</span>
+                <div class="modal-body text-center">
+                    <p class="mb-3">กรุณาเพิ่มเพื่อน WiT AI เพื่อใช้งานเครื่องคำนวณและฟีเจอร์อื่นๆ ได้ไม่จำกัด</p>
+                    <img src="line_wit.jpg" alt="WiT AI QR Code" class="qr-code mb-3 img-fluid">
+                    <div class="d-grid gap-2">
+                        <a href="https://lin.ee/TipxyCa" class="btn btn-success btn-lg fw-bold">
+                            <i class="bi bi-line"></i> เพิ่มเพื่อนเลย!
+                        </a>
+                    </div>
                 </div>
-                <div class="benefit-item">
-                    <i class="fas fa-tools"></i>
-                    <span>วินิจฉัยปัญหาฉีดพลาสติก</span>
-                </div>
-                <div class="benefit-item">
-                    <i class="fas fa-file-alt"></i>
-                    <span>Digital Logbook บันทึกข้อมูล</span>
-                </div>
-                <div class="benefit-item">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Kaizen Expert ปรับปรุงงาน</span>
+                <div class="modal-footer border-0 justify-content-center">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal" id="skipBtn">ลองใช้งานก่อน (จำกัดฟีเจอร์)</button>
                 </div>
             </div>
-
-            <a href="https://lin.ee/TipxyCa" target="_blank" rel="noopener" class="btn-line-login">
-                <i class="fab fa-line"></i> เพิ่มเพื่อน LINE ฟรี!
-            </a>
-
-            <p style="margin-top: 15px; font-size: 0.85rem; color: #888;">
-                <i class="fas fa-shield-alt me-1"></i> ปลอดภัย ไม่มีค่าใช้จ่าย
-            </p>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="app-footer">
-        <p>© 2025 Wizmobiz | พัฒนาโดย อ.วิทยา</p>
-        <p><a href="injection-molding.html" style="color: white;">กลับหน้าหลัก</a></p>
-    </footer>
-
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script>
-        // ==========================================
-        // 🎁 FREE TRIAL SYSTEM
-        // ==========================================
-        const TRIAL_KEY = 'wizmobiz_calc_trial';
-        const MAX_FREE_TRIALS = 5;
-        const LINE_FRIEND_KEY = 'wizmobiz_line_friend';
+        // ⚠️ REPLACE WITH YOUR LIFF ID
+        const LIFF_ID = "2006625438-k8dmrmdl"; 
 
-        // Get trial count from localStorage
-        function getTrialCount() {
-            const stored = localStorage.getItem(TRIAL_KEY);
-            if (!stored) {
-                localStorage.setItem(TRIAL_KEY, MAX_FREE_TRIALS.toString());
-                return MAX_FREE_TRIALS;
-            }
-            return parseInt(stored, 10);
-        }
-
-        // Check if user is LINE friend (simulated)
-        function isLineFriend() {
-            return localStorage.getItem(LINE_FRIEND_KEY) === 'true';
-        }
-
-        // Decrement trial count
-        function useTrialCredit() {
-            if (isLineFriend()) return true; // Unlimited for LINE friends
-
-            const current = getTrialCount();
-            if (current <= 0) {
-                showLineModal();
-                return false;
-            }
-
-            const newCount = current - 1;
-            localStorage.setItem(TRIAL_KEY, newCount.toString());
-            updateTrialBadge();
-            
-            if (newCount === 0) {
-                setTimeout(showLineModal, 500);
-            }
-
-            return true;
-        }
-
-        // Update trial badge UI
-        function updateTrialBadge() {
-            const badge = document.getElementById('trialBadge');
-            const text = document.getElementById('trialText');
-            const count = document.getElementById('trialCount');
-
-            if (isLineFriend()) {
-                badge.className = 'trial-badge premium';
-                text.innerHTML = '<i class="fas fa-crown me-1"></i> Premium Member';
-            } else {
-                const remaining = getTrialCount();
-                count.textContent = remaining;
-
-                if (remaining <= 0) {
-                    badge.className = 'trial-badge exhausted';
-                    text.innerHTML = '❌ หมดสิทธิ์ฟรี';
-                } else if (remaining <= 2) {
-                    badge.className = 'trial-badge';
-                    badge.style.background = 'linear-gradient(135deg, #f5576c, #ff4757)';
-                    badge.style.color = 'white';
-                }
-            }
-        }
-
-        // Show LINE login modal
-        function showLineModal() {
-            document.getElementById('lineModal').classList.add('show');
-        }
-
-        // Hide LINE modal
-        function hideLineModal() {
-            document.getElementById('lineModal').classList.remove('show');
-        }
-
-        // Close modal on overlay click
-        document.getElementById('lineModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                hideLineModal();
-            }
-        });
-
-        // Check URL params for LINE callback
-        function checkLineCallback() {
-            const params = new URLSearchParams(window.location.search);
-            if (params.get('line_friend') === 'true') {
-                localStorage.setItem(LINE_FRIEND_KEY, 'true');
-                updateTrialBadge();
-                hideLineModal();
-                alert('🎉 ขอบคุณที่เพิ่มเพื่อน! คุณสามารถใช้งานได้ไม่จำกัดแล้ว');
-                // Clean URL
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }
-        }
-
-        // ==========================================
-        // Material Database
-        // ==========================================
-        const materialData = {
-            PP: { pressure: 30, mold: [20, 50, 35], melt: "200-280", alpha: 0.096 },
-            PE: { pressure: 25, mold: [10, 50, 30], melt: "180-280", alpha: 0.11 },
-            ABS: { pressure: 40, mold: [40, 80, 60], melt: "200-260", alpha: 0.08 },
-            PC: { pressure: 50, mold: [80, 120, 100], melt: "280-320", alpha: 0.073 },
-            PA: { pressure: 45, mold: [60, 100, 80], melt: "250-300", alpha: 0.09 },
-            POM: { pressure: 45, mold: [60, 120, 90], melt: "180-210", alpha: 0.085 },
-            PET: { pressure: 45, mold: [15, 50, 30], melt: "260-280", alpha: 0.08 },
-            PS: { pressure: 35, mold: [20, 50, 35], melt: "180-260", alpha: 0.075 },
-            PMMA: { pressure: 45, mold: [50, 80, 65], melt: "220-260", alpha: 0.073 },
-            PVC: { pressure: 35, mold: [20, 60, 40], melt: "160-200", alpha: 0.08 }
-        };
-
-        const machineSizes = [50, 80, 100, 120, 150, 180, 200, 250, 300, 350, 400, 450, 500, 550, 650, 850, 1000, 1300, 1600, 2000];
-
-        // ==========================================
-        // Tab Switching
-        // ==========================================
-        document.querySelectorAll('.calc-tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                document.querySelectorAll('.calc-tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
+        async function main() {
+            try {
+                await liff.init({ liffId: LIFF_ID });
                 
-                document.querySelectorAll('.calculator-panel').forEach(p => p.classList.remove('active'));
-                document.getElementById('calc-' + this.dataset.calc).classList.add('active');
-            });
-        });
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                    return;
+                }
 
-        // Material Pills
-        document.querySelectorAll('.material-pills').forEach(container => {
-            container.querySelectorAll('.material-pill').forEach(pill => {
-                pill.addEventListener('click', function() {
-                    container.querySelectorAll('.material-pill').forEach(p => p.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    if (this.dataset.pressure) {
-                        document.getElementById('clamp-pressure').value = this.dataset.pressure;
-                    }
+                // Check Friendship
+                const friend = await liff.getFriendship();
+                if (!friend.friendFlag) {
+                    const modal = new bootstrap.Modal(document.getElementById('friendModal'));
+                    modal.show();
+                }
+
+            } catch (err) {
+                console.error("LIFF Init failed", err);
+            }
+        }
+        main();
+
+        function sendCommand(text) {
+            if (liff.isInClient()) {
+                liff.sendMessages([{
+                    type: 'text',
+                    text: text
+                }]).then(() => {
+                    liff.closeWindow();
+                }).catch((err) => {
+                    console.error('Error sending message:', err);
+                    alert('Error sending message: ' + err.message);
                 });
-            });
+            } else {
+                // Fallback for external browser
+                console.log('Command:', text);
+                alert('ส่งคำสั่ง: ' + text + '\n(ใน LINE จะส่งข้อความอัตโนมัติ)');
+            }
+        }
+
+        // 1. Clamp Form
+        document.getElementById('formClamp').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const area = document.getElementById('clampArea').value;
+            const pressure = document.getElementById('clampPressure').value;
+            const safety = document.getElementById('clampSafety').value;
+            sendCommand(`/clamp area=${area} pressure=${pressure} safety=${safety}`);
         });
 
-        // Range Sliders
-        document.getElementById('shot-cushion').addEventListener('input', function() {
-            document.getElementById('cushion-value').textContent = this.value;
+        // 2. Cooling Form
+        document.getElementById('formCooling').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const thick = document.getElementById('coolThick').value;
+            const mat = document.getElementById('coolMat').value;
+            const moldTemp = document.getElementById('coolMoldTemp').value;
+            sendCommand(`/cooling thick=${thick} mat=${mat} mold=${moldTemp}`);
         });
 
-        document.getElementById('vp-fill').addEventListener('input', function() {
-            document.getElementById('fill-value').textContent = this.value;
+        // 3. Shot Form
+        document.getElementById('formShot').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const weight = document.getElementById('shotPartWeight').value;
+            const cavities = document.getElementById('shotCavities').value;
+            const runner = document.getElementById('shotRunner').value;
+            sendCommand(`/shot weight=${weight} cav=${cavities} runner=${runner}`);
         });
 
-        // ==========================================
-        // CALCULATORS (with trial check)
-        // ==========================================
-        
-        function calculateClamping() {
-            if (!useTrialCredit()) return;
+        // 4. Mold Temp Form
+        document.getElementById('formMoldTemp').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const mat = document.getElementById('tempMat').value;
+            const surface = document.getElementById('tempSurface').value;
+            sendCommand(`/moldtemp mat=${mat} surface=${surface}`);
+        });
 
-            const area = parseFloat(document.getElementById('clamp-area').value);
-            const pressure = parseFloat(document.getElementById('clamp-pressure').value);
-            const safety = parseFloat(document.getElementById('clamp-safety').value);
+        // 5. Machine Form
+        document.getElementById('formMachine').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const area = document.getElementById('machineArea').value;
+            const weight = document.getElementById('machineWeight').value;
+            sendCommand(`/machine area=${area} weight=${weight}`);
+        });
 
-            if (!area || area <= 0) {
-                alert('กรุณากรอกพื้นที่ฉายภาพ');
-                return;
-            }
-
-            const pressureKgCm2 = pressure * 10.197;
-            const forceKg = area * pressureKgCm2;
-            const forceTon = forceKg / 1000;
-            const forceWithSafety = forceTon * safety;
-
-            const recommendedMachine = machineSizes.find(size => size >= forceWithSafety) || "มากกว่า 2000";
-
-            document.getElementById('clamp-result').textContent = forceWithSafety.toFixed(0);
-            document.getElementById('clamp-detail-area').textContent = area.toLocaleString() + ' cm²';
-            document.getElementById('clamp-detail-pressure').textContent = pressure + ' MPa';
-            document.getElementById('clamp-detail-min').textContent = forceTon.toFixed(1) + ' ton';
-            document.getElementById('clamp-machine-text').textContent = 'แนะนำเครื่อง: ' + recommendedMachine + ' ton';
-            
-            document.getElementById('result-clamping').classList.add('show');
-        }
-
-        function calculateCooling() {
-            if (!useTrialCredit()) return;
-
-            const thickness = parseFloat(document.getElementById('cooling-thickness').value);
-            const meltTemp = parseFloat(document.getElementById('cooling-melt').value);
-            const moldTemp = parseFloat(document.getElementById('cooling-mold').value);
-            const ejectTemp = parseFloat(document.getElementById('cooling-eject').value);
-
-            if (!thickness || thickness <= 0) {
-                alert('กรุณากรอกความหนาผนัง');
-                return;
-            }
-
-            const activePill = document.querySelector('#cooling-materials .material-pill.active');
-            const alpha = parseFloat(activePill.dataset.alpha) || 0.085;
-
-            const s = thickness;
-            const Tm = meltTemp;
-            const Tw = moldTemp;
-            const Te = ejectTemp;
-
-            const lnTerm = Math.log((8 * (Tm - Tw)) / (Math.PI * Math.PI * (Te - Tw)));
-            const coolingTimeSec = (s * s / (Math.PI * Math.PI * alpha)) * lnTerm;
-            const practicalTime = Math.max(coolingTimeSec * 1.2, 3);
-
-            document.getElementById('cooling-result').textContent = practicalTime.toFixed(0);
-            document.getElementById('cooling-theory').textContent = coolingTimeSec.toFixed(1) + ' วินาที';
-            document.getElementById('cooling-practical').textContent = practicalTime.toFixed(0) + ' วินาที';
-            
-            document.getElementById('result-cooling').classList.add('show');
-        }
-
-        function calculateShot() {
-            if (!useTrialCredit()) return;
-
-            const partWeight = parseFloat(document.getElementById('shot-weight').value);
-            const cavities = parseInt(document.getElementById('shot-cavity').value) || 1;
-            const runnerWeight = parseFloat(document.getElementById('shot-runner').value) || 0;
-            const cushion = parseFloat(document.getElementById('shot-cushion').value);
-
-            if (!partWeight || partWeight <= 0) {
-                alert('กรุณากรอกน้ำหนักชิ้นงาน');
-                return;
-            }
-
-            const totalPartWeight = partWeight * cavities;
-            const totalShotWeight = totalPartWeight + runnerWeight;
-            const shotWithCushion = totalShotWeight * (1 + cushion / 100);
-            const estimatedVolume = shotWithCushion / 0.9;
-
-            document.getElementById('shot-result').textContent = shotWithCushion.toFixed(1);
-            document.getElementById('shot-parts').textContent = totalPartWeight.toFixed(1) + ' g';
-            document.getElementById('shot-total').textContent = totalShotWeight.toFixed(1) + ' g';
-            document.getElementById('shot-cushion-result').textContent = shotWithCushion.toFixed(1) + ' g';
-            document.getElementById('shot-volume').textContent = estimatedVolume.toFixed(1) + ' cm³';
-            
-            document.getElementById('result-shot').classList.add('show');
-        }
-
-        function showMoldTemp() {
-            if (!useTrialCredit()) return;
-
-            const material = document.getElementById('moldtemp-material').value;
-            
-            if (!material) {
-                document.getElementById('result-moldtemp').style.display = 'none';
-                return;
-            }
-
-            const data = materialData[material];
-            
-            document.getElementById('mold-min').textContent = data.mold[0] + '°C';
-            document.getElementById('mold-max').textContent = data.mold[1] + '°C';
-            document.getElementById('mold-rec').textContent = data.mold[2] + '°C ✅';
-            document.getElementById('mold-melt').textContent = data.melt + '°C';
-            
-            document.getElementById('result-moldtemp').style.display = 'block';
-            document.getElementById('result-moldtemp').classList.add('show');
-        }
-
-        function calculateVP() {
-            if (!useTrialCredit()) return;
-
-            const shotSize = parseFloat(document.getElementById('vp-shotsize').value);
-            const fillPercent = parseFloat(document.getElementById('vp-fill').value);
-
-            if (!shotSize || shotSize <= 0) {
-                alert('กรุณากรอก Shot Size');
-                return;
-            }
-
-            const vpPosition = shotSize * (1 - fillPercent / 100);
-            const cushion = shotSize * 0.05;
-
-            document.getElementById('vp-result').textContent = vpPosition.toFixed(1);
-            document.getElementById('vp-shot').textContent = shotSize + ' mm';
-            document.getElementById('vp-percent').textContent = fillPercent + '%';
-            document.getElementById('vp-cushion').textContent = cushion.toFixed(1) + ' mm';
-            
-            document.getElementById('result-vp').classList.add('show');
-        }
-
-        function calculateMachine() {
-            if (!useTrialCredit()) return;
-
-            const force = parseFloat(document.getElementById('machine-force').value);
-
-            if (!force || force <= 0) {
-                alert('กรุณากรอกแรงปิดที่ต้องการ');
-                return;
-            }
-
-            const recommendedMachine = machineSizes.find(size => size >= force) || 2000;
-            const usage = ((force / recommendedMachine) * 100).toFixed(0);
-
-            document.getElementById('machine-result').textContent = recommendedMachine;
-            document.getElementById('machine-need').textContent = force + ' ton';
-            document.getElementById('machine-usage').textContent = usage + '%';
-            document.getElementById('machine-size').textContent = recommendedMachine;
-            
-            document.getElementById('result-machine').classList.add('show');
-        }
-
-        // ==========================================
-        // INITIALIZATION
-        // ==========================================
-        document.addEventListener('DOMContentLoaded', function() {
-            checkLineCallback();
-            updateTrialBadge();
-            console.log('%c🧮 Injection Molding Calculator', 'color: #667eea; font-size: 18px; font-weight: bold;');
-            console.log('%c🎁 Free Trial: ' + getTrialCount() + '/' + MAX_FREE_TRIALS, 'color: #FFD740; font-size: 14px;');
+        // 6. V-P Form
+        document.getElementById('formVP').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const size = document.getElementById('vpShotSize').value;
+            const fill = document.getElementById('vpFill').value;
+            sendCommand(`/vp size=${size} fill=${fill}`);
         });
     </script>
 </body>
