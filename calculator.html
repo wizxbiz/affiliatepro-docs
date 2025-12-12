@@ -14,10 +14,11 @@
     
     <!-- PWA Meta -->
     <meta name="theme-color" content="#667eea">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="images/icon-192.png">
+    <link rel="apple-touch-icon" href="images/logo.png">
     
     <title>🚀 WiT AI Calculator Pro - เครื่องคิดเลขฉีดพลาสติก AI ระดับโปร</title>
 
@@ -2039,17 +2040,67 @@
     <script src="js/calculator-engines.js"></script>
     <script src="js/calculator-integrations.js"></script>
     <script>
-        // Initialize Integration Modules
+        // Initialize Integration Modules with error handling
         (function() {
-            const modules = window.Integrations || {};
-            const userMgr = new modules.UserManager();
-            window.appUserManager = userMgr;
-            window.appModules = modules;
-            // Create global shortcuts
-            window.UIHelpers = modules.UIHelpers;
-            window.FirebaseSync = modules.FirebaseSync;
-            window.VisionAI = modules.VisionAI;
-            window.MarketplaceIntegration = modules.MarketplaceIntegration;
+            try {
+                const modules = window.Integrations || {};
+                
+                // Check if modules are loaded
+                if (!modules.UserManager) {
+                    console.error('Integrations not loaded properly');
+                    // Create fallback modules
+                    window.appUserManager = {
+                        initialize: async () => true,
+                        getTrialStatus: () => ({ trialCount: 15, isPremium: false }),
+                        useTrial: async () => ({ success: true, trialCount: 14 }),
+                        userId: 'local_' + Date.now()
+                    };
+                    window.UIHelpers = {
+                        updateTrialBadge: () => {},
+                        showToast: (msg, type) => console.log(`[${type}] ${msg}`),
+                        showLoading: () => {}
+                    };
+                    window.FirebaseSync = {
+                        syncWithLocal: () => {},
+                        saveCalculation: async () => {}
+                    };
+                    window.VisionAI = {
+                        analyzeImage: async () => ({ success: false })
+                    };
+                    window.MarketplaceIntegration = {};
+                    return;
+                }
+                
+                const userMgr = new modules.UserManager();
+                window.appUserManager = userMgr;
+                window.appModules = modules;
+                // Create global shortcuts
+                window.UIHelpers = modules.UIHelpers;
+                window.FirebaseSync = modules.FirebaseSync;
+                window.VisionAI = modules.VisionAI;
+                window.MarketplaceIntegration = modules.MarketplaceIntegration;
+            } catch (error) {
+                console.error('Error initializing modules:', error);
+                // Create fallback
+                window.appUserManager = {
+                    initialize: async () => true,
+                    getTrialStatus: () => ({ trialCount: 15, isPremium: false }),
+                    useTrial: async () => ({ success: true, trialCount: 14 }),
+                    userId: 'local_' + Date.now()
+                };
+                window.UIHelpers = {
+                    updateTrialBadge: () => {},
+                    showToast: (msg, type) => { 
+                        console.log(`[${type}] ${msg}`);
+                        alert(msg);
+                    },
+                    showLoading: () => {}
+                };
+                window.FirebaseSync = {
+                    syncWithLocal: () => {},
+                    saveCalculation: async () => {}
+                };
+            }
         })();
         
         // Access modules via window to avoid redeclaration

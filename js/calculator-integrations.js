@@ -3,6 +3,10 @@
  * เชื่อมต่อกับ LINE Bot, Firebase, Marketplace, Vision AI
  */
 
+// Wrap everything in IIFE to avoid global scope pollution
+(function() {
+'use strict';
+
 // =====================================================
 // 🔧 CONFIGURATION
 // =====================================================
@@ -523,3 +527,5 @@ window.Integrations = {
   UIHelpers,
   CONFIG,
 };
+
+})(); // End of IIFE
