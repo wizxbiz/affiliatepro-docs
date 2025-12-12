@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="เน€เธเธฃเธทเนเธญเธเธเธดเธ”เน€เธฅเธเธงเธดเธจเธงเธเธฃเธชเธณเธซเธฃเธฑเธเธเธฒเธเธเธตเธ”เธเธฅเธฒเธชเธ•เธดเธ - เธเธฃเธต 5 เธเธฃเธฑเนเธ! เธเธณเธเธงเธ“เนเธฃเธเธเธดเธ”, Cooling Time, Shot Size">
-    <title>๐งฎ เน€เธเธฃเธทเนเธญเธเธเธดเธ”เน€เธฅเธเธงเธดเธจเธงเธเธฃ - เธเธฃเธต 5 เธเธฃเธฑเนเธ!</title>
+    <meta name="description" content="เครื่องคิดเลขวิศวกรสำหรับงานฉีดพลาสติก - ฟรี 5 ครั้ง! คำนวณแรงปิด, Cooling Time, Shot Size">
+    <title>🧮 เครื่องคิดเลขวิศวกร - ฟรี 5 ครั้ง!</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -43,6 +43,39 @@
             position: sticky;
             top: 0;
             z-index: 100;
+        }
+
+        .app-home-link {
+            color: var(--dark-color);
+            text-decoration: none;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .app-home-link:hover {
+            color: var(--primary-color);
+        }
+
+        .app-menu {
+            margin-top: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 14px;
+        }
+
+        .app-menu a {
+            color: var(--dark-color);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .app-menu a:hover {
+            color: var(--primary-color);
+            opacity: 1;
         }
 
         .app-title {
@@ -375,14 +408,29 @@
 
 <body>
     <header class="app-header">
-        <div class="d-flex align-items-center justify-content-between gap-3">
+        <div class="d-flex align-items-start justify-content-between gap-3">
             <div>
-                <div class="app-title">๐งฎ เน€เธเธฃเธทเนเธญเธเธเธดเธ”เน€เธฅเธเธงเธดเธจเธงเธเธฃ</div>
-                <div class="text-muted sub-title">Injection Molding โ€ข 6 เน€เธเธฃเธทเนเธญเธเธกเธทเธญ</div>
+                <a class="app-home-link" href="/">
+                    <i class="fas fa-arrow-left"></i>
+                    <span class="app-title">🧮 เครื่องคิดเลขวิศวกร</span>
+                </a>
+                <div class="text-muted sub-title">Injection Molding • 6 เครื่องมือ</div>
+                <div class="app-menu">
+                    <a href="/#problems">ปัญหา</a>
+                    <a href="/#solutions">โซลูชัน</a>
+                    <a href="/#how">วิธีใช้</a>
+                    <a href="/#pricing">แพ็คเกจ</a>
+                    <a href="/marketplace.html">ตลาด</a>
+                </div>
             </div>
-            <div id="trialBadge" class="trial-badge">
-                <i class="fas fa-gift"></i>
-                <span id="trialText">เธเธฃเธต 5/5</span>
+            <div class="d-flex align-items-center gap-2">
+                <button type="button" class="btn btn-sm btn-success" onclick="showLineModal()">
+                    <i class="fab fa-line me-1"></i>ปลดล็อก
+                </button>
+                <div id="trialBadge" class="trial-badge">
+                    <i class="fas fa-gift"></i>
+                    <span id="trialText">ฟรี 5/5</span>
+                </div>
             </div>
         </div>
     </header>
@@ -391,7 +439,7 @@
         <div class="calc-tabs">
             <button type="button" class="calc-tab active" data-calc="clamp">
                 <i class="fas fa-lock"></i>
-                <span>เนเธฃเธเธเธดเธ”</span>
+                <span>แรงปิด</span>
             </button>
             <button type="button" class="calc-tab" data-calc="cool">
                 <i class="fas fa-snowflake"></i>
@@ -411,26 +459,26 @@
             </button>
             <button type="button" class="calc-tab" data-calc="machine">
                 <i class="fas fa-industry"></i>
-                <span>เน€เธเธฃเธทเนเธญเธ</span>
+                <span>เครื่อง</span>
             </button>
         </div>
 
         <section class="calculator-panel active" id="calc-clamp">
-            <div class="calc-title"><i class="fas fa-lock"></i>เธเธณเธเธงเธ“เนเธฃเธเธเธดเธ” (Clamping Force)</div>
+            <div class="calc-title"><i class="fas fa-lock"></i>คำนวณแรงปิด (Clamping Force)</div>
 
             <div class="mb-3">
-                <label class="form-label"><i class="fas fa-vector-square me-1"></i>เธเธทเนเธเธ—เธตเนเธเธฒเธข (Projected Area)</label>
+                <label class="form-label"><i class="fas fa-vector-square me-1"></i>พื้นที่ฉาย (Projected Area)</label>
                 <div class="input-group">
-                    <input type="number" class="form-control" id="clamp-area" placeholder="เน€เธเนเธ 350" title="เธเธทเนเธเธ—เธตเนเธเธฒเธข" inputmode="decimal">
-                    <span class="input-group-text">cmยฒ</span>
+                    <input type="number" class="form-control" id="clamp-area" placeholder="เช่น 350" title="พื้นที่ฉาย" inputmode="decimal">
+                    <span class="input-group-text">cm²</span>
                 </div>
             </div>
 
             <div class="mb-3">
-                <label class="form-label"><i class="fas fa-tachometer-alt me-1"></i>เนเธฃเธเธ”เธฑเธเธเธตเธ”เธเธฃเธฐเธกเธฒเธ“</label>
+                <label class="form-label"><i class="fas fa-tachometer-alt me-1"></i>แรงดันฉีดประมาณ</label>
                 <div class="input-group">
-                    <input type="number" class="form-control" id="clamp-pressure" placeholder="เน€เธเนเธ 40" title="เนเธฃเธเธ”เธฑเธเธเธตเธ”" inputmode="decimal">
-                    <span class="input-group-text">kg/cmยฒ</span>
+                    <input type="number" class="form-control" id="clamp-pressure" placeholder="เช่น 40" title="แรงดันฉีด" inputmode="decimal">
+                    <span class="input-group-text">kg/cm²</span>
                 </div>
                 <div class="mt-2 material-pills">
                     <button type="button" class="material-pill" data-pressure="35">PP</button>
@@ -443,18 +491,18 @@
             <div class="mb-3">
                 <label class="form-label"><i class="fas fa-shield-alt me-1"></i>Safety Factor</label>
                 <select class="form-select" id="clamp-safety" title="Safety factor">
-                    <option value="1.1">1.10 (เธเธฒเธเธเธดเนเธ)</option>
-                    <option value="1.2" selected>1.20 (เธ—เธฑเนเธงเนเธ)</option>
-                    <option value="1.3">1.30 (เธเธฒเธเธขเธฒเธ)</option>
+                    <option value="1.1">1.10 (งานนิ่ง)</option>
+                    <option value="1.2" selected>1.20 (ทั่วไป)</option>
+                    <option value="1.3">1.30 (งานยาก)</option>
                 </select>
             </div>
 
             <button class="btn btn-calculate" type="button" onclick="calculateClamping()">
-                <i class="fas fa-calculator me-2"></i>เธเธณเธเธงเธ“
+                <i class="fas fa-calculator me-2"></i>คำนวณ
             </button>
 
             <div class="result-section" id="result-clamp">
-                <h5 class="result-title"><i class="fas fa-lock me-2"></i>เนเธฃเธเธเธดเธ”เธ—เธตเนเธ•เนเธญเธเนเธเน</h5>
+                <h5 class="result-title"><i class="fas fa-lock me-2"></i>แรงปิดที่ต้องใช้</h5>
                 <div class="result-value" id="clamp-result">-</div>
                 <div class="result-unit">ton</div>
 
@@ -467,19 +515,19 @@
         </section>
 
         <section class="calculator-panel" id="calc-cool">
-            <div class="calc-title"><i class="fas fa-snowflake"></i>เธเธณเธเธงเธ“ Cooling Time</div>
+            <div class="calc-title"><i class="fas fa-snowflake"></i>คำนวณ Cooling Time</div>
 
             <div class="mb-3">
-                <label class="form-label"><i class="fas fa-layer-group me-1"></i>เธเธงเธฒเธกเธซเธเธฒเธเธดเนเธเธเธฒเธ</label>
+                <label class="form-label"><i class="fas fa-layer-group me-1"></i>ความหนาชิ้นงาน</label>
                 <div class="input-group">
-                    <input type="number" class="form-control" id="cool-thickness" placeholder="เน€เธเนเธ 2.5" title="เธเธงเธฒเธกเธซเธเธฒเธเธดเนเธเธเธฒเธ" inputmode="decimal">
+                    <input type="number" class="form-control" id="cool-thickness" placeholder="เช่น 2.5" title="ความหนาชิ้นงาน" inputmode="decimal">
                     <span class="input-group-text">mm</span>
                 </div>
             </div>
 
             <div class="mb-3">
-                <label class="form-label"><i class="fas fa-vial me-1"></i>เธงเธฑเธชเธ”เธธ</label>
-                <select class="form-select" id="cool-material" title="เธงเธฑเธชเธ”เธธ">
+                <label class="form-label"><i class="fas fa-vial me-1"></i>วัสดุ</label>
+                <select class="form-select" id="cool-material" title="วัสดุ">
                     <option value="PP">PP</option>
                     <option value="ABS" selected>ABS</option>
                     <option value="PC">PC</option>
@@ -490,15 +538,15 @@
                     <option value="PMMA">PMMA</option>
                     <option value="PVC">PVC</option>
                 </select>
-                <div class="form-text">เธเธณเธเธงเธ“เนเธเธเธเธฃเธฐเธกเธฒเธ“เธเธฒเธฃ เน€เธเธทเนเธญเนเธเนเธเธฒเธเธซเธเนเธฒเธเธฒเธเน€เธฃเนเธง</div>
+                <div class="form-text">คำนวณแบบประมาณการ เพื่อใช้งานหน้างานเร็ว</div>
             </div>
 
             <button class="btn btn-calculate" type="button" onclick="calculateCooling()">
-                <i class="fas fa-calculator me-2"></i>เธเธณเธเธงเธ“
+                <i class="fas fa-calculator me-2"></i>คำนวณ
             </button>
 
             <div class="result-section" id="result-cool">
-                <h5 class="result-title"><i class="fas fa-snowflake me-2"></i>Cooling Time (เธเธฃเธฐเธกเธฒเธ“)</h5>
+                <h5 class="result-title"><i class="fas fa-snowflake me-2"></i>Cooling Time (ประมาณ)</h5>
                 <div class="result-value" id="cool-result">-</div>
                 <div class="result-unit">sec</div>
 
@@ -510,28 +558,28 @@
         </section>
 
         <section class="calculator-panel" id="calc-shot">
-            <div class="calc-title"><i class="fas fa-fill-drip"></i>เธเธณเธเธงเธ“ Shot Size</div>
+            <div class="calc-title"><i class="fas fa-fill-drip"></i>คำนวณ Shot Size</div>
 
             <div class="mb-3">
-                <label class="form-label"><i class="fas fa-weight-hanging me-1"></i>เธเนเธณเธซเธเธฑเธเธเธดเนเธเธเธฒเธ</label>
+                <label class="form-label"><i class="fas fa-weight-hanging me-1"></i>น้ำหนักชิ้นงาน</label>
                 <div class="input-group">
-                    <input type="number" class="form-control" id="shot-part" placeholder="เน€เธเนเธ 35" title="เธเนเธณเธซเธเธฑเธเธเธดเนเธเธเธฒเธ" inputmode="decimal">
+                    <input type="number" class="form-control" id="shot-part" placeholder="เช่น 35" title="น้ำหนักชิ้นงาน" inputmode="decimal">
                     <span class="input-group-text">g</span>
                 </div>
             </div>
 
             <div class="mb-3">
-                <label class="form-label"><i class="fas fa-project-diagram me-1"></i>เธเนเธณเธซเธเธฑเธ Runner/Sprue</label>
+                <label class="form-label"><i class="fas fa-project-diagram me-1"></i>น้ำหนัก Runner/Sprue</label>
                 <div class="input-group">
-                    <input type="number" class="form-control" id="shot-runner" placeholder="เน€เธเนเธ 10" title="เธเนเธณเธซเธเธฑเธ runner" inputmode="decimal">
+                    <input type="number" class="form-control" id="shot-runner" placeholder="เช่น 10" title="น้ำหนัก runner" inputmode="decimal">
                     <span class="input-group-text">g</span>
                 </div>
             </div>
 
             <div class="mb-3">
-                <label class="form-label"><i class="fas fa-tint me-1"></i>เธเธงเธฒเธกเธซเธเธฒเนเธเนเธ (Density)</label>
+                <label class="form-label"><i class="fas fa-tint me-1"></i>ความหนาแน่น (Density)</label>
                 <div class="input-group">
-                    <input type="number" class="form-control" id="shot-density" placeholder="เน€เธเนเธ 1.05" title="เธเธงเธฒเธกเธซเธเธฒเนเธเนเธ" inputmode="decimal" value="1.05">
+                    <input type="number" class="form-control" id="shot-density" placeholder="เช่น 1.05" title="ความหนาแน่น" inputmode="decimal" value="1.05">
                     <span class="input-group-text">g/cc</span>
                 </div>
             </div>
@@ -542,7 +590,7 @@
             </div>
 
             <button class="btn btn-calculate" type="button" onclick="calculateShot()">
-                <i class="fas fa-calculator me-2"></i>เธเธณเธเธงเธ“
+                <i class="fas fa-calculator me-2"></i>คำนวณ
             </button>
 
             <div class="result-section" id="result-shot">
@@ -559,11 +607,11 @@
         </section>
 
         <section class="calculator-panel" id="calc-moldtemp">
-            <div class="calc-title"><i class="fas fa-temperature-high"></i>เธเนเธญเธกเธนเธฅเธญเธธเธ“เธซเธ เธนเธกเธดเนเธเธฐเธเธณ</div>
+            <div class="calc-title"><i class="fas fa-temperature-high"></i>ข้อมูลอุณหภูมิแนะนำ</div>
 
             <div class="mb-3">
-                <label class="form-label"><i class="fas fa-vial me-1"></i>เน€เธฅเธทเธญเธเธงเธฑเธชเธ”เธธ</label>
-                <select class="form-select" id="temp-material" title="เน€เธฅเธทเธญเธเธงเธฑเธชเธ”เธธ">
+                <label class="form-label"><i class="fas fa-vial me-1"></i>เลือกวัสดุ</label>
+                <select class="form-select" id="temp-material" title="เลือกวัสดุ">
                     <option value="PP">PP</option>
                     <option value="ABS" selected>ABS</option>
                     <option value="PC">PC</option>
@@ -577,11 +625,11 @@
             </div>
 
             <button class="btn btn-calculate" type="button" onclick="showMoldTemp()">
-                <i class="fas fa-info-circle me-2"></i>เนเธชเธ”เธเธเนเธญเธกเธนเธฅ
+                <i class="fas fa-info-circle me-2"></i>แสดงข้อมูล
             </button>
 
             <div class="result-section" id="result-temp">
-                <h5 class="result-title"><i class="fas fa-temperature-high me-2"></i>เธเนเธงเธเธญเธธเธ“เธซเธ เธนเธกเธดเนเธเธฐเธเธณ</h5>
+                <h5 class="result-title"><i class="fas fa-temperature-high me-2"></i>ช่วงอุณหภูมิแนะนำ</h5>
                 <div class="result-details">
                     <div class="result-row"><span>Material</span><span id="temp-mat">-</span></div>
                     <div class="result-row"><span>Mold temp</span><span id="temp-mold">-</span></div>
@@ -592,12 +640,12 @@
         </section>
 
         <section class="calculator-panel" id="calc-vp">
-            <div class="calc-title"><i class="fas fa-ruler-combined"></i>เธเธณเธเธงเธ“ V-P Position</div>
+            <div class="calc-title"><i class="fas fa-ruler-combined"></i>คำนวณ V-P Position</div>
 
             <div class="mb-3">
                 <label class="form-label"><i class="fas fa-arrows-alt-v me-1"></i>Shot size (Stroke)</label>
                 <div class="input-group">
-                    <input type="number" class="form-control" id="vp-shot-size" placeholder="เน€เธเนเธ 60" title="Shot stroke" inputmode="decimal">
+                    <input type="number" class="form-control" id="vp-shot-size" placeholder="เช่น 60" title="Shot stroke" inputmode="decimal">
                     <span class="input-group-text">mm</span>
                 </div>
             </div>
@@ -608,7 +656,7 @@
             </div>
 
             <button class="btn btn-calculate" type="button" onclick="calculateVP()">
-                <i class="fas fa-calculator me-2"></i>เธเธณเธเธงเธ“
+                <i class="fas fa-calculator me-2"></i>คำนวณ
             </button>
 
             <div class="result-section" id="result-vp">
@@ -625,49 +673,49 @@
         </section>
 
         <section class="calculator-panel" id="calc-machine">
-            <div class="calc-title"><i class="fas fa-industry"></i>เนเธเธฐเธเธณเธเธเธฒเธ”เน€เธเธฃเธทเนเธญเธ</div>
+            <div class="calc-title"><i class="fas fa-industry"></i>แนะนำขนาดเครื่อง</div>
 
             <div class="mb-3">
-                <label class="form-label"><i class="fas fa-compress-arrows-alt me-1"></i>เนเธฃเธเธเธดเธ”เธ—เธตเนเธ•เนเธญเธเธเธฒเธฃ</label>
+                <label class="form-label"><i class="fas fa-compress-arrows-alt me-1"></i>แรงปิดที่ต้องการ</label>
                 <div class="input-group">
-                    <input type="number" class="form-control" id="machine-force" placeholder="เน€เธเนเธ 150" title="เนเธฃเธเธเธดเธ”เธ—เธตเนเธ•เนเธญเธเธเธฒเธฃ" inputmode="decimal">
+                    <input type="number" class="form-control" id="machine-force" placeholder="เช่น 150" title="แรงปิดที่ต้องการ" inputmode="decimal">
                     <span class="input-group-text">ton</span>
                 </div>
             </div>
 
             <button class="btn btn-calculate" type="button" onclick="calculateMachine()">
-                <i class="fas fa-calculator me-2"></i>เนเธเธฐเธเธณเน€เธเธฃเธทเนเธญเธ
+                <i class="fas fa-calculator me-2"></i>แนะนำเครื่อง
             </button>
 
             <div class="result-section" id="result-machine">
-                <h5 class="result-title"><i class="fas fa-industry me-2"></i>เธเธเธฒเธ”เน€เธเธฃเธทเนเธญเธเนเธเธฐเธเธณ</h5>
+                <h5 class="result-title"><i class="fas fa-industry me-2"></i>ขนาดเครื่องแนะนำ</h5>
                 <div class="result-value" id="machine-result">-</div>
                 <div class="result-unit">ton</div>
 
                 <div class="result-details">
-                    <div class="result-row"><span>เนเธฃเธเธเธดเธ”เธ—เธตเนเธ•เนเธญเธเธเธฒเธฃ</span><span id="machine-need">-</span></div>
-                    <div class="result-row"><span>% เธเธฒเธฃเนเธเนเธเธฒเธ</span><span id="machine-usage">-</span></div>
+                    <div class="result-row"><span>แรงปิดที่ต้องการ</span><span id="machine-need">-</span></div>
+                    <div class="result-row"><span>% การใช้งาน</span><span id="machine-usage">-</span></div>
                 </div>
 
                 <div class="recommendation">
                     <i class="fas fa-check-circle"></i>
-                    <span>เน€เธเธฃเธทเนเธญเธเธเธเธฒเธ” <span id="machine-size">-</span> ton เน€เธซเธกเธฒเธฐเธชเธก</span>
+                    <span>เครื่องขนาด <span id="machine-size">-</span> ton เหมาะสม</span>
                 </div>
             </div>
         </section>
 
         <div class="kaizen-card">
-            <h5>๐”ง เนเธซเธกเน! WiT Kaizen Expert</h5>
-            <p class="mb-2">AI เธ—เธตเนเธเธฃเธถเธเธฉเธฒเธ”เนเธฒเธ Kaizen เธเนเธงเธขเธเธฃเธฑเธเธเธฃเธธเธเธเธฒเธเธซเธเนเธฒเธเธฒเธเธเธฃเธดเธ</p>
+            <h5>🔧 ใหม่! WiT Kaizen Expert</h5>
+            <p class="mb-2">AI ที่ปรึกษาด้าน Kaizen ช่วยปรับปรุงงานหน้างานจริง</p>
             <div class="kaizen-features">
-                <span class="kaizen-tag">๐” 3-Mu's Analysis</span>
-                <span class="kaizen-tag">๐“ 4M Checklist</span>
-                <span class="kaizen-tag">๐”ง TPM Guide</span>
-                <span class="kaizen-tag">๐“ 5S / 5เธช</span>
-                <span class="kaizen-tag">โก JIT</span>
+                <span class="kaizen-tag">🔍 3-Mu's Analysis</span>
+                <span class="kaizen-tag">📊 4M Checklist</span>
+                <span class="kaizen-tag">🔧 TPM Guide</span>
+                <span class="kaizen-tag">📋 5S / 5ส</span>
+                <span class="kaizen-tag">⚡ JIT</span>
             </div>
             <a href="https://lin.ee/TipxyCa" target="_blank" rel="noopener" class="btn btn-light btn-sm mt-3 btn-kaizen">
-                <i class="fab fa-line me-1"></i> เธฅเธญเธเนเธเน Kaizen Expert
+                <i class="fab fa-line me-1"></i> ลองใช้ Kaizen Expert
             </a>
         </div>
     </main>
@@ -675,29 +723,29 @@
     <div class="line-modal-overlay" id="lineModal">
         <div class="line-modal">
             <div class="line-modal-icon"><i class="fab fa-line"></i></div>
-            <h3 class="mb-2">๐ เนเธเนเธเธฃเธ 5 เธเธฃเธฑเนเธเนเธฅเนเธง!</h3>
-            <p class="mb-2">เน€เธเธดเนเธกเน€เธเธทเนเธญเธ LINE เน€เธเธทเนเธญเนเธเนเธเธฒเธเธ•เนเธญเนเธ”เน <strong>เนเธกเนเธเธณเธเธฑเธ”</strong><br>เธเธฃเนเธญเธกเธเธตเน€เธเธญเธฃเนเธเธดเน€เธจเธฉเธญเธตเธเธกเธฒเธเธกเธฒเธข!</p>
+            <h3 class="mb-2">🎉 ใช้ครบ 5 ครั้งแล้ว!</h3>
+            <p class="mb-2">เพิ่มเพื่อน LINE เพื่อใช้งานต่อได้ <strong>ไม่จำกัด</strong><br>พร้อมฟีเจอร์พิเศษอีกมากมาย!</p>
 
             <div class="modal-benefits">
-                <h5 class="mb-2">โจ เธชเธดเธ—เธเธดเธเธดเน€เธจเธฉเธชเธณเธซเธฃเธฑเธเน€เธเธทเนเธญเธ LINE:</h5>
-                <div class="benefit-item"><i class="fas fa-infinity"></i><span>เธเธณเธเธงเธ“เนเธ”เนเนเธกเนเธเธณเธเธฑเธ”</span></div>
-                <div class="benefit-item"><i class="fas fa-robot"></i><span>AI เธเธนเนเน€เธเธตเนเธขเธงเธเธฒเธเธ•เธญเธเธเธณเธ–เธฒเธก 24/7</span></div>
-                <div class="benefit-item"><i class="fas fa-tools"></i><span>เธงเธดเธเธดเธเธเธฑเธขเธเธฑเธเธซเธฒเธเธตเธ”เธเธฅเธฒเธชเธ•เธดเธ</span></div>
-                <div class="benefit-item"><i class="fas fa-file-alt"></i><span>Digital Logbook เธเธฑเธเธ—เธถเธเธเนเธญเธกเธนเธฅ</span></div>
-                <div class="benefit-item"><i class="fas fa-chart-line"></i><span>Kaizen Expert เธเธฃเธฑเธเธเธฃเธธเธเธเธฒเธ</span></div>
+                <h5 class="mb-2">✨ สิทธิพิเศษสำหรับเพื่อน LINE:</h5>
+                <div class="benefit-item"><i class="fas fa-infinity"></i><span>คำนวณได้ไม่จำกัด</span></div>
+                <div class="benefit-item"><i class="fas fa-robot"></i><span>AI ผู้เชี่ยวชาญตอบคำถาม 24/7</span></div>
+                <div class="benefit-item"><i class="fas fa-tools"></i><span>วินิจฉัยปัญหาฉีดพลาสติก</span></div>
+                <div class="benefit-item"><i class="fas fa-file-alt"></i><span>Digital Logbook บันทึกข้อมูล</span></div>
+                <div class="benefit-item"><i class="fas fa-chart-line"></i><span>Kaizen Expert ปรับปรุงงาน</span></div>
             </div>
 
             <a href="https://lin.ee/TipxyCa" target="_blank" rel="noopener" class="btn-line-login">
-                <i class="fab fa-line"></i> เน€เธเธดเนเธกเน€เธเธทเนเธญเธ LINE เธเธฃเธต!
+                <i class="fab fa-line"></i> เพิ่มเพื่อน LINE ฟรี!
             </a>
 
-            <p class="modal-smallprint"><i class="fas fa-shield-alt me-1"></i> เธเธฅเธญเธ”เธ เธฑเธข เนเธกเนเธกเธตเธเนเธฒเนเธเนเธเนเธฒเธข</p>
+            <p class="modal-smallprint"><i class="fas fa-shield-alt me-1"></i> ปลอดภัย ไม่มีค่าใช้จ่าย</p>
         </div>
     </div>
 
     <footer class="app-footer">
-        <p>ยฉ 2025 Wizmobiz | เธเธฑเธ’เธเธฒเนเธ”เธข เธญ.เธงเธดเธ—เธขเธฒ</p>
-        <p><a href="injection-molding.html" class="footer-link">เธเธฅเธฑเธเธซเธเนเธฒเธซเธฅเธฑเธ</a></p>
+        <p>© 2025 Wizmobiz | พัฒนาโดย อ.วิทยา</p>
+        <p><a href="injection-molding.html" class="footer-link">กลับหน้าหลัก</a></p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -760,12 +808,12 @@
 
             if (isLineFriend()) {
                 badge.classList.add('premium');
-                text.textContent = 'LINE Friend (เนเธกเนเธเธณเธเธฑเธ”)';
+                text.textContent = 'LINE Friend (ไม่จำกัด)';
                 return;
             }
 
             const remaining = getTrialCount();
-            text.textContent = `เธเธฃเธต ${remaining}/${MAX_FREE_TRIALS}`;
+            text.textContent = `ฟรี ${remaining}/${MAX_FREE_TRIALS}`;
             if (remaining <= 0) badge.classList.add('exhausted');
         }
 
@@ -793,14 +841,14 @@
             const safety = parseFloat(document.getElementById('clamp-safety').value);
 
             if (!area || area <= 0 || !pressure || pressure <= 0 || !safety || safety <= 0) {
-                alert('เธเธฃเธธเธ“เธฒเธเธฃเธญเธเธเนเธญเธกเธนเธฅเนเธซเนเธเธฃเธเธ–เนเธงเธ');
+                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
                 return;
             }
 
             const ton = (area * pressure * safety) / 1000;
             document.getElementById('clamp-result').textContent = ton.toFixed(1);
-            document.getElementById('clamp-area-out').textContent = `${area} cmยฒ`;
-            document.getElementById('clamp-pressure-out').textContent = `${pressure} kg/cmยฒ`;
+            document.getElementById('clamp-area-out').textContent = `${area} cm²`;
+            document.getElementById('clamp-pressure-out').textContent = `${pressure} kg/cm²`;
             document.getElementById('clamp-safety-out').textContent = safety.toFixed(2);
             document.getElementById('result-clamp').classList.add('show');
         }
@@ -813,7 +861,7 @@
             const mat = materials[materialKey];
 
             if (!thicknessMm || thicknessMm <= 0 || !mat) {
-                alert('เธเธฃเธธเธ“เธฒเธเธฃเธญเธเธเนเธญเธกเธนเธฅเนเธซเนเธเธฃเธเธ–เนเธงเธ');
+                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
                 return;
             }
 
@@ -844,7 +892,7 @@
             const cushionPct = parseFloat(document.getElementById('shot-cushion').value);
 
             if (!part || part <= 0 || runner < 0 || !density || density <= 0) {
-                alert('เธเธฃเธธเธ“เธฒเธเธฃเธญเธเธเนเธญเธกเธนเธฅเนเธซเนเธเธฃเธเธ–เนเธงเธ');
+                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
                 return;
             }
 
@@ -867,9 +915,9 @@
             if (!mat) return;
 
             document.getElementById('temp-mat').textContent = key;
-            document.getElementById('temp-mold').textContent = `${mat.mold[0]}-${mat.mold[1]} ยฐC (เนเธเธฐเธเธณ ~${mat.mold[2]}ยฐC)`;
-            document.getElementById('temp-melt').textContent = `${mat.melt} ยฐC`;
-            document.getElementById('temp-press').textContent = `${mat.pressure} kg/cmยฒ`;
+            document.getElementById('temp-mold').textContent = `${mat.mold[0]}-${mat.mold[1]} °C (แนะนำ ~${mat.mold[2]}°C)`;
+            document.getElementById('temp-melt').textContent = `${mat.melt} °C`;
+            document.getElementById('temp-press').textContent = `${mat.pressure} kg/cm²`;
             document.getElementById('result-temp').classList.add('show');
         }
 
@@ -880,7 +928,7 @@
             const fillPercent = parseFloat(document.getElementById('vp-fill').value);
 
             if (!shotSize || shotSize <= 0 || !fillPercent || fillPercent <= 0) {
-                alert('เธเธฃเธธเธ“เธฒเธเธฃเธญเธเธเนเธญเธกเธนเธฅเนเธซเนเธเธฃเธเธ–เนเธงเธ');
+                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
                 return;
             }
 
@@ -899,7 +947,7 @@
 
             const force = parseFloat(document.getElementById('machine-force').value);
             if (!force || force <= 0) {
-                alert('เธเธฃเธธเธ“เธฒเธเธฃเธญเธเนเธฃเธเธเธดเธ”เธ—เธตเนเธ•เนเธญเธเธเธฒเธฃ');
+                alert('กรุณากรอกแรงปิดที่ต้องการ');
                 return;
             }
 
