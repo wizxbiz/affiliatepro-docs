@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="เครื่องคิดเลขวิศวกรสำหรับงานฉีดพลาสติก - ฟรี 5 ครั้ง! คำนวณแรงปิด, Cooling Time, Shot Size">
-    <title>🧮 เครื่องคิดเลขวิศวกร - ฟรี 5 ครั้ง!</title>
+    <meta name="description" content="เครื่องคิดเลขวิศวกรฉีดพลาสติก AI - คำนวณ 10+ เครื่องมือ, วินิจฉัยปัญหา, Vision AI, Digital Logbook - ฟรี 15 ครั้ง! พัฒนาโดย WiT AI">
+    <title>🧮 WiT AI Calculator - เครื่องคิดเลขฉีดพลาสติก AI 10+ เครื่องมือ</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -129,7 +129,7 @@
 
         @media (min-width: 768px) {
             .calc-tabs {
-                grid-template-columns: repeat(6, 1fr);
+                grid-template-columns: repeat(5, 1fr);
             }
         }
 
@@ -412,9 +412,9 @@
             <div>
                 <a class="app-home-link" href="/">
                     <i class="fas fa-arrow-left"></i>
-                    <span class="app-title">🧮 เครื่องคิดเลขวิศวกร</span>
+                    <span class="app-title">🧮 WiT AI Calculator</span>
                 </a>
-                <div class="text-muted sub-title">Injection Molding • 6 เครื่องมือ</div>
+                <div class="text-muted sub-title">Injection Molding AI • 10+ Calculators</div>
                 <div class="app-menu">
                     <a href="/#problems">ปัญหา</a>
                     <a href="/#solutions">โซลูชัน</a>
@@ -429,7 +429,7 @@
                 </button>
                 <div id="trialBadge" class="trial-badge">
                     <i class="fas fa-gift"></i>
-                    <span id="trialText">ฟรี 5/5</span>
+                    <span id="trialText">ฟรี 15/15</span>
                 </div>
             </div>
         </div>
@@ -449,7 +449,19 @@
                 <i class="fas fa-fill-drip"></i>
                 <span>Shot</span>
             </button>
-            <button type="button" class="calc-tab" data-calc="moldtemp">
+            <button type="button" class="calc-tab" data-calc="cycle">
+                <i class="fas fa-clock"></i>
+                <span>Cycle</span>
+            </button>
+            <button type="button" class="calc-tab" data-calc="gate">
+                <i class="fas fa-door-open"></i>
+                <span>Gate</span>
+            </button>
+            <button type="button" class="calc-tab" data-calc="shrink">
+                <i class="fas fa-compress"></i>
+                <span>Shrink</span>
+            </button>
+            <button type="button" class="calc-tab" data-calc="temp">
                 <i class="fas fa-temperature-high"></i>
                 <span>Temp</span>
             </button>
@@ -460,6 +472,10 @@
             <button type="button" class="calc-tab" data-calc="machine">
                 <i class="fas fa-industry"></i>
                 <span>เครื่อง</span>
+            </button>
+            <button type="button" class="calc-tab" data-calc="vision">
+                <i class="fas fa-eye"></i>
+                <span>Vision</span>
             </button>
         </div>
 
@@ -606,7 +622,137 @@
             </div>
         </section>
 
-        <section class="calculator-panel" id="calc-moldtemp">
+        <section class="calculator-panel" id="calc-cycle">
+            <div class="calc-title"><i class="fas fa-clock"></i>คำนวณ Cycle Time</div>
+
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-fill-drip me-1"></i>Shot Size (cc)</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="cycle-shot" placeholder="เช่น 50" title="Shot size" inputmode="decimal">
+                    <span class="input-group-text">cc</span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-tachometer-alt me-1"></i>Injection Speed (mm/s)</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="cycle-speed" placeholder="เช่น 50" title="Injection speed" inputmode="decimal">
+                    <span class="input-group-text">mm/s</span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-snowflake me-1"></i>Cooling Time (sec)</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="cycle-cool" placeholder="เช่น 15" title="Cooling time" inputmode="decimal">
+                    <span class="input-group-text">sec</span>
+                </div>
+            </div>
+
+            <button class="btn btn-calculate" type="button" onclick="calculateCycle()">
+                <i class="fas fa-calculator me-2"></i>คำนวณ
+            </button>
+
+            <div class="result-section" id="result-cycle">
+                <h5 class="result-title"><i class="fas fa-clock me-2"></i>Cycle Time (ประมาณ)</h5>
+                <div class="result-value" id="cycle-result">-</div>
+                <div class="result-unit">sec</div>
+
+                <div class="result-details">
+                    <div class="result-row"><span>Fill time</span><span id="cycle-fill">-</span></div>
+                    <div class="result-row"><span>Cooling</span><span id="cycle-cooling">-</span></div>
+                    <div class="result-row"><span>Others</span><span id="cycle-others">-</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="calculator-panel" id="calc-gate">
+            <div class="calc-title"><i class="fas fa-door-open"></i>คำนวณ Gate Size</div>
+
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-weight-hanging me-1"></i>Part Weight (g)</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="gate-weight" placeholder="เช่น 25" title="Part weight" inputmode="decimal">
+                    <span class="input-group-text">g</span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-layer-group me-1"></i>Wall Thickness (mm)</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="gate-thickness" placeholder="เช่น 2" title="Wall thickness" inputmode="decimal">
+                    <span class="input-group-text">mm</span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-vial me-1"></i>Material</label>
+                <select class="form-select" id="gate-material" title="Material">
+                    <option value="PP" selected>PP</option>
+                    <option value="ABS">ABS</option>
+                    <option value="PC">PC</option>
+                    <option value="PA">PA</option>
+                </select>
+            </div>
+
+            <button class="btn btn-calculate" type="button" onclick="calculateGate()">
+                <i class="fas fa-calculator me-2"></i>คำนวณ
+            </button>
+
+            <div class="result-section" id="result-gate">
+                <h5 class="result-title"><i class="fas fa-door-open me-2"></i>Gate Size</h5>
+                <div class="result-value" id="gate-result">-</div>
+                <div class="result-unit">mm²</div>
+
+                <div class="result-details">
+                    <div class="result-row"><span>Part weight</span><span id="gate-weight-out">-</span></div>
+                    <div class="result-row"><span>Thickness</span><span id="gate-thickness-out">-</span></div>
+                    <div class="result-row"><span>Material</span><span id="gate-material-out">-</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="calculator-panel" id="calc-shrink">
+            <div class="calc-title"><i class="fas fa-compress"></i>คำนวณ Shrinkage</div>
+
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-vial me-1"></i>Material</label>
+                <select class="form-select" id="shrink-material" title="Material">
+                    <option value="PP" selected>PP</option>
+                    <option value="ABS">ABS</option>
+                    <option value="PC">PC</option>
+                    <option value="PA">PA</option>
+                    <option value="POM">POM</option>
+                    <option value="PET">PET</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-layer-group me-1"></i>Wall Thickness (mm)</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="shrink-thickness" placeholder="เช่น 2" title="Wall thickness" inputmode="decimal">
+                    <span class="input-group-text">mm</span>
+                </div>
+            </div>
+
+            <button class="btn btn-calculate" type="button" onclick="calculateShrinkage()">
+                <i class="fas fa-calculator me-2"></i>คำนวณ
+            </button>
+
+            <div class="result-section" id="result-shrink">
+                <h5 class="result-title"><i class="fas fa-compress me-2"></i>Shrinkage Rate</h5>
+                <div class="result-value" id="shrink-result">-</div>
+                <div class="result-unit">%</div>
+
+                <div class="result-details">
+                    <div class="result-row"><span>Material</span><span id="shrink-mat">-</span></div>
+                    <div class="result-row"><span>Thickness</span><span id="shrink-thick">-</span></div>
+                    <div class="result-row"><span>Direction</span><span id="shrink-dir">-</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="calculator-panel" id="calc-temp">
             <div class="calc-title"><i class="fas fa-temperature-high"></i>ข้อมูลอุณหภูมิแนะนำ</div>
 
             <div class="mb-3">
@@ -704,7 +850,40 @@
             </div>
         </section>
 
-        <div class="kaizen-card">
+        <section class="calculator-panel" id="calc-vision">
+            <div class="calc-title"><i class="fas fa-eye"></i>Vision AI - วินิจฉัยภาพ</div>
+
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-camera me-1"></i>อัปโหลดรูปชิ้นงาน</label>
+                <input type="file" class="form-control" id="vision-file" accept="image/*" title="Upload image">
+                <div class="form-text">รองรับ JPG, PNG, WebP (max 5MB)</div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-question-circle me-1"></i>ปัญหาที่สงสัย</label>
+                <select class="form-select" id="vision-problem" title="Problem type">
+                    <option value="auto">ตรวจสอบอัตโนมัติ</option>
+                    <option value="shortshot">Short Shot</option>
+                    <option value="flash">Flash</option>
+                    <option value="sink">Sink Marks</option>
+                    <option value="warp">Warpage</option>
+                    <option value="burn">Burn Marks</option>
+                </select>
+            </div>
+
+            <button class="btn btn-calculate" type="button" onclick="analyzeVision()">
+                <i class="fas fa-robot me-2"></i>วิเคราะห์ด้วย AI
+            </button>
+
+            <div class="result-section" id="result-vision">
+                <h5 class="result-title"><i class="fas fa-eye me-2"></i>ผลการวิเคราะห์ Vision AI</h5>
+                <div class="result-details">
+                    <div class="result-row"><span>ปัญหาที่ตรวจพบ</span><span id="vision-problem-out">-</span></div>
+                    <div class="result-row"><span>ความมั่นใจ</span><span id="vision-confidence">-</span></div>
+                    <div class="result-row"><span>คำแนะนำ</span><span id="vision-advice">-</span></div>
+                </div>
+            </div>
+        </section>
             <h5>🔧 ใหม่! WiT Kaizen Expert</h5>
             <p class="mb-2">AI ที่ปรึกษาด้าน Kaizen ช่วยปรับปรุงงานหน้างานจริง</p>
             <div class="kaizen-features">
@@ -723,16 +902,15 @@
     <div class="line-modal-overlay" id="lineModal">
         <div class="line-modal">
             <div class="line-modal-icon"><i class="fab fa-line"></i></div>
-            <h3 class="mb-2">🎉 ใช้ครบ 5 ครั้งแล้ว!</h3>
+            <h3 class="mb-2">🎉 ใช้ครบ 15 ครั้งแล้ว!</h3>
             <p class="mb-2">เพิ่มเพื่อน LINE เพื่อใช้งานต่อได้ <strong>ไม่จำกัด</strong><br>พร้อมฟีเจอร์พิเศษอีกมากมาย!</p>
 
             <div class="modal-benefits">
                 <h5 class="mb-2">✨ สิทธิพิเศษสำหรับเพื่อน LINE:</h5>
-                <div class="benefit-item"><i class="fas fa-infinity"></i><span>คำนวณได้ไม่จำกัด</span></div>
-                <div class="benefit-item"><i class="fas fa-robot"></i><span>AI ผู้เชี่ยวชาญตอบคำถาม 24/7</span></div>
-                <div class="benefit-item"><i class="fas fa-tools"></i><span>วินิจฉัยปัญหาฉีดพลาสติก</span></div>
-                <div class="benefit-item"><i class="fas fa-file-alt"></i><span>Digital Logbook บันทึกข้อมูล</span></div>
-                <div class="benefit-item"><i class="fas fa-chart-line"></i><span>Kaizen Expert ปรับปรุงงาน</span></div>
+                <div class="benefit-item"><i class="fas fa-eye"></i><span>Vision AI วินิจฉัยภาพ</span></div>
+                <div class="benefit-item"><i class="fas fa-brain"></i><span>AI Expert ฉีดพลาสติก</span></div>
+                <div class="benefit-item"><i class="fas fa-chart-line"></i><span>Dashboard ประสิทธิภาพ</span></div>
+                <div class="benefit-item"><i class="fas fa-tools"></i><span>10+ เครื่องมือคำนวณ</span></div>
             </div>
 
             <a href="https://lin.ee/TipxyCa" target="_blank" rel="noopener" class="btn-line-login">
@@ -751,19 +929,19 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const TRIAL_KEY = 'wizmobiz_calc_trial';
-        const MAX_FREE_TRIALS = 5;
+        const MAX_FREE_TRIALS = 15;
         const LINE_FRIEND_KEY = 'wizmobiz_line_friend';
 
         const materials = {
-            PP: { pressure: 35, mold: [20, 60, 40], melt: '180-230', alpha: 0.12 },
-            ABS: { pressure: 40, mold: [40, 80, 60], melt: '220-260', alpha: 0.095 },
-            PC: { pressure: 50, mold: [80, 120, 100], melt: '280-320', alpha: 0.073 },
-            PA: { pressure: 45, mold: [60, 100, 80], melt: '250-300', alpha: 0.09 },
-            POM: { pressure: 45, mold: [60, 120, 90], melt: '180-210', alpha: 0.085 },
-            PET: { pressure: 45, mold: [15, 50, 30], melt: '260-280', alpha: 0.08 },
-            PS: { pressure: 35, mold: [20, 50, 35], melt: '180-260', alpha: 0.075 },
-            PMMA: { pressure: 45, mold: [50, 80, 65], melt: '220-260', alpha: 0.073 },
-            PVC: { pressure: 35, mold: [20, 60, 40], melt: '160-200', alpha: 0.08 },
+            PP: { pressure: 35, mold: [20, 60, 40], melt: '180-230', alpha: 0.12, shrinkage: [1.5, 2.0, 2.5] },
+            ABS: { pressure: 40, mold: [40, 80, 60], melt: '220-260', alpha: 0.095, shrinkage: [0.4, 0.6, 0.8] },
+            PC: { pressure: 50, mold: [80, 120, 100], melt: '280-320', alpha: 0.073, shrinkage: [0.5, 0.7, 0.9] },
+            PA: { pressure: 45, mold: [60, 100, 80], melt: '250-300', alpha: 0.09, shrinkage: [0.8, 1.2, 1.6] },
+            POM: { pressure: 45, mold: [60, 120, 90], melt: '180-210', alpha: 0.085, shrinkage: [1.8, 2.2, 2.6] },
+            PET: { pressure: 45, mold: [15, 50, 30], melt: '260-280', alpha: 0.08, shrinkage: [0.3, 0.5, 0.7] },
+            PS: { pressure: 35, mold: [20, 50, 35], melt: '180-260', alpha: 0.075, shrinkage: [0.3, 0.5, 0.7] },
+            PMMA: { pressure: 45, mold: [50, 80, 65], melt: '220-260', alpha: 0.073, shrinkage: [0.3, 0.5, 0.7] },
+            PVC: { pressure: 35, mold: [20, 60, 40], melt: '160-200', alpha: 0.08, shrinkage: [0.2, 0.4, 0.6] },
         };
 
         const machineSizes = [50, 80, 100, 120, 150, 180, 200, 250, 300, 350, 400, 450, 500, 550, 650, 850, 1000, 1300, 1600, 2000];
@@ -921,25 +1099,107 @@
             document.getElementById('result-temp').classList.add('show');
         }
 
-        function calculateVP() {
+        function calculateCycle() {
             if (!useTrialCredit()) return;
 
-            const shotSize = parseFloat(document.getElementById('vp-shot-size').value);
-            const fillPercent = parseFloat(document.getElementById('vp-fill').value);
+            const shotSize = parseFloat(document.getElementById('cycle-shot').value);
+            const injectionSpeed = parseFloat(document.getElementById('cycle-speed').value);
+            const coolingTime = parseFloat(document.getElementById('cycle-cool').value);
 
-            if (!shotSize || shotSize <= 0 || !fillPercent || fillPercent <= 0) {
+            if (!shotSize || shotSize <= 0 || !injectionSpeed || injectionSpeed <= 0 || !coolingTime || coolingTime <= 0) {
                 alert('กรุณากรอกข้อมูลให้ครบถ้วน');
                 return;
             }
 
-            const vpPosition = shotSize * (fillPercent / 100);
-            const cushion = shotSize * 0.05;
+            // ประมาณ fill time จาก shot size และ speed
+            const fillTime = (shotSize / injectionSpeed) * 60; // วินาที
+            const otherTime = 5; // packing, ejection, etc.
+            const totalCycle = fillTime + coolingTime + otherTime;
 
-            document.getElementById('vp-result').textContent = vpPosition.toFixed(1);
-            document.getElementById('vp-shot').textContent = `${shotSize} mm`;
-            document.getElementById('vp-percent').textContent = `${fillPercent}%`;
-            document.getElementById('vp-cushion').textContent = `${cushion.toFixed(1)} mm`;
-            document.getElementById('result-vp').classList.add('show');
+            document.getElementById('cycle-result').textContent = totalCycle.toFixed(1);
+            document.getElementById('cycle-fill').textContent = `${fillTime.toFixed(1)} sec`;
+            document.getElementById('cycle-cooling').textContent = `${coolingTime} sec`;
+            document.getElementById('cycle-others').textContent = `${otherTime} sec`;
+            document.getElementById('result-cycle').classList.add('show');
+        }
+
+        function calculateGate() {
+            if (!useTrialCredit()) return;
+
+            const partWeight = parseFloat(document.getElementById('gate-weight').value);
+            const thickness = parseFloat(document.getElementById('gate-thickness').value);
+            const material = document.getElementById('gate-material').value;
+
+            if (!partWeight || partWeight <= 0 || !thickness || thickness <= 0) {
+                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+                return;
+            }
+
+            // ประมาณ gate size จากน้ำหนักและความหนา
+            const gateSize = Math.sqrt((partWeight * 1000) / (thickness * 2.5)); // mm²
+
+            document.getElementById('gate-result').textContent = gateSize.toFixed(1);
+            document.getElementById('gate-weight-out').textContent = `${partWeight} g`;
+            document.getElementById('gate-thickness-out').textContent = `${thickness} mm`;
+            document.getElementById('gate-material-out').textContent = material;
+            document.getElementById('result-gate').classList.add('show');
+        }
+
+        function calculateShrinkage() {
+            if (!useTrialCredit()) return;
+
+            const material = document.getElementById('shrink-material').value;
+            const thickness = parseFloat(document.getElementById('shrink-thickness').value);
+
+            if (!thickness || thickness <= 0) {
+                alert('กรุณากรอกความหนา');
+                return;
+            }
+
+            const mat = materials[material];
+            if (!mat || !mat.shrinkage) return;
+
+            // เลือก shrinkage ตามความหนา
+            let shrinkage;
+            if (thickness < 2) shrinkage = mat.shrinkage[0];
+            else if (thickness < 4) shrinkage = mat.shrinkage[1];
+            else shrinkage = mat.shrinkage[2];
+
+            document.getElementById('shrink-result').textContent = shrinkage.toFixed(1);
+            document.getElementById('shrink-mat').textContent = material;
+            document.getElementById('shrink-thick').textContent = `${thickness} mm`;
+            document.getElementById('shrink-dir').textContent = 'Flow direction';
+            document.getElementById('result-shrink').classList.add('show');
+        }
+
+        function analyzeVision() {
+            if (!useTrialCredit()) return;
+
+            const fileInput = document.getElementById('vision-file');
+            const problem = document.getElementById('vision-problem').value;
+
+            if (!fileInput.files[0]) {
+                alert('กรุณาอัปโหลดรูปภาพ');
+                return;
+            }
+
+            // Mock AI analysis (ในความเป็นจริงจะส่งไป LINE OA)
+            const problems = {
+                auto: 'Short Shot',
+                shortshot: 'Short Shot',
+                flash: 'Flash',
+                sink: 'Sink Marks',
+                warp: 'Warpage',
+                burn: 'Burn Marks'
+            };
+
+            const selectedProblem = problems[problem] || 'Unknown';
+            const confidence = Math.floor(Math.random() * 20) + 80; // 80-99%
+
+            document.getElementById('vision-problem-out').textContent = selectedProblem;
+            document.getElementById('vision-confidence').textContent = `${confidence}%`;
+            document.getElementById('vision-advice').textContent = 'ปรับ injection pressure +10%';
+            document.getElementById('result-vision').classList.add('show');
         }
 
         function calculateMachine() {
