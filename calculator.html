@@ -15,7 +15,6 @@
     <!-- PWA Meta -->
     <meta name="theme-color" content="#667eea">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="images/logo.png">
@@ -2350,7 +2349,7 @@
 
             const result = CalculatorEngines.calculateClampForce(area, pressure);
 
-            document.getElementById('clamp-result').textContent = result.clampForce.toFixed(1);
+            document.getElementById('clamp-result').textContent = result.forceTon;
             document.getElementById('clamp-area-out').textContent = `${area} cm²`;
             document.getElementById('clamp-pressure-out').textContent = `${pressure} kg/cm²`;
             document.getElementById('result-clamp').classList.add('show');
@@ -2386,7 +2385,7 @@
 
             const result = CalculatorEngines.calculateCoolingTime(thickness, material, moldTemp);
 
-            document.getElementById('cool-result').textContent = result.coolingTime.toFixed(1);
+            document.getElementById('cool-result').textContent = result.coolingTime;
             document.getElementById('cool-details').innerHTML = `
                 <div class="detail-row"><span class="detail-label">ความหนา:</span><span class="detail-value">${thickness} mm</span></div>
                 <div class="detail-row"><span class="detail-label">วัสดุ:</span><span class="detail-value">${material}</span></div>
@@ -2420,7 +2419,7 @@
 
             const result = CalculatorEngines.calculateShotSize(volume, cavities, runnerVolume);
 
-            document.getElementById('shot-result').textContent = result.shotSize.toFixed(1);
+            document.getElementById('shot-result').textContent = result.shotSize;
             document.getElementById('shot-details').innerHTML = `
                 <div class="detail-row"><span class="detail-label">ปริมาตร/Cavity:</span><span class="detail-value">${volume} cm³</span></div>
                 <div class="detail-row"><span class="detail-label">จำนวน Cavities:</span><span class="detail-value">${cavities}</span></div>
@@ -2483,7 +2482,7 @@
 
             const result = CalculatorEngines.calculateCycleTime(injection, packing, cooling, moldTime);
 
-            document.getElementById('cycle-result').textContent = result.cycleTime.toFixed(1);
+            document.getElementById('cycle-result').textContent = result.totalCycle;
             document.getElementById('cycle-details').innerHTML = `
                 <div class="detail-row"><span class="detail-label">Injection Time:</span><span class="detail-value">${injection}s</span></div>
                 <div class="detail-row"><span class="detail-label">Packing Time:</span><span class="detail-value">${packing}s</span></div>
@@ -2521,8 +2520,9 @@
             document.getElementById('gate-details').innerHTML = `
                 <div class="detail-row"><span class="detail-label">ความหนาชิ้นงาน:</span><span class="detail-value">${thickness} mm</span></div>
                 <div class="detail-row"><span class="detail-label">ประเภท Gate:</span><span class="detail-value">${gateType}</span></div>
-                <div class="detail-row"><span class="detail-label">Gate Depth:</span><span class="detail-value">${result.gateDepth.toFixed(2)} mm</span></div>
-                <div class="detail-row"><span class="detail-label">Gate Width:</span><span class="detail-value">${result.gateWidth.toFixed(2)} mm</span></div>
+                <div class="detail-row"><span class="detail-label">Gate Thickness:</span><span class="detail-value">${result.gateThickness} mm</span></div>
+                <div class="detail-row"><span class="detail-label">Gate Width:</span><span class="detail-value">${result.gateWidth} mm</span></div>
+                <div class="detail-row"><span class="detail-label">แนะนำ:</span><span class="detail-value">${result.recommendedGate}</span></div>
             `;
             document.getElementById('result-gate').classList.add('show');
 
@@ -2554,10 +2554,10 @@
 
             document.getElementById('shrink-details').innerHTML = `
                 <div class="detail-row"><span class="detail-label">ขนาดชิ้นงาน:</span><span class="detail-value">${dimension} mm</span></div>
-                <div class="detail-row"><span class="detail-label">วัสดุ:</span><span class="detail-value">${material}</span></div>
+                <div class="detail-row"><span class="detail-label">วัสดุ:</span><span class="detail-value">${result.material}</span></div>
                 <div class="detail-row"><span class="detail-label">Shrinkage:</span><span class="detail-value">${result.shrinkagePercent}%</span></div>
-                <div class="detail-row"><span class="detail-label">Shrinkage Amount:</span><span class="detail-value">${result.shrinkageAmount.toFixed(3)} mm</span></div>
-                <div class="detail-row"><span class="detail-label">ขนาด Cavity:</span><span class="detail-value">${result.cavityDimension.toFixed(3)} mm</span></div>
+                <div class="detail-row"><span class="detail-label">Shrinkage Amount:</span><span class="detail-value">${result.shrinkageAmount} mm</span></div>
+                <div class="detail-row"><span class="detail-label">ขนาด Cavity:</span><span class="detail-value">${result.moldSize} mm</span></div>
             `;
             document.getElementById('result-shrink').classList.add('show');
 

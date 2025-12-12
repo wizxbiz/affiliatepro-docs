@@ -130,12 +130,17 @@ self.addEventListener('fetch', event => {
   // Stale-while-revalidate for other resources
   event.respondWith(
     caches.match(request).then(cachedResponse => {
-      const fetchPromise = fetch(request).then(networkResponse => {
-        caches.open(DYNAMIC_CACHE).then(cache => {
-          cache.put(request, networkResponse.clone());
-        });
-        return networkResponse;
-      }).catch(() => cachedResponse);
+      const fetchPromise = fetch(request)
+        .then(networkResponse => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseToCache = networkResponse.clone();
+            caches.open(DYNAMIC_CACHE).then(cache => {
+              cache.put(request, responseToCache);
+            });
+          }
+          return networkResponse;
+        })
+        .catch(() => cachedResponse);
 
       return cachedResponse || fetchPromise;
     })
