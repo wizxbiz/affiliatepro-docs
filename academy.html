@@ -600,6 +600,11 @@
                             <i class="fab fa-line me-1"></i> LINE Bot
                         </a>
                     </li>
+                    <li class="nav-item ms-2" id="authNavItem">
+                        <a class="nav-link" href="auth.html" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #0a0a0f !important; border-radius: 25px; padding: 10px 20px !important; font-weight: 600;">
+                            <i class="fas fa-user me-1"></i> <span id="authNavText">เข้าสู่ระบบ</span>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -1074,6 +1079,79 @@
                 document.querySelector(this.getAttribute('href')).scrollIntoView({
                     behavior: 'smooth'
                 });
+            });
+        });
+    </script>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+    
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCZaAMkF8dgIEQIwM2zTkPinmMupNqWKmQ",
+            authDomain: "appinjproject.firebaseapp.com",
+            projectId: "appinjproject",
+            storageBucket: "appinjproject.firebasestorage.app",
+            messagingSenderId: "390622431920",
+            appId: "1:390622431920:web:76e9cc7a89e9b4c9d5a8ab"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Check auth state and update navbar
+        auth.onAuthStateChanged(async (user) => {
+            const authNavText = document.getElementById('authNavText');
+            const authNavItem = document.getElementById('authNavItem');
+            
+            if (user) {
+                // User is logged in
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                const userData = userDoc.data();
+                const displayName = userData?.name || user.displayName || 'ผู้ใช้';
+                
+                authNavText.textContent = displayName.split(' ')[0]; // First name only
+                authNavItem.querySelector('a').href = 'auth.html';
+                authNavItem.querySelector('i').className = 'fas fa-user-check me-1';
+
+                // Log page visit
+                await db.collection('user_activity').add({
+                    userId: user.uid,
+                    action: 'page_visit',
+                    page: 'academy',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // Update user's coursesAccessed
+                await db.collection('users').doc(user.uid).update({
+                    coursesAccessed: firebase.firestore.FieldValue.arrayUnion('academy_home')
+                });
+            } else {
+                // User is not logged in
+                authNavText.textContent = 'เข้าสู่ระบบ';
+                authNavItem.querySelector('a').href = 'auth.html';
+                authNavItem.querySelector('i').className = 'fas fa-user me-1';
+            }
+        });
+
+        // Track course clicks
+        document.querySelectorAll('.course-card a, .path-card a').forEach(link => {
+            link.addEventListener('click', async function(e) {
+                const user = auth.currentUser;
+                if (user) {
+                    const courseName = this.closest('.course-card, .path-card')?.querySelector('h3, h4')?.textContent || 'unknown';
+                    await db.collection('user_activity').add({
+                        userId: user.uid,
+                        action: 'course_click',
+                        courseName: courseName,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
             });
         });
     </script>
