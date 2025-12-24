@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Hot Runner - Temperature Control</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #00d9ff;
+            --secondary: #ff9800;
+            --success: #00c853;
+            --warning: #ffc107;
+            --advanced-color: #2196f3;
+            --bg-dark: #0a0a0f;
+            --bg-card: #12121a;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.8;
+        }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+
+        .page-header {
+            text-align: center;
+            padding: 40px 0;
+            margin-bottom: 40px;
+        }
+
+        .badge-advanced {
+            background: linear-gradient(135deg, var(--advanced-color), #1565c0);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .page-header h1 { font-size: 2rem; margin-bottom: 15px; }
+
+        .content-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 35px;
+            margin-bottom: 30px;
+        }
+
+        .content-section h2 {
+            color: var(--primary);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.4rem;
+        }
+
+        .content-section h3 {
+            color: var(--secondary);
+            margin: 25px 0 15px;
+            font-size: 1.15rem;
+        }
+
+        .info-box {
+            background: rgba(33, 150, 243, 0.1);
+            border-left: 4px solid var(--advanced-color);
+            padding: 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 20px 0;
+        }
+
+        .warning-box {
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid var(--warning);
+            padding: 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 20px 0;
+        }
+
+        .parameter-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .parameter-table th, .parameter-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .parameter-table th {
+            background: rgba(33, 150, 243, 0.2);
+            color: var(--primary);
+        }
+
+        .parameter-table tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .temp-visual {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .temp-zone {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .temp-zone .zone-name {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-secondary);
+        }
+
+        .temp-zone .temp-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .temp-zone .temp-unit {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            padding: 12px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .checklist li:last-child { border-bottom: none; }
+
+        .checklist li i { color: var(--success); margin-top: 4px; }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn-nav {
+            padding: 12px 25px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-nav:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-primary-nav {
+            background: linear-gradient(135deg, var(--advanced-color), #1565c0);
+            border: none;
+        }
+
+        .btn-primary-nav:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(33, 150, 243, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <span class="badge-advanced"><i class="fas fa-graduation-cap me-2"></i>Advanced Level</span>
+            <h1><i class="fas fa-thermometer-half me-3"></i>การควบคุมอุณหภูมิขั้นสูง</h1>
+            <p class="text-secondary">Advanced Temperature Control for Hot Runner Systems</p>
+        </div>
+
+        <!-- Section 1: Theory -->
+        <div class="content-section">
+            <h2><i class="fas fa-book"></i> ทฤษฎีการควบคุมอุณหภูมิ</h2>
+            
+            <p>การควบคุมอุณหภูมิใน Hot Runner System เป็นหัวใจสำคัญที่ส่งผลโดยตรงต่อคุณภาพชิ้นงาน ความเสถียรของกระบวนการ และอายุการใช้งานของระบบ</p>
+
+            <h3>หลักการ PID Control</h3>
+            <p>ระบบควบคุมอุณหภูมิใช้ PID (Proportional-Integral-Derivative) Controller:</p>
+            
+            <ul class="checklist">
+                <li><i class="fas fa-check"></i> <strong>P (Proportional):</strong> ตอบสนองต่อ Error ปัจจุบัน - ยิ่ง Error มาก ยิ่งปรับมาก</li>
+                <li><i class="fas fa-check"></i> <strong>I (Integral):</strong> สะสม Error ตลอดเวลา - แก้ปัญหา Steady-state Error</li>
+                <li><i class="fas fa-check"></i> <strong>D (Derivative):</strong> คาดการณ์ Error ในอนาคต - ลด Overshoot</li>
+            </ul>
+
+            <div class="info-box">
+                <h4><i class="fas fa-lightbulb me-2"></i>หลักการตั้งค่า PID</h4>
+                <p>เริ่มจากการตั้งค่า P ก่อน โดย I และ D = 0 แล้วค่อยๆ เพิ่ม I เพื่อลด Steady-state Error และเพิ่ม D เพื่อลด Oscillation</p>
+            </div>
+        </div>
+
+        <!-- Section 2: Temperature Zones -->
+        <div class="content-section">
+            <h2><i class="fas fa-layer-group"></i> โซนอุณหภูมิในระบบ Hot Runner</h2>
+            
+            <div class="temp-visual">
+                <div class="temp-zone">
+                    <div class="zone-name">Nozzle Tip</div>
+                    <div class="temp-value">220</div>
+                    <div class="temp-unit">°C</div>
+                </div>
+                <div class="temp-zone">
+                    <div class="zone-name">Nozzle Body</div>
+                    <div class="temp-value">215</div>
+                    <div class="temp-unit">°C</div>
+                </div>
+                <div class="temp-zone">
+                    <div class="zone-name">Manifold</div>
+                    <div class="temp-value">210</div>
+                    <div class="temp-unit">°C</div>
+                </div>
+                <div class="temp-zone">
+                    <div class="zone-name">Drop Zone</div>
+                    <div class="temp-value">205</div>
+                    <div class="temp-unit">°C</div>
+                </div>
+            </div>
+
+            <h3>ค่าพารามิเตอร์มาตรฐาน</h3>
+            <table class="parameter-table">
+                <thead>
+                    <tr>
+                        <th>พลาสติก</th>
+                        <th>Nozzle (°C)</th>
+                        <th>Manifold (°C)</th>
+                        <th>Tolerance (±°C)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>PP (Polypropylene)</td>
+                        <td>200-230</td>
+                        <td>195-220</td>
+                        <td>±2</td>
+                    </tr>
+                    <tr>
+                        <td>ABS</td>
+                        <td>220-260</td>
+                        <td>215-250</td>
+                        <td>±3</td>
+                    </tr>
+                    <tr>
+                        <td>PC (Polycarbonate)</td>
+                        <td>280-320</td>
+                        <td>270-310</td>
+                        <td>±3</td>
+                    </tr>
+                    <tr>
+                        <td>PA (Nylon)</td>
+                        <td>260-290</td>
+                        <td>255-285</td>
+                        <td>±2</td>
+                    </tr>
+                    <tr>
+                        <td>POM (Acetal)</td>
+                        <td>185-210</td>
+                        <td>180-205</td>
+                        <td>±2</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="warning-box">
+                <h4><i class="fas fa-exclamation-triangle me-2"></i>ข้อควรระวัง</h4>
+                <p>อุณหภูมิที่สูงเกินไปอาจทำให้พลาสติกเสื่อมสภาพ (Degradation) ในขณะที่อุณหภูมิต่ำเกินไปอาจทำให้เกิด Short Shot หรือ Cold Slug</p>
+            </div>
+        </div>
+
+        <!-- Section 3: Troubleshooting -->
+        <div class="content-section">
+            <h2><i class="fas fa-tools"></i> การแก้ไขปัญหาอุณหภูมิ</h2>
+
+            <h3>ปัญหาที่พบบ่อย</h3>
+            <table class="parameter-table">
+                <thead>
+                    <tr>
+                        <th>ปัญหา</th>
+                        <th>สาเหตุที่เป็นไปได้</th>
+                        <th>วิธีแก้ไข</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>อุณหภูมิไม่คงที่</td>
+                        <td>Thermocouple เสีย, PID ไม่เหมาะสม</td>
+                        <td>เปลี่ยน Thermocouple, Tune PID ใหม่</td>
+                    </tr>
+                    <tr>
+                        <td>อุณหภูมิสูงผิดปกติ</td>
+                        <td>Heater Short, Controller ผิดปกติ</td>
+                        <td>ตรวจสอบค่า Resistance, เช็ค Controller</td>
+                    </tr>
+                    <tr>
+                        <td>อุณหภูมิไม่ถึง Set Point</td>
+                        <td>Heater เสีย, กำลังไฟไม่พอ</td>
+                        <td>เช็ค Heater Resistance, ตรวจไฟฟ้า</td>
+                    </tr>
+                    <tr>
+                        <td>Overshoot มากเกินไป</td>
+                        <td>PID ไม่เหมาะสม</td>
+                        <td>ลดค่า P, เพิ่มค่า D</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>การตรวจสอบ Heater</h3>
+            <ul class="checklist">
+                <li><i class="fas fa-check"></i> วัดค่า Resistance ของ Heater (ควรอยู่ในช่วง ±10% ของค่าปกติ)</li>
+                <li><i class="fas fa-check"></i> ตรวจสอบ Insulation Resistance (ต้อง > 1MΩ)</li>
+                <li><i class="fas fa-check"></i> ตรวจสอบสายไฟและ Connection</li>
+                <li><i class="fas fa-check"></i> วัดค่ากระแสขณะทำงาน</li>
+            </ul>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-buttons">
+            <a href="index.html" class="btn-nav">
+                <i class="fas fa-arrow-left"></i> กลับหน้าหลัก Advanced
+            </a>
+            <a href="module-maintenance.html" class="btn-nav btn-primary-nav">
+                บทถัดไป: การบำรุงรักษา <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expert Quiz - Hot Runner Certification</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #00d9ff;
+            --secondary: #ff9800;
+            --success: #00c853;
+            --danger: #ff5252;
+            --expert-color: #9c27b0;
+            --bg-dark: #0a0a0f;
+            --bg-card: #12121a;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container { max-width: 800px; margin: 0 auto; }
+
+        .page-header {
+            text-align: center;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+
+        .badge-expert {
+            background: linear-gradient(135deg, var(--expert-color), #7b1fa2);
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .page-header h1 { font-size: 2rem; margin-bottom: 10px; }
+
+        .quiz-info {
+            background: rgba(156, 39, 176, 0.1);
+            border: 1px solid var(--expert-color);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .quiz-info-item {
+            text-align: center;
+        }
+
+        .quiz-info-item i {
+            font-size: 1.5rem;
+            color: var(--expert-color);
+            margin-bottom: 5px;
+        }
+
+        .quiz-info-item strong {
+            display: block;
+            font-size: 1.2rem;
+        }
+
+        .question-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+        }
+
+        .question-number {
+            display: inline-block;
+            background: var(--expert-color);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        .scenario-box {
+            background: rgba(255, 152, 0, 0.1);
+            border-left: 4px solid var(--secondary);
+            padding: 15px 20px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option:hover {
+            background: rgba(156, 39, 176, 0.1);
+            border-color: var(--expert-color);
+        }
+
+        .option.selected {
+            background: rgba(156, 39, 176, 0.2);
+            border-color: var(--expert-color);
+        }
+
+        .option.correct {
+            background: rgba(0, 200, 83, 0.2);
+            border-color: var(--success);
+        }
+
+        .option.incorrect {
+            background: rgba(255, 82, 82, 0.2);
+            border-color: var(--danger);
+        }
+
+        .option input {
+            display: none;
+        }
+
+        .option-letter {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .option.selected .option-letter {
+            background: var(--expert-color);
+        }
+
+        .option.correct .option-letter {
+            background: var(--success);
+        }
+
+        .option.incorrect .option-letter {
+            background: var(--danger);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--expert-color), #7b1fa2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(156, 39, 176, 0.4);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            display: none;
+        }
+
+        .result-card.show { display: block; }
+
+        .result-score {
+            font-size: 4rem;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+
+        .result-score.pass { color: var(--success); }
+        .result-score.fail { color: var(--danger); }
+
+        .result-message {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-nav {
+            padding: 12px 25px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-nav:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-primary-nav {
+            background: linear-gradient(135deg, var(--expert-color), #7b1fa2);
+            border: none;
+        }
+
+        @media (max-width: 600px) {
+            .quiz-info { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <span class="badge-expert"><i class="fas fa-crown me-2"></i>Expert Level</span>
+            <h1><i class="fas fa-clipboard-check me-3"></i>แบบทดสอบระดับ Expert</h1>
+            <p class="text-secondary">Hot Runner Mastery Assessment</p>
+        </div>
+
+        <div class="quiz-info">
+            <div class="quiz-info-item">
+                <i class="fas fa-question-circle"></i>
+                <strong>10</strong>
+                <span>คำถาม</span>
+            </div>
+            <div class="quiz-info-item">
+                <i class="fas fa-clock"></i>
+                <strong>30</strong>
+                <span>นาที</span>
+            </div>
+            <div class="quiz-info-item">
+                <i class="fas fa-bullseye"></i>
+                <strong>80%</strong>
+                <span>เกณฑ์ผ่าน</span>
+            </div>
+        </div>
+
+        <form id="quizForm">
+            <!-- Question 1 -->
+            <div class="question-card" data-correct="c">
+                <span class="question-number">1</span>
+                <div class="scenario-box">
+                    <strong>สถานการณ์:</strong> เครื่องฉีดพลาสติก PC เกิดปัญหา Gate Vestige ขนาดใหญ่หลังจากเปลี่ยน Nozzle Tip ใหม่
+                </div>
+                <p class="question-text">อะไรคือสาเหตุที่เป็นไปได้มากที่สุด และควรดำเนินการอย่างไร?</p>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q1" value="a">
+                        <span class="option-letter">A</span>
+                        <span>อุณหภูมิ Manifold สูงเกินไป - ลดอุณหภูมิลง 20°C</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q1" value="b">
+                        <span class="option-letter">B</span>
+                        <span>Injection Speed เร็วเกินไป - ลด V1 ลง 30%</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q1" value="c">
+                        <span class="option-letter">C</span>
+                        <span>Gate Size ของ Tip ใหม่ใหญ่กว่าเดิม - ตรวจสอบ spec และเลือก Tip ขนาดที่ถูกต้อง</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q1" value="d">
+                        <span class="option-letter">D</span>
+                        <span>Hold Pressure สูงเกินไป - ลด Hold Pressure 50%</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="question-card" data-correct="b">
+                <span class="question-number">2</span>
+                <p class="question-text">ในการตั้งค่า PID Controller สำหรับ Hot Runner Zone ที่มีอุณหภูมิ Overshoot มากเกินไป ควรปรับค่าใดเป็นอันดับแรก?</p>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q2" value="a">
+                        <span class="option-letter">A</span>
+                        <span>เพิ่มค่า Integral (I) เพื่อตอบสนองเร็วขึ้น</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q2" value="b">
+                        <span class="option-letter">B</span>
+                        <span>ลดค่า Proportional (P) และเพิ่มค่า Derivative (D)</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q2" value="c">
+                        <span class="option-letter">C</span>
+                        <span>เพิ่มค่า Proportional (P) และลดค่า Integral (I)</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q2" value="d">
+                        <span class="option-letter">D</span>
+                        <span>ลดค่าทุกตัว (P, I, D) ลง 50%</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="question-card" data-correct="d">
+                <span class="question-number">3</span>
+                <div class="scenario-box">
+                    <strong>สถานการณ์:</strong> ระบบ Hot Runner 8 drops มีปัญหา 2 โซนแสดงอุณหภูมิสูงกว่า Set Point 15°C โดยไม่มีการทำงานของ Heater (0% output)
+                </div>
+                <p class="question-text">Root Cause ที่เป็นไปได้มากที่สุดคืออะไร?</p>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q3" value="a">
+                        <span class="option-letter">A</span>
+                        <span>Heater ทั้ง 2 โซน Short Circuit</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q3" value="b">
+                        <span class="option-letter">B</span>
+                        <span>Controller มีปัญหา - Output ทำงานตลอด</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q3" value="c">
+                        <span class="option-letter">C</span>
+                        <span>Set Point ถูกตั้งผิด</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q3" value="d">
+                        <span class="option-letter">D</span>
+                        <span>Thermocouple ต่อผิดโซน - สลับกันระหว่าง 2 โซน</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 4 -->
+            <div class="question-card" data-correct="a">
+                <span class="question-number">4</span>
+                <p class="question-text">ค่า Heater Resistance ที่วัดได้ 45Ω (ค่าปกติ 40Ω ±10%) บ่งบอกถึงสภาพใด?</p>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q4" value="a">
+                        <span class="option-letter">A</span>
+                        <span>Heater เริ่มเสื่อมสภาพ - ควรวางแผนเปลี่ยนในการ PM ครั้งถัดไป</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q4" value="b">
+                        <span class="option-letter">B</span>
+                        <span>Heater ปกติ - ใช้งานต่อได้</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q4" value="c">
+                        <span class="option-letter">C</span>
+                        <span>Heater Short Circuit - ต้องเปลี่ยนทันที</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q4" value="d">
+                        <span class="option-letter">D</span>
+                        <span>Heater Open Circuit - ไม่สามารถใช้งานได้</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 5 -->
+            <div class="question-card" data-correct="c">
+                <span class="question-number">5</span>
+                <div class="scenario-box">
+                    <strong>สถานการณ์:</strong> การผลิตชิ้นงาน ABS มีปัญหา Material Degradation (จุดดำ) เฉพาะช่วงเช้าหลัง Start-up แต่หายไปหลังจากรัน 30 นาที
+                </div>
+                <p class="question-text">สาเหตุและวิธีแก้ไขที่เหมาะสมที่สุดคืออะไร?</p>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q5" value="a">
+                        <span class="option-letter">A</span>
+                        <span>อุณหภูมิ Manifold สูงเกินไป - ลดอุณหภูมิลง 10°C</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q5" value="b">
+                        <span class="option-letter">B</span>
+                        <span>วัตถุดิบชื้น - อบวัตถุดิบก่อนใช้งาน</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q5" value="c">
+                        <span class="option-letter">C</span>
+                        <span>พลาสติกค้างใน Dead Spots ตอนกลางคืน - ปรับ Start-up Sequence โดย Purge ก่อนเริ่มผลิต</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q5" value="d">
+                        <span class="option-letter">D</span>
+                        <span>Heater เสียบางโซน - เปลี่ยน Heater ทั้งหมด</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 6 -->
+            <div class="question-card" data-correct="b">
+                <span class="question-number">6</span>
+                <p class="question-text">ในการประเมิน OEE ของระบบ Hot Runner ค่าใดมีผลกระทบมากที่สุดต่อ Availability?</p>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q6" value="a">
+                        <span class="option-letter">A</span>
+                        <span>Cycle Time Variation</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q6" value="b">
+                        <span class="option-letter">B</span>
+                        <span>Unplanned Downtime จาก Heater/Thermocouple Failure</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q6" value="c">
+                        <span class="option-letter">C</span>
+                        <span>Reject Rate จาก Short Shot</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q6" value="d">
+                        <span class="option-letter">D</span>
+                        <span>Color Change Time</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 7 -->
+            <div class="question-card" data-correct="a">
+                <span class="question-number">7</span>
+                <p class="question-text">การตรวจสอบ Insulation Resistance ของ Heater ควรได้ค่าเท่าไหร่จึงถือว่าปลอดภัย?</p>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q7" value="a">
+                        <span class="option-letter">A</span>
+                        <span>> 1 MΩ (Megohm) ที่อุณหภูมิห้อง</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q7" value="b">
+                        <span class="option-letter">B</span>
+                        <span>> 100 Ω (Ohm) ที่อุณหภูมิห้อง</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q7" value="c">
+                        <span class="option-letter">C</span>
+                        <span>> 10 kΩ (Kilohm) ที่อุณหภูมิทำงาน</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q7" value="d">
+                        <span class="option-letter">D</span>
+                        <span>> 500 Ω (Ohm) ที่อุณหภูมิทำงาน</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 8 -->
+            <div class="question-card" data-correct="c">
+                <span class="question-number">8</span>
+                <div class="scenario-box">
+                    <strong>สถานการณ์:</strong> ต้องการลด Cycle Time 5% โดยไม่กระทบคุณภาพ ปัจจุบัน Cooling Time = 12s, Injection Time = 2s, Hold Time = 5s
+                </div>
+                <p class="question-text">แนวทางใดเหมาะสมที่สุดในการปรับ Hot Runner?</p>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q8" value="a">
+                        <span class="option-letter">A</span>
+                        <span>เพิ่มอุณหภูมิ Manifold 20°C เพื่อลด Injection Time</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q8" value="b">
+                        <span class="option-letter">B</span>
+                        <span>ลดอุณหภูมิ Nozzle Tip เพื่อให้ Gate Freeze เร็วขึ้น</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q8" value="c">
+                        <span class="option-letter">C</span>
+                        <span>เพิ่มอุณหภูมิ Tip เล็กน้อยเพื่อให้ Gate Seal เร็วขึ้น และลด Hold Time</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q8" value="d">
+                        <span class="option-letter">D</span>
+                        <span>ลดอุณหภูมิ Manifold 20°C เพื่อลด Cooling Time</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 9 -->
+            <div class="question-card" data-correct="d">
+                <span class="question-number">9</span>
+                <p class="question-text">ในการออกแบบระบบ PM สำหรับ Hot Runner ควรเปลี่ยน Thermocouple เป็นประจำทุกกี่ปี (โดยไม่รอให้เสีย)?</p>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q9" value="a">
+                        <span class="option-letter">A</span>
+                        <span>6 เดือน</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q9" value="b">
+                        <span class="option-letter">B</span>
+                        <span>3-4 ปี</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q9" value="c">
+                        <span class="option-letter">C</span>
+                        <span>5-6 ปี</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q9" value="d">
+                        <span class="option-letter">D</span>
+                        <span>1-2 ปี ขึ้นกับสภาพการใช้งาน</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 10 -->
+            <div class="question-card" data-correct="b">
+                <span class="question-number">10</span>
+                <div class="scenario-box">
+                    <strong>สถานการณ์:</strong> คุณได้รับมอบหมายให้ปรับปรุงระบบ Hot Runner เดิมที่มีปัญหา Balance ไม่ดี (น้ำหนักชิ้นงานต่างกัน 5-8%) งบประมาณจำกัด
+                </div>
+                <p class="question-text">แนวทางใดคุ้มค่าที่สุดในการแก้ไข?</p>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q10" value="a">
+                        <span class="option-letter">A</span>
+                        <span>เปลี่ยน Hot Runner System ใหม่ทั้งหมด</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q10" value="b">
+                        <span class="option-letter">B</span>
+                        <span>ปรับอุณหภูมิแต่ละโซนให้ต่างกัน และใช้ Tip ขนาดต่างกันตามความจำเป็น</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q10" value="c">
+                        <span class="option-letter">C</span>
+                        <span>เพิ่ม Injection Pressure 30% เพื่อชดเชย</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q10" value="d">
+                        <span class="option-letter">D</span>
+                        <span>ยอมรับสภาพปัจจุบันและคัดชิ้นงานที่ไม่ได้คุณภาพออก</span>
+                    </label>
+                </div>
+            </div>
+
+            <button type="button" class="btn-submit" onclick="submitQuiz()">
+                <i class="fas fa-paper-plane me-2"></i>ส่งคำตอบ
+            </button>
+        </form>
+
+        <!-- Results -->
+        <div class="result-card" id="resultCard">
+            <i class="fas fa-trophy" style="font-size: 4rem; color: var(--secondary);"></i>
+            <div class="result-score" id="resultScore">0%</div>
+            <p class="result-message" id="resultMessage"></p>
+            
+            <div class="nav-buttons">
+                <a href="../courses/expert/module-case-studies.html" class="btn-nav">
+                    <i class="fas fa-book"></i> ทบทวนเนื้อหา
+                </a>
+                <a href="../certificates/expert-project.html" class="btn-nav btn-primary-nav" id="projectBtn" style="display: none;">
+                    <i class="fas fa-award"></i> ส่งโปรเจค Expert
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Handle option selection
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                const parent = this.closest('.question-card');
+                parent.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                this.querySelector('input').checked = true;
+            });
+        });
+
+        function submitQuiz() {
+            const form = document.getElementById('quizForm');
+            const questions = document.querySelectorAll('.question-card');
+            let score = 0;
+            let answered = 0;
+
+            questions.forEach((q, index) => {
+                const selected = q.querySelector('input:checked');
+                const correct = q.dataset.correct;
+                
+                if (selected) {
+                    answered++;
+                    const selectedOption = selected.closest('.option');
+                    
+                    if (selected.value === correct) {
+                        score++;
+                        selectedOption.classList.add('correct');
+                    } else {
+                        selectedOption.classList.add('incorrect');
+                        // Show correct answer
+                        q.querySelectorAll('.option').forEach(opt => {
+                            if (opt.querySelector('input').value === correct) {
+                                opt.classList.add('correct');
+                            }
+                        });
+                    }
+                }
+            });
+
+            if (answered < questions.length) {
+                alert('กรุณาตอบคำถามให้ครบทุกข้อ');
+                return;
+            }
+
+            const percentage = Math.round((score / questions.length) * 100);
+            const resultCard = document.getElementById('resultCard');
+            const resultScore = document.getElementById('resultScore');
+            const resultMessage = document.getElementById('resultMessage');
+            const projectBtn = document.getElementById('projectBtn');
+
+            resultScore.textContent = percentage + '%';
+            
+            if (percentage >= 80) {
+                resultScore.classList.add('pass');
+                resultScore.classList.remove('fail');
+                resultMessage.innerHTML = `<strong>ยินดีด้วย!</strong> คุณผ่านการทดสอบระดับ Expert!<br>คุณตอบถูก ${score} จาก ${questions.length} ข้อ<br><br>ขั้นตอนถัดไป: ส่งโปรเจคเพื่อรับใบประกาศนียบัตร Expert`;
+                projectBtn.style.display = 'inline-flex';
+            } else {
+                resultScore.classList.add('fail');
+                resultScore.classList.remove('pass');
+                resultMessage.innerHTML = `คุณตอบถูก ${score} จาก ${questions.length} ข้อ<br>ต้องได้ 80% ขึ้นไปจึงจะผ่าน<br><br>ลองทบทวนเนื้อหาและทำใหม่อีกครั้ง`;
+            }
+
+            resultCard.classList.add('show');
+            resultCard.scrollIntoView({ behavior: 'smooth' });
+            
+            // Disable submit button
+            document.querySelector('.btn-submit').disabled = true;
+        }
+    </script>
+</body>
+</html>

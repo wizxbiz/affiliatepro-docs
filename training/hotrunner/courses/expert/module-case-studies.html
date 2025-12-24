@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expert Case Studies - วิเคราะห์ปัญหาจริงในโรงงาน</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #00d9ff;
+            --primary-dark: #0099cc;
+            --secondary: #ff9800;
+            --success: #00c853;
+            --danger: #ff5252;
+            --warning: #ffc107;
+            --bg-dark: #0a0a0f;
+            --bg-card: #12121a;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        .page-header {
+            text-align: center;
+            padding: 40px 0;
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .badge-expert {
+            background: linear-gradient(135deg, #ff5252, #ff1744);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .case-study-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .case-study-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0, 217, 255, 0.2);
+        }
+
+        .case-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .case-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .case-title h3 {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+        }
+
+        .case-meta {
+            display: flex;
+            gap: 20px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .case-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .case-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .case-section {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .case-section h4 {
+            color: var(--primary);
+            margin-bottom: 12px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .case-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .case-section li {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .case-section li:last-child {
+            border-bottom: none;
+        }
+
+        .case-section li i {
+            color: var(--secondary);
+            margin-top: 4px;
+        }
+
+        .case-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-case {
+            padding: 12px 25px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary-case {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-secondary-case {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-case:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .difficulty-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .difficulty-hard { background: rgba(255, 82, 82, 0.2); color: #ff5252; }
+        .difficulty-expert { background: rgba(156, 39, 176, 0.2); color: #ce93d8; }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        @media (max-width: 768px) {
+            .case-header { flex-direction: column; }
+            .case-content { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <span class="badge-expert"><i class="fas fa-crown me-2"></i>Expert Level</span>
+            <h1><i class="fas fa-microscope me-3"></i>Case Studies Analysis</h1>
+            <p class="text-secondary">วิเคราะห์ปัญหาจริงจากโรงงาน และเรียนรู้วิธีแก้ไขอย่างมืออาชีพ</p>
+        </div>
+
+        <!-- Case Study 1 -->
+        <div class="case-study-card">
+            <div class="case-header">
+                <div class="case-number">01</div>
+                <div class="case-title">
+                    <h3>ปัญหา Gate Vestige บนชิ้นงาน Automotive</h3>
+                    <div class="case-meta">
+                        <span><i class="fas fa-industry"></i> อุตสาหกรรมยานยนต์</span>
+                        <span><i class="fas fa-clock"></i> 45 นาที</span>
+                        <span class="difficulty-badge difficulty-expert">Expert</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="case-content">
+                <div class="case-section">
+                    <h4><i class="fas fa-exclamation-triangle"></i> สถานการณ์ปัญหา</h4>
+                    <ul>
+                        <li><i class="fas fa-chevron-right"></i> Gate vestige สูงเกิน 0.3mm ไม่ผ่าน QC</li>
+                        <li><i class="fas fa-chevron-right"></i> เกิดเฉพาะบาง Cavity (4 จาก 8)</li>
+                        <li><i class="fas fa-chevron-right"></i> ปัญหาเกิดหลังเปลี่ยน Material lot ใหม่</li>
+                    </ul>
+                </div>
+
+                <div class="case-section">
+                    <h4><i class="fas fa-search"></i> การวิเคราะห์</h4>
+                    <ul>
+                        <li><i class="fas fa-chevron-right"></i> ตรวจสอบ MFI ของ Material</li>
+                        <li><i class="fas fa-chevron-right"></i> เปรียบเทียบ Process Parameter</li>
+                        <li><i class="fas fa-chevron-right"></i> วิเคราะห์ Temperature Profile</li>
+                    </ul>
+                </div>
+
+                <div class="case-section">
+                    <h4><i class="fas fa-lightbulb"></i> วิธีแก้ไข</h4>
+                    <ul>
+                        <li><i class="fas fa-check"></i> ปรับ Valve Gate Timing</li>
+                        <li><i class="fas fa-check"></i> เพิ่ม Tip Temperature 10°C</li>
+                        <li><i class="fas fa-check"></i> ลด Holding Pressure ลง 5%</li>
+                    </ul>
+                </div>
+
+                <div class="case-section">
+                    <h4><i class="fas fa-chart-line"></i> ผลลัพธ์</h4>
+                    <ul>
+                        <li><i class="fas fa-star"></i> Gate vestige < 0.15mm ทุก Cavity</li>
+                        <li><i class="fas fa-star"></i> Cycle time ลดลง 2 วินาที</li>
+                        <li><i class="fas fa-star"></i> Reject rate 0% ต่อเนื่อง 1 สัปดาห์</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="case-actions">
+                <a href="#" class="btn-case btn-primary-case" onclick="startCaseStudy(1)">
+                    <i class="fas fa-play"></i> เริ่มวิเคราะห์
+                </a>
+                <a href="#" class="btn-case btn-secondary-case">
+                    <i class="fas fa-file-pdf"></i> ดาวน์โหลด PDF
+                </a>
+            </div>
+        </div>
+
+        <!-- Case Study 2 -->
+        <div class="case-study-card">
+            <div class="case-header">
+                <div class="case-number">02</div>
+                <div class="case-title">
+                    <h3>Temperature Fluctuation ใน 32-Cavity Mold</h3>
+                    <div class="case-meta">
+                        <span><i class="fas fa-industry"></i> บรรจุภัณฑ์</span>
+                        <span><i class="fas fa-clock"></i> 60 นาที</span>
+                        <span class="difficulty-badge difficulty-expert">Expert</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="case-content">
+                <div class="case-section">
+                    <h4><i class="fas fa-exclamation-triangle"></i> สถานการณ์ปัญหา</h4>
+                    <ul>
+                        <li><i class="fas fa-chevron-right"></i> Temperature ไม่สม่ำเสมอ ±15°C</li>
+                        <li><i class="fas fa-chevron-right"></i> Short shot เกิดสุ่มใน Zone 3-4</li>
+                        <li><i class="fas fa-chevron-right"></i> Heater Alarm บ่อยครั้ง</li>
+                    </ul>
+                </div>
+
+                <div class="case-section">
+                    <h4><i class="fas fa-search"></i> การวิเคราะห์</h4>
+                    <ul>
+                        <li><i class="fas fa-chevron-right"></i> ตรวจสอบ Thermocouple Resistance</li>
+                        <li><i class="fas fa-chevron-right"></i> วัด Heater Amperage</li>
+                        <li><i class="fas fa-chevron-right"></i> Thermal Imaging Analysis</li>
+                    </ul>
+                </div>
+
+                <div class="case-section">
+                    <h4><i class="fas fa-lightbulb"></i> วิธีแก้ไข</h4>
+                    <ul>
+                        <li><i class="fas fa-check"></i> เปลี่ยน Thermocouple ที่เสื่อม</li>
+                        <li><i class="fas fa-check"></i> ปรับ PID Parameters</li>
+                        <li><i class="fas fa-check"></i> บำรุงรักษา Connection</li>
+                    </ul>
+                </div>
+
+                <div class="case-section">
+                    <h4><i class="fas fa-chart-line"></i> ผลลัพธ์</h4>
+                    <ul>
+                        <li><i class="fas fa-star"></i> Temperature ±2°C ทุก Zone</li>
+                        <li><i class="fas fa-star"></i> ไม่มี Short shot</li>
+                        <li><i class="fas fa-star"></i> OEE เพิ่มขึ้น 12%</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="case-actions">
+                <a href="#" class="btn-case btn-primary-case" onclick="startCaseStudy(2)">
+                    <i class="fas fa-play"></i> เริ่มวิเคราะห์
+                </a>
+                <a href="#" class="btn-case btn-secondary-case">
+                    <i class="fas fa-file-pdf"></i> ดาวน์โหลด PDF
+                </a>
+            </div>
+        </div>
+
+        <!-- Case Study 3 -->
+        <div class="case-study-card">
+            <div class="case-header">
+                <div class="case-number">03</div>
+                <div class="case-title">
+                    <h3>Material Leakage และ Color Contamination</h3>
+                    <div class="case-meta">
+                        <span><i class="fas fa-industry"></i> เครื่องใช้ไฟฟ้า</span>
+                        <span><i class="fas fa-clock"></i> 50 นาที</span>
+                        <span class="difficulty-badge difficulty-hard">Hard</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="case-content">
+                <div class="case-section">
+                    <h4><i class="fas fa-exclamation-triangle"></i> สถานการณ์ปัญหา</h4>
+                    <ul>
+                        <li><i class="fas fa-chevron-right"></i> พลาสติกรั่วออกจาก Nozzle Tip</li>
+                        <li><i class="fas fa-chevron-right"></i> สีเก่าปนเปื้อนหลังเปลี่ยนสี</li>
+                        <li><i class="fas fa-chevron-right"></i> ต้อง Purge นานกว่าปกติ 3 เท่า</li>
+                    </ul>
+                </div>
+
+                <div class="case-section">
+                    <h4><i class="fas fa-search"></i> การวิเคราะห์</h4>
+                    <ul>
+                        <li><i class="fas fa-chevron-right"></i> ตรวจสอบ Nozzle Seat Condition</li>
+                        <li><i class="fas fa-chevron-right"></i> วัด Melt Channel Clearance</li>
+                        <li><i class="fas fa-chevron-right"></i> ตรวจสอบ Dead Spot</li>
+                    </ul>
+                </div>
+
+                <div class="case-section">
+                    <h4><i class="fas fa-lightbulb"></i> วิธีแก้ไข</h4>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Polish Nozzle Tip Contact Surface</li>
+                        <li><i class="fas fa-check"></i> ปรับ Nozzle Contact Force</li>
+                        <li><i class="fas fa-check"></i> ใช้ Purge Compound</li>
+                    </ul>
+                </div>
+
+                <div class="case-section">
+                    <h4><i class="fas fa-chart-line"></i> ผลลัพธ์</h4>
+                    <ul>
+                        <li><i class="fas fa-star"></i> ไม่มีการรั่วซึม</li>
+                        <li><i class="fas fa-star"></i> Color change < 30 นาที</li>
+                        <li><i class="fas fa-star"></i> ประหยัด Material 40%</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="case-actions">
+                <a href="#" class="btn-case btn-primary-case" onclick="startCaseStudy(3)">
+                    <i class="fas fa-play"></i> เริ่มวิเคราะห์
+                </a>
+                <a href="#" class="btn-case btn-secondary-case">
+                    <i class="fas fa-file-pdf"></i> ดาวน์โหลด PDF
+                </a>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-buttons">
+            <a href="index.html" class="btn-case btn-secondary-case">
+                <i class="fas fa-arrow-left"></i> กลับหน้าหลัก Expert
+            </a>
+            <a href="../certificates/expert-project.html" class="btn-case btn-primary-case">
+                ส่งโปรเจค Final <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function startCaseStudy(caseNumber) {
+            alert(`เริ่มวิเคราะห์ Case Study #${caseNumber}\n\nระบบจะบันทึกความก้าวหน้าของคุณ`);
+            // TODO: Implement actual case study interaction
+        }
+    </script>
+</body>
+</html>

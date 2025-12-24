@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Hot Runner - Troubleshooting</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #00d9ff;
+            --secondary: #ff9800;
+            --success: #00c853;
+            --warning: #ffc107;
+            --danger: #ff5252;
+            --advanced-color: #2196f3;
+            --bg-dark: #0a0a0f;
+            --bg-card: #12121a;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.8;
+        }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+
+        .page-header {
+            text-align: center;
+            padding: 40px 0;
+            margin-bottom: 40px;
+        }
+
+        .badge-advanced {
+            background: linear-gradient(135deg, var(--advanced-color), #1565c0);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .page-header h1 { font-size: 2rem; margin-bottom: 15px; }
+
+        .content-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 35px;
+            margin-bottom: 30px;
+        }
+
+        .content-section h2 {
+            color: var(--primary);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.4rem;
+        }
+
+        .content-section h3 {
+            color: var(--secondary);
+            margin: 25px 0 15px;
+            font-size: 1.15rem;
+        }
+
+        .trouble-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .trouble-header {
+            display: flex;
+            align-items: center;
+            padding: 20px 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            gap: 15px;
+        }
+
+        .trouble-header:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .trouble-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .trouble-icon.critical { background: rgba(255, 82, 82, 0.2); color: var(--danger); }
+        .trouble-icon.warning { background: rgba(255, 193, 7, 0.2); color: var(--warning); }
+        .trouble-icon.info { background: rgba(33, 150, 243, 0.2); color: var(--advanced-color); }
+
+        .trouble-title { flex: 1; }
+        .trouble-title h4 { margin: 0 0 5px; font-size: 1.1rem; }
+        .trouble-title span { color: var(--text-secondary); font-size: 0.9rem; }
+
+        .trouble-content {
+            padding: 0 25px 25px;
+            display: none;
+        }
+
+        .trouble-card.open .trouble-content { display: block; }
+        .trouble-card.open .trouble-header { border-bottom: 1px solid var(--border-color); }
+
+        .solution-step {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(0, 217, 255, 0.05);
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .cause-list {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+        }
+
+        .cause-list li {
+            padding: 10px 0;
+            display: flex;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .cause-list li:last-child { border-bottom: none; }
+        .cause-list li i { color: var(--secondary); margin-top: 4px; }
+
+        .flowchart {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .flow-step:last-child { margin-bottom: 0; }
+
+        .flow-box {
+            flex: 1;
+            padding: 15px 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .flow-box.question { background: rgba(33, 150, 243, 0.2); border: 1px solid var(--advanced-color); }
+        .flow-box.action { background: rgba(0, 200, 83, 0.2); border: 1px solid var(--success); }
+        .flow-box.result { background: rgba(255, 152, 0, 0.2); border: 1px solid var(--secondary); }
+
+        .flow-arrow { color: var(--text-secondary); font-size: 1.5rem; }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn-nav {
+            padding: 12px 25px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-nav:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-primary-nav {
+            background: linear-gradient(135deg, var(--advanced-color), #1565c0);
+            border: none;
+        }
+
+        .btn-primary-nav:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(33, 150, 243, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <span class="badge-advanced"><i class="fas fa-graduation-cap me-2"></i>Advanced Level</span>
+            <h1><i class="fas fa-search me-3"></i>การแก้ไขปัญหา Hot Runner</h1>
+            <p class="text-secondary">Systematic Troubleshooting Guide</p>
+        </div>
+
+        <!-- Section 1: Methodology -->
+        <div class="content-section">
+            <h2><i class="fas fa-project-diagram"></i> วิธีการแก้ปัญหาอย่างเป็นระบบ</h2>
+            
+            <p>การแก้ปัญหา Hot Runner อย่างมีประสิทธิภาพต้องใช้แนวทาง Systematic เพื่อหาสาเหตุที่แท้จริง (Root Cause)</p>
+
+            <h3>5 Why Analysis</h3>
+            <div class="flowchart">
+                <div class="flow-step">
+                    <div class="flow-box question"><strong>ปัญหา:</strong> ชิ้นงานมี Short Shot</div>
+                </div>
+                <div class="flow-step">
+                    <span class="flow-arrow"><i class="fas fa-arrow-down"></i></span>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-box action">Why 1: พลาสติกไหลไม่เต็ม</div>
+                </div>
+                <div class="flow-step">
+                    <span class="flow-arrow"><i class="fas fa-arrow-down"></i></span>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-box action">Why 2: อุณหภูมิ Nozzle ต่ำ</div>
+                </div>
+                <div class="flow-step">
+                    <span class="flow-arrow"><i class="fas fa-arrow-down"></i></span>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-box action">Why 3: Heater ทำงานไม่เต็มที่</div>
+                </div>
+                <div class="flow-step">
+                    <span class="flow-arrow"><i class="fas fa-arrow-down"></i></span>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-box action">Why 4: Heater Resistance สูงผิดปกติ</div>
+                </div>
+                <div class="flow-step">
+                    <span class="flow-arrow"><i class="fas fa-arrow-down"></i></span>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-box result"><strong>Root Cause:</strong> Heater เสื่อมสภาพ ต้องเปลี่ยน</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Common Problems -->
+        <div class="content-section">
+            <h2><i class="fas fa-exclamation-triangle"></i> ปัญหาที่พบบ่อยและวิธีแก้ไข</h2>
+
+            <!-- Problem 1 -->
+            <div class="trouble-card open">
+                <div class="trouble-header" onclick="toggleCard(this)">
+                    <div class="trouble-icon critical"><i class="fas fa-burn"></i></div>
+                    <div class="trouble-title">
+                        <h4>Material Degradation / เศษไหม้</h4>
+                        <span>ชิ้นงานมีจุดดำ, สีเปลี่ยน, กลิ่นเหม็น</span>
+                    </div>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="trouble-content">
+                    <h4>สาเหตุที่เป็นไปได้:</h4>
+                    <ul class="cause-list">
+                        <li><i class="fas fa-arrow-right"></i> อุณหภูมิสูงเกินไป</li>
+                        <li><i class="fas fa-arrow-right"></i> Residence Time นานเกินไป</li>
+                        <li><i class="fas fa-arrow-right"></i> Dead Spots ใน Flow Channel</li>
+                        <li><i class="fas fa-arrow-right"></i> พลาสติกค้างจากการเปลี่ยนสี</li>
+                    </ul>
+                    
+                    <h4>วิธีแก้ไข:</h4>
+                    <div class="solution-step">
+                        <div class="step-number">1</div>
+                        <div>ตรวจสอบและลดอุณหภูมิทุกโซน 5-10°C</div>
+                    </div>
+                    <div class="solution-step">
+                        <div class="step-number">2</div>
+                        <div>ตรวจสอบ Cycle Time - ลด Cooling Time ถ้าเป็นไปได้</div>
+                    </div>
+                    <div class="solution-step">
+                        <div class="step-number">3</div>
+                        <div>Purge ระบบด้วยวัสดุทำความสะอาด</div>
+                    </div>
+                    <div class="solution-step">
+                        <div class="step-number">4</div>
+                        <div>ถ้ายังไม่หาย ถอด Manifold ทำความสะอาด Flow Channels</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problem 2 -->
+            <div class="trouble-card">
+                <div class="trouble-header" onclick="toggleCard(this)">
+                    <div class="trouble-icon warning"><i class="fas fa-tint"></i></div>
+                    <div class="trouble-title">
+                        <h4>Drooling / พลาสติกไหลย้อย</h4>
+                        <span>พลาสติกไหลออกจาก Gate เมื่อเปิดแม่พิมพ์</span>
+                    </div>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="trouble-content">
+                    <h4>สาเหตุที่เป็นไปได้:</h4>
+                    <ul class="cause-list">
+                        <li><i class="fas fa-arrow-right"></i> อุณหภูมิ Tip สูงเกินไป</li>
+                        <li><i class="fas fa-arrow-right"></i> Back Pressure สูงเกินไป</li>
+                        <li><i class="fas fa-arrow-right"></i> Decompression ไม่เพียงพอ</li>
+                        <li><i class="fas fa-arrow-right"></i> Gate ขนาดใหญ่เกินไป</li>
+                    </ul>
+                    
+                    <h4>วิธีแก้ไข:</h4>
+                    <div class="solution-step">
+                        <div class="step-number">1</div>
+                        <div>ลดอุณหภูมิ Nozzle Tip 5-15°C</div>
+                    </div>
+                    <div class="solution-step">
+                        <div class="step-number">2</div>
+                        <div>เพิ่ม Suck Back / Decompression</div>
+                    </div>
+                    <div class="solution-step">
+                        <div class="step-number">3</div>
+                        <div>ลด Back Pressure</div>
+                    </div>
+                    <div class="solution-step">
+                        <div class="step-number">4</div>
+                        <div>พิจารณาเปลี่ยน Tip ขนาดเล็กลง</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problem 3 -->
+            <div class="trouble-card">
+                <div class="trouble-header" onclick="toggleCard(this)">
+                    <div class="trouble-icon info"><i class="fas fa-snowflake"></i></div>
+                    <div class="trouble-title">
+                        <h4>Cold Slug / Gate Freeze</h4>
+                        <span>พลาสติกแข็งที่ Gate, ชิ้นงานไม่เต็ม</span>
+                    </div>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="trouble-content">
+                    <h4>สาเหตุที่เป็นไปได้:</h4>
+                    <ul class="cause-list">
+                        <li><i class="fas fa-arrow-right"></i> อุณหภูมิ Tip ต่ำเกินไป</li>
+                        <li><i class="fas fa-arrow-right"></i> Cooling รอบ Gate เย็นเกินไป</li>
+                        <li><i class="fas fa-arrow-right"></i> Cycle Time นานเกินไป</li>
+                        <li><i class="fas fa-arrow-right"></i> Tip สึกหรอหรือเสียหาย</li>
+                    </ul>
+                    
+                    <h4>วิธีแก้ไข:</h4>
+                    <div class="solution-step">
+                        <div class="step-number">1</div>
+                        <div>เพิ่มอุณหภูมิ Nozzle Tip 10-20°C</div>
+                    </div>
+                    <div class="solution-step">
+                        <div class="step-number">2</div>
+                        <div>ตรวจสอบ Cooling Channel - ลดการไหลของน้ำรอบ Gate</div>
+                    </div>
+                    <div class="solution-step">
+                        <div class="step-number">3</div>
+                        <div>ลด Cycle Time ถ้าเป็นไปได้</div>
+                    </div>
+                    <div class="solution-step">
+                        <div class="step-number">4</div>
+                        <div>ตรวจสอบและเปลี่ยน Tip ถ้าจำเป็น</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problem 4 -->
+            <div class="trouble-card">
+                <div class="trouble-header" onclick="toggleCard(this)">
+                    <div class="trouble-icon critical"><i class="fas fa-water"></i></div>
+                    <div class="trouble-title">
+                        <h4>Material Leakage / พลาสติกรั่ว</h4>
+                        <span>พลาสติกรั่วออกจากข้อต่อหรือ Seal</span>
+                    </div>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="trouble-content">
+                    <h4>สาเหตุที่เป็นไปได้:</h4>
+                    <ul class="cause-list">
+                        <li><i class="fas fa-arrow-right"></i> Seal เสียหายหรือสึกหรอ</li>
+                        <li><i class="fas fa-arrow-right"></i> Torque ไม่เพียงพอ</li>
+                        <li><i class="fas fa-arrow-right"></i> Thermal Expansion ไม่สมดุล</li>
+                        <li><i class="fas fa-arrow-right"></i> ชิ้นส่วนบิดงอหรือเสียหาย</li>
+                    </ul>
+                    
+                    <h4>วิธีแก้ไข:</h4>
+                    <div class="solution-step">
+                        <div class="step-number">1</div>
+                        <div>หยุดเครื่องและปล่อยให้เย็น</div>
+                    </div>
+                    <div class="solution-step">
+                        <div class="step-number">2</div>
+                        <div>ถอดและตรวจสอบ Seal - เปลี่ยนถ้าเสียหาย</div>
+                    </div>
+                    <div class="solution-step">
+                        <div class="step-number">3</div>
+                        <div>ขันข้อต่อตาม Torque Specification</div>
+                    </div>
+                    <div class="solution-step">
+                        <div class="step-number">4</div>
+                        <div>ตรวจสอบ Pre-load และ Thermal Expansion Gap</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-buttons">
+            <a href="module-maintenance.html" class="btn-nav">
+                <i class="fas fa-arrow-left"></i> บทก่อนหน้า: Maintenance
+            </a>
+            <a href="../../quizzes/quiz-advanced.html" class="btn-nav btn-primary-nav">
+                ทำแบบทดสอบ Advanced <i class="fas fa-clipboard-check"></i>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function toggleCard(header) {
+            const card = header.parentElement;
+            card.classList.toggle('open');
+        }
+    </script>
+</body>
+</html>
