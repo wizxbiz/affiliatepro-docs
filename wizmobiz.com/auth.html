@@ -872,6 +872,17 @@
                             <span>ประวัติการใช้งาน</span>
                         </a>
                     </div>
+                    
+                    <!-- Admin Section (hidden by default) -->
+                    <div id="adminSection" style="display: none; margin-top: 30px;">
+                        <h5 class="mb-3" style="color: #ff9800;"><i class="fas fa-shield-alt me-2"></i>Admin Panel</h5>
+                        <div class="quick-actions">
+                            <a href="admin-dashboard.html" class="quick-action-btn" style="background: linear-gradient(135deg, #ff9800, #f57c00);">
+                                <i class="fas fa-tachometer-alt"></i>
+                                <span>Admin Dashboard</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1281,6 +1292,15 @@
             // Set avatar initial
             const initial = (userData?.name || user.displayName || 'U').charAt(0).toUpperCase();
             document.getElementById('userAvatar').innerHTML = initial;
+
+            // Check if user is admin and show admin section
+            const isAdmin = userData?.role === 'admin' || 
+                          userData?.role === 'super_admin' || 
+                          user.email === 'imtthailand2019@gmail.com';
+            
+            if (isAdmin) {
+                document.getElementById('adminSection').style.display = 'block';
+            }
 
             // Calculate trial status
             if (userData?.trialExpiry) {
