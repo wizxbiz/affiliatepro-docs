@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Redirecting to Login...</title>
+    <meta http-equiv="refresh" content="0;url=auth.html?v=2.3_force_refresh" />
+</head>
+<body>
+    <p>Redirecting to latest version...</p>
+    <script>
+        // Force redirect with timestamp to bust cache
+        window.location.href = 'auth.html?v=' + new Date().getTime();
+    </script>
+</body>
+</html>
