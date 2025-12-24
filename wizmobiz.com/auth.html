@@ -259,26 +259,27 @@
         .form-control {
             width: 100%;
             padding: 15px 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
+            background-color: #1a1a2e !important;
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 12px;
             color: #ffffff !important;
+            caret-color: #00d9ff;
             font-family: 'Kanit', sans-serif;
-            font-size: 1rem;
+            font-size: 1.1rem;
             transition: all 0.3s ease;
         }
 
         .form-control:focus {
             outline: none;
             border-color: var(--primary);
-            background: rgba(0, 217, 255, 0.05);
-            box-shadow: 0 0 0 3px rgba(0, 217, 255, 0.1);
+            background-color: #252540 !important;
+            box-shadow: 0 0 0 3px rgba(0, 217, 255, 0.2);
             color: #ffffff !important;
         }
 
         .form-control::placeholder {
-            color: var(--text-secondary);
-            opacity: 0.7;
+            color: #888888 !important;
+            opacity: 1;
         }
 
         /* Fix for Chrome Autofill */
@@ -286,9 +287,10 @@
         input:-webkit-autofill:hover, 
         input:-webkit-autofill:focus, 
         input:-webkit-autofill:active {
-            -webkit-box-shadow: 0 0 0 30px #12121a inset !important;
+            -webkit-box-shadow: 0 0 0 30px #1a1a2e inset !important;
             -webkit-text-fill-color: #ffffff !important;
             transition: background-color 5000s ease-in-out 0s;
+            caret-color: #ffffff;
         }
 
         .input-group {
