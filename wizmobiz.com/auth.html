@@ -881,6 +881,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
+        // DEBUG: Show which version is loaded
+        console.log('Auth.html v3.0 loaded at:', new Date().toISOString());
+        
         // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyD92Lw0vd32ce6m4J2nBVBWZRYBy4aDB_s",
@@ -890,6 +893,9 @@
             messagingSenderId: "408718656984",
             appId: "1:408718656984:web:76e9cc7a89e9b4c9d5a8ab" 
         };
+
+        // DEBUG: Log config being used
+        console.log('Firebase API Key:', firebaseConfig.apiKey);
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
@@ -1120,8 +1126,11 @@
 
             } catch (error) {
                 console.error('Login error:', error);
+                console.error('Error code:', error.code);
+                console.error('Error message:', error.message);
+                
                 // Show full error details for debugging
-                let errorMessage = `เกิดข้อผิดพลาด (${error.code}): ${error.message}`;
+                let errorMessage = `เกิดข้อผิดพลาด (${error.code || 'unknown'}): ${error.message}`;
                 
                 switch (error.code) {
                     case 'auth/user-not-found':
@@ -1133,6 +1142,9 @@
                     case 'auth/invalid-email':
                         errorMessage = 'รูปแบบอีเมลไม่ถูกต้อง';
                         break;
+                    case 'auth/invalid-credential':
+                        errorMessage = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง';
+                        break;
                     case 'auth/too-many-requests':
                         errorMessage = 'มีการพยายามเข้าสู่ระบบหลายครั้งเกินไป กรุณารอสักครู่ 5-10 นาที';
                         break;
@@ -1141,6 +1153,10 @@
                         break;
                     case 'auth/multi-factor-auth-required':
                         errorMessage = 'ระบบต้องการการยืนยันตัวตน 2 ขั้นตอน (กรุณาติดต่อแอดมิน)';
+                        break;
+                    case 'auth/api-key-not-valid.-please-pass-a-valid-api-key.':
+                    case 'auth/api-key-not-valid':
+                        errorMessage = 'API Key ไม่ถูกต้อง - กรุณากด Ctrl+F5 เพื่อรีเฟรชหน้าเว็บ';
                         break;
                 }
                 showAlert(errorMessage);
