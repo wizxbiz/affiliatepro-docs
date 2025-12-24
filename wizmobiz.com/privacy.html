@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="นโยบายความเป็นส่วนตัว - วิธีที่ Wizmobiz เก็บรวบรวมและใช้ข้อมูลของคุณ">
+    <title>นโยบายความเป็นส่วนตัว | Wizmobiz</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --line-green: #00B900;
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --dark-color: #2D3436;
+            --light-color: #F8F9FA;
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.98);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 2px 30px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--line-green), var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-link {
+            color: var(--dark-color);
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover { color: var(--line-green); background: rgba(0, 185, 0, 0.1); }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--line-green) 0%, #06C755 100%);
+            padding: 120px 0 60px;
+            color: white;
+            text-align: center;
+        }
+
+        .hero-section h1 { font-size: 2.5rem; font-weight: 700; }
+
+        .content-section { padding: 60px 0; }
+
+        .content-card {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .content-card h2 {
+            color: var(--line-green);
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin: 30px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-color);
+        }
+
+        .content-card h2:first-child { margin-top: 0; }
+
+        .content-card p, .content-card li {
+            color: #555;
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .content-card ul { padding-left: 20px; }
+        .content-card li { margin-bottom: 10px; }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(0, 185, 0, 0.1), rgba(6, 199, 85, 0.1));
+            border-left: 4px solid var(--line-green);
+            padding: 20px 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .data-table th, .data-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .data-table th {
+            background: var(--light-color);
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .data-table tr:hover { background: rgba(0, 185, 0, 0.05); }
+
+        .badge-yes {
+            background: var(--line-green);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .badge-no {
+            background: #e0e0e0;
+            color: #666;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .last-updated {
+            text-align: center;
+            color: #888;
+            margin-top: 30px;
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            background: var(--dark-color);
+            color: white;
+            padding: 40px 0 20px;
+            text-align: center;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            margin: 0 15px;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover { color: var(--line-green); }
+
+        .footer-copyright { opacity: 0.7; margin: 0; }
+
+        @media (max-width: 768px) {
+            .content-card { padding: 30px 20px; }
+            .hero-section h1 { font-size: 2rem; }
+            .data-table { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fab fa-line me-2"></i>Wizmobiz
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">หน้าแรก</a></li>
+                    <li class="nav-item"><a class="nav-link" href="injection-molding.html">LINE Bot</a></li>
+                    <li class="nav-item"><a class="nav-link" href="calculator.html">เครื่องคิดเลข</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">เกี่ยวกับเรา</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1>🔒 นโยบายความเป็นส่วนตัว</h1>
+            <p>Privacy Policy</p>
+        </div>
+    </section>
+
+    <!-- Content Section -->
+    <section class="content-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="content-card">
+                        
+                        <div class="highlight-box">
+                            <strong>🛡️ ความเป็นส่วนตัวของคุณสำคัญ:</strong> 
+                            Wizmobiz มุ่งมั่นในการปกป้องข้อมูลส่วนบุคคลของผู้ใช้ทุกท่าน 
+                            เอกสารนี้อธิบายวิธีการเก็บรวบรวม ใช้ และปกป้องข้อมูลของคุณ
+                        </div>
+
+                        <h2>1. ข้อมูลที่เราเก็บรวบรวม</h2>
+                        
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ประเภทข้อมูล</th>
+                                    <th>รายละเอียด</th>
+                                    <th>จัดเก็บ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>ข้อมูลจาก LINE</strong></td>
+                                    <td>User ID, Display Name, Profile Picture</td>
+                                    <td><span class="badge-yes">✓</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>ข้อความแชท</strong></td>
+                                    <td>คำถามและคำตอบกับ AI</td>
+                                    <td><span class="badge-yes">✓</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>ข้อมูลการใช้งาน</strong></td>
+                                    <td>ฟีเจอร์ที่ใช้, เวลาเข้าใช้งาน</td>
+                                    <td><span class="badge-yes">✓</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>ข้อมูลการผลิต</strong></td>
+                                    <td>พารามิเตอร์ที่บันทึกใน Logbook</td>
+                                    <td><span class="badge-yes">✓</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>ที่อยู่/เบอร์โทร</strong></td>
+                                    <td>ข้อมูลส่วนตัวอื่นๆ</td>
+                                    <td><span class="badge-no">✗</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h2>2. วัตถุประสงค์การใช้ข้อมูล</h2>
+                        <ul>
+                            <li><strong>ให้บริการ:</strong> ตอบคำถาม, คำนวณ, วินิจฉัยปัญหา</li>
+                            <li><strong>ปรับปรุงบริการ:</strong> วิเคราะห์การใช้งานเพื่อพัฒนาฟีเจอร์</li>
+                            <li><strong>บันทึกข้อมูล:</strong> จัดเก็บ Digital Logbook ตามที่ผู้ใช้ร้องขอ</li>
+                            <li><strong>ติดต่อสื่อสาร:</strong> แจ้งข่าวสาร, อัปเดต, และโปรโมชั่น</li>
+                            <li><strong>ฝึกฝน AI:</strong> ใช้ข้อมูลที่ไม่ระบุตัวตนเพื่อปรับปรุง AI Model</li>
+                        </ul>
+
+                        <h2>3. การแบ่งปันข้อมูล</h2>
+                        <div class="highlight-box">
+                            <strong>⛔ เราไม่ขาย:</strong> ข้อมูลส่วนบุคคลของคุณจะไม่ถูกขายให้บุคคลที่สาม
+                        </div>
+                        <p>เราอาจแบ่งปันข้อมูลในกรณีต่อไปนี้เท่านั้น:</p>
+                        <ul>
+                            <li><strong>ผู้ให้บริการที่เชื่อถือได้:</strong> Google Cloud, Firebase, LINE (เพื่อให้บริการทำงานได้)</li>
+                            <li><strong>ตามกฎหมาย:</strong> เมื่อมีคำสั่งจากหน่วยงานราชการที่มีอำนาจ</li>
+                            <li><strong>ความยินยอม:</strong> เมื่อคุณให้ความยินยอมโดยชัดแจ้ง</li>
+                        </ul>
+
+                        <h2>4. การรักษาความปลอดภัย</h2>
+                        <ul>
+                            <li>🔐 ข้อมูลถูกเข้ารหัสระหว่างการส่งผ่าน (HTTPS/TLS)</li>
+                            <li>☁️ จัดเก็บบน Firebase Cloud ที่มีมาตรฐาน SOC 2</li>
+                            <li>🛡️ มีการควบคุมการเข้าถึงระดับผู้ใช้</li>
+                            <li>📋 ตรวจสอบและอัปเดตมาตรการความปลอดภัยอย่างสม่ำเสมอ</li>
+                        </ul>
+
+                        <h2>5. ระยะเวลาการเก็บรักษา</h2>
+                        <ul>
+                            <li><strong>ข้อมูลแชท:</strong> 90 วัน (หรือนานกว่าสำหรับ Premium)</li>
+                            <li><strong>Digital Logbook:</strong> ตลอดอายุการใช้งานบัญชี</li>
+                            <li><strong>ข้อมูลการใช้งาน:</strong> 1 ปี</li>
+                        </ul>
+                        <p>หลังจากระยะเวลาดังกล่าว ข้อมูลจะถูกลบหรือทำให้ไม่ระบุตัวตนโดยอัตโนมัติ</p>
+
+                        <h2>6. สิทธิ์ของคุณ</h2>
+                        <p>ตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล (PDPA) คุณมีสิทธิ์:</p>
+                        <ul>
+                            <li>✅ <strong>เข้าถึง:</strong> ขอดูข้อมูลที่เราเก็บรวบรวมเกี่ยวกับคุณ</li>
+                            <li>✅ <strong>แก้ไข:</strong> ขอแก้ไขข้อมูลที่ไม่ถูกต้อง</li>
+                            <li>✅ <strong>ลบ:</strong> ขอลบข้อมูลส่วนบุคคลของคุณ</li>
+                            <li>✅ <strong>คัดค้าน:</strong> คัดค้านการใช้ข้อมูลเพื่อการตลาด</li>
+                            <li>✅ <strong>โอนย้าย:</strong> ขอรับข้อมูลในรูปแบบที่อ่านได้ด้วยเครื่อง</li>
+                        </ul>
+                        <p>หากต้องการใช้สิทธิ์เหล่านี้ ติดต่อเราผ่าน LINE</p>
+
+                        <h2>7. คุกกี้และเทคโนโลยีติดตาม</h2>
+                        <p>เว็บไซต์ของเราอาจใช้คุกกี้เพื่อ:</p>
+                        <ul>
+                            <li>จดจำการตั้งค่าของคุณ</li>
+                            <li>วิเคราะห์การใช้งานเว็บไซต์ (Google Analytics)</li>
+                            <li>ปรับปรุงประสบการณ์ผู้ใช้</li>
+                        </ul>
+                        <p>คุณสามารถปิดการใช้งานคุกกี้ได้ในการตั้งค่าเบราว์เซอร์</p>
+
+                        <h2>8. การติดต่อ</h2>
+                        <p>หากมีคำถามเกี่ยวกับนโยบายความเป็นส่วนตัว หรือต้องการใช้สิทธิ์:</p>
+                        <ul>
+                            <li><strong>LINE:</strong> <a href="https://lin.ee/TipxyCa" target="_blank" rel="noopener">@wizmobiz</a></li>
+                            <li><strong>Website:</strong> <a href="index.html">wizmobiz.com</a></li>
+                        </ul>
+
+                        <h2>9. การเปลี่ยนแปลงนโยบาย</h2>
+                        <p>เราอาจปรับปรุงนโยบายนี้เป็นครั้งคราว การเปลี่ยนแปลงที่สำคัญจะแจ้งผ่าน LINE Official Account</p>
+
+                        <p class="last-updated">อัปเดตล่าสุด: 8 ธันวาคม 2025</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links mb-3">
+                <a href="index.html">หน้าแรก</a>
+                <a href="about.html">เกี่ยวกับเรา</a>
+                <a href="terms.html">ข้อกำหนด</a>
+                <a href="privacy.html">นโยบายความเป็นส่วนตัว</a>
+            </div>
+            <p class="footer-copyright">© 2025 Wizmobiz by ครูวิทคับ. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
