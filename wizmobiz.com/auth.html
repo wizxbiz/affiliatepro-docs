@@ -1102,7 +1102,7 @@
 
             } catch (error) {
                 console.error('Login error:', error);
-                let errorMessage = 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ';
+                let errorMessage = 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ: ' + error.message;
                 
                 switch (error.code) {
                     case 'auth/user-not-found':
@@ -1116,6 +1116,9 @@
                         break;
                     case 'auth/too-many-requests':
                         errorMessage = 'มีการพยายามเข้าสู่ระบบหลายครั้งเกินไป กรุณารอสักครู่';
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMessage = 'การเชื่อมต่ออินเทอร์เน็ตขัดข้อง กรุณาตรวจสอบการเชื่อมต่อ';
                         break;
                 }
                 showAlert(errorMessage);
