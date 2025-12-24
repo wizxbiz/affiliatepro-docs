@@ -4,3 +4,4 @@ backup_local/
 # OS/editor noise
 .DS_Store
 Thumbs.db
+node_modules
