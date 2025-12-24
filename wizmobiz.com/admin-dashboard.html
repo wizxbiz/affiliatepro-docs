@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wizmobiz Super Admin Dashboard</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+
+    <style>
+        :root {
+            --primary: #00d9ff;
+            --secondary: #1a1a2e;
+            --bg-dark: #0a0a0f;
+            --bg-card: #12121a;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --success: #00c853;
+            --warning: #ff9800;
+            --danger: #ff5252;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 250px;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-item {
+            margin-bottom: 10px;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            padding: 12px 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(0, 217, 255, 0.1);
+            color: var(--primary);
+        }
+
+        .nav-link i { width: 20px; }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        /* Stats Cards */
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-info h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .stat-info p {
+            color: var(--text-secondary);
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        /* Tables */
+        .table-container {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            margin-top: 30px;
+        }
+
+        .table {
+            color: var(--text-primary);
+            margin-top: 20px;
+        }
+
+        .table th {
+            background: transparent;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 500;
+        }
+
+        .table td {
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-active { background: rgba(0, 200, 83, 0.2); color: var(--success); }
+        .status-expired { background: rgba(255, 82, 82, 0.2); color: var(--danger); }
+        .status-trial { background: rgba(255, 152, 0, 0.2); color: var(--warning); }
+
+        /* Search & Filter */
+        .search-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 10px 15px;
+            border-radius: 10px;
+            width: 300px;
+        }
+
+        .search-box:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+            outline: none;
+            color: var(--text-primary);
+        }
+
+        /* Loading Overlay */
+        #loadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0, 217, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay">
+        <div class="text-center">
+            <div class="spinner mb-3"></div>
+            <h5>กำลังโหลดข้อมูล...</h5>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <i class="fas fa-shield-alt"></i> Super Admin
+        </div>
+        <nav>
+            <a href="#" class="nav-link active" onclick="switchTab('dashboard')">
+                <i class="fas fa-chart-line"></i> ภาพรวม
+            </a>
+            <a href="#" class="nav-link" onclick="switchTab('users')">
+                <i class="fas fa-users"></i> จัดการผู้ใช้
+            </a>
+            <a href="#" class="nav-link" onclick="switchTab('activity')">
+                <i class="fas fa-history"></i> ประวัติการใช้งาน
+            </a>
+            <a href="#" class="nav-link" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold">Dashboard</h2>
+                <p class="text-secondary">ยินดีต้อนรับ, <span id="adminName">Admin</span></p>
+            </div>
+            <div class="d-flex gap-3">
+                <button class="btn btn-outline-light" onclick="refreshData()">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <a href="index.html" class="btn btn-primary">
+                    <i class="fas fa-home me-2"></i> ไปหน้าเว็บหลัก
+                </a>
+            </div>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="tab-dashboard">
+            <!-- Stats Row -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: rgba(0, 217, 255, 0.1); color: var(--primary);">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalUsers">0</h3>
+                            <p>ผู้ใช้ทั้งหมด</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: rgba(0, 200, 83, 0.1); color: var(--success);">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="activeTrials">0</h3>
+                            <p>ทดลองใช้ (Active)</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: rgba(255, 82, 82, 0.1); color: var(--danger);">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="expiredTrials">0</h3>
+                            <p>หมดอายุแล้ว</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: rgba(255, 152, 0, 0.1); color: var(--warning);">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalAdmins">0</h3>
+                            <p>ผู้ดูแลระบบ</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Users Table -->
+            <div class="table-container">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="mb-0">ผู้ใช้งานล่าสุด</h4>
+                    <button class="btn btn-sm btn-outline-primary" onclick="switchTab('users')">ดูทั้งหมด</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ผู้ใช้งาน</th>
+                                <th>สถานะ</th>
+                                <th>วันที่สมัคร</th>
+                                <th>เข้าใช้งานล่าสุด</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentUsersTable">
+                            <!-- Data will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Tab -->
+        <div id="tab-users" style="display: none;">
+            <div class="table-container mt-0">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                    <h4 class="mb-0">จัดการผู้ใช้งาน</h4>
+                    <div class="d-flex gap-2">
+                        <input type="text" class="search-box" id="userSearch" placeholder="ค้นหาชื่อ หรือ อีเมล..." onkeyup="filterUsers()">
+                        <select class="form-select bg-dark text-light border-secondary" style="width: 150px;" id="statusFilter" onchange="filterUsers()">
+                            <option value="all">ทั้งหมด</option>
+                            <option value="active">ใช้งานอยู่</option>
+                            <option value="expired">หมดอายุ</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Avatar</th>
+                                <th>ชื่อ-นามสกุล</th>
+                                <th>อีเมล</th>
+                                <th>สถานะ</th>
+                                <th>วันหมดอายุ</th>
+                                <th>จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allUsersTable">
+                            <!-- Data will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Tab -->
+        <div id="tab-activity" style="display: none;">
+            <div class="table-container mt-0">
+                <h4 class="mb-4">ประวัติการใช้งานระบบ</h4>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>เวลา</th>
+                                <th>ผู้ใช้งาน</th>
+                                <th>กิจกรรม</th>
+                                <th>รายละเอียด</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activityTable">
+                            <!-- Data will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCZaAMkF8dgIEQIwM2zTkPinmMupNqWKmQ",
+            authDomain: "appinjproject.firebaseapp.com",
+            projectId: "appinjproject",
+            storageBucket: "appinjproject.firebasestorage.app",
+            messagingSenderId: "390622431920",
+            appId: "1:390622431920:web:76e9cc7a89e9b4c9d5a8ab"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Global Data
+        let allUsers = [];
+        let currentUser = null;
+
+        // Check Admin Auth
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            currentUser = user;
+            
+            // Check if user is admin
+            try {
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                const userData = userDoc.data();
+                
+                // Simple Admin Check (Email or Role)
+                const isAdmin = userData?.role === 'admin' || 
+                              userData?.role === 'super_admin' || 
+                              user.email === 'imtthailand2019@gmail.com';
+
+                if (!isAdmin) {
+                    alert('คุณไม่มีสิทธิ์เข้าถึงหน้านี้');
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                document.getElementById('adminName').textContent = userData?.name || user.email;
+                loadDashboardData();
+
+            } catch (error) {
+                console.error('Auth check error:', error);
+                alert('เกิดข้อผิดพลาดในการตรวจสอบสิทธิ์');
+                window.location.href = 'auth.html';
+            }
+        });
+
+        // Load Dashboard Data
+        async function loadDashboardData() {
+            try {
+                // Fetch Users
+                const usersSnapshot = await db.collection('users').orderBy('createdAt', 'desc').get();
+                allUsers = [];
+                
+                let stats = {
+                    total: 0,
+                    active: 0,
+                    expired: 0,
+                    admins: 0
+                };
+
+                usersSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    data.id = doc.id;
+                    allUsers.push(data);
+
+                    // Calculate Stats
+                    stats.total++;
+                    if (data.role === 'admin' || data.role === 'super_admin') stats.admins++;
+                    
+                    // Check Trial Status
+                    if (data.trialExpiry) {
+                        const expiry = data.trialExpiry.toDate();
+                        if (expiry > new Date()) {
+                            stats.active++;
+                        } else {
+                            stats.expired++;
+                        }
+                    }
+                });
+
+                // Update UI Stats
+                document.getElementById('totalUsers').textContent = stats.total;
+                document.getElementById('activeTrials').textContent = stats.active;
+                document.getElementById('expiredTrials').textContent = stats.expired;
+                document.getElementById('totalAdmins').textContent = stats.admins;
+
+                // Render Tables
+                renderRecentUsers();
+                renderAllUsers(allUsers);
+                loadActivityLog();
+
+                document.getElementById('loadingOverlay').style.display = 'none';
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+                alert('เกิดข้อผิดพลาดในการโหลดข้อมูล');
+            }
+        }
+
+        // Render Recent Users
+        function renderRecentUsers() {
+            const tbody = document.getElementById('recentUsersTable');
+            tbody.innerHTML = '';
+            
+            allUsers.slice(0, 5).forEach(user => {
+                const status = getUserStatus(user);
+                const row = `
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+                                    ${(user.name || 'U').charAt(0).toUpperCase()}
+                                </div>
+                                <div>
+                                    <div class="fw-bold">${user.name || 'ไม่ระบุชื่อ'}</div>
+                                    <div class="small text-secondary">${user.email}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${status}</td>
+                        <td>${formatDate(user.createdAt)}</td>
+                        <td>${formatDate(user.lastLoginAt)}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // Render All Users
+        function renderAllUsers(users) {
+            const tbody = document.getElementById('allUsersTable');
+            tbody.innerHTML = '';
+
+            users.forEach(user => {
+                const status = getUserStatus(user);
+                const expiryDate = user.trialExpiry ? formatDate(user.trialExpiry) : '-';
+                
+                const row = `
+                    <tr>
+                        <td>
+                            <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                ${(user.name || 'U').charAt(0).toUpperCase()}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="fw-bold">${user.name || 'ไม่ระบุชื่อ'}</div>
+                        </td>
+                        <td>${user.email}</td>
+                        <td>${status}</td>
+                        <td>${expiryDate}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-info" onclick="viewUser('${user.id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-warning" onclick="toggleAdmin('${user.id}', '${user.role}')">
+                                <i class="fas fa-user-shield"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // Load Activity Log
+        async function loadActivityLog() {
+            try {
+                const snapshot = await db.collection('user_activity')
+                    .orderBy('timestamp', 'desc')
+                    .limit(20)
+                    .get();
+
+                const tbody = document.getElementById('activityTable');
+                tbody.innerHTML = '';
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const user = allUsers.find(u => u.id === data.userId);
+                    const userName = user ? user.name : 'Unknown User';
+
+                    const row = `
+                        <tr>
+                            <td>${formatDate(data.timestamp)}</td>
+                            <td>${userName}</td>
+                            <td><span class="badge bg-secondary">${data.action}</span></td>
+                            <td class="text-secondary small">${JSON.stringify(data.details || {})}</td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+            } catch (error) {
+                console.error('Error loading activity:', error);
+            }
+        }
+
+        // Helper: Get User Status Badge
+        function getUserStatus(user) {
+            if (user.role === 'admin' || user.role === 'super_admin') {
+                return '<span class="status-badge bg-info text-white">Admin</span>';
+            }
+            
+            if (user.trialExpiry) {
+                const expiry = user.trialExpiry.toDate();
+                if (expiry > new Date()) {
+                    const daysLeft = Math.ceil((expiry - new Date()) / (1000 * 60 * 60 * 24));
+                    return `<span class="status-badge status-trial">Trial (${daysLeft} วัน)</span>`;
+                } else {
+                    return '<span class="status-badge status-expired">หมดอายุ</span>';
+                }
+            }
+            return '<span class="status-badge bg-secondary">ทั่วไป</span>';
+        }
+
+        // Helper: Format Date
+        function formatDate(timestamp) {
+            if (!timestamp) return '-';
+            // Handle Firestore Timestamp or Date object
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toLocaleDateString('th-TH', {
+                day: '2-digit', month: '2-digit', year: '2-digit',
+                hour: '2-digit', minute: '2-digit'
+            });
+        }
+
+        // Filter Users
+        function filterUsers() {
+            const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            const filtered = allUsers.filter(user => {
+                const matchesSearch = (user.name || '').toLowerCase().includes(searchTerm) || 
+                                    (user.email || '').toLowerCase().includes(searchTerm);
+                
+                let matchesStatus = true;
+                if (statusFilter === 'admin') {
+                    matchesStatus = user.role === 'admin' || user.role === 'super_admin';
+                } else if (statusFilter === 'active') {
+                    matchesStatus = user.trialExpiry && user.trialExpiry.toDate() > new Date();
+                } else if (statusFilter === 'expired') {
+                    matchesStatus = user.trialExpiry && user.trialExpiry.toDate() <= new Date();
+                }
+
+                return matchesSearch && matchesStatus;
+            });
+
+            renderAllUsers(filtered);
+        }
+
+        // Toggle Admin Role
+        async function toggleAdmin(userId, currentRole) {
+            if (!confirm('คุณต้องการเปลี่ยนสิทธิ์ผู้ใช้งานนี้ใช่หรือไม่?')) return;
+
+            const newRole = (currentRole === 'admin') ? 'user' : 'admin';
+            
+            try {
+                await db.collection('users').doc(userId).update({
+                    role: newRole
+                });
+                alert('อัพเดทสิทธิ์เรียบร้อยแล้ว');
+                loadDashboardData(); // Reload
+            } catch (error) {
+                console.error('Error updating role:', error);
+                alert('เกิดข้อผิดพลาด');
+            }
+        }
+
+        // Switch Tabs
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.getElementById('tab-dashboard').style.display = 'none';
+            document.getElementById('tab-users').style.display = 'none';
+            document.getElementById('tab-activity').style.display = 'none';
+            
+            // Show selected
+            document.getElementById(`tab-${tabName}`).style.display = 'block';
+            
+            // Update Sidebar Active State
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        // Refresh Data
+        function refreshData() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            loadDashboardData();
+        }
+
+        // Logout
+        function logout() {
+            auth.signOut().then(() => {
+                window.location.href = 'auth.html';
+            });
+        }
+    </script>
+</body>
+</html>
