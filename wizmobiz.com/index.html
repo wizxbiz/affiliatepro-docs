@@ -64,6 +64,20 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            color: #667eea; /* Fallback for Edge */
+        }
+
+        /* Fix for Edge: ensure all nav items are visible */
+        .navbar-nav {
+            display: flex !important;
+            flex-wrap: nowrap;
+        }
+
+        @media (min-width: 992px) {
+            .navbar-nav .nav-item {
+                display: block !important;
+                visibility: visible !important;
+            }
         }
 
         .nav-link {
