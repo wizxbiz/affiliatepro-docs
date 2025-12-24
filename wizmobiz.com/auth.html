@@ -267,6 +267,9 @@
             font-family: 'Kanit', sans-serif;
             font-size: 1.1rem;
             transition: all 0.3s ease;
+            /* Ensure text is visible */
+            -webkit-text-fill-color: #ffffff !important;
+            opacity: 1 !important;
         }
 
         .form-control:focus {
@@ -275,11 +278,20 @@
             background-color: #252540 !important;
             box-shadow: 0 0 0 3px rgba(0, 217, 255, 0.2);
             color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+        }
+
+        /* Specific ID overrides to guarantee visibility */
+        #loginEmail, #loginPassword, 
+        #signupName, #signupEmail, #signupPhone, #signupPassword, #signupConfirmPassword {
+            color: #ffffff !important;
+            background-color: #1a1a2e !important;
         }
 
         .form-control::placeholder {
             color: #888888 !important;
             opacity: 1;
+            -webkit-text-fill-color: #888888 !important;
         }
 
         /* Fix for Chrome Autofill */
