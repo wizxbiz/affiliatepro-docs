@@ -1120,23 +1120,27 @@
 
             } catch (error) {
                 console.error('Login error:', error);
-                let errorMessage = 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ: ' + error.message;
+                // Show full error details for debugging
+                let errorMessage = `เกิดข้อผิดพลาด (${error.code}): ${error.message}`;
                 
                 switch (error.code) {
                     case 'auth/user-not-found':
-                        errorMessage = 'ไม่พบบัญชีผู้ใช้นี้ กรุณาสมัครสมาชิก';
+                        errorMessage = 'ไม่พบบัญชีผู้ใช้นี้ กรุณาสมัครสมาชิกก่อน';
                         break;
                     case 'auth/wrong-password':
-                        errorMessage = 'รหัสผ่านไม่ถูกต้อง';
+                        errorMessage = 'รหัสผ่านไม่ถูกต้อง (หากคุณเคยสมัครด้วย Google ให้กดปุ่ม Google ด้านล่าง)';
                         break;
                     case 'auth/invalid-email':
                         errorMessage = 'รูปแบบอีเมลไม่ถูกต้อง';
                         break;
                     case 'auth/too-many-requests':
-                        errorMessage = 'มีการพยายามเข้าสู่ระบบหลายครั้งเกินไป กรุณารอสักครู่';
+                        errorMessage = 'มีการพยายามเข้าสู่ระบบหลายครั้งเกินไป กรุณารอสักครู่ 5-10 นาที';
                         break;
                     case 'auth/network-request-failed':
-                        errorMessage = 'การเชื่อมต่ออินเทอร์เน็ตขัดข้อง กรุณาตรวจสอบการเชื่อมต่อ';
+                        errorMessage = 'การเชื่อมต่ออินเทอร์เน็ตขัดข้อง กรุณาตรวจสอบเน็ตของคุณ';
+                        break;
+                    case 'auth/multi-factor-auth-required':
+                        errorMessage = 'ระบบต้องการการยืนยันตัวตน 2 ขั้นตอน (กรุณาติดต่อแอดมิน)';
                         break;
                 }
                 showAlert(errorMessage);
@@ -1328,5 +1332,10 @@
             localStorage.setItem('wizmobiz_lastLogin', new Date().toISOString());
         }
     </script>
+    <!-- Version Tag -->
+    <div style="position: fixed; bottom: 10px; right: 10px; color: white; background: rgba(0,0,0,0.7); padding: 5px 10px; border-radius: 5px; font-size: 12px; z-index: 9999; pointer-events: none;">
+        v2.2 (Debug Mode) - Refreshed: <span id="loadTime"></span>
+    </div>
+    <script>document.getElementById('loadTime').textContent = new Date().toLocaleTimeString();</script>
 </body>
 </html>
