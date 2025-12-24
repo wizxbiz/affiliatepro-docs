@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Step Injection Control</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .injection-profile {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8eeff 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 2px solid #667eea;
+        }
+
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .profile-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+        }
+
+        .flow-direction {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .arrow-line {
+            font-size: 1.5rem;
+            color: #667eea;
+            margin-top: 5px;
+            letter-spacing: 2px;
+            animation: flowAnimation 2s linear infinite;
+        }
+
+        @keyframes flowAnimation {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+
+        .parameter-section {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .parameter-section:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+        }
+
+        .parameter-section h4 {
+            color: #4a5568;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 1.1rem;
+        }
+
+        .parameter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            align-items: end;
+        }
+
+        .step-param-single {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .step-param-single label {
+            font-size: 0.9rem;
+            color: #4a5568;
+            margin-bottom: 5px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .step-param-single input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            text-align: center;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .step-param-single input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            outline: none;
+            transform: scale(1.02);
+        }
+
+        .step-param-single.active {
+            animation: stepHighlight 1s ease-in-out;
+        }
+
+        @keyframes stepHighlight {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); background-color: #f0fff4; }
+            100% { transform: scale(1); }
+        }
+
+        .step-number-label {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin: 0 auto 5px;
+        }
+
+        .shot-size-section {
+            background: linear-gradient(135deg, #fff5f5 0%, #fef5e7 100%);
+            border: 2px solid #ed8936;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .shot-size-section h4 {
+            color: #c05621;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .shot-size-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 0.9rem;
+            color: #4a5568;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-group input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            outline: none;
+        }
+
+        .result-field {
+            background: linear-gradient(135deg, #fed7e2 0%, #fbb6ce 100%);
+            color: #c53030;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .pressure-input {
+            border-color: #e53e3e !important;
+        }
+
+        .speed-input {
+            border-color: #667eea !important;
+        }
+
+        .position-input {
+            border-color: #48bb78 !important;
+        }
+
+        .time-input {
+            border-color: #ed8936 !important;
+        }
+
+        .pressure-input:focus {
+            border-color: #e53e3e !important;
+            box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1) !important;
+        }
+
+        .speed-input:focus {
+            border-color: #667eea !important;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+        }
+
+        .position-input:focus {
+            border-color: #48bb78 !important;
+            box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.1) !important;
+        }
+
+        .time-input:focus {
+            border-color: #ed8936 !important;
+            box-shadow: 0 0 0 3px rgba(237, 137, 54, 0.1) !important;
+        }
+
+        .injection-step {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .injection-step:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .injection-step.active {
+            border-color: #48bb78;
+            background: linear-gradient(135deg, #f0fff4 0%, #e6fffa 100%);
+            animation: pulse 1s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .step-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .step-params {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .step-param {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .step-param label {
+            font-size: 0.8rem;
+            color: #4a5568;
+            margin-bottom: 3px;
+            font-weight: 600;
+        }
+
+        .step-param input {
+            padding: 6px 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .step-param input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+            outline: none;
+        }
+
+        .injection-graph {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            border: 1px solid #e2e8f0;
+            min-height: 320px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .step-indicator {
+            background: #48bb78;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .phase-transition {
+            position: relative;
+        }
+
+        .phase-transition::after {
+            content: '→';
+            position: absolute;
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .phase-transition:last-child::after {
+            display: none;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            font-weight: 600;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            max-width: 400px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .alert-success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #68d391;
+        }
+
+        .alert-warning {
+            background: #fefcbf;
+            color: #744210;
+            border: 1px solid #f6e05e;
+        }
+
+        .alert-info {
+            background: #bee3f8;
+            color: #2a4365;
+            border: 1px solid #63b3ed;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .summary-panel {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 5px solid #667eea;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .summary-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .summary-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .summary-label {
+            font-size: 0.9rem;
+            color: #4a5568;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .step-controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .step-params {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏭 Multi-Step Injection Control</h1>
+            <p>Advanced Injection Molding Parameter Control System</p>
+        </div>
+
+        <div class="card">
+            <div class="injection-profile">
+                <div class="profile-header">
+                    <h3>💉 การควบคุมการฉีดแบบ Multi-Step</h3>
+                    <div class="profile-controls">
+                        <button class="btn btn-sm" onclick="addInjectionStep()">+ เพิ่ม Step</button>
+                        <button class="btn btn-sm btn-warning" onclick="removeInjectionStep()">- ลด Step</button>
+                        <button class="btn btn-sm btn-success" onclick="previewProfile()">👁️ Preview</button>
+                    </div>
+                </div>
+                
+                <!-- Visual Flow Direction -->
+                <div class="flow-direction">
+                    <div class="flow-arrow">
+                        <span><strong>Direction:</strong> Nozzle → Gate → Cavity</span>
+                        <div class="arrow-line">→→→→→→→→→→</div>
+                    </div>
+                </div>
+                
+                <!-- Step Controls -->
+                <div class="step-controls" id="injectionSteps">
+                    <!-- Parameter rows will be generated here -->
+                    <div class="parameter-section">
+                        <h4>🔥 Pressure Parameters (bar)</h4>
+                        <div class="parameter-row" id="pressureRow">
+                            <!-- Pressure inputs for each step -->
+                        </div>
+                    </div>
+                    
+                    <div class="parameter-section">
+                        <h4>⚡ Speed Parameters (mm/s)</h4>
+                        <div class="parameter-row" id="speedRow">
+                            <!-- Speed inputs for each step -->
+                        </div>
+                    </div>
+                    
+                    <div class="parameter-section">
+                        <h4>📍 Position Parameters (%)</h4>
+                        <div class="parameter-row" id="positionRow">
+                            <!-- Position inputs for each step -->
+                        </div>
+                    </div>
+                    
+                    <div class="parameter-section">
+                        <h4>⏱️ Time Parameters (s)</h4>
+                        <div class="parameter-row" id="timeRow">
+                            <!-- Time inputs for each step -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shot Size Calculation -->
+                <div class="shot-size-section">
+                    <h4>📏 Shot Size Calculation</h4>
+                    <div class="shot-size-grid">
+                        <div class="form-group">
+                            <label for="partWeight">Part Weight (g)</label>
+                            <input type="number" id="partWeight" step="0.1" value="25" onchange="calculateShotSize()">
+                        </div>
+                        <div class="form-group">
+                            <label for="runnerWeight">Runner Weight (g)</label>
+                            <input type="number" id="runnerWeight" step="0.1" value="5" onchange="calculateShotSize()">
+                        </div>
+                        <div class="form-group">
+                            <label for="plasticDensity">Plastic Density (g/cm³)</label>
+                            <input type="number" id="plasticDensity" step="0.01" value="1.05" onchange="calculateShotSize()">
+                        </div>
+                        <div class="form-group">
+                            <label for="screwDiameter">Screw Diameter (mm)</label>
+                            <input type="number" id="screwDiameter" step="1" value="25" onchange="calculateShotSize()">
+                        </div>
+                        <div class="form-group">
+                            <label>Calculated Shot Size (mm)</label>
+                            <input type="number" id="calculatedShotSize" readonly class="result-field">
+                        </div>
+                        <div class="form-group">
+                            <label for="actualShotSize">Actual Shot Size (mm)</label>
+                            <input type="number" id="actualShotSize" step="0.1" onchange="updatePositionCalculations()">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Visual Graph -->
+                <div class="injection-graph">
+                    <canvas id="injectionChart" width="800" height="300"></canvas>
+                </div>
+
+                <!-- Summary Panel -->
+                <div class="summary-panel">
+                    <h4>📊 สรุปพารามิเตอร์</h4>
+                    <div class="summary-grid" id="summaryGrid">
+                        <!-- Summary items will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Buttons -->
+        <div style="text-align: center; margin: 20px 0;">
+            <button class="btn btn-success" onclick="simulateInjection()">🚀 จำลองการฉีด</button>
+            <button class="btn" onclick="resetSteps()">🔄 รีเซ็ต</button>
+            <button class="btn btn-warning" onclick="exportProfile()">📋 Export Profile</button>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let injectionSteps = 5;
+        let isSimulating = false;
+        let currentStepAnimation = 0;
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeInjectionSteps();
+        });
+
+        // Initialize injection steps
+        function initializeInjectionSteps() {
+            generateInjectionSteps();
+            updateInjectionChart();
+            updateSummary();
+        }
+
+        // Generate injection step controls with new layout
+        function generateInjectionSteps() {
+            generateParameterRows();
+            calculateShotSize();
+        }
+
+        // Generate parameter rows
+        function generateParameterRows() {
+            const pressureRow = document.getElementById('pressureRow');
+            const speedRow = document.getElementById('speedRow');
+            const positionRow = document.getElementById('positionRow');
+            const timeRow = document.getElementById('timeRow');
+            
+            // Clear existing content
+            pressureRow.innerHTML = '';
+            speedRow.innerHTML = '';
+            positionRow.innerHTML = '';
+            timeRow.innerHTML = '';
+            
+            for (let i = 1; i <= injectionSteps; i++) {
+                // Default values
+                const defaultPressure = Math.max(30, 90 - (i * 5));
+                const defaultSpeed = Math.max(20, 80 - (i * 8));
+                const defaultPosition = (i / injectionSteps) * 100;
+                const defaultTime = 0.2 + (i * 0.15);
+                
+                // Pressure input
+                const pressureDiv = document.createElement('div');
+                pressureDiv.className = 'step-param-single';
+                pressureDiv.innerHTML = `
+                    <div class="step-number-label">${i}</div>
+                    <label>Step ${i}</label>
+                    <input type="number" id="step${i}_pressure" class="pressure-input" 
+                           step="1" value="${defaultPressure}" min="10" max="200"
+                           onchange="updateInjectionChart(); updateSummary()">
+                `;
+                pressureRow.appendChild(pressureDiv);
+                
+                // Speed input
+                const speedDiv = document.createElement('div');
+                speedDiv.className = 'step-param-single';
+                speedDiv.innerHTML = `
+                    <div class="step-number-label">${i}</div>
+                    <label>Step ${i}</label>
+                    <input type="number" id="step${i}_speed" class="speed-input"
+                           step="1" value="${defaultSpeed}" min="1" max="200"
+                           onchange="updateInjectionChart(); updateSummary()">
+                `;
+                speedRow.appendChild(speedDiv);
+                
+                // Position input
+                const positionDiv = document.createElement('div');
+                positionDiv.className = 'step-param-single';
+                positionDiv.innerHTML = `
+                    <div class="step-number-label">${i}</div>
+                    <label>Step ${i}</label>
+                    <input type="number" id="step${i}_position" class="position-input"
+                           step="0.1" value="${defaultPosition.toFixed(1)}" min="0" max="100"
+                           onchange="updateInjectionChart(); updateSummary(); updatePositionCalculations()">
+                `;
+                positionRow.appendChild(positionDiv);
+                
+                // Time input
+                const timeDiv = document.createElement('div');
+                timeDiv.className = 'step-param-single';
+                timeDiv.innerHTML = `
+                    <div class="step-number-label">${i}</div>
+                    <label>Step ${i}</label>
+                    <input type="number" id="step${i}_time" class="time-input"
+                           step="0.01" value="${defaultTime.toFixed(2)}" min="0.01" max="10"
+                           onchange="updateInjectionChart(); updateSummary()">
+                `;
+                timeRow.appendChild(timeDiv);
+            }
+        }
+
+        // Calculate shot size based on part parameters
+        function calculateShotSize() {
+            const partWeight = parseFloat(document.getElementById('partWeight').value) || 0;
+            const runnerWeight = parseFloat(document.getElementById('runnerWeight').value) || 0;
+            const density = parseFloat(document.getElementById('plasticDensity').value) || 1.05;
+            const screwDiameter = parseFloat(document.getElementById('screwDiameter').value) || 25;
+            
+            if (partWeight > 0) {
+                const totalWeight = partWeight + runnerWeight; // grams
+                const volume = totalWeight / density; // cm³
+                
+                // Calculate screw area (cm²)
+                const screwArea = Math.PI * Math.pow(screwDiameter / 20, 2); // Convert mm to cm and calculate area
+                
+                // Calculate shot size (mm)
+                const shotSize = (volume / screwArea) * 10; // Convert cm to mm
+                
+                document.getElementById('calculatedShotSize').value = shotSize.toFixed(2);
+                document.getElementById('actualShotSize').value = shotSize.toFixed(2);
+                
+                updatePositionCalculations();
+            }
+        }
+
+        // Update position calculations based on shot size
+        function updatePositionCalculations() {
+            const actualShotSize = parseFloat(document.getElementById('actualShotSize').value) || 0;
+            
+            if (actualShotSize > 0) {
+                // Update position values to actual distances
+                for (let i = 1; i <= injectionSteps; i++) {
+                    const positionPercent = parseFloat(document.getElementById(`step${i}_position`).value) || 0;
+                    const actualDistance = (positionPercent / 100) * actualShotSize;
+                    
+                    // Add tooltip showing actual distance
+                    const positionInput = document.getElementById(`step${i}_position`);
+                    positionInput.title = `Actual distance: ${actualDistance.toFixed(2)} mm from start position`;
+                }
+            }
+        }
+
+        // Add injection step
+        function addInjectionStep() {
+            if (injectionSteps < 10) {
+                injectionSteps++;
+                generateInjectionSteps();
+                updateInjectionChart();
+                updateSummary();
+                showAlert(`✅ เพิ่ม Step ${injectionSteps} เรียบร้อย`, 'success');
+            } else {
+                showAlert('⚠️ สามารถเพิ่มได้สูงสุด 10 Steps', 'warning');
+            }
+        }
+
+        // Remove injection step
+        function removeInjectionStep() {
+            if (injectionSteps > 2) {
+                injectionSteps--;
+                generateInjectionSteps();
+                updateInjectionChart();
+                updateSummary();
+                showAlert(`⚠️ ลด Step เหลือ ${injectionSteps} Steps`, 'warning');
+            } else {
+                showAlert('⚠️ ต้องมีอย่างน้อย 2 Steps', 'warning');
+            }
+        }
+
+        // Update injection chart
+        function updateInjectionChart() {
+            const canvas = document.getElementById('injectionChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // Set up chart area
+            const margin = 60;
+            const chartWidth = width - 2 * margin;
+            const chartHeight = height - 2 * margin;
+            
+            // Draw background
+            ctx.fillStyle = '#f8f9fa';
+            ctx.fillRect(margin, margin, chartWidth, chartHeight);
+            
+            // Draw grid
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+            
+            // Vertical grid lines (time)
+            for (let i = 0; i <= 10; i++) {
+                const x = margin + (i / 10) * chartWidth;
+                ctx.beginPath();
+                ctx.moveTo(x, margin);
+                ctx.lineTo(x, margin + chartHeight);
+                ctx.stroke();
+            }
+            
+            // Horizontal grid lines (pressure/speed)
+            for (let i = 0; i <= 10; i++) {
+                const y = margin + (i / 10) * chartHeight;
+                ctx.beginPath();
+                ctx.moveTo(margin, y);
+                ctx.lineTo(margin + chartWidth, y);
+                ctx.stroke();
+            }
+            
+            // Collect step data
+            const stepData = [];
+            let totalTime = 0;
+            
+            for (let i = 1; i <= injectionSteps; i++) {
+                const position = parseFloat(document.getElementById(`step${i}_position`).value) || 0;
+                const speed = parseFloat(document.getElementById(`step${i}_speed`).value) || 0;
+                const pressure = parseFloat(document.getElementById(`step${i}_pressure`).value) || 0;
+                const time = parseFloat(document.getElementById(`step${i}_time`).value) || 0;
+                
+                stepData.push({
+                    step: i,
+                    position: position,
+                    speed: speed,
+                    pressure: pressure,
+                    time: time,
+                    startTime: totalTime
+                });
+                
+                totalTime += time;
+            }
+            
+            // Draw pressure curve
+            if (stepData.length > 0 && totalTime > 0) {
+                ctx.strokeStyle = '#e53e3e';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                
+                let currentTime = 0;
+                stepData.forEach((step, index) => {
+                    const x = margin + (currentTime / totalTime) * chartWidth;
+                    const y = margin + chartHeight - (step.pressure / 200) * chartHeight;
+                    
+                    if (index === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                    
+                    currentTime += step.time;
+                    const nextX = margin + (currentTime / totalTime) * chartWidth;
+                    ctx.lineTo(nextX, y);
+                });
+                
+                ctx.stroke();
+                
+                // Draw speed curve
+                ctx.strokeStyle = '#667eea';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                
+                currentTime = 0;
+                stepData.forEach((step, index) => {
+                    const x = margin + (currentTime / totalTime) * chartWidth;
+                    const y = margin + chartHeight - (step.speed / 200) * chartHeight;
+                    
+                    if (index === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                    
+                    currentTime += step.time;
+                    const nextX = margin + (currentTime / totalTime) * chartWidth;
+                    ctx.lineTo(nextX, y);
+                });
+                
+                ctx.stroke();
+                
+                // Draw step markers
+                currentTime = 0;
+                stepData.forEach((step, index) => {
+                    const x = margin + (currentTime / totalTime) * chartWidth;
+                    
+                    // Pressure point
+                    const pressureY = margin + chartHeight - (step.pressure / 200) * chartHeight;
+                    ctx.fillStyle = '#e53e3e';
+                    ctx.beginPath();
+                    ctx.arc(x, pressureY, 5, 0, 2 * Math.PI);
+                    ctx.fill();
+                    
+                    // Speed point
+                    const speedY = margin + chartHeight - (step.speed / 200) * chartHeight;
+                    ctx.fillStyle = '#667eea';
+                    ctx.beginPath();
+                    ctx.arc(x, speedY, 4, 0, 2 * Math.PI);
+                    ctx.fill();
+                    
+                    // Step label
+                    ctx.fillStyle = '#333';
+                    ctx.font = '12px sans-serif';
+                    ctx.fillText(`S${step.step}`, x - 8, margin - 10);
+                    
+                    currentTime += step.time;
+                });
+            }
+            
+            // Draw axes labels
+            ctx.fillStyle = '#4a5568';
+            ctx.font = '14px sans-serif';
+            ctx.fillText('Time (s)', width / 2 - 30, height - 10);
+            
+            ctx.save();
+            ctx.translate(15, height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('Pressure (bar) / Speed (mm/s)', -80, 0);
+            ctx.restore();
+            
+            // Draw legend
+            ctx.fillStyle = '#e53e3e';
+            ctx.fillRect(width - 150, 20, 15, 3);
+            ctx.fillStyle = '#333';
+            ctx.font = '12px sans-serif';
+            ctx.fillText('Pressure', width - 130, 25);
+            
+            ctx.fillStyle = '#667eea';
+            ctx.fillRect(width - 150, 35, 15, 3);
+            ctx.fillText('Speed', width - 130, 40);
+        }
+
+        // Update summary panel with shot size info
+        function updateSummary() {
+            let totalTime = 0;
+            let avgPressure = 0;
+            let avgSpeed = 0;
+            let maxPressure = 0;
+            let maxSpeed = 0;
+            let totalDistance = 0;
+
+            const actualShotSize = parseFloat(document.getElementById('actualShotSize').value) || 0;
+
+            for (let i = 1; i <= injectionSteps; i++) {
+                const pressure = parseFloat(document.getElementById(`step${i}_pressure`).value) || 0;
+                const speed = parseFloat(document.getElementById(`step${i}_speed`).value) || 0;
+                const time = parseFloat(document.getElementById(`step${i}_time`).value) || 0;
+                const position = parseFloat(document.getElementById(`step${i}_position`).value) || 0;
+                
+                totalTime += time;
+                avgPressure += pressure;
+                avgSpeed += speed;
+                maxPressure = Math.max(maxPressure, pressure);
+                maxSpeed = Math.max(maxSpeed, speed);
+                
+                // Calculate actual distance for this step
+                if (actualShotSize > 0) {
+                    totalDistance = Math.max(totalDistance, (position / 100) * actualShotSize);
+                }
+            }
+
+            avgPressure = avgPressure / injectionSteps;
+            avgSpeed = avgSpeed / injectionSteps;
+
+            // Calculate injection rate (cm³/s)
+            const partWeight = parseFloat(document.getElementById('partWeight').value) || 0;
+            const runnerWeight = parseFloat(document.getElementById('runnerWeight').value) || 0;
+            const density = parseFloat(document.getElementById('plasticDensity').value) || 1.05;
+            const totalVolume = (partWeight + runnerWeight) / density; // cm³
+            const avgInjectionRate = totalTime > 0 ? (totalVolume / totalTime).toFixed(2) : 0;
+
+            const summaryContainer = document.getElementById('summaryGrid');
+            summaryContainer.innerHTML = `
+                <div class="summary-item">
+                    <div class="summary-value">${injectionSteps}</div>
+                    <div class="summary-label">จำนวน Steps</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value">${totalTime.toFixed(2)}s</div>
+                    <div class="summary-label">เวลารวม</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value">${actualShotSize.toFixed(1)}</div>
+                    <div class="summary-label">Shot Size (mm)</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value">${totalDistance.toFixed(1)}</div>
+                    <div class="summary-label">Max Distance (mm)</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value">${avgPressure.toFixed(1)}</div>
+                    <div class="summary-label">แรงดันเฉลี่ย (bar)</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value">${avgSpeed.toFixed(1)}</div>
+                    <div class="summary-label">ความเร็วเฉลี่ย (mm/s)</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value">${maxPressure}</div>
+                    <div class="summary-label">แรงดันสูงสุด (bar)</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value">${avgInjectionRate}</div>
+                    <div class="summary-label">อัตราฉีด (cm³/s)</div>
+                </div>
+            `;
+        }
+
+        // Preview injection profile
+        function previewProfile() {
+            animateInjectionPreview();
+            showAlert('🎬 กำลังแสดง Preview การฉีดแบบ Multi-Step', 'info');
+        }
+
+        // Animate injection preview with new layout
+        function animateInjectionPreview() {
+            let currentStep = 0;
+            
+            const animateStep = () => {
+                // Reset all steps
+                for (let i = 1; i <= injectionSteps; i++) {
+                    const pressureInput = document.querySelector(`#step${i}_pressure`);
+                    const speedInput = document.querySelector(`#step${i}_speed`);
+                    const positionInput = document.querySelector(`#step${i}_position`);
+                    const timeInput = document.querySelector(`#step${i}_time`);
+                    
+                    if (pressureInput) pressureInput.parentElement.classList.remove('active');
+                    if (speedInput) speedInput.parentElement.classList.remove('active');
+                    if (positionInput) positionInput.parentElement.classList.remove('active');
+                    if (timeInput) timeInput.parentElement.classList.remove('active');
+                }
+                
+                if (currentStep < injectionSteps) {
+                    // Highlight current step
+                    const stepNum = currentStep + 1;
+                    const pressureInput = document.querySelector(`#step${stepNum}_pressure`);
+                    const speedInput = document.querySelector(`#step${stepNum}_speed`);
+                    const positionInput = document.querySelector(`#step${stepNum}_position`);
+                    const timeInput = document.querySelector(`#step${stepNum}_time`);
+                    
+                    if (pressureInput) pressureInput.parentElement.classList.add('active');
+                    if (speedInput) speedInput.parentElement.classList.add('active');
+                    if (positionInput) positionInput.parentElement.classList.add('active');
+                    if (timeInput) timeInput.parentElement.classList.add('active');
+                    
+                    const time = parseFloat(document.getElementById(`step${stepNum}_time`).value) || 0.5;
+                    currentStep++;
+                    setTimeout(animateStep, time * 800); // Scale time for animation
+                } else {
+                    // Animation complete
+                    setTimeout(() => {
+                        for (let i = 1; i <= injectionSteps; i++) {
+                            const pressureInput = document.querySelector(`#step${i}_pressure`);
+                            const speedInput = document.querySelector(`#step${i}_speed`);
+                            const positionInput = document.querySelector(`#step${i}_position`);
+                            const timeInput = document.querySelector(`#step${i}_time`);
+                            
+                            if (pressureInput) pressureInput.parentElement.classList.remove('active');
+                            if (speedInput) speedInput.parentElement.classList.remove('active');
+                            if (positionInput) positionInput.parentElement.classList.remove('active');
+                            if (timeInput) timeInput.parentElement.classList.remove('active');
+                        }
+                        showAlert('✅ Preview เสร็จสิ้น', 'success');
+                    }, 1000);
+                }
+            };
+            
+            animateStep();
+        }
+
+        // Simulate injection process
+        function simulateInjection() {
+            if (isSimulating) return;
+            
+            isSimulating = true;
+            showAlert('🚀 เริ่มจำลองกระบวนการฉีด...', 'info');
+            
+            // Run animation
+            animateInjectionPreview();
+            
+            // Calculate results
+            setTimeout(() => {
+                const results = calculateInjectionResults();
+                showAlert(`✅ การจำลองเสร็จสิ้น!\n\nประสิทธิภาพ: ${results.efficiency}%\nคุณภาพ: ${results.quality}%`, 'success');
+                isSimulating = false;
+            }, 3000);
+        }
+
+        // Calculate injection results
+        function calculateInjectionResults() {
+            let totalTime = 0;
+            let pressureVariation = 0;
+            let speedVariation = 0;
+            
+            const pressures = [];
+            const speeds = [];
+            
+            for (let i = 1; i <= injectionSteps; i++) {
+                const pressure = parseFloat(document.getElementById(`step${i}_pressure`).value) || 0;
+                const speed = parseFloat(document.getElementById(`step${i}_speed`).value) || 0;
+                const time = parseFloat(document.getElementById(`step${i}_time`).value) || 0;
+                
+                pressures.push(pressure);
+                speeds.push(speed);
+                totalTime += time;
+            }
+            
+            // Calculate variations
+            const avgPressure = pressures.reduce((a, b) => a + b, 0) / pressures.length;
+            const avgSpeed = speeds.reduce((a, b) => a + b, 0) / speeds.length;
+            
+            pressureVariation = Math.max(...pressures) - Math.min(...pressures);
+            speedVariation = Math.max(...speeds) - Math.min(...speeds);
+            
+            // Calculate efficiency and quality scores
+            const efficiency = Math.max(0, 100 - (totalTime - 2) * 10 - pressureVariation * 0.5);
+            const quality = Math.max(0, 100 - speedVariation * 0.3 - (pressureVariation > 50 ? 20 : 0));
+            
+            return {
+                efficiency: Math.round(efficiency),
+                quality: Math.round(quality),
+                totalTime: totalTime.toFixed(2)
+            };
+        }
+
+        // Reset all steps
+        function resetSteps() {
+            if (confirm('คุณต้องการรีเซ็ตค่าทั้งหมดหรือไม่?')) {
+                injectionSteps = 5;
+                generateInjectionSteps();
+                updateInjectionChart();
+                updateSummary();
+                showAlert('🔄 รีเซ็ตค่าเรียบร้อย', 'success');
+            }
+        }
+
+        // Export profile
+        function exportProfile() {
+            const profile = [];
+            let totalTime = 0;
+            
+            for (let i = 1; i <= injectionSteps; i++) {
+                const position = document.getElementById(`step${i}_position`).value;
+                const speed = document.getElementById(`step${i}_speed`).value;
+                const pressure = document.getElementById(`step${i}_pressure`).value;
+                const time = document.getElementById(`step${i}_time`).value;
+                
+                profile.push({
+                    step: i,
+                    position: parseFloat(position),
+                    speed: parseFloat(speed),
+                    pressure: parseFloat(pressure),
+                    time: parseFloat(time)
+                });
+                
+                totalTime += parseFloat(time);
+            }
+
+            // Create CSV content
+            let csvContent = "Step,Position(%),Speed(mm/s),Pressure(bar),Time(s)\n";
+            profile.forEach(step => {
+                csvContent += `${step.step},${step.position},${step.speed},${step.pressure},${step.time}\n`;
+            });
+            csvContent += `\nTotal Time: ${totalTime.toFixed(2)}s\n`;
+            csvContent += `Total Steps: ${injectionSteps}\n`;
+            csvContent += `Export Date: ${new Date().toLocaleString('th-TH')}\n`;
+
+            // Create and download file
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `injection_profile_${new Date().toISOString().slice(0,10)}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showAlert('📋 Export Profile เรียบร้อย!', 'success');
+        }
+
+        // Show alert message
+        function showAlert(message, type = 'info') {
+            // Remove existing alerts
+            const existingAlerts = document.querySelectorAll('.alert');
+            existingAlerts.forEach(alert => alert.remove());
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.innerHTML = message.replace(/\n/g, '<br>');
+            
+            document.body.appendChild(alertDiv);
+            
+            // Auto remove after 4 seconds
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.style.animation = 'slideOut 0.3s ease-in';
+                    setTimeout(() => {
+                        if (alertDiv.parentNode) {
+                            alertDiv.remove();
+                        }
+                    }, 300);
+                }
+            }, 4000);
+        }
+
+        // Add slide out animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Real-time input validation and updates
+        document.addEventListener('input', function(e) {
+            if (e.target.type === 'number' && e.target.id.startsWith('step')) {
+                // Validate ranges
+                const value = parseFloat(e.target.value);
+                const id = e.target.id;
+                
+                if (id.includes('_position') && (value < 0 || value > 100)) {
+                    e.target.style.borderColor = '#f56565';
+                    showAlert('⚠️ Position ต้องอยู่ระหว่าง 0-100%', 'warning');
+                } else if (id.includes('_speed') && (value < 1 || value > 200)) {
+                    e.target.style.borderColor = '#f56565';
+                    showAlert('⚠️ Speed ต้องอยู่ระหว่าง 1-200 mm/s', 'warning');
+                } else if (id.includes('_pressure') && (value < 10 || value > 200)) {
+                    e.target.style.borderColor = '#f56565';
+                    showAlert('⚠️ Pressure ต้องอยู่ระหว่าง 10-200 bar', 'warning');
+                } else if (id.includes('_time') && (value < 0.01 || value > 10)) {
+                    e.target.style.borderColor = '#f56565';
+                    showAlert('⚠️ Time ต้องอยู่ระหว่าง 0.01-10 s', 'warning');
+                } else {
+                    e.target.style.borderColor = '#e2e8f0';
+                }
+                
+                // Update chart and summary on valid input
+                if (value >= 0) {
+                    updateInjectionChart();
+                    updateSummary();
+                }
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 's':
+                        e.preventDefault();
+                        exportProfile();
+                        break;
+                    case 'r':
+                        e.preventDefault();
+                        resetSteps();
+                        break;
+                    case 'p':
+                        e.preventDefault();
+                        previewProfile();
+                        break;
+                    case '=':
+                    case '+':
+                        e.preventDefault();
+                        addInjectionStep();
+                        break;
+                    case '-':
+                        e.preventDefault();
+                        removeInjectionStep();
+                        break;
+                }
+            }
+        });
+
+        // Auto-save functionality (to localStorage if available)
+        function autoSave() {
+            try {
+                const profileData = {
+                    steps: injectionSteps,
+                    data: []
+                };
+                
+                for (let i = 1; i <= injectionSteps; i++) {
+                    profileData.data.push({
+                        position: document.getElementById(`step${i}_position`).value,
+                        speed: document.getElementById(`step${i}_speed`).value,
+                        pressure: document.getElementById(`step${i}_pressure`).value,
+                        time: document.getElementById(`step${i}_time`).value
+                    });
+                }
+                
+                // Note: localStorage is not available in Claude artifacts
+                // This is for when users copy the code to their own environment
+                console.log('Auto-saved profile data:', profileData);
+            } catch (error) {
+                console.log('Auto-save not available in this environment');
+            }
+        }
+
+        // Auto-save every 10 seconds
+        setInterval(autoSave, 10000);
+
+        // Add tooltips for better UX
+        function addTooltips() {
+            const tooltips = {
+                'Position (%)': 'ตำแหน่งการฉีดเป็นเปอร์เซ็นต์ของการเติมเต็ม (0-100%)',
+                'Speed (mm/s)': 'ความเร็วในการฉีดพลาสติก (1-200 mm/s)',
+                'Pressure (bar)': 'แรงดันในการฉีด (10-200 bar)',
+                'Time (s)': 'ระยะเวลาของ step นี้ (0.01-10 วินาที)'
+            };
+            
+            document.querySelectorAll('.step-param label').forEach(label => {
+                const text = label.textContent.trim();
+                if (tooltips[text]) {
+                    label.title = tooltips[text];
+                    label.style.cursor = 'help';
+                }
+            });
+        }
+
+        // Initialize tooltips after DOM is ready
+        setTimeout(addTooltips, 500);
+    </script>
+</body>
+</html>

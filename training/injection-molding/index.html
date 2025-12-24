@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏭 Injection Molding Learning Center - ศูนย์เรียนรู้การฉีดพลาสติก</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="css/injection-molding.css" rel="stylesheet">
+    <link href="css/animations.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-industry"></i>
+                <span>Injection Molding <span class="highlight">Academy</span></span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home"><i class="fas fa-home"></i> หน้าแรก</a></li>
+                <li><a href="#curriculum"><i class="fas fa-book"></i> หลักสูตร</a></li>
+                <li><a href="#leaderboard"><i class="fas fa-trophy"></i> อันดับ</a></li>
+                <li><a href="../hotrunner/index.html"><i class="fas fa-fire"></i> Hot Runner Portal</a></li>
+            </ul>
+            <div class="nav-user" id="navUser">
+                <button class="btn-login" onclick="showLoginModal()">
+                    <i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบ
+                </button>
+            </div>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-particles" id="particles"></div>
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-award"></i>
+                <span>หลักสูตรมาตรฐานอุตสาหกรรม</span>
+            </div>
+            <h1>
+                <span class="gradient-text">Injection Molding</span>
+                <br>Learning Academy
+            </h1>
+            <p class="hero-subtitle">
+                เรียนรู้การฉีดพลาสติกอย่างเป็นระบบ ตั้งแต่พื้นฐานจนถึงขั้นสูง
+                <br>พร้อมใบรับรองมาตรฐานอุตสาหกรรม
+            </p>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number" data-count="24">0</div>
+                    <div class="stat-label">บทเรียน</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-count="6">0</div>
+                    <div class="stat-label">ระดับ</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-count="150">0</div>
+                    <div class="stat-label">ข้อสอบ</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-count="500">0+</div>
+                    <div class="stat-label">ผู้เรียน</div>
+                </div>
+            </div>
+            <div class="hero-buttons">
+                <button class="btn-primary" onclick="startLearning()">
+                    <i class="fas fa-play"></i> เริ่มเรียนฟรี
+                </button>
+                <button class="btn-secondary" onclick="showCurriculum()">
+                    <i class="fas fa-book-open"></i> ดูหลักสูตร
+                </button>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="machine-3d">
+                <div class="machine-body">
+                    <div class="injection-unit">
+                        <div class="barrel"></div>
+                        <div class="screw"></div>
+                        <div class="hopper"></div>
+                    </div>
+                    <div class="clamping-unit">
+                        <div class="platen fixed"></div>
+                        <div class="mold"></div>
+                        <div class="platen moving"></div>
+                    </div>
+                </div>
+                <div class="machine-labels">
+                    <span class="label" style="top: 20%; left: 15%;">Hopper</span>
+                    <span class="label" style="top: 50%; left: 25%;">Barrel</span>
+                    <span class="label" style="top: 50%; left: 65%;">Mold</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Learning Path Section -->
+    <section class="learning-path" id="curriculum">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge"><i class="fas fa-route"></i> Learning Path</span>
+                <h2>เส้นทางการเรียนรู้</h2>
+                <p>6 ระดับ 24 บทเรียน จากพื้นฐานสู่ผู้เชี่ยวชาญ</p>
+            </div>
+            
+            <div class="path-container">
+                <!-- Level 0 -->
+                <div class="level-card" data-level="0" onclick="openLevel(0)">
+                    <div class="level-header">
+                        <div class="level-icon">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <div class="level-info">
+                            <span class="level-badge">Level 0</span>
+                            <h3>Mindset & Foundation</h3>
+                            <p>ปรับ Mindset และเรียนรู้พื้นฐาน</p>
+                        </div>
+                        <div class="level-progress">
+                            <div class="progress-ring">
+                                <svg viewBox="0 0 36 36">
+                                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+                                    <path class="progress-path" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#10B981" stroke-width="3" stroke-dasharray="0, 100"/>
+                                </svg>
+                                <span class="progress-text">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="level-lessons">
+                        <div class="lesson-item" data-lesson="L0_1">
+                            <span class="lesson-status"><i class="fas fa-circle"></i></span>
+                            <span class="lesson-title">บทที่ 1: Mindset ช่างเทคนิคมืออาชีพ</span>
+                            <span class="lesson-duration">15 นาที</span>
+                        </div>
+                        <div class="lesson-item locked" data-lesson="L0_2">
+                            <span class="lesson-status"><i class="fas fa-lock"></i></span>
+                            <span class="lesson-title">บทที่ 2: หลัก 6M ในการฉีดพลาสติก</span>
+                            <span class="lesson-duration">20 นาที</span>
+                        </div>
+                        <div class="lesson-item locked" data-lesson="L0_3">
+                            <span class="lesson-status"><i class="fas fa-lock"></i></span>
+                            <span class="lesson-title">บทที่ 3: หลัก 3 สิ่งสำคัญ</span>
+                            <span class="lesson-duration">20 นาที</span>
+                        </div>
+                        <div class="lesson-item locked" data-lesson="L0_4">
+                            <span class="lesson-status"><i class="fas fa-lock"></i></span>
+                            <span class="lesson-title">บทที่ 4: ความปลอดภัย</span>
+                            <span class="lesson-duration">15 นาที</span>
+                        </div>
+                    </div>
+                    <div class="level-footer">
+                        <button class="btn-quiz locked" data-quiz="Q0">
+                            <i class="fas fa-lock"></i> แบบทดสอบ (ผ่าน 70%)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Level 1 -->
+                <div class="level-card locked" data-level="1" onclick="openLevel(1)">
+                    <div class="level-header">
+                        <div class="level-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <div class="level-info">
+                            <span class="level-badge">Level 1</span>
+                            <h3>Machine Fundamentals</h3>
+                            <p>รู้จักเครื่องฉีดพลาสติก</p>
+                        </div>
+                        <div class="level-lock">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                    </div>
+                    <div class="level-lessons">
+                        <div class="lesson-item locked">
+                            <span class="lesson-status"><i class="fas fa-lock"></i></span>
+                            <span class="lesson-title">บทที่ 5: ส่วนประกอบเครื่องจักร</span>
+                        </div>
+                        <div class="lesson-item locked">
+                            <span class="lesson-status"><i class="fas fa-lock"></i></span>
+                            <span class="lesson-title">บทที่ 6: Injection Unit</span>
+                        </div>
+                        <div class="lesson-item locked">
+                            <span class="lesson-status"><i class="fas fa-lock"></i></span>
+                            <span class="lesson-title">บทที่ 7: Clamping Unit</span>
+                        </div>
+                        <div class="lesson-item locked">
+                            <span class="lesson-status"><i class="fas fa-lock"></i></span>
+                            <span class="lesson-title">บทที่ 8: หน้าจอควบคุม</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Level 2 -->
+                <div class="level-card locked" data-level="2">
+                    <div class="level-header">
+                        <div class="level-icon">
+                            <i class="fas fa-flask"></i>
+                        </div>
+                        <div class="level-info">
+                            <span class="level-badge">Level 2</span>
+                            <h3>Material Science</h3>
+                            <p>ความรู้เรื่องวัสดุพลาสติก</p>
+                        </div>
+                        <div class="level-lock">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Level 3 -->
+                <div class="level-card locked" data-level="3">
+                    <div class="level-header">
+                        <div class="level-icon">
+                            <i class="fas fa-sliders-h"></i>
+                        </div>
+                        <div class="level-info">
+                            <span class="level-badge">Level 3</span>
+                            <h3>Process Parameters</h3>
+                            <p>การตั้งค่าพารามิเตอร์</p>
+                        </div>
+                        <div class="level-lock">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Level 4 -->
+                <div class="level-card locked" data-level="4">
+                    <div class="level-header">
+                        <div class="level-icon">
+                            <i class="fas fa-bug"></i>
+                        </div>
+                        <div class="level-info">
+                            <span class="level-badge">Level 4</span>
+                            <h3>Troubleshooting</h3>
+                            <p>การวิเคราะห์และแก้ปัญหา</p>
+                        </div>
+                        <div class="level-lock">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Level 5 -->
+                <div class="level-card locked" data-level="5">
+                    <div class="level-header">
+                        <div class="level-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="level-info">
+                            <span class="level-badge">Level 5</span>
+                            <h3>Advanced Techniques</h3>
+                            <p>เทคนิคขั้นสูงและ Industry 4.0</p>
+                        </div>
+                        <div class="level-lock">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge"><i class="fas fa-star"></i> Features</span>
+                <h2>ทำไมต้องเรียนที่นี่?</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h3>เนื้อหาคุณภาพ</h3>
+                    <p>บทเรียนออกแบบโดยผู้เชี่ยวชาญ มีภาพประกอบและตัวอย่างจริง</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>AI Tutor</h3>
+                    <p>ผู้ช่วยสอน AI ตอบคำถามได้ตลอด 24 ชั่วโมง</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <h3>แบบทดสอบ</h3>
+                    <p>ข้อสอบท้ายบท วัดความเข้าใจและติดตามความก้าวหน้า</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <h3>ใบรับรอง</h3>
+                    <p>ได้รับใบรับรองเมื่อจบหลักสูตร</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>เรียนได้ทุกที่</h3>
+                    <p>รองรับทุกอุปกรณ์ เรียนได้ทุกที่ทุกเวลา</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3>Gamification</h3>
+                    <p>สะสมแต้ม เหรียญรางวัล และแข่งขันกับผู้เรียนอื่น</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Leaderboard Section -->
+    <section class="leaderboard-section" id="leaderboard">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge"><i class="fas fa-trophy"></i> Leaderboard</span>
+                <h2>อันดับผู้เรียนยอดเยี่ยม</h2>
+            </div>
+            <div class="leaderboard-container">
+                <div class="leaderboard-podium">
+                    <div class="podium-item second">
+                        <div class="podium-avatar">
+                            <img src="https://ui-avatars.com/api/?name=นายสมชาย&background=C0C0C0&color=fff" alt="">
+                        </div>
+                        <div class="podium-name">นายสมชาย</div>
+                        <div class="podium-score">2,850 XP</div>
+                        <div class="podium-stand">2</div>
+                    </div>
+                    <div class="podium-item first">
+                        <div class="podium-crown"><i class="fas fa-crown"></i></div>
+                        <div class="podium-avatar">
+                            <img src="https://ui-avatars.com/api/?name=นายวิชัย&background=FFD700&color=000" alt="">
+                        </div>
+                        <div class="podium-name">นายวิชัย</div>
+                        <div class="podium-score">3,200 XP</div>
+                        <div class="podium-stand">1</div>
+                    </div>
+                    <div class="podium-item third">
+                        <div class="podium-avatar">
+                            <img src="https://ui-avatars.com/api/?name=นางสาวนิดา&background=CD7F32&color=fff" alt="">
+                        </div>
+                        <div class="podium-name">นางสาวนิดา</div>
+                        <div class="podium-score">2,600 XP</div>
+                        <div class="podium-stand">3</div>
+                    </div>
+                </div>
+                <div class="leaderboard-list" id="leaderboardList">
+                    <!-- จะถูก populate โดย JavaScript -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Badges Section -->
+    <section class="badges-section" id="badges">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge"><i class="fas fa-medal"></i> Achievements</span>
+                <h2>เหรียญรางวัล</h2>
+            </div>
+            <div class="badges-grid">
+                <div class="badge-card" data-badge="first_step">
+                    <div class="badge-icon"><i class="fas fa-shoe-prints"></i></div>
+                    <h4>First Step</h4>
+                    <p>เรียนบทแรกสำเร็จ</p>
+                </div>
+                <div class="badge-card locked" data-badge="beginner">
+                    <div class="badge-icon"><i class="fas fa-seedling"></i></div>
+                    <h4>Beginner</h4>
+                    <p>จบ Level 0</p>
+                </div>
+                <div class="badge-card locked" data-badge="machine_operator">
+                    <div class="badge-icon"><i class="fas fa-cogs"></i></div>
+                    <h4>Machine Operator</h4>
+                    <p>จบ Level 1</p>
+                </div>
+                <div class="badge-card locked" data-badge="material_expert">
+                    <div class="badge-icon"><i class="fas fa-flask"></i></div>
+                    <h4>Material Expert</h4>
+                    <p>จบ Level 2</p>
+                </div>
+                <div class="badge-card locked" data-badge="process_master">
+                    <div class="badge-icon"><i class="fas fa-sliders-h"></i></div>
+                    <h4>Process Master</h4>
+                    <p>จบ Level 3</p>
+                </div>
+                <div class="badge-card locked" data-badge="troubleshooter">
+                    <div class="badge-icon"><i class="fas fa-bug"></i></div>
+                    <h4>Problem Solver</h4>
+                    <p>จบ Level 4</p>
+                </div>
+                <div class="badge-card locked" data-badge="advanced_engineer">
+                    <div class="badge-icon"><i class="fas fa-graduation-cap"></i></div>
+                    <h4>Advanced Engineer</h4>
+                    <p>จบ Level 5</p>
+                </div>
+                <div class="badge-card locked" data-badge="quiz_champion">
+                    <div class="badge-icon"><i class="fas fa-star"></i></div>
+                    <h4>Quiz Champion</h4>
+                    <p>ได้ 100% ใน Quiz</p>
+                </div>
+                <div class="badge-card locked" data-badge="speed_learner">
+                    <div class="badge-icon"><i class="fas fa-bolt"></i></div>
+                    <h4>Speed Learner</h4>
+                    <p>จบทั้งหมดใน 7 วัน</p>
+                </div>
+                <div class="badge-card locked" data-badge="injection_master">
+                    <div class="badge-icon"><i class="fas fa-crown"></i></div>
+                    <h4>Injection Master</h4>
+                    <p>จบทุกอย่าง!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>พร้อมเริ่มเรียนรู้หรือยัง?</h2>
+                <p>เริ่มต้นเส้นทางสู่การเป็นผู้เชี่ยวชาญการฉีดพลาสติกวันนี้</p>
+                <button class="btn-cta" onclick="startLearning()">
+                    <i class="fas fa-rocket"></i> เริ่มเรียนฟรีเลย!
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <i class="fas fa-industry"></i>
+                    <span>Injection Molding Academy</span>
+                </div>
+                <div class="footer-links">
+                    <a href="#">เกี่ยวกับเรา</a>
+                    <a href="#">ติดต่อ</a>
+                    <a href="#">นโยบายความเป็นส่วนตัว</a>
+                </div>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-line"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Injection Molding Academy. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-overlay" onclick="closeModal('loginModal')"></div>
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('loginModal')">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-header">
+                <i class="fas fa-user-circle"></i>
+                <h3>เข้าสู่ระบบ</h3>
+            </div>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> อีเมล</label>
+                    <input type="email" id="loginEmail" required placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> รหัสผ่าน</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบ
+                </button>
+            </form>
+            <div class="modal-footer">
+                <p>ยังไม่มีบัญชี? <a href="#" onclick="showRegisterModal()">สมัครสมาชิก</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-overlay" onclick="closeModal('registerModal')"></div>
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('registerModal')">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-header">
+                <i class="fas fa-user-plus"></i>
+                <h3>สมัครสมาชิก</h3>
+            </div>
+            <form id="registerForm" onsubmit="handleRegister(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>ชื่อ</label>
+                        <input type="text" id="regFirstName" required placeholder="ชื่อ">
+                    </div>
+                    <div class="form-group">
+                        <label>นามสกุล</label>
+                        <input type="text" id="regLastName" required placeholder="นามสกุล">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> อีเมล</label>
+                    <input type="email" id="regEmail" required placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-building"></i> บริษัท</label>
+                    <input type="text" id="regCompany" placeholder="ชื่อบริษัท (ถ้ามี)">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> รหัสผ่าน</label>
+                    <input type="password" id="regPassword" required placeholder="อย่างน้อย 6 ตัวอักษร" minlength="6">
+                </div>
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-user-plus"></i> สมัครสมาชิก
+                </button>
+            </form>
+            <div class="modal-footer">
+                <p>มีบัญชีแล้ว? <a href="#" onclick="showLoginModal()">เข้าสู่ระบบ</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lesson Modal -->
+    <div class="modal lesson-modal" id="lessonModal">
+        <div class="modal-overlay" onclick="closeModal('lessonModal')"></div>
+        <div class="modal-content lesson-content">
+            <button class="modal-close" onclick="closeModal('lessonModal')">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="lessonContent">
+                <!-- จะถูก populate โดย JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Modal -->
+    <div class="modal quiz-modal" id="quizModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content quiz-content">
+            <div id="quizContent">
+                <!-- จะถูก populate โดย JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/curriculum-data.js"></script>
+    <script src="js/learning-service.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

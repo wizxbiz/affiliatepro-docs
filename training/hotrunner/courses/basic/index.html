@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Level - พื้นฐาน Injection Molding & Hot Runner</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../../assets/css/main.css" rel="stylesheet">
+    
+    <style>
+        body { padding-top: 80px; }
+        
+        .course-header {
+            padding: 40px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 40px;
+        }
+
+        .course-header-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 30px;
+        }
+
+        .course-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 25px;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            color: white;
+            box-shadow: 0 15px 40px rgba(0, 217, 255, 0.3);
+            flex-shrink: 0;
+        }
+
+        .course-info h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .course-info .badge {
+            margin-bottom: 15px;
+        }
+
+        .course-meta {
+            display: flex;
+            gap: 30px;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+        }
+
+        .course-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .course-meta-item i {
+            color: var(--primary);
+        }
+
+        /* Progress Overview */
+        .progress-overview {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 25px;
+            margin-bottom: 40px;
+            border: 1px solid var(--border-color);
+        }
+
+        .progress-overview h3 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .progress-stat {
+            text-align: center;
+        }
+
+        .progress-stat-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .progress-stat-label {
+            font-size: 0.9em;
+            color: var(--text-muted);
+        }
+
+        /* Modules List */
+        .modules-section h2 {
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modules-section h2 i {
+            color: var(--primary);
+        }
+
+        .module-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .module-card:hover {
+            border-color: var(--border-hover);
+            transform: translateX(10px);
+        }
+
+        .module-card.locked {
+            opacity: 0.6;
+        }
+
+        .module-card.completed {
+            border-color: rgba(0, 200, 83, 0.3);
+        }
+
+        .module-content {
+            display: flex;
+            align-items: center;
+            padding: 25px;
+            gap: 20px;
+        }
+
+        .module-number {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2em;
+            flex-shrink: 0;
+        }
+
+        .module-card.completed .module-number {
+            background: var(--success-gradient);
+        }
+
+        .module-card.current .module-number {
+            background: var(--primary-gradient);
+            color: var(--bg-dark);
+        }
+
+        .module-info {
+            flex: 1;
+        }
+
+        .module-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .module-type-badge {
+            font-size: 0.7em;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        .module-type-badge.theory { background: rgba(33, 150, 243, 0.2); color: #2196f3; }
+        .module-type-badge.practice { background: rgba(255, 152, 0, 0.2); color: #ff9800; }
+        .module-type-badge.quiz { background: rgba(156, 39, 176, 0.2); color: #9c27b0; }
+
+        .module-desc {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+            margin-bottom: 10px;
+        }
+
+        .module-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 0.85em;
+            color: var(--text-muted);
+        }
+
+        .module-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .module-action {
+            flex-shrink: 0;
+        }
+
+        .module-card.completed .module-action .btn {
+            background: rgba(0, 200, 83, 0.2);
+            color: var(--success);
+            border: 1px solid rgba(0, 200, 83, 0.3);
+        }
+
+        /* What You'll Learn */
+        .learn-section {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            margin-top: 40px;
+            border: 1px solid var(--border-color);
+        }
+
+        .learn-section h3 {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .learn-section h3 i {
+            color: var(--success);
+        }
+
+        .learn-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .learn-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius-sm);
+        }
+
+        .learn-item i {
+            color: var(--success);
+            margin-top: 3px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .course-header-content {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .course-meta {
+                justify-content: center;
+            }
+
+            .module-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .module-meta {
+                justify-content: center;
+            }
+
+            .learn-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-stats {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <div class="container">
+        <!-- Course Header -->
+        <div class="course-header">
+            <div class="course-header-content">
+                <div class="course-icon">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <div class="course-info">
+                    <span class="badge badge-level basic">Basic Level</span>
+                    <h1>พื้นฐาน Injection Molding & Hot Runner</h1>
+                    <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                        เรียนรู้พื้นฐานการฉีดพลาสติก เข้าใจกระบวนการทำงาน และรู้จักระบบ Hot Runner เบื้องต้น
+                    </p>
+                    <div class="course-meta">
+                        <div class="course-meta-item">
+                            <i class="fas fa-book"></i>
+                            <span>6 บทเรียน</span>
+                        </div>
+                        <div class="course-meta-item">
+                            <i class="fas fa-clock"></i>
+                            <span>3.5 ชั่วโมง</span>
+                        </div>
+                        <div class="course-meta-item">
+                            <i class="fas fa-signal"></i>
+                            <span>ระดับเริ่มต้น</span>
+                        </div>
+                        <div class="course-meta-item">
+                            <i class="fas fa-certificate"></i>
+                            <span>มีประกาศนียบัตร</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Overview -->
+        <div class="progress-overview">
+            <h3><i class="fas fa-chart-pie"></i> ความคืบหน้าของคุณ</h3>
+            <div class="progress" style="height: 12px;">
+                <div class="progress-bar" id="courseProgress" style="width: 0%;"></div>
+            </div>
+            <div class="progress-stats">
+                <div class="progress-stat">
+                    <div class="progress-stat-value" id="completedModules">0</div>
+                    <div class="progress-stat-label">บทเรียนที่เรียนจบ</div>
+                </div>
+                <div class="progress-stat">
+                    <div class="progress-stat-value" id="totalTime">0</div>
+                    <div class="progress-stat-label">นาทีที่เรียน</div>
+                </div>
+                <div class="progress-stat">
+                    <div class="progress-stat-value" id="quizScore">-</div>
+                    <div class="progress-stat-label">คะแนนทดสอบ</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modules Section -->
+        <section class="modules-section">
+            <h2><i class="fas fa-list-ol"></i> บทเรียนทั้งหมด</h2>
+
+            <!-- Module 1 -->
+            <div class="module-card" data-module="intro">
+                <div class="module-content">
+                    <div class="module-number">1</div>
+                    <div class="module-info">
+                        <div class="module-title">
+                            รู้จักกับ Injection Molding
+                            <span class="module-type-badge theory">ทฤษฎี</span>
+                        </div>
+                        <p class="module-desc">
+                            เรียนรู้พื้นฐานกระบวนการฉีดพลาสติก ประวัติความเป็นมา และความสำคัญในอุตสาหกรรม
+                        </p>
+                        <div class="module-meta">
+                            <span><i class="fas fa-clock"></i> 30 นาที</span>
+                            <span><i class="fas fa-file-alt"></i> 5 หัวข้อ</span>
+                        </div>
+                    </div>
+                    <div class="module-action">
+                        <a href="module-intro.html" class="btn btn-primary">
+                            <i class="fas fa-play"></i> เริ่มเรียน
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module 2 -->
+            <div class="module-card" data-module="machine">
+                <div class="module-content">
+                    <div class="module-number">2</div>
+                    <div class="module-info">
+                        <div class="module-title">
+                            เครื่องฉีดพลาสติก
+                            <span class="module-type-badge theory">ทฤษฎี</span>
+                        </div>
+                        <p class="module-desc">
+                            ส่วนประกอบของเครื่องฉีด ระบบ Clamping, Injection Unit และหลักการทำงาน
+                        </p>
+                        <div class="module-meta">
+                            <span><i class="fas fa-clock"></i> 45 นาที</span>
+                            <span><i class="fas fa-file-alt"></i> 8 หัวข้อ</span>
+                        </div>
+                    </div>
+                    <div class="module-action">
+                        <a href="module-machine.html" class="btn btn-primary">
+                            <i class="fas fa-play"></i> เริ่มเรียน
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module 3 -->
+            <div class="module-card" data-module="material">
+                <div class="module-content">
+                    <div class="module-number">3</div>
+                    <div class="module-info">
+                        <div class="module-title">
+                            วัสดุพลาสติก
+                            <span class="module-type-badge theory">ทฤษฎี</span>
+                        </div>
+                        <p class="module-desc">
+                            ประเภทของพลาสติก Thermoplastic/Thermoset คุณสมบัติและการเลือกใช้งาน
+                        </p>
+                        <div class="module-meta">
+                            <span><i class="fas fa-clock"></i> 40 นาที</span>
+                            <span><i class="fas fa-file-alt"></i> 6 หัวข้อ</span>
+                        </div>
+                    </div>
+                    <div class="module-action">
+                        <a href="module-material.html" class="btn btn-primary">
+                            <i class="fas fa-play"></i> เริ่มเรียน
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module 4 -->
+            <div class="module-card" data-module="hotrunner_basic">
+                <div class="module-content">
+                    <div class="module-number">4</div>
+                    <div class="module-info">
+                        <div class="module-title">
+                            Hot Runner เบื้องต้น
+                            <span class="module-type-badge theory">ทฤษฎี</span>
+                        </div>
+                        <p class="module-desc">
+                            รู้จัก Hot Runner System ส่วนประกอบ ข้อดี-ข้อเสีย และการประยุกต์ใช้งาน
+                        </p>
+                        <div class="module-meta">
+                            <span><i class="fas fa-clock"></i> 45 นาที</span>
+                            <span><i class="fas fa-file-alt"></i> 7 หัวข้อ</span>
+                        </div>
+                    </div>
+                    <div class="module-action">
+                        <a href="../../basic-hotrunner.html" class="btn btn-primary">
+                            <i class="fas fa-play"></i> เริ่มเรียน
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module 5 -->
+            <div class="module-card" data-module="safety">
+                <div class="module-content">
+                    <div class="module-number">5</div>
+                    <div class="module-info">
+                        <div class="module-title">
+                            ความปลอดภัยในการทำงาน
+                            <span class="module-type-badge practice">ปฏิบัติ</span>
+                        </div>
+                        <p class="module-desc">
+                            มาตรฐานความปลอดภัย PPE การป้องกันอันตราย และการปฏิบัติตัวที่ถูกต้อง
+                        </p>
+                        <div class="module-meta">
+                            <span><i class="fas fa-clock"></i> 30 นาที</span>
+                            <span><i class="fas fa-file-alt"></i> 5 หัวข้อ</span>
+                        </div>
+                    </div>
+                    <div class="module-action">
+                        <a href="module-safety.html" class="btn btn-primary">
+                            <i class="fas fa-play"></i> เริ่มเรียน
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module 6 - Quiz -->
+            <div class="module-card" data-module="quiz_basic">
+                <div class="module-content">
+                    <div class="module-number">6</div>
+                    <div class="module-info">
+                        <div class="module-title">
+                            แบบทดสอบ Basic Level
+                            <span class="module-type-badge quiz">แบบทดสอบ</span>
+                        </div>
+                        <p class="module-desc">
+                            ทดสอบความรู้ความเข้าใจทั้งหมดของ Basic Level (ต้องผ่าน 70% จึงจะได้ประกาศนียบัตร)
+                        </p>
+                        <div class="module-meta">
+                            <span><i class="fas fa-clock"></i> 20 นาที</span>
+                            <span><i class="fas fa-question-circle"></i> 15 ข้อ</span>
+                            <span><i class="fas fa-check-circle"></i> ต้องผ่าน 70%</span>
+                        </div>
+                    </div>
+                    <div class="module-action">
+                        <a href="../../quizzes/quiz-basic.html" class="btn btn-primary">
+                            <i class="fas fa-pencil-alt"></i> ทำแบบทดสอบ
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- What You'll Learn -->
+        <section class="learn-section">
+            <h3><i class="fas fa-lightbulb"></i> สิ่งที่คุณจะได้เรียนรู้</h3>
+            <div class="learn-grid">
+                <div class="learn-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>กระบวนการ Injection Molding</strong>
+                        <p style="color: var(--text-muted); font-size: 0.9em;">เข้าใจวงจรการฉีดพลาสติกทั้งหมด</p>
+                    </div>
+                </div>
+                <div class="learn-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>ส่วนประกอบเครื่องฉีด</strong>
+                        <p style="color: var(--text-muted); font-size: 0.9em;">รู้จักทุกส่วนของเครื่องจักร</p>
+                    </div>
+                </div>
+                <div class="learn-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>วัสดุพลาสติกประเภทต่างๆ</strong>
+                        <p style="color: var(--text-muted); font-size: 0.9em;">เลือกใช้วัสดุได้อย่างเหมาะสม</p>
+                    </div>
+                </div>
+                <div class="learn-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>พื้นฐาน Hot Runner</strong>
+                        <p style="color: var(--text-muted); font-size: 0.9em;">เข้าใจหลักการทำงานของ Hot Runner</p>
+                    </div>
+                </div>
+                <div class="learn-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>มาตรฐานความปลอดภัย</strong>
+                        <p style="color: var(--text-muted); font-size: 0.9em;">ปฏิบัติงานอย่างปลอดภัย</p>
+                    </div>
+                </div>
+                <div class="learn-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>ประกาศนียบัตร Basic Level</strong>
+                        <p style="color: var(--text-muted); font-size: 0.9em;">รับใบรับรองเมื่อผ่านการทดสอบ</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Next Level CTA -->
+        <div style="text-align: center; padding: 50px 0;">
+            <p style="color: var(--text-muted); margin-bottom: 20px;">
+                เรียนจบ Basic Level แล้ว? ไปต่อที่ระดับถัดไป
+            </p>
+            <a href="../advanced/index.html" class="btn btn-secondary btn-lg">
+                <i class="fas fa-arrow-right"></i> ไประดับ Advanced
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Update CONFIG for this path
+        const CONFIG = {
+            basePath: '../..',
+            storagePrefix: 'imtp_'
+        };
+    </script>
+    <script src="../../assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            updateModuleStatus();
+            updateProgress();
+        });
+
+        function updateModuleStatus() {
+            const progress = ProgressTracker.getCourseProgress('basic');
+            const modules = document.querySelectorAll('.module-card');
+            
+            modules.forEach(card => {
+                const moduleId = card.dataset.module;
+                const moduleProgress = progress.modules[moduleId];
+                
+                if (moduleProgress?.completed) {
+                    card.classList.add('completed');
+                    const btn = card.querySelector('.btn');
+                    btn.innerHTML = '<i class="fas fa-check"></i> เรียนจบแล้ว';
+                }
+            });
+        }
+
+        function updateProgress() {
+            const progress = ProgressTracker.getCourseProgress('basic');
+            const completedCount = Object.values(progress.modules).filter(m => m.completed).length;
+            const totalModules = 6;
+            const percentage = Math.round((completedCount / totalModules) * 100);
+            
+            document.getElementById('courseProgress').style.width = percentage + '%';
+            document.getElementById('completedModules').textContent = completedCount;
+            
+            // Quiz score
+            const quizHistory = QuizTracker.getHistory('basic_quiz');
+            if (quizHistory.length > 0) {
+                document.getElementById('quizScore').textContent = quizHistory[0].score + '%';
+            }
+        }
+    </script>
+</body>
+</html>

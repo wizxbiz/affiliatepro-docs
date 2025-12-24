@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายงานความก้าวหน้า Hot Runner - Hot Runner Training Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            padding-top: 70px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            margin-bottom: 20px;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #00d9ff;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-family: 'Prompt', sans-serif;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: linear-gradient(145deg, rgba(30, 42, 61, 0.9), rgba(22, 32, 46, 0.9));
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 217, 255, 0.3);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 1.5em;
+        }
+
+        .stat-icon.lessons { background: linear-gradient(135deg, #00d9ff, #0066ff); }
+        .stat-icon.time { background: linear-gradient(135deg, #ff9800, #ff6b35); }
+        .stat-icon.quizzes { background: linear-gradient(135deg, #00c853, #00e676); }
+        .stat-icon.streak { background: linear-gradient(135deg, #9c27b0, #e91e63); }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9em;
+        }
+
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .chart-card {
+            background: linear-gradient(145deg, rgba(30, 42, 61, 0.9), rgba(22, 32, 46, 0.9));
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chart-card h3 {
+            font-family: 'Prompt', sans-serif;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-card h3 i {
+            color: #00d9ff;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 250px;
+        }
+
+        /* Progress Table */
+        .progress-table-card {
+            background: linear-gradient(145deg, rgba(30, 42, 61, 0.9), rgba(22, 32, 46, 0.9));
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 40px;
+        }
+
+        .progress-table-card h3 {
+            font-family: 'Prompt', sans-serif;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-table-card h3 i {
+            color: #00d9ff;
+        }
+
+        .progress-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .progress-table th,
+        .progress-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .progress-table th {
+            background: rgba(0, 217, 255, 0.1);
+            font-weight: 600;
+        }
+
+        .progress-table tr:hover td {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .progress-bar-cell {
+            width: 150px;
+        }
+
+        .progress-bar-mini {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-mini .fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .status-badge-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .status-dot.completed { background: #00c853; }
+        .status-dot.inprogress { background: #ff9800; }
+        .status-dot.notstarted { background: rgba(255, 255, 255, 0.3); }
+
+        /* Activity Log */
+        .activity-card {
+            background: linear-gradient(145deg, rgba(30, 42, 61, 0.9), rgba(22, 32, 46, 0.9));
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .activity-card h3 {
+            font-family: 'Prompt', sans-serif;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .activity-card h3 i {
+            color: #ff9800;
+        }
+
+        .activity-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            transition: all 0.3s ease;
+        }
+
+        .activity-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.view { background: rgba(0, 217, 255, 0.2); color: #00d9ff; }
+        .activity-icon.quiz { background: rgba(255, 152, 0, 0.2); color: #ff9800; }
+        .activity-icon.complete { background: rgba(0, 200, 83, 0.2); color: #00c853; }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .activity-time {
+            font-size: 0.85em;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title {
+                font-size: 1.8em;
+            }
+
+            .progress-table {
+                font-size: 0.9em;
+            }
+
+            .progress-table th,
+            .progress-table td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <div id="navbar"></div>
+
+    <div class="container">
+        <a href="index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i> กลับไปหน้า Hot Runner
+        </a>
+
+        <!-- Header -->
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-chart-line" style="color: #00d9ff;"></i>
+                รายงานความก้าวหน้า
+            </h1>
+            <p class="page-subtitle">ติดตามความก้าวหน้าในการเรียนรู้ Hot Runner</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon lessons">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div class="stat-value" id="lessonsCompleted">0</div>
+                <div class="stat-label">บทเรียนที่เรียนจบ</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon time">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-value" id="totalTime">0</div>
+                <div class="stat-label">ชั่วโมงเรียน</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon quizzes">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-value" id="quizzesPassed">0</div>
+                <div class="stat-label">แบบทดสอบที่ผ่าน</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon streak">
+                    <i class="fas fa-fire"></i>
+                </div>
+                <div class="stat-value" id="currentStreak">0</div>
+                <div class="stat-label">วันติดต่อกัน</div>
+            </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3><i class="fas fa-chart-pie"></i> ความคืบหน้าตามระดับ</h3>
+                <div class="chart-container">
+                    <canvas id="progressChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3><i class="fas fa-chart-bar"></i> คะแนนแบบทดสอบ</h3>
+                <div class="chart-container">
+                    <canvas id="quizChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Table -->
+        <div class="progress-table-card">
+            <h3><i class="fas fa-list"></i> รายละเอียดบทเรียน</h3>
+            <table class="progress-table">
+                <thead>
+                    <tr>
+                        <th>บทเรียน</th>
+                        <th>ระดับ</th>
+                        <th>ความคืบหน้า</th>
+                        <th>สถานะ</th>
+                    </tr>
+                </thead>
+                <tbody id="progressTableBody">
+                    <!-- Data will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Activity Log -->
+        <div class="activity-card">
+            <h3><i class="fas fa-history"></i> กิจกรรมล่าสุด</h3>
+            <div class="activity-list" id="activityList">
+                <!-- Activities will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/components.js"></script>
+    <script>
+        // Lesson Data
+        const lessons = [
+            { id: 'hr_intro', name: 'รู้จัก Hot Runner System', level: 'basic' },
+            { id: 'hr_components', name: 'ส่วนประกอบระบบ Hot Runner', level: 'basic' },
+            { id: 'hr_thermocouple', name: 'Thermocouple Type K และ J', level: 'basic' },
+            { id: 'hr_basic_quiz', name: 'แบบทดสอบพื้นฐาน', level: 'basic' },
+            { id: 'hr_controller', name: 'Temperature Controller', level: 'intermediate' },
+            { id: 'hr_toshiba', name: 'Toshiba V30 Controller', level: 'intermediate' },
+            { id: 'hr_troubleshooting', name: 'การแก้ปัญหา Hot Runner', level: 'intermediate' },
+            { id: 'hr_skill_test', name: 'ทดสอบทักษะ', level: 'intermediate' },
+            { id: 'hr_3d_simulation', name: 'Hot Runner 3D Simulation', level: 'advanced' },
+            { id: 'hr_roi', name: 'ROI Calculator', level: 'advanced' },
+            { id: 'hr_advanced', name: 'Advanced Hot Runner', level: 'advanced' }
+        ];
+
+        // Progress Data
+        let userProgress = {};
+        let activities = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            renderStats();
+            renderCharts();
+            renderProgressTable();
+            renderActivities();
+        });
+
+        // Load Data
+        function loadData() {
+            const savedProgress = localStorage.getItem('hotrunner_progress');
+            if (savedProgress) {
+                userProgress = JSON.parse(savedProgress);
+            }
+
+            const savedActivities = localStorage.getItem('activity_log');
+            if (savedActivities) {
+                activities = JSON.parse(savedActivities);
+            }
+        }
+
+        // Render Stats
+        function renderStats() {
+            const completed = Object.values(userProgress).filter(p => p >= 100).length;
+            const quizzes = lessons.filter(l => l.id.includes('quiz') || l.id.includes('test'))
+                                   .filter(l => userProgress[l.id] >= 70).length;
+            
+            // Calculate time (estimate based on progress)
+            let totalMinutes = 0;
+            lessons.forEach(l => {
+                if (userProgress[l.id]) {
+                    totalMinutes += Math.round(30 * (userProgress[l.id] / 100));
+                }
+            });
+
+            // Calculate streak
+            const today = new Date().toDateString();
+            const lastVisit = localStorage.getItem('last_visit');
+            let streak = parseInt(localStorage.getItem('learning_streak') || '0');
+            
+            if (lastVisit !== today) {
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                
+                if (lastVisit === yesterday.toDateString()) {
+                    streak++;
+                } else if (lastVisit !== today) {
+                    streak = 1;
+                }
+                
+                localStorage.setItem('last_visit', today);
+                localStorage.setItem('learning_streak', streak.toString());
+            }
+
+            document.getElementById('lessonsCompleted').textContent = completed;
+            document.getElementById('totalTime').textContent = Math.round(totalMinutes / 60);
+            document.getElementById('quizzesPassed').textContent = quizzes;
+            document.getElementById('currentStreak').textContent = streak;
+        }
+
+        // Render Charts
+        function renderCharts() {
+            // Progress by Level Chart
+            const progressCtx = document.getElementById('progressChart').getContext('2d');
+            
+            const levelProgress = {
+                basic: calculateLevelProgress('basic'),
+                intermediate: calculateLevelProgress('intermediate'),
+                advanced: calculateLevelProgress('advanced')
+            };
+
+            new Chart(progressCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['พื้นฐาน', 'กลาง', 'ขั้นสูง'],
+                    datasets: [{
+                        data: [levelProgress.basic, levelProgress.intermediate, levelProgress.advanced],
+                        backgroundColor: ['#00d9ff', '#ff9800', '#e91e63'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: 'rgba(255, 255, 255, 0.7)' }
+                        }
+                    }
+                }
+            });
+
+            // Quiz Scores Chart
+            const quizCtx = document.getElementById('quizChart').getContext('2d');
+            
+            const quizScores = lessons
+                .filter(l => l.id.includes('quiz') || l.id.includes('test'))
+                .map(l => ({
+                    name: l.name.substring(0, 15) + '...',
+                    score: userProgress[l.id] || 0
+                }));
+
+            new Chart(quizCtx, {
+                type: 'bar',
+                data: {
+                    labels: quizScores.map(q => q.name),
+                    datasets: [{
+                        label: 'คะแนน (%)',
+                        data: quizScores.map(q => q.score),
+                        backgroundColor: quizScores.map(q => 
+                            q.score >= 70 ? '#00c853' : q.score > 0 ? '#ff9800' : 'rgba(255,255,255,0.1)'
+                        ),
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: 'rgba(255, 255, 255, 0.7)' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: 'rgba(255, 255, 255, 0.7)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Calculate Level Progress
+        function calculateLevelProgress(level) {
+            const levelLessons = lessons.filter(l => l.level === level);
+            const total = levelLessons.reduce((sum, l) => sum + (userProgress[l.id] || 0), 0);
+            return Math.round(total / levelLessons.length);
+        }
+
+        // Render Progress Table
+        function renderProgressTable() {
+            const tbody = document.getElementById('progressTableBody');
+            
+            tbody.innerHTML = lessons.map(lesson => {
+                const progress = userProgress[lesson.id] || 0;
+                const status = progress >= 100 ? 'completed' : progress > 0 ? 'inprogress' : 'notstarted';
+                const statusText = status === 'completed' ? 'เรียนจบแล้ว' : 
+                                   status === 'inprogress' ? 'กำลังเรียน' : 'ยังไม่เริ่ม';
+                const levelText = lesson.level === 'basic' ? 'พื้นฐาน' :
+                                  lesson.level === 'intermediate' ? 'กลาง' : 'ขั้นสูง';
+                const levelColor = lesson.level === 'basic' ? '#00d9ff' :
+                                   lesson.level === 'intermediate' ? '#ff9800' : '#e91e63';
+
+                return `
+                    <tr>
+                        <td>${lesson.name}</td>
+                        <td><span style="color: ${levelColor}">${levelText}</span></td>
+                        <td class="progress-bar-cell">
+                            <div class="progress-bar-mini">
+                                <div class="fill" style="width: ${progress}%; 
+                                     background: ${status === 'completed' ? 'linear-gradient(90deg, #00c853, #00e676)' : 
+                                                  'linear-gradient(90deg, #ff9800, #ffb74d)'}"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="status-badge-cell">
+                                <span class="status-dot ${status}"></span>
+                                ${statusText}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Render Activities
+        function renderActivities() {
+            const activityList = document.getElementById('activityList');
+            
+            // Filter to hot runner related activities
+            const hrActivities = activities
+                .filter(a => a.module && (a.module.includes('hot') || a.module.includes('hr_')))
+                .slice(0, 20);
+
+            if (hrActivities.length === 0) {
+                activityList.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: rgba(255,255,255,0.5);">
+                        <i class="fas fa-inbox" style="font-size: 3em; margin-bottom: 15px;"></i>
+                        <p>ยังไม่มีกิจกรรม</p>
+                    </div>
+                `;
+                return;
+            }
+
+            activityList.innerHTML = hrActivities.map(activity => {
+                const iconClass = activity.type === 'quiz' ? 'quiz' : 
+                                  activity.type === 'complete' ? 'complete' : 'view';
+                const iconName = activity.type === 'quiz' ? 'fa-question-circle' :
+                                 activity.type === 'complete' ? 'fa-check-circle' : 'fa-eye';
+                const timeStr = formatTimeAgo(new Date(activity.timestamp));
+
+                return `
+                    <div class="activity-item">
+                        <div class="activity-icon ${iconClass}">
+                            <i class="fas ${iconName}"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">${activity.description || activity.module}</div>
+                            <div class="activity-time">${timeStr}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Format Time Ago
+        function formatTimeAgo(date) {
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+
+            if (minutes < 1) return 'เมื่อสักครู่';
+            if (minutes < 60) return `${minutes} นาทีที่แล้ว`;
+            if (hours < 24) return `${hours} ชั่วโมงที่แล้ว`;
+            if (days < 7) return `${days} วันที่แล้ว`;
+            
+            return date.toLocaleDateString('th-TH');
+        }
+    </script>
+</body>
+</html>

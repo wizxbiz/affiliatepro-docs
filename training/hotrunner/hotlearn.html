@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hot Runner System - Interactive Learning</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .diagram-section {
+            position: relative;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hot-runner-diagram {
+            position: relative;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .component-marker {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ff6b6b;
+            border: 3px solid white;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        .component-marker:hover {
+            transform: scale(1.3);
+            background: #ff5252;
+            z-index: 10;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 107, 107, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
+        }
+
+        .info-panel {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            height: fit-content;
+        }
+
+        .component-info {
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .component-info.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .component-info h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3498db;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .info-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .info-item h4 {
+            color: #2980b9;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .info-item p {
+            color: #7f8c8d;
+            line-height: 1.6;
+        }
+
+        .specs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .specs-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .specs-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .specs-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #ecf0f1;
+            color: #2c3e50;
+        }
+
+        .btn-secondary:hover {
+            background: #bdc3c7;
+        }
+
+        .btn-secondary.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .quiz-section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .quiz-section.active {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        .quiz-question {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .quiz-option {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #ecf0f1;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-option:hover {
+            border-color: #3498db;
+            background: #f0f8ff;
+        }
+
+        .quiz-option.correct {
+            border-color: #27ae60;
+            background: #d5f4e6;
+        }
+
+        .quiz-option.incorrect {
+            border-color: #e74c3c;
+            background: #fdf2f2;
+        }
+
+        .progress-bar {
+            background: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .welcome-message {
+            text-align: center;
+            color: #7f8c8d;
+            padding: 40px;
+            background: white;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .welcome-message h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .component-list {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .component-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .component-item:hover {
+            background: #f8f9fa;
+        }
+
+        .component-dot {
+            width: 12px;
+            height: 12px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .diagram-section {
+                order: 1;
+            }
+            
+            .info-panel {
+                order: 2;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                justify-content: center;
+            }
+            
+            .btn {
+                font-size: 0.9em;
+                padding: 8px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Hot Runner System</h1>
+            <p>Interactive Learning - เรียนรู้โครงสร้างและหน้าที่ของแต่ละองค์ประกอบ</p>
+        </div>
+
+        <div class="main-content">
+            <div class="diagram-section">
+                <div style="position: relative; width: 100%; max-width: 600px;">
+                    <!-- Hot Runner Diagram -->
+                    <svg viewBox="0 0 400 600" style="width: 100%; height: auto; background: white; border-radius: 10px;">
+                        <!-- Main Body -->
+                        <rect x="120" y="50" width="160" height="500" fill="#e0e0e0" stroke="#999" stroke-width="2"/>
+                        
+                        <!-- Manifold -->
+                        <rect x="140" y="100" width="120" height="60" fill="#c0c0c0" stroke="#666" stroke-width="1"/>
+                        
+                        <!-- Sprue Bushing -->
+                        <rect x="170" y="70" width="60" height="40" fill="#ff9800" stroke="#e65100" stroke-width="2"/>
+                        
+                        <!-- Nozzle Housing -->
+                        <rect x="150" y="200" width="100" height="80" fill="#90a4ae" stroke="#455a64" stroke-width="1"/>
+                        
+                        <!-- Nozzle -->
+                        <rect x="180" y="220" width="40" height="40" fill="#ff5722" stroke="#d84315" stroke-width="2"/>
+                        
+                        <!-- Heaters -->
+                        <rect x="100" y="120" width="20" height="40" fill="#f44336" stroke="#c62828" stroke-width="1"/>
+                        <rect x="280" y="120" width="20" height="40" fill="#f44336" stroke="#c62828" stroke-width="1"/>
+                        <rect x="130" y="240" width="20" height="30" fill="#f44336" stroke="#c62828" stroke-width="1"/>
+                        <rect x="250" y="240" width="20" height="30" fill="#f44336" stroke="#c62828" stroke-width="1"/>
+                        
+                        <!-- Thermocouples -->
+                        <line x1="110" y1="140" x2="80" y2="140" stroke="#4caf50" stroke-width="3"/>
+                        <line x1="290" y1="140" x2="320" y2="140" stroke="#4caf50" stroke-width="3"/>
+                        
+                        <!-- Valve Stem -->
+                        <rect x="195" y="180" width="10" height="60" fill="#2196f3" stroke="#1565c0" stroke-width="1"/>
+                        
+                        <!-- Gate -->
+                        <circle cx="200" cy="280" r="5" fill="#4caf50" stroke="#2e7d32" stroke-width="2"/>
+                        
+                        <!-- Cooling Lines -->
+                        <rect x="80" y="300" width="40" height="8" fill="#03a9f4" stroke="#0277bd" stroke-width="1"/>
+                        <rect x="280" y="300" width="40" height="8" fill="#03a9f4" stroke="#0277bd" stroke-width="1"/>
+                        
+                        <!-- Electrical Connections -->
+                        <rect x="180" y="30" width="40" height="20" fill="#ff9800" stroke="#e65100" stroke-width="1"/>
+                        <line x1="200" y1="50" x2="200" y2="70" stroke="#ff9800" stroke-width="2"/>
+                    </svg>
+
+                    <!-- Interactive Markers -->
+                    <div class="component-marker" data-component="manifold" style="top: 20%; left: 50%;"></div>
+                    <div class="component-marker" data-component="sprue-bushing" style="top: 12%; left: 50%;"></div>
+                    <div class="component-marker" data-component="nozzle" style="top: 40%; left: 50%;"></div>
+                    <div class="component-marker" data-component="heater" style="top: 25%; left: 25%;"></div>
+                    <div class="component-marker" data-component="thermocouple" style="top: 25%; left: 20%;"></div>
+                    <div class="component-marker" data-component="valve-stem" style="top: 35%; left: 50%;"></div>
+                    <div class="component-marker" data-component="gate" style="top: 50%; left: 50%;"></div>
+                    <div class="component-marker" data-component="cooling" style="top: 55%; left: 25%;"></div>
+                </div>
+            </div>
+
+            <div class="info-panel">
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="startQuiz()">📝 Quiz</button>
+                    <button class="btn btn-secondary" onclick="showOverview()">📋 Overview</button>
+                    <button class="btn btn-secondary" onclick="resetLearning()">🔄 Reset</button>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+
+                <div class="welcome-message" id="welcomeMessage">
+                    <h3>🎯 ยินดีต้อนรับสู่การเรียนรู้ Hot Runner System</h3>
+                    <p>คลิกที่จุดสีแดงบนแผนภาพเพื่อเรียนรู้เกี่ยวกับองค์ประกอบต่างๆ</p>
+                    <p>หรือใช้ปุ่มด้านบนเพื่อเริ่ม Quiz หรือดู Overview</p>
+                </div>
+
+                <!-- Component Information Panels -->
+                <div class="component-info" id="manifold">
+                    <h3>🔧 Manifold (ท่อกระจาย)</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <h4>หน้าที่หลัก</h4>
+                            <p>กระจายพลาสติกเหลวจากหัวฉีดไปยัง Gate ต่างๆ อย่างสม่ำเสมอ</p>
+                        </div>
+                        <div class="info-item">
+                            <h4>วัสดุ</h4>
+                            <p>เหล็กเครื่องมือ H13 ความแข็ง 48-52 HRC ทนความร้อนสูง</p>
+                        </div>
+                        <div class="info-item">
+                            <h4>การออกแบบ</h4>
+                            <p>ออกแบบให้การไหลสม่ำเสมอ (Flow Balance) และง่ายต่อการบำรุงรักษา</p>
+                        </div>
+                    </div>
+                    <table class="specs-table">
+                        <thead>
+                            <tr><th>คุณสมบัติ</th><th>ค่า</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>อุณหภูมิใช้งาน</td><td>200-300°C</td></tr>
+                            <tr><td>ความดัน</td><td>สูงสุด 2000 bar</td></tr>
+                            <tr><td>Surface Treatment</td><td>Nitriding หรือ Chrome plating</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="component-info" id="sprue-bushing">
+                    <h3>🎯 Sprue Bushing</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <h4>หน้าที่</h4>
+                            <p>เชื่อมต่อระหว่างหัวฉีดเครื่องกับระบบ Hot Runner</p>
+                        </div>
+                        <div class="info-item">
+                            <h4>การออกแบบ</h4>
+                            <p>มีรูปทรงกรวยเพื่อให้พลาสติกไหลเข้าได้อย่างราบรื่น</p>
+                        </div>
+                        <div class="info-item">
+                            <h4>ความสำคัญ</h4>
+                            <p>ต้องมีอุณหภูมิสูงที่สุดในระบบเพื่อป้องกัน Freeze-off</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="component-info" id="nozzle">
+                    <h3>💉 Nozzle (หัวฉีด)</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <h4>ประเภท</h4>
+                            <p><strong>Open Gate:</strong> เปิดตลอดเวลา<br><strong>Valve Gate:</strong> มี Valve ควบคุม</p>
+                        </div>
+                        <div class="info-item">
+                            <h4>วัสดุ</h4>
+                            <p>Beryllium Copper (การนำความร้อนดี) หรือ H13 Steel</p>
+                        </div>
+                        <div class="info-item">
+                            <h4>การใช้งาน</h4>
+                            <p>Valve Gate: งานคุณภาพสูง, Open Gate: งานทั่วไป</p>
+                        </div>
+                    </div>
+                    <table class="specs-table">
+                        <thead>
+                            <tr><th>ประเภท</th><th>ข้อดี</th><th>ข้อเสีย</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Open Gate</td><td>ราคาถูก, บำรุงง่าย</td><td>มีรอย Gate</td></tr>
+                            <tr><td>Valve Gate</td><td>ไม่มีรอย Gate</td><td>ราคาแพง, ซับซ้อน</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="component-info" id="heater">
+                    <h3>🔥 Heater (ตัวให้ความร้อน)</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <h4>ประเภท</h4>
+                            <p><strong>Cartridge Heater:</strong> สำหรับ Manifold<br><strong>Band Heater:</strong> สำหรับส่วนกลม</p>
+                        </div>
+                        <div class="info-item">
+                            <h4>การคำนวณกำลัง</h4>
+                            <p>P = (Q × Cp × ΔT) / η + Ploss</p>
+                        </div>
+                        <div class="info-item">
+                            <h4>การควบคุม</h4>
+                            <p>ใช้ PID Controller สำหรับการควบคุมอุณหภูมิที่แม่นยำ</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="component-info" id="thermocouple">
+                    <h3>🌡️ Thermocouple</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <h4>ประเภท</h4>
+                            <p><strong>Type J:</strong> 0-750°C, ราคาถูก<br><strong>Type K:</strong> 0-1000°C, ทนทาน</p>
+                        </div>
+                        <div class="info-item">
+                            <h4>การติดตั้ง</h4>
+                            <p>ติดตั้งใกล้ Runner 5-10mm และห่างจาก Heater 15-20mm</p>
+                        </div>
+                        <div class="info-item">
+                            <h4>การบำรุงรักษา</h4>
+                            <p>เปลี่ยนทุก 3-6 เดือน หรือเมื่อความแม่นยำลดลง</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="component-info" id="valve-stem">
+                    <h3>🔧 Valve Stem</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <h4>หน้าที่</h4>
+                            <p>ควบคุมการเปิด-ปิด Gate ในระบบ Valve Gate</p>
+                        </div>
+                        <div class="info-item">
+                            <h4>การทำงาน</h4>
+                            <p>Pneumatic, Hydraulic หรือ Electric actuator</p>
+                        </div>
+                        <div class="info-item">
+                            <h4>ความแม่นยำ</h4>
+                            <p>Timing ต้องแม่นยำ ±0.1 วินาทีสำหรับคุณภาพสูง</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="component-info" id="gate">
+                    <h3>🚪 Gate</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <h4>ขนาด</h4>
+                            <p>ขึ้นกับชนิดพลาสติกและขนาดชิ้นงาน โดยทั่วไป 0.5-2.0mm</p>
+                        </div>
+                        <div class="info-item">
+                            <h4>รูปทรง</h4>
+                            <p>Pin Gate, Ring Gate, Film Gate ตามการใช้งาน</p>
+                        </div>
+                        <div class="info-item">
+                            <h4>คุณภาพ</h4>
+                            <p>Valve Gate ไม่มีรอย, Open Gate มีรอยต้องตัด</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="component-info" id="cooling">
+                    <h3>❄️ Cooling System</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <h4>หน้าที่</h4>
+                            <p>ระบายความร้อนจากแม่พิมพ์เพื่อป้องกันความร้อนรั่ว</p>
+                        </div>
+                        <div class="info-item">
+                            <h4>การออกแบบ</h4>
+                            <p>ต้องไม่ทำให้ Hot Runner เย็นเกินไป</p>
+                        </div>
+                        <div class="info-item">
+                            <h4>การควบคุม</h4>
+                            <p>อุณหภูมิน้ำหล่อเย็น 15-25°C</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Component List -->
+                <div class="component-list">
+                    <h3>📋 องค์ประกอบทั้งหมด</h3>
+                    <div class="component-item" onclick="showComponent('manifold')">
+                        <div class="component-dot"></div>
+                        <span>Manifold - ท่อกระจาย</span>
+                    </div>
+                    <div class="component-item" onclick="showComponent('sprue-bushing')">
+                        <div class="component-dot"></div>
+                        <span>Sprue Bushing - หัวต่อ</span>
+                    </div>
+                    <div class="component-item" onclick="showComponent('nozzle')">
+                        <div class="component-dot"></div>
+                        <span>Nozzle - หัวฉีด</span>
+                    </div>
+                    <div class="component-item" onclick="showComponent('heater')">
+                        <div class="component-dot"></div>
+                        <span>Heater - ตัวให้ความร้อน</span>
+                    </div>
+                    <div class="component-item" onclick="showComponent('thermocouple')">
+                        <div class="component-dot"></div>
+                        <span>Thermocouple - เซ็นเซอร์อุณหภูมิ</span>
+                    </div>
+                    <div class="component-item" onclick="showComponent('valve-stem')">
+                        <div class="component-dot"></div>
+                        <span>Valve Stem - แกนวาล์ว</span>
+                    </div>
+                    <div class="component-item" onclick="showComponent('gate')">
+                        <div class="component-dot"></div>
+                        <span>Gate - ประตูฉีด</span>
+                    </div>
+                    <div class="component-item" onclick="showComponent('cooling')">
+                        <div class="component-dot"></div>
+                        <span>Cooling System - ระบบทำความเย็น</span>
+                    </div>
+                </div>
+
+                <!-- Quiz Section -->
+                <div class="quiz-section" id="quizSection">
+                    <h3>📝 แบบทดสอบความรู้</h3>
+                    <div id="quizContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const components = ['manifold', 'sprue-bushing', 'nozzle', 'heater', 'thermocouple', 'valve-stem', 'gate', 'cooling'];
+        let visitedComponents = new Set();
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+
+        const quizQuestions = [
+            {
+                question: "องค์ประกอบใดที่มีหน้าที่กระจายพลาสติกเหลวไปยัง Gate ต่างๆ?",
+                options: ["Nozzle", "Manifold", "Heater", "Thermocouple"],
+                correct: 1,
+                explanation: "Manifold หรือท่อกระจาย มีหน้าที่กระจายพลาสติกเหลวจากหัวฉีดไปยัง Gate ต่างๆ อย่างสม่ำเสมอ"
+            },
+            {
+                question: "Valve Gate และ Open Gate แตกต่างกันอย่างไร?",
+                options: ["ราคาเท่ากัน", "Open Gate ไม่มีรอย Gate", "Valve Gate ควบคุมการเปิด-ปิดได้", "ใช้วัสดุเดียวกัน"],
+                correct: 2,
+                explanation: "Valve Gate มี Valve pin ควบคุมการเปิด-ปิด Gate ได้ ทำให้ไม่มีรอย Gate บนชิ้นงาน ต่างจาก Open Gate ที่เปิดตลอดเวลา"
+            },
+            {
+                question: "วัสดุใดที่เหมาะสำหรับ Manifold?",
+                options: ["Aluminum", "H13 Tool Steel", "Plastic", "Copper"],
+                correct: 1,
+                explanation: "H13 Tool Steel เป็นวัสดุที่เหมาะสำหรับ Manifold เพราะทนความร้อนสูง (500-600°C) และมีความแข็ง 48-52 HRC"
+            },
+            {
+                question: "อุณหภูมิส่วนใดที่ต้องสูงที่สุดในระบบ Hot Runner?",
+                options: ["Nozzle", "Manifold", "Sprue Bushing", "Gate"],
+                correct: 2,
+                explanation: "Sprue Bushing ต้องมีอุณหภูมิสูงที่สุดเพื่อป้องกัน Freeze-off ที่จุดเชื่อมต่อกับหัวฉีดเครื่อง"
+            },
+            {
+                question: "ประโยชน์หลักของ Hot Runner คืออะไร?",
+                options: ["ราคาถูก", "ไม่มี Runner waste", "บำรุงรักษาง่าย", "ใช้พลังงานน้อย"],
+                correct: 1,
+                explanation: "ประโยชน์หลักของ Hot Runner คือไม่มี Runner waste เพราะพลาสติกใน Runner ยังคงเหลวอยู่ตลอดเวลา"
+            }
+        ];
+
+        // Initialize markers
+        document.querySelectorAll('.component-marker').forEach(marker => {
+            marker.addEventListener('click', function() {
+                const component = this.dataset.component;
+                showComponent(component);
+            });
+        });
+
+        function showComponent(componentId) {
+            // Hide welcome message
+            document.getElementById('welcomeMessage').style.display = 'none';
+            
+            // Hide all component info
+            document.querySelectorAll('.component-info').forEach(info => {
+                info.classList.remove('active');
+            });
+            
+            // Show selected component
+            const componentInfo = document.getElementById(componentId);
+            if (componentInfo) {
+                componentInfo.classList.add('active');
+                visitedComponents.add(componentId);
+                updateProgress();
+            }
+            
+            // Hide quiz
+            document.getElementById('quizSection').classList.remove('active');
+        }
+
+        function updateProgress() {
+            const progress = (visitedComponents.size / components.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function showOverview() {
+            document.getElementById('welcomeMessage').style.display = 'block';
+            document.querySelectorAll('.component-info').forEach(info => {
+                info.classList.remove('active');
+            });
+            document.getElementById('quizSection').classList.remove('active');
+        }
+
+        function resetLearning() {
+            visitedComponents.clear();
+            updateProgress();
+            showOverview();
+            currentQuizIndex = 0;
+            quizScore = 0;
+        }
+
+        function startQuiz() {
+            document.getElementById('welcomeMessage').style.display = 'none';
+            document.querySelectorAll('.component-info').forEach(info => {
+                info.classList.remove('active');
+            });
+            
+            currentQuizIndex = 0;
+            quizScore = 0;
+            showQuizQuestion();
+            document.getElementById('quizSection').classList.add('active');
+        }
+
+        function showQuizQuestion() {
+            if (currentQuizIndex >= quizQuestions.length) {
+                showQuizResults();
+                return;
+            }
+
+            const question = quizQuestions[currentQuizIndex];
+            const quizContent = document.getElementById('quizContent');
+            
+            quizContent.innerHTML = `
+                <div class="quiz-question">
+                    <h4>คำถามที่ ${currentQuizIndex + 1} จาก ${quizQuestions.length}</h4>
+                    <p>${question.question}</p>
+                </div>
+                <div class="quiz-options">
+                    ${question.options.map((option, index) => 
+                        `<div class="quiz-option" onclick="selectAnswer(${index})">${option}</div>`
+                    ).join('')}
+                </div>
+                <div id="explanation" style="display: none; background: #f0f8ff; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                    <strong>คำอธิบาย:</strong> <span id="explanationText">${question.explanation}</span>
+                </div>
+            `;
+        }
+
+        function selectAnswer(selectedIndex) {
+            const question = quizQuestions[currentQuizIndex];
+            const options = document.querySelectorAll('.quiz-option');
+            
+            options.forEach((option, index) => {
+                option.style.pointerEvents = 'none';
+                if (index === question.correct) {
+                    option.classList.add('correct');
+                } else if (index === selectedIndex && index !== question.correct) {
+                    option.classList.add('incorrect');
+                }
+            });
+
+            if (selectedIndex === question.correct) {
+                quizScore++;
+            }
+
+            document.getElementById('explanation').style.display = 'block';
+            
+            setTimeout(() => {
+                currentQuizIndex++;
+                showQuizQuestion();
+            }, 3000);
+        }
+
+        function showQuizResults() {
+            const percentage = Math.round((quizScore / quizQuestions.length) * 100);
+            let message = '';
+            let color = '';
+
+            if (percentage >= 80) {
+                message = 'ยอดเยี่ยม! คุณมีความเข้าใจ Hot Runner เป็นอย่างดี 🏆';
+                color = '#27ae60';
+            } else if (percentage >= 60) {
+                message = 'ดี! คุณมีความรู้พื้นฐานที่ดี 👍';
+                color = '#f39c12';
+            } else {
+                message = 'ควรศึกษาเพิ่มเติม ลองเรียนรู้จากแผนภาพอีกครั้ง 📚';
+                color = '#e74c3c';
+            }
+
+            document.getElementById('quizContent').innerHTML = `
+                <div style="text-align: center; padding: 30px;">
+                    <h3 style="color: ${color}; margin-bottom: 20px;">ผลคะแนน</h3>
+                    <div style="font-size: 3em; color: ${color}; margin: 20px 0;">${percentage}%</div>
+                    <p style="font-size: 1.2em; margin: 20px 0;">คะแนน: ${quizScore}/${quizQuestions.length}</p>
+                    <p style="color: ${color}; font-weight: bold;">${message}</p>
+                    <button class="btn btn-primary" onclick="startQuiz()" style="margin: 20px 10px;">ทำใหม่</button>
+                    <button class="btn btn-secondary" onclick="showOverview()" style="margin: 20px 10px;">กลับหน้าหลัก</button>
+                </div>
+            `;
+        }
+
+        // Initialize
+        showOverview();
+    </script>
+</body>
+</html>

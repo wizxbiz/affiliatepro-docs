@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>หลักสูตรการอบรม: เทคนิคการขึ้นรูปงานฉีดพลาสติก</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styles */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Breadcrumb Navigation */
+        .breadcrumb {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 25px;
+            border-radius: 50px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .breadcrumb a {
+            color: #667eea;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .breadcrumb .separator {
+            color: #a0aec0;
+            margin: 0 10px;
+        }
+
+        .breadcrumb .current {
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+        }
+
+        .content-left {
+            flex: 2;
+        }
+
+        .content-right {
+            flex: 1;
+            position: sticky;
+            top: 20px;
+        }
+
+        /* Module Styles */
+        .modules {
+            display: grid;
+            gap: 25px;
+        }
+
+        .module {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .module:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .module-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .module-header h3 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .module-actions {
+            position: absolute;
+            right: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .btn-detail {
+            background: rgba(52, 211, 153, 0.8);
+        }
+
+        .btn-detail:hover {
+            background: rgba(52, 211, 153, 1);
+        }
+
+        /* Detail Modal */
+        .detail-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .detail-modal.active {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 1200px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            margin-top: 50px;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 20px 20px 0 0;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        /* Image Gallery */
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .image-item {
+            background: #f7fafc;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .image-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, #e2e8f0 25%, transparent 25%), 
+                        linear-gradient(-45deg, #e2e8f0 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #e2e8f0 75%), 
+                        linear-gradient(-45deg, transparent 75%, #e2e8f0 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #718096;
+            font-size: 2rem;
+        }
+
+        .image-caption {
+            padding: 15px;
+            background: white;
+        }
+
+        .image-caption h4 {
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .image-caption p {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        /* Detailed Content Sections */
+        .detail-section {
+            margin: 30px 0;
+            padding: 25px;
+            background: #f7fafc;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+        }
+
+        .detail-section h3 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+
+        .technical-specs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .spec-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .spec-item h5 {
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .spec-item p {
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+
+        /* Process Flow */
+        .process-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .process-step {
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+            position: relative;
+        }
+
+        .process-step::after {
+            content: '→';
+            position: absolute;
+            right: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+            font-size: 1.5rem;
+        }
+
+        .process-step:last-child::after {
+            display: none;
+        }
+
+        .step-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .step-desc {
+            font-size: 0.8rem;
+            color: #718096;
+        }
+
+        /* Side Panel */
+        .side-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .panel-section {
+            margin-bottom: 25px;
+        }
+
+        .panel-section h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .quick-nav {
+            list-style: none;
+        }
+
+        .quick-nav li {
+            margin-bottom: 10px;
+        }
+
+        .quick-nav a {
+            color: #667eea;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            display: block;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .quick-nav a:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(5px);
+        }
+
+        /* Progress Indicator */
+        .progress-indicator {
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 0.8rem;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .content-right {
+                position: relative;
+                top: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .module-actions {
+                position: relative;
+                right: auto;
+                top: auto;
+                transform: none;
+                margin-top: 15px;
+                justify-content: center;
+            }
+            
+            .modal-content {
+                margin-top: 20px;
+                border-radius: 15px;
+            }
+            
+            .process-flow {
+                flex-direction: column;
+            }
+            
+            .process-step::after {
+                display: none;
+            }
+        }
+
+        /* Animation Classes */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <div class="breadcrumb">
+            <a href="#" onclick="showMainCourse()">🏠 หน้าหลัก</a>
+            <span class="separator">›</span>
+            <span class="current" id="breadcrumb-current">หลักสูตรการอบรม</span>
+        </div>
+
+        <div class="header">
+            <h1>เทคนิคการขึ้นรูปงานฉีดพลาสติก</h1>
+            <p>Know How Injection Molding - Advanced Training Course</p>
+            <p style="margin-top: 10px; font-size: 1rem;">สถาบันเรียนรู้การฉีดพลาสติก IMT THAILAND</p>
+        </div>
+
+        <div class="main-content">
+            <div class="content-left">
+                <div class="modules" id="main-modules">
+                    <!-- Module 1 -->
+                    <div class="module" data-module="1">
+                        <div class="module-header">
+                            <h3>บทที่ 1: พื้นฐานการฉีดพลาสติก</h3>
+                            <p>ทำความรู้จักกับกระบวนการฉีดพลาสติกและองค์ประกอบสำคัญ</p>
+                            <div class="module-actions">
+                                <button class="btn toggle-btn" onclick="toggleModule(this)">+</button>
+                                <button class="btn btn-detail" onclick="showModuleDetail(1)" title="ดูรายละเอียด">📖</button>
+                            </div>
+                        </div>
+                        <div class="module-content">
+                            <div class="content-inner">
+                                <p><strong>เนื้อหาหลัก:</strong> หลักการพื้นฐาน, องค์ประกอบ 3 อย่างสำคัญ, ประเภทเครื่องฉีด</p>
+                                <p><strong>เวลาเรียน:</strong> 2 ชั่วโมง | <strong>ระดับ:</strong> เบื้องต้น</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Module 2 -->
+                    <div class="module" data-module="2">
+                        <div class="module-header">
+                            <h3>บทที่ 2: โครงสร้างและระบบเครื่องฉีดพลาสติก</h3>
+                            <p>ศึกษาโครงสร้างและระบบการทำงานของเครื่องฉีดพลาสติก</p>
+                            <div class="module-actions">
+                                <button class="btn toggle-btn" onclick="toggleModule(this)">+</button>
+                                <button class="btn btn-detail" onclick="showModuleDetail(2)" title="ดูรายละเอียด">📖</button>
+                            </div>
+                        </div>
+                        <div class="module-content">
+                            <div class="content-inner">
+                                <p><strong>เนื้อหาหลัก:</strong> Clamping Unit, Injection Unit, ระบบส่งกำลัง</p>
+                                <p><strong>เวลาเรียน:</strong> 3 ชั่วโมง | <strong>ระดับ:</strong> ปานกลาง</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Module 3 -->
+                    <div class="module" data-module="3">
+                        <div class="module-header">
+                            <h3>บทที่ 3: อุปกรณ์เสริมและระบบสนับสนุน</h3>
+                            <p>อุปกรณ์พื้นฐานที่ใช้งานร่วมกับเครื่องฉีดพลาสติก</p>
+                            <div class="module-actions">
+                                <button class="btn toggle-btn" onclick="toggleModule(this)">+</button>
+                                <button class="btn btn-detail" onclick="showModuleDetail(3)" title="ดูรายละเอียด">📖</button>
+                            </div>
+                        </div>
+                        <div class="module-content">
+                            <div class="content-inner">
+                                <p><strong>เนื้อหาหลัก:</strong> Robot, Chiller, Air Compressor, Mold Temperature</p>
+                                <p><strong>เวลาเรียน:</strong> 2.5 ชั่วโมง | <strong>ระดับ:</strong> ปานกลาง</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Module 4 -->
+                    <div class="module" data-module="4">
+                        <div class="module-header">
+                            <h3>บทที่ 4: การควบคุมและใช้งานเครื่องฉีดพลาสติก</h3>
+                            <p>เรียนรู้การใช้งานระบบควบคุมและปุ่มกดต่างๆ</p>
+                            <div class="module-actions">
+                                <button class="btn toggle-btn" onclick="toggleModule(this)">+</button>
+                                <button class="btn btn-detail" onclick="showModuleDetail(4)" title="ดูรายละเอียด">📖</button>
+                            </div>
+                        </div>
+                        <div class="module-content">
+                            <div class="content-inner">
+                                <p><strong>เนื้อหาหลัก:</strong> Control Panel, Monitor Screen, Operating Modes</p>
+                                <p><strong>เวลาเรียน:</strong> 3 ชั่วโมง | <strong>ระดับ:</strong> ปานกลาง</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Module 5 -->
+                    <div class="module" data-module="5">
+                        <div class="module-header">
+                            <h3>บทที่ 5: วัตถุดิบพลาสติกและการเตรียมวัตถุดิบ</h3>
+                            <p>ประเภทของพลาสติกและการเตรียมก่อนการฉีด</p>
+                            <div class="module-actions">
+                                <button class="btn toggle-btn" onclick="toggleModule(this)">+</button>
+                                <button class="btn btn-detail" onclick="showModuleDetail(5)" title="ดูรายละเอียด">📖</button>
+                            </div>
+                        </div>
+                        <div class="module-content">
+                            <div class="content-inner">
+                                <p><strong>เนื้อหาหลัก:</strong> Thermoplastic Types, Drying Process, Temperature Standards</p>
+                                <p><strong>เวลาเรียน:</strong> 2.5 ชั่วโมง | <strong>ระดับ:</strong> เบื้องต้น</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Module 6 -->
+                    <div class="module" data-module="6">
+                        <div class="module-header">
+                            <h3>บทที่ 6: แม่พิมพ์ฉีดพลาสติกและระบบทางน้ำ</h3>
+                            <p>โครงสร้างแม่พิมพ์และระบบ Hot Runner</p>
+                            <div class="module-actions">
+                                <button class="btn toggle-btn" onclick="toggleModule(this)">+</button>
+                                <button class="btn btn-detail" onclick="showModuleDetail(6)" title="ดูรายละเอียด">📖</button>
+                            </div>
+                        </div>
+                        <div class="module-content">
+                            <div class="content-inner">
+                                <p><strong>เนื้อหาหลัก:</strong> Mold Structure, Hot/Cold Runner, Gate Types</p>
+                                <p><strong>เวลาเรียน:</strong> 4 ชั่วโมง | <strong>ระดับ:</strong> สูง</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Module 7 -->
+                    <div class="module" data-module="7">
+                        <div class="module-header">
+                            <h3>บทที่ 7: กระบวนการฉีดและการกำหนดเงื่อนไข</h3>
+                            <p>ลำดับกระบวนการฉีดและการตั้งพารามิเตอร์</p>
+                            <div class="module-actions">
+                                <button class="btn toggle-btn" onclick="toggleModule(this)">+</button>
+                                <button class="btn btn-detail" onclick="showModuleDetail(7)" title="ดูรายละเอียด">📖</button>
+                            </div>
+                        </div>
+                        <div class="module-content">
+                            <div class="content-inner">
+                                <p><strong>เนื้อหาหลัก:</strong> Process Sequence, Parameter Setting, Shot Size Calculation</p>
+                                <p><strong>เวลาเรียน:</strong> 4 ชั่วโมง | <strong>ระดับ:</strong> สูง</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Module 8 -->
+                    <div class="module" data-module="8">
+                        <div class="module-header">
+                            <h3>บทที่ 8: การวิเคราะห์และแก้ไขปัญหา</h3>
+                            <p>ปัญหาที่พบบ่อยในการฉีดพลาสติกและวิธีการแก้ไข</p>
+                            <div class="module-actions">
+                                <button class="btn toggle-btn" onclick="toggleModule(this)">+</button>
+                                <button class="btn btn-detail" onclick="showModuleDetail(8)" title="ดูรายละเอียด">📖</button>
+                            </div>
+                        </div>
+                        <div class="module-content">
+                            <div class="content-inner">
+                                <p><strong>เนื้อหาหลัก:</strong> Troubleshooting, Defect Analysis, Solution Methods</p>
+                                <p><strong>เวลาเรียน:</strong> 3.5 ชั่วโมง | <strong>ระดับ:</strong> สูง</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-right">
+                <div class="side-panel">
+                    <div class="panel-section">
+                        <h3>📊 ความคืบหน้า</h3>
+                        <div class="progress-indicator">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-fill"></div>
+                            </div>
+                            <div class="progress-text" id="progress-text">0% เสร็จสิ้น</div>
+                        </div>
+                    </div>
+
+                    <div class="panel-section">
+                        <h3>🚀 เมนูด่วน</h3>
+                        <ul class="quick-nav">
+                            <li><a href="#" onclick="showModuleDetail(1)">บทที่ 1: พื้นฐาน</a></li>
+                            <li><a href="#" onclick="showModuleDetail(2)">บทที่ 2: โครงสร้าง</a></li>
+                            <li><a href="#" onclick="showModuleDetail(3)">บทที่ 3: อุปกรณ์เสริม</a></li>
+                            <li><a href="#" onclick="showModuleDetail(4)">บทที่ 4: การควบคุม</a></li>
+                            <li><a href="#" onclick="showModuleDetail(5)">บทที่ 5: วัตถุดิบ</a></li>
+                            <li><a href="#" onclick="showModuleDetail(6)">บทที่ 6: แม่พิมพ์</a></li>
+                            <li><a href="#" onclick="showModuleDetail(7)">บทที่ 7: กระบวนการ</a></li>
+                            <li><a href="#" onclick="showModuleDetail(8)">บทที่ 8: แก้ไขปัญหา</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="panel-section">
+                        <h3>📚 ข้อมูลหลักสูตร</h3>
+                        <div style="font-size: 0.9rem; color: #4a5568;">
+                            <p><strong>⏱️ รวมเวลา:</strong> 24 ชั่วโมง</p>
+                            <p><strong>🎯 จำนวนบท:</strong> 8 บทเรียน</p>
+                            <p><strong>📈 ระดับ:</strong> เบื้องต้น - สูง</p>
+                            <p><strong>🏆 ใบประกาศ:</strong> มี</p>
+                        </div>
+                    </div>
+
+                    <div class="panel-section">
+                        <h3>👨‍🏫 วิทยากร</h3>
+                        <div style="font-size: 0.9rem; color: #4a5568;">
+                            <p><strong>นายอนันต์ มัทปะนัง</strong></p>
+                            <p>ผู้เชี่ยวชาญการฉีดพลาสติก</p>
+                            <hr style="margin: 10px 0; border: none; border-top: 1px solid #e2e8f0;">
+                            <p><strong>นายวิทยา พงษ์สำราญ</strong></p>
+                            <p>ผู้เชี่ยวชาญการแก้ไขปัญหา</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="detail-modal" id="detail-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">รายละเอียดบทเรียน</h2>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Module detailed data
+        const moduleData = {
+            1: {
+                title: "บทที่ 1: พื้นฐานการฉีดพลาสติก",
+                subtitle: "ทำความรู้จักกับกระบวนการฉีดพลาสติกและองค์ประกอบสำคัญ",
+                objectives: [
+                    "เข้าใจหลักการพื้นฐานของการฉีดพลาสติก",
+                    "รู้จักองค์ประกอบหลักของเครื่องฉีดพลาสติก",
+                    "เข้าใจความสำคัญของ 3 สิ่งหลักในการฉีดพลาสติก"
+                ],
+                content: [
+                    {
+                        title: "การฉีดพลาสติกคืออะไร",
+                        description: "กระบวนการผลิตชิ้นงานโดยอาศัยกรรมวิธีการเติมเม็ดพลาสติกเข้าไปในเครื่องฉีดพลาสติก เมื่อเม็ดพลาสติก (เทอร์โมพลาสติก) ผ่านความร้อนและอ่อนตัวลงจนหลอมละลายจนเป็นของเหลว",
+                        processSteps: [
+                            { icon: "🔥", title: "ขั้นหลอมเหลว", desc: "เม็ดพลาสติกถูกทำให้หลอมเหลวด้วยความร้อน" },
+                            { icon: "💉", title: "ขั้นฉีด", desc: "พลาสติกเหลวถูกฉีดเข้าไปในแม่พิมพ์" },
+                            { icon: "❄️", title: "ขั้นเย็นตัว", desc: "ชิ้นงานเย็นตัวและแข็งตัวในแม่พิมพ์" },
+                            { icon: "🔓", title: "ขั้นปลดชิ้น", desc: "เปิดแม่พิมพ์และปลดชิ้นงานออกมา" }
+                        ]
+                    },
+                    {
+                        title: "3 สิ่งสำคัญในการฉีดพลาสติก",
+                        description: "องค์ประกอบหลักที่ต้องมีครบถ้วนในการฉีดพลาสติก",
+                        items: [
+                            "1. พลาสติก (Polymer) - วัตถุดิบหลักในการขึ้นรูป",
+                            "2. เครื่องฉีดพลาสติก (Injection Molding Machine) - อุปกรณ์สำหรับขึ้นรูป",
+                            "3. แม่พิมพ์ฉีดพลาสติก (Mold) - เครื่องมือกำหนดรูปร่างชิ้นงาน"
+                        ]
+                    }
+                ],
+                images: [
+                    { title: "เครื่องฉีดพลาสติกแนวนอน", desc: "เครื่องฉีดแบบ Horizontal ที่ใช้กันแพร่หลาย", icon: "🏭" },
+                    { title: "เครื่องฉีดพลาสติกแนวตั้ง", desc: "เครื่องฉีดแบบ Vertical ประหยัดพื้นที่", icon: "🏗️" },
+                    { title: "กระบวนการฉีดพลาสติก", desc: "ขั้นตอนการทำงานของเครื่องฉีด", icon: "⚙️" },
+                    { title: "ชิ้นงานพลาสติกตัวอย่าง", desc: "ผลิตภัณฑ์ที่ได้จากการฉีดพลาสติก", icon: "🔧" }
+                ],
+                technicalSpecs: [
+                    { title: "ขนาดเครื่องฉีด", value: "15-4500 ตัน", desc: "กำลังการหนีบแม่พิมพ์" },
+                    { title: "อุณหภูมิการทำงาน", value: "180-320°C", desc: "ช่วงอุณหภูมิหลอมเหลว" },
+                    { title: "แรงดันฉีด", value: "50-2000 bar", desc: "แรงดันในการฉีดพลาสติก" },
+                    { title: "ความเร็วฉีด", value: "1-1000 mm/s", desc: "ความเร็วในการเติมแม่พิมพ์" }
+                ]
+            },
+            2: {
+                title: "บทที่ 2: โครงสร้างและระบบเครื่องฉีดพลาสติก",
+                subtitle: "ศึกษาโครงสร้างและระบบการทำงานของเครื่องฉีดพลาสติก",
+                objectives: [
+                    "เข้าใจโครงสร้างส่วนสำคัญของเครื่องฉีดพลาสติก",
+                    "รู้จักระบบส่งกำลังต่างๆ",
+                    "เข้าใจการทำงานของระบบ Clamp และ Injection Unit"
+                ],
+                content: [
+                    {
+                        title: "ชุดปิด-เปิดแม่พิมพ์ (Clamping Unit)",
+                        description: "ทำหน้าที่เคลื่อนปิด-เปิดแม่พิมพ์ในจังหวะการทำงานของเครื่องฉีดพลาสติก",
+                        processSteps: [
+                            { icon: "🔒", title: "Mold Close", desc: "แม่พิมพ์เริ่มปิด" },
+                            { icon: "💪", title: "Clamp", desc: "บีบอัดแม่พิมพ์ให้แน่น" },
+                            { icon: "💉", title: "Injection", desc: "ฉีดพลาสติกเข้าแม่พิมพ์" },
+                            { icon: "🔓", title: "Mold Open", desc: "เปิดแม่พิมพ์และปลดชิ้นงาน" }
+                        ]
+                    },
+                    {
+                        title: "ระบบส่งกำลัง",
+                        description: "ระบบขับเคลื่อนหลักของเครื่องฉีดพลาสติก",
+                        items: [
+                            "1. Hydraulic System - ใช้น้ำมันไฮดรอลิค ให้กำลังสูง เสถียร",
+                            "2. Electric Servo System - ใช้มอเตอร์ไฟฟ้า ประหยัดพลังงาน แม่นยำ",
+                            "3. Hybrid System - รวมข้อดีของทั้งสองระบบ"
+                        ]
+                    }
+                ],
+                images: [
+                    { title: "Toggle Clamp System", desc: "ระบบข้อพับสำหรับปิด-เปิดแม่พิมพ์", icon: "🔧" },
+                    { title: "Direct Clamp System", desc: "ระบบปิดแม่พิมพ์โดยตรง", icon: "⚡" },
+                    { title: "Injection Unit", desc: "ชุดฉีดและส่วนประกอบ", icon: "💉" },
+                    { title: "Hydraulic System", desc: "ระบบไฮดรอลิคและปั๊ม", icon: "🔄" }
+                ],
+                technicalSpecs: [
+                    { title: "Clamping Force", value: "15-4500 ตัน", desc: "แรงการหนีบแม่พิมพ์" },
+                    { title: "Shot Size", value: "1-50000 cm³", desc: "ปริมาตรการฉีดต่อครั้ง" },
+                    { title: "Injection Pressure", value: "50-2500 bar", desc: "แรงดันการฉีด" },
+                    { title: "Screw Diameter", value: "14-300 mm", desc: "เส้นผ่านศูนย์กลางเกลียวหนอน" }
+                ]
+            },
+            3: {
+                title: "บทที่ 3: อุปกรณ์เสริมและระบบสนับสนุน",
+                subtitle: "อุปกรณ์พื้นฐานที่ใช้งานร่วมกับเครื่องฉีดพลาสติก",
+                objectives: [
+                    "รู้จักอุปกรณ์เสริมที่จำเป็นสำหรับการฉีดพลาสติก",
+                    "เข้าใจการทำงานของระบบสนับสนุนต่างๆ",
+                    "เลือกใช้อุปกรณ์ให้เหมาะสมกับงาน"
+                ],
+                content: [
+                    {
+                        title: "อุปกรณ์สนับสนุนหลัก",
+                        description: "อุปกรณ์ที่จำเป็นต่อการผลิตงานฉีดพลาสติกอย่างมีประสิทธิภาพ",
+                        items: [
+                            "เครนอุตสาหกรรม - สำหรับยกแม่พิมพ์และชิ้นงานหนัก",
+                            "แขนกลจับชิ้นงาน (Robot) - อัตโนมัติในการจับและวางชิ้นงาน",
+                            "ระบบหล่อเย็น (Cooling Tower) - ระบายความร้อนจากเครื่องจักร",
+                            "ปั๊มลมอัดอากาศ - สำหรับระบบนิวแมติก",
+                            "ชุดควบคุมอุณหภูมิแม่พิมพ์ - รักษาอุณหภูมิแม่พิมพ์",
+                            "เครื่องโม่พลาสติก - รีไซเคิลเศษพลาสติก"
+                        ]
+                    }
+                ],
+                images: [
+                    { title: "Industrial Robot", desc: "แขนกลสำหรับจับชิ้นงานอัตโนมัติ", icon: "🤖" },
+                    { title: "Cooling Tower", desc: "ระบบหล่อเย็นสำหรับโรงงาน", icon: "❄️" },
+                    { title: "Mold Temperature Controller", desc: "ควบคุมอุณหภูมิแม่พิมพ์", icon: "🌡️" },
+                    { title: "Plastic Crusher", desc: "เครื่องโม่เศษพลาสติก", icon: "♻️" }
+                ],
+                technicalSpecs: [
+                    { title: "Robot Payload", value: "5-100 kg", desc: "น้ำหนักที่แขนกลรับได้" },
+                    { title: "Cooling Capacity", value: "10-500 RT", desc: "กำลังการทำความเย็น" },
+                    { title: "Air Pressure", value: "4-6 bar", desc: "แรงดันลมอัดที่ต้องการ" },
+                    { title: "Mold Temp Range", value: "20-120°C", desc: "ช่วงอุณหภูมิแม่พิมพ์" }
+                ]
+            },
+            4: {
+                title: "บทที่ 4: การควบคุมและใช้งานเครื่องฉีดพลาสติก",
+                subtitle: "เรียนรู้การใช้งานระบบควบคุมและปุ่มกดต่างๆ",
+                objectives: [
+                    "เข้าใจหน้าที่ของปุ่มกดและสัญลักษณ์ต่างๆ",
+                    "รู้จักหน้าจอการทำงานของเครื่องฉีด",
+                    "สามารถใช้งานเครื่องฉีดในโหมดต่างๆ"
+                ],
+                content: [
+                    {
+                        title: "ระบบควบคุมและปุ่มกด",
+                        description: "ปุ่มกดและสัญลักษณ์สำคัญในการควบคุมเครื่องฉีดพลาสติก",
+                        items: [
+                            "Manual Mode - การทำงานแบบควบคุมด้วยมือ",
+                            "Semi Auto Mode - การทำงานกึ่งอัตโนมัติ",
+                            "Full Auto Mode - การทำงานอัตโนมัติเต็มรูปแบบ",
+                            "Emergency Stop - ปุ่มหยุดฉุกเฉิน",
+                            "Safety Interlock - ระบบป้องกันความปลอดภัย"
+                        ]
+                    },
+                    {
+                        title: "หน้าจอควบคุม (HMI)",
+                        description: "จอแสดงผลและการตั้งค่าพารามิเตอร์ต่างๆ",
+                        processSteps: [
+                            { icon: "📊", title: "Process Monitor", desc: "ตรวจสอบกระบวนการผลิต" },
+                            { icon: "⚙️", title: "Parameter Setting", desc: "ตั้งค่าพารามิเตอร์การฉีด" },
+                            { icon: "📈", title: "Data Logging", desc: "บันทึกข้อมูลการผลิต" },
+                            { icon: "🚨", title: "Alarm Management", desc: "จัดการสัญญาณเตือน" }
+                        ]
+                    }
+                ],
+                images: [
+                    { title: "Control Panel", desc: "แผงควบคุมหลักของเครื่องฉีด", icon: "🎛️" },
+                    { title: "HMI Touch Screen", desc: "หน้าจอสัมผัสสำหรับควบคุม", icon: "📱" },
+                    { title: "Safety Systems", desc: "ระบบความปลอดภัย", icon: "🛡️" },
+                    { title: "Operating Modes", desc: "โหมดการทำงานต่างๆ", icon: "🔄" }
+                ],
+                technicalSpecs: [
+                    { title: "HMI Screen Size", value: "10-21 นิ้ว", desc: "ขนาดหน้าจอควบคุม" },
+                    { title: "Response Time", value: "< 100 ms", desc: "เวลาตอบสนองของระบบ" },
+                    { title: "Memory Capacity", value: "1-32 GB", desc: "ความจุหน่วยความจำ" },
+                    { title: "I/O Points", value: "64-512 จุด", desc: "จำนวนจุดรับ-ส่งสัญญาณ" }
+                ]
+            },
+            5: {
+                title: "บทที่ 5: วัตถุดิบพลาสติกและการเตรียมวัตถุดิบ",
+                subtitle: "ประเภทของพลาสติกและการเตรียมก่อนการฉีด",
+                objectives: [
+                    "เข้าใจประเภทของพลาสติกในการฉีด",
+                    "รู้วิธีการอบเม็ดพลาสติกที่ถูกต้อง",
+                    "เข้าใจค่ามาตรฐานอุณหภูมิการหลอมเหลว"
+                ],
+                content: [
+                    {
+                        title: "ประเภทพลาสติก",
+                        description: "พลาสติกแบ่งออกเป็น 2 ประเภทหลัก",
+                        items: [
+                            "Thermoplastic - พลาสติกที่หลอมเหลวได้ด้วยความร้อน สามารถรีไซเคิลได้",
+                            "Thermosetting - พลาสติกที่แข็งตัวถาวร ไม่สามารถหลอมเหลวซ้ำได้"
+                        ],
+                        processSteps: [
+                            { icon: "🧪", title: "ABS", desc: "แข็งแรง ทนทาน ใช้งานทั่วไป" },
+                            { icon: "💧", title: "PP", desc: "เบา ทนสารเคมี กันน้ำได้ดี" },
+                            { icon: "🔥", title: "Nylon", desc: "แข็งแรงมาก ทนความร้อนสูง" },
+                            { icon: "💎", title: "PC", desc: "ใส แข็งแรง ทนแรงกระแทก" }
+                        ]
+                    },
+                    {
+                        title: "การอบเม็ดพลาสติก",
+                        description: "กระบวนการเตรียมเม็ดพลาสติกก่อนการฉีด",
+                        items: [
+                            "เพื่อไล่ความชื้นออกจากเม็ดพลาสติก",
+                            "ป้องกันการเกิดรอยประกายเงินบนชิ้นงาน",
+                            "รักษาคุณภาพและความแข็งแรงของชิ้นงาน"
+                        ]
+                    }
+                ],
+                images: [
+                    { title: "Plastic Pellets", desc: "เม็ดพลาสติกประเภทต่างๆ", icon: "⚪" },
+                    { title: "Hopper Dryer", desc: "เครื่องอบเม็ดพลาสติก", icon: "🔥" },
+                    { title: "Material Testing", desc: "การทดสอบคุณสมบัติพลาสติก", icon: "🧪" },
+                    { title: "Storage System", desc: "ระบบเก็บและป้อนวัตถุดิบ", icon: "📦" }
+                ],
+                technicalSpecs: [
+                    { title: "Drying Temperature", value: "60-120°C", desc: "อุณหภูมิการอบแห้ง" },
+                    { title: "Drying Time", value: "2-8 ชั่วโมง", desc: "เวลาในการอบแห้ง" },
+                    { title: "Moisture Content", value: "< 0.02%", desc: "ความชื้นที่เหลือ" },
+                    { title: "Melt Temperature", value: "180-320°C", desc: "อุณหภูมิหลอมเหลว" }
+                ]
+            },
+            6: {
+                title: "บทที่ 6: แม่พิมพ์ฉีดพลาสติกและระบบทางน้ำ",
+                subtitle: "โครงสร้างแม่พิมพ์และระบบ Hot Runner",
+                objectives: [
+                    "เข้าใจโครงสร้างแม่พิมพ์พื้นฐาน",
+                    "รู้จักระบบ Cold Runner และ Hot Runner",
+                    "เข้าใจทางเข้าพลาสติกแบบต่างๆ"
+                ],
+                content: [
+                    {
+                        title: "โครงสร้างแม่พิมพ์",
+                        description: "ส่วนประกอบหลักของแม่พิมพ์ฉีดพลาสติก",
+                        processSteps: [
+                            { icon: "🔗", title: "Cavity Plate", desc: "แผ่นกำหนดรูปร่างชิ้นงาน" },
+                            { icon: "🔧", title: "Core Plate", desc: "แผ่นสร้างโพรงภายใน" },
+                            { icon: "↕️", title: "Ejector System", desc: "ระบบผลักชิ้นงานออก" },
+                            { icon: "🎯", title: "Guide System", desc: "ระบบนำทางและจับตำแหน่ง" }
+                        ]
+                    },
+                    {
+                        title: "ระบบทางน้ำ (Runner System)",
+                        description: "ระบบนำพลาสติกเหลวเข้าสู่แม่พิมพ์",
+                        items: [
+                            "Cold Runner - ระบบทางน้ำแบบเย็น มีเศษเหลือ",
+                            "Hot Runner - ระบบทางน้ำแบบร้อน ไม่มีเศษเหลือ",
+                            "Gate Types - ประเภททางเข้าต่างๆ"
+                        ]
+                    },
+                    {
+                        title: "ประเภท Gate หลัก",
+                        description: "ทางเข้าพลาสติกสู่ชิ้นงาน",
+                        items: [
+                            "Direct Gate - เข้าโดยตรง แรงดันต่ำ แต่รอยใหญ่",
+                            "Side Gate - เข้าด้านข้าง ควบคุมง่าย รอยเล็ก",
+                            "Fan Gate - กระจายแรงดัน เหมาะกับชิ้นงานแบน",
+                            "Submarine Gate - หลุดเอง รอยเล็ก ซ่อนได้",
+                            "Pinpoint Gate - รอยเล็กมาก เหมาะงานละเอียด"
+                        ]
+                    }
+                ],
+                images: [
+                    { title: "2-Plate Mold", desc: "แม่พิมพ์แบบ 2 แผ่น พื้นฐาน", icon: "📋" },
+                    { title: "3-Plate Mold", desc: "แม่พิมพ์แบบ 3 แผ่น ซับซ้อน", icon: "📚" },
+                    { title: "Hot Runner System", desc: "ระบบทางน้ำร้อน", icon: "🔥" },
+                    { title: "Gate Types", desc: "ประเภททางเข้าต่างๆ", icon: "🚪" }
+                ],
+                technicalSpecs: [
+                    { title: "Mold Size", value: "100x100-2000x2000 mm", desc: "ขนาดแม่พิมพ์" },
+                    { title: "Cavity Number", value: "1-128 หลุม", desc: "จำนวนหลุมต่อแม่พิมพ์" },
+                    { title: "Mold Temperature", value: "20-120°C", desc: "อุณหภูมิแม่พิมพ์" },
+                    { title: "Cooling Time", value: "5-60 วินาที", desc: "เวลาหล่อเย็น" }
+                ]
+            },
+            8: {
+                title: "บทที่ 8: การวิเคราะห์และแก้ไขปัญหา",
+                subtitle: "ปัญหาที่พบบ่อยในการฉีดพลาสติกและวิธีการแก้ไข",
+                objectives: [
+                    "สามารถวิเคราะห์ปัญหาที่เกิดขึ้นได้",
+                    "รู้วิธีการแก้ไขปัญหาแต่ละประเภท",
+                    "เข้าใจสาเหตุหลักและสาเหตุรอง"
+                ],
+                content: [
+                    {
+                        title: "ปัญหาหลักในการฉีดพลาสติก",
+                        description: "ปัญหาที่พบบ่อยและส่งผลต่อคุณภาพชิ้นงาน",
+                        items: [
+                            "Short Shot - ชิ้นงานไม่เต็ม ฉีดไม่ทั่วถึง",
+                            "Flash - เกิดครีบพิเศษตามรอยแม่พิมพ์",  
+                            "Burn - รอยไหม้จากอากาศร้อน",
+                            "Sink Mark - รอยยุบบนผิวชิ้นงาน",
+                            "Silver Streak - ประกายเงินบนชิ้นงาน"
+                        ]
+                    },
+                    {
+                        title: "วิธีการแก้ไขปัญหา Short Shot",
+                        description: "ขั้นตอนการแก้ไขเมื่อชิ้นงานฉีดไม่เต็ม",
+                        processSteps: [
+                            { icon: "⬆️", title: "เพิ่มแรงดัน", desc: "เพิ่ม Injection Pressure" },
+                            { icon: "⚡", title: "เพิ่มความเร็ว", desc: "เพิ่ม Injection Speed" },
+                            { icon: "🔥", title: "เพิ่มอุณหภูมิ", desc: "เพิ่มอุณหภูมิพลาสติก/แม่พิมพ์" },
+                            { icon: "📏", title: "เพิ่ม Shot Size", desc: "เพิ่มปริมาณพลาสติก" }
+                        ]
+                    },
+                    {
+                        title: "การวิเคราะห์สาเหตุ",
+                        description: "หลักการวิเคราะห์ปัญหาอย่างเป็นระบบ",
+                        items: [
+                            "ระบุปัญหาที่เกิดขึ้นให้ชัดเจน",
+                            "หาสาเหตุหลักและสาเหตุรอง",
+                            "จัดลำดับความสำคัญของการแก้ไข",
+                            "ทดสอบการแก้ไขทีละขั้นตอน",
+                            "บันทึกผลและสรุปแนวทางแก้ไข"
+                        ]
+                    }
+                ],
+                images: [
+                    { title: "Defect Examples", desc: "ตัวอย่างข้อบกพร่องต่างๆ", icon: "🔍" },
+                    { title: "Root Cause Analysis", desc: "การวิเคราะห์สาเหตุหลัก", icon: "🎯" },
+                    { title: "Solution Methods", desc: "วิธีการแก้ไขปัญหา", icon: "🔧" },
+                    { title: "Quality Inspection", desc: "การตรวจสอบคุณภาพ", icon: "✅" }
+                ],
+                technicalSpecs: [
+                    { title: "Defect Rate Target", value: "< 0.1%", desc: "เป้าหมายอัตราของเสีย" },
+                    { title: "Process Capability", value: "Cpk > 1.33", desc: "ความสามารถของกระบวนการ" },
+                    { title: "First Pass Yield", value: "> 99%", desc: "อัตราผ่านครั้งแรก" },
+                    { title: "Problem Resolution", value: "< 24 ชม.", desc: "เวลาแก้ไขปัญหา" }
+                ]
+            }
+        };
+
+        let currentModule = null;
+        let completedModules = new Set();
+
+        // Toggle module content
+        function toggleModule(button) {
+            const content = button.closest('.module').querySelector('.module-content');
+            const isActive = content.classList.contains('active');
+            
+            // Close all modules
+            document.querySelectorAll('.module-content').forEach(c => {
+                c.classList.remove('active');
+                c.closest('.module').querySelector('.toggle-btn').textContent = '+';
+            });
+            
+            // Open clicked module if it wasn't active
+            if (!isActive) {
+                content.classList.add('active');
+                button.textContent = '−';
+            }
+        }
+
+        // Show module detail in modal
+        function showModuleDetail(moduleId) {
+            currentModule = moduleId;
+            const data = moduleData[moduleId];
+            
+            if (!data) return;
+            
+            updateBreadcrumb(`บทที่ ${moduleId}`, data.title);
+            
+            const modal = document.getElementById('detail-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalBody = document.getElementById('modal-body');
+            
+            modalTitle.textContent = data.title;
+            
+            let contentHtml = `
+                <div class="detail-section">
+                    <h3>📖 ภาพรวมบทเรียน</h3>
+                    <p style="font-size: 1.1rem; color: #4a5568; margin-bottom: 20px;">${data.subtitle}</p>
+                    
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 15px; margin: 20px 0;">
+                        <h4 style="margin-bottom: 15px; font-size: 1.2rem;">🎯 จุดประสงค์การเรียนรู้</h4>
+                        <ul style="list-style: none; padding: 0;">
+                            ${data.objectives.map(obj => `<li style="margin: 10px 0; padding-left: 25px; position: relative;">
+                                <span style="position: absolute; left: 0; top: 0;">✓</span>
+                                ${obj}
+                            </li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+
+            // Add content sections
+            data.content.forEach((section, index) => {
+                contentHtml += `
+                    <div class="detail-section">
+                        <h3>${section.title}</h3>
+                        <p style="color: #4a5568; margin-bottom: 20px;">${section.description}</p>
+                        
+                        ${section.processSteps ? `
+                            <div class="process-flow">
+                                ${section.processSteps.map(step => `
+                                    <div class="process-step">
+                                        <div class="step-icon">${step.icon}</div>
+                                        <div class="step-title">${step.title}</div>
+                                        <div class="step-desc">${step.desc}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                        
+                        ${section.items ? `
+                            <ul style="list-style: none; padding: 0;">
+                                ${section.items.map(item => `
+                                    <li style="background: #f7fafc; padding: 12px 15px; margin: 8px 0; border-radius: 8px; border-left: 4px solid #667eea;">
+                                        ${item}
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        ` : ''}
+                    </div>
+                `;
+            });
+
+            // Add image gallery
+            if (data.images) {
+                contentHtml += `
+                    <div class="detail-section">
+                        <h3>🖼️ ภาพประกอบและแผนภาพ</h3>
+                        <div class="image-gallery">
+                            ${data.images.map(img => `
+                                <div class="image-item" onclick="viewImage('${img.title}', '${img.desc}')">
+                                    <div class="image-placeholder">
+                                        <span style="font-size: 3rem;">${img.icon}</span>
+                                    </div>
+                                    <div class="image-caption">
+                                        <h4>${img.title}</h4>
+                                        <p>${img.desc}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <p style="color: #718096; font-style: italic; text-align: center; margin-top: 15px;">
+                            💡 คลิกที่ภาพเพื่อดูรายละเอียดเพิ่มเติม
+                        </p>
+                    </div>
+                `;
+            }
+
+            // Add technical specifications
+            if (data.technicalSpecs) {
+                contentHtml += `
+                    <div class="detail-section" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                        <h3 style="color: white;">⚙️ ข้อมูลทางเทคนิค</h3>
+                        <div class="technical-specs">
+                            ${data.technicalSpecs.map(spec => `
+                                <div class="spec-item" style="background: rgba(255, 255, 255, 0.9);">
+                                    <h5 style="color: #f5576c;">${spec.title}</h5>
+                                    <p style="font-weight: bold; color: #2d3748; font-size: 1.1rem;">${spec.value}</p>
+                                    <p style="color: #718096; font-size: 0.85rem;">${spec.desc}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Add practical exercises
+            contentHtml += `
+                <div class="detail-section" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                    <h3 style="color: #2d3748;">🔧 การปฏิบัติและแบบฝึกหัด</h3>
+                    <div style="background: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 10px; margin-top: 15px;">
+                        <h4 style="color: #2d3748; margin-bottom: 15px;">📝 แบบฝึกหัด</h4>
+                        <ul style="color: #4a5568; list-style-type: disc; padding-left: 20px;">
+                            <li>ศึกษาและระบุส่วนประกอบที่เกี่ยวข้อง</li>
+                            <li>ทดลองการทำงานในสภาพจำลอง</li>
+                            <li>วิเคราะห์ปัญหาและหาแนวทางแก้ไข</li>
+                            <li>จัดทำรายงานผลการทดลอง</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 10px; margin-top: 15px;">
+                        <h4 style="color: #2d3748; margin-bottom: 15px;">✅ เกณฑ์การประเมิน</h4>
+                        <p style="color: #4a5568;">
+                            • ความเข้าใจในทฤษฎี (30%)<br>
+                            • ทักษะการปฏิบัติ (40%)<br>
+                            • การวิเคราะห์และแก้ไขปัญหา (30%)
+                        </p>
+                    </div>
+                </div>
+            `;
+
+            // Add navigation buttons
+            contentHtml += `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; padding: 20px; background: #f7fafc; border-radius: 15px;">
+                    <button onclick="navigateModule(${moduleId - 1})" 
+                            ${moduleId <= 1 ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''} 
+                            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 24px; border-radius: 25px; font-size: 1rem; cursor: pointer; transition: all 0.3s ease;">
+                        ← บทก่อนหน้า
+                    </button>
+                    
+                    <button onclick="markAsCompleted(${moduleId})" 
+                            style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); color: white; border: none; padding: 12px 24px; border-radius: 25px; font-size: 1rem; cursor: pointer; transition: all 0.3s ease;">
+                        ✓ ทำเครื่องหมายว่าเสร็จ
+                    </button>
+                    
+                    <button onclick="navigateModule(${moduleId + 1})" 
+                            ${moduleId >= 8 ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''} 
+                            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 24px; border-radius: 25px; font-size: 1rem; cursor: pointer; transition: all 0.3s ease;">
+                        บทถัดไป →
+                    </button>
+                </div>
+            `;
+            
+            modalBody.innerHTML = contentHtml;
+            modal.classList.add('active');
+            
+            // Add animation
+            setTimeout(() => {
+                modal.querySelector('.modal-content').classList.add('fade-in');
+            }, 50);
+        }
+
+        // Navigate between modules
+        function navigateModule(moduleId) {
+            if (moduleId >= 1 && moduleId <= 8) {
+                showModuleDetail(moduleId);
+            }
+        }
+
+        // Mark module as completed
+        function markAsCompleted(moduleId) {
+            completedModules.add(moduleId);
+            updateProgress();
+            
+            // Visual feedback
+            const moduleElement = document.querySelector(`[data-module="${moduleId}"]`);
+            if (moduleElement) {
+                moduleElement.style.background = 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)';
+                moduleElement.querySelector('.module-header').style.background = 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)';
+            }
+            
+            // Show success message
+            showNotification(`✅ บทที่ ${moduleId} ทำเครื่องหมายว่าเสร็จสิ้นแล้ว!`, 'success');
+        }
+
+        // Update progress
+        function updateProgress() {
+            const progress = (completedModules.size / 8) * 100;
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
+            
+            if (progressFill && progressText) {
+                progressFill.style.width = `${progress}%`;
+                progressText.textContent = `${Math.round(progress)}% เสร็จสิ้น (${completedModules.size}/8 บท)`;
+            }
+        }
+
+        // Update breadcrumb
+        function updateBreadcrumb(section, title) {
+            const breadcrumbCurrent = document.getElementById('breadcrumb-current');
+            if (breadcrumbCurrent) {
+                breadcrumbCurrent.textContent = `${section}: ${title}`;
+            }
+        }
+
+        // Show main course
+        function showMainCourse() {
+            const modal = document.getElementById('detail-modal');
+            modal.classList.remove('active');
+            currentModule = null;
+            
+            const breadcrumbCurrent = document.getElementById('breadcrumb-current');
+            if (breadcrumbCurrent) {
+                breadcrumbCurrent.textContent = 'หลักสูตรการอบรม';
+            }
+        }
+
+        // Close modal
+        function closeModal() {
+            const modal = document.getElementById('detail-modal');
+            modal.classList.remove('active');
+            currentModule = null;
+            showMainCourse();
+        }
+
+        // View image details
+        function viewImage(title, description) {
+            showNotification(`🖼️ ${title}: ${description}`, 'info');
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)' : 
+                            type === 'error' ? 'linear-gradient(135deg, #f56565 0%, #e53e3e 100%)' : 
+                            'linear-gradient(135deg, #4299e1 0%, #3182ce 100%)'};
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+                z-index: 10000;
+                max-width: 400px;
+                font-size: 0.9rem;
+                animation: slideIn 0.3s ease-out;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'fadeOut 0.3s ease-in';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes fadeOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgress();
+            
+            // Add hover effects
+            document.querySelectorAll('.module').forEach((module, index) => {
+                module.style.opacity = '0';
+                module.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    module.style.transition = 'all 0.6s ease';
+                    module.style.opacity = '1';
+                    module.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+            
+            // Close modal when clicking outside
+            document.getElementById('detail-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal();
+                }
+            });
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (currentModule) {
+                    if (e.key === 'Escape') {
+                        closeModal();
+                    } else if (e.key === 'ArrowLeft' && currentModule > 1) {
+                        navigateModule(currentModule - 1);
+                    } else if (e.key === 'ArrowRight' && currentModule < 8) {
+                        navigateModule(currentModule + 1);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

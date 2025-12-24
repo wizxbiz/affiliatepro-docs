@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="WiT 365 Training Center - ศูนย์การเรียนรู้ระบบ Hot Runner และ Injection Molding">
+    <title>WiT 365 Training Center - ศูนย์การเรียนรู้ระบบ Hot Runner</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Main CSS -->
+    <link href="css/main.css" rel="stylesheet">
+    
+    <!-- ========== Firebase SDK (v9 Compat) ========== -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        /* ============ Navigation Bar ============ */
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 15px 30px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #00d9ff;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            height: 40px;
+            width: auto;
+        }
+
+        .logo i {
+            font-size: 1.8em;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+
+        .nav-links a:hover {
+            background: rgba(0, 217, 255, 0.2);
+            color: #00d9ff;
+        }
+
+        /* User Dropdown */
+        .user-dropdown {
+            position: relative;
+        }
+
+        .user-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 217, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            color: #fff;
+        }
+
+        .user-btn:hover {
+            background: rgba(0, 217, 255, 0.4);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00d9ff, #0066ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(30, 30, 50, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            padding: 10px 0;
+            min-width: 200px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 1001;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown-menu.show {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            color: #fff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-menu a:hover {
+            background: rgba(0, 217, 255, 0.2);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 5px 0;
+        }
+
+        /* Auth Buttons */
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-login {
+            background: transparent;
+            border: 2px solid #00d9ff;
+            color: #00d9ff;
+            padding: 8px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login:hover {
+            background: #00d9ff;
+            color: #1a1a2e;
+        }
+
+        .btn-register {
+            background: linear-gradient(135deg, #00d9ff, #0066ff);
+            border: none;
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 217, 255, 0.4);
+        }
+
+        /* ============ Hero Section ============ */
+        .hero {
+            padding: 150px 30px 80px;
+            text-align: center;
+            background: url('images/hero-bg.jpg') center/cover no-repeat;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.8));
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff, #00d9ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.3em;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d9ff, #0066ff);
+            color: #fff;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #00d9ff;
+        }
+
+        /* ============ Stats Section ============ */
+        .stats-section {
+            padding: 50px 30px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .stats-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-icon {
+            font-size: 2.5em;
+            color: #00d9ff;
+            margin-bottom: 15px;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1em;
+        }
+
+        /* ============ Courses Section ============ */
+        .courses-section {
+            padding: 80px 30px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-header h2 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #fff, #00d9ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-header p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1em;
+        }
+
+        .courses-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .course-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .course-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 217, 255, 0.2);
+            border-color: rgba(0, 217, 255, 0.3);
+        }
+
+        .course-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #1a1a2e, #0f3460);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .course-image i {
+            font-size: 4em;
+            color: rgba(0, 217, 255, 0.5);
+        }
+
+        .course-content {
+            padding: 25px;
+        }
+
+        .course-category {
+            display: inline-block;
+            background: rgba(0, 217, 255, 0.2);
+            color: #00d9ff;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-bottom: 15px;
+        }
+
+        .course-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .course-description {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .course-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .course-info {
+            display: flex;
+            gap: 15px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9em;
+        }
+
+        .course-info span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .course-price {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #00d9ff;
+        }
+
+        .course-price.free {
+            color: #00ff88;
+        }
+
+        /* ============ Auth Modal ============ */
+        .auth-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .auth-modal.show {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1e1e32, #2a2a45);
+            padding: 40px;
+            border-radius: 25px;
+            width: 100%;
+            max-width: 450px;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: #ff4444;
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-header h2 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .modal-header p {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #00d9ff;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #00d9ff, #0066ff);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 217, 255, 0.4);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .social-login {
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        .social-divider {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .social-divider span {
+            color: rgba(255, 255, 255, 0.5);
+            white-space: nowrap;
+        }
+
+        .social-divider::before,
+        .social-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .social-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn-social {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-google {
+            background: #fff;
+            color: #333;
+        }
+
+        .btn-google:hover {
+            background: #f5f5f5;
+            transform: translateY(-2px);
+        }
+
+        .btn-line {
+            background: #00C300;
+            color: #fff;
+        }
+
+        .btn-line:hover {
+            background: #00a000;
+            transform: translateY(-2px);
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .auth-switch a {
+            color: #00d9ff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* ============ Footer ============ */
+        .footer {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 60px 30px 30px;
+            margin-top: 80px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .footer-section h3 {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            color: #00d9ff;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 2;
+            text-decoration: none;
+            display: block;
+        }
+
+        .footer-section a:hover {
+            color: #00d9ff;
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 40px auto 0;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* ============ Loading Overlay ============ */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(26, 26, 46, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-overlay.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(0, 217, 255, 0.2);
+            border-top-color: #00d9ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* ============ Toast Notification ============ */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 15px 25px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 3000;
+            animation: slideInRight 0.3s ease;
+            max-width: 400px;
+        }
+
+        .toast.success {
+            background: linear-gradient(135deg, #00c851, #007e33);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #ff4444, #cc0000);
+        }
+
+        .toast.info {
+            background: linear-gradient(135deg, #33b5e5, #0099cc);
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* ============ Responsive ============ */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(30, 30, 50, 0.98);
+                flex-direction: column;
+                padding: 20px;
+                gap: 10px;
+            }
+
+            .nav-links.show {
+                display: flex;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2em;
+            }
+
+            .hero p {
+                font-size: 1em;
+            }
+
+            .modal-content {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">กำลังโหลด...</div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-cube"></i>
+                <span>WiT 365</span>
+            </a>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#courses"><i class="fas fa-book"></i> หลักสูตร</a></li>
+                <li><a href="quiz.html"><i class="fas fa-clipboard-check"></i> แบบทดสอบ</a></li>
+                <li><a href="hotrunner/index.html"><i class="fas fa-fire"></i> Hot Runner</a></li>
+                <li><a href="certificate.html"><i class="fas fa-certificate"></i> ใบประกาศ</a></li>
+            </ul>
+
+            <!-- Auth Buttons (shown when logged out) -->
+            <div class="auth-buttons" id="authButtons">
+                <button class="btn-login" onclick="showLoginModal()">เข้าสู่ระบบ</button>
+                <button class="btn-register" onclick="showRegisterModal()">สมัครสมาชิก</button>
+            </div>
+
+            <!-- User Dropdown (shown when logged in) -->
+            <div class="user-dropdown" id="userDropdown" style="display: none;">
+                <button class="user-btn" onclick="toggleDropdown()">
+                    <div class="user-avatar" id="userAvatar">
+                        <span id="avatarInitial">U</span>
+                    </div>
+                    <span id="userName">ผู้ใช้</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <a href="profile.html"><i class="fas fa-user"></i> โปรไฟล์</a>
+                    <a href="my-courses.html"><i class="fas fa-graduation-cap"></i> คอร์สของฉัน</a>
+                    <a href="my-certificates.html"><i class="fas fa-certificate"></i> ใบประกาศ</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" id="adminLink" style="display: none;"><i class="fas fa-cog"></i> จัดการระบบ</a>
+                    <a href="#" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</a>
+                </div>
+            </div>
+
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()" style="display: none;">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>🔥 WiT 365 Training Center</h1>
+            <p>ศูนย์การเรียนรู้ระบบ Hot Runner และ Injection Molding ที่ครบครัน<br>
+            เรียนรู้จากผู้เชี่ยวชาญ พร้อมรับใบประกาศนียบัตรรับรองความรู้</p>
+            <div class="hero-btns">
+                <a href="#courses" class="btn-primary">
+                    <i class="fas fa-play"></i> เริ่มเรียนเลย
+                </a>
+                <a href="quiz.html" class="btn-secondary">
+                    <i class="fas fa-clipboard-check"></i> ทดสอบความรู้
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="stats-container" id="statsContainer">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-number" data-target="0">0</div>
+                <div class="stat-label">ผู้เรียนทั้งหมด</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-book-open"></i></div>
+                <div class="stat-number" data-target="0">0</div>
+                <div class="stat-label">หลักสูตร</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-clipboard-check"></i></div>
+                <div class="stat-number" data-target="0">0</div>
+                <div class="stat-label">แบบทดสอบ</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-certificate"></i></div>
+                <div class="stat-number" data-target="0">0</div>
+                <div class="stat-label">ใบประกาศที่ออก</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Courses Section -->
+    <section class="courses-section" id="courses">
+        <div class="section-header">
+            <h2>📚 หลักสูตรแนะนำ</h2>
+            <p>เลือกหลักสูตรที่เหมาะกับคุณ เรียนรู้ได้ทุกที่ทุกเวลา</p>
+        </div>
+
+        <div class="courses-grid" id="coursesGrid">
+            <!-- Courses will be loaded dynamically -->
+            <div class="course-card" data-category="hot-runner">
+                <div class="course-image">
+                    <i class="fas fa-fire"></i>
+                </div>
+                <div class="course-content">
+                    <span class="course-category">Hot Runner</span>
+                    <h3 class="course-title">พื้นฐานระบบ Hot Runner</h3>
+                    <p class="course-description">เรียนรู้หลักการทำงานของระบบ Hot Runner ตั้งแต่เริ่มต้น เหมาะสำหรับผู้เริ่มต้น</p>
+                    <div class="course-meta">
+                        <div class="course-info">
+                            <span><i class="fas fa-clock"></i> 4 ชม.</span>
+                            <span><i class="fas fa-signal"></i> เริ่มต้น</span>
+                        </div>
+                        <span class="course-price free">ฟรี</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="course-card" data-category="injection">
+                <div class="course-image">
+                    <i class="fas fa-industry"></i>
+                </div>
+                <div class="course-content">
+                    <span class="course-category">Injection Molding</span>
+                    <h3 class="course-title">การฉีดพลาสติกขั้นสูง</h3>
+                    <p class="course-description">เทคนิคการฉีดพลาสติกขั้นสูง การแก้ปัญหา Defect และการปรับจูน</p>
+                    <div class="course-meta">
+                        <div class="course-info">
+                            <span><i class="fas fa-clock"></i> 8 ชม.</span>
+                            <span><i class="fas fa-signal"></i> ขั้นสูง</span>
+                        </div>
+                        <span class="course-price">฿1,990</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="course-card" data-category="troubleshooting">
+                <div class="course-image">
+                    <i class="fas fa-tools"></i>
+                </div>
+                <div class="course-content">
+                    <span class="course-category">Troubleshooting</span>
+                    <h3 class="course-title">การแก้ปัญหาในงานฉีดพลาสติก</h3>
+                    <p class="course-description">วิเคราะห์และแก้ไขปัญหาที่พบบ่อยในกระบวนการฉีดพลาสติก</p>
+                    <div class="course-meta">
+                        <div class="course-info">
+                            <span><i class="fas fa-clock"></i> 6 ชม.</span>
+                            <span><i class="fas fa-signal"></i> กลาง</span>
+                        </div>
+                        <span class="course-price">฿1,490</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>WiT 365 Training</h3>
+                <p>ศูนย์การเรียนรู้ระบบ Hot Runner และ Injection Molding<br>
+                พัฒนาโดย อ.วิทยา ผู้เชี่ยวชาญด้านการฉีดพลาสติก</p>
+            </div>
+            <div class="footer-section">
+                <h3>หลักสูตร</h3>
+                <a href="#">พื้นฐาน Hot Runner</a>
+                <a href="#">Injection Molding</a>
+                <a href="#">การแก้ปัญหา</a>
+                <a href="#">ใบประกาศนียบัตร</a>
+            </div>
+            <div class="footer-section">
+                <h3>ลิงก์ที่เกี่ยวข้อง</h3>
+                <a href="#">LINE OA: @wit365</a>
+                <a href="#">คู่มือการใช้งาน</a>
+                <a href="#">เกี่ยวกับเรา</a>
+                <a href="#">ติดต่อเรา</a>
+            </div>
+            <div class="footer-section">
+                <h3>ติดต่อ</h3>
+                <p><i class="fas fa-envelope"></i> contact@wit365.com</p>
+                <p><i class="fab fa-line"></i> @wit365</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 WiT 365 Training Center. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Auth Modal -->
+    <div class="auth-modal" id="authModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            
+            <!-- Login Form -->
+            <div id="loginForm">
+                <div class="modal-header">
+                    <h2>🔐 เข้าสู่ระบบ</h2>
+                    <p>ยินดีต้อนรับกลับมา!</p>
+                </div>
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label>อีเมล</label>
+                        <input type="email" id="loginEmail" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>รหัสผ่าน</label>
+                        <input type="password" id="loginPassword" placeholder="รหัสผ่าน" required>
+                    </div>
+                    <button type="submit" class="btn-submit" id="loginBtn">เข้าสู่ระบบ</button>
+                </form>
+                <div class="social-login">
+                    <div class="social-divider">
+                        <span>หรือเข้าสู่ระบบด้วย</span>
+                    </div>
+                    <div class="social-buttons">
+                        <button class="btn-social btn-google" onclick="handleGoogleLogin()">
+                            <i class="fab fa-google"></i> Google
+                        </button>
+                        <button class="btn-social btn-line" onclick="handleLineLogin()">
+                            <i class="fab fa-line"></i> LINE
+                        </button>
+                    </div>
+                </div>
+                <div class="auth-switch">
+                    ยังไม่มีบัญชี? <a href="#" onclick="showRegisterModal()">สมัครสมาชิก</a>
+                </div>
+            </div>
+
+            <!-- Register Form -->
+            <div id="registerForm" style="display: none;">
+                <div class="modal-header">
+                    <h2>📝 สมัครสมาชิก</h2>
+                    <p>สร้างบัญชีใหม่เพื่อเริ่มเรียนรู้</p>
+                </div>
+                <form onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label>ชื่อ-นามสกุล</label>
+                        <input type="text" id="registerName" placeholder="ชื่อ นามสกุล" required>
+                    </div>
+                    <div class="form-group">
+                        <label>อีเมล</label>
+                        <input type="email" id="registerEmail" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>รหัสผ่าน</label>
+                        <input type="password" id="registerPassword" placeholder="อย่างน้อย 6 ตัวอักษร" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label>ยืนยันรหัสผ่าน</label>
+                        <input type="password" id="registerConfirmPassword" placeholder="กรอกรหัสผ่านอีกครั้ง" required>
+                    </div>
+                    <button type="submit" class="btn-submit" id="registerBtn">สมัครสมาชิก</button>
+                </form>
+                <div class="social-login">
+                    <div class="social-divider">
+                        <span>หรือสมัครด้วย</span>
+                    </div>
+                    <div class="social-buttons">
+                        <button class="btn-social btn-google" onclick="handleGoogleLogin()">
+                            <i class="fab fa-google"></i> Google
+                        </button>
+                        <button class="btn-social btn-line" onclick="handleLineLogin()">
+                            <i class="fab fa-line"></i> LINE
+                        </button>
+                    </div>
+                </div>
+                <div class="auth-switch">
+                    มีบัญชีอยู่แล้ว? <a href="#" onclick="showLoginModal()">เข้าสู่ระบบ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Config & Services -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/auth-service.js"></script>
+    <script src="js/training-firebase.js"></script>
+
+    <script>
+        // ===========================================
+        // 🚀 Initialization
+        // ===========================================
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize auth state listener
+            setTimeout(() => {
+                if (window.AuthService) {
+                    window.AuthService.onAuthStateChanged(handleAuthStateChange);
+                }
+                loadStats();
+                hideLoading();
+            }, 500);
+        });
+
+        // ===========================================
+        // 🔐 Auth State Handler
+        // ===========================================
+
+        function handleAuthStateChange(user, userData) {
+            const authButtons = document.getElementById('authButtons');
+            const userDropdown = document.getElementById('userDropdown');
+            const userName = document.getElementById('userName');
+            const avatarInitial = document.getElementById('avatarInitial');
+            const userAvatar = document.getElementById('userAvatar');
+            const adminLink = document.getElementById('adminLink');
+
+            if (user) {
+                // User is logged in
+                authButtons.style.display = 'none';
+                userDropdown.style.display = 'block';
+
+                // Set user name
+                const displayName = userData?.displayName || user.displayName || user.email?.split('@')[0] || 'ผู้ใช้';
+                userName.textContent = displayName;
+                avatarInitial.textContent = displayName.charAt(0).toUpperCase();
+
+                // Set avatar image if available
+                if (userData?.avatar || user.photoURL) {
+                    userAvatar.innerHTML = `<img src="${userData?.avatar || user.photoURL}" alt="Avatar">`;
+                }
+
+                // Show admin link if admin
+                if (userData?.role === 'admin') {
+                    adminLink.style.display = 'flex';
+                    adminLink.href = 'admin_panel.html';
+                }
+
+            } else {
+                // User is logged out
+                authButtons.style.display = 'flex';
+                userDropdown.style.display = 'none';
+            }
+        }
+
+        // ===========================================
+        // 📊 Load Statistics
+        // ===========================================
+
+        async function loadStats() {
+            try {
+                if (window.TrainingService && window.TrainingService.initialized) {
+                    const stats = await window.TrainingService.getSystemStats();
+                    if (stats.success) {
+                        updateStatDisplay(0, stats.data.totalUsers);
+                        updateStatDisplay(1, stats.data.totalCourses);
+                        updateStatDisplay(2, stats.data.totalQuizAttempts);
+                        updateStatDisplay(3, stats.data.totalCertificates);
+                    }
+                } else {
+                    // Default stats
+                    updateStatDisplay(0, 150);
+                    updateStatDisplay(1, 12);
+                    updateStatDisplay(2, 500);
+                    updateStatDisplay(3, 80);
+                }
+            } catch (error) {
+                console.error('Load stats error:', error);
+            }
+        }
+
+        function updateStatDisplay(index, value) {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            if (statNumbers[index]) {
+                animateNumber(statNumbers[index], value);
+            }
+        }
+
+        function animateNumber(element, target) {
+            let current = 0;
+            const duration = 1500;
+            const step = target / (duration / 16);
+            
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    clearInterval(timer);
+                    current = target;
+                }
+                element.textContent = Math.floor(current).toLocaleString();
+            }, 16);
+        }
+
+        // ===========================================
+        // 🔒 Auth Modal Functions
+        // ===========================================
+
+        function showLoginModal() {
+            document.getElementById('authModal').classList.add('show');
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('registerForm').style.display = 'none';
+        }
+
+        function showRegisterModal() {
+            document.getElementById('authModal').classList.add('show');
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('authModal').classList.remove('show');
+        }
+
+        // Close modal on background click
+        document.getElementById('authModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // ===========================================
+        // 📧 Email Authentication
+        // ===========================================
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const btn = document.getElementById('loginBtn');
+            
+            btn.disabled = true;
+            btn.textContent = 'กำลังเข้าสู่ระบบ...';
+
+            try {
+                const result = await window.AuthService.login(email, password);
+                
+                if (result.success) {
+                    showToast('success', result.message);
+                    closeModal();
+                } else {
+                    showToast('error', result.error);
+                }
+            } catch (error) {
+                showToast('error', 'เกิดข้อผิดพลาด กรุณาลองใหม่');
+            }
+
+            btn.disabled = false;
+            btn.textContent = 'เข้าสู่ระบบ';
+        }
+
+        async function handleRegister(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            const btn = document.getElementById('registerBtn');
+
+            if (password !== confirmPassword) {
+                showToast('error', 'รหัสผ่านไม่ตรงกัน');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'กำลังสมัคร...';
+
+            try {
+                const result = await window.AuthService.register(email, password, {
+                    displayName: name
+                });
+                
+                if (result.success) {
+                    showToast('success', result.message);
+                    closeModal();
+                } else {
+                    showToast('error', result.error);
+                }
+            } catch (error) {
+                showToast('error', 'เกิดข้อผิดพลาด กรุณาลองใหม่');
+            }
+
+            btn.disabled = false;
+            btn.textContent = 'สมัครสมาชิก';
+        }
+
+        // ===========================================
+        // 🔵 Social Login
+        // ===========================================
+
+        async function handleGoogleLogin() {
+            showLoading('กำลังเข้าสู่ระบบด้วย Google...');
+            
+            try {
+                const result = await window.AuthService.loginWithGoogle();
+                
+                if (result.success) {
+                    showToast('success', result.message);
+                    closeModal();
+                } else {
+                    showToast('error', result.error);
+                }
+            } catch (error) {
+                showToast('error', 'เกิดข้อผิดพลาด กรุณาลองใหม่');
+            }
+
+            hideLoading();
+        }
+
+        async function handleLineLogin() {
+            showToast('info', 'LINE Login จะเปิดใช้งานเร็วๆ นี้');
+            // TODO: Implement LINE Login with LIFF
+        }
+
+        // ===========================================
+        // 🚪 Logout
+        // ===========================================
+
+        async function handleLogout() {
+            if (confirm('คุณต้องการออกจากระบบใช่หรือไม่?')) {
+                const result = await window.AuthService.logout();
+                if (result.success) {
+                    showToast('success', result.message);
+                }
+            }
+        }
+
+        // ===========================================
+        // 📱 UI Functions
+        // ===========================================
+
+        function toggleDropdown() {
+            const menu = document.getElementById('dropdownMenu');
+            menu.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const dropdown = document.querySelector('.user-dropdown');
+            const menu = document.getElementById('dropdownMenu');
+            if (dropdown && !dropdown.contains(e.target)) {
+                menu.classList.remove('show');
+            }
+        });
+
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('show');
+        }
+
+        function showLoading(text = 'กำลังโหลด...') {
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.querySelector('.loading-text').textContent = text;
+            overlay.classList.remove('hide');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.add('hide');
+        }
+
+        function showToast(type, message) {
+            // Remove existing toast
+            const existingToast = document.querySelector('.toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'times-circle' : 'info-circle';
+            toast.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
+            
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideInRight 0.3s ease reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

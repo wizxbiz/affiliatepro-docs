@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบจำลองการทำงานทีมแก้ไขปัญหา Hot Runner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .role-selector {
+            background: white;
+            padding: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .role-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .role-btn {
+            padding: 12px 25px;
+            border: 2px solid #74b9ff;
+            background: white;
+            color: #74b9ff;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .role-btn.active {
+            background: #74b9ff;
+            color: white;
+        }
+
+        .role-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(116, 185, 255, 0.3);
+        }
+
+        .main-workspace {
+            display: grid;
+            grid-template-columns: 300px 1fr 350px;
+            min-height: 80vh;
+        }
+
+        .sidebar {
+            background: #f8f9fa;
+            padding: 25px;
+            border-right: 2px solid #e9ecef;
+        }
+
+        .sidebar h3 {
+            color: #2d3436;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #74b9ff;
+            padding-bottom: 10px;
+        }
+
+        .main-content {
+            padding: 30px;
+            background: white;
+        }
+
+        .activity-panel {
+            background: #f8f9fa;
+            padding: 25px;
+            border-left: 2px solid #e9ecef;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+
+        .panel-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #2d3436;
+            border-bottom: 3px solid #74b9ff;
+            padding-bottom: 10px;
+        }
+
+        .problem-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #ff7675;
+        }
+
+        .problem-card.in-progress {
+            border-left-color: #fdcb6e;
+        }
+
+        .problem-card.resolved {
+            border-left-color: #00b894;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .status-badge.critical {
+            background: #ff7675;
+            color: white;
+        }
+
+        .status-badge.in-progress {
+            background: #fdcb6e;
+            color: white;
+        }
+
+        .status-badge.resolved {
+            background: #00b894;
+            color: white;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #74b9ff;
+            color: white;
+        }
+
+        .btn-success {
+            background: #00b894;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #fdcb6e;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #ff7675;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #74b9ff;
+        }
+
+        .timeline-item {
+            position: relative;
+            background: white;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -23px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #74b9ff;
+            border: 3px solid white;
+        }
+
+        .timeline-item.current::before {
+            background: #ff7675;
+            animation: pulse 1s infinite;
+        }
+
+        .timeline-item.completed::before {
+            background: #00b894;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2d3436;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #74b9ff;
+            box-shadow: 0 0 0 3px rgba(116, 185, 255, 0.2);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .team-member {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #74b9ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin-right: 12px;
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-name {
+            font-weight: 600;
+            color: #2d3436;
+        }
+
+        .member-role {
+            font-size: 0.9rem;
+            color: #636e72;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #00b894;
+        }
+
+        .status-indicator.busy {
+            background: #fdcb6e;
+        }
+
+        .status-indicator.offline {
+            background: #ddd;
+        }
+
+        .chat-message {
+            background: white;
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-left: 3px solid #74b9ff;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .message-author {
+            font-weight: 600;
+            color: #2d3436;
+        }
+
+        .message-time {
+            font-size: 0.8rem;
+            color: #636e72;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #74b9ff, #0984e3);
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-danger {
+            background: #ff7675;
+            color: white;
+        }
+
+        .alert-warning {
+            background: #fdcb6e;
+            color: white;
+        }
+
+        .alert-success {
+            background: #00b894;
+            color: white;
+        }
+
+        .alert-info {
+            background: #74b9ff;
+            color: white;
+        }
+
+        .scenario-selector {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .scenario-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .scenario-btn:hover {
+            border-color: #74b9ff;
+            background: #e3f2fd;
+        }
+
+        .scenario-btn.active {
+            border-color: #74b9ff;
+            background: #74b9ff;
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        @media (max-width: 1200px) {
+            .main-workspace {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar, .activity-panel {
+                border: none;
+                border-bottom: 2px solid #e9ecef;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏭 ระบบจำลองการทำงานทีมแก้ไขปัญหา Hot Runner</h1>
+            <div class="subtitle">การทำงานร่วมกันระหว่าง Production, Engineering และ Supplier</div>
+        </div>
+
+        <!-- เลือกบทบาท -->
+        <div class="role-selector">
+            <h3 style="text-align: center; margin-bottom: 15px;">🎭 เลือกบทบาทของคุณ</h3>
+            <div class="role-buttons">
+                <button class="role-btn active" data-role="production" onclick="switchRole('production')">
+                    👷‍♂️ Production Operator
+                </button>
+                <button class="role-btn" data-role="engineer" onclick="switchRole('engineer')">
+                    🔧 Process Engineer
+                </button>
+                <button class="role-btn" data-role="maintenance" onclick="switchRole('maintenance')">
+                    🛠️ Maintenance Engineer
+                </button>
+                <button class="role-btn" data-role="supplier" onclick="switchRole('supplier')">
+                    🏢 Supplier Support
+                </button>
+                <button class="role-btn" data-role="manager" onclick="switchRole('manager')">
+                    👔 Production Manager
+                </button>
+            </div>
+        </div>
+
+        <div class="main-workspace">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <h3>🎯 เลือกสถานการณ์</h3>
+                <div class="scenario-selector">
+                    <button class="scenario-btn active" onclick="selectScenario('gate_block')">
+                        🚫 ปัญหาเกทไม่ออก<br>
+                        <small>เกท 3 ไม่มีพลาสติกไหลออก</small>
+                    </button>
+                    <button class="scenario-btn" onclick="selectScenario('temp_spike')">
+                        🌡️ อุณหภูมิพุ่งสูง<br>
+                        <small>Zone 2 อุณหภูมิสูงผิดปกติ</small>
+                    </button>
+                    <button class="scenario-btn" onclick="selectScenario('color_change')">
+                        🎨 สีไม่เท่ากัน<br>
+                        <small>ชิ้นงานมีสีไม่สม่ำเสมอ</small>
+                    </button>
+                </div>
+
+                <h3>👥 ทีมงาน</h3>
+                <div id="teamMembers">
+                    <!-- จะถูกสร้างโดย JavaScript -->
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <div id="roleContent">
+                    <!-- เนื้อหาตามบทบาท -->
+                </div>
+            </div>
+
+            <!-- Activity Panel -->
+            <div class="activity-panel">
+                <h3>📈 Timeline & Activity</h3>
+                <div id="timelineContainer">
+                    <!-- Timeline จะถูกสร้างโดย JavaScript -->
+                </div>
+
+                <h3 style="margin-top: 30px;">💬 Team Communication</h3>
+                <div id="chatContainer">
+                    <!-- Chat จะถูกสร้างโดย JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ข้อมูลระบบ
+        let currentRole = 'production';
+        let currentScenario = 'gate_block';
+        let scenarioProgress = 0;
+        let timeElapsed = 0;
+        let problemTickets = [];
+        let chatMessages = [];
+
+        // ข้อมูลทีมงาน
+        const teamMembers = {
+            production: [
+                { id: 'prod1', name: 'สมชาย ใจดี', role: 'Production Operator', status: 'online' },
+                { id: 'prod2', name: 'สมหญิง แยบ', role: 'QC Inspector', status: 'online' }
+            ],
+            engineer: [
+                { id: 'eng1', name: 'วิศวกร ปัญญา', role: 'Process Engineer', status: 'online' },
+                { id: 'eng2', name: 'อาจารย์ รู้', role: 'Senior Engineer', status: 'busy' }
+            ],
+            maintenance: [
+                { id: 'maint1', name: 'ช่างต้อม มือทอง', role: 'Maintenance Tech', status: 'online' },
+                { id: 'maint2', name: 'หัวหน้า แกว่', role: 'Maintenance Manager', status: 'online' }
+            ],
+            supplier: [
+                { id: 'sup1', name: 'Mr. Johnson', role: 'Technical Support', status: 'online' },
+                { id: 'sup2', name: 'คุณสมิท แนะแนว', role: 'Application Engineer', status: 'online' }
+            ],
+            manager: [
+                { id: 'mgr1', name: 'ผู้จัดการ วางแผน', role: 'Production Manager', status: 'online' }
+            ]
+        };
+
+        // สถานการณ์ต่างๆ
+        const scenarios = {
+            gate_block: {
+                title: 'ปัญหาเกทไม่ออก',
+                description: 'เกท 3 ไม่มีพลาสติกไหลออก ทำให้ชิ้นงานไม่เต็ม',
+                severity: 'critical',
+                timeline: [
+                    { phase: 'report', title: 'รายงานปัญหา', description: 'Production พบปัญหาและรายงาน', completed: false },
+                    { phase: 'investigate', title: 'สืบสวนเบื้องต้น', description: 'ตรวจสอบปัญหาเบื้องต้น', completed: false },
+                    { phase: 'analyze', title: 'วิเคราะห์สาเหตุ', description: 'หาสาเหตุของปัญหา', completed: false },
+                    { phase: 'plan', title: 'วางแผนแก้ไข', description: 'จัดทำแผนการแก้ไข', completed: false },
+                    { phase: 'implement', title: 'ดำเนินการแก้ไข', description: 'ลงมือแก้ไขปัญหา', completed: false },
+                    { phase: 'verify', title: 'ตรวจสอบผล', description: 'ทดสอบและยืนยันผล', completed: false },
+                    { phase: 'prevent', title: 'มาตรการป้องกัน', description: 'วางมาตรการป้องกันไม่ให้เกิดซ้ำ', completed: false }
+                ]
+            },
+            temp_spike: {
+                title: 'อุณหภูมิพุ่งสูง',
+                description: 'Zone 2 อุณหภูมิสูงผิดปกติ อาจทำให้พลาสติกไหม้',
+                severity: 'critical',
+                timeline: [
+                    { phase: 'alert', title: 'แจ้งเตือนระบบ', description: 'ระบบตรวจพบอุณหภูมิสูง', completed: false },
+                    { phase: 'shutdown', title: 'หยุดเครื่องฉุกเฉิน', description: 'หยุดการผลิตเพื่อความปลอดภัย', completed: false },
+                    { phase: 'cool_down', title: 'ลดอุณหภูมิ', description: 'ทำให้อุณหภูมิลดลงอย่างปลอดภัย', completed: false },
+                    { phase: 'inspect', title: 'ตรวจสอบอุปกรณ์', description: 'ตรวจหาสาเหตุของการเพิ่มอุณหภูมิ', completed: false },
+                    { phase: 'repair', title: 'ซ่อมแซม', description: 'แก้ไขปัญหาที่พบ', completed: false },
+                    { phase: 'test', title: 'ทดสอบระบบ', description: 'ทดสอบก่อนเริ่มผลิตใหม่', completed: false }
+                ]
+            }
+        };
+
+        // เริ่มต้นระบบ
+        function initializeSystem() {
+            updateTeamMembers();
+            updateRoleContent();
+            updateTimeline();
+            addInitialMessages();
+            
+            // เริ่มจับเวลา
+            setInterval(() => {
+                timeElapsed++;
+                updateTimeDisplay();
+            }, 1000);
+        }
+
+        // เปลี่ยนบทบาท
+        function switchRole(role) {
+            currentRole = role;
+            
+            // อัปเดต UI
+            document.querySelectorAll('.role-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-role="${role}"]`).classList.add('active');
+            
+            updateRoleContent();
+            updateTeamMembers();
+        }
+
+        // เลือกสถานการณ์
+        function selectScenario(scenario) {
+            currentScenario = scenario;
+            scenarioProgress = 0;
+            
+            document.querySelectorAll('.scenario-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            updateTimeline();
+            updateRoleContent();
+            addChatMessage('system', `🎬 เริ่มสถานการณ์: ${scenarios[scenario].title}`);
+        }
+
+        // อัปเดตเนื้อหาตามบทบาท
+        function updateRoleContent() {
+            const container = document.getElementById('roleContent');
+            const scenario = scenarios[currentScenario];
+            
+            let content = `
+                <div class="panel-title">
+                    ${getRoleIcon(currentRole)} ${getRoleTitle(currentRole)}
+                </div>
+                
+                <div class="alert alert-${scenario.severity === 'critical' ? 'danger' : 'warning'}">
+                    <strong>🚨 ${scenario.title}</strong><br>
+                    ${scenario.description}
+                </div>
+            `;
+            
+            content += getRoleSpecificContent();
+            container.innerHTML = content;
+        }
+
+        // เนื้อหาตามบทบาท
+        function getRoleSpecificContent() {
+            switch(currentRole) {
+                case 'production':
+                    return getProductionContent();
+                case 'engineer':
+                    return getEngineerContent();
+                case 'maintenance':
+                    return getMaintenanceContent();
+                case 'supplier':
+                    return getSupplierContent();
+                case 'manager':
+                    return getManagerContent();
+                default:
+                    return '';
+            }
+        }
+
+        function getProductionContent() {
+            if (scenarioProgress === 0) {
+                return `
+                    <div class="problem-card">
+                        <div class="status-badge critical">🔴 ปัญหาวิกฤต</div>
+                        <h4>📋 รายงานปัญหา</h4>
+                        <p>คุณเป็น Production Operator ที่พบปัญหาในการผลิต</p>
+                        
+                        <div class="form-group">
+                            <label class="form-label">📝 อธิบายปัญหาที่พบ</label>
+                            <textarea class="form-input form-textarea" id="problemDescription" 
+                                placeholder="เช่น เกท 3 ไม่มีพลาสติกออกมา ชิ้นงาน 15 ชิ้นล่าสุดไม่เต็ม..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">⏰ เวลาที่เริ่มพบปัญหา</label>
+                            <input type="time" class="form-input" id="problemTime" value="${getCurrentTime()}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">📊 ความรุนแรง</label>
+                            <select class="form-input" id="severity">
+                                <option value="critical">🔴 วิกฤต - หยุดการผลิต</option>
+                                <option value="high">🟡 สูง - ส่งผลต่อคุณภาพ</option>
+                                <option value="medium">🟢 ปานกลาง - ติดตามได้</option>
+                            </select>
+                        </div>
+                        
+                        <button class="btn btn-danger" onclick="reportProblem()">
+                            📞 แจ้งปัญหาให้ Engineer
+                        </button>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="problem-card in-progress">
+                        <div class="status-badge in-progress">🟡 กำลังดำเนินการ</div>
+                        <h4>📊 สถานะปัจจุบัน</h4>
+                        <p>ปัญหาได้รับการรายงานแล้ว ทีม Engineering กำลังตรวจสอบ</p>
+                        
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${(scenarioProgress / scenarios[currentScenario].timeline.length) * 100}%"></div>
+                        </div>
+                        <p>ความคืบหน้า: ${scenarioProgress}/${scenarios[currentScenario].timeline.length} ขั้นตอน</p>
+                        
+                        <h5>📋 สิ่งที่คุณสามารถทำได้:</h5>
+                        <button class="btn btn-primary" onclick="provideFeedback()">💬 ให้ข้อมูลเพิ่มเติม</button>
+                        <button class="btn btn-warning" onclick="monitorProduction()">👀 ติดตามการผลิต</button>
+                    </div>
+                `;
+            }
+        }
+
+        function getEngineerContent() {
+            if (scenarioProgress <= 1) {
+                return `
+                    <div class="problem-card">
+                        <div class="status-badge critical">🔴 ต้องการการวิเคราะห์</div>
+                        <h4>🔍 การวิเคราะห์ปัญหาเบื้องต้น</h4>
+                        
+                        <h5>📋 ข้อมูลจาก Production:</h5>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                            <p><strong>ปัญหา:</strong> เกท 3 ไม่มีพลาสติกไหลออก</p>
+                            <p><strong>ผลกระทบ:</strong> ชิ้นงานไม่เต็ม 15 ชิ้นล่าสุด</p>
+                            <p><strong>เวลา:</strong> ${getCurrentTime()}</p>
+                        </div>
+                        
+                        <h5>🔧 การตรวจสอบเบื้องต้น:</h5>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                            <button class="btn btn-primary" onclick="checkTemperature()">🌡️ ตรวจอุณหภูมิ</button>
+                            <button class="btn btn-primary" onclick="checkPressure()">💨 ตรวจความดัน</button>
+                            <button class="btn btn-primary" onclick="checkGateDesign()">⚙️ ตรวจเกทดีไซน์</button>
+                            <button class="btn btn-primary" onclick="checkMaterial()">🧪 ตรวจวัสดุ</button>
+                        </div>
+                        
+                        <div id="analysisResults" style="margin-top: 20px;">
+                            <!-- ผลการวิเคราะห์จะแสดงที่นี่ -->
+                        </div>
+                        
+                        <button class="btn btn-success" onclick="requestMaintenance()" style="margin-top: 15px;">
+                            🛠️ เรียกทีม Maintenance
+                        </button>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="problem-card in-progress">
+                        <div class="status-badge in-progress">🟡 กำลังแก้ไข</div>
+                        <h4>📊 การติดตามและควบคุม</h4>
+                        
+                        <h5>🎯 แผนการแก้ไข:</h5>
+                        <div class="timeline">
+                            <div class="timeline-item completed">
+                                <strong>✅ วิเคราะห์สาเหตุ:</strong> พบการอุดตันในเกท 3
+                            </div>
+                            <div class="timeline-item current">
+                                <strong>🔧 ดำเนินการแก้ไข:</strong> ทีม Maintenance กำลังทำความสะอาดเกท
+                            </div>
+                            <div class="timeline-item">
+                                <strong>📝 ทดสอบ:</strong> ทดสอบการผลิตหลังแก้ไข
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary" onclick="coordinateRepair()">🤝 ประสานงานซ่อม</button>
+                        <button class="btn btn-success" onclick="contactSupplier()">📞 ติดต่อ Supplier</button>
+                    </div>
+                `;
+            }
+        }
+
+        function getMaintenanceContent() {
+            return `
+                <div class="problem-card">
+                    <div class="status-badge in-progress">🔧 พร้อมดำเนินการ</div>
+                    <h4>🛠️ การซ่อมแซมและบำรุงรักษา</h4>
+                    
+                    <h5>📋 รายการตรวจสอบ:</h5>
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                        <label><input type="checkbox" id="check1"> ✅ ตรวจสอบการอุดตันในเกท</label><br>
+                        <label><input type="checkbox" id="check2"> ✅ ทำความสะอาดช่องทางเกท</label><br>
+                        <label><input type="checkbox" id="check3"> ✅ ตรวจสอบหัวความร้อน</label><br>
+                        <label><input type="checkbox" id="check4"> ✅ ปรับแต่งการตั้งค่า</label><br>
+                        <label><input type="checkbox" id="check5"> ✅ ทดสอบการทำงาน</label>
+                    </div>
+                    
+                    <h5 style="margin-top: 20px;">🔧 เครื่องมือที่ต้องใช้:</h5>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                        <button class="btn btn-primary" onclick="getTools()">🧰 เตรียมเครื่องมือ</button>
+                        <button class="btn btn-primary" onclick="getSpareParts()">🔩 อะไหล่</button>
+                        <button class="btn btn-warning" onclick="requestShutdown()">⏹️ ขอหยุดเครื่อง</button>
+                        <button class="btn btn-success" onclick="startRepair()">🔧 เริ่มซ่อม</button>
+                    </div>
+                    
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label class="form-label">📝 บันทึกการทำงาน</label>
+                        <textarea class="form-input form-textarea" placeholder="บันทึกขั้นตอนและผลการซ่อม..."></textarea>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getSupplierContent() {
+            return `
+                <div class="problem-card">
+                    <div class="status-badge in-progress">🏢 พร้อมสนับสนุน</div>
+                    <h4>🤝 การสนับสนุนทางเทคนิค</h4>
+                    
+                    <h5>📊 การวิเคราะห์ข้อมูล:</h5>
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                        <p><strong>ประเภทปัญหา:</strong> Gate blocking in hot runner system</p>
+                        <p><strong>โมเดลเครื่อง:</strong> HRS-2000 Series</p>
+                        <p><strong>วัสดุ:</strong> ABS พิเศษ</p>
+                        <p><strong>อุณหภูมิปัจจุบัน:</strong> 245°C</p>
+                    </div>
+                    
+                    <h5>💡 คำแนะนำจาก Database:</h5>
+                    <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; border-left: 4px solid #2196f3;">
+                        <p><strong>สาเหตุที่เป็นไปได้:</strong></p>
+                        <ul>
+                            <li>วัสดุมีความชื้นสูงเกินไป</li>
+                            <li>อุณหภูมิเกทไม่เหมาะสม</li>
+                            <li>การทำความสะอาดไม่สม่ำเสมอ</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px;">
+                        <button class="btn btn-primary" onclick="provideTechnicalSupport()">📚 แนะนำเทคนิค</button>
+                        <button class="btn btn-success" onclick="sendSpareParts()">📦 ส่งอะไหล่</button>
+                        <button class="btn btn-warning" onclick="scheduleVisit()">👨‍🔧 นัดหมายเข้าตรวจ</button>
+                        <button class="btn btn-primary" onclick="updateDocumentation()">📄 อัปเดตคู่มือ</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getManagerContent() {
+            return `
+                <div class="problem-card">
+                    <div class="status-badge critical">👔 ต้องการการตัดสินใจ</div>
+                    <h4>📈 การจัดการและติดตาม</h4>
+                    
+                    <h5>📊 ผลกระทบต่อการผลิต:</h5>
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; border: 1px solid #ffeaa7;">
+                        <p><strong>⏰ เวลาหยุดการผลิต:</strong> ${Math.floor(timeElapsed / 60)} นาที</p>
+                        <p><strong>📦 ชิ้นงานเสียหาย:</strong> 15 ชิ้น</p>
+                        <p><strong>💰 ค่าใช้จ่ายประมาณ:</strong> 12,000 บาท</p>
+                        <p><strong>👥 ทีมที่เกี่ยวข้อง:</strong> 8 คน</p>
+                    </div>
+                    
+                    <h5>⚡ การตัดสินใจเร่งด่วน:</h5>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                        <button class="btn btn-danger" onclick="approveShutdown()">⏹️ อนุมัติหยุดเครื่อง</button>
+                        <button class="btn btn-success" onclick="approveRepair()">✅ อนุมัติซ่อม</button>
+                        <button class="btn btn-warning" onclick="allocateResources()">👥 จัดสรรทีม</button>
+                        <button class="btn btn-primary" onclick="updateStakeholders()">📢 แจ้งผู้เกี่ยวข้อง</button>
+                    </div>
+                    
+                    <h5 style="margin-top: 20px;">📋 แผนป้องกัน:</h5>
+                    <textarea class="form-input form-textarea" placeholder="วางแผนมาตรการป้องกันไม่ให้เกิดปัญหาซ้ำ..."></textarea>
+                </div>
+            `;
+        }
+
+        // ฟังก์ชันต่างๆ
+        function reportProblem() {
+            const description = document.getElementById('problemDescription').value;
+            const time = document.getElementById('problemTime').value;
+            const severity = document.getElementById('severity').value;
+            
+            if (!description) {
+                alert('กรุณาอธิบายปัญหาที่พบ');
+                return;
+            }
+            
+            scenarioProgress = 1;
+            updateTimeline();
+            updateRoleContent();
+            addChatMessage('production', `🚨 รายงานปัญหา: ${description} เวลา ${time} ระดับ ${severity}`);
+            addChatMessage('engineer', `✅ รับทราบปัญหาแล้ว กำลังดำเนินการตรวจสอบ`);
+        }
+
+        function checkTemperature() {
+            addAnalysisResult('🌡️ อุณหภูมิ: Zone 3 = 238°C (ปกติ)', 'success');
+        }
+
+        function checkPressure() {
+            addAnalysisResult('💨 ความดัน: 1250 bar (ปกติ)', 'success');
+        }
+
+        function checkGateDesign() {
+            addAnalysisResult('⚙️ เกทดีไซน์: พบการอุดตันที่เกท 3', 'danger');
+        }
+
+        function checkMaterial() {
+            addAnalysisResult('🧪 วัสดุ: ABS มีความชื้น 0.08% (ปกติ)', 'success');
+        }
+
+        function addAnalysisResult(text, type) {
+            const container = document.getElementById('analysisResults');
+            const div = document.createElement('div');
+            div.className = `alert alert-${type}`;
+            div.textContent = text;
+            container.appendChild(div);
+        }
+
+        function requestMaintenance() {
+            scenarioProgress = 2;
+            updateTimeline();
+            updateRoleContent();
+            addChatMessage('engineer', `🛠️ พบสาเหตุแล้ว: การอุดตันที่เกท 3 ขอให้ทีม Maintenance ดำเนินการ`);
+            addChatMessage('maintenance', `✅ รับทราบ เตรียมเครื่องมือและจะเริ่มซ่อมใน 15 นาที`);
+        }
+
+        function startRepair() {
+            scenarioProgress = 4;
+            updateTimeline();
+            addChatMessage('maintenance', `🔧 เริ่มการซ่อมแซม: กำลังทำความสะอาดเกท 3`);
+            
+            setTimeout(() => {
+                scenarioProgress = 5;
+                updateTimeline();
+                addChatMessage('maintenance', `✅ ซ่อมเสร็จแล้ว: เกท 3 ทำงานปกติ พร้อมทดสอบ`);
+            }, 5000);
+        }
+
+        function contactSupplier() {
+            addChatMessage('engineer', `📞 ติดต่อ Supplier เพื่อขอคำแนะนำเพิ่มเติม`);
+            addChatMessage('supplier', `🏢 Mr. Johnson พร้อมสนับสนุน แนะนำตรวจสอบการบำรุงรักษาประจำ`);
+        }
+
+        function updateTeamMembers() {
+            const container = document.getElementById('teamMembers');
+            let html = '';
+            
+            Object.keys(teamMembers).forEach(role => {
+                teamMembers[role].forEach(member => {
+                    const statusClass = member.status === 'online' ? '' : 
+                                      member.status === 'busy' ? 'busy' : 'offline';
+                    
+                    html += `
+                        <div class="team-member">
+                            <div class="avatar">${member.name.charAt(0)}</div>
+                            <div class="member-info">
+                                <div class="member-name">${member.name}</div>
+                                <div class="member-role">${member.role}</div>
+                            </div>
+                            <div class="status-indicator ${statusClass}"></div>
+                        </div>
+                    `;
+                });
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function updateTimeline() {
+            const container = document.getElementById('timelineContainer');
+            const scenario = scenarios[currentScenario];
+            let html = '<div class="timeline">';
+            
+            scenario.timeline.forEach((item, index) => {
+                const isCompleted = index < scenarioProgress;
+                const isCurrent = index === scenarioProgress;
+                const className = isCompleted ? 'completed' : (isCurrent ? 'current' : '');
+                
+                html += `
+                    <div class="timeline-item ${className}">
+                        <strong>${item.title}</strong><br>
+                        <small>${item.description}</small>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function addChatMessage(role, message) {
+            const container = document.getElementById('chatContainer');
+            const time = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+            
+            const div = document.createElement('div');
+            div.className = 'chat-message';
+            div.innerHTML = `
+                <div class="message-header">
+                    <span class="message-author">${getRoleTitle(role)}</span>
+                    <span class="message-time">${time}</span>
+                </div>
+                <div>${message}</div>
+            `;
+            
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function addInitialMessages() {
+            addChatMessage('system', '🏭 ระบบเริ่มต้นการทำงาน พร้อมสำหรับการจำลอง');
+            addChatMessage('manager', '👔 ทีมทุกคนพร้อมแล้ว หากมีปัญหาให้รายงานทันที');
+        }
+
+        function getRoleIcon(role) {
+            const icons = {
+                production: '👷‍♂️',
+                engineer: '🔧',
+                maintenance: '🛠️',
+                supplier: '🏢',
+                manager: '👔'
+            };
+            return icons[role] || '👤';
+        }
+
+        function getRoleTitle(role) {
+            const titles = {
+                production: 'Production Operator',
+                engineer: 'Process Engineer',
+                maintenance: 'Maintenance Engineer',
+                supplier: 'Supplier Support',
+                manager: 'Production Manager',
+                system: 'ระบบ'
+            };
+            return titles[role] || role;
+        }
+
+        function getCurrentTime() {
+            return new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function updateTimeDisplay() {
+            // อัปเดตเวลาในหน้าจอถ้าจำเป็น
+        }
+
+        // ฟังก์ชันเพิ่มเติมสำหรับการโต้ตอบ
+        function provideFeedback() {
+            const feedback = prompt('ข้อมูลเพิ่มเติมจาก Production:');
+            if (feedback) {
+                addChatMessage('production', `💬 ข้อมูลเพิ่มเติม: ${feedback}`);
+            }
+        }
+
+        function monitorProduction() {
+            addChatMessage('production', '👀 กำลังติดตามการผลิต... ชิ้นงานยังคงไม่เต็มในเกท 3');
+        }
+
+        function coordinateRepair() {
+            addChatMessage('engineer', '🤝 ประสานงานกับทีม Maintenance เพื่อเร่งการซ่อม');
+        }
+
+        function provideTechnicalSupport() {
+            addChatMessage('supplier', '📚 แนะนำ: ตรวจสอบการบำรุงรักษา Gate ทุก 500 ชิ้น และใช้ Purging compound ทุกสัปดาห์');
+        }
+
+        function approveShutdown() {
+            addChatMessage('manager', '⏹️ อนุมัติให้หยุดเครื่องเพื่อซ่อมแซม ความปลอดภัยเป็นสำคัญ');
+        }
+
+        function approveRepair() {
+            addChatMessage('manager', '✅ อนุมัติงบประมาณซ่อม 50,000 บาท และอนุมัติ OT ทีม Maintenance');
+        }
+
+        // เริ่มต้นระบบ
+        initializeSystem();
+    </script>
+</body>
+</html>

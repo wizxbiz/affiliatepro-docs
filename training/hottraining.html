@@ -1,0 +1,2169 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hot Runner Open Gate System สำหรับ PPS - Advanced Course</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e22ce 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+            padding: 40px 0;
+        }
+
+        .page-header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+            animation: slideInDown 0.8s ease;
+        }
+
+        .page-header .subtitle {
+            font-size: 1.4rem;
+            opacity: 0.95;
+            margin-bottom: 10px;
+        }
+
+        .page-header .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 10px 25px;
+            border-radius: 25px;
+            margin-top: 15px;
+            font-size: 1rem;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .hero-section h2 {
+            color: #1e3c72;
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+        }
+
+        .hero-section p {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .learning-path {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .path-step {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .path-step:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .path-step .number {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .path-step h3 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        /* Main Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #FF6B6B, #4ECDC4, #45B7D1);
+        }
+
+        .content-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        }
+
+        .content-card .icon {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .content-card h2 {
+            color: #1e3c72;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .content-card h3 {
+            color: #2a5298;
+            font-size: 1.3rem;
+            margin: 25px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border-left: 5px solid #667eea;
+        }
+
+        .info-box.warning {
+            background: linear-gradient(135deg, #fff5e6 0%, #ffe0b2 100%);
+            border-left-color: #ff9800;
+        }
+
+        .info-box.danger {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border-left-color: #f44336;
+        }
+
+        .info-box.success {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-left-color: #4caf50;
+        }
+
+        .info-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-list li {
+            padding: 12px 0;
+            padding-left: 35px;
+            position: relative;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .info-list li:last-child {
+            border-bottom: none;
+        }
+
+        .info-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #4caf50;
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+
+        .info-list.steps li::before {
+            content: counter(step);
+            counter-increment: step;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .info-list.steps {
+            counter-reset: step;
+        }
+
+        /* Data Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .data-table tr:hover td {
+            background-color: #f5f7fa;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Interactive Tabs */
+        .tabs-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+
+        .tabs-header {
+            display: flex;
+            border-bottom: 3px solid #eee;
+            margin-bottom: 30px;
+            overflow-x: auto;
+            gap: 10px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 15px 30px;
+            cursor: pointer;
+            font-size: 1.05rem;
+            color: #666;
+            border-bottom: 4px solid transparent;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+            font-weight: 600;
+        }
+
+        .tab-btn:hover {
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Comparison Section */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .comparison-card {
+            padding: 30px;
+            border-radius: 15px;
+            border: 3px solid;
+            transition: all 0.3s ease;
+        }
+
+        .comparison-card.open-gate {
+            border-color: #4caf50;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+        }
+
+        .comparison-card.valve-gate {
+            border-color: #2196f3;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        }
+
+        .comparison-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .comparison-card h3 {
+            border: none;
+            margin-top: 0;
+            font-size: 1.5rem;
+        }
+
+        /* Calculator Section */
+        .calculator-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            margin: 30px 0;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .calculator-box h3 {
+            color: white;
+            border: none;
+            margin-top: 0;
+        }
+
+        .calc-input-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .calc-input {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .calc-input label {
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .calc-input input,
+        .calc-input select {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: rgba(255,255,255,0.9);
+        }
+
+        .calc-button {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .calc-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .calc-result {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 25px;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .calc-result h4 {
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        /* Troubleshooting Flowchart */
+        .flowchart {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .flow-step {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border-left: 5px solid #667eea;
+            position: relative;
+        }
+
+        .flow-step::after {
+            content: '↓';
+            display: block;
+            text-align: center;
+            font-size: 2rem;
+            color: #667eea;
+            margin-top: 10px;
+        }
+
+        .flow-step:last-child::after {
+            content: '✓';
+            color: #4caf50;
+        }
+
+        .flow-step strong {
+            color: #1e3c72;
+            font-size: 1.1rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        /* Interactive Demo */
+        .demo-section {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            margin-bottom: 40px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+
+        .demo-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .demo-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px 35px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .demo-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .demo-btn .icon {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        /* Best Practices Cards */
+        .best-practices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .practice-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            border-top: 5px solid #4caf50;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .practice-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+        }
+
+        .practice-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .practice-card h4 {
+            color: #1e3c72;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .page-header .subtitle {
+                font-size: 1.1rem;
+            }
+
+            .content-grid,
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-section {
+                padding: 30px 20px;
+            }
+
+            .content-card {
+                padding: 25px;
+            }
+
+            .tabs-header {
+                flex-wrap: wrap;
+            }
+
+            .demo-buttons {
+                flex-direction: column;
+            }
+
+            .demo-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+            }
+            
+            .demo-section,
+            .calculator-box {
+                break-inside: avoid;
+            }
+            
+            .content-card {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Page Header -->
+        <header class="page-header">
+            <h1>🔥 Hot Runner Open Gate System</h1>
+            <div class="subtitle">สำหรับพลาสติก PPS (Polyphenylene Sulfide)</div>
+            <div class="badge">📚 Advanced Training Course - Phase 2</div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <h2>🎯 ยินดีต้อนรับสู่หลักสูตรขั้นสูง!</h2>
+            <p>หลักสูตรนี้ออกแบบมาเพื่อผู้ที่มีพื้นฐาน Hot Runner แล้ว และต้องการเพิ่มความเชี่ยวชาญในการใช้งาน <strong>Open Gate System กับพลาสติก PPS</strong> ให้มีประสิทธิภาพสูงสุด</p>
+            
+            <div class="learning-path">
+                <div class="path-step">
+                    <div class="number">1</div>
+                    <h3>ทบทวนพื้นฐาน</h3>
+                    <p>Hot Runner Basics</p>
+                </div>
+                <div class="path-step">
+                    <div class="number">2</div>
+                    <h3>เข้าใจ PPS</h3>
+                    <p>คุณสมบัติเฉพาะ</p>
+                </div>
+                <div class="path-step">
+                    <div class="number">3</div>
+                    <h3>Open Gate</h3>
+                    <p>หลักการและการตั้งค่า</p>
+                </div>
+                <div class="path-step">
+                    <div class="number">4</div>
+                    <h3>แก้ปัญหา</h3>
+                    <p>Troubleshooting</p>
+                </div>
+                <div class="path-step">
+                    <div class="number">5</div>
+                    <h3>ปฏิบัติการ</h3>
+                    <p>Hands-on Workshop</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <div class="content-grid">
+            <!-- Card 1: PPS Material -->
+            <div class="content-card">
+                <span class="icon">🧪</span>
+                <h2>PPS (Polyphenylene Sulfide)</h2>
+                
+                <h3>คุณสมบัติเด่นของ PPS</h3>
+                <ul class="info-list">
+                    <li><strong>ทนความร้อนสูง:</strong> ใช้งานได้ถึง 240°C ต่อเนื่อง</li>
+                    <li><strong>ทนเคมีภัณฑ์:</strong> ทนต่อกรด, ด่าง และตัวทำละลาย</li>
+                    <li><strong>ความแข็งแรงสูง:</strong> แข็งแกร่งแม้ที่อุณหภูมิสูง</li>
+                    <li><strong>มิติคงตัว:</strong> การหดตัวต่ำ 0.3-0.7%</li>
+                    <li><strong>ทนเปลวไฟ:</strong> UL94 V-0 Rating</li>
+                    <li><strong>ฉนวนไฟฟ้าดี:</strong> เหมาะกับชิ้นงานอิเล็กทรอนิกส์</li>
+                </ul>
+
+                <div class="info-box warning">
+                    <strong>⚠️ ข้อควรระวัง:</strong>
+                    <ul style="margin-top: 10px; margin-left: 20px;">
+                        <li>ต้องการอุณหภูมิหลอมเหลวสูง (280-320°C)</li>
+                        <li>ความหนืดต่ำ - ไหลเร็ว</li>
+                        <li>ต้องการแรงดันฉีดสูง</li>
+                        <li>ต้องอบแห้งก่อนใช้งาน (150°C, 3-4 ชม.)</li>
+                    </ul>
+                </div>
+
+                <h3>การประยุกต์ใช้งาน PPS</h3>
+                <ul class="info-list">
+                    <li>ชิ้นส่วนยานยนต์ (ใต้ฝากระโปรง)</li>
+                    <li>อุปกรณ์อิเล็กทรอนิกส์ (Connectors, Sockets)</li>
+                    <li>ชิ้นส่วนเครื่องจักร (Bearings, Gears)</li>
+                    <li>อุปกรณ์การแพทย์ (ทนการนึ่งฆ่าเชื้อ)</li>
+                    <li>อุตสาหกรรมเคมี (ทนเคมีภัณฑ์)</li>
+                </ul>
+            </div>
+
+            <!-- Card 2: Open Gate System -->
+            <div class="content-card">
+                <span class="icon">🚪</span>
+                <h2>Open Gate System คืออะไร?</h2>
+                
+                <h3>หลักการทำงาน</h3>
+                <p>Open Gate (หรือ Open Tip) เป็นระบบ Hot Runner ที่ <strong>ไม่มีวาล์วควบคุม</strong> การเปิด-ปิดของทางเข้าพลาสติก (Gate) แต่ใช้การควบคุมอุณหภูมิในการหยุดการไหลของพลาสติก</p>
+
+                <div class="info-box">
+                    <strong>💡 หลักการ:</strong><br>
+                    เมื่อหยุดฉีด → พลาสติกที่ Gate เริ่มเย็นตัว → แข็งตัวและอุดทางเอง → ป้องกันพลาสติกไหลออกมา
+                </div>
+
+                <h3>ข้อดีของ Open Gate</h3>
+                <ul class="info-list">
+                    <li><strong>ราคาถูกกว่า Valve Gate:</strong> 40-60%</li>
+                    <li><strong>โครงสร้างเรียบง่าย:</strong> ส่วนประกอบน้อย</li>
+                    <li><strong>บำรุงรักษาง่าย:</strong> ไม่มีชิ้นส่วนเคลื่อนที่</li>
+                    <li><strong>เชื่อถือได้สูง:</strong> เสียน้อย</li>
+                    <li><strong>เหมาะกับ PPS:</strong> ความหนืดต่ำ ไหลดี</li>
+                </ul>
+
+                <h3>ข้อจำกัดของ Open Gate</h3>
+                <div class="info-box warning">
+                    <ul style="margin-left: 20px;">
+                        <li>มี Gate Mark บนชิ้นงาน (ขนาด 0.5-2 มม.)</li>
+                        <li>อาจเกิด Stringing/Drooling ถ้าตั้งค่าไม่ดี</li>
+                        <li>ควบคุม Fill Time ได้จำกัด</li>
+                        <li>ไม่เหมาะกับชิ้นงานที่ต้องการผิวสวยมาก</li>
+                        <li>ต้องการ Cycle Time ที่คงที่</li>
+                    </ul>
+                </div>
+
+                <h3>ส่วนประกอบหลัก</h3>
+                <ul class="info-list">
+                    <li><strong>Manifold:</strong> ท่อกระจายความร้อน</li>
+                    <li><strong>Nozzle (Drop):</strong> หัวฉีดแบบเปิด</li>
+                    <li><strong>Tip/Gate:</strong> ปากทางเข้า (ไม่มีวาล์ว)</li>
+                    <li><strong>Heater:</strong> Cartridge Heater</li>
+                    <li><strong>Thermocouple:</strong> วัดอุณหภูมิ</li>
+                    <li><strong>Thermal Barrier:</strong> ฉนวนกันความร้อน</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Comparison Section -->
+        <section class="tabs-container">
+            <h2 style="text-align: center; color: #1e3c72; margin-bottom: 30px;">
+                ⚖️ เปรียบเทียบ Open Gate vs Valve Gate
+            </h2>
+            
+            <div class="comparison-grid">
+                <div class="comparison-card open-gate">
+                    <h3>🚪 Open Gate System</h3>
+                    <ul class="info-list">
+                        <li>ราคา: ถูกกว่า 40-60%</li>
+                        <li>โครงสร้าง: เรียบง่าย</li>
+                        <li>Gate Mark: มี (0.5-2 มม.)</li>
+                        <li>บำรุงรักษา: ง่ายมาก</li>
+                        <li>ความเชื่อถือ: สูงมาก</li>
+                        <li>Cycle Time: ยาวกว่าเล็กน้อย</li>
+                        <li>เหมาะกับ: PPS, PP, PE, PA</li>
+                        <li>ปัญหา: Stringing, Drooling</li>
+                        <li>ความยืดหยุ่น: จำกัด</li>
+                    </ul>
+                </div>
+
+                <div class="comparison-card valve-gate">
+                    <h3>🔧 Valve Gate System</h3>
+                    <ul class="info-list">
+                        <li>ราคา: แพงกว่า 40-60%</li>
+                        <li>โครงสร้าง: ซับซ้อน</li>
+                        <li>Gate Mark: ไม่มี หรือน้อยมาก</li>
+                        <li>บำรุงรักษา: ซับซ้อน</li>
+                        <li>ความเชื่อถือ: ดี (แต่มีชิ้นส่วนเคลื่อนที่)</li>
+                        <li>Cycle Time: สั้นกว่า</li>
+                        <li>เหมาะกับ: ชิ้นงานคุณภาพสูง</li>
+                        <li>ปัญหา: Pin ติด, Leakage</li>
+                        <li>ความยืดหยุ่น: สูงมาก</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="info-box success" style="margin-top: 30px;">
+                <strong>💡 คำแนะนำสำหรับ PPS:</strong><br>
+                Open Gate เหมาะกับ PPS มาก เนื่องจาก PPS มีความหนืดต่ำและไหลได้ดี ทำให้การควบคุมด้วยอุณหภูมิทำได้ง่าย และราคาที่ถูกกว่าช่วยลดต้นทุนการผลิตชิ้นงาน Engineering Plastic ที่มีราคาวัตถุดิบสูงอยู่แล้ว
+</div>
+</section>
+<!-- Tabs Section: Technical Details -->
+    <section class="tabs-container">
+        <h2 style="text-align: center; color: #1e3c72; margin-bottom: 30px;">
+            ⚙️ รายละเอียดทางเทคนิค
+        </h2>
+        
+        <div class="tabs-header">
+            <button class="tab-btn active" data-tab="temperature">🌡️ อุณหภูมิ</button>
+            <button class="tab-btn" data-tab="parameters">📊 พารามิเตอร์</button>
+            <button class="tab-btn" data-tab="problems">🔧 ปัญหาและการแก้ไข</button>
+            <button class="tab-btn" data-tab="maintenance">🛠️ การบำรุงรักษา</button>
+        </div>
+
+        <!-- Temperature Tab -->
+        <div class="tab-content active" id="temperature">
+            <h3>การตั้งค่าอุณหภูมิสำหรับ PPS</h3>
+            
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>โซน/ตำแหน่ง</th>
+                        <th>อุณหภูมิแนะนำ (°C)</th>
+                        <th>ช่วงที่ใช้ได้ (°C)</th>
+                        <th>หมายเหตุ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Barrel - Rear Zone</strong></td>
+                        <td>280-290</td>
+                        <td>270-300</td>
+                        <td>โซนหลัง - เริ่มหลอม</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Barrel - Middle Zone</strong></td>
+                        <td>295-305</td>
+                        <td>285-315</td>
+                        <td>โซนกลาง - หลอมเต็มที่</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Barrel - Front Zone</strong></td>
+                        <td>305-315</td>
+                        <td>295-325</td>
+                        <td>โซนหน้า - รักษาความร้อน</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Nozzle (Machine)</strong></td>
+                        <td>310-320</td>
+                        <td>300-330</td>
+                        <td>หัวฉีดเครื่อง</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Manifold</strong></td>
+                        <td>315-325</td>
+                        <td>310-335</td>
+                        <td>ท่อกระจาย Hot Runner</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Hot Drop/Nozzle</strong></td>
+                        <td>315-325</td>
+                        <td>310-335</td>
+                        <td>หัวฉีดร้อน</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Gate/Tip</strong></td>
+                        <td>310-320</td>
+                        <td>305-330</td>
+                        <td><strong>สำคัญมาก!</strong> ควบคุม Stringing</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mold Temperature</strong></td>
+                        <td>135-150</td>
+                        <td>120-160</td>
+                        <td>อุณหภูมิแม่พิมพ์</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="info-box danger">
+                <strong>⚠️ คำเตือนสำคัญ:</strong>
+                <ul style="margin-top: 10px; margin-left: 20px;">
+                    <li><strong>อย่าให้อุณหภูมิสูงเกิน 340°C:</strong> PPS จะเริ่มสลายตัว</li>
+                    <li><strong>ระวังการติดไฟ:</strong> PPS ที่ร้อนเกินจะมีควันและกลิ่น</li>
+                    <li><strong>ควบคุม Gate Temperature:</strong> สำคัญที่สุดในการป้องกัน Drooling</li>
+                    <li><strong>Residence Time:</strong> PPS ไม่ควรอยู่ในกระบอกนานเกิน 8-10 นาที</li>
+                </ul>
+            </div>
+
+            <h3>เทคนิคการตั้งค่าอุณหภูมิ Gate</h3>
+            
+            <div class="info-box success">
+                <strong>✅ วิธีหาอุณหภูมิ Gate ที่เหมาะสม:</strong>
+                <ol class="info-list steps">
+                    <li>เริ่มที่ 315°C (เท่ากับ Manifold)</li>
+                    <li>ถ้ามี Drooling/Stringing → ลดอุณหภูมิลง 5°C</li>
+                    <li>ถ้า Gate Freeze เร็วเกิน (Short Shot) → เพิ่มอุณหภูมิขึ้น 3°C</li>
+                    <li>ปรับทีละเล็กน้อยจนได้จุดสมดุล</li>
+                    <li>บันทึกค่าที่เหมาะสมสำหรับแต่ละชิ้นงาน</li>
+                </ol>
+            </div>
+
+            <h3>Multi-Zone Temperature Control</h3>
+            <p>สำหรับ Hot Runner ที่มีหลาย Nozzle ควรแบ่งโซนอุณหภูมิดังนี้:</p>
+            
+            <ul class="info-list">
+                <li><strong>Zone 1 - Manifold Inlet:</strong> 320-325°C (ร้อนที่สุด)</li>
+                <li><strong>Zone 2 - Manifold Center:</strong> 315-320°C</li>
+                <li><strong>Zone 3 - Manifold Branch:</strong> 315-320°C</li>
+                <li><strong>Zone 4-n - Each Nozzle:</strong> 315-325°C (แยกควบคุมแต่ละตัว)</li>
+                <li><strong>Zone Tips - Gate Area:</strong> 310-320°C (ควบคุมแยก)</li>
+            </ul>
+        </div>
+
+        <!-- Parameters Tab -->
+        <div class="tab-content" id="parameters">
+            <h3>พารามิเตอร์การฉีดสำหรับ PPS + Open Gate</h3>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>พารามิเตอร์</th>
+                        <th>ค่าแนะนำ</th>
+                        <th>ช่วงที่ใช้ได้</th>
+                        <th>หมายเหตุ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Injection Pressure</strong></td>
+                        <td>100-150 MPa</td>
+                        <td>80-180 MPa</td>
+                        <td>PPS ต้องการแรงดันสูง</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Injection Speed</strong></td>
+                        <td>70-90% ของความเร็วสูงสุด</td>
+                        <td>50-100%</td>
+                        <td>ฉีดเร็วเพื่อไม่ให้เย็นตัวก่อน</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Packing Pressure</strong></td>
+                        <td>60-80% ของ Injection</td>
+                        <td>50-90%</td>
+                        <td>อัดแน่นชดเชยการหดตัว</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Packing Time</strong></td>
+                        <td>3-8 วินาที</td>
+                        <td>2-12 วินาที</td>
+                        <td>ขึ้นกับขนาดชิ้นงาน</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cooling Time</strong></td>
+                        <td>15-30 วินาที</td>
+                        <td>10-45 วินาที</td>
+                        <td>PPS เย็นตัวช้า</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Screw Back Pressure</strong></td>
+                        <td>5-10 MPa</td>
+                        <td>3-15 MPa</td>
+                        <td>ไม่ควรสูงเกินไป</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Screw Speed</strong></td>
+                        <td>50-70 rpm</td>
+                        <td>40-100 rpm</td>
+                        <td>ความเร็วปานกลาง</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Decompression</strong></td>
+                        <td>3-8 มม.</td>
+                        <td>2-15 มม.</td>
+                        <td>ป้องกัน Drooling</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>การตั้งค่า Multi-Stage Injection</h3>
+            <p>สำหรับชิ้นงานที่ซับซ้อน แนะนำใช้การฉีดหลายขั้นตอน:</p>
+
+            <div class="info-box">
+                <strong>ตัวอย่างการตั้งค่า 3 Stage Injection:</strong>
+                <ul style="margin-top: 10px; margin-left: 20px;">
+                    <li><strong>Stage 1 (0-70% Fill):</strong> Speed 80%, Pressure 120 MPa - ฉีดเร็วเต็มที่</li>
+                    <li><strong>Stage 2 (70-95% Fill):</strong> Speed 60%, Pressure 100 MPa - ลดความเร็วป้องกัน Flash</li>
+                    <li><strong>Stage 3 (95-100% Fill):</strong> Speed 40%, Pressure 80 MPa - ฉีดช้าสุดท้าย</li>
+                    <li><strong>Packing:</strong> Pressure 70 MPa, Time 5 sec - อัดแน่น</li>
+                </ul>
+            </div>
+
+            <h3>Gate Freeze Time</h3>
+            <p><strong>Gate Freeze Time</strong> คือเวลาที่พลาสติกที่ Gate แข็งตัวจนไม่สามารถอัดแน่นเพิ่มได้</p>
+
+            <div class="info-box warning">
+                <strong>🔍 วิธีหา Gate Freeze Time สำหรับ PPS + Open Gate:</strong>
+                <ol class="info-list steps">
+                    <li>ตั้ง Packing Time ที่ 2 วินาที</li>
+                    <li>ชั่งน้ำหนักชิ้นงาน 10 ชิ้น (บันทึกค่าเฉลี่ย)</li>
+                    <li>เพิ่ม Packing Time ขึ้นทีละ 1 วินาที</li>
+                    <li>ชั่งน้ำหนักอีกครั้ง</li>
+                    <li>ถ้าน้ำหนักไม่เพิ่มขึ้นแล้ว = Gate Freeze แล้ว</li>
+                    <li>ใช้เวลาก่อนหน้านั้น + 1 วินาที เป็น Packing Time ที่เหมาะสม</li>
+                </ol>
+            </div>
+
+            <h3>ข้อแนะนำพิเศษสำหรับ PPS</h3>
+            <ul class="info-list">
+                <li><strong>อบแห้ง:</strong> 150°C เป็นเวลา 3-4 ชั่วโมง (ความชื้น < 0.02%)</li>
+                <li><strong>Purging:</strong> ใช้ PE หรือ PS ล้างก่อนเปลี่ยนเป็น PPS</li>
+                <li><strong>Start-up:</strong> ฉีดทิ้ง 20-30 Shot แรกเพื่อให้อุณหภูมิสม่ำเสมอ</li>
+                <li><strong>Shutdown:</strong> ล้างด้วย PE ก่อนหยุดเครื่อง</li>
+                <li><strong>Color Change:</strong> ใช้ Purging Compound หรือฉีดทิ้ง 50-100 Shot</li>
+            </ul>
+        </div>
+
+        <!-- Problems Tab -->
+        <div class="tab-content" id="problems">
+            <h3>ปัญหาที่พบบ่อยและวิธีแก้ไข</h3>
+
+            <div class="flowchart">
+                <h4 style="color: #1e3c72; margin-bottom: 20px;">🔍 Troubleshooting Guide</h4>
+
+                <!-- Problem 1: Stringing/Drooling -->
+                <div class="flow-step">
+                    <strong>❌ ปัญหา: Stringing/Drooling (พลาสติกหยด/เส้นใย)</strong>
+                    <p><strong>อาการ:</strong> มีเส้นพลาสติกยื่นออกมาจาก Gate หรือหยดระหว่างการเปิดแม่พิมพ์</p>
+                    <p><strong>สาเหตุ:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>อุณหภูมิ Gate สูงเกินไป</li>
+                        <li>Decompression ไม่เพียงพอ</li>
+                        <li>Cooling Time สั้นเกิน</li>
+                        <li>Packing Pressure สูงเกิน</li>
+                    </ul>
+                    <p><strong>วิธีแก้:</strong></p>
+                    <ol style="margin-left: 20px;">
+                        <li>ลดอุณหภูมิ Gate ลง 5-10°C</li>
+                        <li>เพิ่ม Decompression Distance (2-5 มม.)</li>
+                        <li>เพิ่ม Cooling Time (3-5 วินาที)</li>
+                        <li>ลด Packing Pressure ลง 10-20%</li>
+                        <li>ตรวจสอบ Nozzle Tip ว่าสึกหรือไม่</li>
+                    </ol>
+                </div>
+
+                <!-- Problem 2: Short Shot -->
+                <div class="flow-step">
+                    <strong>❌ ปัญหา: Short Shot (ชิ้นงานไม่เต็ม)</strong>
+                    <p><strong>อาการ:</strong> พลาสติกไม่ไหลเต็ม Cavity มีส่วนที่ขาด</p>
+                    <p><strong>สาเหตุ:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>อุณหภูมิต่ำเกิน (PPS เย็นตัวเร็วเกิน)</li>
+                        <li>Injection Speed ช้าเกิน</li>
+                        <li>Injection Pressure ไม่เพียงพอ</li>
+                        <li>Gate Freeze เร็วเกิน</li>
+                        <li>วัสดุไม่แห้งพอ (มีความชื้น)</li>
+                    </ul>
+                    <p><strong>วิธีแก้:</strong></p>
+                    <ol style="margin-left: 20px;">
+                        <li>เพิ่มอุณหภูมิทุกโซน 5-10°C</li>
+                        <li>เพิ่ม Injection Speed</li>
+                        <li>เพิ่ม Injection Pressure</li>
+                        <li>เพิ่มอุณหภูมิแม่พิมพ์ 10-15°C</li>
+                        <li>ตรวจสอบการอบแห้งวัสดุ</li>
+                        <li>เพิ่มอุณหภูมิ Gate</li>
+                    </ol>
+                </div>
+
+                <!-- Problem 3: Flash -->
+                <div class="flow-step">
+                    <strong>❌ ปัญหา: Flash (พลาสติกล้น)</strong>
+                    <p><strong>อาการ:</strong> พลาสติกไหลออกนอกแม่พิมพ์ มีครีบบาง</p>
+                    <p><strong>สาเหตุ:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>แรงล็อคแม่พิมพ์ไม่เพียงพอ</li>
+                        <li>Injection Pressure สูงเกิน</li>
+                        <li>อุณหภูมิสูงเกิน (ความหนืดต่ำ)</li>
+                        <li>แม่พิมพ์สึก หรือมีสิ่งแปลกปลอม</li>
+                    </ul>
+                    <p><strong>วิธีแก้:</strong></p>
+                    <ol style="margin-left: 20px;">
+                        <li>เพิ่มแรงล็อคแม่พิมพ์</li>
+                        <li>ลด Injection Pressure</li>
+                        <li>ลดอุณหภูมิ 5-10°C</li>
+                        <li>ลด Injection Speed</li>
+                        <li>ตรวจสอบความสะอาดแม่พิมพ์</li>
+                    </ol>
+                </div>
+
+                <!-- Problem 4: Gate Mark -->
+                <div class="flow-step">
+                    <strong>❌ ปัญหา: Gate Mark เด่นเกินไป</strong>
+                    <p><strong>อาการ:</strong> รอยที่ Gate ใหญ่เกิน หรือมีรอยแตก</p>
+                    <p><strong>สาเหตุ:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>Gate Size ใหญ่เกิน</li>
+                        <li>Packing Pressure สูงเกิน</li>
+                        <li>Packing Time ยาวเกิน</li>
+                        <li>Gate Freeze ช้าเกิน</li>
+                    </ul>
+                    <p><strong>วิธีแก้:</strong></p>
+                    <ol style="margin-left: 20px;">
+                        <li>ปรับ Gate Size ให้เล็กลง (ต้องเปลี่ยน Tip)</li>
+                        <li>ลด Packing Pressure</li>
+                        <li>ลด Packing Time</li>
+                        <li>ลดอุณหภูมิ Gate เล็กน้อย</li>
+                        <li>เพิ่ม Gate Location (ถ้าเป็นไปได้)</li>
+                    </ol>
+                </div>
+
+                <!-- Problem 5: Sink Mark -->
+                <div class="flow-step">
+                    <strong>❌ ปัญหา: Sink Mark (รอยยุบ)</strong>
+                    <p><strong>อาการ:</strong> มีรอยยุบบริเวณผนังหนา หรือซี่โครง</p>
+                    <p><strong>สาเหตุ:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>Packing Pressure ไม่เพียงพอ</li>
+                        <li>Packing Time สั้นเกิน</li>
+                        <li>Cooling Time ไม่พอ</li>
+                        <li>ความหนาผนังไม่สม่ำเสมอ</li>
+                    </ul>
+                    <p><strong>วิธีแก้:</strong></p>
+                    <ol style="margin-left: 20px;">
+                        <li>เพิ่ม Packing Pressure</li>
+                        <li>เพิ่ม Packing Time</li>
+                        <li>เพิ่ม Cooling Time</li>
+                        <li>ลดอุณหภูมิแม่พิมพ์</li>
+                        <li>ปรับแต่ง Design ชิ้นงาน (ระยะยาว)</li>
+                    </ol>
+                </div>
+
+                <!-- Problem 6: Warpage -->
+                <div class="flow-step">
+                    <strong>❌ ปัญหา: Warpage (ชิ้นงานบิดงอ)</strong>
+                    <p><strong>อาการ:</strong> ชิ้นงานไม่แบน มีการบิดงอ</p>
+                    <p><strong>สาเหตุ:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>การเย็นตัวไม่สม่ำเสมอ</li>
+                        <li>อุณหภูมิแม่พิมพ์ไม่เท่ากัน 2 ฝั่ง</li>
+                        <li>Ejection เร็วเกิน (ชิ้นงานยังร้อน)</li>
+                        <li>Internal Stress</li>
+                    </ul>
+                    <p><strong>วิธีแก้:</strong></p>
+                    <ol style="margin-left: 20px;">
+                        <li>ปรับอุณหภูมิแม่พิมพ์ให้เท่ากันทุกโซน</li>
+                        <li>เพิ่ม Cooling Time</li>
+                        <li>ปรับแต่งระบบ Cooling Channel</li>
+                        <li>ลดอุณหภูมิหลอม (ถ้าเป็นไปได้)</li>
+                        <li>ใช้ Annealing หลังฉีด (อบที่ 200°C, 2-4 ชม.)</li>
+                    </ol>
+                </div>
+
+                <!-- Problem 7: Discoloration -->
+                <div class="flow-step">
+                    <strong>❌ ปัญหา: Discoloration (สีเปลี่ยน/ไหม้)</strong>
+                    <p><strong>อาการ:</strong> ชิ้นงานมีสีคล้ำ เหลือง หรือดำ</p>
+                    <p><strong>สาเหตุ:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li>อุณหภูมิสูงเกิน (PPS เริ่มสลายตัว)</li>
+                        <li>Residence Time นานเกิน</li>
+                        <li>มี Dead Spot ในระบบ</li>
+                        <li>ความชื้นในวัสดุ</li>
+                        <li>Air Trap</li>
+                    </ul>
+                    <p><strong>วิธีแก้:</strong></p>
+                    <ol style="margin-left: 20px;">
+                        <li>ลดอุณหภูมิทุกโซน 10-15°C</li>
+                        <li>ลด Screw Back Pressure</li>
+                        <li>เพิ่ม Shot Size (ลด Residence Time)</li>
+                        <li>ทำความสะอาดระบบ Hot Runner</li>
+                        <li>ตรวจสอบการอบแห้งวัสดุ</li>
+                        <li>เพิ่ม Venting</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="info-box success">
+                <strong>💡 เคล็ดลับการแก้ปัญหา:</strong>
+                <ul style="margin-top: 10px; margin-left: 20px;">
+                    <li>แก้ไขทีละพารามิเตอร์ - อย่าแก้หลายอย่างพร้อมกัน</li>
+                    <li>บันทึกผลทุกครั้งที่ปรับเปลี่ยน</li>
+                    <li>ใช้ DOE (Design of Experiments) สำหรับปัญหาซับซ้อน</li>
+                    <li>ปรึกษาผู้ผลิต Hot Runner เมื่อแก้ไม่ได้</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Maintenance Tab -->
+        <div class="tab-content" id="maintenance">
+            <h3>แผนการบำรุงรักษา Hot Runner สำหรับ PPS</h3>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ความถี่</th>
+                        <th>รายการตรวจสอบ</th>
+                        <th>วิธีการ</th>
+                        <th>เกณฑ์ผ่าน</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>รายวัน</strong></td>
+                        <td>ตรวจสอบอุณหภูมิทุกโซน</td>
+                        <td>อ่านค่าจาก Controller</td>
+                        <td>±3°C จากค่าตั้ง</td>
+                    </tr>
+                    <tr>
+                        <td><strong>รายวัน</strong></td>
+                        <td>ตรวจสอบ Stringing/Drooling</td>
+                        <td>ดูชิ้นงานหลังเปิดแม่พิมพ์</td>
+                        <td>ไม่มีเส้นใย/หยด</td>
+                    </tr>
+                    <tr>
+                        <td><strong>รายวัน</strong></td>
+                        <td>ตรวจสอบ Gate Mark</td>
+                        <td>ดูรอยบนชิ้นงาน</td>
+                        <td>ไม่เปลี่ยนแปลง</td>
+                    </tr>
+                    <tr>
+                        <td><strong>รายสัปดาห์</strong></td>
+                        <td>วัดความต้านทาน Heater</td>
+                        <td>ใช้ Multimeter</td>
+                        <td>±15% จากค่ามาตรฐาน</td>
+                    </tr>
+                    <tr>
+                        <td><strong>รายสัปดาห์</strong></td>
+                        <td>ตรวจสอบ Cable Connection</td>
+                        <td>Visual Check</td>
+                        <td>ไม่หลวม ไม่ไหม้</td>
+                    <tr>
+                            <td><strong>รายเดือน</strong></td>
+                            <td>Purging System</td>
+                            <td>ใช้ PE หรือ Purging Compound</td>
+                            <td>ไม่มีสีดำ/คาร์บอน</td>
+                        </tr>
+                        <tr>
+                            <td><strong>รายเดือน</strong></td>
+                            <td>ตรวจสอบ Thermal Insulation</td>
+                            <td>ดูความเสียหาย/แตกร้าว</td>
+                            <td>ไม่มีรอยแตก</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ทุก 3 เดือน</strong></td>
+                            <td>Calibrate Thermocouple</td>
+                            <td>ใช้ Temperature Calibrator</td>
+                            <td>±2°C</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ทุก 3 เดือน</strong></td>
+                            <td>ตรวจสอบ Nozzle Tip</td>
+                            <td>ดูการสึกหรอ</td>
+                            <td>ไม่มีรอยสึก/เสียรูป</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ทุก 6 เดือน</strong></td>
+                            <td>ถอดล้าง Hot Runner</td>
+                            <td>Disassemble และทำความสะอาด</td>
+                            <td>ไม่มีคาร์บอนสะสม</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ทุก 6 เดือน</strong></td>
+                            <td>เปลี่ยน Thermal Paste</td>
+                            <td>ทา Thermal Paste ใหม่</td>
+                            <td>ทาสม่ำเสมอ</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ทุกปี</strong></td>
+                            <td>เปลี่ยน Heater</td>
+                            <td>เปลี่ยนทั้งหมดพร้อมกัน</td>
+                            <td>Heater ใหม่</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ทุกปี</strong></td>
+                            <td>เปลี่ยน Thermocouple</td>
+                            <td>เปลี่ยนทั้งหมดพร้อมกัน</td>
+                            <td>Thermocouple ใหม่</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h3>ขั้นตอนการทำ Purging สำหรับ PPS</h3>
+            
+            <div class="info-box">
+                <strong>🧹 Purging Procedure:</strong>
+                <ol class="info-list steps">
+                    <li>ยกอุณหภูมิทุกโซน (รวม Hot Runner) ขึ้นเป็น 320°C</li>
+                    <li>เปลี่ยนเป็น PE (Polyethylene) หรือ Purging Compound</li>
+                    <li>ฉีดทิ้งจนกว่าจะไม่มีสีของ PPS (ประมาณ 50-100 Shot)</li>
+                    <li>ถ้ามีสีคล้ำ/คาร์บอน ให้เพิ่มอุณหภูมิอีก 10°C</li>
+                    <li>ฉีดทิ้งจนสะอาดหมด</li>
+                    <li>ลดอุณหภูมิลงมา 280°C และเปลี่ยนกลับเป็น PPS</li>
+                    <li>ฉีดทิ้ง 20-30 Shot แรกก่อนเริ่มผลิต</li>
+                </ol>
+            </div>
+
+            <h3>ขั้นตอนการถอดล้าง Hot Runner</h3>
+
+            <div class="info-box warning">
+                <strong>⚠️ ความปลอดภัย:</strong>
+                <ul style="margin-top: 10px; margin-left: 20px;">
+                    <li>ปิดไฟทั้งหมดและรอให้เย็นตัวต่ำกว่า 80°C</li>
+                    <li>ใช้ถุงมือทนความร้อน</li>
+                    <li>ระวังพลาสติกร้อนตกหล่น</li>
+                    <li>ทำงานในพื้นที่ที่มีการระบายอากาศดี</li>
+                </ul>
+            </div>
+
+            <ol class="info-list steps">
+                <li><strong>Preparation:</strong> ทำ Purging จนสะอาด, ปิดไฟ, ปลดสายไฟทั้งหมด</li>
+                <li><strong>ถอด Manifold:</strong> ถอดสกรูยึด, ระวังไม่ให้ Drop หล่น</li>
+                <li><strong>ถอด Nozzle/Drop:</strong> ถอดทีละตัว, บันทึกตำแหน่ง</li>
+                <li><strong>ถอด Heater:</strong> ถอด Heater และ Thermocouple ออก</li>
+                <li><strong>ทำความสะอาด:</strong> ใช้ Brass Brush ขัด, พ่น Air ทำความสะอาด</li>
+                <li><strong>ตรวจสอบ:</strong> ตรวจหารอยร้าว, การสึกหรอ, O-ring</li>
+                <li><strong>เปลี่ยนอะไหล่:</strong> เปลี่ยน O-ring, Seal ทั้งหมด</li>
+                <li><strong>ประกอบกลับ:</strong> ทา Thermal Paste, ประกอบตามลำดับย้อนกลับ</li>
+                <li><strong>ทดสอบ:</strong> ต่อสายไฟ, ทดสอบความต้านทาน, เปิดไฟค่อยๆ</li>
+                <li><strong>Start-up:</strong> ทดสอบฉีดด้วย PE ก่อน, แล้วจึงเปลี่ยนเป็น PPS</li>
+            </ol>
+
+            <h3>การเก็บรักษา Hot Runner</h3>
+
+            <div class="info-box success">
+                <strong>📦 วิธีเก็บเมื่อไม่ใช้งานนาน (>1 เดือน):</strong>
+                <ul style="margin-top: 10px; margin-left: 20px;">
+                    <li>ทำ Purging จนสะอาดด้วย PE</li>
+                    <li>ปิดไฟและถอดสายไฟทั้งหมด</li>
+                    <li>ทำความสะอาดภายนอก</li>
+                    <li>ทา Anti-rust Spray บริเวณโลหะ</li>
+                    <li>ห่อด้วย Plastic Film ป้องกันความชื้น</li>
+                    <li>เก็บในที่แห้ง อุณหภูมิห้อง</li>
+                    <li>บันทึก Parameter การตั้งค่าสุดท้าย</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Calculator Section -->
+    <section class="calculator-box">
+        <h3>🧮 เครื่องคำนวณพารามิเตอร์</h3>
+        <p>เครื่องมือช่วยคำนวณพารามิเตอร์สำหรับ PPS + Open Gate</p>
+
+        <div class="calc-input-group">
+            <div class="calc-input">
+                <label>น้ำหนักชิ้นงาน (กรัม):</label>
+                <input type="number" id="partWeight" placeholder="เช่น 50" value="50">
+            </div>
+            <div class="calc-input">
+                <label>จำนวน Cavity:</label>
+                <input type="number" id="cavities" placeholder="เช่น 4" value="4">
+            </div>
+            <div class="calc-input">
+                <label>ความหนาผนังเฉลี่ย (มม.):</label>
+                <input type="number" id="wallThickness" placeholder="เช่น 2.5" value="2.5">
+            </div>
+            <div class="calc-input">
+                <label>ประเภท PPS:</label>
+                <select id="ppsType">
+                    <option value="virgin">Virgin PPS</option>
+                    <option value="gf30">PPS + 30% Glass Fiber</option>
+                    <option value="gf40">PPS + 40% Glass Fiber</option>
+                </select>
+            </div>
+        </div>
+
+        <button class="calc-button" onclick="calculateParameters()">คำนวณ</button>
+
+        <div class="calc-result" id="calcResult" style="display: none;">
+            <h4>📊 ผลการคำนวณ</h4>
+            <div id="resultContent"></div>
+        </div>
+    </section>
+
+    <!-- Best Practices Section -->
+    <section class="content-card">
+        <h2>✅ Best Practices สำหรับการใช้งาน Open Gate + PPS</h2>
+
+        <div class="best-practices-grid">
+            <div class="practice-card">
+                <span class="icon">🌡️</span>
+                <h4>Temperature Management</h4>
+                <ul style="margin-top: 10px; margin-left: 20px; font-size: 0.95rem;">
+                    <li>ใช้ Multi-Zone Control อย่างน้อย 5 โซน</li>
+                    <li>ควบคุม Gate Temperature แยกจาก Manifold</li>
+                    <li>ตรวจสอบอุณหภูมิจริงด้วย Pyrometer</li>
+                    <li>บันทึก Temperature Profile ของแต่ละชิ้นงาน</li>
+                </ul>
+            </div>
+
+            <div class="practice-card">
+                <span class="icon">💧</span>
+                <h4>Material Handling</h4>
+                <ul style="margin-top: 10px; margin-left: 20px; font-size: 0.95rem;">
+                    <li>อบแห้ง PPS ทุกครั้งก่อนใช้ (150°C, 3-4 ชม.)</li>
+                    <li>ใช้ Hopper Dryer ระหว่างการผลิต</li>
+                    <li>ตรวจสอบความชื้น < 0.02%</li>
+                    <li>เก็บในถุงปิดสนิทหลังอบแห้ง</li>
+                </ul>
+            </div>
+
+            <div class="practice-card">
+                <span class="icon">⚙️</span>
+                <h4>Process Control</h4>
+                <ul style="margin-top: 10px; margin-left: 20px; font-size: 0.95rem;">
+                    <li>ใช้ Scientific Molding Principles</li>
+                    <li>หา Gate Freeze Time อย่างถูกวิธี</li>
+                    <li>บันทึก Process Window</li>
+                    <li>ใช้ SPC ควบคุมคุณภาพ</li>
+                </ul>
+            </div>
+
+            <div class="practice-card">
+                <span class="icon">🔍</span>
+                <h4>Quality Inspection</h4>
+                <ul style="margin-top: 10px; margin-left: 20px; font-size: 0.95rem;">
+                    <li>ตรวจชิ้นงานทุก 30 นาที</li>
+                    <li>ชั่งน้ำหนักชิ้นงานเป็นประจำ</li>
+                    <li>วัดมิติด้วย CMM หรือ Caliper</li>
+                    <li>ตรวจสอบ Gate Mark Quality</li>
+                </ul>
+            </div>
+
+            <div class="practice-card">
+                <span class="icon">🛠️</span>
+                <h4>Maintenance</h4>
+                <ul style="margin-top: 10px; margin-left: 20px; font-size: 0.95rem;">
+                    <li>ทำ Preventive Maintenance ตามแผน</li>
+                    <li>Purging ทุกครั้งก่อน Shutdown</li>
+                    <li>เก็บ Spare Parts สำคัญ</li>
+                    <li>บันทึกประวัติการซ่อมบำรุง</li>
+                </ul>
+            </div>
+
+            <div class="practice-card">
+                <span class="icon">📚</span>
+                <h4>Documentation</h4>
+                <ul style="margin-top: 10px; margin-left: 20px; font-size: 0.95rem;">
+                    <li>สร้าง Process Sheet สำหรับแต่ละชิ้นงาน</li>
+                    <li>บันทึก Troubleshooting Log</li>
+                    <li>เก็บ Maintenance Records</li>
+                    <li>จัดทำ SOP ชัดเจน</li>
+                </ul>
+            </div>
+
+            <div class="practice-card">
+                <span class="icon">👥</span>
+                <h4>Training</h4>
+                <ul style="margin-top: 10px; margin-left: 20px; font-size: 0.95rem;">
+                    <li>ฝึกอบรมพนักงานเป็นประจำ</li>
+                    <li>สร้าง Standard Work</li>
+                    <li>จัด Skill Matrix</li>
+                    <li>แลกเปลี่ยนความรู้ระหว่างกะ</li>
+                </ul>
+            </div>
+
+            <div class="practice-card">
+                <span class="icon">🔒</span>
+                <h4>Safety</h4>
+                <ul style="margin-top: 10px; margin-left: 20px; font-size: 0.95rem;">
+                    <li>ใช้ PPE ครบถ้วน (ถุงมือ, แว่นตา)</li>
+                    <li>ทำ LOTO ก่อนซ่อมบำรุง</li>
+                    <li>ระวังพื้นผิวร้อน</li>
+                    <li>มี Fire Extinguisher ใกล้เครื่อง</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Demo Section -->
+    <section class="demo-section">
+        <h2 style="color: #1e3c72; margin-bottom: 20px;">🎮 เครื่องมือเรียนรู้เชิงโต้ตอบ</h2>
+        <p style="color: #666; font-size: 1.1rem;">เลือกเครื่องมือที่ต้องการใช้งาน</p>
+
+        <div class="demo-buttons">
+            <button class="demo-btn" onclick="openQuickRef()">
+                <span class="icon">📋</span>
+                Quick Reference Guide
+            </button>
+            <button class="demo-btn" onclick="openTroubleshootingFlow()">
+                <span class="icon">🔍</span>
+                Troubleshooting Flowchart
+            </button>
+            <button class="demo-btn" onclick="openParameterChart()">
+                <span class="icon">📊</span>
+                Parameter Comparison Chart
+            </button>
+            <button class="demo-btn" onclick="openCheckList()">
+                <span class="icon">✓</span>
+                Daily Check List
+            </button>
+            <button class="demo-btn" onclick="openProcessSheet()">
+                <span class="icon">📄</span>
+                Process Sheet Template
+            </button>
+            <button class="demo-btn" onclick="downloadPDF()">
+                <span class="icon">⬇️</span>
+                ดาวน์โหลดเอกสารทั้งหมด
+            </button>
+        </div>
+    </section>
+
+    <!-- Summary Card -->
+    <section class="content-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <h2 style="color: white; border-color: rgba(255,255,255,0.3);">🎓 สรุปสำคัญ</h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 30px;">
+            <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; backdrop-filter: blur(10px);">
+                <h3 style="color: white; font-size: 1.2rem; margin-bottom: 10px;">🔑 จุดสำคัญ</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin: 8px 0;">✓ อุณหภูมิ Gate คือกุญแจสำคัญ</li>
+                    <li style="margin: 8px 0;">✓ PPS ต้องอบแห้งเสมอ</li>
+                    <li style="margin: 8px 0;">✓ Decompression ป้องกัน Drooling</li>
+                    <li style="margin: 8px 0;">✓ บำรุงรักษาตามแผน</li>
+                </ul>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; backdrop-filter: blur(10px);">
+                <h3 style="color: white; font-size: 1.2rem; margin-bottom: 10px;">📈 ข้อดี</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin: 8px 0;">✓ ประหยัดต้นทุน 40-60%</li>
+                    <li style="margin: 8px 0;">✓ เชื่อถือได้สูง</li>
+                    <li style="margin: 8px 0;">✓ บำรุงรักษาง่าย</li>
+                    <li style="margin: 8px 0;">✓ เหมาะกับ PPS</li>
+                </ul>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; backdrop-filter: blur(10px);">
+                <h3 style="color: white; font-size: 1.2rem; margin-bottom: 10px;">⚠️ ข้อควรระวัง</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin: 8px 0;">! มี Gate Mark</li>
+                    <li style="margin: 8px 0;">! ระวัง Stringing/Drooling</li>
+                    <li style="margin: 8px 0;">! อุณหภูมิสูงมาก</li>
+                    <li style="margin: 8px 0;">! PPS ไหลเร็ว</li>
+                </ul>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; backdrop-filter: blur(10px);">
+                <h3 style="color: white; font-size: 1.2rem; margin-bottom: 10px;">🎯 เป้าหมาย</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin: 8px 0;">✓ ผลิตได้คุณภาพสม่ำเสมอ</li>
+                    <li style="margin: 8px 0;">✓ Cycle Time เหมาะสม</li>
+                    <li style="margin: 8px 0;">✓ ลด Downtime</li>
+                    <li style="margin: 8px 0;">✓ เพิ่มประสิทธิภาพ</li>
+                </ul>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; padding: 30px; background: rgba(255,255,255,0.1); border-radius: 15px; backdrop-filter: blur(10px);">
+            <h3 style="color: white; font-size: 1.5rem; margin-bottom: 15px;">🌟 ขั้นตอนต่อไป</h3>
+            <p style="font-size: 1.1rem; margin-bottom: 20px;">เมื่อเรียนจบหลักสูตรนี้แล้ว คุณสามารถ:</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <div>✅ ตั้งค่า Hot Runner Open Gate เองได้</div>
+                <div>✅ แก้ปัญหาเบื้องต้นได้</div>
+                <div>✅ บำรุงรักษาด้วยตนเอง</div>
+                <div>✅ ฝึกสอนผู้อื่นได้</div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- JavaScript -->
+<script>
+    // Tab System
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const tabId = this.getAttribute('data-tab');
+            const tabContainer = this.closest('.tabs-container');
+            
+            // Remove active class from all tabs and content in this container
+            tabContainer.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            tabContainer.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            // Add active class to clicked tab and corresponding content
+            this.classList.add('active');
+            tabContainer.querySelector(`#${tabId}`).classList.add('active');
+        });
+    });
+
+    // Calculator Function
+    function calculateParameters() {
+        const partWeight = parseFloat(document.getElementById('partWeight').value);
+        const cavities = parseInt(document.getElementById('cavities').value);
+        const wallThickness = parseFloat(document.getElementById('wallThickness').value);
+        const ppsType = document.getElementById('ppsType').value;
+
+        if (!partWeight || !cavities || !wallThickness) {
+            alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+            return;
+        }
+
+        // Calculate shot size
+        const shotSize = partWeight * cavities * 1.1; // +10% for runner
+
+        // Calculate injection time (based on wall thickness)
+        const injectionTime = wallThickness * 0.8; // rule of thumb
+
+        // Calculate cooling time
+        const coolingTime = Math.pow(wallThickness, 2) * 2.5; // for PPS
+
+        // Adjust for PPS type
+        let tempAdjust = 0;
+        let pressureAdjust = 1.0;
+        if (ppsType === 'gf30') {
+            tempAdjust = 5;
+            pressureAdjust = 1.15;
+        } else if (ppsType === 'gf40') {
+            tempAdjust = 10;
+            pressureAdjust = 1.25;
+        }
+
+        // Recommended temperatures
+        const manifoldTemp = 320 + tempAdjust;
+        const nozzleTemp = 320 + tempAdjust;
+        const gateTemp = 315 + tempAdjust;
+
+        // Recommended pressure
+        const injPressure = Math.round(120 * pressureAdjust);
+        const packPressure = Math.round(injPressure * 0.7);
+
+        // Display results
+        const resultContent = `
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <div>
+                    <strong>Shot Size:</strong><br>
+                    ${shotSize.toFixed(1)} กรัม
+                </div>
+                <div>
+                    <strong>Injection Time:</strong><br>
+                    ${injectionTime.toFixed(2)} วินาที
+                </div>
+                <div>
+                    <strong>Cooling Time:</strong><br>
+                    ${coolingTime.toFixed(1)} วินาที
+                </div>
+                <div>
+                    <strong>Total Cycle Time (ประมาณ):</strong><br>
+                    ${(injectionTime + coolingTime + 5).toFixed(1)} วินาที
+                </div>
+            </div>
+            <hr style="margin: 20px 0; border-color: rgba(255,255,255,0.3);">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <div>
+                    <strong>Manifold Temp:</strong><br>
+                    ${manifoldTemp}°C
+                </div>
+                <div>
+                    <strong>Nozzle Temp:</strong><br>
+                    ${nozzleTemp}°C
+                </div>
+                <div>
+                    <strong>Gate Temp:</strong><br>
+                    ${gateTemp}°C
+                </div>
+                <div>
+                    <strong>Mold Temp:</strong><br>
+                    140-150°C
+                </div>
+            </div>
+            <hr style="margin: 20px 0; border-color: rgba(255,255,255,0.3);">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <div>
+                    <strong>Injection Pressure:</strong><br>
+                    ${injPressure} MPa
+                </div>
+                <div>
+                    <strong>Packing Pressure:</strong><br>
+                    ${packPressure} MPa
+                </div>
+                <div>
+                    <strong>Packing Time:</strong><br>
+                    ${(coolingTime * 0.3).toFixed(1)} วินาที
+                </div>
+                <div>
+                    <strong>Decompression:</strong><br>
+                    5-8 มม.
+                </div>
+            </div>
+            <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.2); border-radius: 10px;">
+                <strong>⚠️ หมายเหตุ:</strong><br>
+                ค่าเหล่านี้เป็นค่าเริ่มต้นเท่านั้น ควรปรับแต่งตามสภาพจริงและทำการทดสอบ
+            </div>
+        `;
+
+        document.getElementById('resultContent').innerHTML = resultContent;
+        document.getElementById('calcResult').style.display = 'block';
+
+        // Scroll to result
+        document.getElementById('calcResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // Demo Button Functions
+    function openQuickRef() {
+        alert('📋 Quick Reference Guide\n\n' +
+            'คู่มืออ้างอิงด่วนสำหรับ PPS + Open Gate\n\n' +
+            'เนื้อหา:\n' +
+            '• อุณหภูมิที่แนะนำ\n' +
+            '• พารามิเตอร์มาตรฐาน\n' +
+            '• Troubleshooting ด่วน\n' +
+            '• Emergency Procedures\n\n' +
+            'ฟีเจอร์นี้จะพัฒนาเป็นเอกสาร PDF ในเวอร์ชันถัดไป');
+    }
+
+    function openTroubleshootingFlow() {
+        alert('🔍 Troubleshooting Flowchart\n\n' +
+            'แผนผังการแก้ปัญหาแบบ Step-by-Step\n\nเนื้อหา:\n' +
+'• Flowchart สำหรับแต่ละปัญหา\n' +
+'• Decision Tree\n' +
+'• ขั้นตอนการวินิจฉัย\n' +
+'• แนวทางแก้ไข\n\n' +
+'ฟีเจอร์นี้จะพัฒนาเป็นแผนผังโต้ตอบในเวอร์ชันถัดไป');
+}
+function openParameterChart() {
+        alert('📊 Parameter Comparison Chart\n\n' +
+            'ตารางเปรียบเทียบพารามิเตอร์\n\n' +
+            'เนื้อหา:\n' +
+            '• PPS Virgin vs Glass Filled\n' +
+            '• Open Gate vs Valve Gate\n' +
+            '• ความหนาผนังต่างๆ\n' +
+            '• ขนาด Cavity ต่างๆ\n\n' +
+            'ฟีเจอร์นี้จะพัฒนาเป็นกราฟเชิงโต้ตอบในเวอร์ชันถัดไป');
+    }
+
+    function openCheckList() {
+        const checklistWindow = window.open('', 'CheckList', 'width=800,height=600');
+        checklistWindow.document.write(`
+            <!DOCTYPE html>
+            <html lang="th">
+            <head>
+                <meta charset="UTF-8">
+                <title>Daily Check List - PPS + Open Gate</title>
+                <style>
+                    body {
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                        padding: 30px;
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    }
+                    .container {
+                        background: white;
+                        padding: 40px;
+                        border-radius: 15px;
+                        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+                    }
+                    h1 {
+                        color: #1e3c72;
+                        text-align: center;
+                        margin-bottom: 10px;
+                    }
+                    .date-section {
+                        text-align: center;
+                        margin-bottom: 30px;
+                        padding: 15px;
+                        background: #f5f7fa;
+                        border-radius: 10px;
+                    }
+                    .checklist-section {
+                        margin-bottom: 30px;
+                    }
+                    .checklist-section h2 {
+                        color: #2a5298;
+                        border-bottom: 3px solid #667eea;
+                        padding-bottom: 10px;
+                        margin-bottom: 20px;
+                    }
+                    .checklist-item {
+                        display: flex;
+                        align-items: flex-start;
+                        padding: 15px;
+                        margin-bottom: 10px;
+                        background: #f9f9f9;
+                        border-radius: 8px;
+                        border-left: 4px solid #4caf50;
+                    }
+                    .checklist-item input[type="checkbox"] {
+                        margin-right: 15px;
+                        margin-top: 5px;
+                        width: 20px;
+                        height: 20px;
+                        cursor: pointer;
+                    }
+                    .checklist-item label {
+                        flex: 1;
+                        cursor: pointer;
+                    }
+                    .checklist-item .value-input {
+                        width: 100px;
+                        padding: 5px;
+                        border: 1px solid #ddd;
+                        border-radius: 5px;
+                        margin-left: 10px;
+                    }
+                    .print-btn {
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        color: white;
+                        border: none;
+                        padding: 15px 40px;
+                        border-radius: 30px;
+                        font-size: 1.1rem;
+                        cursor: pointer;
+                        display: block;
+                        margin: 30px auto;
+                        font-weight: bold;
+                    }
+                    .print-btn:hover {
+                        transform: scale(1.05);
+                        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+                    }
+                    @media print {
+                        body { background: white; }
+                        .print-btn { display: none; }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h1>📋 Daily Check List</h1>
+                    <h3 style="text-align: center; color: #666;">Hot Runner Open Gate System - PPS</h3>
+                    
+                    <div class="date-section">
+                        <strong>วันที่:</strong> <input type="date" id="checkDate" value="${new Date().toISOString().split('T')[0]}" style="padding: 5px; border: 1px solid #ddd; border-radius: 5px;">
+                        &nbsp;&nbsp;
+                        <strong>กะ:</strong> 
+                        <select style="padding: 5px; border: 1px solid #ddd; border-radius: 5px;">
+                            <option>A</option>
+                            <option>B</option>
+                            <option>C</option>
+                        </select>
+                        &nbsp;&nbsp;
+                        <strong>ผู้ตรวจสอบ:</strong> <input type="text" placeholder="ชื่อ" style="padding: 5px; border: 1px solid #ddd; border-radius: 5px; width: 150px;">
+                    </div>
+
+                    <div class="checklist-section">
+                        <h2>🌡️ Temperature Check</h2>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="temp1">
+                            <label for="temp1">
+                                <strong>Manifold Temperature:</strong> ตรวจสอบอุณหภูมิ Manifold (315-325°C)
+                            </label>
+                            <input type="number" class="value-input" placeholder="°C">
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="temp2">
+                            <label for="temp2">
+                                <strong>Nozzle Temperature:</strong> ตรวจสอบอุณหภูมิ Nozzle ทุกตัว (315-325°C)
+                            </label>
+                            <input type="number" class="value-input" placeholder="°C">
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="temp3">
+                            <label for="temp3">
+                                <strong>Gate Temperature:</strong> ตรวจสอบอุณหภูมิ Gate (310-320°C)
+                            </label>
+                            <input type="number" class="value-input" placeholder="°C">
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="temp4">
+                            <label for="temp4">
+                                <strong>Mold Temperature:</strong> ตรวจสอบอุณหภูมิแม่พิมพ์ (140-150°C)
+                            </label>
+                            <input type="number" class="value-input" placeholder="°C">
+                        </div>
+                    </div>
+
+                    <div class="checklist-section">
+                        <h2>🔍 Visual Inspection</h2>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="visual1">
+                            <label for="visual1">
+                                <strong>Stringing/Drooling:</strong> ตรวจสอบเส้นพลาสติกหยด (ต้องไม่มี)
+                            </label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="visual2">
+                            <label for="visual2">
+                                <strong>Gate Mark:</strong> ตรวจสอบขนาดและคุณภาพของ Gate Mark
+                            </label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="visual3">
+                            <label for="visual3">
+                                <strong>Part Quality:</strong> ตรวจสอบคุณภาพชิ้นงาน (ไม่มี Flash, Short Shot, Sink)
+                            </label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="visual4">
+                            <label for="visual4">
+                                <strong>Color Consistency:</strong> ตรวจสอบสีสม่ำเสมอ (ไม่มีสีคล้ำ/ไหม้)
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="checklist-section">
+                        <h2>⚙️ Process Parameters</h2>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="param1">
+                            <label for="param1">
+                                <strong>Injection Pressure:</strong> ตรวจสอบแรงดันฉีด
+                            </label>
+                            <input type="number" class="value-input" placeholder="MPa">
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="param2">
+                            <label for="param2">
+                                <strong>Packing Pressure:</strong> ตรวจสอบแรงดันอัด
+                            </label>
+                            <input type="number" class="value-input" placeholder="MPa">
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="param3">
+                            <label for="param3">
+                                <strong>Cycle Time:</strong> ตรวจสอบเวลา Cycle
+                            </label>
+                            <input type="number" class="value-input" placeholder="sec">
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="param4">
+                            <label for="param4">
+                                <strong>Part Weight:</strong> ชั่งน้ำหนักชิ้นงาน 5 ชิ้น
+                            </label>
+                            <input type="number" class="value-input" placeholder="g">
+                        </div>
+                    </div>
+
+                    <div class="checklist-section">
+                        <h2>🛠️ Equipment Check</h2>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="equip1">
+                            <label for="equip1">
+                                <strong>Heater Status:</strong> ตรวจสอบ Heater ทำงานปกติ (ไม่มี Alarm)
+                            </label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="equip2">
+                            <label for="equip2">
+                                <strong>Cable Connection:</strong> ตรวจสอบสายไฟไม่หลวม ไม่ร้อน
+                            </label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="equip3">
+                            <label for="equip3">
+                                <strong>Controller Display:</strong> ตรวจสอบจอแสดงผลปกติ
+                            </label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="equip4">
+                            <label for="equip4">
+                                <strong>Cooling System:</strong> ตรวจสอบระบบหล่อเย็นแม่พิมพ์ทำงานปกติ
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="checklist-section">
+                        <h2>💧 Material Handling</h2>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="mat1">
+                            <label for="mat1">
+                                <strong>Material Drying:</strong> PPS อบแห้งแล้ว (150°C, 3-4 ชม.)
+                            </label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="mat2">
+                            <label for="mat2">
+                                <strong>Hopper Level:</strong> ตรวจสอบระดับวัตถุดิบใน Hopper
+                            </label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="mat3">
+                            <label for="mat3">
+                                <strong>Material Type:</strong> ยืนยันชนิดวัตถุดิบถูกต้อง
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="checklist-section">
+                        <h2>📝 หมายเหตุและปัญหาที่พบ</h2>
+                        <textarea style="width: 100%; min-height: 100px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;" placeholder="บันทึกปัญหา การแก้ไข หรือข้อสังเกตพิเศษ..."></textarea>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 30px; padding: 20px; background: #f0f0f0; border-radius: 10px;">
+                        <strong>ลงชื่อผู้ตรวจสอบ:</strong> __________________ 
+                        &nbsp;&nbsp;&nbsp;
+                        <strong>วันที่:</strong> __________________
+                    </div>
+
+                    <button class="print-btn" onclick="window.print()">🖨️ พิมพ์เอกสาร</button>
+                </div>
+            </body>
+            </html>
+        `);
+    }
+
+    function openProcessSheet() {
+        alert('📄 Process Sheet Template\n\n' +
+            'แบบฟอร์มบันทึกกระบวนการผลิต\n\n' +
+            'เนื้อหา:\n' +
+            '• ข้อมูลชิ้นงาน\n' +
+            '• พารามิเตอร์การฉีด\n' +
+            '• อุณหภูมิทุกโซน\n' +
+            '• Process Window\n' +
+            '• Quality Criteria\n\n' +
+            'คลิก "Daily Check List" เพื่อดูตัวอย่าง\nฟีเจอร์นี้จะพัฒนาเพิ่มเติมในเวอร์ชันถัดไป');
+    }
+
+    function downloadPDF() {
+        alert('⬇️ ดาวน์โหลดเอกสาร\n\n' +
+            'เอกสารที่จะรวมอยู่:\n\n' +
+            '📚 เอกสารหลัก:\n' +
+            '• คู่มือ Hot Runner Open Gate + PPS (50 หน้า)\n' +
+            '• Quick Reference Guide (5 หน้า)\n' +
+            '• Troubleshooting Manual (15 หน้า)\n\n' +
+            '📋 แบบฟอร์ม:\n' +
+            '• Daily Check List\n' +
+            '• Process Sheet Template\n' +
+            '• Maintenance Log\n\n' +
+            '📊 ตารางและกราฟ:\n' +
+            '• Parameter Tables\n' +
+            '• Temperature Charts\n' +
+            '• Comparison Charts\n\n' +
+            'ฟีเจอร์นี้จะพัฒนาในเวอร์ชันถัดไป\nปัจจุบันสามารถใช้ "Print to PDF" จากเบราว์เซอร์');
+    }
+
+    // Smooth scroll for internal links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Scroll animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    // Observe content cards
+    document.querySelectorAll('.content-card, .tabs-container, .calculator-box, .demo-section').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'all 0.6s ease';
+        observer.observe(el);
+    });
+
+    // Learning path steps animation
+    document.querySelectorAll('.path-step').forEach((step, index) => {
+        step.style.opacity = '0';
+        step.style.transform = 'translateY(30px)';
+        step.style.transition = `all 0.5s ease ${index * 0.1}s`;
+        observer.observe(step);
+    });
+
+    // Add pulse animation to important elements
+    setInterval(() => {
+        document.querySelectorAll('.calc-button, .demo-btn').forEach(btn => {
+            btn.classList.add('pulse');
+            setTimeout(() => btn.classList.remove('pulse'), 2000);
+        });
+    }, 5000);
+
+    // Back to top button
+    const backToTopBtn = document.createElement('button');
+    backToTopBtn.innerHTML = '⬆️';
+    backToTopBtn.style.cssText = `
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        font-size: 1.5rem;
+        cursor: pointer;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        display: none;
+        z-index: 1000;
+        transition: all 0.3s ease;
+    `;
+
+    backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    backToTopBtn.addEventListener('mouseenter', function() {
+        this.style.transform = 'scale(1.1)';
+    });
+
+    backToTopBtn.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1)';
+    });
+
+    document.body.appendChild(backToTopBtn);
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            backToTopBtn.style.display = 'block';
+        } else {
+            backToTopBtn.style.display = 'none';
+        }
+    });
+
+    // Loading animation on page load
+    window.addEventListener('load', function() {
+        document.body.style.opacity = '0';
+        document.body.style.transition = 'opacity 0.5s ease';
+        
+        setTimeout(() => {
+            document.body.style.opacity = '1';
+        }, 100);
+    });
+
+    // Console welcome message
+    console.log('%c🔥 Hot Runner Open Gate System for PPS', 'color: #667eea; font-size: 24px; font-weight: bold;');
+    console.log('%c📚 Advanced Training Course - Phase 2', 'color: #764ba2; font-size: 16px;');
+    console.log('%c✨ Features: Interactive Learning, Calculators, Troubleshooting Guide', 'color: #4caf50; font-size: 14px;');
+    console.log('%cพัฒนาโดย: Training Development Team', 'color: #666; font-size: 12px;');
+
+    // Print friendly
+    window.addEventListener('beforeprint', function() {
+        document.querySelectorAll('.demo-btn, .calc-button').forEach(btn => {
+            btn.style.display = 'none';
+        });
+    });
+
+    window.addEventListener('afterprint', function() {
+        document.querySelectorAll('.demo-btn, .calc-button').forEach(btn => {
+            btn.style.display = '';
+        });
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        // Ctrl/Cmd + K for Quick Reference
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            openQuickRef();
+        }
+        
+        // Ctrl/Cmd + H for Help
+        if ((e.ctrlKey || e.metaKey) && e.key === 'h') {
+            e.preventDefault();
+            alert('⌨️ Keyboard Shortcuts:\n\n' +
+                'Ctrl/Cmd + K: Quick Reference\n' +
+                'Ctrl/Cmd + H: Help\n' +
+                'Ctrl/Cmd + P: Print\n' +
+                'Home: Scroll to top\n' +
+                'End: Scroll to bottom');
+        }
+    });
+
+    // Add easter egg
+    let clickCount = 0;
+    document.querySelector('.page-header h1').addEventListener('click', function() {
+        clickCount++;
+        if (clickCount === 5) {
+            alert('🎉 ยินดีด้วย! คุณพบ Easter Egg!\n\n' +
+                '🏆 คุณกำลังเรียนรู้อย่างตั้งใจ\n' +
+                '💪 ขอให้ประสบความสำเร็จในการใช้งาน Hot Runner!\n\n' +
+                'Tips: ลองใช้ Ctrl+K เพื่อเปิด Quick Reference');
+            clickCount = 0;
+        }
+    });
+
+    console.log('🎯 System ready! All features loaded successfully.');
+</script>
+</body>
+</html>

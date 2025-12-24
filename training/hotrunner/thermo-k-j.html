@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thermocouple Type K vs Type J Comparison</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .comparison-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .comparison-table th {
+            color: white;
+            padding: 20px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .comparison-table th:first-child {
+            width: 25%;
+        }
+
+        .comparison-table th.type-k {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            text-align: center;
+        }
+
+        .comparison-table th.type-j {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            text-align: center;
+        }
+
+        .comparison-table td {
+            padding: 18px 15px;
+            border-bottom: 1px solid #ecf0f1;
+            font-size: 1em;
+            line-height: 1.6;
+        }
+
+        .comparison-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .category-row {
+            background: #f8f9fa;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .advantage {
+            background: #d5f4e6;
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        .disadvantage {
+            background: #fdf2f2;
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        .neutral {
+            background: #fff3cd;
+            color: #856404;
+            font-weight: 600;
+        }
+
+        .spec-highlight {
+            background: #e3f2fd;
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-weight: 600;
+            color: #1565c0;
+        }
+
+        .price-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .star {
+            color: #ffc107;
+            font-size: 1.2em;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .summary-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 5px solid;
+        }
+
+        .summary-card.type-k {
+            border-left-color: #4ecdc4;
+        }
+
+        .summary-card.type-j {
+            border-left-color: #f5576c;
+        }
+
+        .summary-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .summary-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .summary-card li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .summary-card li:last-child {
+            border-bottom: none;
+        }
+
+        .summary-card .check {
+            color: #27ae60;
+            margin-right: 8px;
+        }
+
+        .summary-card .cross {
+            color: #e74c3c;
+            margin-right: 8px;
+        }
+
+        .applications {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+
+        .applications h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.5em;
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .app-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .app-item h4 {
+            color: #2980b9;
+            margin-bottom: 10px;
+        }
+
+        .recommendation {
+            background: linear-gradient(135deg, #a8e6cf 0%, #88d8a3 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .recommendation h3 {
+            color: #2d5a3d;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .recommendation p {
+            color: #2d5a3d;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .highlight-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .highlight-box h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        /* Simulation Styles */
+        .simulation-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+
+        .simulation-section h3 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 1.6em;
+        }
+
+        .simulation-controls {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .sim-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            background: #ecf0f1;
+            color: #2c3e50;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9em;
+        }
+
+        .sim-btn:hover {
+            background: #bdc3c7;
+            transform: translateY(-2px);
+        }
+
+        .sim-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .simulation-display {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 400px;
+            margin-bottom: 20px;
+            position: relative;
+            background: #fafafa;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .real-time-data {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .data-panel {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 5px solid;
+        }
+
+        .type-k-panel {
+            border-left-color: #4ecdc4;
+        }
+
+        .type-j-panel {
+            border-left-color: #f5576c;
+        }
+
+        .data-panel h4 {
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .data-row:last-child {
+            border-bottom: none;
+        }
+
+        .temp-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+
+        .output-value {
+            font-family: 'Courier New', monospace;
+            color: #2980b9;
+            font-weight: bold;
+        }
+
+        .accuracy-value {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .response-value {
+            color: #f39c12;
+            font-weight: bold;
+        }
+
+        .simulation-info {
+            margin-top: 20px;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid #3498db;
+        }
+
+        .info-card h4 {
+            color: #2980b9;
+            margin-bottom: 10px;
+        }
+
+        /* Performance Comparison Styles */
+        .performance-comparison {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .performance-comparison h3 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 1.6em;
+        }
+
+        .performance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .performance-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid #3498db;
+        }
+
+        .performance-card h4 {
+            color: #2980b9;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .comparison-bars {
+            margin: 15px 0;
+        }
+
+        .bar-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .bar-item span:first-child {
+            width: 60px;
+            font-weight: bold;
+        }
+
+        .bar-item span:last-child {
+            width: 40px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .progress-bar-small {
+            flex: 1;
+            height: 20px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill-small {
+            height: 100%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+
+        .type-k-color {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+        }
+
+        .type-j-color {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .performance-note {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            font-style: italic;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        /* Scenarios Styles */
+        .scenarios-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+
+        .scenarios-section h3 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 1.6em;
+        }
+
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+        }
+
+        .scenario-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .scenario-card h4 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .scenario-comparison {
+            display: grid;
+            gap: 15px;
+        }
+
+        .scenario-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            border-left: 4px solid #bdc3c7;
+        }
+
+        .scenario-item.winner {
+            background: #d5f4e6;
+            border-left-color: #27ae60;
+        }
+
+        .scenario-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .type-badge {
+            padding: 5px 12px;
+            border-radius: 15px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .type-badge.type-k {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+        }
+
+        .type-badge.type-j {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .winner-badge {
+            background: #27ae60;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .limitation-badge {
+            background: #f39c12;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .consideration-badge {
+            background: #3498db;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .scenario-item ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .scenario-item li {
+            padding: 5px 0;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .real-time-data {
+                grid-template-columns: 1fr;
+            }
+            
+            .scenario-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .performance-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .simulation-controls {
+                gap: 5px;
+            }
+            
+            .sim-btn {
+                padding: 8px 12px;
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌡️ Thermocouple Type K vs Type J</h1>
+            <p>ตารางเปรียบเทียบเซ็นเซอร์วัดอุณหภูมิสำหรับ Hot Runner System</p>
+        </div>
+
+        <div class="content">
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>คุณสมบัติ</th>
+                        <th class="type-k">Type K (Chromel-Alumel)</th>
+                        <th class="type-j">Type J (Iron-Constantan)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Temperature Range -->
+                    <tr class="category-row">
+                        <td><strong>ช่วงอุณหภูมิ</strong></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>ช่วงการใช้งาน</td>
+                        <td class="advantage"><span class="spec-highlight">-270°C ถึง +1372°C</span></td>
+                        <td class="neutral"><span class="spec-highlight">-210°C ถึง +1200°C</span></td>
+                    </tr>
+                    <tr>
+                        <td>ช่วงแนะนำสำหรับ Hot Runner</td>
+                        <td class="advantage">0°C ถึง 1000°C</td>
+                        <td class="neutral">0°C ถึง 750°C</td>
+                    </tr>
+
+                    <!-- Accuracy -->
+                    <tr class="category-row">
+                        <td><strong>ความแม่นยำ</strong></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>ความแม่นยำมาตรฐาน</td>
+                        <td class="neutral">±2.2°C หรือ ±0.75%</td>
+                        <td class="advantage">±2.2°C หรือ ±0.75%</td>
+                    </tr>
+                    <tr>
+                        <td>Sensitivity (µV/°C)</td>
+                        <td class="neutral">41 µV/°C</td>
+                        <td class="advantage">52 µV/°C</td>
+                    </tr>
+
+                    <!-- Durability -->
+                    <tr class="category-row">
+                        <td><strong>ความทนทาน</strong></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>ทนต่อการกัดกร่อน</td>
+                        <td class="advantage">ดีเยี่ยม</td>
+                        <td class="disadvantage">ปานกลาง (เสี่ยงต่อสนิม)</td>
+                    </tr>
+                    <tr>
+                        <td>ทนต่อการออกซิเดชัน</td>
+                        <td class="advantage">ดีมาก (อากาศปกติ)</td>
+                        <td class="disadvantage">จำกัด (>500°C)</td>
+                    </tr>
+                    <tr>
+                        <td>อายุการใช้งาน</td>
+                        <td class="advantage">ยาวนาน</td>
+                        <td class="neutral">ปานกลาง</td>
+                    </tr>
+
+                    <!-- Environmental -->
+                    <tr class="category-row">
+                        <td><strong>สภาพแวดล้อม</strong></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>ใช้ในบรรยากาศลดรูป</td>
+                        <td class="disadvantage">ไม่แนะนำ</td>
+                        <td class="advantage">ใช้ได้ดี</td>
+                    </tr>
+                    <tr>
+                        <td>ใช้ในบรรยากาศออกซิไดซ์</td>
+                        <td class="advantage">ดีเยี่ยม</td>
+                        <td class="neutral">จำกัดที่อุณหภูมิสูง</td>
+                    </tr>
+                    <tr>
+                        <td>ทนต่อความชื้น</td>
+                        <td class="advantage">ดี</td>
+                        <td class="disadvantage">ไม่ดี (เสี่ยงสนิม)</td>
+                    </tr>
+
+                    <!-- Cost -->
+                    <tr class="category-row">
+                        <td><strong>ต้นทุน</strong></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>ราคาซื้อ</td>
+                        <td class="neutral">
+                            <div class="price-indicator">
+                                ปานกลาง 
+                                <span class="star">★★★☆☆</span>
+                            </div>
+                        </td>
+                        <td class="advantage">
+                            <div class="price-indicator">
+                                ถูก 
+                                <span class="star">★★☆☆☆</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>ต้นทุนบำรุงรักษา</td>
+                        <td class="advantage">ต่ำ (ทนทาน)</td>
+                        <td class="disadvantage">สูงกว่า (เปลี่ยนบ่อย)</td>
+                    </tr>
+
+                    <!-- Applications -->
+                    <tr class="category-row">
+                        <td><strong>การใช้งาน</strong></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Hot Runner ทั่วไป</td>
+                        <td class="advantage">แนะนำ</td>
+                        <td class="advantage">แนะนำ</td>
+                    </tr>
+                    <tr>
+                        <td>อุณหภูมิสูง (>750°C)</td>
+                        <td class="advantage">เหมาะมาก</td>
+                        <td class="disadvantage">ไม่เหมาะ</td>
+                    </tr>
+                    <tr>
+                        <td>สภาพแวดล้อมกัดกร่อน</td>
+                        <td class="advantage">ดีเยี่ยม</td>
+                        <td class="disadvantage">ไม่แนะนำ</td>
+                    </tr>
+                    <tr>
+                        <td>งบประมาณจำกัด</td>
+                        <td class="neutral">พิจารณาได้</td>
+                        <td class="advantage">เหมาะมาก</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="summary-cards">
+                <div class="summary-card type-k">
+                    <h3>🏆 Type K - ความเสถียรและทนทาน</h3>
+                    <ul>
+                        <li><span class="check">✓</span> ช่วงอุณหภูมิกว้าง (-270°C ถึง +1372°C)</li>
+                        <li><span class="check">✓</span> ทนการกัดกร่อนดีเยี่ยม</li>
+                        <li><span class="check">✓</span> อายุการใช้งานยาวนาน</li>
+                        <li><span class="check">✓</span> เหมาะกับอุณหภูมิสูง</li>
+                        <li><span class="check">✓</span> ต้นทุนบำรุงรักษาต่ำ</li>
+                        <li><span class="cross">✗</span> ราคาสูงกว่า Type J</li>
+                        <li><span class="cross">✗</span> Sensitivity ต่ำกว่า</li>
+                    </ul>
+                </div>
+
+                <div class="summary-card type-j">
+                    <h3>💰 Type J - ประหยัดและไวต่อการเปลี่ยนแปลง</h3>
+                    <ul>
+                        <li><span class="check">✓</span> ราคาถูกที่สุด</li>
+                        <li><span class="check">✓</span> Sensitivity สูง (52 µV/°C)</li>
+                        <li><span class="check">✓</span> ใช้ในบรรยากาศลดรูปได้</li>
+                        <li><span class="check">✓</span> หาซื้อง่าย</li>
+                        <li><span class="cross">✗</span> จำกัดอุณหภูมิ (สูงสุด 750°C)</li>
+                        <li><span class="cross">✗</span> เสี่ยงต่อการสนิม</li>
+                        <li><span class="cross">✗</span> อายุสั้นกว่า Type K</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="applications">
+                <h3>🎯 แนวทางการเลือกใช้ใน Hot Runner</h3>
+                <div class="app-grid">
+                    <div class="app-item">
+                        <h4>🔥 Type K แนะนำสำหรับ:</h4>
+                        <ul>
+                            <li>• อุณหภูมิสูง (250-400°C)</li>
+                            <li>• สภาพแวดล้อมกัดกร่อน</li>
+                            <li>• การใช้งานต่อเนื่องยาวนาน</li>
+                            <li>• PEI, PPS, PEEK หรือพลาสติกทนความร้อนสูง</li>
+                            <li>• โรงงานที่มีสารเคมีปนเปื้อน</li>
+                        </ul>
+                    </div>
+                    <div class="app-item">
+                        <h4>💡 Type J แนะนำสำหรับ:</h4>
+                        <ul>
+                            <li>• อุณหภูมิปานกลาง (150-250°C)</li>
+                            <li>• งบประมาณจำกัด</li>
+                            <li>• PE, PP, PS, ABS ทั่วไป</li>
+                            <li>• ต้องการความไวในการตอบสนอง</li>
+                            <li>• การใช้งานชั่วคราวหรือทดสอบ</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h4>⚠️ ข้อควรระวัง</h4>
+                <p><strong>Type J:</strong> ไม่ควรใช้ในสภาพแวดล้อมที่มีความชื้นสูงหรือสารเคมีกัดกร่อน เพราะเสี่ยงต่อการสนิมและให้ค่าผิดพลาด</p>
+                <p><strong>Type K:</strong> หลีกเลี่ยงการใช้ในบรรยากาศลดรูป (เช่น ก๊าซ CO, H₂) เพราะจะลดความแม่นยำ</p>
+            </div>
+
+            <!-- Temperature Simulation Section -->
+            <div class="simulation-section">
+                <h3>📈 จำลองการทำงานของ Thermocouple</h3>
+                
+                <div class="simulation-controls">
+                    <button class="sim-btn active" onclick="startTemperatureRamp()">🔥 Temperature Ramp Test</button>
+                    <button class="sim-btn" onclick="startStepResponse()">⚡ Step Response</button>
+                    <button class="sim-btn" onclick="startStabilityTest()">🎯 Stability Test</button>
+                    <button class="sim-btn" onclick="startNoisTest()">📊 Noise Comparison</button>
+                    <button class="sim-btn" onclick="resetSimulation()">🔄 Reset</button>
+                </div>
+
+                <div class="simulation-display">
+                    <div class="chart-container">
+                        <canvas id="temperatureChart" width="800" height="400"></canvas>
+                    </div>
+                    
+                    <div class="real-time-data">
+                        <div class="data-panel type-k-panel">
+                            <h4>🔵 Type K</h4>
+                            <div class="data-row">
+                                <span>Temperature:</span>
+                                <span id="typeK-temp" class="temp-value">25.0°C</span>
+                            </div>
+                            <div class="data-row">
+                                <span>Output:</span>
+                                <span id="typeK-output" class="output-value">1.000 mV</span>
+                            </div>
+                            <div class="data-row">
+                                <span>Accuracy:</span>
+                                <span id="typeK-accuracy" class="accuracy-value">±2.2°C</span>
+                            </div>
+                            <div class="data-row">
+                                <span>Response Time:</span>
+                                <span id="typeK-response" class="response-value">0.3s</span>
+                            </div>
+                        </div>
+                        
+                        <div class="data-panel type-j-panel">
+                            <h4>🔴 Type J</h4>
+                            <div class="data-row">
+                                <span>Temperature:</span>
+                                <span id="typeJ-temp" class="temp-value">25.0°C</span>
+                            </div>
+                            <div class="data-row">
+                                <span>Output:</span>
+                                <span id="typeJ-output" class="output-value">1.277 mV</span>
+                            </div>
+                            <div class="data-row">
+                                <span>Accuracy:</span>
+                                <span id="typeJ-accuracy" class="accuracy-value">±2.2°C</span>
+                            </div>
+                            <div class="data-row">
+                                <span>Response Time:</span>
+                                <span id="typeJ-response" class="response-value">0.2s</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="simulation-info">
+                    <div class="info-card">
+                        <h4>📋 Simulation Details</h4>
+                        <p id="simulation-description">Temperature Ramp Test: เพิ่มอุณหภูมิจาก 25°C ถึง 300°C ในอัตรา 5°C/วินาทีเพื่อดูการตอบสนองของทั้งสองแบบ</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Comparison -->
+            <div class="performance-comparison">
+                <h3>⚡ การเปรียบเทียบประสิทธิภาพ</h3>
+                
+                <div class="performance-grid">
+                    <div class="performance-card">
+                        <h4>🎯 ความแม่นยำ (Accuracy)</h4>
+                        <div class="comparison-bars">
+                            <div class="bar-item">
+                                <span>Type K</span>
+                                <div class="progress-bar-small">
+                                    <div class="progress-fill-small type-k-color" style="width: 85%"></div>
+                                </div>
+                                <span>85%</span>
+                            </div>
+                            <div class="bar-item">
+                                <span>Type J</span>
+                                <div class="progress-bar-small">
+                                    <div class="progress-fill-small type-j-color" style="width: 90%"></div>
+                                </div>
+                                <span>90%</span>
+                            </div>
+                        </div>
+                        <p class="performance-note">Type J มี sensitivity สูงกว่า ทำให้แม่นยำมากกว่าในช่วงอุณหภูมิต่ำ</p>
+                    </div>
+
+                    <div class="performance-card">
+                        <h4>⚡ ความเร็วตอบสนอง (Response)</h4>
+                        <div class="comparison-bars">
+                            <div class="bar-item">
+                                <span>Type K</span>
+                                <div class="progress-bar-small">
+                                    <div class="progress-fill-small type-k-color" style="width: 75%"></div>
+                                </div>
+                                <span>75%</span>
+                            </div>
+                            <div class="bar-item">
+                                <span>Type J</span>
+                                <div class="progress-bar-small">
+                                    <div class="progress-fill-small type-j-color" style="width: 85%"></div>
+                                </div>
+                                <span>85%</span>
+                            </div>
+                        </div>
+                        <p class="performance-note">Type J ตอบสนองเร็วกว่าเพราะ thermal mass ต่ำกว่า</p>
+                    </div>
+
+                    <div class="performance-card">
+                        <h4>🛡️ ความทนทาน (Durability)</h4>
+                        <div class="comparison-bars">
+                            <div class="bar-item">
+                                <span>Type K</span>
+                                <div class="progress-bar-small">
+                                    <div class="progress-fill-small type-k-color" style="width: 95%"></div>
+                                </div>
+                                <span>95%</span>
+                            </div>
+                            <div class="bar-item">
+                                <span>Type J</span>
+                                <div class="progress-bar-small">
+                                    <div class="progress-fill-small type-j-color" style="width: 70%"></div>
+                                </div>
+                                <span>70%</span>
+                            </div>
+                        </div>
+                        <p class="performance-note">Type K ทนการกัดกร่อนและอายุการใช้งานยาวกว่ามาก</p>
+                    </div>
+
+                    <div class="performance-card">
+                        <h4>💰 ความคุ้มค่า (Cost Effectiveness)</h4>
+                        <div class="comparison-bars">
+                            <div class="bar-item">
+                                <span>Type K</span>
+                                <div class="progress-bar-small">
+                                    <div class="progress-fill-small type-k-color" style="width: 80%"></div>
+                                </div>
+                                <span>80%</span>
+                            </div>
+                            <div class="bar-item">
+                                <span>Type J</span>
+                                <div class="progress-bar-small">
+                                    <div class="progress-fill-small type-j-color" style="width: 65%"></div>
+                                </div>
+                                <span>65%</span>
+                            </div>
+                        </div>
+                        <p class="performance-note">Type K คุ้มค่ากว่าในระยะยาวเพราะอายุการใช้งานยาวกว่า</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Real-world Scenarios -->
+            <div class="scenarios-section">
+                <h3>🏭 สถานการณ์การใช้งานจริง</h3>
+                
+                <div class="scenario-grid">
+                    <div class="scenario-card">
+                        <h4>🔥 Hot Runner อุณหภูมิสูง (300°C+)</h4>
+                        <div class="scenario-comparison">
+                            <div class="scenario-item winner">
+                                <div class="scenario-header">
+                                    <span class="type-badge type-k">Type K</span>
+                                    <span class="winner-badge">🏆 Winner</span>
+                                </div>
+                                <ul>
+                                    <li>✅ ทนอุณหภูมิสูงได้เป็นอย่างดี</li>
+                                    <li>✅ ความแม่นยำคงที่ตลอดการใช้งาน</li>
+                                    <li>✅ ไม่เสื่อมสภาพง่าย</li>
+                                </ul>
+                            </div>
+                            <div class="scenario-item">
+                                <div class="scenario-header">
+                                    <span class="type-badge type-j">Type J</span>
+                                    <span class="limitation-badge">⚠️ Limited</span>
+                                </div>
+                                <ul>
+                                    <li>❌ จำกัดที่ 750°C</li>
+                                    <li>❌ เสี่ยงต่อการออกซิเดชัน</li>
+                                    <li>❌ อายุการใช้งานสั้น</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="scenario-card">
+                        <h4>💧 สภาพแวดล้อมชื้น</h4>
+                        <div class="scenario-comparison">
+                            <div class="scenario-item winner">
+                                <div class="scenario-header">
+                                    <span class="type-badge type-k">Type K</span>
+                                    <span class="winner-badge">🏆 Winner</span>
+                                </div>
+                                <ul>
+                                    <li>✅ ทนต่อความชื้นดี</li>
+                                    <li>✅ ไม่เกิดสนิมง่าย</li>
+                                    <li>✅ การอ่านค่าเสถียร</li>
+                                </ul>
+                            </div>
+                            <div class="scenario-item">
+                                <div class="scenario-header">
+                                    <span class="type-badge type-j">Type J</span>
+                                    <span class="limitation-badge">❌ Not Suitable</span>
+                                </div>
+                                <ul>
+                                    <li>❌ เสี่ยงต่อการสนิมสูง</li>
+                                    <li>❌ ค่าที่อ่านได้ไม่แม่นยำ</li>
+                                    <li>❌ ต้องเปลี่ยนบ่อย</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="scenario-card">
+                        <h4>💰 งบประมาณจำกัด</h4>
+                        <div class="scenario-comparison">
+                            <div class="scenario-item">
+                                <div class="scenario-header">
+                                    <span class="type-badge type-k">Type K</span>
+                                    <span class="consideration-badge">💭 Consider</span>
+                                </div>
+                                <ul>
+                                    <li>⚠️ ลงทุนเริ่มต้นสูง</li>
+                                    <li>✅ คุ้มค่าระยะยาว</li>
+                                    <li>✅ ต้นทุนบำรุงรักษาต่ำ</li>
+                                </ul>
+                            </div>
+                            <div class="scenario-item winner">
+                                <div class="scenario-header">
+                                    <span class="type-badge type-j">Type J</span>
+                                    <span class="winner-badge">💰 Budget Choice</span>
+                                </div>
+                                <ul>
+                                    <li>✅ ราคาถูกที่สุด</li>
+                                    <li>✅ หาซื้อง่าย</li>
+                                    <li>⚠️ ต้นทุนบำรุงรักษาสูงกว่า</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="scenario-card">
+                        <h4>🎯 การควบคุมแม่นยำ</h4>
+                        <div class="scenario-comparison">
+                            <div class="scenario-item">
+                                <div class="scenario-header">
+                                    <span class="type-badge type-k">Type K</span>
+                                    <span class="consideration-badge">👍 Good</span>
+                                </div>
+                                <ul>
+                                    <li>✅ เสถียรภาพสูง</li>
+                                    <li>⚠️ Sensitivity ปานกลาง</li>
+                                    <li>✅ Drift ต่ำ</li>
+                                </ul>
+                            </div>
+                            <div class="scenario-item winner">
+                                <div class="scenario-header">
+                                    <span class="type-badge type-j">Type J</span>
+                                    <span class="winner-badge">🎯 More Sensitive</span>
+                                </div>
+                                <ul>
+                                    <li>✅ Sensitivity สูง (52 µV/°C)</li>
+                                    <li>✅ ตอบสนองเร็ว</li>
+                                    <li>⚠️ เสถียรภาพน้อยกว่า</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recommendation">
+                <h3>🎯 คำแนะนำสำหรับ Hot Runner</h3>
+                <p><strong>สำหรับการใช้งานทั่วไป:</strong> Type K เป็นตัวเลือกที่ดีที่สุด เพราะความทนทาน ช่วงอุณหภูมิกว้าง และต้นทุนรวมที่ต่ำในระยะยาว</p>
+                <p><strong>สำหรับงบประมาณจำกัด:</strong> Type J สามารถใช้ได้ดีสำหรับพลาสติกทั่วไป แต่ต้องเตรียมพร้อมสำหรับการเปลี่ยนบ่อยขึ้น</p>
+                <p><strong>สำหรับการควบคุมแม่นยำ:</strong> Type J ให้ sensitivity สูงกว่า เหมาะสำหรับการควบคุมที่ต้องการความละเอียดสูง</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบทดสอบ Basic Level - Injection Molding Training</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../assets/css/main.css" rel="stylesheet">
+    
+    <style>
+        body { padding-top: 80px; }
+        
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .quiz-header {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .quiz-header h1 {
+            margin-bottom: 10px;
+        }
+
+        .quiz-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .quiz-info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+        }
+
+        .quiz-info-item i {
+            color: var(--primary);
+        }
+
+        /* Progress Bar */
+        .quiz-progress {
+            margin-bottom: 30px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: var(--text-muted);
+        }
+
+        /* Question Card */
+        .question-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .question-number {
+            font-size: 0.9em;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+            background: rgba(0, 217, 255, 0.05);
+        }
+
+        .option.selected {
+            border-color: var(--primary);
+            background: rgba(0, 217, 255, 0.1);
+        }
+
+        .option.correct {
+            border-color: var(--success);
+            background: rgba(0, 200, 83, 0.1);
+        }
+
+        .option.incorrect {
+            border-color: var(--danger);
+            background: rgba(255, 82, 82, 0.1);
+        }
+
+        .option-letter {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .option.selected .option-letter {
+            background: var(--primary);
+            color: var(--bg-dark);
+        }
+
+        .option.correct .option-letter {
+            background: var(--success);
+        }
+
+        .option.incorrect .option-letter {
+            background: var(--danger);
+        }
+
+        .option-text {
+            flex: 1;
+        }
+
+        /* Navigation */
+        .quiz-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        /* Results */
+        .results-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .results-card.passed {
+            border-color: rgba(0, 200, 83, 0.3);
+        }
+
+        .results-card.failed {
+            border-color: rgba(255, 82, 82, 0.3);
+        }
+
+        .result-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .result-icon.passed { color: var(--success); }
+        .result-icon.failed { color: var(--danger); }
+
+        .result-score {
+            font-size: 4em;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+
+        .result-score.passed { color: var(--success); }
+        .result-score.failed { color: var(--danger); }
+
+        .result-details {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .result-detail {
+            text-align: center;
+        }
+
+        .result-detail-value {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .result-detail-label {
+            font-size: 0.9em;
+            color: var(--text-muted);
+        }
+
+        .result-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        /* Start Quiz */
+        .start-card {
+            text-align: center;
+            padding: 60px 40px;
+        }
+
+        .start-card h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .start-card .rules {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius-md);
+            padding: 25px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .start-card .rules h4 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .start-card .rules ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .start-card .rules li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-secondary);
+        }
+
+        .start-card .rules li i {
+            color: var(--primary);
+        }
+
+        /* Hidden */
+        .hidden { display: none; }
+
+        @media (max-width: 768px) {
+            .quiz-navigation {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .quiz-navigation .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <div class="quiz-container">
+        <!-- Quiz Header -->
+        <div class="quiz-header">
+            <span class="badge badge-level basic">Basic Level</span>
+            <h1>แบบทดสอบความรู้พื้นฐาน</h1>
+            <p style="color: var(--text-secondary);">Injection Molding & Hot Runner</p>
+            <div class="quiz-info">
+                <div class="quiz-info-item">
+                    <i class="fas fa-question-circle"></i>
+                    <span>15 ข้อ</span>
+                </div>
+                <div class="quiz-info-item">
+                    <i class="fas fa-clock"></i>
+                    <span>20 นาที</span>
+                </div>
+                <div class="quiz-info-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>ต้องผ่าน 70%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Start Screen -->
+        <div id="startScreen" class="question-card start-card">
+            <h2><i class="fas fa-graduation-cap" style="color: var(--primary);"></i> พร้อมทดสอบแล้วหรือยัง?</h2>
+            <p style="color: var(--text-secondary);">
+                แบบทดสอบนี้จะประเมินความรู้พื้นฐานเกี่ยวกับ Injection Molding และ Hot Runner
+            </p>
+            <div class="rules">
+                <h4><i class="fas fa-clipboard-list"></i> กฎการทดสอบ</h4>
+                <ul>
+                    <li><i class="fas fa-check"></i> ทำแบบทดสอบ 15 ข้อ ภายใน 20 นาที</li>
+                    <li><i class="fas fa-check"></i> ต้องได้คะแนนอย่างน้อย 70% จึงจะผ่าน</li>
+                    <li><i class="fas fa-check"></i> สามารถย้อนกลับดูคำถามก่อนหน้าได้</li>
+                    <li><i class="fas fa-check"></i> ผ่านการทดสอบจะได้รับประกาศนียบัตร Basic Level</li>
+                    <li><i class="fas fa-check"></i> สามารถทำแบบทดสอบซ้ำได้ไม่จำกัด</li>
+                </ul>
+            </div>
+            <button onclick="startQuiz()" class="btn btn-primary btn-lg">
+                <i class="fas fa-play"></i> เริ่มทำแบบทดสอบ
+            </button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quizScreen" class="hidden">
+            <div class="quiz-progress">
+                <div class="progress-info">
+                    <span>คำถามที่ <span id="currentQuestion">1</span>/15</span>
+                    <span id="timer"><i class="fas fa-clock"></i> 20:00</span>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar" id="progressBar" style="width: 0%;"></div>
+                </div>
+            </div>
+
+            <div id="questionContainer">
+                <!-- Questions will be loaded here -->
+            </div>
+
+            <div class="quiz-navigation">
+                <button id="prevBtn" onclick="prevQuestion()" class="btn btn-outline" disabled>
+                    <i class="fas fa-arrow-left"></i> ก่อนหน้า
+                </button>
+                <button id="nextBtn" onclick="nextQuestion()" class="btn btn-primary">
+                    ถัดไป <i class="fas fa-arrow-right"></i>
+                </button>
+                <button id="submitBtn" onclick="submitQuiz()" class="btn btn-success hidden">
+                    <i class="fas fa-check"></i> ส่งคำตอบ
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="hidden">
+            <!-- Results will be shown here -->
+        </div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            basePath: '..',
+            storagePrefix: 'imtp_'
+        };
+    </script>
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Quiz Questions
+        const questions = [
+            {
+                question: "Injection Molding คืออะไร?",
+                options: [
+                    "กระบวนการขึ้นรูปพลาสติกด้วยการฉีดเข้าแม่พิมพ์",
+                    "กระบวนการหล่อโลหะ",
+                    "กระบวนการขึ้นรูปด้วยความร้อน",
+                    "กระบวนการตัดพลาสติก"
+                ],
+                correct: 0
+            },
+            {
+                question: "ส่วนประกอบหลักของเครื่องฉีดพลาสติกมีกี่ส่วน?",
+                options: [
+                    "2 ส่วน",
+                    "3 ส่วน (Injection Unit, Clamping Unit, Control System)",
+                    "4 ส่วน",
+                    "5 ส่วน"
+                ],
+                correct: 1
+            },
+            {
+                question: "Thermoplastic แตกต่างจาก Thermoset อย่างไร?",
+                options: [
+                    "Thermoplastic สามารถหลอมและขึ้นรูปใหม่ได้",
+                    "Thermoset สามารถหลอมและขึ้นรูปใหม่ได้",
+                    "ทั้งคู่เหมือนกัน",
+                    "Thermoplastic แข็งแรงกว่า"
+                ],
+                correct: 0
+            },
+            {
+                question: "Hot Runner System มีประโยชน์หลักอะไร?",
+                options: [
+                    "ลดน้ำหนักชิ้นงาน",
+                    "ลดเศษพลาสติก (Runner) และประหยัดวัตถุดิบ",
+                    "เพิ่มความเร็วเครื่อง",
+                    "ลดอุณหภูมิหลอม"
+                ],
+                correct: 1
+            },
+            {
+                question: "Clamping Force ใช้ทำอะไร?",
+                options: [
+                    "ดันพลาสติกเข้าแม่พิมพ์",
+                    "ควบคุมอุณหภูมิ",
+                    "ล็อคแม่พิมพ์ไม่ให้เปิดระหว่างฉีด",
+                    "หมุนสกรู"
+                ],
+                correct: 2
+            },
+            {
+                question: "อุณหภูมิหลอม (Melt Temperature) วัดที่ไหน?",
+                options: [
+                    "ที่แม่พิมพ์",
+                    "ที่ Nozzle หรือหัวฉีด",
+                    "ที่ Hopper",
+                    "ที่ระบบ Cooling"
+                ],
+                correct: 1
+            },
+            {
+                question: "Short Shot คืออะไร?",
+                options: [
+                    "พลาสติกเต็มแม่พิมพ์",
+                    "พลาสติกไม่เต็มแม่พิมพ์",
+                    "พลาสติกล้นออกมา",
+                    "พลาสติกไหม้"
+                ],
+                correct: 1
+            },
+            {
+                question: "Manifold ในระบบ Hot Runner ทำหน้าที่อะไร?",
+                options: [
+                    "ควบคุมอุณหภูมิ",
+                    "กระจายพลาสติกไปยัง Nozzle ต่างๆ",
+                    "ล็อคแม่พิมพ์",
+                    "ระบายความร้อน"
+                ],
+                correct: 1
+            },
+            {
+                question: "PPE ที่จำเป็นในการทำงานกับเครื่องฉีดพลาสติก คืออะไร?",
+                options: [
+                    "เฉพาะถุงมือ",
+                    "แว่นตา ถุงมือกันความร้อน รองเท้านิรภัย",
+                    "เฉพาะหมวกนิรภัย",
+                    "ไม่ต้องใช้ PPE"
+                ],
+                correct: 1
+            },
+            {
+                question: "Cycle Time คืออะไร?",
+                options: [
+                    "เวลาในการหลอมพลาสติก",
+                    "เวลาทั้งหมดในการผลิตชิ้นงาน 1 ชิ้น",
+                    "เวลาในการ Cooling",
+                    "เวลาในการเปิด-ปิดแม่พิมพ์"
+                ],
+                correct: 1
+            },
+            {
+                question: "Thermocouple Type K และ J แตกต่างกันอย่างไร?",
+                options: [
+                    "รูปร่างต่างกัน",
+                    "ช่วงอุณหภูมิที่วัดได้ต่างกัน",
+                    "สีเหมือนกัน",
+                    "ราคาเท่ากัน"
+                ],
+                correct: 1
+            },
+            {
+                question: "Flash หรือ Burrs เกิดจากสาเหตุใด?",
+                options: [
+                    "แรงดันฉีดต่ำเกินไป",
+                    "แรงดันฉีดสูงเกินไป หรือ Clamping Force น้อยเกินไป",
+                    "อุณหภูมิต่ำเกินไป",
+                    "Cycle Time นานเกินไป"
+                ],
+                correct: 1
+            },
+            {
+                question: "ข้อใดคือข้อดีของ Hot Runner เมื่อเทียบกับ Cold Runner?",
+                options: [
+                    "ต้นทุนเริ่มต้นต่ำกว่า",
+                    "ไม่ต้องบำรุงรักษา",
+                    "ประหยัดวัตถุดิบและ Cycle Time สั้นลง",
+                    "ใช้ได้กับทุกวัสดุ"
+                ],
+                correct: 2
+            },
+            {
+                question: "การตั้งค่า Back Pressure มีผลอย่างไร?",
+                options: [
+                    "ช่วยไล่อากาศและผสมสีให้สม่ำเสมอ",
+                    "เพิ่มความเร็วในการฉีด",
+                    "ลดอุณหภูมิหลอม",
+                    "ไม่มีผลอะไร"
+                ],
+                correct: 0
+            },
+            {
+                question: "ในกรณีฉุกเฉิน ควรกดปุ่มใดเป็นอันดับแรก?",
+                options: [
+                    "ปุ่ม Start",
+                    "ปุ่ม Emergency Stop",
+                    "ปุ่ม Auto",
+                    "ปุ่ม Manual"
+                ],
+                correct: 1
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let answers = [];
+        let timerInterval;
+        let timeRemaining = 20 * 60; // 20 minutes in seconds
+
+        function startQuiz() {
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('quizScreen').classList.remove('hidden');
+            
+            // Initialize answers array
+            answers = new Array(questions.length).fill(null);
+            
+            // Start timer
+            startTimer();
+            
+            // Show first question
+            showQuestion(0);
+            
+            // Log activity
+            if (typeof ActivityLogger !== 'undefined') {
+                ActivityLogger.log('quiz_start', {
+                    quizId: 'basic_quiz',
+                    totalQuestions: questions.length
+                });
+            }
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+                document.getElementById('timer').innerHTML = 
+                    `<i class="fas fa-clock"></i> ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    submitQuiz();
+                }
+                
+                // Warning when 5 minutes left
+                if (timeRemaining === 300) {
+                    Toast.warning('เหลือเวลาอีก 5 นาที');
+                }
+            }, 1000);
+        }
+
+        function showQuestion(index) {
+            currentQuestionIndex = index;
+            const question = questions[index];
+            
+            const container = document.getElementById('questionContainer');
+            container.innerHTML = `
+                <div class="question-card">
+                    <div class="question-number">คำถามที่ ${index + 1}</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options-list">
+                        ${question.options.map((opt, i) => `
+                            <div class="option ${answers[index] === i ? 'selected' : ''}" 
+                                 onclick="selectOption(${i})">
+                                <div class="option-letter">${String.fromCharCode(65 + i)}</div>
+                                <div class="option-text">${opt}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            // Update progress
+            document.getElementById('currentQuestion').textContent = index + 1;
+            document.getElementById('progressBar').style.width = 
+                `${((index + 1) / questions.length) * 100}%`;
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = index === 0;
+            
+            if (index === questions.length - 1) {
+                document.getElementById('nextBtn').classList.add('hidden');
+                document.getElementById('submitBtn').classList.remove('hidden');
+            } else {
+                document.getElementById('nextBtn').classList.remove('hidden');
+                document.getElementById('submitBtn').classList.add('hidden');
+            }
+        }
+
+        function selectOption(optionIndex) {
+            answers[currentQuestionIndex] = optionIndex;
+            
+            // Update UI
+            document.querySelectorAll('.option').forEach((opt, i) => {
+                opt.classList.toggle('selected', i === optionIndex);
+            });
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                showQuestion(currentQuestionIndex + 1);
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                showQuestion(currentQuestionIndex - 1);
+            }
+        }
+
+        function submitQuiz() {
+            clearInterval(timerInterval);
+            
+            // Calculate score
+            let correct = 0;
+            questions.forEach((q, i) => {
+                if (answers[i] === q.correct) {
+                    correct++;
+                }
+            });
+            
+            const score = Math.round((correct / questions.length) * 100);
+            const passed = score >= 70;
+            
+            // Save to storage
+            if (typeof QuizTracker !== 'undefined') {
+                const quizData = QuizTracker.endQuiz({
+                    correctAnswers: correct,
+                    totalQuestions: questions.length,
+                    answers: answers
+                });
+            }
+            
+            // Save progress
+            if (typeof ProgressTracker !== 'undefined' && passed) {
+                ProgressTracker.completeModule('basic', 'quiz_basic');
+            }
+            
+            // Show results
+            showResults(score, correct, passed);
+        }
+
+        function showResults(score, correct, passed) {
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('resultsScreen').classList.remove('hidden');
+            
+            const resultsContainer = document.getElementById('resultsScreen');
+            resultsContainer.innerHTML = `
+                <div class="results-card ${passed ? 'passed' : 'failed'}">
+                    <div class="result-icon ${passed ? 'passed' : 'failed'}">
+                        <i class="fas ${passed ? 'fa-trophy' : 'fa-times-circle'}"></i>
+                    </div>
+                    <h2>${passed ? 'ยินดีด้วย! คุณผ่านการทดสอบ' : 'ยังไม่ผ่านการทดสอบ'}</h2>
+                    <div class="result-score ${passed ? 'passed' : 'failed'}">${score}%</div>
+                    <div class="result-details">
+                        <div class="result-detail">
+                            <div class="result-detail-value">${correct}</div>
+                            <div class="result-detail-label">ตอบถูก</div>
+                        </div>
+                        <div class="result-detail">
+                            <div class="result-detail-value">${questions.length - correct}</div>
+                            <div class="result-detail-label">ตอบผิด</div>
+                        </div>
+                        <div class="result-detail">
+                            <div class="result-detail-value">${questions.length}</div>
+                            <div class="result-detail-label">ทั้งหมด</div>
+                        </div>
+                    </div>
+                    <p style="color: var(--text-secondary); margin: 20px 0;">
+                        ${passed 
+                            ? 'คุณสามารถไปรับประกาศนียบัตร Basic Level ได้แล้ว!' 
+                            : 'ต้องได้คะแนนอย่างน้อย 70% จึงจะผ่าน ลองทำใหม่อีกครั้ง'}
+                    </p>
+                    <div class="result-actions">
+                        ${passed 
+                            ? `<a href="../certificates/certificate-basic.html" class="btn btn-success btn-lg">
+                                <i class="fas fa-certificate"></i> รับประกาศนียบัตร
+                               </a>`
+                            : ''
+                        }
+                        <button onclick="location.reload()" class="btn btn-outline">
+                            <i class="fas fa-redo"></i> ทำแบบทดสอบใหม่
+                        </button>
+                        <a href="../courses/basic/index.html" class="btn btn-primary">
+                            <i class="fas fa-arrow-left"></i> กลับหน้าหลักสูตร
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

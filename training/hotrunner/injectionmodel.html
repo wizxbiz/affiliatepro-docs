@@ -1,0 +1,2632 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Professional Injection Molding Simulator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <style>
+        :root {
+            --primary-blue: #4a90e2;
+            --success-green: #27ae60;
+            --warning-orange: #f39c12;
+            --danger-red: #e74c3c;
+            --text-light: #ecf0f1;
+            --text-dark: #2c3e50;
+            --bg-dark: #1a2332;
+            --bg-light: rgba(255,255,255,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background: linear-gradient(135deg, #0f1419 0%, #1a2332 50%, #2c3e50 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(15px);
+            padding: 15px 25px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.3);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #4a90e2, #e74c3c, #f39c12);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .machine-status {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 14px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success-green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Main Layout */
+        .main-container {
+            margin-top: 80px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 380px 1fr 280px;
+            gap: 20px;
+            height: calc(100vh - 100px);
+        }
+
+        /* Control Panel */
+        .control-panel {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.15);
+            overflow-y: auto;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+        }
+
+        .control-section {
+            margin-bottom: 25px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .control-section h3 {
+            color: var(--text-light);
+            margin-bottom: 15px;
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 2px solid var(--primary-blue);
+            padding-bottom: 8px;
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 12px 16px;
+            margin: 6px 0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            color: white;
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60, #229954);
+            color: white;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Parameter Controls */
+        .parameter-group {
+            margin: 12px 0;
+        }
+
+        .parameter-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .parameter-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 6px;
+            background: rgba(255,255,255,0.1);
+            color: var(--text-light);
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .parameter-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+        }
+
+        .slider-container {
+            margin: 12px 0;
+            position: relative;
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.2);
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue), #357abd);
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(74, 144, 226, 0.4);
+            border: 2px solid white;
+        }
+
+        .value-display {
+            text-align: center;
+            margin-top: 6px;
+            font-weight: 600;
+            color: var(--primary-blue);
+            font-size: 14px;
+            background: rgba(74, 144, 226, 0.1);
+            padding: 4px 8px;
+            border-radius: 12px;
+        }
+
+        /* 3D Viewport */
+        .viewport {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 50px rgba(0,0,0,0.4);
+        }
+
+        #three-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0,0,0,0.9), rgba(44, 62, 80, 0.9));
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            border: 4px solid rgba(74, 144, 226, 0.2);
+            border-top: 4px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1.2s linear infinite;
+            margin-bottom: 25px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-progress {
+            width: 200px;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        .loading-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-blue), #357abd);
+            width: 0%;
+            animation: loadingProgress 3s ease-in-out infinite;
+        }
+
+        @keyframes loadingProgress {
+            0% { width: 0%; }
+            50% { width: 80%; }
+            100% { width: 100%; }
+        }
+
+        /* Status Panel */
+        .status-panel {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.15);
+            overflow-y: auto;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+        }
+
+        .status-section {
+            margin-bottom: 20px;
+        }
+
+        .status-section h4 {
+            margin-bottom: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 8px 0;
+            font-size: 13px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .status-value {
+            font-weight: 600;
+            color: var(--primary-blue);
+            font-size: 14px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin: 15px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success-green), var(--primary-blue), var(--warning-orange));
+            width: 0%;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.3) 50%, transparent 60%);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 8px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.8);
+            font-weight: 500;
+        }
+
+        /* Machine Type Selector */
+        .machine-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 15px 0;
+        }
+
+        .machine-type {
+            padding: 15px 12px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .machine-type:hover {
+            border-color: var(--primary-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(74, 144, 226, 0.2);
+        }
+
+        .machine-type.active {
+            border-color: var(--primary-blue);
+            background: rgba(74, 144, 226, 0.15);
+            box-shadow: 0 0 20px rgba(74, 144, 226, 0.3);
+        }
+
+        /* Alert System */
+        .alert-system {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            width: 300px;
+            z-index: 2000;
+        }
+
+        .alert {
+            background: rgba(255,255,255,0.95);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            border-left: 4px solid;
+            animation: slideInRight 0.5s ease;
+        }
+
+        .alert.success { border-left-color: var(--success-green); }
+        .alert.warning { border-left-color: var(--warning-orange); }
+        .alert.error { border-left-color: var(--danger-red); }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        /* Checkbox styling */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary-blue);
+        }
+
+        /* Chart Container */
+        .chart-container {
+            margin: 15px 0;
+            height: 120px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            padding: 10px;
+            position: relative;
+        }
+
+        .chart-title {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--primary-blue);
+        }
+
+        /* Performance Metrics */
+        .performance-metrics {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.7);
+            padding: 12px 15px;
+            border-radius: 10px;
+            font-size: 11px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 4px 0;
+            min-width: 120px;
+        }
+
+        .metric-value {
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        /* Timeline Controls */
+        .timeline-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            padding: 15px 30px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .timeline-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .timeline-btn:hover {
+            background: rgba(74, 144, 226, 0.2);
+            transform: scale(1.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 320px 1fr 250px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr auto;
+                height: calc(100vh - 120px);
+            }
+            
+            .control-panel, .status-panel {
+                max-height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Professional Header -->
+    <div class="header">
+        <div class="header-content">
+            <h1><i class="fas fa-industry"></i> Enhanced Professional Injection Molding Simulator</h1>
+            <div class="machine-status">
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span>System Ready</span>
+                </div>
+                <div class="status-indicator">
+                    <i class="fas fa-thermometer-half"></i>
+                    <span id="temp-indicator">240°C</span>
+                </div>
+                <div class="status-indicator">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span id="pressure-indicator">120 MPa</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert System -->
+    <div class="alert-system" id="alert-system"></div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Advanced Control Panel -->
+        <div class="control-panel">
+            <!-- Machine Configuration -->
+            <div class="control-section">
+                <h3><i class="fas fa-cog"></i> Machine Configuration</h3>
+                <div class="machine-selector">
+                    <div class="machine-type active" data-machine="horizontal">
+                        <i class="fas fa-arrows-alt-h"></i><br>
+                        <strong>Horizontal</strong><br>
+                        <small>SPGM-100</small>
+                    </div>
+                    <div class="machine-type" data-machine="vertical">
+                        <i class="fas fa-arrows-alt-v"></i><br>
+                        <strong>Vertical</strong><br>
+                        <small>SPGV-80</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Process Control -->
+            <div class="control-section">
+                <h3><i class="fas fa-play-circle"></i> Process Control</h3>
+                <button class="btn btn-success" id="start-simulation">
+                    <i class="fas fa-play"></i> Start Cycle
+                </button>
+                <button class="btn btn-warning" id="pause-simulation" disabled>
+                    <i class="fas fa-pause"></i> Pause
+                </button>
+                <button class="btn btn-danger" id="reset-simulation">
+                    <i class="fas fa-stop"></i> Reset
+                </button>
+                <button class="btn btn-primary" id="auto-mode">
+                    <i class="fas fa-robot"></i> Auto Mode
+                </button>
+            </div>
+
+            <!-- Material Selection -->
+            <div class="control-section">
+                <h3><i class="fas fa-flask"></i> Material Database</h3>
+                <div class="parameter-group">
+                    <label for="material-selector">Select Plastic Material</label>
+                    <select id="material-selector" class="parameter-input">
+                        <option value="">-- Select Material --</option>
+                        <option value="ABS">ABS (Acrylonitrile Butadiene Styrene)</option>
+                        <option value="PC">PC (Polycarbonate)</option>
+                        <option value="PP">PP (Polypropylene)</option>
+                        <option value="PET">PET (Polyethylene Terephthalate)</option>
+                        <option value="PA6">PA6 (Nylon 6)</option>
+                        <option value="PS">PS (Polystyrene)</option>
+                        <option value="PVC">PVC (Polyvinyl Chloride)</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" id="optimize-params">
+                    <i class="fas fa-magic"></i> Auto Optimize
+                </button>
+            </div>
+
+            <!-- Advanced Process Parameters -->
+            <div class="control-section">
+                <h3><i class="fas fa-sliders-h"></i> Process Parameters</h3>
+                
+                <div class="parameter-group">
+                    <label for="injection-pressure">Injection Pressure (MPa)</label>
+                    <div class="slider-container">
+                        <input type="range" id="injection-pressure" class="slider" 
+                               min="50" max="200" value="120" step="5">
+                        <div class="value-display" id="pressure-value">120 MPa</div>
+                    </div>
+                </div>
+
+                <div class="parameter-group">
+                    <label for="melt-temperature">Melt Temperature (°C)</label>
+                    <div class="slider-container">
+                        <input type="range" id="melt-temperature" class="slider" 
+                               min="180" max="350" value="240" step="5">
+                        <div class="value-display" id="temp-value">240°C</div>
+                    </div>
+                </div>
+
+                <div class="parameter-group">
+                    <label for="injection-speed">Injection Speed (mm/s)</label>
+                    <div class="slider-container">
+                        <input type="range" id="injection-speed" class="slider" 
+                               min="10" max="100" value="50" step="5">
+                        <div class="value-display" id="speed-value">50 mm/s</div>
+                    </div>
+                </div>
+
+                <div class="parameter-group">
+                    <label for="holding-pressure">Holding Pressure (MPa)</label>
+                    <div class="slider-container">
+                        <input type="range" id="holding-pressure" class="slider" 
+                               min="30" max="150" value="80" step="5">
+                        <div class="value-display" id="hold-value">80 MPa</div>
+                    </div>
+                </div>
+
+                <div class="parameter-group">
+                    <label for="cooling-time">Cooling Time (sec)</label>
+                    <div class="slider-container">
+                        <input type="range" id="cooling-time" class="slider" 
+                               min="5" max="60" value="20" step="1">
+                        <div class="value-display" id="cooling-value">20 sec</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View Controls -->
+            <div class="control-section">
+                <h3><i class="fas fa-eye"></i> Camera Views</h3>
+                <button class="btn btn-primary" id="view-machine">
+                    <i class="fas fa-industry"></i> Machine View
+                </button>
+                <button class="btn btn-primary" id="view-mold">
+                    <i class="fas fa-cube"></i> Mold View
+                </button>
+                <button class="btn btn-primary" id="view-cross-section">
+                    <i class="fas fa-cut"></i> Cross Section
+                </button>
+                <button class="btn btn-primary" id="view-isometric">
+                    <i class="fas fa-cube"></i> Isometric
+                </button>
+            </div>
+
+            <!-- Advanced Features -->
+            <div class="control-section">
+                <h3><i class="fas fa-chart-line"></i> Analysis Tools</h3>
+                <div class="parameter-group">
+                    <label class="checkbox-group">
+                        <input type="checkbox" id="show-temperature-map"> 
+                        Temperature Distribution
+                    </label>
+                </div>
+                <div class="parameter-group">
+                    <label class="checkbox-group">
+                        <input type="checkbox" id="show-flow-analysis"> 
+                        Flow Analysis
+                    </label>
+                </div>
+                <div class="parameter-group">
+                    <label class="checkbox-group">
+                        <input type="checkbox" id="show-pressure-map"> 
+                        Pressure Mapping
+                    </label>
+                </div>
+                <div class="parameter-group">
+                    <label class="checkbox-group">
+                        <input type="checkbox" id="show-quality-check"> 
+                        Quality Assessment
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3D Viewport -->
+        <div class="viewport">
+            <div id="three-container">
+                <div class="loading-screen" id="loading-screen">
+                    <div class="loading-spinner"></div>
+                    <h3>Initializing Enhanced Professional Simulation System</h3>
+                    <p>Loading Ultra-Realistic 3D Models and Advanced Physics Engine...</p>
+                    <div class="loading-progress">
+                        <div class="loading-bar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Metrics -->
+            <div class="performance-metrics" id="performance-metrics">
+                <div class="metric-item">
+                    <span>FPS:</span>
+                    <span class="metric-value" id="fps-counter">60</span>
+                </div>
+                <div class="metric-item">
+                    <span>Triangles:</span>
+                    <span class="metric-value" id="triangle-count">0</span>
+                </div>
+                <div class="metric-item">
+                    <span>Memory:</span>
+                    <span class="metric-value" id="memory-usage">0 MB</span>
+                </div>
+            </div>
+
+            <!-- Professional Timeline Controls -->
+            <div class="timeline-controls" id="timeline-controls" style="display: none;">
+                <button class="timeline-btn" id="timeline-play">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button class="timeline-btn" id="timeline-pause">
+                    <i class="fas fa-pause"></i>
+                </button>
+                <button class="timeline-btn" id="timeline-stop">
+                    <i class="fas fa-stop"></i>
+                </button>
+                <span id="timeline-time" style="color: white; font-size: 14px;">0:00</span>
+            </div>
+        </div>
+
+        <!-- Professional Status Panel -->
+        <div class="status-panel">
+            <!-- System Status -->
+            <div class="status-section">
+                <h4><i class="fas fa-info-circle"></i> System Status</h4>
+                <div class="status-item">
+                    <span>Fill Percentage:</span>
+                    <span class="status-value" id="fill-percentage">0%</span>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="progress-text" id="progress-text">System Ready</div>
+                </div>
+            </div>
+
+            <!-- Process Monitoring -->
+            <div class="status-section">
+                <h4><i class="fas fa-chart-area"></i> Process Data</h4>
+                <div class="status-item">
+                    <span>Current Pressure:</span>
+                    <span class="status-value" id="current-pressure">0 MPa</span>
+                </div>
+                <div class="status-item">
+                    <span>Barrel Temp:</span>
+                    <span class="status-value" id="barrel-temp">240°C</span>
+                </div>
+                <div class="status-item">
+                    <span>Mold Temp:</span>
+                    <span class="status-value" id="mold-temp">60°C</span>
+                </div>
+                <div class="status-item">
+                    <span>Screw Position:</span>
+                    <span class="status-value" id="screw-position">0 mm</span>
+                </div>
+                <div class="status-item">
+                    <span>Shot Counter:</span>
+                    <span class="status-value" id="shot-counter">0</span>
+                </div>
+
+                <!-- Real-time Chart -->
+                <div class="chart-container">
+                    <div class="chart-title">Pressure vs Time</div>
+                    <canvas id="pressure-chart" width="240" height="80"></canvas>
+                </div>
+            </div>
+
+            <!-- Quality Control -->
+            <div class="status-section">
+                <h4><i class="fas fa-shield-alt"></i> Quality Control</h4>
+                <div class="status-item">
+                    <span>Part Quality:</span>
+                    <span class="status-value" id="part-quality">Excellent</span>
+                </div>
+                <div class="status-item">
+                    <span>Defect Rate:</span>
+                    <span class="status-value" id="defect-rate">0.2%</span>
+                </div>
+                <div class="status-item">
+                    <span>Cycle Efficiency:</span>
+                    <span class="status-value" id="cycle-efficiency">98.5%</span>
+                </div>
+                <div class="status-item">
+                    <span>Surface Finish:</span>
+                    <span class="status-value" id="surface-finish">A+</span>
+                </div>
+            </div>
+
+            <!-- Energy Monitoring -->
+            <div class="status-section">
+                <h4><i class="fas fa-bolt"></i> Energy Usage</h4>
+                <div class="status-item">
+                    <span>Power Draw:</span>
+                    <span class="status-value" id="power-draw">15.2 kW</span>
+                </div>
+                <div class="status-item">
+                    <span>Energy/Cycle:</span>
+                    <span class="status-value" id="energy-cycle">0.85 kWh</span>
+                </div>
+                <div class="status-item">
+                    <span>Daily Usage:</span>
+                    <span class="status-value" id="daily-energy">245 kWh</span>
+                </div>
+            </div>
+
+            <!-- Export Controls -->
+            <div class="status-section">
+                <h4><i class="fas fa-download"></i> Export & Reports</h4>
+                <button class="btn btn-primary" id="save-screenshot">
+                    <i class="fas fa-camera"></i> Screenshot
+                </button>
+                <button class="btn btn-primary" id="export-data">
+                    <i class="fas fa-file-csv"></i> Export Data
+                </button>
+                <button class="btn btn-primary" id="generate-report">
+                    <i class="fas fa-file-pdf"></i> Generate Report
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        // =============== Global Variables ===============
+        let scene, camera, renderer;
+        let injectionMachine, moldAssembly, hotRunnerSystem;
+        let plasticMelt = [], steamParticles = [], smokeParticles = [];
+        let animationMixer, clock;
+        let isSimulating = false;
+        let simulationProgress = 0;
+        let currentMachineType = 'horizontal';
+        let simulationTimeline;
+        let frameCount = 0;
+        let lastTime = performance.now();
+        let shotCounter = 0;
+        let pressureChart, pressureData = [];
+        let conveyorBelt, auxiliaryEquipment = [];
+        let qualityCheckInterval, alertSystem;
+
+        // Enhanced simulation parameters
+        const simParams = {
+            injectionPressure: 120,
+            meltTemperature: 240,
+            injectionSpeed: 50,
+            holdingPressure: 80,
+            coolingTime: 20,
+            moldTemperature: 60,
+            showTemperatureMap: false,
+            showFlowAnalysis: false,
+            showPressureMap: false,
+            showQualityCheck: false,
+            autoMode: false,
+            realisticTextures: true,
+            particleEffects: true
+        };
+
+        // Enhanced material database with realistic properties
+        const materialDatabase = {
+            'ABS': { 
+                temp: 240, pressure: 120, viscosity: 'medium', 
+                shrinkage: 0.6, moldTemp: 60, color: 0x2ecc71,
+                description: 'General purpose thermoplastic',
+                flowRate: 35, crystallization: false, 
+                thermalConductivity: 0.25, specificHeat: 1.4
+            },
+            'PC': { 
+                temp: 280, pressure: 150, viscosity: 'high', 
+                shrinkage: 0.7, moldTemp: 80, color: 0x3498db,
+                description: 'High temperature engineering plastic',
+                flowRate: 25, crystallization: false,
+                thermalConductivity: 0.20, specificHeat: 1.2
+            },
+            'PP': { 
+                temp: 220, pressure: 100, viscosity: 'low', 
+                shrinkage: 1.5, moldTemp: 40, color: 0xf39c12,
+                description: 'Low cost commodity plastic',
+                flowRate: 45, crystallization: true,
+                thermalConductivity: 0.12, specificHeat: 1.9
+            },
+            'PET': { 
+                temp: 260, pressure: 140, viscosity: 'medium', 
+                shrinkage: 0.8, moldTemp: 70, color: 0x9b59b6,
+                description: 'Clear packaging material',
+                flowRate: 30, crystallization: true,
+                thermalConductivity: 0.15, specificHeat: 1.0
+            },
+            'PA6': { 
+                temp: 250, pressure: 130, viscosity: 'medium', 
+                shrinkage: 1.2, moldTemp: 90, color: 0x34495e,
+                description: 'High strength engineering plastic',
+                flowRate: 28, crystallization: true,
+                thermalConductivity: 0.25, specificHeat: 1.7
+            },
+            'PS': { 
+                temp: 200, pressure: 90, viscosity: 'low', 
+                shrinkage: 0.5, moldTemp: 50, color: 0xe74c3c,
+                description: 'Clear disposable plastic',
+                flowRate: 40, crystallization: false,
+                thermalConductivity: 0.13, specificHeat: 1.3
+            },
+            'PVC': { 
+                temp: 180, pressure: 110, viscosity: 'high', 
+                shrinkage: 0.4, moldTemp: 45, color: 0x95a5a6,
+                description: 'Rigid construction plastic',
+                flowRate: 20, crystallization: false,
+                thermalConductivity: 0.16, specificHeat: 0.9
+            }
+        };
+
+        // =============== Enhanced Initialization ===============
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEnhancedThreeJS();
+            setupEnhancedEventListeners();
+            createUltraRealisticInjectionMoldingSystem();
+            initializeEnhancedPressureChart();
+            initializeAlertSystem();
+            hideLoadingScreen();
+            showEnhancedAlert('Enhanced Professional Injection Molding Simulator Ready!', 'success');
+        });
+
+        function initializeEnhancedThreeJS() {
+            // Scene setup with ultra-realistic lighting and atmosphere
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x1a1a2e);
+            scene.fog = new THREE.Fog(0x1a1a2e, 10, 150);
+
+            // Professional camera setup with enhanced field of view
+            const container = document.getElementById('three-container');
+            camera = new THREE.PerspectiveCamera(
+                55, 
+                container.clientWidth / container.clientHeight, 
+                0.1, 
+                1000
+            );
+            camera.position.set(18, 15, 18);
+
+            // Ultra high-quality renderer setup
+            renderer = new THREE.WebGLRenderer({ 
+                antialias: true,
+                alpha: true,
+                powerPreference: "high-performance"
+            });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.0;
+            renderer.physicallyCorrectLights = true;
+            
+            container.appendChild(renderer.domElement);
+
+            // Enhanced camera controls with smooth interaction
+            setupEnhancedProfessionalControls();
+
+            // Ultra-realistic lighting setup
+            setupUltraRealisticLighting();
+
+            // Clock for animations
+            clock = new THREE.Clock();
+
+            // Start render loop
+            animate();
+        }
+
+        function setupEnhancedProfessionalControls() {
+            let isDragging = false;
+            let previousMousePosition = { x: 0, y: 0 };
+            let cameraTarget = new THREE.Vector3(0, 0, 0);
+            let spherical = new THREE.Spherical();
+            spherical.setFromVector3(camera.position.clone().sub(cameraTarget));
+
+            const canvas = renderer.domElement;
+
+            canvas.addEventListener('mousedown', (event) => {
+                isDragging = true;
+                previousMousePosition = { x: event.clientX, y: event.clientY };
+                canvas.style.cursor = 'grabbing';
+            });
+
+            canvas.addEventListener('mouseup', () => {
+                isDragging = false;
+                canvas.style.cursor = 'grab';
+            });
+
+            canvas.addEventListener('mousemove', (event) => {
+                if (!isDragging) return;
+
+                const deltaMove = {
+                    x: event.clientX - previousMousePosition.x,
+                    y: event.clientY - previousMousePosition.y
+                };
+
+                spherical.theta -= deltaMove.x * 0.005;
+                spherical.phi += deltaMove.y * 0.005;
+                spherical.phi = Math.max(0.1, Math.min(Math.PI - 0.1, spherical.phi));
+
+                camera.position.setFromSpherical(spherical).add(cameraTarget);
+                camera.lookAt(cameraTarget);
+
+                previousMousePosition = { x: event.clientX, y: event.clientY };
+            });
+
+            canvas.addEventListener('wheel', (event) => {
+                event.preventDefault();
+                spherical.radius += event.deltaY * 0.005;
+                spherical.radius = Math.max(8, Math.min(60, spherical.radius));
+                
+                camera.position.setFromSpherical(spherical).add(cameraTarget);
+            });
+
+            canvas.style.cursor = 'grab';
+        }
+
+        function setupUltraRealisticLighting() {
+            // Remove any existing lights
+            scene.children = scene.children.filter(child => !(child instanceof THREE.Light));
+
+            // Ambient light for base illumination with realistic color temperature
+            const ambientLight = new THREE.AmbientLight(0x404060, 0.3);
+            scene.add(ambientLight);
+
+            // Main directional light (factory ceiling lights)
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+            directionalLight.position.set(40, 50, 30);
+            directionalLight.castShadow = true;
+            directionalLight.shadow.mapSize.width = 4096;
+            directionalLight.shadow.mapSize.height = 4096;
+            directionalLight.shadow.camera.near = 0.5;
+            directionalLight.shadow.camera.far = 150;
+            directionalLight.shadow.camera.left = -50;
+            directionalLight.shadow.camera.right = 50;
+            directionalLight.shadow.camera.top = 50;
+            directionalLight.shadow.camera.bottom = -50;
+            directionalLight.shadow.bias = -0.0005;
+            directionalLight.shadow.normalBias = 0.02;
+            scene.add(directionalLight);
+
+            // Machine work area spotlights
+            const workSpots = [
+                { pos: [-8, 15, 8], target: [-8, -2, 0], intensity: 2 },
+                { pos: [5, 15, 8], target: [2.5, -2, 0], intensity: 2 },
+                { pos: [15, 12, 5], target: [8, -4, 0], intensity: 1.5 }
+            ];
+
+            workSpots.forEach((spot, index) => {
+                const spotLight = new THREE.SpotLight(0xffffff, spot.intensity, 25, Math.PI / 5, 0.3);
+                spotLight.position.set(...spot.pos);
+                spotLight.target.position.set(...spot.target);
+                spotLight.castShadow = true;
+                spotLight.shadow.mapSize.width = 2048;
+                spotLight.shadow.mapSize.height = 2048;
+                scene.add(spotLight);
+                scene.add(spotLight.target);
+            });
+
+            // Colored accent lighting for atmosphere
+            const accentLight1 = new THREE.PointLight(0x4a90e2, 0.8, 25);
+            accentLight1.position.set(-20, 8, 15);
+            scene.add(accentLight1);
+
+            const accentLight2 = new THREE.PointLight(0xe74c3c, 0.6, 20);
+            accentLight2.position.set(20, 8, -15);
+            scene.add(accentLight2);
+        }
+
+        function createUltraRealisticInjectionMoldingSystem() {
+            // Create factory environment
+            createFactoryEnvironment();
+            
+            // Create injection machine
+            createUltraRealisticInjectionMachine(currentMachineType);
+            
+            // Create mold assembly
+            createEnhancedDetailedMoldAssembly();
+            
+            // Create hot runner system
+            createUltraRealisticHotRunnerSystem();
+            
+            // Create auxiliary equipment
+            createEnhancedAuxiliaryEquipment();
+        }
+
+        function createFactoryEnvironment() {
+            // Factory floor
+            const floorGeometry = new THREE.PlaneGeometry(100, 80);
+            const floorMaterial = new THREE.MeshStandardMaterial({
+                color: 0x34495e,
+                roughness: 0.8,
+                metalness: 0.2
+            });
+            const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+            floor.rotation.x = -Math.PI / 2;
+            floor.position.y = -5;
+            floor.receiveShadow = true;
+            scene.add(floor);
+
+            // Factory walls
+            const wallHeight = 15;
+            const wallGeometry = new THREE.PlaneGeometry(100, wallHeight);
+            const wallMaterial = new THREE.MeshStandardMaterial({
+                color: 0x7f8c8d,
+                roughness: 0.6,
+                metalness: 0.1
+            });
+
+            // Back wall
+            const backWall = new THREE.Mesh(wallGeometry, wallMaterial);
+            backWall.position.set(0, wallHeight/2 - 5, -40);
+            backWall.receiveShadow = true;
+            scene.add(backWall);
+
+            // Side walls
+            const sideWallGeometry = new THREE.PlaneGeometry(80, wallHeight);
+            const leftWall = new THREE.Mesh(sideWallGeometry, wallMaterial);
+            leftWall.rotation.y = Math.PI / 2;
+            leftWall.position.set(-50, wallHeight/2 - 5, 0);
+            leftWall.receiveShadow = true;
+            scene.add(leftWall);
+
+            const rightWall = new THREE.Mesh(sideWallGeometry, wallMaterial);
+            rightWall.rotation.y = -Math.PI / 2;
+            rightWall.position.set(50, wallHeight/2 - 5, 0);
+            rightWall.receiveShadow = true;
+            scene.add(rightWall);
+
+            // Industrial ceiling
+            const ceilingGeometry = new THREE.PlaneGeometry(100, 80);
+            const ceilingMaterial = new THREE.MeshStandardMaterial({
+                color: 0x2c3e50,
+                roughness: 0.4,
+                metalness: 0.6
+            });
+            const ceiling = new THREE.Mesh(ceilingGeometry, ceilingMaterial);
+            ceiling.rotation.x = Math.PI / 2;
+            ceiling.position.y = 15;
+            scene.add(ceiling);
+
+            // Support pillars
+            for (let i = 0; i < 6; i++) {
+                const pillarGeometry = new THREE.CylinderGeometry(0.5, 0.5, 20, 16);
+                const pillarMaterial = new THREE.MeshStandardMaterial({
+                    color: 0x95a5a6,
+                    roughness: 0.3,
+                    metalness: 0.8
+                });
+                const pillar = new THREE.Mesh(pillarGeometry, pillarMaterial);
+                const angle = (i / 6) * Math.PI * 2;
+                pillar.position.set(
+                    Math.cos(angle) * 35,
+                    4,
+                    Math.sin(angle) * 25
+                );
+                pillar.castShadow = true;
+                pillar.receiveShadow = true;
+                scene.add(pillar);
+            }
+        }
+
+        function createUltraRealisticInjectionMachine(type = 'horizontal') {
+            if (injectionMachine) {
+                scene.remove(injectionMachine);
+            }
+
+            injectionMachine = new THREE.Group();
+            injectionMachine.name = 'injection-machine';
+
+            if (type === 'horizontal') {
+                createEnhancedHorizontalMachine();
+            } else {
+                createEnhancedVerticalMachine();
+            }
+
+            scene.add(injectionMachine);
+        }
+
+        function createEnhancedHorizontalMachine() {
+            // Ultra-realistic machine base
+            const baseGeometry = new THREE.BoxGeometry(14, 2.5, 8);
+            const baseMaterial = new THREE.MeshStandardMaterial({
+                color: 0x4a90e2,
+                roughness: 0.2,
+                metalness: 0.9
+            });
+            const machineBase = new THREE.Mesh(baseGeometry, baseMaterial);
+            machineBase.position.set(-8, -3, 0);
+            machineBase.castShadow = true;
+            machineBase.receiveShadow = true;
+            machineBase.name = 'machine-base';
+            injectionMachine.add(machineBase);
+
+            // Enhanced injection barrel with heating zones
+            createEnhancedInjectionBarrel();
+
+            // Professional screw assembly
+            createRealisticScrewAssembly();
+
+            // Advanced nozzle assembly
+            createAdvancedNozzleAssembly();
+
+            // Hydraulic system
+            createHydraulicSystem();
+
+            // Professional control panel
+            createProfessionalControlPanel();
+        }
+
+        function createEnhancedVerticalMachine() {
+            // Vertical machine base
+            const baseGeometry = new THREE.CylinderGeometry(6, 6, 2.5, 16);
+            const baseMaterial = new THREE.MeshStandardMaterial({
+                color: 0x4a90e2,
+                roughness: 0.2,
+                metalness: 0.9
+            });
+            const machineBase = new THREE.Mesh(baseGeometry, baseMaterial);
+            machineBase.position.set(0, -3, 0);
+            machineBase.castShadow = true;
+            machineBase.receiveShadow = true;
+            machineBase.name = 'machine-base';
+            injectionMachine.add(machineBase);
+
+            // Vertical injection unit
+            const unitGeometry = new THREE.CylinderGeometry(1.5, 1.5, 8, 16);
+            const unitMaterial = new THREE.MeshStandardMaterial({
+                color: 0x34495e,
+                roughness: 0.3,
+                metalness: 0.8
+            });
+            const injectionUnit = new THREE.Mesh(unitGeometry, unitMaterial);
+            injectionUnit.position.set(0, 2, 0);
+            injectionUnit.castShadow = true;
+            injectionUnit.name = 'injection-unit';
+            injectionMachine.add(injectionUnit);
+        }
+
+        function createEnhancedInjectionBarrel() {
+            // Main barrel
+            const barrelGeometry = new THREE.CylinderGeometry(1.0, 1.2, 10, 24);
+            const barrelMaterial = new THREE.MeshStandardMaterial({
+                color: 0x34495e,
+                roughness: 0.15,
+                metalness: 0.9
+            });
+            const barrel = new THREE.Mesh(barrelGeometry, barrelMaterial);
+            barrel.rotation.z = Math.PI / 2;
+            barrel.position.set(-4, -2, 0);
+            barrel.castShadow = true;
+            barrel.receiveShadow = true;
+            barrel.name = 'barrel';
+            injectionMachine.add(barrel);
+
+            // Heating bands
+            for (let i = 0; i < 5; i++) {
+                const bandGeometry = new THREE.TorusGeometry(1.1, 0.08, 12, 20);
+                const bandMaterial = new THREE.MeshStandardMaterial({
+                    color: 0xff6b35,
+                    emissive: 0x331100,
+                    emissiveIntensity: 0.6,
+                    roughness: 0.3,
+                    metalness: 0.8
+                });
+                const heatingBand = new THREE.Mesh(bandGeometry, bandMaterial);
+                heatingBand.position.set(-7 + i * 1.8, -2, 0);
+                heatingBand.rotation.x = Math.PI / 2;
+                heatingBand.name = `heating-band-${i}`;
+                injectionMachine.add(heatingBand);
+            }
+        }
+
+        function createRealisticScrewAssembly() {
+            // Main screw shaft
+            const screwGeometry = new THREE.CylinderGeometry(0.45, 0.45, 9, 20);
+            const screwMaterial = new THREE.MeshStandardMaterial({
+                color: 0xe74c3c,
+                roughness: 0.1,
+                metalness: 0.95
+            });
+            const screw = new THREE.Mesh(screwGeometry, screwMaterial);
+            screw.rotation.z = Math.PI / 2;
+            screw.position.set(-4, -2, 0);
+            screw.name = 'screw';
+            screw.castShadow = true;
+            injectionMachine.add(screw);
+
+            // Screw tip
+            const tipGeometry = new THREE.ConeGeometry(0.4, 0.8, 16);
+            const tipMaterial = new THREE.MeshStandardMaterial({
+                color: 0xa93226,
+                roughness: 0.15,
+                metalness: 0.9
+            });
+            const screwTip = new THREE.Mesh(tipGeometry, tipMaterial);
+            screwTip.rotation.z = Math.PI / 2;
+            screwTip.position.set(0.8, -2, 0);
+            screwTip.name = 'screw-tip';
+            injectionMachine.add(screwTip);
+        }
+
+        function createAdvancedNozzleAssembly() {
+            // Main nozzle body
+            const nozzleGeometry = new THREE.ConeGeometry(0.6, 2, 20);
+            const nozzleMaterial = new THREE.MeshStandardMaterial({
+                color: 0xf39c12,
+                emissive: 0x331100,
+                emissiveIntensity: 0.4,
+                roughness: 0.2,
+                metalness: 0.8
+            });
+            const nozzle = new THREE.Mesh(nozzleGeometry, nozzleMaterial);
+            nozzle.rotation.z = -Math.PI / 2;
+            nozzle.position.set(-0.2, -2, 0);
+            nozzle.castShadow = true;
+            nozzle.name = 'nozzle';
+            injectionMachine.add(nozzle);
+
+            // Nozzle tip
+            const tipGeometry = new THREE.CylinderGeometry(0.15, 0.25, 0.4, 12);
+            const tipMaterial = new THREE.MeshStandardMaterial({
+                color: 0xd68910,
+                roughness: 0.1,
+                metalness: 0.9
+            });
+            const nozzleTip = new THREE.Mesh(tipGeometry, tipMaterial);
+            nozzleTip.position.set(0.8, -2, 0);
+            nozzleTip.rotation.z = Math.PI / 2;
+            nozzleTip.name = 'nozzle-tip';
+            injectionMachine.add(nozzleTip);
+        }
+
+        function createHydraulicSystem() {
+            // Main hydraulic power unit
+            const hydraulicGeometry = new THREE.BoxGeometry(4, 5, 4);
+            const hydraulicMaterial = new THREE.MeshStandardMaterial({
+                color: 0x27ae60,
+                roughness: 0.4,
+                metalness: 0.7
+            });
+            const hydraulicSystem = new THREE.Mesh(hydraulicGeometry, hydraulicMaterial);
+            hydraulicSystem.position.set(-14, -1, 0);
+            hydraulicSystem.castShadow = true;
+            hydraulicSystem.receiveShadow = true;
+            hydraulicSystem.name = 'hydraulic-system';
+            injectionMachine.add(hydraulicSystem);
+
+            // Hydraulic cylinders
+            const cylinderPositions = [
+                { pos: [-14, 1.5, 2], name: 'injection-cylinder' },
+                { pos: [-14, 1.5, -2], name: 'clamp-cylinder' }
+            ];
+
+            cylinderPositions.forEach(cylinder => {
+                const cylinderGeometry = new THREE.CylinderGeometry(0.4, 0.4, 3, 16);
+                const cylinderMaterial = new THREE.MeshStandardMaterial({
+                    color: 0x2c3e50,
+                    roughness: 0.3,
+                    metalness: 0.8
+                });
+                const hydraulicCylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+                hydraulicCylinder.position.set(...cylinder.pos);
+                hydraulicCylinder.name = cylinder.name;
+                hydraulicCylinder.castShadow = true;
+                injectionMachine.add(hydraulicCylinder);
+            });
+        }
+
+        function createProfessionalControlPanel() {
+            // Main control cabinet
+            const panelGeometry = new THREE.BoxGeometry(2, 4, 0.6);
+            const panelMaterial = new THREE.MeshStandardMaterial({
+                color: 0x2c3e50,
+                roughness: 0.3,
+                metalness: 0.7
+            });
+            const controlPanel = new THREE.Mesh(panelGeometry, panelMaterial);
+            controlPanel.position.set(-8, -0.5, 4.5);
+            controlPanel.castShadow = true;
+            controlPanel.receiveShadow = true;
+            controlPanel.name = 'control-panel';
+            injectionMachine.add(controlPanel);
+
+            // Display screen
+            const displayGeometry = new THREE.PlaneGeometry(1.2, 0.8);
+            const displayMaterial = new THREE.MeshStandardMaterial({
+                color: 0x000000,
+                emissive: 0x004400,
+                emissiveIntensity: 0.5
+            });
+            const display = new THREE.Mesh(displayGeometry, displayMaterial);
+            display.position.set(-8, 0.8, 4.81);
+            display.name = 'display';
+            injectionMachine.add(display);
+        }
+
+        // function createEnhancedDetailedMoldAssembly() {
+        //     moldAssembly = new THREE.Group();
+        //     moldAssembly.name = 'mold-assembly';
+
+        //     // Enhanced mold base
+        //     const moldBaseGeometry = new THREE.BoxGeometry(10, 1.5, 5);
+        //     const moldBaseMaterial = new THREE.MeshStandardMaterial({
+        //         color: 0x2c3e50,
+        //         roughness: 0.1,
+        //         metalness: 0.9
+        //     });
+        //     const moldBase = new THREE.Mesh(moldBaseGeometry, moldBaseMaterial);
+        //     moldBase.position.set(2, -4, 0);
+        //     moldBase.castShadow = true;
+        //     moldBase.receiveShadow = true;
+        //     moldBase.name = 'mold-base';
+        //     moldAssembly.add(moldBase);
+
+        //     // Fixed mold half
+        //     const fixedMoldGeometry = new THREE.BoxGeometry(5, 5, 4);
+        //     const moldMaterial = new THREE.MeshStandardMaterial({
+        //         color: 0x7f8c8d,
+        //         roughness: 0.1,
+        //         metalness: 0.9
+        //     });
+        //     const fixedMold = new THREE.Mesh(fixedMoldGeometry, moldMaterial);
+        //     fixedMold.position.set(0.5, -1.5, 0);
+        //     fixedMold.castShadow = true;
+        //     fixedMold.receiveShadow = true;
+        //     ease: "power2.inOut",
+        //         onUpdate: function() {
+        //             const currentValue = Math.round(this.targets()[0].value);
+        //             slider.value = currentValue;
+        //             display.textContent = `${currentValue} ${unit}`;
+        //         }
+        //     });
+        // }
+
+        // =============== Enhanced Visual Effects ===============
+        // แก้ไข function createEnhancedDetailedMoldAssembly ที่ถูก comment ออก
+function createEnhancedDetailedMoldAssembly() {
+    moldAssembly = new THREE.Group();
+    moldAssembly.name = 'mold-assembly';
+
+    // Enhanced mold base
+    const moldBaseGeometry = new THREE.BoxGeometry(10, 1.5, 5);
+    const moldBaseMaterial = new THREE.MeshStandardMaterial({
+        color: 0x2c3e50,
+        roughness: 0.1,
+        metalness: 0.9
+    });
+    const moldBase = new THREE.Mesh(moldBaseGeometry, moldBaseMaterial);
+    moldBase.position.set(2, -4, 0);
+    moldBase.castShadow = true;
+    moldBase.receiveShadow = true;
+    moldBase.name = 'mold-base';
+    moldAssembly.add(moldBase);
+
+    // Fixed mold half
+    const fixedMoldGeometry = new THREE.BoxGeometry(5, 5, 4);
+    const moldMaterial = new THREE.MeshStandardMaterial({
+        color: 0x7f8c8d,
+        roughness: 0.1,
+        metalness: 0.9
+    });
+    const fixedMold = new THREE.Mesh(fixedMoldGeometry, moldMaterial);
+    fixedMold.position.set(0.5, -1.5, 0);
+    fixedMold.castShadow = true;
+    fixedMold.receiveShadow = true;
+    fixedMold.name = 'fixed-mold';
+    moldAssembly.add(fixedMold);
+
+    // Moving mold half
+    const movingMold = new THREE.Mesh(fixedMoldGeometry, moldMaterial);
+    movingMold.position.set(4.5, -1.5, 0);
+    movingMold.castShadow = true;
+    movingMold.receiveShadow = true;
+    movingMold.name = 'moving-mold';
+    moldAssembly.add(movingMold);
+
+    // Mold cavity
+    const cavityGeometry = new THREE.BoxGeometry(2.5, 2.5, 2.5);
+    const cavityMaterial = new THREE.MeshStandardMaterial({
+        color: 0x34495e,
+        transparent: true,
+        opacity: 0.4,
+        side: THREE.DoubleSide
+    });
+    const cavity = new THREE.Mesh(cavityGeometry, cavityMaterial);
+    cavity.position.set(2.5, -1.5, 0);
+    cavity.name = 'cavity';
+    moldAssembly.add(cavity);
+
+    // Ejector pins
+    const ejectorPositions = [
+        [3.5, -1.5, -0.8], [3.5, -1.5, 0.8],
+        [5.5, -1.5, -0.8], [5.5, -1.5, 0.8]
+    ];
+
+    ejectorPositions.forEach((pos, index) => {
+        const ejectorGeometry = new THREE.CylinderGeometry(0.06, 0.06, 2.5, 12);
+        const ejectorMaterial = new THREE.MeshStandardMaterial({
+            color: 0xe74c3c,
+            roughness: 0.2,
+            metalness: 0.9
+        });
+        const ejector = new THREE.Mesh(ejectorGeometry, ejectorMaterial);
+        ejector.position.set(...pos);
+        ejector.name = `ejector-pin-${index}`;
+        moldAssembly.add(ejector);
+    });
+
+    scene.add(moldAssembly);
+}
+
+// เพิ่ม function createUltraRealisticHotRunnerSystem ที่ขาดหายไป
+function createUltraRealisticHotRunnerSystem() {
+    hotRunnerSystem = new THREE.Group();
+    hotRunnerSystem.name = 'hot-runner-system';
+
+    // Main manifold
+    const manifoldGeometry = new THREE.BoxGeometry(4, 0.6, 2);
+    const manifoldMaterial = new THREE.MeshStandardMaterial({
+        color: 0x3498db,
+        roughness: 0.2,
+        metalness: 0.8
+    });
+    const manifold = new THREE.Mesh(manifoldGeometry, manifoldMaterial);
+    manifold.position.set(2.5, -2.6, 0);
+    manifold.castShadow = true;
+    manifold.name = 'manifold';
+    hotRunnerSystem.add(manifold);
+
+    // Hot runner tips
+    const tipPositions = [
+        [1.5, -2.6, -0.6], [1.5, -2.6, 0.6],
+        [3.5, -2.6, -0.6], [3.5, -2.6, 0.6]
+    ];
+
+    tipPositions.forEach((pos, index) => {
+        const tipGeometry = new THREE.CylinderGeometry(0.15, 0.22, 1.2, 16);
+        const tipMaterial = new THREE.MeshStandardMaterial({
+            color: 0xe74c3c,
+            emissive: 0x441100,
+            emissiveIntensity: 0.5,
+            roughness: 0.3,
+            metalness: 0.8
+        });
+        const hotTip = new THREE.Mesh(tipGeometry, tipMaterial);
+        hotTip.position.set(...pos);
+        hotTip.name = `hot-tip-${index}`;
+        hotRunnerSystem.add(hotTip);
+    });
+
+    scene.add(hotRunnerSystem);
+}
+
+// เพิ่ม function createEnhancedAuxiliaryEquipment ที่ขาดหายไป
+function createEnhancedAuxiliaryEquipment() {
+    // Conveyor belt system
+    conveyorBelt = new THREE.Group();
+    conveyorBelt.name = 'conveyor-system';
+
+    // Main conveyor belt
+    const beltGeometry = new THREE.BoxGeometry(15, 0.3, 2.5);
+    const beltMaterial = new THREE.MeshStandardMaterial({
+        color: 0x2c3e50,
+        roughness: 0.7,
+        metalness: 0.5
+    });
+    const belt = new THREE.Mesh(beltGeometry, beltMaterial);
+    belt.position.set(12, -4.3, 0);
+    belt.receiveShadow = true;
+    belt.name = 'conveyor-belt';
+    conveyorBelt.add(belt);
+
+    // Conveyor rollers
+    for (let i = 0; i < 12; i++) {
+        const rollerGeometry = new THREE.CylinderGeometry(0.12, 0.12, 2.7, 16);
+        const rollerMaterial = new THREE.MeshStandardMaterial({
+            color: 0x95a5a6,
+            roughness: 0.2,
+            metalness: 0.9
+        });
+        const roller = new THREE.Mesh(rollerGeometry, rollerMaterial);
+        roller.position.set(5 + i * 1.2, -4.2, 0);
+        roller.rotation.x = Math.PI / 2;
+        roller.castShadow = true;
+        roller.name = `conveyor-roller-${i}`;
+        conveyorBelt.add(roller);
+    }
+
+    scene.add(conveyorBelt);
+
+    // Quality control station
+    const qcTableGeometry = new THREE.BoxGeometry(3, 1.2, 2.5);
+    const qcTableMaterial = new THREE.MeshStandardMaterial({
+        color: 0x27ae60,
+        roughness: 0.4,
+        metalness: 0.6
+    });
+    const qcTable = new THREE.Mesh(qcTableGeometry, qcTableMaterial);
+    qcTable.position.set(18, -4, 0);
+    qcTable.castShadow = true;
+    qcTable.receiveShadow = true;
+    qcTable.name = 'qc-table';
+    scene.add(qcTable);
+
+    // QC lighting
+    const qcLightGeometry = new THREE.CylinderGeometry(0.15, 0.15, 0.4, 12);
+    const qcLightMaterial = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        emissive: 0xffffff,
+        emissiveIntensity: 0.3
+    });
+    const qcLight = new THREE.Mesh(qcLightGeometry, qcLightMaterial);
+    qcLight.position.set(18, -2.5, 0);
+    qcLight.name = 'qc-light';
+    scene.add(qcLight);
+}
+
+// เพิ่ม function ที่ขาดหายไปสำหรับ simulation
+function startEnhancedSimulation() {
+    if (isSimulating) return;
+    
+    isSimulating = true;
+    simulationProgress = 0;
+    shotCounter++;
+    
+    updateStatus('Cycle Running', simulationProgress);
+    updateEnhancedShotCounter();
+    document.getElementById('timeline-controls').style.display = 'flex';
+    document.getElementById('start-simulation').disabled = true;
+    document.getElementById('pause-simulation').disabled = false;
+    
+    // Enhanced simulation timeline
+    simulationTimeline = gsap.timeline({
+        onUpdate: updateSimulationProgress,
+        onComplete: onEnhancedSimulationComplete
+    });
+
+    // Phase 1: Mold closing
+    simulationTimeline.call(() => {
+        updateProgressText('Mold Closing');
+        animateMoldClosing();
+    });
+
+    simulationTimeline.to(moldAssembly.getObjectByName('moving-mold').position, {
+        x: 2.5,
+        duration: 2.5,
+        ease: "power2.inOut",
+        onUpdate: () => updateProgress(20)
+    });
+
+    // Phase 2: Injection
+    simulationTimeline.call(() => {
+        updateProgressText('Plastic Injection');
+        createRealisticPlasticFlow();
+        startPressureRamp();
+    });
+
+    const material = getMaterialProperties();
+    const injectionDuration = material.viscosity === 'low' ? 2.5 : 
+                            material.viscosity === 'high' ? 4.5 : 3.5;
+
+    simulationTimeline.to({}, {
+        duration: injectionDuration,
+        onUpdate: () => updateProgress(60)
+    });
+
+    // Phase 3: Cooling
+    simulationTimeline.call(() => {
+        updateProgressText('Cooling Phase');
+        simulateCooling();
+    });
+
+    const coolingDuration = simParams.coolingTime / 3;
+    simulationTimeline.to({}, {
+        duration: coolingDuration,
+        onUpdate: () => updateProgress(90)
+    });
+
+    // Phase 4: Mold opening and ejection
+    simulationTimeline.call(() => {
+        updateProgressText('Mold Opening');
+        animateMoldOpening();
+    });
+
+    simulationTimeline.to(moldAssembly.getObjectByName('moving-mold').position, {
+        x: 4.5,
+        duration: 2,
+        ease: "power2.inOut"
+    });
+
+    simulationTimeline.call(() => {
+        updateProgressText('Part Ejection');
+        animateEjection();
+        createFinishedProduct();
+        updateProgress(100);
+    });
+}
+
+// เพิ่ม function animation helpers ที่ขาดหายไป
+function animateMoldClosing() {
+    const clampCylinder = injectionMachine.getObjectByName('clamp-cylinder');
+    if (clampCylinder) {
+        gsap.to(clampCylinder.scale, {
+            x: 1.2,
+            duration: 2.5,
+            ease: "power2.inOut",
+            yoyo: true,
+            repeat: 1
+        });
+    }
+}
+
+function animateMoldOpening() {
+    const movingMold = moldAssembly.getObjectByName('moving-mold');
+    if (movingMold) {
+        gsap.to(movingMold.position, {
+            y: movingMold.position.y + 0.1,
+            duration: 0.2,
+            yoyo: true,
+            repeat: 3,
+            ease: "power2.inOut"
+        });
+    }
+}
+
+function animateEjection() {
+    for (let i = 0; i < 4; i++) {
+        const ejectorPin = moldAssembly.getObjectByName(`ejector-pin-${i}`);
+        if (ejectorPin) {
+            gsap.to(ejectorPin.position, {
+                y: ejectorPin.position.y + 0.8,
+                duration: 0.5,
+                ease: "power2.out",
+                yoyo: true,
+                repeat: 1
+            });
+        }
+    }
+}
+
+// เพิ่ม function helper ที่ขาดหายไป
+function setupEnhancedEventListeners() {
+    // Simulation controls
+    document.getElementById('start-simulation').addEventListener('click', startEnhancedSimulation);
+    document.getElementById('pause-simulation').addEventListener('click', pauseSimulation);
+    document.getElementById('reset-simulation').addEventListener('click', resetEnhancedSimulation);
+    document.getElementById('auto-mode').addEventListener('click', toggleEnhancedAutoMode);
+
+    // Enhanced parameter controls
+    setupEnhancedParameterControls();
+
+    // Material optimization
+    document.getElementById('optimize-params').addEventListener('click', optimizeEnhancedParameters);
+
+    // Machine type selection
+    document.querySelectorAll('.machine-type').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.machine-type').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentMachineType = this.dataset.machine;
+            createUltraRealisticInjectionMachine(currentMachineType);
+            showEnhancedAlert(`Switched to ${currentMachineType} machine`, 'success');
+        });
+    });
+
+    // Enhanced view controls
+    document.getElementById('view-machine').addEventListener('click', () => setEnhancedCameraView('machine'));
+    document.getElementById('view-mold').addEventListener('click', () => setEnhancedCameraView('mold'));
+    document.getElementById('view-cross-section').addEventListener('click', () => setEnhancedCameraView('cross-section'));
+    document.getElementById('view-isometric').addEventListener('click', () => setEnhancedCameraView('isometric'));
+
+    // Analysis tools
+    document.getElementById('show-temperature-map').addEventListener('change', function() {
+        simParams.showTemperatureMap = this.checked;
+        toggleEnhancedTemperatureMap(this.checked);
+    });
+
+    document.getElementById('show-flow-analysis').addEventListener('change', function() {
+        simParams.showFlowAnalysis = this.checked;
+        toggleEnhancedFlowAnalysis(this.checked);
+    });
+
+    document.getElementById('show-pressure-map').addEventListener('change', function() {
+        simParams.showPressureMap = this.checked;
+        toggleEnhancedPressureMap(this.checked);
+    });
+
+    document.getElementById('show-quality-check').addEventListener('change', function() {
+        simParams.showQualityCheck = this.checked;
+        toggleEnhancedQualityCheck(this.checked);
+    });
+
+    // Export controls
+    document.getElementById('save-screenshot').addEventListener('click', saveEnhancedScreenshot);
+    document.getElementById('export-data').addEventListener('click', exportEnhancedData);
+    document.getElementById('generate-report').addEventListener('click', generateEnhancedReport);
+
+    // Window resize
+    window.addEventListener('resize', onWindowResize);
+}
+
+function setupEnhancedParameterControls() {
+    // Injection pressure control
+    const pressureSlider = document.getElementById('injection-pressure');
+    const pressureValue = document.getElementById('pressure-value');
+    
+    pressureSlider.addEventListener('input', function() {
+        simParams.injectionPressure = parseInt(this.value);
+        pressureValue.textContent = `${this.value} MPa`;
+        updatePressureIndicator(parseInt(this.value));
+        validateParameter('injectionPressure', parseInt(this.value));
+    });
+
+    // Melt temperature control
+    const tempSlider = document.getElementById('melt-temperature');
+    const tempValue = document.getElementById('temp-value');
+    
+    tempSlider.addEventListener('input', function() {
+        simParams.meltTemperature = parseInt(this.value);
+        tempValue.textContent = `${this.value}°C`;
+        updateTemperatureIndicator(parseInt(this.value));
+        validateParameter('meltTemperature', parseInt(this.value));
+    });
+
+    // Injection speed control
+    const speedSlider = document.getElementById('injection-speed');
+    const speedValue = document.getElementById('speed-value');
+    
+    speedSlider.addEventListener('input', function() {
+        simParams.injectionSpeed = parseInt(this.value);
+        speedValue.textContent = `${this.value} mm/s`;
+    });
+
+    // Holding pressure control
+    const holdSlider = document.getElementById('holding-pressure');
+    const holdValue = document.getElementById('hold-value');
+    
+    holdSlider.addEventListener('input', function() {
+        simParams.holdingPressure = parseInt(this.value);
+        holdValue.textContent = `${this.value} MPa`;
+    });
+
+    // Cooling time control
+    const coolingSlider = document.getElementById('cooling-time');
+    const coolingValue = document.getElementById('cooling-value');
+    
+    coolingSlider.addEventListener('input', function() {
+        simParams.coolingTime = parseInt(this.value);
+        coolingValue.textContent = `${this.value} sec`;
+        validateParameter('coolingTime', parseInt(this.value));
+    });
+}
+
+// เพิ่ม function helper อื่นๆ ที่ยังขาดหายไป
+function getMaterialProperties() {
+    const materialType = document.getElementById('material-selector').value;
+    return materialDatabase[materialType] || materialDatabase['ABS'];
+}
+
+function validateParameter(param, value) {
+    const material = getMaterialProperties();
+    let warning = null;
+
+    switch (param) {
+        case 'meltTemperature':
+            if (Math.abs(value - material.temp) > 30) {
+                warning = `Temperature deviation: ${Math.abs(value - material.temp)}°C from optimal`;
+            }
+            break;
+        case 'injectionPressure':
+            if (Math.abs(value - material.pressure) > 40) {
+                warning = `Pressure deviation: ${Math.abs(value - material.pressure)} MPa from optimal`;
+            }
+            break;
+        case 'coolingTime':
+            if (value < material.moldTemp / 10) {
+                warning = `Cooling time may be insufficient for this material`;
+            }
+            break;
+    }
+
+    if (warning) {
+        showEnhancedAlert(warning, 'warning');
+    }
+}
+
+function optimizeEnhancedParameters() {
+    const material = document.getElementById('material-selector').value;
+    if (!material || !materialDatabase[material]) {
+        showEnhancedAlert('Please select a material first', 'warning');
+        return;
+    }
+
+    const params = materialDatabase[material];
+    
+    // Animate parameter changes
+    animateParameterChange('injection-pressure', params.pressure, 'pressure-value', 'MPa');
+    animateParameterChange('melt-temperature', params.temp, 'temp-value', '°C');
+    
+    const optimalSpeed = Math.round(params.flowRate * 1.2);
+    const optimalHolding = Math.round(params.pressure * 0.7);
+    const optimalCooling = Math.round(params.moldTemp / 3);
+    
+    animateParameterChange('injection-speed', optimalSpeed, 'speed-value', 'mm/s');
+    animateParameterChange('holding-pressure', optimalHolding, 'hold-value', 'MPa');
+    animateParameterChange('cooling-time', optimalCooling, 'cooling-value', 'sec');
+    
+    // Update simulation parameters
+    simParams.meltTemperature = params.temp;
+    simParams.injectionPressure = params.pressure;
+    simParams.injectionSpeed = optimalSpeed;
+    simParams.holdingPressure = optimalHolding;
+    simParams.coolingTime = optimalCooling;
+    simParams.moldTemperature = params.moldTemp;
+    
+    updateTemperatureIndicator(params.temp);
+    updatePressureIndicator(params.pressure);
+    
+    showEnhancedAlert(`Parameters optimized for ${material}`, 'success');
+}
+
+function animateParameterChange(sliderId, targetValue, displayId, unit) {
+    const slider = document.getElementById(sliderId);
+    const display = document.getElementById(displayId);
+    const startValue = parseInt(slider.value);
+    
+    gsap.to({ value: startValue }, {
+        value: targetValue,
+        duration: 1.5,
+        ease: "power2.inOut",
+        onUpdate: function() {
+            const currentValue = Math.round(this.targets()[0].value);
+            slider.value = currentValue;
+            display.textContent = `${currentValue} ${unit}`;
+        }
+    });
+}
+        function toggleEnhancedTemperatureMap(show) {
+            if (!hotRunnerSystem) return;
+            
+            if (show) {
+                showEnhancedAlert('Temperature mapping activated', 'success');
+                // Enhance heating band glow
+                for (let i = 0; i < 5; i++) {
+                    const heatingBand = injectionMachine.getObjectByName(`heating-band-${i}`);
+                    if (heatingBand) {
+                        const tempIntensity = 0.6 + (simParams.meltTemperature - 180) / 400;
+                        gsap.to(heatingBand.material, {
+                            emissiveIntensity: tempIntensity,
+                            duration: 2,
+                            ease: "power2.inOut"
+                        });
+                    }
+                }
+            }
+        }
+
+        function toggleEnhancedFlowAnalysis(show) {
+            if (show) {
+                createFlowVectors();
+                showEnhancedAlert('Flow analysis activated', 'success');
+            } else {
+                removeFlowVectors();
+            }
+        }
+
+        function createFlowVectors() {
+            const flowPaths = [
+                { start: new THREE.Vector3(-0.2, -2, 0), end: new THREE.Vector3(2.5, -2, 0), color: 0x00ff00 },
+                { start: new THREE.Vector3(2.5, -2, 0), end: new THREE.Vector3(2.5, -1.2, 0.8), color: 0xffff00 },
+                { start: new THREE.Vector3(2.5, -2, 0), end: new THREE.Vector3(2.5, -1.2, -0.8), color: 0xffff00 }
+            ];
+
+            flowPaths.forEach((path, index) => {
+                const geometry = new THREE.BufferGeometry().setFromPoints([path.start, path.end]);
+                const material = new THREE.LineBasicMaterial({ 
+                    color: path.color,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                
+                const flowLine = new THREE.Line(geometry, material);
+                flowLine.name = `flow-line-${index}`;
+                scene.add(flowLine);
+            });
+        }
+
+        function removeFlowVectors() {
+            const flowElements = scene.children.filter(child => 
+                child.name && child.name.includes('flow-line')
+            );
+            flowElements.forEach(element => scene.remove(element));
+        }
+
+        function toggleEnhancedPressureMap(show) {
+            if (!moldAssembly) return;
+            
+            const cavity = moldAssembly.getObjectByName('cavity');
+            if (cavity) {
+                if (show) {
+                    cavity.material.opacity = 0.8;
+                    cavity.material.color.setHex(0xff6666);
+                    showEnhancedAlert('Pressure mapping activated', 'success');
+                } else {
+                    cavity.material.opacity = 0.4;
+                    cavity.material.color.setHex(0x34495e);
+                }
+                cavity.material.needsUpdate = true;
+            }
+        }
+
+        function toggleEnhancedQualityCheck(show) {
+            if (show) {
+                startQualityMonitoring();
+                showEnhancedAlert('Quality monitoring activated', 'success');
+            } else {
+                stopQualityMonitoring();
+            }
+        }
+
+        let qualityInterval;
+        function startQualityMonitoring() {
+            qualityInterval = setInterval(() => {
+                const quality = simulateQualityCheck();
+                if (quality.defectRate > 2.0) {
+                    showEnhancedAlert(`High defect rate: ${quality.defectRate}%`, 'error');
+                }
+            }, 3000);
+        }
+
+        function stopQualityMonitoring() {
+            if (qualityInterval) {
+                clearInterval(qualityInterval);
+            }
+        }
+
+        // =============== Enhanced Camera Views ===============
+        function setEnhancedCameraView(viewType) {
+            const positions = {
+                'machine': { 
+                    pos: { x: -18, y: 10, z: 12 }, 
+                    target: { x: -8, y: -2, z: 0 }
+                },
+                'mold': { 
+                    pos: { x: 8, y: 6, z: 15 }, 
+                    target: { x: 2.5, y: -2, z: 0 }
+                },
+                'cross-section': { 
+                    pos: { x: 0, y: 0, z: 25 }, 
+                    target: { x: 0, y: -2, z: 0 }
+                },
+                'isometric': { 
+                    pos: { x: 20, y: 15, z: 20 }, 
+                    target: { x: 0, y: 0, z: 0 }
+                }
+            };
+
+            const view = positions[viewType];
+            if (!view) return;
+
+            gsap.to(camera.position, {
+                x: view.pos.x,
+                y: view.pos.y,
+                z: view.pos.z,
+                duration: 2.5,
+                ease: "power2.inOut"
+            });
+
+            gsap.to(camera, {
+                duration: 2.5,
+                ease: "power2.inOut",
+                onUpdate: () => {
+                    camera.lookAt(view.target.x, view.target.y, view.target.z);
+                }
+            });
+
+            showEnhancedAlert(`Camera switched to ${viewType} view`, 'success');
+        }
+
+        // =============== Enhanced Export Functions ===============
+        function saveEnhancedScreenshot() {
+            const canvas = renderer.domElement;
+            const link = document.createElement('a');
+            const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+            
+            link.download = `injection_molding_${timestamp}.png`;
+            link.href = canvas.toDataURL('image/png', 1.0);
+            link.click();
+            
+            showEnhancedAlert('Screenshot saved successfully!', 'success');
+        }
+
+        function exportEnhancedData() {
+            const material = getMaterialProperties();
+            const quality = simulateQualityCheck();
+            const energy = calculateEnergyConsumption();
+            
+            const data = {
+                timestamp: new Date().toISOString(),
+                machineType: currentMachineType,
+                shotCounter: shotCounter,
+                material: {
+                    type: document.getElementById('material-selector').value,
+                    properties: material
+                },
+                processParameters: simParams,
+                qualityMetrics: quality,
+                energyConsumption: energy,
+                pressureData: pressureData.slice(-100)
+            };
+            
+            const jsonString = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+            link.download = `injection_data_${timestamp}.json`;
+            link.href = url;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+            showEnhancedAlert('Process data exported successfully!', 'success');
+        }
+
+        function generateEnhancedReport() {
+            const quality = simulateQualityCheck();
+            const energy = calculateEnergyConsumption();
+            const material = getMaterialProperties();
+            const materialType = document.getElementById('material-selector').value || 'Unknown';
+            const efficiency = calculateCycleEfficiency();
+            
+            const reportData = `
+INJECTION MOLDING PROCESS REPORT
+===============================
+Generated: ${new Date().toLocaleString()}
+
+MACHINE CONFIGURATION
+--------------------
+Machine Type: ${currentMachineType.toUpperCase()}
+Material: ${materialType}
+Shot Counter: ${shotCounter}
+
+PROCESS PARAMETERS
+-----------------
+Injection Pressure: ${simParams.injectionPressure} MPa
+Melt Temperature: ${simParams.meltTemperature}°C
+Injection Speed: ${simParams.injectionSpeed} mm/s
+Holding Pressure: ${simParams.holdingPressure} MPa
+Cooling Time: ${simParams.coolingTime} seconds
+
+QUALITY METRICS
+--------------
+Part Quality: ${quality.quality}
+Defect Rate: ${quality.defectRate}%
+Surface Finish: ${quality.surfaceFinish}
+Cycle Efficiency: ${efficiency}%
+
+ENERGY CONSUMPTION
+-----------------
+Power Draw: ${energy.powerDraw} kW
+Energy per Cycle: ${energy.energyPerCycle} kWh
+Daily Usage: ${energy.dailyEnergy} kWh
+
+RECOMMENDATIONS
+--------------
+${generateRecommendations(quality, energy, material)}
+
+Report Generated by Enhanced Injection Molding Simulator
+======================================================
+            `.trim();
+            
+            const blob = new Blob([reportData], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+            link.download = `injection_report_${timestamp}.txt`;
+            link.href = url;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+            showEnhancedAlert('Process report generated successfully!', 'success');
+        }
+
+        function generateRecommendations(quality, energy, material) {
+            const recommendations = [];
+            
+            if (quality.defectRate > 1.0) {
+                recommendations.push("• Optimize process parameters for better quality");
+            }
+            
+            if (energy.powerDraw > 25) {
+                recommendations.push("• Consider reducing injection pressure for energy efficiency");
+            }
+            
+            const tempDev = Math.abs(simParams.meltTemperature - material.temp);
+            if (tempDev > 20) {
+                recommendations.push(`• Adjust temperature closer to optimal ${material.temp}°C`);
+            }
+            
+            if (recommendations.length === 0) {
+                recommendations.push("• Process parameters are well optimized");
+            }
+            
+            return recommendations.join('\n');
+        }
+
+        // =============== Simulation Control ===============
+        function resetEnhancedSimulation() {
+            if (simulationTimeline) {
+                simulationTimeline.kill();
+            }
+            
+            isSimulating = false;
+            simulationProgress = 0;
+            updateStatus('Ready', 0);
+            updateProgress(0);
+            updateProgressText('System Ready');
+            
+            document.getElementById('start-simulation').disabled = false;
+            document.getElementById('pause-simulation').disabled = true;
+            
+            // Reset mold position
+            const movingMold = moldAssembly.getObjectByName('moving-mold');
+            if (movingMold) {
+                gsap.set(movingMold.position, {x: 4.5});
+            }
+            
+            // Clear particles
+            [...plasticMelt, ...steamParticles].forEach(particle => scene.remove(particle));
+            plasticMelt = [];
+            steamParticles = [];
+            
+            // Remove finished products
+            const products = scene.children.filter(child => child.name === 'finished-product');
+            products.forEach(product => scene.remove(product));
+            
+            document.getElementById('timeline-controls').style.display = 'none';
+            
+            pressureData = [];
+            updatePressureChart(0);
+            document.getElementById('current-pressure').textContent = '0 MPa';
+            document.getElementById('screw-position').textContent = '0 mm';
+            
+            showEnhancedAlert('Simulation reset successfully', 'success');
+        }
+
+        function toggleEnhancedAutoMode() {
+            simParams.autoMode = !simParams.autoMode;
+            const btn = document.getElementById('auto-mode');
+            
+            if (simParams.autoMode) {
+                btn.innerHTML = '<i class="fas fa-stop"></i> Stop Auto';
+                btn.className = 'btn btn-danger';
+                startAutoMode();
+                showEnhancedAlert('Auto mode activated', 'success');
+            } else {
+                btn.innerHTML = '<i class="fas fa-robot"></i> Auto Mode';
+                btn.className = 'btn btn-primary';
+                stopAutoMode();
+                showEnhancedAlert('Auto mode deactivated', 'warning');
+            }
+        }
+
+        let autoModeInterval;
+        function startAutoMode() {
+            autoModeInterval = setInterval(() => {
+                if (!isSimulating && simParams.autoMode) {
+                    startEnhancedSimulation();
+                }
+            }, (simParams.coolingTime + 12) * 1000);
+        }
+
+        function stopAutoMode() {
+            if (autoModeInterval) {
+                clearInterval(autoModeInterval);
+            }
+        }
+
+        function onEnhancedSimulationComplete() {
+            isSimulating = false;
+            updateStatus('Cycle Complete', 100);
+            showEnhancedAlert('Injection molding cycle completed!', 'success');
+            
+            document.getElementById('start-simulation').disabled = false;
+            document.getElementById('pause-simulation').disabled = true;
+            
+            if (simParams.autoMode) {
+                setTimeout(() => {
+                    resetEnhancedSimulation();
+                    setTimeout(() => {
+                        if (simParams.autoMode) {
+                            startEnhancedSimulation();
+                        }
+                    }, 1500);
+                }, 3000);
+            } else {
+                setTimeout(() => {
+                    if (!isSimulating) {
+                        resetEnhancedSimulation();
+                    }
+                }, 4000);
+            }
+        }
+
+        // =============== Pressure Chart ===============
+        function initializeEnhancedPressureChart() {
+            const canvas = document.getElementById('pressure-chart');
+            const ctx = canvas.getContext('2d');
+            pressureChart = { canvas, ctx };
+            pressureData = [];
+        }
+
+        function updatePressureChart(pressure) {
+            if (!pressureChart) return;
+            
+            const { canvas, ctx } = pressureChart;
+            pressureData.push(pressure);
+            
+            if (pressureData.length > 120) {
+                pressureData.shift();
+            }
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw grid
+            ctx.strokeStyle = 'rgba(74, 144, 226, 0.2)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < canvas.height; i += 20) {
+                ctx.beginPath();
+                ctx.moveTo(0, i);
+                ctx.lineTo(canvas.width, i);
+                ctx.stroke();
+            }
+            
+            // Draw pressure curve
+            ctx.strokeStyle = '#4a90e2';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            
+            pressureData.forEach((value, index) => {
+                const x = (index / pressureData.length) * canvas.width;
+                const y = canvas.height - (value / 250) * canvas.height;
+                
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            
+            ctx.stroke();
+            
+            // Current pressure indicator
+            if (pressureData.length > 0) {
+                const currentPressure = pressureData[pressureData.length - 1];
+                const y = canvas.height - (currentPressure / 250) * canvas.height;
+                
+                ctx.fillStyle = '#e74c3c';
+                ctx.beginPath();
+                ctx.arc(canvas.width - 5, y, 4, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // =============== Animation Loop ===============
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            const delta = clock.getDelta();
+            const time = clock.getElapsedTime();
+            
+            // Enhanced screw rotation during simulation
+            if (isSimulating && injectionMachine) {
+                const screw = injectionMachine.getObjectByName('screw');
+                if (screw) {
+                    screw.rotation.x += delta * (simParams.injectionSpeed / 10);
+                }
+            }
+            
+            // Hot runner glow effects
+            if (hotRunnerSystem) {
+                hotRunnerSystem.children.forEach(child => {
+                    if (child.name && child.name.includes('hot-tip')) {
+                        const baseIntensity = (simParams.meltTemperature - 180) / 400;
+                        child.material.emissiveIntensity = baseIntensity + Math.sin(time * 4) * 0.1;
+                    }
+                });
+            }
+            
+            // Conveyor animation
+            if (conveyorBelt) {
+                const rollers = conveyorBelt.children.filter(child => 
+                    child.name && child.name.includes('conveyor-roller')
+                );
+                rollers.forEach(roller => {
+                    roller.rotation.x += delta * 2;
+                });
+            }
+            
+            renderer.render(scene, camera);
+            updatePerformanceMetrics();
+        }
+
+        function updatePerformanceMetrics() {
+            frameCount++;
+            const currentTime = performance.now();
+            
+            if (currentTime >= lastTime + 1000) {
+                const fps = Math.round(frameCount * 1000 / (currentTime - lastTime));
+                document.getElementById('fps-counter').textContent = fps;
+                
+                const info = renderer.info;
+                document.getElementById('triangle-count').textContent = info.render.triangles.toLocaleString();
+                
+                const memoryMB = (info.memory.geometries * 0.1) + (info.memory.textures * 0.5);
+                document.getElementById('memory-usage').textContent = `${Math.round(memoryMB)} MB`;
+                
+                frameCount = 0;
+                lastTime = currentTime;
+            }
+        }
+
+        function pauseSimulation() {
+            if (simulationTimeline) {
+                if (simulationTimeline.isActive()) {
+                    simulationTimeline.pause();
+                    updateProgressText('Paused');
+                    showEnhancedAlert('Simulation paused', 'warning');
+                } else {
+                    simulationTimeline.resume();
+                    updateProgressText('Cycle Running');
+                    showEnhancedAlert('Simulation resumed', 'success');
+                }
+            }
+        }
+
+        // =============== Helper Functions ===============
+        function updateStatus(status, progress) {
+            document.getElementById('fill-percentage').textContent = `${Math.round(progress)}%`;
+        }
+
+        function updateProgress(percentage) {
+            simulationProgress = percentage;
+            document.getElementById('progress-fill').style.width = `${percentage}%`;
+        }
+
+        function updateProgressText(text) {
+            document.getElementById('progress-text').textContent = text;
+        }
+
+        function updateSimulationProgress() {
+            if (simulationTimeline) {
+                const elapsed = simulationTimeline.time();
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = Math.floor(elapsed % 60);
+                document.getElementById('timeline-time').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }
+        }
+
+        function updateTemperatureIndicator(temperature) {
+            document.getElementById('temp-indicator').textContent = `${temperature}°C`;
+        }
+
+        function updatePressureIndicator(pressure) {
+            document.getElementById('pressure-indicator').textContent = `${pressure} MPa`;
+        }
+
+        function onWindowResize() {
+            const container = document.getElementById('three-container');
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+
+        function hideLoadingScreen() {
+            setTimeout(() => {
+                const loadingScreen = document.getElementById('loading-screen');
+                gsap.to(loadingScreen, {
+                    opacity: 0,
+                    duration: 1.5,
+                    onComplete: () => {
+                        loadingScreen.style.display = 'none';
+                    }
+                });
+            }, 3000);
+        }
+
+        // =============== Enhanced Alert System ===============
+        function initializeAlertSystem() {
+            alertSystem = document.getElementById('alert-system');
+        }
+
+        function showEnhancedAlert(message, type = 'success') {
+            const alert = document.createElement('div');
+            alert.className = `alert ${type}`;
+            
+            const icon = type === 'success' ? 'check-circle' : 
+                        type === 'warning' ? 'exclamation-triangle' : 'times-circle';
+            
+            alert.innerHTML = `
+                <i class="fas fa-${icon}" style="margin-right: 8px; color: #2c3e50;"></i>
+                <span style="color: #2c3e50;">${message}</span>
+            `;
+            
+            alertSystem.appendChild(alert);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (alertSystem.contains(alert)) {
+                    alert.style.animation = 'slideOutRight 0.5s ease forwards';
+                    setTimeout(() => {
+                        if (alertSystem.contains(alert)) {
+                            alertSystem.removeChild(alert);
+                        }
+                    }, 500);
+                }
+            }, 5000);
+        }
+
+    </script>
+</body>
+</html>

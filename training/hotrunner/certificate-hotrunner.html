@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ใบประกาศนียบัตร Hot Runner - Hot Runner Training Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            padding-top: 70px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            margin-bottom: 20px;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #00d9ff;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-family: 'Prompt', sans-serif;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Certificate Preview */
+        .certificate-container {
+            background: linear-gradient(145deg, rgba(30, 42, 61, 0.9), rgba(22, 32, 46, 0.9));
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .certificate-preview {
+            background: linear-gradient(145deg, #f8f4e8, #fff9e8);
+            border-radius: 10px;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Certificate Design */
+        .certificate {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 50px;
+            background: linear-gradient(145deg, #fffdf5, #fff8e1);
+            position: relative;
+            aspect-ratio: 1.414/1;
+            box-sizing: border-box;
+        }
+
+        .certificate-border {
+            position: absolute;
+            inset: 15px;
+            border: 3px solid #d4af37;
+            border-radius: 5px;
+        }
+
+        .certificate-border-inner {
+            position: absolute;
+            inset: 25px;
+            border: 1px solid #d4af37;
+            border-radius: 3px;
+        }
+
+        .certificate-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: #2c3e50;
+        }
+
+        .certificate-logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #ff6b35, #ff9800);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5em;
+            box-shadow: 0 5px 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .certificate-header {
+            font-family: 'Great Vibes', cursive;
+            font-size: 3em;
+            color: #d4af37;
+            margin-bottom: 10px;
+        }
+
+        .certificate-subheader {
+            font-family: 'Prompt', sans-serif;
+            font-size: 1.2em;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .certificate-body {
+            margin-bottom: 25px;
+        }
+
+        .certificate-body p {
+            font-size: 1.1em;
+            color: #5d6d7e;
+            margin-bottom: 15px;
+        }
+
+        .recipient-name {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.8em;
+            color: #2c3e50;
+            margin: 15px 0;
+            padding: 10px 0;
+            border-bottom: 2px solid #d4af37;
+            display: inline-block;
+        }
+
+        .course-name {
+            font-family: 'Prompt', sans-serif;
+            font-size: 1.6em;
+            color: #e74c3c;
+            margin: 15px 0;
+            font-weight: 600;
+        }
+
+        .certificate-score {
+            display: inline-block;
+            background: linear-gradient(135deg, #00c853, #00e676);
+            color: white;
+            padding: 10px 30px;
+            border-radius: 30px;
+            font-size: 1.2em;
+            font-weight: 600;
+            margin: 15px 0;
+            box-shadow: 0 5px 15px rgba(0, 200, 83, 0.3);
+        }
+
+        .certificate-date {
+            font-size: 1em;
+            color: #7f8c8d;
+            margin-top: 20px;
+        }
+
+        .certificate-footer {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+            padding-top: 20px;
+        }
+
+        .signature-block {
+            text-align: center;
+            width: 200px;
+        }
+
+        .signature-line {
+            border-top: 2px solid #2c3e50;
+            margin-bottom: 10px;
+            padding-top: 10px;
+        }
+
+        .signature-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .signature-title {
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+
+        .certificate-seal {
+            position: absolute;
+            right: 50px;
+            bottom: 80px;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #d4af37, #f4d03f);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .certificate-id {
+            position: absolute;
+            bottom: 30px;
+            left: 40px;
+            font-size: 0.8em;
+            color: #95a5a6;
+        }
+
+        /* Actions */
+        .certificate-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        /* Status Section */
+        .status-section {
+            margin-bottom: 40px;
+        }
+
+        .status-card {
+            background: linear-gradient(145deg, rgba(30, 42, 61, 0.9), rgba(22, 32, 46, 0.9));
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .status-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .status-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+        }
+
+        .status-icon.complete {
+            background: linear-gradient(135deg, #00c853, #00e676);
+        }
+
+        .status-icon.incomplete {
+            background: linear-gradient(135deg, #ff9800, #ffb74d);
+        }
+
+        .status-title h2 {
+            font-family: 'Prompt', sans-serif;
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        .status-desc {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Requirements */
+        .requirements-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .requirement-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .requirement-check {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9em;
+        }
+
+        .requirement-check.done {
+            background: rgba(0, 200, 83, 0.2);
+            color: #00c853;
+        }
+
+        .requirement-check.pending {
+            background: rgba(255, 152, 0, 0.2);
+            color: #ff9800;
+        }
+
+        .requirement-info {
+            flex: 1;
+        }
+
+        .requirement-name {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .requirement-status {
+            font-size: 0.85em;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .requirement-progress {
+            width: 100px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .requirement-progress .fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d9ff, #0066ff);
+            border-radius: 3px;
+        }
+
+        .requirement-progress .fill.complete {
+            background: linear-gradient(90deg, #00c853, #00e676);
+        }
+
+        /* Locked State */
+        .locked-message {
+            text-align: center;
+            padding: 60px 40px;
+        }
+
+        .locked-icon {
+            font-size: 4em;
+            color: rgba(255, 255, 255, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .locked-message h3 {
+            font-family: 'Prompt', sans-serif;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .locked-message p {
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 20px;
+        }
+
+        /* Form */
+        .certificate-form {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            font-size: 1em;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #00d9ff;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .certificate {
+                padding: 30px;
+            }
+
+            .certificate-header {
+                font-size: 2em;
+            }
+
+            .recipient-name {
+                font-size: 2em;
+            }
+
+            .course-name {
+                font-size: 1.2em;
+            }
+
+            .certificate-footer {
+                flex-direction: column;
+                align-items: center;
+                gap: 30px;
+            }
+
+            .certificate-seal {
+                right: 20px;
+                bottom: 60px;
+                width: 70px;
+                height: 70px;
+                font-size: 1.2em;
+            }
+
+            .status-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <div id="navbar"></div>
+
+    <div class="container">
+        <a href="index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i> กลับไปหน้า Hot Runner
+        </a>
+
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-certificate" style="color: #ffd700;"></i>
+                ใบประกาศนียบัตร Hot Runner
+            </h1>
+            <p class="page-subtitle">รับประกาศนียบัตรเมื่อผ่านการอบรมครบทุกหลักสูตร</p>
+        </div>
+
+        <!-- Status Section -->
+        <div class="status-section">
+            <div class="status-card">
+                <div class="status-header">
+                    <div class="status-icon" id="statusIcon">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                    <div class="status-title">
+                        <h2 id="statusTitle">กำลังตรวจสอบ...</h2>
+                        <p class="status-desc" id="statusDesc">กรุณารอสักครู่</p>
+                    </div>
+                </div>
+
+                <div class="requirements-list" id="requirementsList">
+                    <!-- Requirements will be loaded here -->
+                </div>
+
+                <!-- Certificate Form (shown when ready) -->
+                <div class="certificate-form" id="certificateForm" style="display: none;">
+                    <h3 style="margin-bottom: 20px;"><i class="fas fa-user"></i> กรอกข้อมูลสำหรับประกาศนียบัตร</h3>
+                    <div class="form-group">
+                        <label for="userName">ชื่อ-นามสกุล (ภาษาไทย)</label>
+                        <input type="text" id="userName" placeholder="กรอกชื่อ-นามสกุล">
+                    </div>
+                    <div class="form-group">
+                        <label for="userNameEn">ชื่อ-นามสกุล (English)</label>
+                        <input type="text" id="userNameEn" placeholder="Enter your name">
+                    </div>
+                    <button class="btn btn-primary btn-lg" onclick="generateCertificate()">
+                        <i class="fas fa-magic"></i> สร้างประกาศนียบัตร
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Certificate Preview (shown after generation) -->
+        <div class="certificate-container" id="certificateContainer" style="display: none;">
+            <h3 style="text-align: center; margin-bottom: 20px;">
+                <i class="fas fa-eye"></i> ตัวอย่างประกาศนียบัตร
+            </h3>
+            
+            <div class="certificate-preview">
+                <div class="certificate" id="certificate">
+                    <div class="certificate-border"></div>
+                    <div class="certificate-border-inner"></div>
+                    
+                    <div class="certificate-content">
+                        <div class="certificate-logo">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        
+                        <h1 class="certificate-header">Certificate of Completion</h1>
+                        <p class="certificate-subheader">ประกาศนียบัตร</p>
+                        
+                        <div class="certificate-body">
+                            <p>This is to certify that / ขอมอบประกาศนียบัตรฉบับนี้แก่</p>
+                            <div class="recipient-name" id="certName">John Doe</div>
+                            <p>has successfully completed the course / สำเร็จหลักสูตร</p>
+                            <div class="course-name">Hot Runner System Training</div>
+                            <p>การอบรมระบบ Hot Runner</p>
+                            <div class="certificate-score" id="certScore">คะแนน: 85%</div>
+                            <p class="certificate-date" id="certDate">วันที่ออก: 1 มกราคม 2568</p>
+                        </div>
+                        
+                        <div class="certificate-footer">
+                            <div class="signature-block">
+                                <div class="signature-line">
+                                    ผู้อำนวยการฝึกอบรม
+                                </div>
+                                <div class="signature-name">Training Director</div>
+                                <div class="signature-title">Hot Runner Center</div>
+                            </div>
+                            <div class="signature-block">
+                                <div class="signature-line">
+                                    ผู้จัดการโครงการ
+                                </div>
+                                <div class="signature-name">Project Manager</div>
+                                <div class="signature-title">Technical Training</div>
+                            </div>
+                        </div>
+                        
+                        <div class="certificate-seal">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        
+                        <div class="certificate-id" id="certId">Cert ID: HR-2025-0001</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="certificate-actions">
+                <button class="btn btn-primary btn-lg" onclick="downloadPDF()">
+                    <i class="fas fa-download"></i> ดาวน์โหลด PDF
+                </button>
+                <button class="btn btn-outline" onclick="downloadImage()">
+                    <i class="fas fa-image"></i> ดาวน์โหลดรูปภาพ
+                </button>
+                <button class="btn btn-outline" onclick="printCertificate()">
+                    <i class="fas fa-print"></i> พิมพ์
+                </button>
+                <button class="btn btn-success" onclick="shareCertificate()">
+                    <i class="fas fa-share-alt"></i> แชร์
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/components.js"></script>
+    <script>
+        // Course Requirements
+        const requirements = [
+            { id: 'hr_intro', name: 'รู้จัก Hot Runner System', minScore: 100 },
+            { id: 'hr_components', name: 'ส่วนประกอบระบบ Hot Runner', minScore: 100 },
+            { id: 'hr_thermocouple', name: 'Thermocouple Type K และ J', minScore: 100 },
+            { id: 'hr_basic_quiz', name: 'แบบทดสอบพื้นฐาน', minScore: 70 },
+            { id: 'hr_controller', name: 'Temperature Controller', minScore: 100 },
+            { id: 'hr_toshiba', name: 'Toshiba V30 Controller', minScore: 100 },
+            { id: 'hr_troubleshooting', name: 'การแก้ปัญหา Hot Runner', minScore: 100 },
+            { id: 'hr_skill_test', name: 'ทดสอบทักษะ', minScore: 70 },
+            { id: 'hr_3d_simulation', name: 'Hot Runner 3D Simulation', minScore: 100 },
+            { id: 'hr_roi', name: 'ROI Calculator', minScore: 100 },
+            { id: 'hr_advanced', name: 'Advanced Hot Runner', minScore: 100 }
+        ];
+
+        // User Progress
+        let userProgress = {};
+        let isEligible = false;
+        let averageScore = 0;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProgress();
+            checkEligibility();
+        });
+
+        // Load Progress
+        function loadProgress() {
+            const saved = localStorage.getItem('hotrunner_progress');
+            if (saved) {
+                userProgress = JSON.parse(saved);
+            }
+        }
+
+        // Check Eligibility
+        function checkEligibility() {
+            let totalScore = 0;
+            let completedCount = 0;
+
+            const reqListHTML = requirements.map(req => {
+                const progress = userProgress[req.id] || 0;
+                const isDone = progress >= req.minScore;
+                
+                if (isDone) {
+                    completedCount++;
+                    totalScore += progress;
+                }
+
+                return `
+                    <div class="requirement-item">
+                        <div class="requirement-check ${isDone ? 'done' : 'pending'}">
+                            <i class="fas ${isDone ? 'fa-check' : 'fa-hourglass-half'}"></i>
+                        </div>
+                        <div class="requirement-info">
+                            <div class="requirement-name">${req.name}</div>
+                            <div class="requirement-status">
+                                ${isDone ? 'เสร็จสิ้น' : `ต้องผ่าน ${req.minScore}%`}
+                            </div>
+                        </div>
+                        <div class="requirement-progress">
+                            <div class="fill ${progress >= req.minScore ? 'complete' : ''}" 
+                                 style="width: ${Math.min(progress, 100)}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('requirementsList').innerHTML = reqListHTML;
+
+            // Calculate eligibility
+            isEligible = completedCount === requirements.length;
+            averageScore = completedCount > 0 ? Math.round(totalScore / completedCount) : 0;
+
+            // Update status
+            const statusIcon = document.getElementById('statusIcon');
+            const statusTitle = document.getElementById('statusTitle');
+            const statusDesc = document.getElementById('statusDesc');
+            const certForm = document.getElementById('certificateForm');
+
+            if (isEligible) {
+                statusIcon.className = 'status-icon complete';
+                statusIcon.innerHTML = '<i class="fas fa-check"></i>';
+                statusTitle.textContent = 'ยินดีด้วย! คุณผ่านทุกหลักสูตรแล้ว';
+                statusDesc.textContent = `คะแนนเฉลี่ย: ${averageScore}%`;
+                certForm.style.display = 'block';
+
+                // Load saved name
+                const savedName = localStorage.getItem('user_name') || '';
+                const savedNameEn = localStorage.getItem('user_name_en') || '';
+                document.getElementById('userName').value = savedName;
+                document.getElementById('userNameEn').value = savedNameEn;
+            } else {
+                statusIcon.className = 'status-icon incomplete';
+                statusIcon.innerHTML = '<i class="fas fa-clock"></i>';
+                statusTitle.textContent = 'กรุณาเรียนให้ครบทุกหลักสูตร';
+                statusDesc.textContent = `ความคืบหน้า: ${completedCount}/${requirements.length} หลักสูตร`;
+            }
+        }
+
+        // Generate Certificate
+        function generateCertificate() {
+            const name = document.getElementById('userName').value.trim();
+            const nameEn = document.getElementById('userNameEn').value.trim();
+
+            if (!name && !nameEn) {
+                Notify.warning('กรุณากรอกชื่อ-นามสกุล');
+                return;
+            }
+
+            // Save names
+            localStorage.setItem('user_name', name);
+            localStorage.setItem('user_name_en', nameEn);
+
+            // Update certificate
+            const displayName = nameEn || name;
+            document.getElementById('certName').textContent = displayName;
+            document.getElementById('certScore').textContent = `คะแนน: ${averageScore}%`;
+
+            // Date
+            const now = new Date();
+            const thaiMonths = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+                               'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+            const thaiYear = now.getFullYear() + 543;
+            const dateStr = `วันที่ออก: ${now.getDate()} ${thaiMonths[now.getMonth()]} ${thaiYear}`;
+            document.getElementById('certDate').textContent = dateStr;
+
+            // Certificate ID
+            const certId = `HR-${now.getFullYear()}-${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`;
+            document.getElementById('certId').textContent = `Cert ID: ${certId}`;
+
+            // Show certificate
+            document.getElementById('certificateContainer').style.display = 'block';
+            document.getElementById('certificateContainer').scrollIntoView({ behavior: 'smooth' });
+
+            // Save to history
+            saveCertificate(certId, displayName, averageScore, now);
+
+            Notify.success('สร้างประกาศนียบัตรสำเร็จ!');
+        }
+
+        // Save Certificate
+        function saveCertificate(id, name, score, date) {
+            const certs = JSON.parse(localStorage.getItem('certificates') || '[]');
+            certs.push({
+                id: id,
+                course: 'Hot Runner System Training',
+                name: name,
+                score: score,
+                date: date.toISOString()
+            });
+            localStorage.setItem('certificates', JSON.stringify(certs));
+        }
+
+        // Download PDF
+        async function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const cert = document.getElementById('certificate');
+
+            Notify.info('กำลังสร้าง PDF...');
+
+            try {
+                const canvas = await html2canvas(cert, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#fffdf5'
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF({
+                    orientation: 'landscape',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const imgWidth = pageWidth - 20;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                const x = 10;
+                const y = (pageHeight - imgHeight) / 2;
+
+                pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight);
+                
+                const certId = document.getElementById('certId').textContent.replace('Cert ID: ', '');
+                pdf.save(`Certificate_HotRunner_${certId}.pdf`);
+
+                Notify.success('ดาวน์โหลด PDF สำเร็จ!');
+            } catch (error) {
+                console.error('Error:', error);
+                Notify.error('เกิดข้อผิดพลาดในการสร้าง PDF');
+            }
+        }
+
+        // Download Image
+        async function downloadImage() {
+            const cert = document.getElementById('certificate');
+
+            Notify.info('กำลังสร้างรูปภาพ...');
+
+            try {
+                const canvas = await html2canvas(cert, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#fffdf5'
+                });
+
+                const link = document.createElement('a');
+                link.download = `Certificate_HotRunner_${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+
+                Notify.success('ดาวน์โหลดรูปภาพสำเร็จ!');
+            } catch (error) {
+                console.error('Error:', error);
+                Notify.error('เกิดข้อผิดพลาดในการสร้างรูปภาพ');
+            }
+        }
+
+        // Print Certificate
+        function printCertificate() {
+            const printContent = document.getElementById('certificate').outerHTML;
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Print Certificate</title>
+                    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Prompt:wght@400;600&display=swap" rel="stylesheet">
+                    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+                    <style>
+                        body { margin: 0; padding: 20px; font-family: 'Prompt', sans-serif; }
+                        ${document.querySelector('style').textContent}
+                    </style>
+                </head>
+                <body onload="window.print(); window.close();">
+                    ${printContent}
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+
+        // Share Certificate
+        function shareCertificate() {
+            const certName = document.getElementById('certName').textContent;
+            const shareText = `🎉 ฉันได้รับประกาศนียบัตร Hot Runner System Training!\n\nชื่อ: ${certName}\nคะแนน: ${averageScore}%\n\n#HotRunner #Training #Certificate`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'ประกาศนียบัตร Hot Runner',
+                    text: shareText,
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(shareText);
+                Notify.success('คัดลอกข้อความแชร์แล้ว!');
+            }
+        }
+
+        // Demo: Simulate completion
+        function simulateCompletion() {
+            requirements.forEach(req => {
+                userProgress[req.id] = 100;
+            });
+            localStorage.setItem('hotrunner_progress', JSON.stringify(userProgress));
+            checkEligibility();
+        }
+    </script>
+</body>
+</html>

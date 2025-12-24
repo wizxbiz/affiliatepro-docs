@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Injection Molding Training Portal - Hot Runner System</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --primary: #00d9ff;
+            --primary-dark: #0099cc;
+            --secondary: #ff9800;
+            --accent: #ff4081;
+            --success: #00c853;
+            --danger: #ff5252;
+            --warning: #ffab00;
+            --info: #2196f3;
+            --bg-dark: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-sidebar: #0d0d12;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-muted: #666;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Background Animation */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at center, rgba(0, 217, 255, 0.03) 0%, transparent 50%);
+            animation: bgPulse 20s ease-in-out infinite;
+        }
+
+        @keyframes bgPulse {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(5%, 5%) scale(1.1); }
+        }
+
+        /* Top Navigation Bar */
+        .top-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 15, 0.98);
+            backdrop-filter: blur(20px);
+            padding: 0 20px;
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1001;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .nav-brand-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+        }
+
+        .nav-brand-text {
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        .nav-center {
+            display: flex;
+            gap: 5px;
+            list-style: none;
+        }
+
+        .nav-center a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-center a:hover, .nav-center a.active {
+            color: var(--text-primary);
+            background: rgba(0, 217, 255, 0.15);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-mini {
+            text-align: right;
+        }
+
+        .progress-mini-label {
+            font-size: 0.75em;
+            color: var(--text-muted);
+        }
+
+        .progress-mini-bar {
+            width: 80px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-mini-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.3em;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 280px;
+            height: calc(100vh - 60px);
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .sidebar-section {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-section-title {
+            font-size: 0.7em;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            padding: 0 10px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .sidebar-menu li a:hover {
+            background: rgba(0, 217, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .sidebar-menu li a.active {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.2), rgba(0, 217, 255, 0.05));
+            color: var(--primary);
+        }
+
+        .sidebar-menu li a i {
+            width: 20px;
+            text-align: center;
+            font-size: 1em;
+        }
+
+        .menu-badge {
+            margin-left: auto;
+            padding: 2px 8px;
+            font-size: 0.7em;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .badge-basic { background: rgba(0, 217, 255, 0.2); color: var(--primary); }
+        .badge-advanced { background: rgba(255, 152, 0, 0.2); color: var(--secondary); }
+        .badge-expert { background: rgba(255, 64, 129, 0.2); color: var(--accent); }
+        .badge-new { background: rgba(0, 200, 83, 0.2); color: var(--success); }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            margin-top: 60px;
+            min-height: calc(100vh - 60px);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            min-height: calc(100vh - 60px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 80px 40px;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: linear-gradient(to top, var(--bg-dark), transparent);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+        }
+
+        .hero-logo {
+            width: 130px;
+            height: 130px;
+            margin: 0 auto 30px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5em;
+            box-shadow: 0 30px 60px rgba(0, 217, 255, 0.3);
+            animation: logoFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(3deg); }
+        }
+
+        .hero h1 {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2em;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat-value {
+            font-size: 2.8em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-stat-label {
+            color: var(--text-muted);
+            font-size: 0.95em;
+        }
+
+        .hero-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 30px;
+            font-size: 1em;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--bg-dark);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(0, 217, 255, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            background: rgba(0, 217, 255, 0.1);
+        }
+
+        /* Sections */
+        .section {
+            position: relative;
+            z-index: 2;
+            padding: 80px 40px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-header h2 {
+            font-size: 2.2em;
+            margin-bottom: 15px;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 1.05em;
+        }
+
+        /* Course Grid */
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .course-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .course-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .course-card.basic:hover { border-color: var(--primary); }
+        .course-card.advanced:hover { border-color: var(--secondary); }
+        .course-card.expert:hover { border-color: var(--accent); }
+
+        .course-header {
+            padding: 35px 25px 25px;
+            position: relative;
+        }
+
+        .course-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .course-card.basic .course-header::before {
+            background: linear-gradient(90deg, var(--primary), #00b8d9);
+        }
+
+        .course-card.advanced .course-header::before {
+            background: linear-gradient(90deg, var(--secondary), #ff6f00);
+        }
+
+        .course-card.expert .course-header::before {
+            background: linear-gradient(90deg, var(--accent), #f50057);
+        }
+
+        .course-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            margin-bottom: 18px;
+        }
+
+        .course-card.basic .course-icon {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.2), rgba(0, 217, 255, 0.05));
+            color: var(--primary);
+        }
+
+        .course-card.advanced .course-icon {
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.2), rgba(255, 152, 0, 0.05));
+            color: var(--secondary);
+        }
+
+        .course-card.expert .course-icon {
+            background: linear-gradient(135deg, rgba(255, 64, 129, 0.2), rgba(255, 64, 129, 0.05));
+            color: var(--accent);
+        }
+
+        .course-level {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .course-card.basic .course-level {
+            background: rgba(0, 217, 255, 0.15);
+            color: var(--primary);
+        }
+
+        .course-card.advanced .course-level {
+            background: rgba(255, 152, 0, 0.15);
+            color: var(--secondary);
+        }
+
+        .course-card.expert .course-level {
+            background: rgba(255, 64, 129, 0.15);
+            color: var(--accent);
+        }
+
+        .course-title {
+            font-size: 1.25em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .course-desc {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .course-meta {
+            display: flex;
+            gap: 15px;
+            color: var(--text-muted);
+            font-size: 0.85em;
+        }
+
+        .course-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .course-body {
+            padding: 0 25px 25px;
+        }
+
+        .course-progress {
+            margin-bottom: 15px;
+        }
+
+        .course-progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8em;
+            margin-bottom: 6px;
+        }
+
+        .course-progress-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .course-progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .course-card.basic .course-progress-fill {
+            background: linear-gradient(90deg, var(--primary), #00b8d9);
+        }
+
+        .course-card.advanced .course-progress-fill {
+            background: linear-gradient(90deg, var(--secondary), #ff6f00);
+        }
+
+        .course-card.expert .course-progress-fill {
+            background: linear-gradient(90deg, var(--accent), #f50057);
+        }
+
+        .course-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            text-align: center;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+
+        .course-card.basic .course-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--bg-dark);
+        }
+
+        .course-card.advanced .course-btn {
+            background: linear-gradient(135deg, var(--secondary), #ff6f00);
+            color: var(--bg-dark);
+        }
+
+        .course-card.expert .course-btn {
+            background: linear-gradient(135deg, var(--accent), #f50057);
+            color: white;
+        }
+
+        .course-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Quick Links Grid */
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .quick-card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 25px 20px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .quick-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            background: rgba(0, 217, 255, 0.05);
+        }
+
+        .quick-card i {
+            font-size: 2em;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .quick-card.sim i { color: var(--primary); }
+        .quick-card.quiz i { color: var(--secondary); }
+        .quick-card.cert i { color: var(--accent); }
+        .quick-card.tool i { color: var(--success); }
+        .quick-card.video i { color: var(--info); }
+        .quick-card.problem i { color: var(--danger); }
+
+        .quick-card span {
+            display: block;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .quick-card small {
+            display: block;
+            font-size: 0.75em;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        /* Tools Grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .tool-card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .tool-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .tool-card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .tool-card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4em;
+            background: rgba(0, 217, 255, 0.1);
+            color: var(--primary);
+        }
+
+        .tool-card h4 {
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .tool-card p {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 30px 20px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.15), rgba(0, 217, 255, 0.05));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 1.5em;
+            color: var(--primary);
+        }
+
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .feature-desc {
+            color: var(--text-muted);
+            font-size: 0.85em;
+        }
+
+        /* Footer */
+        .footer {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 50px 40px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 30px;
+        }
+
+        .footer p {
+            color: var(--text-muted);
+        }
+
+        /* Animation Classes */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .courses-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .quick-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .tools-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-center {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 60px 20px;
+            }
+
+            .hero h1 {
+                font-size: 2.2em;
+            }
+
+            .hero-stats {
+                gap: 25px;
+            }
+
+            .hero-stat-value {
+                font-size: 2em;
+            }
+
+            .courses-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section {
+                padding: 50px 20px;
+            }
+        }
+
+        /* Overlay for mobile sidebar */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="bg-animation"></div>
+
+    <!-- Top Navigation Bar -->
+    <nav class="top-navbar">
+        <a href="index.html" class="nav-brand">
+            <div class="nav-brand-icon">
+                <i class="fas fa-industry"></i>
+            </div>
+            <span class="nav-brand-text">IMTP</span>
+        </a>
+
+        <button class="menu-toggle" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <ul class="nav-center">
+            <li><a href="#home" class="active"><i class="fas fa-home"></i> หน้าแรก</a></li>
+            <li><a href="#courses"><i class="fas fa-graduation-cap"></i> หลักสูตร</a></li>
+            <li><a href="#tools"><i class="fas fa-tools"></i> เครื่องมือ</a></li>
+            <li><a href="original-3d-demo.html"><i class="fas fa-cube"></i> 3D Demo</a></li>
+        </ul>
+
+        <div class="nav-right">
+            <div class="progress-mini">
+                <div class="progress-mini-label">ความคืบหน้า</div>
+                <div class="progress-mini-bar">
+                    <div class="progress-mini-fill" id="overallProgress" style="width: 0%;"></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar Overlay (Mobile) -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+        <!-- หลักสูตร -->
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">หลักสูตร</div>
+            <ul class="sidebar-menu">
+                <li><a href="courses/basic/index.html"><i class="fas fa-seedling"></i> Basic - พื้นฐาน <span class="menu-badge badge-basic">Basic</span></a></li>
+                <li><a href="courses/advanced/index.html"><i class="fas fa-sliders-h"></i> Advanced - ขั้นสูง <span class="menu-badge badge-advanced">Adv</span></a></li>
+                <li><a href="courses/expert/index.html"><i class="fas fa-crown"></i> Expert - ผู้เชี่ยวชาญ <span class="menu-badge badge-expert">Pro</span></a></li>
+                <li><a href="learning-path.html"><i class="fas fa-road"></i> เส้นทางการเรียนรู้</a></li>
+            </ul>
+        </div>
+
+        <!-- Wizmobiz Ecosystem -->
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">🚀 Wizmobiz Ecosystem</div>
+            <ul class="sidebar-menu">
+                <li><a href="../../wizmobiz.com/index.html"><i class="fas fa-home"></i> Wizmobiz หน้าหลัก</a></li>
+                <li><a href="../../wizmobiz.com/academy.html"><i class="fas fa-graduation-cap"></i> Academy Portal <span class="menu-badge badge-new">New</span></a></li>
+                <li><a href="../../wizmobiz.com/injection-molding.html"><i class="fas fa-robot"></i> AI Assistant</a></li>
+                <li><a href="../../wizmobiz.com/calculator.html"><i class="fas fa-calculator"></i> เครื่องคิดเลขวิศวกร</a></li>
+                <li><a href="https://lin.ee/kruwitkub" target="_blank"><i class="fab fa-line"></i> LINE Bot <span class="menu-badge badge-new">24/7</span></a></li>
+            </ul>
+        </div>
+
+        <!-- การเรียนรู้ -->
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">การเรียนรู้</div>
+            <ul class="sidebar-menu">
+                <li><a href="basic-hotrunner.html"><i class="fas fa-book-open"></i> พื้นฐาน Hot Runner</a></li>
+                <li><a href="advancehot.html"><i class="fas fa-fire-alt"></i> Hot Runner ขั้นสูง</a></li>
+                <li><a href="injection-learning.html"><i class="fas fa-book-reader"></i> เทคนิคการขึ้นรูป</a></li>
+                <li><a href="training-hot.html"><i class="fas fa-fire"></i> Hot Runner Training</a></li>
+                <li><a href="injectionmodel.html"><i class="fas fa-cubes"></i> Injection Modeling</a></li>
+                <li><a href="toshibav30.html"><i class="fas fa-industry"></i> Toshiba V30 Training</a></li>
+                <li><a href="hotlearn.html"><i class="fas fa-graduation-cap"></i> Hot Runner Learn</a></li>
+                <li><a href="hotaction.html"><i class="fas fa-running"></i> Hot Runner Action</a></li>
+            </ul>
+        </div>
+
+        <!-- เครื่องมือและการจำลอง -->
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">เครื่องมือ & การจำลอง</div>
+            <ul class="sidebar-menu">
+                <li><a href="injection-simulation.html"><i class="fas fa-cube"></i> 3D Simulation <span class="menu-badge badge-new">Hot</span></a></li>
+                <li><a href="original-3d-demo.html"><i class="fas fa-vr-cardboard"></i> 3D Demo Model</a></li>
+                <li><a href="datacontrol.html"><i class="fas fa-sliders-h"></i> PID Controller</a></li>
+                <li><a href="pidtest.html"><i class="fas fa-chart-line"></i> PID Test Lab</a></li>
+                <li><a href="roi-ralculator.html"><i class="fas fa-calculator"></i> ROI Calculator</a></li>
+                <li><a href="thermo-k-j.html"><i class="fas fa-thermometer-half"></i> Thermocouple K/J</a></li>
+                <li><a href="clampping.html"><i class="fas fa-compress-arrows-alt"></i> Clamping Force</a></li>
+            </ul>
+        </div>
+
+        <!-- การทดสอบและประเมิน -->
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">ทดสอบ & ประเมินผล</div>
+            <ul class="sidebar-menu">
+                <li><a href="quizzes/quiz-basic.html"><i class="fas fa-clipboard-list"></i> Quiz Basic</a></li>
+                <li><a href="quizzes/quiz-advanced.html"><i class="fas fa-clipboard-check"></i> Quiz Advanced</a></li>
+                <li><a href="quiz-hotrunner.html"><i class="fas fa-question-circle"></i> Quiz Hot Runner</a></li>
+                <li><a href="testskill.html"><i class="fas fa-tasks"></i> ทดสอบทักษะ</a></li>
+                <li><a href="cltest.html"><i class="fas fa-compress"></i> ทดสอบ Clamping</a></li>
+                <li><a href="Ctest.html"><i class="fas fa-flask"></i> ทดสอบ C</a></li>
+                <li><a href="datatest.html"><i class="fas fa-database"></i> ทดสอบ Data</a></li>
+                <li><a href="Gtest.html"><i class="fas fa-cogs"></i> ทดสอบ G</a></li>
+            </ul>
+        </div>
+
+        <!-- ประกาศนียบัตร & รายงาน -->
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">ประกาศนียบัตร & รายงาน</div>
+            <ul class="sidebar-menu">
+                <li><a href="certificates/index.html"><i class="fas fa-certificate"></i> ประกาศนียบัตร <span class="menu-badge badge-new">New</span></a></li>
+                <li><a href="certificate-hotrunner.html"><i class="fas fa-award"></i> Certificate Hot Runner</a></li>
+                <li><a href="progress-report.html"><i class="fas fa-chart-bar"></i> รายงานความก้าวหน้า</a></li>
+            </ul>
+        </div>
+
+        <!-- แก้ไขปัญหา -->
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">แก้ไขปัญหา & อ้างอิง</div>
+            <ul class="sidebar-menu">
+                <li><a href="problem.html"><i class="fas fa-bug"></i> Troubleshooting</a></li>
+                <li><a href="datacontrol.html"><i class="fas fa-thermometer-half"></i> Temperature Control</a></li>
+            </ul>
+        </div>
+
+        <!-- ลิงก์ด่วน -->
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">ลิงก์ด่วน</div>
+            <ul class="sidebar-menu">
+                <li><a href="../index.html"><i class="fas fa-home"></i> หน้าหลัก Training</a></li>
+                <li><a href="../pretest.html"><i class="fas fa-clipboard-question"></i> Pre-Test</a></li>
+                <li><a href="../protest.html"><i class="fas fa-clipboard-check"></i> Post-Test</a></li>
+                <li><a href="../certificate.html"><i class="fas fa-certificate"></i> ใบรับรอง</a></li>
+                <li><a href="../admin_panel.html"><i class="fas fa-user-shield"></i> Admin Panel</a></li>
+            </ul>
+        </div>
+
+        <!-- Powered by Wizmobiz -->
+        <div class="sidebar-section" style="background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(255, 152, 0, 0.1)); border-radius: 15px; margin: 10px;">
+            <div style="text-align: center; padding: 15px;">
+                <p style="font-size: 0.8em; color: var(--text-muted); margin-bottom: 5px;">Powered by</p>
+                <a href="../../wizmobiz.com/index.html" style="font-size: 1.2em; font-weight: 700; color: var(--primary); text-decoration: none;">
+                    🚀 Wizmobiz
+                </a>
+                <p style="font-size: 0.75em; color: var(--text-muted); margin-top: 5px;">AI ผู้ช่วยงานฉีดพลาสติก 24/7</p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero" id="home">
+            <div class="hero-content">
+                <div class="hero-logo">
+                    <i class="fas fa-industry"></i>
+                </div>
+                <h1>
+                    <span>Injection Molding</span><br>
+                    Training Portal
+                </h1>
+                <p class="hero-subtitle">
+                    ศูนย์การเรียนรู้ครบวงจรสำหรับ Injection Molding และ Hot Runner System<br>
+                    ตั้งแต่พื้นฐานจนถึงระดับผู้เชี่ยวชาญ พร้อมเครื่องมือจำลองแบบ Interactive
+                </p>
+                
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">6</div>
+                        <div class="hero-stat-label">ระดับหลักสูตร</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">24+</div>
+                        <div class="hero-stat-label">บทเรียน</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">10+</div>
+                        <div class="hero-stat-label">เครื่องมือ</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">10</div>
+                        <div class="hero-stat-label">แบบทดสอบ</div>
+                    </div>
+                </div>
+
+                <div class="hero-actions">
+                    <a href="basic-hotrunner.html" class="btn btn-primary">
+                        <i class="fas fa-rocket"></i> เริ่มเรียนเลย
+                    </a>
+                    <a href="#courses" class="btn btn-outline">
+                        <i class="fas fa-list"></i> ดูหลักสูตรทั้งหมด
+                    </a>
+                    <a href="original-3d-demo.html" class="btn btn-outline">
+                        <i class="fas fa-cube"></i> ดู 3D Demo
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Courses Section -->
+        <section class="section" id="courses">
+            <div class="section-header">
+                <h2><i class="fas fa-graduation-cap" style="color: var(--primary);"></i> หลักสูตรการเรียน</h2>
+                <p>เลือกระดับที่เหมาะสมกับคุณ เรียนรู้อย่างเป็นระบบ</p>
+            </div>
+
+            <div class="courses-grid">
+                <!-- Basic Course -->
+                <div class="course-card basic fade-in">
+                    <div class="course-header">
+                        <div class="course-icon">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <span class="course-level">Basic Level</span>
+                        <h3 class="course-title">พื้นฐาน Injection Molding</h3>
+                        <p class="course-desc">
+                            เรียนรู้หลักการทำงานพื้นฐาน เข้าใจเครื่องจักร วัสดุ และ Hot Runner เบื้องต้น
+                        </p>
+                        <div class="course-meta">
+                            <div class="course-meta-item">
+                                <i class="fas fa-book"></i> 6 บทเรียน
+                            </div>
+                            <div class="course-meta-item">
+                                <i class="fas fa-clock"></i> 3.5 ชม.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="course-body">
+                        <div class="course-progress">
+                            <div class="course-progress-label">
+                                <span>ความคืบหน้า</span>
+                                <span id="basicProgressText">0%</span>
+                            </div>
+                            <div class="course-progress-bar">
+                                <div class="course-progress-fill" id="basicProgressBar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        <a href="basic-hotrunner.html" class="course-btn">
+                            <i class="fas fa-play"></i> เริ่มเรียน Basic
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Advanced Course -->
+                <div class="course-card advanced fade-in">
+                    <div class="course-header">
+                        <div class="course-icon">
+                            <i class="fas fa-sliders-h"></i>
+                        </div>
+                        <span class="course-level">Advanced Level</span>
+                        <h3 class="course-title">การควบคุมและแก้ปัญหา</h3>
+                        <p class="course-desc">
+                            PID Control, Temperature Management, Troubleshooting และ Optimization
+                        </p>
+                        <div class="course-meta">
+                            <div class="course-meta-item">
+                                <i class="fas fa-book"></i> 6 บทเรียน
+                            </div>
+                            <div class="course-meta-item">
+                                <i class="fas fa-clock"></i> 5 ชม.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="course-body">
+                        <div class="course-progress">
+                            <div class="course-progress-label">
+                                <span>ความคืบหน้า</span>
+                                <span id="advancedProgressText">0%</span>
+                            </div>
+                            <div class="course-progress-bar">
+                                <div class="course-progress-fill" id="advancedProgressBar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        <a href="advancehot.html" class="course-btn">
+                            <i class="fas fa-play"></i> เริ่มเรียน Advanced
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Expert Course -->
+                <div class="course-card expert fade-in">
+                    <div class="course-header">
+                        <div class="course-icon">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <span class="course-level">Expert Level</span>
+                        <h3 class="course-title">ผู้เชี่ยวชาญ Hot Runner</h3>
+                        <p class="course-desc">
+                            3D Simulation, ROI Analysis, System Design และ Professional Skills
+                        </p>
+                        <div class="course-meta">
+                            <div class="course-meta-item">
+                                <i class="fas fa-book"></i> 5 บทเรียน
+                            </div>
+                            <div class="course-meta-item">
+                                <i class="fas fa-clock"></i> 6 ชม.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="course-body">
+                        <div class="course-progress">
+                            <div class="course-progress-label">
+                                <span>ความคืบหน้า</span>
+                                <span id="expertProgressText">0%</span>
+                            </div>
+                            <div class="course-progress-bar">
+                                <div class="course-progress-fill" id="expertProgressBar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                        <a href="hotlearn.html" class="course-btn">
+                            <i class="fas fa-play"></i> เริ่มเรียน Expert
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Injection Molding Academy -->
+                <div class="course-card expert fade-in" style="border-color: var(--success); grid-column: span 3;">
+                    <div class="course-header" style="display: flex; align-items: center; gap: 30px;">
+                        <div class="course-icon" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.05)); color: var(--success);">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <span class="course-level" style="background: rgba(16, 185, 129, 0.15); color: var(--success);">🏭 NEW! Full Course</span>
+                            <h3 class="course-title">Injection Molding Learning Academy</h3>
+                            <p class="course-desc">
+                                หลักสูตรเต็มรูปแบบ 6 ระดับ ตั้งแต่ Mindset จนถึง Industry 4.0 พร้อมระบบ XP, Badges และ Leaderboard
+                            </p>
+                            <div class="course-meta">
+                                <div class="course-meta-item">
+                                    <i class="fas fa-layer-group"></i> 6 Levels
+                                </div>
+                                <div class="course-meta-item">
+                                    <i class="fas fa-book"></i> 24 บทเรียน
+                                </div>
+                                <div class="course-meta-item">
+                                    <i class="fas fa-clipboard-check"></i> 6 Quiz
+                                </div>
+                                <div class="course-meta-item">
+                                    <i class="fas fa-medal"></i> 10 Badges
+                                </div>
+                            </div>
+                        </div>
+                        <a href="../injection-molding/index.html" class="course-btn" style="background: linear-gradient(135deg, var(--success), #059669); width: auto; padding: 15px 40px;">
+                            <i class="fas fa-rocket"></i> เข้าเรียน Academy
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Access Section -->
+        <section class="section">
+            <div class="section-header">
+                <h2><i class="fas fa-bolt" style="color: var(--secondary);"></i> เข้าถึงอย่างรวดเร็ว</h2>
+                <p>ทางลัดไปยังเครื่องมือและเนื้อหาที่ใช้บ่อย</p>
+            </div>
+
+            <div class="quick-grid">
+                <a href="injection-simulation.html" class="quick-card sim fade-in">
+                    <i class="fas fa-cube"></i>
+                    <span>3D Simulation</span>
+                    <small>จำลองการฉีดพลาสติก</small>
+                </a>
+                <a href="original-3d-demo.html" class="quick-card video fade-in">
+                    <i class="fas fa-vr-cardboard"></i>
+                    <span>3D Demo Model</span>
+                    <small>โมเดล 3 มิติ Interactive</small>
+                </a>
+                <a href="cltest.html" class="quick-card quiz fade-in">
+                    <i class="fas fa-clipboard-check"></i>
+                    <span>แบบทดสอบ</span>
+                    <small>ประเมินความรู้</small>
+                </a>
+                <a href="problem.html" class="quick-card problem fade-in">
+                    <i class="fas fa-bug"></i>
+                    <span>Troubleshooting</span>
+                    <small>แก้ไขปัญหา</small>
+                </a>
+                <a href="roi-ralculator.html" class="quick-card tool fade-in">
+                    <i class="fas fa-calculator"></i>
+                    <span>ROI Calculator</span>
+                    <small>คำนวณผลตอบแทน</small>
+                </a>
+                <a href="datacontrol.html" class="quick-card tool fade-in">
+                    <i class="fas fa-thermometer-half"></i>
+                    <span>PID Control</span>
+                    <small>ควบคุมอุณหภูมิ</small>
+                </a>
+                <a href="training-hot.html" class="quick-card video fade-in">
+                    <i class="fas fa-fire"></i>
+                    <span>Hot Runner</span>
+                    <small>Training เฉพาะทาง</small>
+                </a>
+                <a href="toshibav30.html" class="quick-card sim fade-in">
+                    <i class="fas fa-industry"></i>
+                    <span>Toshiba V30</span>
+                    <small>เครื่องฉีด Toshiba</small>
+                </a>
+                <a href="../injection-molding/index.html" class="quick-card cert fade-in">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Injection Academy</span>
+                    <small>หลักสูตร 6 ระดับ + Badge</small>
+                </a>
+            </div>
+        </section>
+
+        <!-- Tools Section -->
+        <section class="section" id="tools">
+            <div class="section-header">
+                <h2><i class="fas fa-tools" style="color: var(--primary);"></i> เครื่องมือและการจำลอง</h2>
+                <p>เครื่องมือช่วยเรียนรู้แบบ Interactive</p>
+            </div>
+
+            <div class="tools-grid">
+                <a href="injection-simulation.html" class="tool-card fade-in">
+                    <div class="tool-card-header">
+                        <div class="tool-card-icon">
+                            <i class="fas fa-cube"></i>
+                        </div>
+                        <h4>3D Injection Simulation</h4>
+                    </div>
+                    <p>จำลองกระบวนการฉีดพลาสติกแบบ 3 มิติ พร้อมการควบคุมพารามิเตอร์ต่างๆ</p>
+                </a>
+
+                <a href="datacontrol.html" class="tool-card fade-in">
+                    <div class="tool-card-header">
+                        <div class="tool-card-icon" style="background: rgba(255, 152, 0, 0.1); color: var(--secondary);">
+                            <i class="fas fa-sliders-h"></i>
+                        </div>
+                        <h4>PID Controller</h4>
+                    </div>
+                    <p>เรียนรู้การควบคุม PID สำหรับ Temperature Control ในระบบ Hot Runner</p>
+                </a>
+
+                <a href="roi-ralculator.html" class="tool-card fade-in">
+                    <div class="tool-card-header">
+                        <div class="tool-card-icon" style="background: rgba(0, 200, 83, 0.1); color: var(--success);">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <h4>ROI Calculator</h4>
+                    </div>
+                    <p>คำนวณ Return on Investment สำหรับการลงทุนระบบ Hot Runner</p>
+                </a>
+
+                <a href="pidtest.html" class="tool-card fade-in">
+                    <div class="tool-card-header">
+                        <div class="tool-card-icon" style="background: rgba(255, 64, 129, 0.1); color: var(--accent);">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h4>PID Test Lab</h4>
+                    </div>
+                    <p>ทดลองปรับค่า PID และดูผลลัพธ์แบบ Real-time ในห้องปฏิบัติการเสมือน</p>
+                </a>
+
+                <a href="original-3d-demo.html" class="tool-card fade-in">
+                    <div class="tool-card-header">
+                        <div class="tool-card-icon" style="background: rgba(33, 150, 243, 0.1); color: var(--info);">
+                            <i class="fas fa-vr-cardboard"></i>
+                        </div>
+                        <h4>3D Demo Model</h4>
+                    </div>
+                    <p>โมเดล 3 มิติ Interactive สำรวจส่วนประกอบของ Hot Runner System</p>
+                </a>
+
+                <a href="injectionmodel.html" class="tool-card fade-in">
+                    <div class="tool-card-header">
+                        <div class="tool-card-icon">
+                            <i class="fas fa-cubes"></i>
+                        </div>
+                        <h4>Injection Modeling</h4>
+                    </div>
+                    <p>เรียนรู้การออกแบบและโมเดลลิ่งสำหรับ Injection Molding</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="section">
+            <div class="section-header">
+                <h2><i class="fas fa-star" style="color: var(--secondary);"></i> จุดเด่นของหลักสูตร</h2>
+                <p>ทำไมต้องเรียนกับเรา</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-cube"></i>
+                    </div>
+                    <h4 class="feature-title">3D Interactive</h4>
+                    <p class="feature-desc">จำลองการทำงานแบบ 3 มิติ เข้าใจง่าย</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h4 class="feature-title">วิดีโอสาธิต</h4>
+                    <p class="feature-desc">เนื้อหาวิดีโอจากผู้เชี่ยวชาญจริง</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <h4 class="feature-title">แบบทดสอบวัดผล</h4>
+                    <p class="feature-desc">ประเมินความเข้าใจทุกบทเรียน</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h4 class="feature-title">เครื่องมือ Interactive</h4>
+                    <p class="feature-desc">PID, ROI และเครื่องมือช่วยคำนวณ</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>
+                <i class="fas fa-industry"></i> Injection Molding Training Portal<br>
+                <span style="font-size: 0.9em;">© 2024 Hot Runner System Training | พัฒนาเพื่อการศึกษา</span>
+            </p>
+        </footer>
+    </main>
+
+    <!-- Scripts -->
+    <script>
+        // Toggle Sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        // Update progress bars (simulated for now)
+        document.addEventListener('DOMContentLoaded', () => {
+            initScrollAnimations();
+            loadProgress();
+        });
+
+        function loadProgress() {
+            // Load from localStorage if available
+            const basicProg = localStorage.getItem('basicProgress') || 0;
+            const advancedProg = localStorage.getItem('advancedProgress') || 0;
+            const expertProg = localStorage.getItem('expertProgress') || 0;
+            const overallProg = Math.round((parseInt(basicProg) + parseInt(advancedProg) + parseInt(expertProg)) / 3);
+
+            document.getElementById('basicProgressBar').style.width = basicProg + '%';
+            document.getElementById('basicProgressText').textContent = basicProg + '%';
+
+            document.getElementById('advancedProgressBar').style.width = advancedProg + '%';
+            document.getElementById('advancedProgressText').textContent = advancedProg + '%';
+
+            document.getElementById('expertProgressBar').style.width = expertProg + '%';
+            document.getElementById('expertProgressText').textContent = expertProg + '%';
+
+            document.getElementById('overallProgress').style.width = overallProg + '%';
+        }
+
+        function initScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+        }
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Close sidebar when clicking outside on mobile
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 992) {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.querySelector('.sidebar-overlay');
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

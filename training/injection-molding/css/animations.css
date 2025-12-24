@@ -1,0 +1,683 @@
+/* ============================================
+   🎨 Additional Animations & Effects
+   Injection Molding Learning Platform
+   ============================================ */
+
+/* ============================================
+   Badge Notification Animation
+   ============================================ */
+.badge-notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0;
+    z-index: 10000;
+    pointer-events: none;
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.badge-notification.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.badge-notification-content {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 20px;
+    padding: 40px 60px;
+    text-align: center;
+    box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.5),
+        0 0 100px rgba(245, 158, 11, 0.3);
+    border: 2px solid rgba(245, 158, 11, 0.5);
+    animation: badgeGlow 2s ease-in-out infinite;
+}
+
+@keyframes badgeGlow {
+    0%, 100% {
+        box-shadow: 
+            0 25px 50px -12px rgba(0, 0, 0, 0.5),
+            0 0 60px rgba(245, 158, 11, 0.2);
+    }
+    50% {
+        box-shadow: 
+            0 25px 50px -12px rgba(0, 0, 0, 0.5),
+            0 0 100px rgba(245, 158, 11, 0.4);
+    }
+}
+
+.badge-notification-icon {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 3rem;
+    color: white;
+    animation: badgeIconPop 0.5s ease-out 0.3s both;
+}
+
+@keyframes badgeIconPop {
+    0% {
+        transform: scale(0) rotate(-180deg);
+    }
+    50% {
+        transform: scale(1.2) rotate(10deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+.badge-notification-title {
+    display: block;
+    font-size: 1.2rem;
+    color: #F59E0B;
+    margin-bottom: 10px;
+    font-weight: 600;
+    animation: textFadeIn 0.5s ease-out 0.4s both;
+}
+
+.badge-notification-name {
+    display: block;
+    font-size: 1.8rem;
+    color: white;
+    font-weight: 700;
+    margin-bottom: 5px;
+    animation: textFadeIn 0.5s ease-out 0.5s both;
+}
+
+.badge-notification-desc {
+    display: block;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+    animation: textFadeIn 0.5s ease-out 0.6s both;
+}
+
+@keyframes textFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   Quiz Results Styling
+   ============================================ */
+.quiz-results {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.quiz-results .result-header {
+    margin-bottom: 30px;
+}
+
+.quiz-results .result-icon {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 3rem;
+}
+
+.quiz-results.passed .result-icon {
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: white;
+    animation: winnerBounce 1s ease-out;
+}
+
+.quiz-results.failed .result-icon {
+    background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+    color: white;
+}
+
+@keyframes winnerBounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-30px);
+    }
+    60% {
+        transform: translateY(-15px);
+    }
+}
+
+.quiz-results h3 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #1F2937;
+}
+
+.quiz-results p {
+    color: #6B7280;
+    font-size: 1.1rem;
+}
+
+.result-score {
+    margin: 30px 0;
+}
+
+.score-circle {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    border: 8px solid;
+}
+
+.score-circle.passed {
+    border-color: #10B981;
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.score-circle.failed {
+    border-color: #EF4444;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.score-value {
+    font-size: 3rem;
+    font-weight: 700;
+}
+
+.score-circle.passed .score-value {
+    color: #10B981;
+}
+
+.score-circle.failed .score-value {
+    color: #EF4444;
+}
+
+.score-label {
+    font-size: 1rem;
+    color: #6B7280;
+}
+
+.result-stats {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 30px 0;
+    flex-wrap: wrap;
+}
+
+.result-stats .stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    color: #374151;
+}
+
+.result-stats .stat i {
+    font-size: 1.3rem;
+}
+
+.text-success { color: #10B981; }
+.text-danger { color: #EF4444; }
+.text-warning { color: #F59E0B; }
+
+.level-up-notification {
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 50px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    margin: 20px 0;
+    animation: levelUpPulse 2s ease-in-out infinite;
+}
+
+@keyframes levelUpPulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.5);
+    }
+    50% {
+        transform: scale(1.02);
+        box-shadow: 0 0 20px 10px rgba(245, 158, 11, 0);
+    }
+}
+
+.result-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+/* ============================================
+   Quiz Info & Questions
+   ============================================ */
+.quiz-info {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    padding: 20px;
+    background: #F3F4F6;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.quiz-info span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #4B5563;
+    font-weight: 500;
+}
+
+.quiz-info i {
+    color: #6B7280;
+}
+
+.quiz-questions {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.quiz-question {
+    background: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.quiz-question:hover {
+    border-color: #3B82F6;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.1);
+}
+
+.question-header {
+    margin-bottom: 15px;
+}
+
+.question-number {
+    background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.question-text {
+    font-size: 1.1rem;
+    color: #1F2937;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.question-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.option-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 20px;
+    background: #F9FAFB;
+    border: 2px solid #E5E7EB;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.option-label:hover {
+    background: #F3F4F6;
+    border-color: #D1D5DB;
+}
+
+.option-label.selected {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: #3B82F6;
+}
+
+.option-label input[type="radio"] {
+    display: none;
+}
+
+.option-label::before {
+    content: '';
+    width: 22px;
+    height: 22px;
+    border: 2px solid #D1D5DB;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.option-label.selected::before {
+    border-color: #3B82F6;
+    background: #3B82F6;
+    box-shadow: inset 0 0 0 4px white;
+}
+
+.option-text {
+    color: #374151;
+    font-size: 1rem;
+}
+
+.quiz-actions {
+    padding: 20px 0;
+    text-align: center;
+    border-top: 1px solid #E5E7EB;
+    margin-top: 20px;
+}
+
+/* ============================================
+   Lesson Content Styling
+   ============================================ */
+.lesson-placeholder {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.lesson-placeholder i {
+    font-size: 4rem;
+    color: #D1D5DB;
+    margin-bottom: 20px;
+}
+
+.lesson-placeholder h3 {
+    color: #1F2937;
+    margin-bottom: 15px;
+}
+
+.lesson-placeholder p {
+    color: #6B7280;
+    margin-bottom: 10px;
+}
+
+.lesson-placeholder ul {
+    text-align: left;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.lesson-placeholder li {
+    color: #4B5563;
+    padding: 5px 0;
+}
+
+.lesson-sections {
+    padding: 20px 0;
+}
+
+.lesson-section {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 20px;
+    border-left: 4px solid #3B82F6;
+    animation: slideInUp 0.5s ease-out both;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.section-title {
+    font-size: 1.3rem;
+    color: #1F2937;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-content {
+    color: #4B5563;
+    line-height: 1.8;
+    font-size: 1rem;
+}
+
+.section-content p {
+    margin-bottom: 15px;
+}
+
+.section-content strong {
+    color: #1F2937;
+}
+
+.key-points {
+    background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+    border-radius: 12px;
+    padding: 25px;
+    margin-top: 20px;
+}
+
+.key-points h4 {
+    color: #92400E;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.key-points ul {
+    list-style: none;
+    padding: 0;
+}
+
+.key-points li {
+    padding: 8px 0;
+    color: #78350F;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.key-points li::before {
+    content: '✓';
+    color: #D97706;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+/* ============================================
+   Scroll Reveal Animations
+   ============================================ */
+.feature-card,
+.level-card,
+.badge-item {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.feature-card.visible,
+.level-card.visible,
+.badge-item.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ============================================
+   Loading Spinner
+   ============================================ */
+.loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #E5E7EB;
+    border-top-color: #3B82F6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-text {
+    margin-top: 15px;
+    color: #6B7280;
+    font-size: 1rem;
+}
+
+/* ============================================
+   Empty State
+   ============================================ */
+.no-data {
+    text-align: center;
+    padding: 40px 20px;
+    color: #9CA3AF;
+    font-style: italic;
+}
+
+/* ============================================
+   Confetti Animation (for celebrations)
+   ============================================ */
+.confetti-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    overflow: hidden;
+}
+
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    animation: confetti-fall 3s ease-out forwards;
+}
+
+@keyframes confetti-fall {
+    0% {
+        transform: translateY(-100%) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+/* ============================================
+   Responsive Adjustments for Animations
+   ============================================ */
+@media (max-width: 768px) {
+    .badge-notification-content {
+        padding: 30px 40px;
+    }
+    
+    .badge-notification-icon {
+        width: 80px;
+        height: 80px;
+        font-size: 2.5rem;
+    }
+    
+    .badge-notification-name {
+        font-size: 1.5rem;
+    }
+    
+    .score-circle {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .score-value {
+        font-size: 2.5rem;
+    }
+    
+    .result-stats {
+        gap: 15px;
+    }
+    
+    .quiz-info {
+        gap: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .badge-notification-content {
+        padding: 25px 30px;
+    }
+    
+    .badge-notification-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 2rem;
+    }
+    
+    .badge-notification-name {
+        font-size: 1.3rem;
+    }
+    
+    .quiz-question {
+        padding: 20px 15px;
+    }
+    
+    .option-label {
+        padding: 12px 15px;
+    }
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+@media print {
+    .navbar,
+    .btn,
+    .modal,
+    .toast-container {
+        display: none !important;
+    }
+    
+    body {
+        background: white;
+    }
+    
+    .level-card {
+        break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+}

@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>โปรแกรมแนะนำขนาดเครื่องฉีดพลาสติก</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+        
+        .calculator-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .info-section {
+            background: #fff;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3498db;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            font-weight: normal;
+        }
+        
+        .radio-option input[type="radio"] {
+            width: auto;
+            margin-right: 8px;
+        }
+        
+        .calculate-btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+        }
+        
+        .result-box {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .result-box h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        
+        .result-value {
+            font-size: 2em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .plastic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .plastic-card {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .plastic-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .plastic-card.selected {
+            border-color: #fff;
+            transform: scale(1.05);
+        }
+        
+        .plastic-name {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+        
+        .plastic-pressure {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .machine-recommendation {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            background: #bdc3c7;
+            color: #2c3e50;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        
+        .tab.active {
+            background: #3498db;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .info-list {
+            list-style: none;
+        }
+        
+        .info-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        .info-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid #ffc107;
+            margin: 15px 0;
+        }
+        
+        .small-text {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .plastic-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .radio-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏭 โปรแกรมแนะนำขนาดเครื่องฉีดพลาสติก</h1>
+            <p>Injection Molding Machine Size Recommendation</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="calculator-section">
+                <h2 class="section-title">⚙️ เครื่องแนะนำขนาดเครื่องฉีด</h2>
+                
+                <div class="input-group">
+                    <label>วิธีการคำนวณพื้นที่การฉาย</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="calculation-method" value="dimensions" checked>
+                            <span>คำนวณจากขนาดชิ้นงาน</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="calculation-method" value="area">
+                            <span>ใส่พื้นที่หน้าตัดโดยตรง</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="dimension-inputs">
+                    <div class="input-group">
+                        <label for="part-length">ความยาวชิ้นงาน (มม.)</label>
+                        <input type="number" id="part-length" placeholder="ความยาวชิ้นงาน" step="0.1">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="part-width">ความกว้างชิ้นงาน (มม.)</label>
+                        <input type="number" id="part-width" placeholder="ความกว้างชิ้นงาน" step="0.1">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="cavity-count">จำนวน Cavity</label>
+                        <input type="number" id="cavity-count" value="1" min="1">
+                    </div>
+                </div>
+
+                <div id="area-input" style="display: none;">
+                    <div class="input-group">
+                        <label for="projected-area">พื้นที่หน้าตัดแม่พิมพ์ (mm²)</label>
+                        <input type="number" id="projected-area" placeholder="พื้นที่หน้าตัดแม่พิมพ์" step="0.1">
+                        <small class="small-text">
+                            💡 รวมพื้นที่ชิ้นงาน + ระบบรันเนอร์ + พื้นที่อื่นๆ ที่ความดันกระทำ
+                        </small>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="plastic-type">ชนิดของเม็ดพลาสติก (อ้างอิง)</label>
+                    <select id="plastic-type">
+                        <option value="">เลือกชนิดพลาสติก</option>
+                    </select>
+                    <small class="small-text">
+                        💡 ข้อมูลเพื่อการอ้างอิงสำหรับความดันที่ใช้ในการฉีด
+                    </small>
+                </div>
+
+                <button class="calculate-btn" onclick="recommendMachineSize()">
+                    🔍 แนะนำขนาดเครื่องฉีด
+                </button>
+                
+                <div id="result" class="result-box" style="display: none;">
+                    <h3>พื้นที่การฉาย</h3>
+                    <div class="result-value" id="result-value">0 mm²</div>
+                </div>
+                
+                <div id="machine-recommendation" class="machine-recommendation" style="display: none;">
+                    <h3>💡 แนะนำขนาดเครื่องฉีด</h3>
+                    <div id="machine-size"></div>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <div class="tabs">
+                    <div class="tab active" onclick="showTab('plastic-info')">ข้อมูลเม็ดพลาสติก</div>
+                    <div class="tab" onclick="showTab('formula-info')">วิธีการแนะนำ</div>
+                    <div class="tab" onclick="showTab('general-info')">ข้อมูลทั่วไป</div>
+                </div>
+                
+                <div id="plastic-info" class="tab-content active">
+                    <h2 class="section-title">🧪 ข้อมูลเม็ดพลาสติก 15 ชนิด</h2>
+                    <div class="plastic-grid" id="plastic-grid"></div>
+                </div>
+                
+                <div id="formula-info" class="tab-content">
+                    <h2 class="section-title">📐 วิธีการแนะนำขนาดเครื่องฉีด</h2>
+                    
+                    <div class="highlight">
+                        <strong>วิธีการคำนวณพื้นที่:</strong><br>
+                        <strong>วิธีที่ 1 - คำนวณจากขนาดชิ้นงาน:</strong><br>
+                        • พื้นที่การฉาย = ความยาว × ความกว้าง × จำนวน Cavity (mm²)<br><br>
+                        <strong>วิธีที่ 2 - ใช้พื้นที่หน้าตัดโดยตรง:</strong><br>
+                        • พื้นที่การฉาย = พื้นที่หน้าตัดแม่พิมพ์ที่วัดหรือคำนวณได้ (mm²)<br><br>
+                        • การแนะนำขึ้นอยู่กับประสบการณ์และมาตรฐานอุตสาหกรรม
+                    </div>
+                    
+                    <ul class="info-list">
+                        <li><strong>ขั้นตอนการใช้งาน:</strong></li>
+                        <li>1. เลือกวิธีการคำนวณพื้นที่การฉาย</li>
+                        <li>&nbsp;&nbsp;&nbsp;• จากขนาดชิ้นงาน: กรอกความยาว × ความกว้าง × จำนวน cavity</li>
+                        <li>&nbsp;&nbsp;&nbsp;• พื้นที่หน้าตัดโดยตรง: กรอกพื้นที่ที่วัดหรือคำนวณได้ (mm²)</li>
+                        <li>2. เลือกชนิดพลาสติกเพื่อดูข้อมูลอ้างอิง</li>
+                        <li>3. คลิกแนะนำขนาดเครื่องฉีด</li>
+                        <li>4. ศึกษาข้อมูลที่แนะนำและปรึกษาผู้เชี่ยวชาญ</li>
+                    </ul>
+                    
+                    <ul class="info-list" style="margin-top: 20px;">
+                        <li><strong>ช่วงขนาดเครื่องฉีดที่แนะนำ:</strong></li>
+                        <li>• 80-120 ตัน: พื้นที่ 0-15,000 mm² (ชิ้นงานเล็ก)</li>
+                        <li>• 150-200 ตัน: พื้นที่ 15,000-35,000 mm² (ชิ้นงานกลาง)</li>
+                        <li>• 250-300 ตัน: พื้นที่ 35,000-60,000 mm² (ชิ้นงานกลาง-ใหญ่)</li>
+                        <li>• 350-450 ตัน: พื้นที่ 60,000-100,000 mm² (ชิ้นงานใหญ่)</li>
+                        <li>• 500+ ตัน: พื้นที่ 100,000+ mm² (ชิ้นงานใหญ่มาก)</li>
+                    </ul>
+                </div>
+                
+                <div id="general-info" class="tab-content">
+                    <h2 class="section-title">📋 ข้อมูลทั่วไปและความสำคัญ</h2>
+                    
+                    <div class="highlight">
+                        <strong>⚠️ ความสำคัญของการเลือกขนาดเครื่องฉีด:</strong><br>
+                        การเลือกขนาดเครื่องฉีดที่เหมาะสมเป็นปัจจัยสำคัญต่อคุณภาพการผลิต ต้นทุน และประสิทธิภาพในการฉีดพลาสติก
+                    </div>
+                    
+                    <ul class="info-list">
+                        <li><strong>ปัญหาจากการเลือกเครื่องฉีดไม่เหมาะสม:</strong></li>
+                        <li>• เครื่องเล็กเกินไป: แรงปิดล็อคไม่เพียงพอ, ชิ้นงานมี Flash</li>
+                        <li>• เครื่องใหญ่เกินไป: สิ้นเปลืองพลังงาน, ต้นทุนสูง</li>
+                        <li>• ปริมาตรการฉีดไม่เหมาะสม</li>
+                        <li>• เวลาการผลิตไม่เหมาะสม</li>
+                        <li>• คุณภาพชิ้นงานไม่สม่ำเสมอ</li>
+                    </ul>
+                    
+                    <ul class="info-list" style="margin-top: 20px;">
+                        <li><strong>ปัจจัยที่ต้องพิจารณาในการเลือกเครื่องฉีด:</strong></li>
+                        <li>• ขนาดและรูปร่างของชิ้นงาน</li>
+                        <li>• ชนิดของพลาสติกที่ใช้</li>
+                        <li>• จำนวน Cavity ในแม่พิมพ์</li>
+                        <li>• ความหนาของผนังชิ้นงาน</li>
+                        <li>• ระยะทางการไหลของพลาสติก</li>
+                        <li>• ปริมาณการผลิตต่อวัน</li>
+                        <li>• งบประมาณและพื้นที่โรงงาน</li>
+                    </ul>
+                    
+                    <div class="highlight" style="margin-top: 20px;">
+                        <strong>💡 คำแนะนำสำคัญ:</strong><br>
+                        • การแนะนำในโปรแกรมนี้เป็นเพียงการประมาณเบื้องต้น<br>
+                        • ควรปรึกษาผู้เชี่ยวชาญก่อนตัดสินใจซื้อเครื่องฉีด<br>
+                        • พิจารณาปัจจัยอื่นๆ นอกเหนือจากพื้นที่การฉาย<br>
+                        • ทดสอบการฉีดจริงก่อนการผลิตจำนวนมาก
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ข้อมูลเม็ดพลาสติก 15 ชนิด
+        const plasticData = [
+            { name: 'ABS', fullName: 'Acrylonitrile Butadiene Styrene', pressure: '500-800', color: '#e74c3c' },
+            { name: 'PP', fullName: 'Polypropylene', pressure: '300-600', color: '#3498db' },
+            { name: 'PE', fullName: 'Polyethylene', pressure: '200-500', color: '#2ecc71' },
+            { name: 'PS', fullName: 'Polystyrene', pressure: '400-700', color: '#f39c12' },
+            { name: 'PVC', fullName: 'Polyvinyl Chloride', pressure: '600-900', color: '#9b59b6' },
+            { name: 'PA', fullName: 'Nylon (Polyamide)', pressure: '800-1200', color: '#e67e22' },
+            { name: 'PC', fullName: 'Polycarbonate', pressure: '700-1000', color: '#1abc9c' },
+            { name: 'POM', fullName: 'Polyoxymethylene (Acetal)', pressure: '600-900', color: '#34495e' },
+            { name: 'PMMA', fullName: 'Polymethyl Methacrylate (Acrylic)', pressure: '500-800', color: '#8e44ad' },
+            { name: 'PBT', fullName: 'Polybutylene Terephthalate', pressure: '600-900', color: '#d35400' },
+            { name: 'PET', fullName: 'Polyethylene Terephthalate', pressure: '700-1000', color: '#27ae60' },
+            { name: 'TPU', fullName: 'Thermoplastic Polyurethane', pressure: '400-700', color: '#16a085' },
+            { name: 'PEEK', fullName: 'Polyetheretherketone', pressure: '800-1200', color: '#c0392b' },
+            { name: 'PPS', fullName: 'Polyphenylene Sulfide', pressure: '700-1000', color: '#7f8c8d' },
+            { name: 'PTFE', fullName: 'Polytetrafluoroethylene', pressure: '300-600', color: '#95a5a6' }
+        ];
+
+        // เริ่มต้นโปรแกรม
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePlasticData();
+            setupEventListeners();
+        });
+
+        // ตั้งค่า Event Listeners
+        function setupEventListeners() {
+            // Radio buttons สำหรับเลือกวิธีการคำนวณ
+            document.querySelectorAll('input[name="calculation-method"]').forEach(radio => {
+                radio.addEventListener('change', toggleCalculationMethod);
+            });
+        }
+
+        // สร้างการ์ดพลาสติกและ dropdown
+        function initializePlasticData() {
+            const grid = document.getElementById('plastic-grid');
+            const select = document.getElementById('plastic-type');
+            
+            plasticData.forEach((plastic, index) => {
+                // สร้างการ์ด
+                const card = document.createElement('div');
+                card.className = 'plastic-card';
+                card.style.background = `linear-gradient(135deg, ${plastic.color} 0%, ${adjustColor(plastic.color, -20)} 100%)`;
+                card.innerHTML = `
+                    <div class="plastic-name">${plastic.name}</div>
+                    <div style="font-size: 0.8em; margin: 5px 0;">${plastic.fullName}</div>
+                    <div class="plastic-pressure">${plastic.pressure} bar</div>
+                `;
+                card.onclick = () => selectPlastic(index, card);
+                grid.appendChild(card);
+                
+                // สร้าง option
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${plastic.name} - ${plastic.fullName}`;
+                select.appendChild(option);
+            });
+            
+            // Event listener สำหรับ dropdown
+            select.addEventListener('change', function() {
+                if (this.value !== '') {
+                    selectPlastic(parseInt(this.value));
+                }
+            });
+        }
+
+        function adjustColor(color, percent) {
+            const num = parseInt(color.replace("#", ""), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = (num >> 16) + amt;
+            const G = (num >> 8 & 0x00FF) + amt;
+            const B = (num & 0x0000FF) + amt;
+            return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+                (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+                (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+        }
+
+        function selectPlastic(index, cardElement = null) {
+            // ล้างการเลือกเก่า
+            document.querySelectorAll('.plastic-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // เลือกการ์ดใหม่
+            if (cardElement) {
+                cardElement.classList.add('selected');
+            } else {
+                document.querySelectorAll('.plastic-card')[index].classList.add('selected');
+            }
+            
+            // อัพเดต dropdown
+            document.getElementById('plastic-type').value = index;
+        }
+
+        function toggleCalculationMethod() {
+            const method = document.querySelector('input[name="calculation-method"]:checked').value;
+            const dimensionInputs = document.getElementById('dimension-inputs');
+            const areaInput = document.getElementById('area-input');
+            
+            if (method === 'dimensions') {
+                dimensionInputs.style.display = 'block';
+                areaInput.style.display = 'none';
+                // ล้างค่าพื้นที่หน้าตัด
+                document.getElementById('projected-area').value = '';
+            } else {
+                dimensionInputs.style.display = 'none';
+                areaInput.style.display = 'block';
+                // ล้างค่าขนาดชิ้นงาน
+                document.getElementById('part-length').value = '';
+                document.getElementById('part-width').value = '';
+                document.getElementById('cavity-count').value = '1';
+            }
+        }
+
+        function recommendMachineSize() {
+            const method = document.querySelector('input[name="calculation-method"]:checked').value;
+            let projectedArea = 0;
+            let calculationDetails = '';
+            
+            if (method === 'dimensions') {
+                const length = parseFloat(document.getElementById('part-length').value);
+                const width = parseFloat(document.getElementById('part-width').value);
+                const cavityCount = parseInt(document.getElementById('cavity-count').value) || 1;
+                
+                // ตรวจสอบข้อมูลที่จำเป็น
+                if (!length || !width) {
+                    alert('กรุณากรอกข้อมูลขนาดชิ้นงานให้ครบถ้วน');
+                    return;
+                }
+                
+                // คำนวณพื้นที่การฉาย (mm²)
+                projectedArea = length * width * cavityCount;
+                calculationDetails = `📏 พื้นที่การฉาย: ${length} × ${width} × ${cavityCount} = ${projectedArea.toFixed(0)} mm²`;
+                
+            } else {
+                projectedArea = parseFloat(document.getElementById('projected-area').value);
+                
+                // ตรวจสอบข้อมูลที่จำเป็น
+                if (!projectedArea) {
+                    alert('กรุณากรอกพื้นที่หน้าตัดแม่พิมพ์');
+                    return;
+                }
+                
+                calculationDetails = `📏 พื้นที่หน้าตัดแม่พิมพ์: ${projectedArea.toFixed(0)} mm²`;
+            }
+            
+            // แสดงพื้นที่ที่คำนวณได้
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('result-value').textContent = `${projectedArea.toFixed(0)} mm²`;
+            
+            // แนะนำขนาดเครื่องฉีดตามพื้นที่
+            recommendMachineByArea(projectedArea, calculationDetails);
+        }
+
+        function recommendMachineByArea(projectedArea, calculationDetails) {
+            // แนะนำขนาดเครื่องฉีดตามพื้นที่การฉาย (mm²)
+            const machines = [
+                { size: '80-120 ตัน', areaRange: [0, 15000], description: 'เหมาะสำหรับชิ้นงานขนาดเล็ก' },
+                { size: '150-200 ตัน', areaRange: [15000, 35000], description: 'เหมาะสำหรับชิ้นงานขนาดกลาง' },
+                { size: '250-300 ตัน', areaRange: [35000, 60000], description: 'เหมาะสำหรับชิ้นงานขนาดกลาง-ใหญ่' },
+                { size: '350-450 ตัน', areaRange: [60000, 100000], description: 'เหมาะสำหรับชิ้นงานขนาดใหญ่' },
+                { size: '500-650 ตัน', areaRange: [100000, 150000], description: 'เหมาะสำหรับชิ้นงานขนาดใหญ่มาก' },
+                { size: '700-850 ตัน', areaRange: [150000, 200000], description: 'เหมาะสำหรับงานอุตสาหกรรม' },
+                { size: '900-1200 ตัน', areaRange: [200000, 300000], description: 'เหมาะสำหรับงานอุตสาหกรรมหนัก' },
+                { size: '1300+ ตัน', areaRange: [300000, Infinity], description: 'เหมาะสำหรับชิ้นงานขนาดใหญ่พิเศษ' }
+            ];
+            
+            let recommendedMachine = '';
+            let machineDescription = '';
+            
+            for (let machine of machines) {
+                if (projectedArea >= machine.areaRange[0] && projectedArea < machine.areaRange[1]) {
+                    recommendedMachine = machine.size;
+                    machineDescription = machine.description;
+                    break;
+                }
+            }
+            
+            // ข้อมูลพลาสติกที่เลือก
+            const plasticSelect = document.getElementById('plastic-type');
+            const selectedPlastic = plasticSelect.selectedIndex > 0 ? plasticData[plasticSelect.value] : null;
+            
+            const recommendation = document.getElementById('machine-recommendation');
+            const machineSize = document.getElementById('machine-size');
+            
+            let plasticInfo = '';
+            if (selectedPlastic) {
+                plasticInfo = `
+                    <p>🧪 พลาสติกที่เลือก: ${selectedPlastic.name} (${selectedPlastic.fullName})</p>
+                    <p>⚙️ ความดันฉีดแนะนำ: ${selectedPlastic.pressure} bar</p>
+                `;
+            }
+            
+            machineSize.innerHTML = `
+                <h4>ขนาดเครื่องฉีดที่แนะนำ: ${recommendedMachine}</h4>
+                <p style="color: #ecf0f1; margin: 10px 0;">${machineDescription}</p>
+                <p>${calculationDetails}</p>
+                ${plasticInfo}
+                <div style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.2); border-radius: 8px;">
+                    <small><strong>📋 หมายเหตุ:</strong><br>
+                    • การแนะนำนี้เป็นเพียงการประมาณเบื้องต้นตามพื้นที่การฉาย<br>
+                    • ควรปรึกษาผู้เชี่ยวชาญเพื่อการเลือกที่แม่นยำ<br>
+                    • พิจารณาปัจจัยอื่นๆ เช่น ความหนาชิ้นงาน, ระยะทางการไหล</small>
+                </div>
+            `;
+            
+            recommendation.style.display = 'block';
+        }
+
+        function showTab(tabName) {
+            // ซ่อนทุก tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // ลบ active class จากทุก tab
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // แสดง tab ที่เลือกและเพิ่ม active class
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1920 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สื่อการสอน Hot Runner Mold System</title>
+
+    <!-- นำเข้าไฟล์ CSS -->
+    <link href="hot-runner-styles.css" rel="stylesheet">
+
+    <!-- ฟอนต์และไอคอน -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <!-- GSAP สำหรับแอนิเมชัน -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <!-- Chart.js สำหรับกราฟ -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* เพิ่มสไตล์เฉพาะสำหรับการปรับปรุง */
+        .page-transition {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .page-transition.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ปรับปรุงสไตล์ 3D container */
+        #three-js-container {
+            width: 100%;
+            height: 500px;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+        }
+
+        /* Loading screen */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-family: 'Sarabun', sans-serif;
+            z-index: 1000;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #333;
+            border-top: 4px solid #0066cc;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Info panel สำหรับแสดงข้อมูลชิ้นส่วน */
+        #part-info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 300px;
+            max-height: 200px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            display: none;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        /* ปรับปรุงสไตล์ปุ่มควบคุม */
+        .model-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        .control-button {
+            background: linear-gradient(45deg, #0066cc, #0056b3);
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 102, 204, 0.3);
+        }
+
+        .control-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.4);
+            background: linear-gradient(45deg, #0056b3, #004080);
+        }
+
+        .control-button:active {
+            transform: translateY(0);
+        }
+
+        /* Video container improvements */
+        .video-container {
+            margin: 20px 0;
+        }
+
+        /* สไตล์สำหรับ breadcrumb */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #666;
+            padding: 10px 0;
+        }
+
+        .breadcrumb a {
+            color: #0066cc;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        .breadcrumb i.fas.fa-chevron-right {
+            color: #999;
+            font-size: 12px;
+        }
+        
+        /* Thermal Visualization Overlay */
+        #thermal-overlay {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            z-index: 100;
+            min-width: 200px;
+        }
+        
+        .thermal-legend {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        
+        .thermal-color {
+            width: 30px;
+            height: 15px;
+            margin-right: 10px;
+            border: 1px solid white;
+        }
+        
+        /* Physics Debug Info */
+        #physics-debug {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            color: #0f0;
+            font-family: monospace;
+            font-size: 12px;
+            z-index: 100;
+        }
+        
+        /* Sound Control */
+        #sound-control {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+        
+        .sound-btn {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .sound-btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+        }
+    </style>
+</head>
+
+<body>
+    <button id="menu-toggle" title="เปิด/ปิดเมนู" aria-label="เปิดหรือปิดเมนูนำทาง">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="sidebar">
+        <div id="sidebar-header">
+            <h1>Hot Runner Pro</h1>
+            <p>สื่อการสอนเชิงโต้ตอบ</p>
+        </div>
+
+        <!-- เมนูหลัก -->
+        <div class="menu-item active" data-page="home">
+            <i class="fas fa-home"></i>
+            <span>หน้าหลัก</span>
+        </div>
+
+        <!-- เมนู: เทคนิคการขึ้นรูปงานฉีดพลาสติก -->
+        <div class="menu-item" onclick="window.open('injection-learning.html', '_blank')">
+            <i class="fas fa-tools"></i> <!-- ไอคอนเครื่องมือ -->
+            <span>เทคนิคการขึ้นรูปงานฉีดพลาสติก</span>
+        </div>
+
+        <!-- เมนู: ความรู้เบื้องต้นแบบละเอียด -->
+        <div class="menu-item" onclick="window.open('basic-hotrunner.html', '_blank')">
+            <i class="fas fa-book-open"></i> <!-- ไอคอนหนังสือเปิด -->
+            <span>ความรู้เบื้องต้นแบบละเอียด</span>
+        </div>
+
+        <!-- เมนู: Hot Runner Mold Injection -->
+        <div class="menu-item" onclick="window.open('training-hot.html', '_blank')">
+            <i class="fas fa-burn"></i> <!-- ไอคอนแสดงความร้อน -->
+            <span>Hot Runner Mold Injection</span>
+        </div>
+
+        <!-- เมนู: โปรแกรมทดลองฉีด -->
+        <div class="menu-item" onclick="window.open('injection-simulation.html', '_blank')">
+            <i class="fas fa-vials"></i> <!-- ไอคอนทดลอง/ห้องแล็บ -->
+            <span>โปรแกรมทดลองฉีด</span>
+        </div>
+
+
+        <div class="menu-item" data-page="introduction">
+            <i class="fas fa-info-circle"></i>
+            <span>ความรู้เบื้องต้น</span>
+        </div>
+
+        <div class="menu-item" data-page="components">
+            <i class="fas fa-cogs"></i>
+            <span>ส่วนประกอบของระบบ</span>
+        </div>
+        
+        <div class="menu-item" data-page="3d-model">
+            <i class="fas fa-cube"></i>
+            <span>โมเดล 3D</span>
+        </div>
+
+        <div class="menu-item" data-page="videos">
+            <i class="fas fa-video"></i>
+            <span>วิดีโอสาธิต</span>
+        </div>
+
+        <div class="menu-item" data-page="troubleshooting">
+            <i class="fas fa-wrench"></i>
+            <span>การแก้ไขปัญหา</span>
+        </div>
+        <!-- เมนู: Hot Runner ROI Calculator -->
+<div class="menu-item" onclick="window.open('roi-ralculator.html', '_blank')">
+    <i class="fas fa-calculator"></i> <!-- ไอคอนเครื่องคิดเลข -->
+    <span>Hot Runner ROI Calculator</span>
+</div>
+
+<!-- เมนู: PID Controller -->
+<div class="menu-item" onclick="window.open('pidtest.html', '_blank')">
+    <i class="fas fa-sliders-h"></i> <!-- ไอคอนแสดงการควบคุม -->
+    <span>PID Controller</span>
+</div>
+
+
+        <div class="menu-item" data-page="quiz">
+            <i class="fas fa-question-circle"></i>
+            <span>แบบทดสอบ</span>
+        </div>
+    </div>
+
+    <div id="content">
+        <!-- หน้าหลัก -->
+        <div id="home" class="page active page-transition">
+            <div class="page-header">
+                <h2>หน้าหลัก - Hot Runner Mold System</h2>
+            </div>
+
+            <div class="page-content">
+                <!-- Breadcrumb Navigation -->
+                <div class="breadcrumb">
+                    <i class="fas fa-home"></i>
+                    <span>หน้าหลัก</span>
+                </div>
+
+                <!-- Featured Section สำหรับลิงก์พิเศษ -->
+                <div class="featured-section">
+                    <h3>🎓 เริ่มต้นเรียนรู้กับความรู้เบื้องต้นแบบละเอียด</h3>
+                    <p>สำรวจความรู้เชิงลึกเกี่ยวกับ Hot Runner System พร้อมประวัติศาสตร์ การเปรียบเทียบ
+                        และการประยุกต์ใช้งานในอุตสาหกรรมต่างๆ</p>
+                    <a href="basic-hotrunner.html" target="_blank" class="knowledge-link-btn">
+                        <i class="fas fa-graduation-cap"></i>
+                        เข้าสู่หน้าความรู้เบื้องต้นแบบละเอียด
+                    </a>
+                </div>
+
+                <div class="info-section">
+                    <h3>ยินดีต้อนรับสู่สื่อการสอนเกี่ยวกับ Hot Runner Mold System</h3>
+                    <p>สื่อการสอนนี้ออกแบบมาเพื่อให้ความรู้เกี่ยวกับเทคโนโลยี Hot Runner ในการผลิตพลาสติก
+                        ประกอบด้วยเนื้อหาดังนี้:</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>ความรู้พื้นฐานเกี่ยวกับ Hot Runner Mold System</li>
+                        <li>ส่วนประกอบและการทำงานของระบบ</li>
+                        <li>โมเดล 3D สำหรับการศึกษาอย่างละเอียด</li>
+                        <li>วิดีโอสาธิตการทำงานและการบำรุงรักษา</li>
+                        <li>คำแนะนำในการแก้ไขปัญหาที่พบบ่อย</li>
+                        <li>แบบทดสอบความรู้ความเข้าใจ</li>
+                    </ul>
+                </div>
+
+                <!-- Quick Access Menu -->
+                <div class="info-section">
+                    <h3>เข้าถึงเนื้อหาได้อย่างรวดเร็ว</h3>
+                    <div class="quick-access-menu">
+                        <a href="basic-hotrunner.html" target="_blank" class="quick-access-item">
+                            <i class="fas fa-book-open"></i>
+                            <h4>ความรู้เชิงลึก</h4>
+                            <p>ประวัติศาสตร์และทฤษฎี</p>
+                        </a>
+
+                        <div class="quick-access-item" onclick="switchPage('3d-model')">
+                            <i class="fas fa-cube"></i>
+                            <h4>โมเดล 3D</h4>
+                            <p>สำรวจโครงสร้าง</p>
+                        </div>
+
+                        <div class="quick-access-item" onclick="switchPage('videos')">
+                            <i class="fas fa-play-circle"></i>
+                            <h4>วิดีโอสาธิต</h4>
+                            <p>ดูการทำงานจริง</p>
+                        </div>
+
+                        <div class="quick-access-item" onclick="switchPage('quiz')">
+                            <i class="fas fa-clipboard-check"></i>
+                            <h4>ทดสอบความรู้</h4>
+                            <p>ประเมินความเข้าใจ</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="two-column">
+                    <div class="info-section">
+                        <h3>ประโยชน์ของ Hot Runner System</h3>
+                        <p>Hot Runner System มีข้อดีหลายประการเมื่อเทียบกับระบบแบบดั้งเดิม:</p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>ลดเวลาในการผลิต (Cycle Time)</li>
+                            <li>ลดการสูญเสียวัตถุดิบ</li>
+                            <li>คุณภาพชิ้นงานที่สูงขึ้น</li>
+                            <li>ประหยัดพลังงาน</li>
+                            <li>การควบคุมอุณหภูมิที่แม่นยำ</li>
+                        </ul>
+
+                        <!-- เพิ่มลิงก์ในส่วนนี้ด้วย -->
+                        <div style="margin-top: 15px;">
+                            <a href="basic-hotrunner.html" target="_blank" class="knowledge-link-btn">
+                                <i class="fas fa-external-link-alt"></i>
+                                อ่านรายละเอียดเพิ่มเติม
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="info-section">
+                        <h3>การใช้งานสื่อการสอน</h3>
+                        <p>วิธีการใช้งานสื่อการสอนนี้:</p>
+                        <ol style="margin-left: 20px; margin-top: 10px;">
+                            <li>เริ่มต้นด้วย<strong>ความรู้เบื้องต้นแบบละเอียด</strong></li>
+                            <li>เลือกหัวข้อที่ต้องการศึกษาจากเมนูด้านซ้าย</li>
+                            <li>ศึกษาเนื้อหาในแต่ละส่วน</li>
+                            <li>ดูโมเดล 3D เพื่อทำความเข้าใจโครงสร้าง</li>
+                            <li>ชมวิดีโอสาธิตการทำงาน</li>
+                            <li>ทำแบบทดสอบเพื่อประเมินความรู้</li>
+                        </ol>
+
+                        <div
+                            style="background: #e8f4fd; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #2196F3;">
+                            <p style="margin: 0; color: #1976D2;">
+                                <i class="fas fa-lightbulb"></i>
+                                <strong>คำแนะนำ:</strong>
+                                เริ่มจากหน้าความรู้เบื้องต้นแบบละเอียดเพื่อสร้างพื้นฐานความเข้าใจที่แข็งแกร่ง
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="model-container">
+                    <div class="model-placeholder">
+                        <i class="fas fa-cube"
+                            style="font-size: 3em; margin-bottom: 20px; color: var(--primary-color);"></i>
+                        <h3>ภาพรวมของ Hot Runner Mold System</h3>
+                        <p>เริ่มต้นการเรียนรู้ด้วยการเลือกหัวข้อจากเมนูด้านซ้าย</p>
+
+                        <!-- เพิ่มปุ่มลิงก์ที่นี่ด้วย -->
+                        <div style="margin-top: 20px;">
+                            <a href="basic-hotrunner.html" target="_blank" class="knowledge-link-btn">
+                                <i class="fas fa-search-plus"></i>
+                                ศึกษาเชิงลึกเพิ่มเติม
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ความรู้เบื้องต้น -->
+        <div id="introduction" class="page page-transition">
+            <div class="page-header">
+                <h2>ความรู้เบื้องต้นเกี่ยวกับ Hot Runner Mold System</h2>
+            </div>
+
+            <div class="page-content">
+                <!-- Breadcrumb Navigation -->
+                <div class="breadcrumb">
+                    <a href="#" onclick="switchPage('home')">หน้าหลัก</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>ความรู้เบื้องต้น</span>
+                </div>
+
+                <!-- แจ้งเตือนเกี่ยวกับหน้าที่มีรายละเอียดมากกว่า -->
+                <div
+                    style="background: linear-gradient(45deg, #667eea, #764ba2); color: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
+                    <h3 style="margin: 0 0 10px 0; color: white;">
+                        <i class="fas fa-star"></i>
+                        ต้องการเรียนรู้เชิงลึกมากขึ้น?
+                    </h3>
+                    <p style="margin: 0 0 15px 0;">
+                        เรามีหน้าความรู้เบื้องต้นแบบละเอียดที่ครอบคลุมประวัติศาสตร์ การเปรียบเทียบ
+                        และการประยุกต์ใช้งานในอุตสาหกรรม
+                    </p>
+                    <a href="basic-hotrunner.html" target="_blank" class="knowledge-link-btn"
+                        style="background: rgba(255,255,255,0.2); border: 2px solid white;">
+                        <i class="fas fa-graduation-cap"></i>
+                        เข้าสู่หน้าความรู้เบื้องต้นแบบละเอียด
+                    </a>
+                </div>
+
+                <div class="info-section">
+                    <h3>Hot Runner คืออะไร?</h3>
+                    <p>Hot Runner System เป็นเทคโนโลยีขั้นสูงในการฉีดพลาสติก (Injection Molding)
+                        ที่ใช้ระบบทำความร้อนแบบควบคุมเพื่อรักษาอุณหภูมิพลาสติกให้อยู่ในสภาพหลอมเหลว (Melt State) ตลอดเส้นทางจากหัวฉีด (Nozzle) 
+                        ผ่าน Manifold และ Hot Drop ไปจนถึงช่องเบ้า (Cavity) โดยตรง โดยไม่มีการแข็งตัวของพลาสติกในทางวิ่ง (Runner) 
+                        เหมือนในระบบแบบเย็น (Cold Runner System)</p>
+                    
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #3498db;">
+                        <h4 style="margin-top: 0; color: #2c3e50;"><i class="fas fa-thermometer-half"></i> พารามิเตอร์สำคัญของระบบ</h4>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>อุณหภูมิ Manifold:</strong> 200-350°C (ขึ้นอยู่กับชนิดพลาสติก)</li>
+                            <li><strong>อุณหภูมิ Hot Tip:</strong> ±5°C ของอุณหภูมิหลอมเหลว</li>
+                            <li><strong>ความดันระบบ:</strong> 70-140 MPa (10,000-20,000 psi)</li>
+                            <li><strong>Residence Time:</strong> ไม่เกิน 5-10 นาทีเพื่อป้องกัน Degradation</li>
+                            <li><strong>Temperature Uniformity:</strong> ±2-3°C ทั่วทั้งระบบ</li>
+                            <li><strong>Heat Loss Rate:</strong> 0.5-1.5 kW ต่อจุดฉีด</li>
+                        </ul>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <a href="basic-hotrunner.html" target="_blank" class="knowledge-link-btn">
+                            <i class="fas fa-arrow-right"></i>
+                            อ่านประวัติศาสตร์และวิวัฒนาการ
+                        </a>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3>ความแตกต่างระหว่าง Hot Runner และ Cold Runner</h3>
+                    <table>
+                        <tr>
+                            <th>คุณลักษณะ</th>
+                            <th>Hot Runner System</th>
+                            <th>Cold Runner System</th>
+                        </tr>
+                        <tr>
+                            <td>การควบคุมอุณหภูมิ</td>
+                            <td>PID Control ±2-3°C แบบ Multi-Zone</td>
+                            <td>ไม่มีระบบทำความร้อน ใช้อุณหภูมิแม่พิมพ์</td>
+                        </tr>
+                        <tr>
+                            <td>เศษพลาสติก (Sprue/Runner)</td>
+                            <td>0-5% ของน้ำหนักชิ้นงาน</td>
+                            <td>15-30% ต้องนำกลับมารีไซเคิล</td>
+                        </tr>
+                        <tr>
+                            <td>ราคาแม่พิมพ์</td>
+                            <td>สูงกว่า 2-5 เท่า ($50,000-$500,000)</td>
+                            <td>ต่ำกว่า ($10,000-$100,000)</td>
+                        </tr>
+                        <tr>
+                            <td>Cycle Time</td>
+                            <td>ลดลง 15-40% (ไม่ต้องรอ Runner เย็น)</td>
+                            <td>ช้ากว่าเนื่องจากต้องรอ Runner แข็งตัว</td>
+                        </tr>
+                        <tr>
+                            <td>การบำรุงรักษา</td>
+                            <td>ซับซ้อน ต้องทำความสะอาดทุก 2,000-5,000 Shots</td>
+                            <td>ง่าย ไม่ต้องบำรุงพิเศษ</td>
+                        </tr>
+                        <tr>
+                            <td>คุณภาพชิ้นงาน</td>
+                            <td>สม่ำเสมอ Gate Vestige < 0.1mm</td>
+                            <td>อาจมี Weld Line และ Gate Mark</td>
+                        </tr>
+                        <tr>
+                            <td>การใช้พลังงาน</td>
+                            <td>1.5-3 kW ต่อ Manifold Zone</td>
+                            <td>ใช้พลังงานจากเครื่องฉีดเท่านั้น</td>
+                        </tr>
+                        <tr>
+                            <td>Break-Even Point</td>
+                            <td>50,000-500,000 Shots (ขึ้นกับชนิดงาน)</td>
+                            <td>เหมาะกับ Short Run Production</td>
+                        </tr>
+                    </table>
+
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #ffc107;">
+                        <h4 style="margin-top: 0; color: #856404;"><i class="fas fa-calculator"></i> สูตรคำนวณ Break-Even Point</h4>
+                        <p style="margin: 10px 0; font-family: 'Courier New', monospace; background: white; padding: 10px; border-radius: 4px;">
+                            <strong>BEP (Shots) = (C<sub>hr</sub> - C<sub>cr</sub>) / (S<sub>m</sub> + S<sub>t</sub> + S<sub>e</sub>)</strong>
+                        </p>
+                        <p style="margin: 5px 0; font-size: 14px;">โดยที่:</p>
+                        <ul style="margin-left: 20px; font-size: 14px;">
+                            <li>C<sub>hr</sub> = ราคาแม่พิมพ์ Hot Runner</li>
+                            <li>C<sub>cr</sub> = ราคาแม่พิมพ์ Cold Runner</li>
+                            <li>S<sub>m</sub> = ประหยัดวัตถุดิบต่อ Shot</li>
+                            <li>S<sub>t</sub> = ประหยัดเวลาต่อ Shot (แปลงเป็นค่าเงิน)</li>
+                            <li>S<sub>e</sub> = ประหยัดพลังงานต่อ Shot</li>
+                        </ul>
+                    </div>
+
+                    <div style="margin-top: 20px; text-align: center;">
+                        <a href="basic-hotrunner.html" target="_blank" class="knowledge-link-btn">
+                            <i class="fas fa-chart-bar"></i>
+                            ดูการเปรียบเทียบแบบละเอียดพร้อมกราฟ
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ส่วนประกอบของระบบ -->
+        <div id="components" class="page page-transition">
+            <div class="page-header">
+                <h2>ส่วนประกอบของ Hot Runner Mold System</h2>
+            </div>
+
+            <div class="page-content">
+                <!-- Breadcrumb Navigation -->
+                <div class="breadcrumb">
+                    <a href="#" onclick="switchPage('home')">หน้าหลัก</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>ส่วนประกอบของระบบ</span>
+                </div>
+
+                <div class="info-section">
+                    <h3>ส่วนประกอบหลักของ Hot Runner System</h3>
+                    <div class="model-container">
+                        <div class="model-placeholder">
+                            <i class="fas fa-cogs"
+                                style="font-size: 3em; margin-bottom: 20px; color: var(--primary-color);"></i>
+                            <p>ภาพแสดงส่วนประกอบของ Hot Runner System</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3>รายละเอียดส่วนประกอบ</h3>
+
+                    <div style="margin-top: 20px;">
+                        <h4>1. Manifold (แมนิโฟลด์)</h4>
+                        <p>แมนิโฟลด์เป็นส่วนสำคัญที่ทำหน้าที่กระจายพลาสติกหลอมเหลวจากหัวฉีด (Nozzle) ไปยังหัวฉีดย่อย
+                            (Hot Tip) หลายๆ จุด ออกแบบด้วยระบบ Flow Channel ที่มี Flow Balance เพื่อให้พลาสติกไหลไปถึงทุก Cavity พร้อมกัน</p>
+                        
+                        <div style="background: #e8f4f8; padding: 15px; border-radius: 8px; margin-top: 10px;">
+                            <h5 style="margin-top: 0; color: #0066cc;"><i class="fas fa-cog"></i> ข้อมูลทางเทคนิค</h5>
+                            <ul style="margin-left: 20px; font-size: 14px;">
+                                <li><strong>วัสดุ:</strong> H13 Tool Steel (HRC 48-52) หรือ Stainless Steel 420</li>
+                                <li><strong>การเคลือบผิว:</strong> Nitride หรือ Nickel Plating เพื่อป้องกันการกัดกร่อน</li>
+                                <li><strong>ช่องทาง (Channel):</strong> เส้นผ่านศูนย์กลาง 8-20 mm ขึ้นอยู่กับ Shot Weight</li>
+                                <li><strong>Heater Capacity:</strong> 150-400 Watts ต่อ Zone</li>
+                                <li><strong>Thermocouple Type:</strong> J-Type หรือ K-Type (ความแม่นยำ ±1°C)</li>
+                                <li><strong>Insulation Gap:</strong> 1-3 mm เพื่อลดการสูญเสียความร้อน</li>
+                                <li><strong>น้ำหนัก:</strong> 5-50 kg ขึ้นอยู่กับจำนวน Drop และขนาด</li>
+                            </ul>
+                            <p style="margin: 10px 0 0 0; font-size: 13px; color: #666;">
+                                <i class="fas fa-info-circle"></i> <strong>Flow Balance:</strong> ความแตกต่างของ Pressure Drop ระหว่าง Cavity ควรน้อยกว่า 5%
+                            </p>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <h4>2. Hot Tip / Nozzle (หัวฉีดร้อน)</h4>
+                        <p>หัวฉีดร้อนเป็นส่วนที่ติดต่อกับช่องเบ้า (Cavity) โดยตรง มีระบบทำความร้อนแบบ Internal Heating 
+                            และเซ็นเซอร์วัดอุณหภูมิแบบ Real-time สามารถแบ่งได้หลายประเภท:</p>
+                        
+                        <div style="margin-top: 15px;">
+                            <div style="background: #f0f8ff; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #4169e1;">
+                                <h5 style="margin-top: 0; color: #4169e1;"><i class="fas fa-circle"></i> Open Tip Nozzle</h5>
+                                <ul style="margin-left: 20px; font-size: 14px;">
+                                    <li><strong>หลักการ:</strong> พลาสติกไหลผ่าน Gate โดยตรงไม่มีการปิด-เปิด</li>
+                                    <li><strong>Gate Size:</strong> 0.8-3.0 mm (ขึ้นอยู่กับขนาดชิ้นงาน)</li>
+                                    <li><strong>Gate Vestige:</strong> 0.2-0.5 mm (ต้องตัดออก)</li>
+                                    <li><strong>เหมาะสำหรับ:</strong> PP, PE, PS (พลาสติกความหนืดต่ำ, MFI > 15)</li>
+                                    <li><strong>ราคา:</strong> $200-$800 ต่อ Drop</li>
+                                    <li><strong>ข้อจำกัด:</strong> มี Stringing และ Drooling ได้</li>
+                                </ul>
+                            </div>
+
+                            <div style="background: #fff5e6; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #ff8c00;">
+                                <h5 style="margin-top: 0; color: #ff8c00;"><i class="fas fa-valve"></i> Valve Gate Nozzle</h5>
+                                <ul style="margin-left: 20px; font-size: 14px;">
+                                    <li><strong>หลักการ:</strong> ใช้ Pin ควบคุมการเปิด-ปิด Gate แบบ Mechanical</li>
+                                    <li><strong>Pin Stroke:</strong> 0.5-5.0 mm (ขับด้วย Pneumatic, Hydraulic หรือ Electric)</li>
+                                    <li><strong>Gate Vestige:</strong> < 0.1 mm (เกือบไม่มี)</li>
+                                    <li><strong>Response Time:</strong> 10-50 milliseconds</li>
+                                    <li><strong>เหมาะสำหรับ:</strong> ทุกชนิดพลาสติก รวมถึง Engineering Plastics</li>
+                                    <li><strong>ราคา:</strong> $1,500-$5,000 ต่อ Drop</li>
+                                    <li><strong>ข้อดี:</strong> ไม่มี Stringing, Gate Mark สวย, Sequential Injection ได้</li>
+                                    <li><strong>Cycle Time Impact:</strong> เพิ่มขึ้น 0.5-2 วินาที</li>
+                                </ul>
+                            </div>
+
+                            <div style="background: #ffe6e6; padding: 15px; border-radius: 8px; border-left: 4px solid #dc143c;">
+                                <h5 style="margin-top: 0; color: #dc143c;"><i class="fas fa-temperature-high"></i> Thermal Gate Nozzle</h5>
+                                <ul style="margin-left: 20px; font-size: 14px;">
+                                    <li><strong>หลักการ:</strong> ควบคุม Viscosity ด้วยการปรับอุณหภูมิบริเวณ Gate</li>
+                                    <li><strong>Temperature Control:</strong> ±3-5°C แบบ Dynamic</li>
+                                    <li><strong>Gate Vestige:</strong> 0.1-0.3 mm</li>
+                                    <li><strong>เหมาะสำหรับ:</strong> PA, PBT, PET (พลาสติกที่ไวต่ออุณหภูมิ)</li>
+                                    <li><strong>ราคา:</strong> $500-$1,500 ต่อ Drop</li>
+                                    <li><strong>ข้อควรระวัง:</strong> ต้อง Fine-tune Temperature Profile</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <h4>3. Heater (ฮีตเตอร์)</h4>
+                        <p>ระบบทำความร้อนใน Hot Runner มีหลายรูปแบบ:</p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li><strong>Cartridge Heater</strong> - แท่งทำความร้อนที่ฝังอยู่ในแมนิโฟลด์หรือหัวฉีด</li>
+                            <li><strong>Coil Heater</strong> - ขดลวดความร้อนที่พันรอบท่อหรือส่วนประกอบ</li>
+                            <li><strong>Band Heater</strong> - แถบความร้อนที่หุ้มรอบส่วนประกอบ</li>
+                        </ul>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <h4>4. Temperature Controller (ระบบควบคุมอุณหภูมิ)</h4>
+                        <p>ระบบควบคุมอุณหภูมิแบบ Multi-Zone ทำหน้าที่รักษาอุณหภูมิของแต่ละส่วนใน Hot Runner System 
+                            ให้คงที่และสม่ำเสมอตามที่กำหนดด้วย PID Control Algorithm</p>
+                        
+                        <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin-top: 10px;">
+                            <h5 style="margin-top: 0; color: #333;"><i class="fas fa-microchip"></i> ส่วนประกอบระบบควบคุม</h5>
+                            <ul style="margin-left: 20px; font-size: 14px;">
+                                <li><strong>Controller Unit:</strong> Multi-Zone Controller (4-32 Zones)
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Display: 7" Touchscreen HMI</li>
+                                        <li>Communication: Ethernet, RS-485, Modbus TCP</li>
+                                        <li>Data Logging: 10,000+ cycles</li>
+                                        <li>Alarm System: Over/Under Temperature, Heater Failure</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Thermocouple:</strong> J-Type หรือ K-Type
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>ความแม่นยำ: ±0.5-1.0°C</li>
+                                        <li>Response Time: < 1 second</li>
+                                        <li>Temperature Range: 0-500°C</li>
+                                    </ul>
+                                </li>
+                                <li><strong>SSR (Solid State Relay):</strong> สำหรับควบคุมกำลังไฟฟ้า
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Switching Frequency: 10-50 Hz</li>
+                                        <li>Power Rating: 25-100 Amps</li>
+                                        <li>Zero-Cross Switching เพื่อลด EMI</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #2196f3;">
+                            <h5 style="margin-top: 0; color: #1976d2;"><i class="fas fa-sliders-h"></i> PID Control Parameters</h5>
+                            <p style="font-size: 14px; margin: 10px 0;">การตั้งค่า PID Controller สำหรับ Hot Runner System:</p>
+                            <table style="width: 100%; font-size: 13px; margin-top: 10px;">
+                                <tr style="background: #fff;">
+                                    <th style="padding: 8px; border: 1px solid #ddd;">Parameter</th>
+                                    <th style="padding: 8px; border: 1px solid #ddd;">Manifold</th>
+                                    <th style="padding: 8px; border: 1px solid #ddd;">Nozzle</th>
+                                </tr>
+                                <tr style="background: #fff;">
+                                    <td style="padding: 8px; border: 1px solid #ddd;">P (Proportional)</td>
+                                    <td style="padding: 8px; border: 1px solid #ddd;">15-30</td>
+                                    <td style="padding: 8px; border: 1px solid #ddd;">20-40</td>
+                                </tr>
+                                <tr style="background: #f5f5f5;">
+                                    <td style="padding: 8px; border: 1px solid #ddd;">I (Integral)</td>
+                                    <td style="padding: 8px; border: 1px solid #ddd;">100-300 sec</td>
+                                    <td style="padding: 8px; border: 1px solid #ddd;">80-200 sec</td>
+                                </tr>
+                                <tr style="background: #fff;">
+                                    <td style="padding: 8px; border: 1px solid #ddd;">D (Derivative)</td>
+                                    <td style="padding: 8px; border: 1px solid #ddd;">5-15 sec</td>
+                                    <td style="padding: 8px; border: 1px solid #ddd;">3-10 sec</td>
+                                </tr>
+                            </table>
+                            <p style="font-size: 12px; margin: 10px 0 0 0; color: #666;">
+                                <i class="fas fa-exclamation-triangle"></i> <strong>หมายเหตุ:</strong> ค่า PID ต้อง Fine-tune ตามลักษณะของระบบและชนิดพลาสติก
+                            </p>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <h4>5. Valve Pin Actuator (สำหรับระบบ Valve Gate)</h4>
+                        <p>ในระบบ Valve Gate จะมีอุปกรณ์ควบคุมการเคลื่อนที่ของเข็มเปิด-ปิด ซึ่งอาจขับเคลื่อนด้วย:</p>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li>ระบบนิวเมติก (Pneumatic Actuator)</li>
+                            <li>ระบบไฮดรอลิก (Hydraulic Actuator)</li>
+                            <li>ระบบไฟฟ้า (Electric Actuator)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="gallery">
+                    <div class="gallery-item">
+                        <div
+                            style="width: 100%; height: 150px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                            <i class="fas fa-image" style="font-size: 2em; color: #ccc;"></i>
+                        </div>
+                        <p style="text-align: center; margin-top: 10px;">แมนิโฟลด์</p>
+                    </div>
+                    <div class="gallery-item">
+                        <div
+                            style="width: 100%; height: 150px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                            <i class="fas fa-image" style="font-size: 2em; color: #ccc;"></i>
+                        </div>
+                        <p style="text-align: center; margin-top: 10px;">หัวฉีดร้อน</p>
+                    </div>
+                    <div class="gallery-item">
+                        <div
+                            style="width: 100%; height: 150px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                            <i class="fas fa-image" style="font-size: 2em; color: #ccc;"></i>
+                        </div>
+                        <p style="text-align: center; margin-top: 10px;">โครงสร้างภายใน</p>
+                    </div>
+                    <div class="gallery-item">
+                        <div
+                            style="width: 100%; height: 150px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                            <i class="fas fa-image" style="font-size: 2em; color: #ccc;"></i>
+                        </div>
+                        <p style="text-align: center; margin-top: 10px;">ระบบควบคุม</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- โมเดล 3D -->
+        <div id="3d-model" class="page page-transition">
+            <div class="page-header">
+                <h2>โมเดล 3D ของ Hot Runner Mold System</h2>
+            </div>
+
+            <div class="page-content">
+                <!-- Breadcrumb Navigation -->
+                <div class="breadcrumb">
+                    <a href="#" onclick="switchPage('home')">หน้าหลัก</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>โมเดล 3D</span>
+                </div>
+
+                <div class="info-section">
+                    <h3>เลือกประเภทของ Hot Runner System</h3>
+                    <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; margin: 20px 0;">
+                        <button class="model-selector active" data-model="valve-gate">
+                            <i class="fas fa-random"></i> Valve Gate System
+                        </button>
+                        <button class="model-selector" data-model="thermal-gate">
+                            <i class="fas fa-temperature-high"></i> Thermal Gate System
+                        </button>
+                        <button class="model-selector" data-model="open-tip">
+                            <i class="fas fa-faucet"></i> Open Tip System
+                        </button>
+                    </div>
+
+                    <!-- Container สำหรับโมเดล 3D -->
+                    <div id="three-js-container">
+                        <div class="loading-overlay" id="model-loading">
+                            <div class="loading-spinner"></div>
+                            <h3>กำลังโหลดโมเดล 3D...</h3>
+                            <p>กรุณารอสักครู่</p>
+                        </div>
+                        
+                        <!-- Sound Control -->
+                        <div id="sound-control">
+                            <button class="sound-btn" onclick="toggleSound()">
+                                <i class="fas fa-volume-up" id="sound-icon"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Thermal Visualization -->
+                        <div id="thermal-overlay" style="display: none;">
+                            <h4 style="margin: 0 0 10px 0;">🌡️ Heat Distribution</h4>
+                            <div class="thermal-legend">
+                                <div class="thermal-color" style="background: #ff0000;"></div>
+                                <span>250-300°C (Hot)</span>
+                            </div>
+                            <div class="thermal-legend">
+                                <div class="thermal-color" style="background: #ff9900;"></div>
+                                <span>200-250°C</span>
+                            </div>
+                            <div class="thermal-legend">
+                                <div class="thermal-color" style="background: #ffff00;"></div>
+                                <span>150-200°C</span>
+                            </div>
+                            <div class="thermal-legend">
+                                <div class="thermal-color" style="background: #00ff00;"></div>
+                                <span>100-150°C</span>
+                            </div>
+                            <div class="thermal-legend">
+                                <div class="thermal-color" style="background: #0099ff;"></div>
+                                <span>50-100°C (Cool)</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Physics Debug Info -->
+                        <div id="physics-debug" style="display: none;">
+                            <div>Physics: <span id="physics-status">Active</span></div>
+                            <div>Objects: <span id="physics-objects">0</span></div>
+                            <div>FPS: <span id="physics-fps">60</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Panel สำหรับแสดงข้อมูลชิ้นส่วน -->
+                    <div id="part-info"></div>
+
+                    <!-- ปุ่มควบคุมโมเดล 3D -->
+                    <div class="model-controls">
+                        <button class="control-button" id="toggle-labels">
+                            <i class="fas fa-tags"></i> แสดง/ซ่อนป้ายชื่อ
+                        </button>
+                        <button class="control-button" id="toggle-animation">
+                            <i class="fas fa-play"></i> แสดงการทำงาน
+                        </button>
+                        <button class="control-button" id="toggle-explode">
+                            <i class="fas fa-expand-arrows-alt"></i> แยกชิ้นส่วน
+                        </button>
+                        <button class="control-button" id="reset-view">
+                            <i class="fas fa-sync-alt"></i> รีเซ็ตมุมมอง
+                        </button>
+                        <button class="control-button" id="toggle-wireframe">
+                            <i class="fas fa-project-diagram"></i> โหมดโครงสร้าง
+                        </button>
+                        <button class="control-button" id="camera-top">
+                            <i class="fas fa-eye"></i> มุมมองบน
+                        </button>
+                        <button class="control-button" id="toggle-thermal">
+                            <i class="fas fa-thermometer-half"></i> Thermal View
+                        </button>
+                        <button class="control-button" id="toggle-physics">
+                            <i class="fas fa-atom"></i> Physics Debug
+                        </button>
+                        <button class="control-button" id="toggle-quality">
+                            <i class="fas fa-magic"></i> Ultra Quality
+                        </button>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3>คำอธิบายส่วนประกอบ</h3>
+                    <div class="two-column">
+                        <div>
+                            <h4>ส่วนประกอบหลัก:</h4>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li><strong>Manifold:</strong> ทำหน้าที่กระจายพลาสติกไปยังหัวฉีดต่างๆ</li>
+                                <li><strong>Hot Tip:</strong> ตำแหน่งที่พลาสติกจะไหลเข้าสู่ช่องเบ้า</li>
+                                <li><strong>Valve Pin:</strong> เข็มควบคุมการไหลของพลาสติก (เฉพาะระบบ Valve Gate)</li>
+                                <li><strong>Heater:</strong> ระบบทำความร้อนรอบๆ runner</li>
+                                <li><strong>Sprue Bushing:</strong> ทางเข้าพลาสติกจากหัวฉีดของเครื่อง</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4>วิธีใช้งานโมเดล 3D:</h4>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>คลิกและลากเพื่อหมุนโมเดล</li>
+                                <li>เลื่อนเพื่อย่อ/ขยาย</li>
+                                <li>คลิกขวาและลากเพื่อเลื่อนตำแหน่ง</li>
+                                <li>ใช้ปุ่มควบคุมเพื่อดูรายละเอียด</li>
+                                <li>คลิกที่ชิ้นส่วนเพื่อดูข้อมูล</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div id="model-description"
+                        style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid var(--primary-color);">
+                        <p>เลือกประเภทโมเดลจากปุ่มด้านบนเพื่อดูคำอธิบายรายละเอียด</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- วิดีโอสาธิต -->
+        <div id="videos" class="page page-transition">
+            <div class="page-header">
+                <h2>วิดีโอสาธิตการทำงานของ Hot Runner Mold System</h2>
+            </div>
+
+            <div class="page-content">
+                <!-- Breadcrumb Navigation -->
+                <div class="breadcrumb">
+                    <a href="#" onclick="switchPage('home')">หน้าหลัก</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>วิดีโอสาธิต</span>
+                </div>
+
+                <div class="info-section">
+                    <h3>เลือกประเภทวิดีโอ</h3>
+                    <div id="video-category-description">
+                        <p>กรุณาเลือกประเภทวิดีโอจากปุ่มด้านล่าง</p>
+                    </div>
+
+                    <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; margin: 25px 0;">
+                        <button class="video-button" data-video="operation"
+                            aria-label="เลือกดูวิดีโอการทำงานของ Hot Runner">
+                            <i class="fas fa-play"></i> การทำงานของ Hot Runner
+                        </button>
+                        <button class="video-button" data-video="installation"
+                            aria-label="เลือกดูวิดีโอการติดตั้ง Hot Runner">
+                            <i class="fas fa-tools"></i> การติดตั้ง Hot Runner
+                        </button>
+                        <button class="video-button" data-video="maintenance" aria-label="เลือกดูวิดีโอการบำรุงรักษา">
+                            <i class="fas fa-wrench"></i> การบำรุงรักษา
+                        </button>
+                        <button class="video-button" data-video="troubleshooting"
+                            aria-label="เลือกดูวิดีโอการแก้ไขปัญหาเบื้องต้น">
+                            <i class="fas fa-search"></i> การแก้ไขปัญหา
+                        </button>
+                    </div>
+
+                    <!-- Container สำหรับแสดงวิดีโอ -->
+                    <div class="video-container">
+                        <!-- วิดีโอจะถูกโหลดที่นี่โดย hot-runner-videos.js -->
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3>คำอธิบายประกอบวิดีโอ</h3>
+                    <div id="video-description">
+                        <p>กรุณาเลือกวิดีโอจากปุ่มด้านบนเพื่อดูคำอธิบายประกอบ</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- การแก้ไขปัญหา -->
+        <div id="troubleshooting" class="page page-transition">
+            <div class="page-header">
+                <h2>การแก้ไขปัญหาใน Hot Runner Mold System</h2>
+            </div>
+
+            <div class="page-content">
+                <!-- Breadcrumb Navigation -->
+                <div class="breadcrumb">
+                    <a href="#" onclick="switchPage('home')">หน้าหลัก</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>การแก้ไขปัญหา</span>
+                </div>
+
+                <div class="info-section">
+                    <h3>ปัญหาที่พบบ่อยและวิธีแก้ไข</h3>
+                    <table>
+                        <tr>
+                            <th>ปัญหา</th>
+                            <th>สาเหตุที่เป็นไปได้</th>
+                            <th>วิธีแก้ไข</th>
+                        </tr>
+                        <tr>
+                            <td>พลาสติกรั่วไหลจากหัวฉีด (Leakage)</td>
+                            <td>
+                                <ul style="margin-left: 20px;">
+                                    <li>อุณหภูมิสูงเกินไป</li>
+                                    <li>ซีลเสื่อมสภาพ</li>
+                                    <li>แรงปิดแม่พิมพ์ไม่เพียงพอ</li>
+                                </ul>
+                            </td>
+                            <td>
+                                <ul style="margin-left: 20px;">
+                                    <li>ปรับอุณหภูมิให้เหมาะสม</li>
+                                    <li>เปลี่ยนซีลใหม่</li>
+                                    <li>เพิ่มแรงปิดแม่พิมพ์</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>เกิดคราบไหม้ (Burning)</td>
+                            <td>
+                                <ul style="margin-left: 20px;">
+                                    <li>อุณหภูมิสูงเกินไป</li>
+                                    <li>พลาสติกติดค้างในระบบนานเกินไป</li>
+                                    <li>การระบายอากาศไม่ดี</li>
+                                </ul>
+                            </td>
+                            <td>
+                                <ul style="margin-left: 20px;">
+                                    <li>ลดอุณหภูมิ</li>
+                                    <li>ลด Residence Time</li>
+                                    <li>ปรับปรุงระบบระบายอากาศ</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>จุดประสานเย็น (Cold Weld Line)</td>
+                            <td>
+                                <ul style="margin-left: 20px;">
+                                    <li>อุณหภูมิต่ำเกินไป</li>
+                                    <li>ความเร็วในการฉีดต่ำเกินไป</li>
+                                    <li>การวางตำแหน่ง Gate ไม่เหมาะสม</li>
+                                </ul>
+                            </td>
+                            <td>
+                                <ul style="margin-left: 20px;">
+                                    <li>เพิ่มอุณหภูมิ</li>
+                                    <li>เพิ่มความเร็วในการฉีด</li>
+                                    <li>ปรับตำแหน่ง Gate</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>การอุดตันของ Hot Tip</td>
+                            <td>
+                                <ul style="margin-left: 20px;">
+                                    <li>การเสื่อมสภาพของพลาสติก</li>
+                                    <li>สิ่งปนเปื้อนในเม็ดพลาสติก</li>
+                                    <li>อุณหภูมิไม่สม่ำเสมอ</li>
+                                </ul>
+                            </td>
+                            <td>
+                                <ul style="margin-left: 20px;">
+                                    <li>ทำความสะอาด Hot Tip</li>
+                                    <li>ใช้วัตถุดิบที่มีคุณภาพ</li>
+                                    <li>ตรวจสอบระบบควบคุมอุณหภูมิ</li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="info-section">
+                    <h3>การวินิจฉัยปัญหาด้วยตนเองแบบเชิงลึก</h3>
+                    <div class="two-column">
+                        <div>
+                            <h4><i class="fas fa-search"></i> ขั้นตอนการตรวจสอบเชิงระบบ:</h4>
+                            <ol style="margin-left: 20px; margin-top: 10px; font-size: 14px;">
+                                <li><strong>Temperature Profile Analysis</strong>
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>ตรวจสอบ Temperature Uniformity (ควร < ±3°C)</li>
+                                        <li>วิเคราะห์ Heat-up Time (ปกติ 30-60 นาที)</li>
+                                        <li>ตรวจสอบ Temperature Overshoot (ควร < 5°C)</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Electrical System Check</strong>
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>วัดค่าความต้านทานของ Heater (5-30 Ohms)</li>
+                                        <li>ตรวจสอบ Thermocouple Voltage (mV output)</li>
+                                        <li>ทดสอบ SSR ด้วย Multimeter</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Mechanical Inspection</strong>
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>ตรวจสอบ Gate Wear Pattern</li>
+                                        <li>วัด Pin Stroke ของ Valve Gate (ต้องตรงตาม Spec)</li>
+                                        <li>ตรวจหา Plastic Leakage รอบ Tip Seal</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Plastic Quality Test</strong>
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>ตรวจสอบ MFI (Melt Flow Index)</li>
+                                        <li>วิเคราะห์ Moisture Content (ควร < 0.02%)</li>
+                                        <li>ตรวจหา Contamination</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Process Parameters Verification</strong>
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>ตรวจสอบ Injection Pressure (70-140 MPa)</li>
+                                        <li>วิเคราะห์ Cushion Size (3-6 mm)</li>
+                                        <li>ประเมิน Residence Time</li>
+                                    </ul>
+                                </li>
+                            </ol>
+                        </div>
+
+                        <div>
+                            <h4><i class="fas fa-toolbox"></i> เครื่องมือและอุปกรณ์ขั้นสูง:</h4>
+                            <ul style="margin-left: 20px; margin-top: 10px; font-size: 14px;">
+                                <li><strong>Temperature Measurement</strong>
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Infrared Thermometer (±1°C)</li>
+                                        <li>Thermal Imaging Camera (FLIR)</li>
+                                        <li>Data Logger (24-channel)</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Electrical Testing</strong>
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Digital Multimeter (0.1% accuracy)</li>
+                                        <li>Megger (Insulation Tester)</li>
+                                        <li>Clamp Meter (AC/DC)</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Mechanical Tools</strong>
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Torque Wrench (0-200 Nm)</li>
+                                        <li>Pin Gauge Set (0.01mm)</li>
+                                        <li>Borescope/Endoscope</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Material Testing</strong>
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>MFI Tester (ASTM D1238)</li>
+                                        <li>Moisture Analyzer</li>
+                                        <li>DSC (Differential Scanning Calorimetry)</li>
+                                    </ul>
+                                </li>
+                                <li><strong>Safety Equipment</strong>
+                                    <ul style="margin-left: 20px; margin-top: 5px;">
+                                        <li>Heat-resistant Gloves (350°C)</li>
+                                        <li>Safety Glasses with Side Shield</li>
+                                        <li>Anti-static Wrist Strap</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div style="background: #fff3cd; padding: 20px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #ffc107;">
+                        <h4 style="margin-top: 0; color: #856404;"><i class="fas fa-flask"></i> กรณีศึกษา: การแก้ปัญหา Color Streak</h4>
+                        <p style="font-size: 14px;"><strong>ปัญหา:</strong> พบเส้นสีที่ผิดปกติบนชิ้นงานพลาสติกใส (Clear PC)</p>
+                        <p style="font-size: 14px;"><strong>การวิเคราะห์:</strong></p>
+                        <ol style="margin-left: 20px; font-size: 14px;">
+                            <li>ตรวจสอบ Temperature Profile → พบว่า Manifold Zone 3 สูงกว่าปกติ 8°C</li>
+                            <li>ตรวจสอบ Residence Time → 12 นาที (เกินมาตรฐาน PC ที่ 8 นาที)</li>
+                            <li>วิเคราะห์ Color Streak ด้วย Microscope → เป็น Degraded Material</li>
+                        </ol>
+                        <p style="font-size: 14px;"><strong>การแก้ไข:</strong></p>
+                        <ul style="margin-left: 20px; font-size: 14px;">
+                            <li>ลดอุณหภูมิ Manifold Zone 3 จาก 290°C → 282°C</li>
+                            <li>เพิ่ม Injection Speed 15% เพื่อลด Residence Time</li>
+                            <li>ทำ Purging ด้วย High MFI GPPS 3 cycles</li>
+                        </ul>
+                        <p style="font-size: 14px; margin-top: 10px;"><strong>ผลลัพธ์:</strong> Color Streak หายไป, รอบการผลิตลดลง 2.3 วินาที</p>
+                    </div>
+                </div>
+
+                <div class="model-container">
+                    <div class="model-placeholder">
+                        <i class="fas fa-tools"
+                            style="font-size: 3em; margin-bottom: 20px; color: var(--primary-color);"></i>
+                        <h3>แผนภาพแสดงวิธีการแก้ไขปัญหา Hot Runner</h3>
+                        <p>คลิกที่ปัญหาในตารางด้านบนเพื่อดูวิธีการแก้ไขอย่างละเอียด</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- แบบทดสอบ -->
+        <div id="quiz" class="page page-transition">
+            <div class="page-header">
+                <h2>แบบทดสอบความรู้เกี่ยวกับ Hot Runner Mold System</h2>
+            </div>
+
+            <div class="page-content">
+                <!-- Breadcrumb Navigation -->
+                <div class="breadcrumb">
+                    <a href="#" onclick="switchPage('home')">หน้าหลัก</a>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>แบบทดสอบ</span>
+                </div>
+
+                <div class="info-section">
+                    <h3>แบบทดสอบความรู้ความเข้าใจ</h3>
+                    <p>ทำแบบทดสอบเพื่อประเมินความรู้เกี่ยวกับ Hot Runner Mold System (5 ข้อ)</p>
+
+                    <div style="margin-top: 30px;">
+                        <div class="quiz-question">
+                            <p><strong>1. Hot Runner System แตกต่างจาก Cold Runner System อย่างไร?</strong></p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q1" value="a"> ก. ไม่มีการสูญเสียพลาสติกในส่วนของ
+                                    Runner</label><br>
+                                <label><input type="radio" name="q1" value="b"> ข. ใช้พลังงานน้อยกว่า</label><br>
+                                <label><input type="radio" name="q1" value="c"> ค. ราคาแม่พิมพ์ถูกกว่า</label><br>
+                                <label><input type="radio" name="q1" value="d"> ง. การบำรุงรักษาง่ายกว่า</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p><strong>2. ส่วนประกอบใดทำหน้าที่กระจายพลาสติกหลอมเหลว?</strong></p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q2" value="a"> ก. Sprue Bushing</label><br>
+                                <label><input type="radio" name="q2" value="b"> ข. Manifold</label><br>
+                                <label><input type="radio" name="q2" value="c"> ค. Hot Tip</label><br>
+                                <label><input type="radio" name="q2" value="d"> ง. Valve Pin</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p><strong>3. ประเภทของ Hot Tip ที่ให้คุณภาพชิ้นงานดีที่สุดคือ?</strong></p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q3" value="a"> ก. Open Tip</label><br>
+                                <label><input type="radio" name="q3" value="b"> ข. Valve Gate</label><br>
+                                <label><input type="radio" name="q3" value="c"> ค. Thermal Gate</label><br>
+                                <label><input type="radio" name="q3" value="d"> ง. Sprue Gate</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p><strong>4. หากพบปัญหาพลาสติกรั่วไหลจาก Hot Tip ควรแก้ไขอย่างไร?</strong></p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q4" value="a"> ก. เพิ่มอุณหภูมิ</label><br>
+                                <label><input type="radio" name="q4" value="b"> ข. ลดความเร็วในการฉีด</label><br>
+                                <label><input type="radio" name="q4" value="c"> ค. ตรวจสอบและเปลี่ยนซีล</label><br>
+                                <label><input type="radio" name="q4" value="d"> ง. เพิ่มความดันจากเครื่องฉีด</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p><strong>5. ข้อใดไม่ใช่ข้อดีของ Hot Runner System?</strong></p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q5" value="a"> ก. ลด Cycle Time</label><br>
+                                <label><input type="radio" name="q5" value="b"> ข. ลดการสูญเสียวัตถุดิบ</label><br>
+                                <label><input type="radio" name="q5" value="c"> ค. ราคาแม่พิมพ์ถูกกว่า</label><br>
+                                <label><input type="radio" name="q5" value="d"> ง. คุณภาพชิ้นงานสม่ำเสมอ</label>
+                            </div>
+                        </div>
+
+                        <div style="text-align: center; margin-top: 40px;">
+                            <button id="submit-quiz">
+                                <i class="fas fa-paper-plane"></i> ส่งคำตอบ
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="quiz-result" style="margin-top: 30px; display: none;">
+                        <div class="info-section"
+                            style="background: #f8f9fa; border-left: 4px solid var(--primary-color);">
+                            <h4><i class="fas fa-chart-bar"></i> ผลการทดสอบ</h4>
+                            <p style="font-size: 1.2em; margin: 10px 0;">คะแนนของคุณ: <span id="score"
+                                    style="font-weight: bold; color: var(--primary-color);">0</span>/5</p>
+                            <div id="feedback"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Three.js Core Library -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+
+    <!-- Three.js Extensions -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/RGBELoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/postprocessing/OutlinePass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/postprocessing/UnrealBloomPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/postprocessing/SSAOPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/shaders/FXAAShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/shaders/CopyShader.js"></script>
+    
+    <!-- Physics Engine (Ammo.js) -->
+    <script src="https://cdn.jsdelivr.net/gh/kripken/ammo.js@master/builds/ammo.js"></script>
+
+    <!-- โหลดไฟล์หลักหลังจากไลบรารีพื้นฐานโหลดเสร็จ -->
+    <script src="hot-runner-3d.js" defer></script>
+    <script src="hot-runner-advanced.js" defer></script>
+    <script src="hot-runner-videos.js" defer></script>
+    <script src="hot-runner-main.js" defer></script>
+
+    <script>
+        // Enhanced JavaScript functionality for complete Hot Runner System
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // =============== ตัวแปรสำหรับจัดการสถานะระบบ ===============
+            window.modelInitialized = false;
+            window.videoSystemInitialized = false;
+            window.originalPositionsSaved = false;
+            window.currentModel = null;
+            window.currentModelType = 'valve-gate';
+
+            // =============== การจัดการเมนูและการนำทาง ===============
+            const menuItems = document.querySelectorAll('.menu-item[data-page]');
+            const pages = document.querySelectorAll('.page');
+
+            // ฟังก์ชันสำหรับเปลี่ยนหน้า
+            window.switchPage = function (pageId) {
+                // ซ่อนหน้าทั้งหมด
+                pages.forEach(page => {
+                    page.classList.remove('active');
+                });
+
+                // แสดงหน้าที่เลือก
+                const targetPage = document.getElementById(pageId);
+                if (targetPage) {
+                    targetPage.classList.add('active');
+                }
+
+                // อัปเดตเมนู
+                menuItems.forEach(item => item.classList.remove('active'));
+                const activeMenuItem = document.querySelector(`[data-page="${pageId}"]`);
+                if (activeMenuItem) {
+                    activeMenuItem.classList.add('active');
+                }
+
+                // ปิดเมนูในโหมดมือถือ
+                document.body.classList.remove('menu-open');
+
+                // เริ่มต้นระบบต่างๆ ตามหน้าที่เลือก
+                initializePageSystems(pageId);
+            };
+
+            // ฟังก์ชันเริ่มต้นระบบต่างๆ ตามหน้า
+            function initializePageSystems(pageId) {
+                switch (pageId) {
+                    case '3d-model':
+                        if (window.HotRunnerModels && !window.modelInitialized) {
+                            // แสดงหน้าจอโหลด
+                            showLoadingOverlay();
+
+                            // เริ่มต้น Three.js
+                            setTimeout(() => {
+                                try {
+                                    window.HotRunnerModels.initThreeJS('three-js-container');
+                                    window.modelInitialized = true;
+                                    setupEnhancedModelControls();
+                                    hideLoadingOverlay();
+                                } catch (error) {
+                                    console.error('Error initializing 3D model:', error);
+                                    hideLoadingOverlay();
+                                    showErrorMessage('ไม่สามารถโหลดโมเดล 3D ได้ กรุณาลองใหม่อีกครั้ง');
+                                }
+                            }, 500);
+                        }
+                        break;
+
+                    case 'videos':
+                        if (window.HotRunnerVideos && !window.videoSystemInitialized) {
+                            try {
+                                window.HotRunnerVideos.initVideoSystem();
+                                window.videoSystemInitialized = true;
+                            } catch (error) {
+                                console.error('Error initializing video system:', error);
+                            }
+                        }
+                        break;
+                }
+            }
+
+            // เพิ่ม event listener สำหรับเมนู
+            menuItems.forEach(item => {
+                item.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const pageId = this.getAttribute('data-page');
+                    if (pageId) {
+                        switchPage(pageId);
+                    }
+                });
+            });
+
+            // ปุ่มเปิด/ปิดเมนูสำหรับอุปกรณ์มือถือ
+            const menuToggle = document.getElementById('menu-toggle');
+            if (menuToggle) {
+                menuToggle.addEventListener('click', function () {
+                    document.body.classList.toggle('menu-open');
+                });
+            }
+
+            // =============== การจัดการโหลดและข้อผิดพลาด ===============
+            function showLoadingOverlay() {
+                const overlay = document.getElementById('model-loading');
+                if (overlay) {
+                    overlay.style.display = 'flex';
+                }
+            }
+
+            function hideLoadingOverlay() {
+                const overlay = document.getElementById('model-loading');
+                if (overlay) {
+                    overlay.style.display = 'none';
+                }
+            }
+
+            function showErrorMessage(message) {
+                const container = document.getElementById('three-js-container');
+                if (container) {
+                    container.innerHTML = `
+                        <div class="loading-overlay" style="display: flex;">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 3em; margin-bottom: 20px; color: #f39c12;"></i>
+                            <h3>เกิดข้อผิดพลาด</h3>
+                            <p>${message}</p>
+                            <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                                รีเฟรชหน้า
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+
+            // =============== การจัดการโมเดล 3D ที่ปรับปรุงแล้ว ===============
+            const modelSelectors = document.querySelectorAll('.model-selector');
+            modelSelectors.forEach(selector => {
+                selector.addEventListener('click', function () {
+                    const modelType = this.getAttribute('data-model');
+
+                    // ยกเลิกการเลือกทั้งหมด
+                    modelSelectors.forEach(s => s.classList.remove('active'));
+
+                    // เลือกรายการที่คลิก
+                    this.classList.add('active');
+
+                    // อัปเดตประเภทโมเดลปัจจุบัน
+                    window.currentModelType = modelType;
+
+                    // แสดงโมเดล 3D
+                    if (window.HotRunnerModels && window.modelInitialized) {
+                        window.HotRunnerModels.showModel(modelType);
+                        window.currentModel = window.HotRunnerModels.getCurrentModel();
+                    }
+
+                    // อัปเดตคำอธิบายตามโมเดลที่เลือก
+                    updateModelDescription(modelType);
+                });
+            });
+
+            // อัปเดตคำอธิบายโมเดล
+            function updateModelDescription(modelType) {
+                let description = '';
+                switch (modelType) {
+                    case 'valve-gate':
+                        description = '<i class="fas fa-random" style="color: var(--primary-color); margin-right: 10px;"></i><strong>Valve Gate System:</strong> ใช้เข็มควบคุมการไหลของพลาสติก ให้คุณภาพชิ้นงานดีที่สุด แต่มีราคาสูงและซับซ้อนในการบำรุงรักษา เหมาะสำหรับงานที่ต้องการความแม่นยำสูง';
+                        break;
+                    case 'thermal-gate':
+                        description = '<i class="fas fa-temperature-high" style="color: #f39c12; margin-right: 10px;"></i><strong>Thermal Gate System:</strong> ควบคุมการไหลด้วยอุณหภูมิ ราคาถูกกว่าแบบ Valve Gate แต่อาจมีปัญหาเรื่องรอยตำหนิบนชิ้นงาน เหมาะสำหรับงานทั่วไป';
+                        break;
+                    case 'open-tip':
+                        description = '<i class="fas fa-faucet" style="color: #27ae60; margin-right: 10px;"></i><strong>Open Tip System:</strong> เป็นระบบที่พลาสติกไหลผ่านโดยตรง เหมาะกับพลาสติกที่มีความหนืดต่ำ มีโครงสร้างไม่ซับซ้อน ราคาประหยัด';
+                        break;
+                }
+
+                const descriptionElement = document.getElementById('model-description');
+                if (descriptionElement) {
+                    descriptionElement.innerHTML = `<p>${description}</p>`;
+                }
+            }
+
+            // =============== ตั้งค่าปุ่มควบคุมโมเดล 3D ที่ปรับปรุงแล้ว ===============
+            function setupEnhancedModelControls() {
+                if (!window.HotRunnerModels) return;
+
+                // ปุ่มแสดง/ซ่อนป้ายชื่อ
+                const toggleLabelsButton = document.getElementById('toggle-labels');
+                let labelsVisible = false;
+
+                if (toggleLabelsButton) {
+                    toggleLabelsButton.addEventListener('click', function () {
+                        labelsVisible = !labelsVisible;
+                        window.HotRunnerModels.toggleLabels(labelsVisible);
+                        this.innerHTML = labelsVisible ?
+                            '<i class="fas fa-eye-slash"></i> ซ่อนป้ายชื่อ' :
+                            '<i class="fas fa-tags"></i> แสดงป้ายชื่อ';
+                    });
+                }
+
+                // ปุ่มแสดงการทำงาน
+                const toggleAnimationButton = document.getElementById('toggle-animation');
+                let animationActive = false;
+
+                if (toggleAnimationButton) {
+                    toggleAnimationButton.addEventListener('click', function () {
+                        animationActive = !animationActive;
+
+                        if (animationActive) {
+                            // เริ่มแอนิเมชัน
+                            const activeModelType = window.currentModelType || 'valve-gate';
+
+                            if (activeModelType === 'valve-gate') {
+                                window.HotRunnerModels.animateValveGate();
+                            }
+
+                            // แสดงการไหลของพลาสติก
+                            window.HotRunnerModels.animatePlasticFlow(activeModelType);
+
+                            this.innerHTML = '<i class="fas fa-stop"></i> หยุดการทำงาน';
+                            this.style.background = 'linear-gradient(45deg, #e74c3c, #c0392b)';
+                        } else {
+                            // หยุดแอนิเมชัน
+                            window.HotRunnerModels.stopAllAnimations();
+
+                            this.innerHTML = '<i class="fas fa-play"></i> แสดงการทำงาน';
+                            this.style.background = 'linear-gradient(45deg, #0066cc, #0056b3)';
+                        }
+                    });
+                }
+
+                // ปุ่มแยกชิ้นส่วน
+                const toggleExplodeButton = document.getElementById('toggle-explode');
+                let exploded = false;
+
+                if (toggleExplodeButton) {
+                    toggleExplodeButton.addEventListener('click', function () {
+                        exploded = !exploded;
+
+                        // บันทึกตำแหน่งเดิมก่อนแยกชิ้นส่วนครั้งแรก
+                        if (!window.originalPositionsSaved) {
+                            window.HotRunnerModels.saveOriginalPositions(window.currentModel);
+                            window.originalPositionsSaved = true;
+                        }
+
+                        window.HotRunnerModels.createExplodedView(window.currentModel, exploded);
+
+                        this.innerHTML = exploded ?
+                            '<i class="fas fa-compress-arrows-alt"></i> รวมชิ้นส่วน' :
+                            '<i class="fas fa-expand-arrows-alt"></i> แยกชิ้นส่วน';
+                    });
+                }
+
+                // ปุ่มรีเซ็ตมุมมอง
+                const resetViewButton = document.getElementById('reset-view');
+                if (resetViewButton) {
+                    resetViewButton.addEventListener('click', function () {
+                        window.HotRunnerModels.resetCamera();
+                        if (window.currentModel) {
+                            window.currentModel.rotation.set(0, 0, 0);
+                        }
+                    });
+                }
+
+                // ปุ่มโหมดโครงสร้าง
+                const toggleWireframeButton = document.getElementById('toggle-wireframe');
+                let wireframeMode = false;
+                if (toggleWireframeButton) {
+                    toggleWireframeButton.addEventListener('click', function () {
+                        wireframeMode = !wireframeMode;
+                        window.HotRunnerModels.toggleWireframe(wireframeMode);
+                        this.innerHTML = wireframeMode ?
+                            '<i class="fas fa-cube"></i> โหมดปกติ' :
+                            '<i class="fas fa-project-diagram"></i> โหมดโครงสร้าง';
+                    });
+                }
+
+                // ปุ่มมุมมองบน
+                const cameraTopButton = document.getElementById('camera-top');
+                if (cameraTopButton) {
+                    cameraTopButton.addEventListener('click', function () {
+                        window.HotRunnerModels.setCameraView('top');
+                    });
+                }
+            }
+
+            // =============== การจัดการวิดีโอที่ปรับปรุงแล้ว ===============
+            const videoButtons = document.querySelectorAll('.video-button');
+            videoButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const videoType = this.getAttribute('data-video');
+
+                    // ยกเลิกการเลือกทั้งหมด
+                    videoButtons.forEach(b => b.classList.remove('active'));
+
+                    // เลือกรายการที่คลิก
+                    this.classList.add('active');
+
+                    // โหลดวิดีโอผ่านระบบวิดีโอ
+                    if (window.HotRunnerVideos && window.HotRunnerVideos.loadVideo) {
+                        window.HotRunnerVideos.loadVideo(videoType);
+                    }
+
+                    // อัปเดตคำอธิบายตามวิดีโอที่เลือก
+                    updateVideoDescription(videoType);
+                });
+            });
+
+            // อัปเดตคำอธิบายวิดีโอ
+            function updateVideoDescription(videoType) {
+                let description = '';
+                let categoryDescription = '';
+
+                switch (videoType) {
+                    case 'operation':
+                        categoryDescription = 'วิดีโอการทำงานของ Hot Runner System';
+                        description = 'วิดีโอนี้แสดงการทำงานของ Hot Runner System ตั้งแต่ขั้นตอนการหลอมละลายพลาสติก การไหลผ่านแมนิโฟลด์ และการฉีดเข้าสู่ช่องเบ้า รวมถึงการควบคุมอุณหภูมิในแต่ละจุด';
+                        break;
+                    case 'installation':
+                        categoryDescription = 'วิดีโอการติดตั้ง Hot Runner System';
+                        description = 'วิดีโอนี้แสดงขั้นตอนการติดตั้งระบบ Hot Runner เข้ากับแม่พิมพ์ การต่อระบบควบคุมอุณหภูมิ การตั้งค่าเริ่มต้น และการทดสอบระบบก่อนใช้งานจริง';
+                        break;
+                    case 'maintenance':
+                        categoryDescription = 'วิดีโอการบำรุงรักษาระบบ';
+                        description = 'วิดีโอนี้แนะนำการบำรุงรักษาระบบ Hot Runner การทำความสะอาดส่วนประกอบต่างๆ การตรวจสอบการสึกหรอ การเปลี่ยนชิ้นส่วนที่เสียหาย และการดูแลรักษาเพื่อยืดอายุการใช้งาน';
+                        break;
+                    case 'troubleshooting':
+                        categoryDescription = 'วิดีโอการแก้ไขปัญหาเบื้องต้น';
+                        description = 'วิดีโอนี้แสดงการวินิจฉัยและแก้ไขปัญหาที่พบบ่อยในระบบ Hot Runner เช่น การอุดตัน การรั่วไหล ปัญหาด้านคุณภาพชิ้นงาน และเทคนิคการตรวจสอบเบื้องต้น';
+                        break;
+                }
+
+                const categoryElement = document.getElementById('video-category-description');
+                const descriptionElement = document.getElementById('video-description');
+
+                if (categoryElement) {
+                    categoryElement.innerHTML = `<p><strong>${categoryDescription}</strong></p>`;
+                }
+
+                if (descriptionElement) {
+                    descriptionElement.innerHTML = `<p>${description}</p>`;
+                }
+            }
+
+            // =============== การจัดการแบบทดสอบที่ปรับปรุงแล้ว ===============
+            const submitQuizButton = document.getElementById('submit-quiz');
+            if (submitQuizButton) {
+                submitQuizButton.addEventListener('click', function () {
+                    // เฉลยคำตอบ
+                    const answers = {
+                        q1: 'a', // ไม่มีการสูญเสียพลาสติกในส่วนของ Runner
+                        q2: 'b', // Manifold
+                        q3: 'b', // Valve Gate
+                        q4: 'c', // ตรวจสอบและเปลี่ยนซีล
+                        q5: 'c'  // ราคาแม่พิมพ์ถูกกว่า (นี่ไม่ใช่ข้อดี)
+                    };
+
+                    let score = 0;
+                    let feedback = '<div style="margin-top: 15px;">';
+
+                    // ตรวจคำตอบ
+                    for (let question in answers) {
+                        const selectedOption = document.querySelector(`input[name="${question}"]:checked`);
+                        const questionNum = question.substring(1);
+
+                        if (selectedOption) {
+                            if (selectedOption.value === answers[question]) {
+                                score++;
+                                feedback += `<p style="color: #27ae60; margin: 5px 0;"><i class="fas fa-check-circle"></i> ข้อ ${questionNum}: ถูกต้อง</p>`;
+                            } else {
+                                feedback += `<p style="color: #e74c3c; margin: 5px 0;"><i class="fas fa-times-circle"></i> ข้อ ${questionNum}: ไม่ถูกต้อง</p>`;
+                            }
+                        } else {
+                            feedback += `<p style="color: #f39c12; margin: 5px 0;"><i class="fas fa-exclamation-circle"></i> ข้อ ${questionNum}: ไม่ได้ตอบ</p>`;
+                        }
+                    }
+
+                    feedback += '</div>';
+
+                    // เพิ่มข้อความประเมินผล
+                    let performanceMessage = '';
+                    const percentage = (score / 5) * 100;
+
+                    if (percentage >= 80) {
+                        performanceMessage = '<p style="color: #27ae60; font-weight: bold; margin-top: 15px;"><i class="fas fa-trophy"></i> ยินดีด้วย! คุณมีความรู้ความเข้าใจดีมาก</p>';
+                    } else if (percentage >= 60) {
+                        performanceMessage = '<p style="color: #f39c12; font-weight: bold; margin-top: 15px;"><i class="fas fa-thumbs-up"></i> ผลการทดสอบอยู่ในเกณฑ์ดี ควรทบทวนเนื้อหาบางส่วน</p>';
+                    } else {
+                        performanceMessage = '<p style="color: #e74c3c; font-weight: bold; margin-top: 15px;"><i class="fas fa-book-open"></i> ควรศึกษาเนื้อหาเพิ่มเติมเพื่อความเข้าใจที่ดีขึ้น</p>';
+                    }
+
+                    // แสดงผลคะแนน
+                    document.getElementById('score').textContent = score;
+                    document.getElementById('feedback').innerHTML = feedback + performanceMessage;
+                    document.getElementById('quiz-result').style.display = 'block';
+
+                    // เลื่อนไปที่ผลลัพธ์
+                    document.getElementById('quiz-result').scrollIntoView({ behavior: 'smooth' });
+
+                    // เพิ่มเอฟเฟกต์แอนิเมชัน
+                    const resultElement = document.getElementById('quiz-result');
+                    resultElement.style.opacity = '0';
+                    resultElement.style.transform = 'translateY(20px)';
+
+                    setTimeout(() => {
+                        resultElement.style.transition = 'all 0.5s ease';
+                        resultElement.style.opacity = '1';
+                        resultElement.style.transform = 'translateY(0)';
+                    }, 100);
+                });
+            }
+
+            // =============== เอฟเฟกต์และแอนิเมชัน ===============
+
+            // เพื่อให้หน้าต่างๆ มีเอฟเฟกต์เปลี่ยนหน้า
+            function addPageTransitionEffects() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('active');
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                document.querySelectorAll('.page-transition').forEach(el => {
+                    observer.observe(el);
+                });
+            }
+
+            // เพิ่มเอฟเฟกต์โหลดสำหรับองค์ประกอบต่างๆ
+            function addLoadingEffects() {
+                const elements = document.querySelectorAll('.info-section, .quick-access-item');
+                elements.forEach((element, index) => {
+                    element.style.opacity = '0';
+                    element.style.transform = 'translateY(20px)';
+                    element.style.transition = 'all 0.6s ease';
+
+                    setTimeout(() => {
+                        element.style.opacity = '1';
+                        element.style.transform = 'translateY(0)';
+                    }, index * 100);
+                });
+            }
+
+            // เพิ่มเอฟเฟกต์ hover สำหรับปุ่มต่างๆ
+            function addHoverEffects() {
+                const buttons = document.querySelectorAll('.control-button, .model-selector, .video-button');
+                buttons.forEach(button => {
+                    button.addEventListener('mouseenter', function () {
+                        this.style.transform = 'translateY(-2px) scale(1.05)';
+                    });
+
+                    button.addEventListener('mouseleave', function () {
+                        this.style.transform = 'translateY(0) scale(1)';
+                    });
+                });
+            }
+
+            // =============== การจัดการข้อผิดพลาดและการติดตาม ===============
+
+            // จัดการข้อผิดพลาด JavaScript
+            window.addEventListener('error', function (e) {
+                console.error('Hot Runner System Error:', e.message);
+                // อาจแสดงข้อความแจ้งเตือนผู้ใช้ถ้าจำเป็น
+            });
+
+            // ติดตามการใช้งานฟีเจอร์ต่างๆ
+            function trackFeatureUsage(feature, action) {
+                console.log(`Feature: ${feature}, Action: ${action}`);
+                // อาจส่งข้อมูลไป Analytics ถ้าต้องการ
+            }
+
+            // =============== การเริ่มต้นระบบ ===============
+
+            // เริ่มต้นเอฟเฟกต์ต่างๆ
+            addPageTransitionEffects();
+            addLoadingEffects();
+            addHoverEffects();
+            
+            // Initialize advanced features
+            if (window.HotRunnerAdvanced) {
+                // Initialize sound system
+                window.HotRunnerAdvanced.initSoundSystem();
+                
+                // Setup event handlers for new buttons
+                const thermalBtn = document.getElementById('toggle-thermal');
+                if (thermalBtn) {
+                    thermalBtn.addEventListener('click', function() {
+                        if (thermalEnabled) {
+                            window.HotRunnerAdvanced.disableThermalVisualization();
+                            thermalEnabled = false;
+                            this.style.background = 'linear-gradient(45deg, #0066cc, #0056b3)';
+                        } else {
+                            window.HotRunnerAdvanced.initThermalVisualization();
+                            thermalEnabled = true;
+                            this.style.background = 'linear-gradient(45deg, #ff6600, #ff3300)';
+                        }
+                    });
+                }
+                
+                const physicsBtn = document.getElementById('toggle-physics');
+                if (physicsBtn) {
+                    physicsBtn.addEventListener('click', function() {
+                        window.HotRunnerAdvanced.togglePhysicsDebug();
+                        trackFeatureUsage('physics-debug', 'toggle');
+                    });
+                }
+                
+                const qualityBtn = document.getElementById('toggle-quality');
+                if (qualityBtn) {
+                    qualityBtn.addEventListener('click', function() {
+                        window.HotRunnerAdvanced.toggleUltraQuality();
+                        ultraQuality = !ultraQuality;
+                        this.innerHTML = ultraQuality ? 
+                            '<i class="fas fa-magic"></i> High Quality' : 
+                            '<i class="fas fa-magic"></i> Ultra Quality';
+                        trackFeatureUsage('ultra-quality', 'toggle');
+                    });
+                }
+                
+                console.log('✅ Advanced features initialized');
+            }
+
+            // ปิดเมนูเมื่อคลิกพื้นที่นอกเมนู
+            document.addEventListener('click', function (e) {
+                const sidebar = document.getElementById('sidebar');
+                const menuToggle = document.getElementById('menu-toggle');
+
+                if (window.innerWidth <= 768 &&
+                    !sidebar.contains(e.target) &&
+                    !menuToggle.contains(e.target) &&
+                    document.body.classList.contains('menu-open')) {
+                    document.body.classList.remove('menu-open');
+                }
+            });
+
+            // จัดการการเปลี่ยนขนาดหน้าต่าง
+            window.addEventListener('resize', function () {
+                if (window.modelInitialized && window.HotRunnerModels && window.HotRunnerModels.onWindowResize) {
+                    window.HotRunnerModels.onWindowResize();
+                }
+            });
+
+            // แสดงหน้าแรกเป็นค่าเริ่มต้น
+            if (!window.location.hash) {
+                switchPage('home');
+            }
+
+            // จัดการ URL hash
+            window.addEventListener('hashchange', function () {
+                const hash = window.location.hash.substring(1);
+                if (hash && document.getElementById(hash)) {
+                    switchPage(hash);
+                }
+            });
+
+            // แสดงข้อความว่าระบบพร้อมใช้งาน
+            console.log('🚀 Hot Runner Mold System พร้อมใช้งานแล้ว!');
+            console.log('📊 ระบบประกอบด้วย:');
+            console.log('   - 3D Model System');
+            console.log('   - Video Management System');
+            console.log('   - Interactive Quiz System');
+            console.log('   - Enhanced UI/UX Effects');
+
+            // เพิ่มข้อความต้อนรับ
+            setTimeout(() => {
+                const welcomeToast = document.createElement('div');
+                welcomeToast.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: linear-gradient(45deg, #27ae60, #2ecc71);
+                    color: white;
+                    padding: 15px 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                    z-index: 10000;
+                    opacity: 0;
+                    transform: translateX(100%);
+                    transition: all 0.5s ease;
+                `;
+                welcomeToast.innerHTML = `
+                    <i class="fas fa-check-circle" style="margin-right: 10px;"></i>
+                    ระบบพร้อมใช้งานแล้ว!
+                `;
+
+                document.body.appendChild(welcomeToast);
+
+                setTimeout(() => {
+                    welcomeToast.style.opacity = '1';
+                    welcomeToast.style.transform = 'translateX(0)';
+                }, 100);
+
+                setTimeout(() => {
+                    welcomeToast.style.opacity = '0';
+                    welcomeToast.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        document.body.removeChild(welcomeToast);
+                    }, 500);
+                }, 3000);
+            }, 1000);
+
+        });
+    </script>
+</body>
+
+</html>

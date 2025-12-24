@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hot Runner System - การใช้งานและการควบคุมแบบครบวงจร</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+            color: white;
+            padding: 40px 0;
+        }
+
+        .page-header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb span {
+            padding: 5px 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Main Navigation */
+        .main-nav {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .nav-item {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .nav-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            box-shadow: 0 10px 25px rgba(255,107,107,0.4);
+        }
+
+        .nav-item i {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .section-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+        }
+
+        .content-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .card-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+            margin-right: 20px;
+        }
+
+        .card-title {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        /* Control Panel Styles */
+        .control-panel {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 40px;
+            color: white;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .control-item {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .control-item h4 {
+            color: #fff;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .parameter-slider {
+            width: 100%;
+            margin: 15px 0;
+            -webkit-appearance: none;
+            height: 8px;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.3);
+            outline: none;
+        }
+
+        .parameter-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        .parameter-display {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        /* Process Flow */
+        .process-flow {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+
+        .flow-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .flow-header h2 {
+            color: #2c3e50;
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+        }
+
+        .flow-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .flow-step {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            position: relative;
+        }
+
+        .step-circle {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 24px;
+            color: white;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .step-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .step-description {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .flow-arrow {
+            font-size: 2rem;
+            color: #667eea;
+            margin: 0 10px;
+        }
+
+        /* Interactive Simulator */
+        .simulator-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+
+        .simulator-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .simulator-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            color: white;
+            margin-bottom: 30px;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .simulator-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .sim-control {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        /* Troubleshooting Guide */
+        .troubleshooting-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .problem-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-left: 5px solid #f44336;
+            transition: all 0.3s ease;
+        }
+
+        .problem-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .problem-card.warning { border-left-color: #ff9800; }
+        .problem-card.info { border-left-color: #2196f3; }
+        .problem-card.success { border-left-color: #4caf50; }
+
+        .problem-title {
+            color: #2c3e50;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .solution-steps {
+            list-style: none;
+            padding: 0;
+        }
+
+        .solution-steps li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            position: relative;
+        }
+
+        .solution-steps li:last-child {
+            border-bottom: none;
+        }
+
+        .solution-steps li::before {
+            content: '✓';
+            color: #4caf50;
+            font-weight: bold;
+            position: absolute;
+            left: -20px;
+            top: 10px;
+        }
+
+        /* Maintenance Schedule */
+        .maintenance-calendar {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .maintenance-item {
+            background: linear-gradient(135deg, #4caf50, #45a049);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .maintenance-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(76, 175, 80, 0.4);
+        }
+
+        .maintenance-item.daily { background: linear-gradient(135deg, #4caf50, #45a049); }
+        .maintenance-item.weekly { background: linear-gradient(135deg, #ff9800, #f57c00); }
+        .maintenance-item.monthly { background: linear-gradient(135deg, #2196f3, #1976d2); }
+        .maintenance-item.yearly { background: linear-gradient(135deg, #9c27b0, #7b1fa2); }
+
+        /* Quality Control Dashboard */
+        .quality-dashboard {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+
+        .quality-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .metric-card {
+            text-align: center;
+            padding: 25px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .section-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .flow-steps {
+                flex-direction: column;
+            }
+            
+            .flow-arrow {
+                transform: rotate(90deg);
+                margin: 10px 0;
+            }
+            
+            .nav-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(102, 126, 234, 0.6); }
+        }
+
+        .pulse { animation: pulse 2s infinite; }
+        .glow { animation: glow 3s infinite; }
+
+        /* Advanced UI Components */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #667eea;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-indicator.online { background: #4caf50; animation: pulse 2s infinite; }
+        .status-indicator.offline { background: #f44336; }
+        .status-indicator.warning { background: #ff9800; animation: pulse 2s infinite; }
+
+        /* Data Visualization */
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .chart-placeholder {
+            text-align: center;
+            color: #666;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="page-header">
+            <h1>Hot Runner System</h1>
+            <p>การใช้งานและการควบคุมแบบครบวงจร</p>
+            <div class="breadcrumb">
+                <span>🏠 หน้าหลัก</span>
+                <span>→</span>
+                <span>🔧 การควบคุมระบบ</span>
+                <span>→</span>
+                <span>📊 การใช้งาน</span>
+            </div>
+        </header>
+
+        <!-- Main Navigation -->
+        <nav class="main-nav">
+            <div class="nav-grid">
+                <button class="nav-item active" data-section="operation">
+                    <i>⚙️</i>
+                    <div>การใช้งานระบบ</div>
+                </button>
+                <button class="nav-item" data-section="control">
+                    <i>🎛️</i>
+                    <div>การควบคุม</div>
+                </button>
+                <button class="nav-item" data-section="monitoring">
+                    <i>📊</i>
+                    <div>การติดตาม</div>
+                </button>
+                <button class="nav-item" data-section="maintenance">
+                    <i>🔧</i>
+                    <div>การบำรุงรักษา</div>
+                </button>
+                <button class="nav-item" data-section="troubleshooting">
+                    <i>🚨</i>
+                    <div>แก้ไขปัญหา</div>
+                </button>
+                <button class="nav-item" data-section="quality">
+                    <i>⭐</i>
+                    <div>ควบคุมคุณภาพ</div>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Operation Section -->
+        <section id="operation" class="content-section active">
+            <div class="section-grid">
+                <div class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🚀</div>
+                        <h3 class="card-title">การเริ่มต้นระบบ</h3>
+                    </div>
+                    <div class="startup-checklist">
+                        <h4>📋 ขั้นตอนการเริ่มต้น</h4>
+                        <ul class="solution-steps">
+                            <li>ตรวจสอบการเชื่อมต่อไฟฟ้าและสาย Control</li>
+                            <li>ตรวจสอบระดับและคุณภาพของวัตถุดิบ</li>
+                            <li>เปิดระบบไฮดรอลิกและตรวจสอบแรงดัน</li>
+                            <li>เปิดระบบทำความร้อนและรอให้ถึงอุณหภูมิ</li>
+                            <li>ทดสอบการทำงานของ Valve Gate (ถ้ามี)</li>
+                            <li>ตรวจสอบการทำงานของ Temperature Controller</li>
+                            <li>ทำการทดสอบฉีดครั้งแรก</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🌡️</div>
+                        <h3 class="card-title">การตั้งค่าอุณหภูมิ</h3>
+                    </div>
+                    <div class="temperature-zones">
+                        <h4>🎯 โซนอุณหภูมิ</h4>
+                        <div class="temp-zone">
+                            <strong>Manifold Zone:</strong> 240-280°C
+                            <div class="parameter-display">260°C</div>
+                        </div>
+                        <div class="temp-zone">
+                            <strong>Nozzle Zone:</strong> 250-290°C
+                            <div class="parameter-display">270°C</div>
+                        </div>
+                        <div class="temp-zone">
+                            <strong>Gate Zone:</strong> 230-270°C
+                            <div class="parameter-display">250°C</div>
+                        </div>
+                        <p style="margin-top: 15px; color: #666; font-size: 0.9rem;">
+                            * อุณหภูมิขึ้นกับประเภทพลาสติกและความต้องการของผลิตภัณฑ์
+                        </p>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">⏱️</div>
+                        <h3 class="card-title">การควบคุม Timing</h3>
+                    </div>
+                    <div class="timing-control">
+                        <h4>⏰ พารามิเตอร์เวลา</h4>
+                        <div class="timing-item">
+                            <strong>Injection Time:</strong> 0.5-3.0 วินาที
+                        </div>
+                        <div class="timing-item">
+                            <strong>Holding Time:</strong> 2-8 วินาที
+                        </div>
+                        <div class="timing-item">
+                            <strong>Cooling Time:</strong> 10-30 วินาที
+                        </div>
+                        <div class="timing-item">
+                            <strong>Gate Open/Close:</strong> 0.1-0.5 วินาที
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Process Flow -->
+            <div class="process-flow">
+                <div class="flow-header">
+                    <h2>🔄 ขั้นตอนการทำงาน</h2>
+                    <p>กระบวนการฉีดพลาสติกด้วย Hot Runner System</p>
+                </div>
+                <div class="flow-steps">
+                    <div class="flow-step">
+                        <div class="step-circle">1</div>
+                        <div class="step-title">เตรียมระบบ</div>
+                        <div class="step-description">ตั้งค่าอุณหภูมิและแรงดัน</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="step-circle">2</div>
+                        <div class="step-title">การฉีด</div>
+                        <div class="step-description">ฉีดพลาสติกเข้าสู่ Cavity</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="step-circle">3</div>
+                        <div class="step-title">การบรรจุ</div>
+                        <div class="step-description">รักษาแรงดันเพื่อคุณภาพ</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="step-circle">4</div>
+                        <div class="step-title">การทำเย็น</div>
+                        <div class="step-description">รอให้ชิ้นงานแข็งตัว</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="step-circle">5</div>
+                        <div class="step-title">การแยกชิ้น</div>
+                        <div class="step-description">เปิดแม่พิมพ์และนำชิ้นงานออก</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Control Section -->
+        <section id="control" class="content-section">
+            <div class="control-panel">
+                <h2 style="text-align: center; margin-bottom: 30px; font-size: 2rem;">🎛️ ศูนย์ควบคุมหลัก</h2>
+                <div class="control-grid">
+                    <div class="control-item">
+                        <h4>🌡️ อุณหภูมิ Manifold</h4>
+                        <input type="range" class="parameter-slider" min="220" max="300" value="260" id="manifold-temp">
+                        <div class="parameter-display" id="manifold-display">260°C</div>
+                        <div class="status-indicator online"></div>
+                        <span>สถานะ: พร้อมใช้งาน</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Simulator -->
+            <div class="simulator-container">
+                <div class="simulator-header">
+                    <h2 style="color: #2c3e50; margin-bottom: 15px;">🎮 เครื่องจำลองการทำงาน</h2>
+                    <p style="color: #666;">ทดลองปรับค่าพารามิเตอร์และดูผลลัพธ์แบบเรียลไทม์</p>
+                </div>
+                
+                <div class="simulator-display" id="simulator-screen">
+                    <div style="text-align: center;">
+                        <h3>🔥 Hot Runner System</h3>
+                        <div style="font-size: 2rem; margin: 20px 0;">
+                            <span id="sim-temp">260°C</span> | 
+                            <span id="sim-pressure">120 MPa</span>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px;">
+                            <div>สถานะ: <span id="sim-status">ปกติ</span></div>
+                            <div>ประสิทธิภาพ: <span id="sim-efficiency">95%</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="simulator-controls">
+                    <div class="sim-control">
+                        <h4>🎯 ความเร็วฉีด</h4>
+                        <input type="range" min="10" max="100" value="50" id="sim-speed">
+                        <div class="parameter-display" id="speed-display">50 mm/s</div>
+                    </div>
+                    <div class="sim-control">
+                        <h4>🔄 จำนวนรอบ</h4>
+                        <input type="range" min="1" max="10" value="5" id="sim-cycles">
+                        <div class="parameter-display" id="cycles-display">5 รอบ</div>
+                    </div>
+                    <div class="sim-control">
+                        <h4>⚡ โหมดการทำงาน</h4>
+                        <select id="sim-mode" style="width: 100%; padding: 10px; border-radius: 5px;">
+                            <option value="auto">อัตโนมัติ</option>
+                            <option value="manual">ด้วยมือ</option>
+                            <option value="test">ทดสอบ</option>
+                        </select>
+                    </div>
+                    <div class="sim-control">
+                        <h4>🎮 การควบคุม</h4>
+                        <button onclick="startSimulation()" style="width: 100%; padding: 15px; background: #4caf50; color: white; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer;">
+                            ▶️ เริ่มจำลอง
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Monitoring Section -->
+        <section id="monitoring" class="content-section">
+            <div class="quality-dashboard">
+                <h2 style="text-align: center; color: #2c3e50; margin-bottom: 30px;">📊 แดชบอร์ดการตรวจสอบ</h2>
+                
+                <div class="quality-metrics">
+                    <div class="metric-card">
+                        <div class="metric-value" id="production-count">1,247</div>
+                        <div class="metric-label">ชิ้นงานที่ผลิต</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="efficiency-rate">96.5%</div>
+                        <div class="metric-label">ประสิทธิภาพ</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="defect-rate">0.8%</div>
+                        <div class="metric-label">อัตราของเสีย</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="uptime">98.2%</div>
+                        <div class="metric-label">เวลาทำงาน</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Real-time Charts -->
+            <div class="chart-container">
+                <div class="chart-placeholder">
+                    <h3>📈 กราฟอุณหภูมิแบบเรียลไทม์</h3>
+                    <div id="temperature-chart" style="margin-top: 20px;">
+                        <div style="display: flex; justify-content: space-around; align-items: end; height: 150px;">
+                            <div style="width: 30px; height: 80px; background: linear-gradient(to top, #667eea, #764ba2); border-radius: 4px;"></div>
+                            <div style="width: 30px; height: 120px; background: linear-gradient(to top, #667eea, #764ba2); border-radius: 4px;"></div>
+                            <div style="width: 30px; height: 95px; background: linear-gradient(to top, #667eea, #764ba2); border-radius: 4px;"></div>
+                            <div style="width: 30px; height: 110px; background: linear-gradient(to top, #667eea, #764ba2); border-radius: 4px;"></div>
+                            <div style="width: 30px; height: 85px; background: linear-gradient(to top, #667eea, #764ba2); border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-placeholder">
+                    <h3>📊 การติดตามคุณภาพ</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
+                        <div style="text-align: center;">
+                            <div style="width: 80px; height: 80px; border: 8px solid #4caf50; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold;">95%</div>
+                            <div>คุณภาพดี</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="width: 80px; height: 80px; border: 8px solid #ff9800; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold;">4%</div>
+                            <div>ต้องปรับปรุง</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="width: 80px; height: 80px; border: 8px solid #f44336; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold;">1%</div>
+                            <div>ของเสีย</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Maintenance Section -->
+        <section id="maintenance" class="content-section">
+            <div class="maintenance-calendar">
+                <h2 style="text-align: center; color: #2c3e50; margin-bottom: 30px;">🔧 ตารางการบำรุงรักษา</h2>
+                
+                <div class="calendar-grid">
+                    <div class="maintenance-item daily">
+                        <h4>📅 รายวัน</h4>
+                        <ul style="text-align: left; margin-top: 15px;">
+                            <li>ตรวจสอบอุณหภูมิทุกโซน</li>
+                            <li>ตรวจสอบแรงดันระบบ</li>
+                            <li>บันทึกข้อมูลการผลิต</li>
+                            <li>ทำความสะอาดพื้นที่ทำงาน</li>
+                        </ul>
+                    </div>
+
+                    <div class="maintenance-item weekly">
+                        <h4>📆 รายสัปดาห์</h4>
+                        <ul style="text-align: left; margin-top: 15px;">
+                            <li>ตรวจสอบการทำงานของ Heater</li>
+                            <li>ทำความสะอาด Temperature Controller</li>
+                            <li>ตรวจสอบสายไฟและการเชื่อมต่อ</li>
+                            <li>วิเคราะห์ข้อมูลคุณภาพ</li>
+                        </ul>
+                    </div>
+
+                    <div class="maintenance-item monthly">
+                        <h4>🗓️ รายเดือน</h4>
+                        <ul style="text-align: left; margin-top: 15px;">
+                            <li>ตรวจสอบและปรับเทียบ Sensor</li>
+                            <li>ทำความสะอาด Manifold</li>
+                            <li>ตรวจสอบ Valve Gate System</li>
+                            <li>อัพเดท Software และ Firmware</li>
+                        </ul>
+                    </div>
+
+                    <div class="maintenance-item yearly">
+                        <h4>📅 รายปี</h4>
+                        <ul style="text-align: left; margin-top: 15px;">
+                            <li>เปลี่ยน Heater Element</li>
+                            <li>ตรวจสอบระบบไฟฟ้าทั้งหมด</li>
+                            <li>Overhaul ระบบควบคุม</li>
+                            <li>อบรมเจ้าหน้าที่</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Maintenance Checklist -->
+            <div class="content-card" style="margin-bottom: 30px;">
+                <div class="card-header">
+                    <div class="card-icon">✅</div>
+                    <h3 class="card-title">Checklist การบำรุงรักษา</h3>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    <div>
+                        <h4 style="color: #2c3e50; margin-bottom: 15px;">🔍 การตรวจสอบ</h4>
+                        <ul class="solution-steps">
+                            <li>อุณหภูมิทุกโซนอยู่ในช่วงที่กำหนด</li>
+                            <li>แรงดันระบบไฮดรอลิกปกติ</li>
+                            <li>ไม่มีการรั่วไหลของวัสดุ</li>
+                            <li>เสียงการทำงานปกติ</li>
+                            <li>ไม่มีกลิ่นผิดปกติ</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: #2c3e50; margin-bottom: 15px;">🧹 การทำความสะอาด</h4>
+                        <ul class="solution-steps">
+                            <li>ทำความสะอาดผิวหน้า Control Panel</li>
+                            <li>เช็ดทำความสะอาด Heater Band</li>
+                            <li>ล้างท่อ Runner ด้วย Purging Compound</li>
+                            <li>ทำความสะอาดพื้นที่รอบเครื่อง</li>
+                            <li>เก็บเศษวัสดุและของเสีย</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Troubleshooting Section -->
+        <section id="troubleshooting" class="content-section">
+            <h2 style="text-align: center; color: white; margin-bottom: 40px; font-size: 2.2rem;">🚨 คู่มือแก้ไขปัญหา</h2>
+            
+            <div class="troubleshooting-grid">
+                <div class="problem-card">
+                    <div class="problem-title">
+                        🌡️ อุณหภูมิไม่คงที่
+                    </div>
+                    <p style="margin-bottom: 15px; color: #666;">ปัญหาที่พบบ่อยที่สุดในระบบ Hot Runner</p>
+                    <h5 style="color: #2c3e50; margin-bottom: 10px;">สาเหตุที่เป็นไปได้:</h5>
+                    <ul class="solution-steps">
+                        <li>Heater Element ชำรุด</li>
+                        <li>Thermocouple เสียหาย</li>
+                        <li>Temperature Controller ตั้งค่าผิด</li>
+                        <li>การสูญเสียความร้อนมากเกินไป</li>
+                    </ul>
+                    <h5 style="color: #2c3e50; margin: 15px 0 10px;">วิธีแก้ไข:</h5>
+                    <ul class="solution-steps">
+                        <li>ตรวจสอบและเปลี่ยน Heater ที่เสียหาย</li>
+                        <li>ปรับเทียบ Thermocouple</li>
+                        <li>ตรวจสอบการตั้งค่า PID Controller</li>
+                        <li>เพิ่มฉนวนกันความร้อน</li>
+                    </ul>
+                </div>
+
+                <div class="problem-card warning">
+                    <div class="problem-title">
+                        🚫 Gate Mark บนชิ้นงาน
+                    </div>
+                    <p style="margin-bottom: 15px; color: #666;">ปัญหาคุณภาพที่ส่งผลต่อลูกค้า</p>
+                    <h5 style="color: #2c3e50; margin-bottom: 10px;">สาเหตุที่เป็นไปได้:</h5>
+                    <ul class="solution-steps">
+                        <li>Gate Size ใหญ่เกินไป</li>
+                        <li>อุณหภูมิ Gate Zone สูงเกินไป</li>
+                        <li>Valve Gate ปิดไม่สนิท</li>
+                        <li>เวลา Gate Close ไม่เหมาะสม</li>
+                    </ul>
+                    <h5 style="color: #2c3e50; margin: 15px 0 10px;">วิธีแก้ไข:</h5>
+                    <ul class="solution-steps">
+                        <li>ปรับขนาด Gate ให้เหมาะสม</li>
+                        <li>ลดอุณหภูมิ Gate Zone</li>
+                        <li>ตรวจสอบและซ่อม Valve System</li>
+                        <li>ปรับ Timing การปิด Gate</li>
+                    </ul>
+                </div>
+
+                <div class="problem-card info">
+                    <div class="problem-title">
+                        🔧 ระบบอุดตัน
+                    </div>
+                    <p style="margin-bottom: 15px; color: #666;">ปัญหาการไหลที่ขัดขวางการผลิต</p>
+                    <h5 style="color: #2c3e50; margin-bottom: 10px;">สาเหตุที่เป็นไปได้:</h5>
+                    <ul class="solution-steps">
+                        <li>วัสดุเกรดต่ำหรือมีสิ่งปนเปื้อน</li>
+                        <li>อุณหภูมิต่ำเกินไป</li>
+                        <li>การไหลไม่สม่ำเสมอ</li>
+                        <li>ทางผ่านแคบเกินไป</li>
+                    </ul>
+                    <h5 style="color: #2c3e50; margin: 15px 0 10px;">วิธีแก้ไข:</h5>
+                    <ul class="solution-steps">
+                        <li>ใช้ Purging Compound ล้างทำความสะอาด</li>
+                        <li>เพิ่มอุณหภูมิการหลอมเหลว</li>
+                        <li>ตรวจสอบและปรับ Flow Rate</li>
+                        <li>ขยายช่องทางการไหล</li>
+                    </ul>
+                </div>
+
+                <div class="problem-card success">
+                    <div class="problem-title">
+                        ⚡ ปัญหาไฟฟ้า
+                    </div>
+                    <p style="margin-bottom: 15px; color: #666;">ปัญหาระบบไฟฟ้าและการควบคุม</p>
+                    <h5 style="color: #2c3e50; margin-bottom: 10px;">สาเหตุที่เป็นไปได้:</h5>
+                    <ul class="solution-steps">
+                        <li>สายไฟหลวมหรือขาด</li>
+                        <li>Fuse หรือ Breaker ขัดข้อง</li>
+                        <li>Controller Error</li>
+                        <li>Sensor ไม่ทำงาน</li>
+                    </ul>
+                    <h5 style="color: #2c3e50; margin: 15px 0 10px;">วิธีแก้ไข:</h5>
+                    <ul class="solution-steps">
+                        <li>ตรวจสอบการเชื่อมต่อทั้งหมด</li>
+                        <li>เปลี่ยน Fuse ที่เสียหาย</li>
+                        <li>Reset และตั้งค่า Controller ใหม่</li>
+                        <li>ทดสอบและเปลี่ยน Sensor</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Emergency Procedures -->
+            <div class="content-card" style="margin-top: 30px; border-left: 5px solid #f44336;">
+                <div class="card-header">
+                    <div class="card-icon">🚨</div>
+                    <h3 class="card-title">ขั้นตอนเหตุฉุกเฉิน</h3>
+                </div>
+                <div style="background: #fff3e0; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <h4 style="color: #f57c00; margin-bottom: 15px;">⚠️ เมื่อเกิดเหตุฉุกเฉิน</h4>
+                    <ol style="padding-left: 20px;">
+                        <li style="margin-bottom: 10px;"><strong>หยุดเครื่องทันที</strong> - กดปุ่ม Emergency Stop</li>
+                        <li style="margin-bottom: 10px;"><strong>ตัดไฟฟ้า</strong> - ปิด Main Power Switch</li>
+                        <li style="margin-bottom: 10px;"><strong>แจ้งหัวหน้างาน</strong> - รายงานสถานการณ์</li>
+                        <li style="margin-bottom: 10px;"><strong>ประเมินความเสียหาย</strong> - ตรวจสอบอุปกรณ์</li>
+                        <li style="margin-bottom: 10px;"><strong>บันทึกเหตุการณ์</strong> - จดรายละเอียดเพื่อวิเคราะห์</li>
+                    </ol>
+                </div>
+                <div style="background: #e8f5e8; padding: 20px; border-radius: 10px;">
+                    <h4 style="color: #4caf50; margin-bottom: 15px;">✅ หมายเลขติดต่อฉุกเฉิน</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div><strong>หัวหน้าแผนก:</strong> 02-XXX-XXXX</div>
+                        <div><strong>ช่างซ่อม:</strong> 02-XXX-XXXX</div>
+                        <div><strong>ศูนย์ควบคุม:</strong> 02-XXX-XXXX</div>
+                        <div><strong>เหตุฉุกเฉิน:</strong> 191</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quality Control Section -->
+        <section id="quality" class="content-section">
+            <h2 style="text-align: center; color: white; margin-bottom: 40px; font-size: 2.2rem;">⭐ ระบบควบคุมคุณภาพ</h2>
+            
+            <div class="section-grid">
+                <div class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">📏</div>
+                        <h3 class="card-title">การตรวจสอบขนาด</h3>
+                    </div>
+                    <div class="quality-check">
+                        <h4>🎯 จุดตรวจสอบหลัก</h4>
+                        <ul class="solution-steps">
+                            <li>ความยาว ± 0.1 mm</li>
+                            <li>ความกว้าง ± 0.1 mm</li>
+                            <li>ความสูง ± 0.1 mm</li>
+                            <li>ความหนาผนัง ± 0.05 mm</li>
+                            <li>มุมและรัศมี ± 0.5°</li>
+                        </ul>
+                        <div style="margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 8px;">
+                            <strong>เครื่องมือที่ใช้:</strong> Caliper, Micrometer, CMM, Optical Comparator
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">✨</div>
+                        <h3 class="card-title">การตรวจสอบผิวหน้า</h3>
+                    </div>
+                    <div class="surface-check">
+                        <h4>🔍 เกณฑ์คุณภาพผิว</h4>
+                        <ul class="solution-steps">
+                            <li>ไม่มีรอยขีดข่วน > 0.1 mm</li>
+                            <li>ไม่มี Flow Mark ที่มองเห็นได้</li>
+                            <li>ไม่มี Sink Mark > 0.05 mm</li>
+                            <li>ความเรียบผิว Ra < 1.6 μm</li>
+                            <li>สีและความเงาสม่ำเสมอ</li>
+                        </ul>
+                        <div style="margin-top: 20px; padding: 15px; background: #e8f5e8; border-radius: 8px;">
+                            <strong>วิธีตรวจ:</strong> Visual Inspection, Surface Roughness Tester, Gloss Meter
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <div class="card-header">
+                        <div class="card-icon">🧪</div>
+                        <h3 class="card-title">การทดสอบคุณสมบัติ</h3>
+                    </div>
+                    <div class="property-test">
+                        <h4>⚗️ การทดสอบหลัก</h4>
+                        <ul class="solution-steps">
+                            <li>ความแข็งแรงดึง (Tensile Strength)</li>
+                            <li>ความแข็งแรงดัด (Flexural Strength)</li>
+                            <li>ความทนต่อแรงกระแทก (Impact Resistance)</li>
+                            <li>ความทนต่อความร้อน (Heat Deflection)</li>
+                            <li>การหดตัว (Shrinkage)</li>
+                        </ul>
+                        <div style="margin-top: 20px; padding: 15px; background: #fff3e0; border-radius: 8px;">
+                            <strong>ความถี่:</strong> ทุก 100 ชิ้น หรือทุก 2 ชั่วโมง
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quality Control Dashboard -->
+            <div class="quality-dashboard">
+                <h3 style="text-align: center; color: #2c3e50; margin-bottom: 25px;">📊 แดชบอร์ดคุณภาพแบบเรียลไทม์</h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                    <div style="background: #4caf50; color: white; padding: 25px; border-radius: 15px; text-align: center;">
+                        <h4>✅ ผ่านเกณฑ์</h4>
+                        <div style="font-size: 2.5rem; font-weight: bold; margin: 15px 0;">1,189</div>
+                        <div style="opacity: 0.9;">ชิ้น (95.3%)</div>
+                    </div>
+                    
+                    <div style="background: #ff9800; color: white; padding: 25px; border-radius: 15px; text-align: center;">
+                        <h4>⚠️ ต้องแก้ไข</h4>
+                        <div style="font-size: 2.5rem; font-weight: bold; margin: 15px 0;">48</div>
+                        <div style="opacity: 0.9;">ชิ้น (3.9%)</div>
+                    </div>
+                    
+                    <div style="background: #f44336; color: white; padding: 25px; border-radius: 15px; text-align: center;">
+                        <h4>❌ ของเสีย</h4>
+                        <div style="font-size: 2.5rem; font-weight: bold; margin: 15px 0;">10</div>
+                        <div style="opacity: 0.9;">ชิ้น (0.8%)</div>
+                    </div>
+                    
+                    <div style="background: #2196f3; color: white; padding: 25px; border-radius: 15px; text-align: center;">
+                        <h4>📈 แนวโน้ม</h4>
+                        <div style="font-size: 2.5rem; font-weight: bold; margin: 15px 0;">↗️</div>
+                        <div style="opacity: 0.9;">คุณภาพดีขึ้น</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SPC Chart -->
+            <div class="chart-container">
+                <h3 style="text-align: center; color: #2c3e50; margin-bottom: 20px;">📊 Statistical Process Control (SPC)</h3>
+                <div style="display: flex; justify-content: space-around; align-items: end; height: 200px; background: #f8f9fa; border-radius: 10px; padding: 20px;">
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <div style="width: 40px; height: 150px; background: linear-gradient(to top, #4caf50, #8bc34a); border-radius: 4px;"></div>
+                        <div style="margin-top: 10px; font-size: 0.9rem;">08:00</div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <div style="width: 40px; height: 140px; background: linear-gradient(to top, #4caf50, #8bc34a); border-radius: 4px;"></div>
+                        <div style="margin-top: 10px; font-size: 0.9rem;">10:00</div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <div style="width: 40px; height: 160px; background: linear-gradient(to top, #4caf50, #8bc34a); border-radius: 4px;"></div>
+                        <div style="margin-top: 10px; font-size: 0.9rem;">12:00</div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <div style="width: 40px; height: 130px; background: linear-gradient(to top, #ff9800, #ffc107); border-radius: 4px;"></div>
+                        <div style="margin-top: 10px; font-size: 0.9rem;">14:00</div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <div style="width: 40px; height: 145px; background: linear-gradient(to top, #4caf50, #8bc34a); border-radius: 4px;"></div>
+                        <div style="margin-top: 10px; font-size: 0.9rem;">16:00</div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 15px; color: #666;">
+                    <div style="display: inline-flex; align-items: center; gap: 20px;">
+                        <div><span style="display: inline-block; width: 12px; height: 12px; background: #4caf50; border-radius: 2px; margin-right: 5px;"></span>ภายในขีดจำกัด</div>
+                        <div><span style="display: inline-block; width: 12px; height: 12px; background: #ff9800; border-radius: 2px; margin-right: 5px;"></span>ใกล้ขีดจำกัด</div>
+                        <div><span style="display: inline-block; width: 12px; height: 12px; background: #f44336; border-radius: 2px; margin-right: 5px;"></span>เกินขีดจำกัด</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Main Navigation System
+        function switchSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active class from all nav items
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Show selected section
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+
+            // Add active class to clicked nav item
+            const activeNavItem = document.querySelector(`[data-section="${sectionId}"]`);
+            if (activeNavItem) {
+                activeNavItem.classList.add('active');
+            }
+        }
+
+        // Add event listeners to navigation items
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const sectionId = this.getAttribute('data-section');
+                switchSection(sectionId);
+            });
+        });
+
+        // Control Panel Interactions
+        function updateParameterDisplay(sliderId, displayId, unit = '') {
+            const slider = document.getElementById(sliderId);
+            const display = document.getElementById(displayId);
+            
+            if (slider && display) {
+                slider.addEventListener('input', function() {
+                    display.textContent = this.value + unit;
+                    updateSimulatorDisplay();
+                });
+            }
+        }
+
+        // Initialize parameter displays
+        updateParameterDisplay('manifold-temp', 'manifold-display', '°C');
+        updateParameterDisplay('nozzle-temp', 'nozzle-display', '°C');
+        updateParameterDisplay('injection-pressure', 'pressure-display', ' MPa');
+        updateParameterDisplay('injection-time', 'time-display', ' วินาที');
+        updateParameterDisplay('sim-speed', 'speed-display', ' mm/s');
+        updateParameterDisplay('sim-cycles', 'cycles-display', ' รอบ');
+
+        // Toggle Switch Interactions
+        document.querySelectorAll('.toggle-switch input').forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                const displayElement = this.closest('.control-item').querySelector('.parameter-display');
+                const statusElement = this.closest('.control-item').querySelector('.status-indicator');
+                
+                if (displayElement) {
+                    displayElement.textContent = this.checked ? 'เปิดใช้งาน' : 'ปิดใช้งาน';
+                }
+                
+                if (statusElement) {
+                    statusElement.className = this.checked ? 'status-indicator online' : 'status-indicator offline';
+                }
+            });
+        });
+
+        // Simulator Functions
+        function updateSimulatorDisplay() {
+            const manifoldTemp = document.getElementById('manifold-temp')?.value || 260;
+            const pressure = document.getElementById('injection-pressure')?.value || 120;
+            
+            document.getElementById('sim-temp').textContent = manifoldTemp + '°C';
+            document.getElementById('sim-pressure').textContent = pressure + ' MPa';
+            
+            // Update efficiency based on parameters
+            const efficiency = Math.min(98, 85 + (manifoldTemp - 240) * 0.1 + (pressure - 100) * 0.05);
+            document.getElementById('sim-efficiency').textContent = efficiency.toFixed(1) + '%';
+        }
+
+        function startSimulation() {
+            const simulatorScreen = document.getElementById('simulator-screen');
+            const originalContent = simulatorScreen.innerHTML;
+            
+            // Show simulation running
+            simulatorScreen.innerHTML = `
+                <div style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 20px;">🔄</div>
+                    <h3>กำลังจำลองการทำงาน...</h3>
+                    <div style="margin: 20px 0;">
+                        <div style="width: 200px; height: 6px; background: rgba(255,255,255,0.3); border-radius: 3px; margin: 0 auto; overflow: hidden;">
+                            <div id="progress-bar" style="width: 0%; height: 100%; background: #4caf50; border-radius: 3px; transition: width 0.1s ease;"></div>
+                        </div>
+                    </div>
+                    <p>กรุณารอสักครู่...</p>
+                </div>
+            `;
+            
+            // Animate progress bar
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 2;
+                const progressBar = document.getElementById('progress-bar');
+                if (progressBar) {
+                    progressBar.style.width = progress + '%';
+                }
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        simulatorScreen.innerHTML = `
+                            <div style="text-align: center;">
+                                <div style="font-size: 3rem; margin-bottom: 20px;">✅</div>
+                                <h3>จำลองสำเร็จ!</h3>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0;">
+                                    <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px;">
+                                        <div style="font-size: 1.5rem; font-weight: bold;">96.5%</div>
+                                        <div>ประสิทธิภาพ</div>
+                                    </div>
+                                    <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px;">
+                                        <div style="font-size: 1.5rem; font-weight: bold;">15.2s</div>
+                                        <div>Cycle Time</div>
+                                    </div>
+                                    <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px;">
+                                        <div style="font-size: 1.5rem; font-weight: bold;">0.5%</div>
+                                        <div>Defect Rate</div>
+                                    </div>
+                                </div>
+                                <button onclick="resetSimulator()" style="background: #fff; color: #667eea; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-weight: bold;">
+                                    🔄 รีเซ็ต
+                                </button>
+                            </div>
+                        `;
+                    }, 1000);
+                }
+            }, 50);
+        }
+
+        function resetSimulator() {
+            const simulatorScreen = document.getElementById('simulator-screen');
+            simulatorScreen.innerHTML = `
+                <div style="text-align: center;">
+                    <h3>🔥 Hot Runner System</h3>
+                    <div style="font-size: 2rem; margin: 20px 0;">
+                        <span id="sim-temp">260°C</span> | 
+                        <span id="sim-pressure">120 MPa</span>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px;">
+                        <div>สถานะ: <span id="sim-status">ปกติ</span></div>
+                        <div>ประสิทธิภาพ: <span id="sim-efficiency">95%</span></div>
+                    </div>
+                </div>
+            `;
+            updateSimulatorDisplay();
+        }
+
+        // Real-time Data Updates
+        function updateRealTimeData() {
+            // Update production count
+            const productionCount = document.getElementById('production-count');
+            if (productionCount) {
+                let currentCount = parseInt(productionCount.textContent.replace(',', ''));
+                currentCount += Math.floor(Math.random() * 3);
+                productionCount.textContent = currentCount.toLocaleString();
+            }
+
+            // Update efficiency (simulate small fluctuations)
+            const efficiencyRate = document.getElementById('efficiency-rate');
+            if (efficiencyRate) {
+                const baseEfficiency = 96.5;
+                const fluctuation = (Math.random() - 0.5) * 0.4;
+                const newEfficiency = (baseEfficiency + fluctuation).toFixed(1);
+                efficiencyRate.textContent = newEfficiency + '%';
+            }
+
+            // Update defect rate
+            const defectRate = document.getElementById('defect-rate');
+            if (defectRate) {
+                const baseDefect = 0.8;
+                const fluctuation = (Math.random() - 0.5) * 0.2;
+                const newDefect = Math.max(0.1, baseDefect + fluctuation).toFixed(1);
+                defectRate.textContent = newDefect + '%';
+            }
+
+            // Update uptime
+            const uptime = document.getElementById('uptime');
+            if (uptime) {
+                const baseUptime = 98.2;
+                const fluctuation = (Math.random() - 0.5) * 0.1;
+                const newUptime = Math.max(95, Math.min(100, baseUptime + fluctuation)).toFixed(1);
+                uptime.textContent = newUptime + '%';
+            }
+        }
+
+        // Update real-time data every 5 seconds
+        setInterval(updateRealTimeData, 5000);
+
+        // Advanced Animations
+        function addInteractiveAnimations() {
+            // Hover effects for cards
+            document.querySelectorAll('.content-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Pulse animation for status indicators
+            document.querySelectorAll('.status-indicator.online').forEach(indicator => {
+                setInterval(() => {
+                    indicator.style.animation = 'pulse 1s ease-in-out';
+                    setTimeout(() => {
+                        indicator.style.animation = '';
+                    }, 1000);
+                }, 3000);
+            });
+
+            // Glow effect for active controls
+            document.querySelectorAll('.parameter-slider').forEach(slider => {
+                slider.addEventListener('input', function() {
+                    this.parentElement.style.animation = 'glow 0.5s ease-in-out';
+                    setTimeout(() => {
+                        this.parentElement.style.animation = '';
+                    }, 500);
+                });
+            });
+        }
+
+        // Initialize interactive animations
+        addInteractiveAnimations();
+
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Alt + 1-6 for quick navigation
+            if (e.altKey) {
+                const sections = ['operation', 'control', 'monitoring', 'maintenance', 'troubleshooting', 'quality'];
+                const keyNum = parseInt(e.key);
+                if (keyNum >= 1 && keyNum <= 6) {
+                    switchSection(sections[keyNum - 1]);
+                    e.preventDefault();
+                }
+            }
+            
+            // Esc to reset simulator
+            if (e.key === 'Escape') {
+                resetSimulator();
+            }
+        });
+
+        // Context Menu for Advanced Options
+        document.addEventListener('contextmenu', function(e) {
+            if (e.target.closest('.control-panel')) {
+                e.preventDefault();
+                showContextMenu(e.pageX, e.pageY);
+            }
+        });
+
+        function showContextMenu(x, y) {
+            // Remove existing context menu
+            const existingMenu = document.getElementById('context-menu');
+            if (existingMenu) {
+                existingMenu.remove();
+            }
+
+            const contextMenu = document.createElement('div');
+            contextMenu.id = 'context-menu';
+            contextMenu.style.cssText = `
+                position: absolute;
+                top: ${y}px;
+                left: ${x}px;
+                background: white;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                padding: 10px 0;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 10000;
+                min-width: 150px;
+            `;
+
+            const menuItems = [
+                { text: '📊 Export Data', action: () => alert('ส่งออกข้อมูล...') },
+                { text: '🔄 Reset All', action: () => { resetSimulator(); alert('รีเซ็ตทั้งหมด'); } },
+                { text: '⚙️ Settings', action: () => alert('เปิดการตั้งค่า...') },
+                { text: '📁 Save Profile', action: () => alert('บันทึก Profile...') }
+            ];
+
+            menuItems.forEach(item => {
+                const menuItem = document.createElement('div');
+                menuItem.textContent = item.text;
+                menuItem.style.cssText = `
+                    padding: 8px 16px;
+                    cursor: pointer;
+                    transition: background-color 0.2s;
+                `;
+                menuItem.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#f0f0f0';
+                });
+                menuItem.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '';
+                });
+                menuItem.addEventListener('click', function() {
+                    item.action();
+                    contextMenu.remove();
+                });
+                contextMenu.appendChild(menuItem);
+            });
+
+            document.body.appendChild(contextMenu);
+
+            // Remove context menu when clicking elsewhere
+            setTimeout(() => {
+                document.addEventListener('click', function removeMenu() {
+                    if (contextMenu.parentNode) {
+                        contextMenu.remove();
+                    }
+                    document.removeEventListener('click', removeMenu);
+                }, 100);
+            });
+        }
+
+        // Print functionality
+        function addPrintStyles() {
+            const printStyles = `
+                @media print {
+                    .main-nav, .simulator-container { display: none !important; }
+                    .content-section { display: block !important; }
+                    .content-card { break-inside: avoid; margin-bottom: 20px; }
+                    body { background: white !important; }
+                    .page-header { color: black !important; }
+                }
+            `;
+            
+            const styleSheet = document.createElement('style');
+            styleSheet.textContent = printStyles;
+            document.head.appendChild(styleSheet);
+        }
+
+        addPrintStyles();
+
+        // Initialize default display values
+        updateSimulatorDisplay();
+
+        // Loading animation
+        window.addEventListener('load', function() {
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.5s ease';
+            
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+
+        // Performance monitoring
+        function addPerformanceMonitoring() {
+            const observer = new PerformanceObserver((list) => {
+                for (const entry of list.getEntries()) {
+                    if (entry.entryType === 'navigation') {
+                        console.log(`⚡ Page Load Time: ${entry.loadEventEnd - entry.loadEventStart}ms`);
+                    }
+                }
+            });
+            observer.observe({ entryTypes: ['navigation'] });
+        }
+
+        addPerformanceMonitoring();
+
+        // Accessibility enhancements
+        function enhanceAccessibility() {
+            // Add ARIA labels
+            document.querySelectorAll('.nav-item').forEach((item, index) => {
+                item.setAttribute('role', 'tab');
+                item.setAttribute('aria-selected', index === 0 ? 'true' : 'false');
+            });
+
+            document.querySelectorAll('.content-section').forEach((section, index) => {
+                section.setAttribute('role', 'tabpanel');
+                section.setAttribute('aria-hidden', index === 0 ? 'false' : 'true');
+            });
+
+            // Add skip navigation
+            const skipLink = document.createElement('a');
+            skipLink.href = '#main-content';
+            skipLink.textContent = 'ข้ามไปยังเนื้อหาหลัก';
+            skipLink.style.cssText = `
+                position: absolute;
+                top: -100px;
+                left: 10px;
+                background: #000;
+                color: #fff;
+                padding: 10px 15px;
+                text-decoration: none;
+                border-radius: 5px;
+                z-index: 10000;
+            `;
+            
+            skipLink.addEventListener('focus', function() {
+                this.style.top = '10px';
+            });
+            
+            skipLink.addEventListener('blur', function() {
+                this.style.top = '-100px';
+            });
+            
+            document.body.insertBefore(skipLink, document.body.firstChild);
+        }
+
+        enhanceAccessibility();
+
+        console.log('🚀 Hot Runner Control System loaded successfully!');
+        console.log('💡 Keyboard shortcuts: Alt+1-6 for navigation, Esc to reset simulator');
+        console.log('🎛️ Features: Real-time monitoring, interactive controls, quality dashboard');
+    </script>
+</body>
+</html>

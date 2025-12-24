@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบทดสอบ: Hot Runner & Open Gate Systems สำหรับพลาสติก PPS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .quiz-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-left: 5px solid #e74c3c;
+            margin: 20px;
+            border-radius: 8px;
+        }
+
+        .quiz-info h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .user-info {
+            background: #fff;
+            padding: 20px;
+            border: 2px solid #e74c3c;
+            margin: 20px;
+            border-radius: 8px;
+        }
+
+        .user-info h3 {
+            color: #e74c3c;
+            margin-bottom: 15px;
+        }
+
+        .quiz-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px;
+            background: #ecf0f1;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .progress-container {
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .progress-bar {
+            background: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .question-container {
+            display: none;
+            padding: 30px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .question-container.active {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e74c3c;
+        }
+
+        .question-number {
+            background: #e74c3c;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .question-category {
+            background: #fdf2f2;
+            color: #c0392b;
+            padding: 8px 15px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: #2c3e50;
+        }
+
+        .options-container {
+            display: grid;
+            gap: 12px;
+        }
+
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .option:hover {
+            border-color: #e74c3c;
+            background: #fdf2f2;
+        }
+
+        .option.selected {
+            border-color: #e74c3c;
+            background: #fdf2f2;
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.2);
+        }
+
+        .option.correct {
+            border-color: #27ae60;
+            background: #d5f4e6;
+            color: #155724;
+        }
+
+        .option.incorrect {
+            border-color: #e74c3c;
+            background: #fdf2f2;
+            color: #721c24;
+        }
+
+        .option-letter {
+            background: #e74c3c;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .option.correct .option-letter {
+            background: #27ae60;
+        }
+
+        .option.incorrect .option-letter {
+            background: #e74c3c;
+        }
+
+        .explanation {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .explanation.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; height: 0; }
+            to { opacity: 1; height: auto; }
+        }
+
+        .explanation h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .explanation p {
+            color: #856404;
+            line-height: 1.6;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .quiz-results {
+            display: none;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .quiz-results.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin: 30px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .score-excellent {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        }
+
+        .score-good {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        }
+
+        .score-fair {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .score-details {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .score-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .score-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .score-item h4 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .score-item .number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+
+        .recommendations {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .recommendations h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .recommendations ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .recommendations li {
+            background: #f8f9fa;
+            margin: 8px 0;
+            padding: 12px 15px;
+            border-radius: 5px;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .timer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 0 10px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .question-text {
+                font-size: 1.1em;
+            }
+
+            .quiz-controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .navigation {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .timer {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin: 10px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔥 แบบทดสอบความรู้เทคนิค</h1>
+            <p>Hot Runner & Open Gate Systems สำหรับพลาสติก PPS</p>
+        </div>
+
+        <div class="timer" id="timer">เวลา: 50:00</div>
+
+        <div class="quiz-info">
+            <h3>🎯 ข้อมูลการสอบ</h3>
+            <ul>
+                <li><strong>จำนวนข้อ:</strong> 25 ข้อ</li>
+                <li><strong>เวลาทำข้อสอบ:</strong> 50 นาที</li>
+                <li><strong>คะแนนผ่าน:</strong> 75% (19 ข้อ)</li>
+                <li><strong>หัวข้อที่ครอบคลุม:</strong> Hot Runner Systems, Open Gate Technology, PPS Processing, PP Purging, Troubleshooting, Maintenance</li>
+            </ul>
+        </div>
+
+        <div class="user-info" id="userInfo">
+            <h3>👤 ข้อมูลผู้เข้าสอบ</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                <div>
+                    <label for="userName" style="display: block; margin-bottom: 5px; font-weight: bold;">ชื่อ-นามสกุล:</label>
+                    <input type="text" id="userName" placeholder="กรุณากรอกชื่อ-นามสกุล" style="width: 100%; padding: 10px; border: 2px solid #ecf0f1; border-radius: 5px; font-size: 1em;">
+                </div>
+                <div>
+                    <label for="userPosition" style="display: block; margin-bottom: 5px; font-weight: bold;">ตำแหน่ง:</label>
+                    <input type="text" id="userPosition" placeholder="เช่น Production Engineer, Technician" style="width: 100%; padding: 10px; border: 2px solid #ecf0f1; border-radius: 5px; font-size: 1em;">
+                </div>
+            </div>
+        </div>
+
+        <div class="quiz-controls">
+            <button class="btn btn-primary" onclick="startQuiz()">🚀 เริ่มทำข้อสอบ</button>
+            <button class="btn btn-warning" onclick="reviewMode()">📚 ทบทวนข้อสอบ</button>
+            <button class="btn btn-success" onclick="showResults()">📊 ดูผลลัพธ์</button>
+        </div>
+
+        <div class="progress-container" id="progressContainer" style="display: none;">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">ข้อ 0 จาก 20</div>
+        </div>
+
+        <!-- Questions Container -->
+        <div id="questionsContainer"></div>
+
+        <div class="navigation" id="navigation" style="display: none;">
+            <button class="btn btn-warning" onclick="previousQuestion()" id="prevBtn">⬅️ ข้อก่อนหน้า</button>
+            <button class="btn btn-primary" onclick="nextQuestion()" id="nextBtn">ข้อถัดไป ➡️</button>
+            <button class="btn btn-success" onclick="submitQuiz()" id="submitBtn" style="display: none;">✅ ส่งข้อสอบ</button>
+        </div>
+
+        <!-- Results Container -->
+        <div class="quiz-results" id="results">
+            <h2>🎯 ผลการสอบ</h2>
+            <div class="score-circle" id="scoreCircle">
+                <span id="scorePercent">0%</span>
+            </div>
+            
+            <div class="score-details">
+                <h3 id="scoreMessage">กำลังคำนวณผล...</h3>
+                <div class="score-breakdown">
+                    <div class="score-item">
+                        <h4>คะแนนรวม</h4>
+                        <div class="number" id="totalScore">0/20</div>
+                    </div>
+                    <div class="score-item">
+                        <h4>เปอร์เซ็นต์</h4>
+                        <div class="number" id="percentScore">0%</div>
+                    </div>
+                    <div class="score-item">
+                        <h4>เวลาที่ใช้</h4>
+                        <div class="number" id="timeUsed">00:00</div>
+                    </div>
+                    <div class="score-item">
+                        <h4>ผลการสอบ</h4>
+                        <div class="number" id="passStatus">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recommendations" id="recommendations">
+                <h3>📚 คำแนะนำการปรับปรุง</h3>
+                <ul id="recommendationList"></ul>
+            </div>
+
+            <div class="quiz-controls">
+                <button class="btn btn-primary" onclick="retakeQuiz()">🔄 ทำใหม่</button>
+                <button class="btn btn-warning" onclick="reviewAnswers()">📋 ดูเฉลย</button>
+                <button class="btn btn-success" onclick="shareResults()">📤 แชร์ผลลัพธ์</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Quiz Data - Hot Runner & Open Gate Systems for PPS
+        const quizData = [
+            // ข้อ 1-4: Hot Runner System Fundamentals
+            {
+                category: "Hot Runner System Fundamentals",
+                question: "อุณหภูมิที่เหมาะสมสำหรับ Hot Runner Manifold เมื่อฉีดพลาสติก PPS (Polyphenylene Sulfide) คือเท่าไร?",
+                options: [
+                    "280-300°C",
+                    "320-340°C", 
+                    "360-380°C",
+                    "400-420°C"
+                ],
+                correct: 1,
+                explanation: "PPS ต้องการอุณหภูมิ Hot Runner ประมาณ 320-340°C เพื่อป้องกันการแข็งตัวในระบบและรักษาความหนืดที่เหมาะสม"
+            },
+            {
+                category: "Hot Runner System Fundamentals",
+                question: "ข้อใดคือลักษณะสำคัญของ Open Gate Hot Runner System?",
+                options: [
+                    "มีการปิดเปิด Gate ด้วย Valve Pin",
+                    "Melt flow ตรงจาก Nozzle ไปยัง Cavity โดยไม่มี Valve",
+                    "ใช้ Hydraulic Cylinder ควบคุม Gate",
+                    "มี Mechanical Actuator ปิดเปิด Gate"
+                ],
+                correct: 1,
+                explanation: "Open Gate System คือระบบที่ plastic melt ไหลตรงจาก Hot Runner Nozzle เข้า Cavity โดยไม่มี valve หรือ gate ที่ปิดเปิดได้"
+            },
+            {
+                category: "Hot Runner System Fundamentals", 
+                question: "ประโยชน์หลักของ Hot Runner System เมื่อเทียบกับ Cold Runner คืออะไร?",
+                options: [
+                    "ลดต้นทุนแม่พิมพ์",
+                    "ลด Cycle Time และ Material Waste",
+                    "ใช้งานง่ายกว่า",
+                    "ซ่อมบำรุงน้อยกว่า"
+                ],
+                correct: 1,
+                explanation: "Hot Runner ช่วยลด Cycle Time เพราะไม่ต้องรอให้ Runner เย็น และลด Material Waste เพราะไม่มี Runner ที่ต้องตัดทิ้ง"
+            },
+            {
+                category: "Hot Runner System Fundamentals",
+                question: "ใน Hot Runner System สำหรับ PPS การควบคุมอุณหภูมิแบบใดที่สำคัญที่สุด?",
+                options: [
+                    "Proportional Control (P)",
+                    "Proportional-Integral-Derivative Control (PID)",
+                    "On-Off Control",
+                    "Manual Control"
+                ],
+                correct: 1,
+                explanation: "PID Control ให้การควบคุมอุณหภูมิที่แม่นยำและเสถียร ซึ่งสำคัญมากสำหรับ PPS ที่มี Processing Window แคบ"
+            },
+
+            // ข้อ 5-8: Open Gate Technology & Issues
+            {
+                category: "Open Gate Technology",
+                question: "ปัญหา 'Stringing' ใน Open Gate System เกิดจากสาเหตุใด?",
+                options: [
+                    "อุณหภูมิ Nozzle สูงเกินไป",
+                    "Melt viscosity ต่ำเกินไป และ Nozzle geometry ไม่เหมาะสม",
+                    "ความดัน Injection ต่ำเกินไป",
+                    "Material degradation"
+                ],
+                correct: 1,
+                explanation: "Stringing เกิดจาก melt ที่มี viscosity ต่ำเกินไป และ nozzle tip geometry ที่ไม่เหมาะสม ทำให้เกิดการดึงยืดของ plastic"
+            },
+            {
+                category: "Open Gate Technology",
+                question: "วิธีการแก้ปัญหา Gate Vestige ใน Open Gate System คืออะไร?",
+                options: [
+                    "เพิ่มความเร็ว Injection",
+                    "ออกแบบ Gate geometry ให้มี Self-breaking feature",
+                    "ลดอุณหภูมิ Mold",
+                    "เพิ่ม Holding Pressure"
+                ],
+                correct: 1,
+                explanation: "Gate ควรออกแบบให้มี Necking area ที่จะหักออกได้เองเมื่อเปิดแม่พิมพ์ หรือใช้ Conical gate design เพื่อลด vestige"
+            },
+            {
+                category: "Open Gate Technology",
+                question: "ข้อใดไม่ใช่ข้อดีของ Open Gate System?",
+                options: [
+                    "ไม่มี Valve Pin ที่ซับซ้อน",
+                    "Cost ต่ำกว่า Valve Gate",
+                    "Gate mark คุณภาพดี",
+                    "Maintenance ง่าย"
+                ],
+                correct: 2,
+                explanation: "Open Gate มักให้ Gate mark ที่ไม่สวยเท่า Valve Gate เพราะไม่มีการควบคุมการปิด Gate ที่แม่นยำ"
+            },
+            {
+                category: "Open Gate Technology",
+                question: "Drop Formation ใน Open Gate เกิดจากอะไร?",
+                options: [
+                    "อุณหภูมิ Nozzle ต่ำเกินไป",
+                    "Surface tension และ Rheological properties ของ polymer",
+                    "ความดัน Injection สูงเกินไป", 
+                    "Gate size ใหญ่เกินไป"
+                ],
+                correct: 1,
+                explanation: "Drop Formation เกิดจาก surface tension และ rheological properties ของ polymer ที่ทำให้ melt รวมตัวเป็นหยด ณ จุด gate"
+            },
+
+            // ข้อ 9-12: PPS Material Processing
+            {
+                category: "PPS Material Processing",
+                question: "Glass Transition Temperature (Tg) ของ PPS อยู่ในช่วงใด?",
+                options: [
+                    "60-80°C",
+                    "85-95°C",
+                    "120-140°C",
+                    "160-180°C"
+                ],
+                correct: 1,
+                explanation: "PPS มี Tg ประมาณ 85-95°C ซึ่งค่อนข้างสูง ทำให้มีความเสถียรทางความร้อนดี"
+            },
+            {
+                category: "PPS Material Processing",
+                question: "เวลา Residence Time ที่เหมาะสมสำหรับ PPS ใน Hot Runner System คือเท่าไร?",
+                options: [
+                    "30 วินาที - 2 นาที",
+                    "5-10 นาที",
+                    "15-20 นาที", 
+                    "30-45 นาที"
+                ],
+                correct: 1,
+                explanation: "PPS ควรมี residence time ไม่เกิน 5-10 นาที เพื่อป้องกันการเสื่อมสลาย (degradation) ที่อุณหภูมิสูง"
+            },
+            {
+                category: "PPS Material Processing",
+                question: "อุณหภูมิ Mold ที่เหมาะสมสำหรับฉีด PPS คือเท่าไร?",
+                options: [
+                    "80-100°C",
+                    "120-140°C",
+                    "160-180°C",
+                    "200-220°C"
+                ],
+                correct: 1,
+                explanation: "PPS ต้องการ mold temperature ประมาณ 120-140°C เพื่อให้ได้ crystallinity ที่เหมาะสมและ surface finish ที่ดี"
+            },
+            {
+                category: "PPS Material Processing",
+                question: "ปัญหาหลักเมื่อ Processing PPS ที่อุณหภูมิต่ำเกินไปคืออะไร?",
+                options: [
+                    "Material degradation",
+                    "Short shot และ Poor surface finish",
+                    "Flash formation",
+                    "Sink mark"
+                ],
+                correct: 1,
+                explanation: "อุณหภูมิต่ำเกินไปทำให้ PPS มี viscosity สูง เกิด short shot และ surface finish ที่ไม่ดี"
+            },
+
+            // ข้อ 13-16: Troubleshooting
+            {
+                category: "Troubleshooting",
+                question: "หาก Hot Runner Nozzle อุดตันด้วย PPS ที่เสื่อมสลาย วิธีแก้ไขที่ถูกต้องคืออะไร?",
+                options: [
+                    "เพิ่มอุณหภูมิเพื่อละลาย deposit",
+                    "ใช้ Purging compound และ Disassemble nozzle",
+                    "ใช้ mechanical drilling",
+                    "Soak ใน Chemical solvent"
+                ],
+                correct: 1,
+                explanation: "การใช้ purging compound และการถอดประกอบ nozzle เป็นวิธีที่ปลอดภัยและมีประสิทธิภาพในการทำความสะอาด PPS deposits"
+            },
+            {
+                category: "Troubleshooting",
+                question: "สาเหตุของ Color variation ในชิ้นงาน PPS ที่ฉีดด้วย Hot Runner คืออะไร?",
+                options: [
+                    "Uneven heating ใน Hot Runner system",
+                    "Material contamination",
+                    "Injection speed ไม่เหมาะสม",
+                    "Mold venting ไม่ดี"
+                ],
+                correct: 0,
+                explanation: "การให้ความร้อนไม่สม่ำเสมอใน hot runner ทำให้ PPS มี thermal history ต่างกัน ส่งผลต่อสีและ crystallinity"
+            },
+            {
+                category: "Troubleshooting",
+                question: "ปัญหา 'Hesitation' ใน Injection กับ PPS เกิดจากอะไร?",
+                options: [
+                    "Screw speed สูงเกินไป",
+                    "Cold slug และ Poor melt homogeneity",
+                    "Back pressure ต่ำเกินไป",
+                    "Injection pressure สูงเกินไป"
+                ],
+                correct: 1,
+                explanation: "Hesitation เกิดจาก cold slug หรือ melt ที่ไม่เนื้อเดียวกัน ทำให้การไหลของ material ไม่สม่ำเสมอ"
+            },
+            {
+                category: "Troubleshooting",
+                question: "เมื่อเกิด Thermal degradation ของ PPS ใน Hot Runner จะมีลักษณะอย่างไร?",
+                options: [
+                    "สีเปลี่ยนเป็นสีดำและมีกลิ่นเหม็น",
+                    "วัสดุเหนียวขึ้น",
+                    "ความใสเพิ่มขึ้น",
+                    "Shrinkage เพิ่มขึ้น"
+                ],
+                correct: 0,
+                explanation: "PPS ที่เสื่อมสลายจะเปลี่ยนเป็นสีดำ มีกลิ่นเหม็น และอาจมี char particles ปนอยู่"
+            },
+
+            // ข้อ 17-20: Maintenance & Optimization
+            {
+                category: "Maintenance & Optimization",
+                question: "การบำรุงรักษา Hot Runner สำหรับ PPS ควรทำความสะอาดทุกกี่ shot?",
+                options: [
+                    "ทุก 10,000-20,000 shots",
+                    "ทุก 50,000-100,000 shots",
+                    "ทุก 200,000-300,000 shots",
+                    "เมื่อมีปัญหาเท่านั้น"
+                ],
+                correct: 1,
+                explanation: "สำหรับ PPS ควรทำความสะอาด hot runner ทุก 50,000-100,000 shots เพื่อป้องกัน deposit buildup และรักษาคุณภาพ"
+            },
+            {
+                category: "Maintenance & Optimization",
+                question: "Purging compound ที่เหมาะสำหรับทำความสะอาด PPS residue คืออะไร?",
+                options: [
+                    "High temperature mechanical purge",
+                    "Chemical purge compound",
+                    "LDPE หรือ PS",
+                    "Compressed air เท่านั้น"
+                ],
+                correct: 0,
+                explanation: "High temperature mechanical purge compound เหมาะสำหรับ PPS เพราะช่วยขจัด thermal degradation products ได้ดี"
+            },
+            {
+                category: "Maintenance & Optimization",
+                question: "การ Optimize gate design สำหรับ PPS ใน Open Gate System ควรพิจารณาอะไรเป็นหลัก?",
+                options: [
+                    "Gate size ให้ใหญ่ที่สุด",
+                    "Gate-to-wall thickness ratio ประมาณ 0.5-0.8",
+                    "Gate size ให้เล็กที่สุด",
+                    "Gate shape เป็นสี่เหลี่ยมเท่านั้น"
+                ],
+                correct: 1,
+                explanation: "สำหรับ PPS gate-to-wall thickness ratio ประมาณ 0.5-0.8 จะให้การไหลที่ดีและ gate vestige ที่ยอมรับได้"
+            },
+            {
+                category: "Maintenance & Optimization", 
+                question: "การตรวจสอบ Hot Runner System สำหรับ PPS ควรเช็คอะไรเป็นประจำ?",
+                options: [
+                    "เฉพาะอุณหภูมิ",
+                    "Temperature uniformity, Heater resistance, Thermocouple accuracy",
+                    "เฉพาะ Heating element",
+                    "เฉพาะ Melt pressure"
+                ],
+                correct: 1,
+                explanation: "การตรวจสอบที่สมบูรณ์ต้องรวม temperature uniformity, heater resistance, และ thermocouple accuracy เพื่อให้แน่ใจว่าระบบทำงานเสถียร"
+            },
+
+            // ข้อ 21-25: PP Purging & Cleaning Procedures
+            {
+                category: "PP Purging & Cleaning",
+                question: "เมื่อใช้ PP (Polypropylene) ในการทำความสะอาด Hot Runner หลังจากฉีด PPS ควรใช้อุณหภูมิเท่าไร?",
+                options: [
+                    "180-200°C",
+                    "220-240°C", 
+                    "260-280°C",
+                    "300-320°C"
+                ],
+                correct: 1,
+                explanation: "PP ควรใช้ที่อุณหภูมิ 220-240°C เพื่อให้มี melt flow ที่ดีในการขจาย PPS residue โดยไม่ทำให้ PP เสื่อมสลาย"
+            },
+            {
+                category: "PP Purging & Cleaning",
+                question: "ข้อใดคือขั้นตอนที่ถูกต้องในการ Purge PPS ด้วย PP?",
+                options: [
+                    "ลดอุณหภูมิทันที แล้ว inject PP",
+                    "ลดอุณหภูมิค่อยเป็นค่อยไป inject PP intermittently จนใส",
+                    "เพิ่มอุณหภูมิก่อน แล้ว inject PP",
+                    "ใช้ high pressure inject PP"
+                ],
+                correct: 1,
+                explanation: "ต้องลดอุณหภูมิค่อยเป็นค่อยไปและ inject PP แบบ intermittent เพื่อให้ thermal shock น้อยที่สุดและทำความสะอาดได้ทั่วถึง"
+            },
+            {
+                category: "PP Purging & Cleaning",
+                question: "PP grade ใดที่เหมาะสมที่สุดสำหรับ Purging Hot Runner System?",
+                options: [
+                    "PP Homopolymer MFI 20-35",
+                    "PP Copolymer MFI 10-15",
+                    "PP Homopolymer MFI 2-5", 
+                    "PP with Filler"
+                ],
+                correct: 0,
+                explanation: "PP Homopolymer MFI 20-35 มี flow ดีเหมาะสำหรับการล้างทำความสะอาด และไม่มี additives ที่อาจก่อให้เกิด deposit"
+            },
+            {
+                category: "PP Purging & Cleaning",
+                question: "การใช้ Natural PP ในการ Purge มีข้อดีอย่างไร?",
+                options: [
+                    "ราคาถูกกว่า",
+                    "ไม่มี colorant หรือ additive ที่อาจก่อให้เกิดปัญหา contamination",
+                    "มี thermal stability ดีกว่า",
+                    "ใช้อุณหภูมิต่ำได้"
+                ],
+                correct: 1,
+                explanation: "Natural PP ไม่มี colorant หรือ additive ที่อาจทิ้ง residue หรือก่อให้เกิด contamination ในระบบ Hot Runner"
+            },
+            {
+                category: "PP Purging & Cleaning",
+                question: "หลังจาก Purge ด้วย PP แล้ว ขั้นตอนสุดท้ายที่ควรทำคืออะไร?",
+                options: [
+                    "ปิดเครื่องทันที",
+                    "Flush ด้วย Compressed Air และตรวจสอบ material flow",
+                    "เพิ่มอุณหภูมิสูงสุด",
+                    "เปลี่ยน material ใหม่ทันที"
+                ],
+                correct: 1,
+                explanation: "ควร flush ด้วย compressed air เพื่อขจาย PP ที่เหลืออยู่และตรวจสอบว่า material flow เป็นปกติก่อนเริ่มงานใหม่"
+            }
+        ];
+
+        // Quiz State
+        let currentQuestion = 0;
+        let userAnswers = [];
+        let quizStartTime = null;
+        let timerInterval = null;
+        let timeRemaining = 50 * 60; // 50 minutes in seconds
+        let isQuizActive = false;
+        let reviewModeActive = false;
+
+        // Initialize Quiz
+        function initializeQuiz() {
+            userAnswers = new Array(quizData.length).fill(null);
+            renderQuestions();
+        }
+
+        // Render Questions
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+
+            quizData.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-container';
+                questionDiv.id = `question-${index}`;
+                
+                questionDiv.innerHTML = `
+                    <div class="question-header">
+                        <div class="question-number">${index + 1}</div>
+                        <div class="question-category">${q.category}</div>
+                    </div>
+                    <div class="question-text">${q.question}</div>
+                    <div class="options-container">
+                        ${q.options.map((option, optIndex) => `
+                            <div class="option" data-option="${optIndex}" onclick="selectOption(${index}, ${optIndex})">
+                                <div class="option-letter">${String.fromCharCode(65 + optIndex)}</div>
+                                <div class="option-text">${option}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="explanation" id="explanation-${index}">
+                        <h4>💡 คำอธิบาย</h4>
+                        <p>${q.explanation}</p>
+                    </div>
+                `;
+                
+                container.appendChild(questionDiv);
+            });
+        }
+
+        // Start Quiz
+        function startQuiz() {
+            // ตรวจสอบข้อมูลผู้ใช้
+            const userName = document.getElementById('userName').value.trim();
+            const userPosition = document.getElementById('userPosition').value.trim();
+            
+            if (!userName || !userPosition) {
+                alert('กรุณากรอกชื่อ-นามสกุลและตำแหน่งก่อนเริ่มทำข้อสอบ');
+                return;
+            }
+            
+            isQuizActive = true;
+            reviewModeActive = false;
+            quizStartTime = new Date();
+            currentQuestion = 0;
+            userAnswers = new Array(quizData.length).fill(null);
+            
+            document.getElementById('progressContainer').style.display = 'block';
+            document.getElementById('navigation').style.display = 'flex';
+            document.getElementById('results').classList.remove('show');
+            
+            showQuestion(0);
+            startTimer();
+            updateProgress();
+        }
+
+        // Review Mode
+        function reviewMode() {
+            reviewModeActive = true;
+            isQuizActive = false;
+            currentQuestion = 0;
+            
+            document.getElementById('progressContainer').style.display = 'block';
+            document.getElementById('navigation').style.display = 'flex';
+            document.getElementById('results').classList.remove('show');
+            
+            // Show all explanations in review mode
+            quizData.forEach((q, index) => {
+                const explanation = document.getElementById(`explanation-${index}`);
+                if (explanation) explanation.classList.add('show');
+                
+                // Highlight correct answers
+                const questionContainer = document.getElementById(`question-${index}`);
+                const options = questionContainer.querySelectorAll('.option');
+                options[q.correct].classList.add('correct');
+            });
+            
+            showQuestion(0);
+            updateProgress();
+        }
+
+        // Timer Functions
+        function startTimer() {
+            timeRemaining = 50 * 60;
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimer();
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    submitQuiz();
+                }
+            }, 1000);
+        }
+
+        function updateTimer() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timer').textContent = 
+                `เวลา: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Question Navigation
+        function showQuestion(index) {
+            document.querySelectorAll('.question-container').forEach(q => q.classList.remove('active'));
+            document.getElementById(`question-${index}`).classList.add('active');
+            currentQuestion = index;
+            updateProgress();
+            updateNavigation();
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < quizData.length - 1) {
+                showQuestion(currentQuestion + 1);
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                showQuestion(currentQuestion - 1);
+            }
+        }
+
+        // Select Option
+        function selectOption(questionIndex, optionIndex) {
+            if (!isQuizActive && !reviewModeActive) return;
+            
+            userAnswers[questionIndex] = optionIndex;
+            
+            const questionContainer = document.getElementById(`question-${questionIndex}`);
+            const options = questionContainer.querySelectorAll('.option');
+            
+            // Clear previous selections
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            // Mark selected option
+            options[optionIndex].classList.add('selected');
+            
+            updateProgress();
+            updateNavigation();
+        }
+
+        // Update Progress
+        function updateProgress() {
+            const answered = userAnswers.filter(answer => answer !== null).length;
+            const progress = (answered / quizData.length) * 100;
+            
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            document.getElementById('progressText').textContent = `ข้อ ${currentQuestion + 1} จาก ${quizData.length} (ตอบแล้ว ${answered} ข้อ)`;
+        }
+
+        // Update Navigation
+        function updateNavigation() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            prevBtn.style.display = currentQuestion > 0 ? 'block' : 'none';
+            
+            if (isQuizActive) {
+                if (currentQuestion === quizData.length - 1) {
+                    nextBtn.style.display = 'none';
+                    submitBtn.style.display = 'block';
+                } else {
+                    nextBtn.style.display = 'block';
+                    submitBtn.style.display = 'none';
+                }
+            } else {
+                nextBtn.style.display = currentQuestion < quizData.length - 1 ? 'block' : 'none';
+                submitBtn.style.display = 'none';
+            }
+        }
+
+        // Submit Quiz
+        function submitQuiz() {
+            if (isQuizActive) {
+                isQuizActive = false;
+                clearInterval(timerInterval);
+                
+                const unanswered = userAnswers.filter(answer => answer === null).length;
+                if (unanswered > 0) {
+                    if (!confirm(`คุณยังไม่ได้ตอบ ${unanswered} ข้อ ต้องการส่งข้อสอบหรือไม่?`)) {
+                        return;
+                    }
+                }
+            }
+            
+            calculateResults();
+            showResults();
+        }
+
+        // Calculate Results
+        function calculateResults() {
+            let correctAnswers = 0;
+            const categoryScores = {};
+            
+            quizData.forEach((q, index) => {
+                if (userAnswers[index] === q.correct) {
+                    correctAnswers++;
+                }
+                
+                // Track category performance
+                if (!categoryScores[q.category]) {
+                    categoryScores[q.category] = { correct: 0, total: 0 };
+                }
+                categoryScores[q.category].total++;
+                if (userAnswers[index] === q.correct) {
+                    categoryScores[q.category].correct++;
+                }
+            });
+            
+            const percentage = Math.round((correctAnswers / quizData.length) * 100);
+            const passed = percentage >= 75;
+            
+            // Calculate time used
+            const timeUsed = quizStartTime ? new Date() - quizStartTime : 0;
+            const minutesUsed = Math.floor(timeUsed / 60000);
+            const secondsUsed = Math.floor((timeUsed % 60000) / 1000);
+            
+            return {
+                correctAnswers,
+                percentage,
+                passed,
+                timeUsed: `${minutesUsed.toString().padStart(2, '0')}:${secondsUsed.toString().padStart(2, '0')}`,
+                categoryScores
+            };
+        }
+
+        // Show Results
+        function showResults() {
+            const results = calculateResults();
+            
+            document.getElementById('progressContainer').style.display = 'none';
+            document.getElementById('navigation').style.display = 'none';
+            document.querySelectorAll('.question-container').forEach(q => q.classList.remove('active'));
+            
+            // Update score display
+            document.getElementById('scorePercent').textContent = `${results.percentage}%`;
+            document.getElementById('totalScore').textContent = `${results.correctAnswers}/${quizData.length}`;
+            document.getElementById('percentScore').textContent = `${results.percentage}%`;
+            document.getElementById('timeUsed').textContent = results.timeUsed;
+            document.getElementById('passStatus').textContent = results.passed ? 'ผ่าน' : 'ไม่ผ่าน';
+            
+            // Set score circle color
+            const scoreCircle = document.getElementById('scoreCircle');
+            scoreCircle.className = 'score-circle';
+            if (results.percentage >= 85) {
+                scoreCircle.classList.add('score-excellent');
+                document.getElementById('scoreMessage').textContent = '🏆 Expert Level! คุณเป็นผู้เชี่ยวชาญด้าน Hot Runner & PPS';
+            } else if (results.percentage >= 75) {
+                scoreCircle.classList.add('score-good');
+                document.getElementById('scoreMessage').textContent = '👍 Professional Level! คุณมีความรู้ระดับมืออาชีพ';
+            } else {
+                scoreCircle.classList.add('score-fair');
+                document.getElementById('scoreMessage').textContent = '📚 ต้องพัฒนาความรู้เพิ่มเติม';
+            }
+            
+            // Generate recommendations
+            generateRecommendations(results.categoryScores, results.percentage);
+            
+            document.getElementById('results').classList.add('show');
+        }
+
+        // Generate Recommendations
+        function generateRecommendations(categoryScores, percentage) {
+            const recommendations = [];
+            
+            if (percentage < 75) {
+                recommendations.push('ควรศึกษาความรู้พื้นฐานเกี่ยวกับ Hot Runner และ PPS เพิ่มเติม');
+            }
+            
+            Object.entries(categoryScores).forEach(([category, score]) => {
+                const categoryPercentage = Math.round((score.correct / score.total) * 100);
+                if (categoryPercentage < 75) {
+                    switch(category) {
+                        case 'Hot Runner System Fundamentals':
+                            recommendations.push('ศึกษาหลักการ Hot Runner System และการควบคุมอุณหภูมิสำหรับ PPS');
+                            break;
+                        case 'Open Gate Technology':
+                            recommendations.push('ทบทวนเทคโนโลยี Open Gate และการแก้ไขปัญหา Stringing, Gate Vestige');
+                            break;
+                        case 'PPS Material Processing':
+                            recommendations.push('เรียนรู้คุณสมบัติของ PPS และเงื่อนไขการประมวลผลที่เหมาะสม');
+                            break;
+                        case 'Troubleshooting':
+                            recommendations.push('ฝึกฝนการวินิจฉัยและแก้ไขปัญหาที่เกิดขึ้นใน Hot Runner System');
+                            break;
+                        case 'Maintenance & Optimization':
+                            recommendations.push('ศึกษาการบำรุงรักษาและการปรับปรุงประสิทธิภาพของระบบ');
+                            break;
+                    }
+                }
+            });
+            
+            if (recommendations.length === 0) {
+                recommendations.push('คุณมีความรู้ในระดับผู้เชี่ยวชาญแล้ว แนะนำให้แชร์ความรู้กับผู้อื่น');
+                recommendations.push('พิจารณาศึกษาเทคโนโลยีใหม่ๆ เช่น Industry 4.0 ในงาน Injection Molding');
+                recommendations.push('มีส่วนร่วมในการพัฒนา Process Optimization และ Preventive Maintenance');
+            }
+            
+            const recommendationList = document.getElementById('recommendationList');
+            recommendationList.innerHTML = recommendations.map(rec => `<li>${rec}</li>`).join('');
+        }
+
+        // Share Results
+        function shareResults() {
+            const results = calculateResults();
+            const userName = document.getElementById('userName').value.trim();
+            const userPosition = document.getElementById('userPosition').value.trim();
+            
+            // สร้างข้อความสำหรับแชร์
+            let shareText = `🔥 ผลการสอบ Hot Runner & Open Gate Systems\n\n`;
+            shareText += `👤 ชื่อ: ${userName}\n`;
+            shareText += `💼 ตำแหน่ง: ${userPosition}\n`;
+            shareText += `📊 คะแนน: ${results.correctAnswers}/${quizData.length} (${results.percentage}%)\n`;
+            shareText += `⏱️ เวลาที่ใช้: ${results.timeUsed}\n`;
+            shareText += `✅ ผลการสอบ: ${results.passed ? 'ผ่าน' : 'ไม่ผ่าน'}\n\n`;
+            
+            // เพิ่มคะแนนแยกตามหมวด
+            shareText += `📚 คะแนนรายหมวด:\n`;
+            Object.entries(results.categoryScores).forEach(([category, score]) => {
+                const categoryPercentage = Math.round((score.correct / score.total) * 100);
+                shareText += `• ${category}: ${score.correct}/${score.total} (${categoryPercentage}%)\n`;
+            });
+            
+            shareText += `\n🎯 Hot Runner & PPS Expert Assessment\n`;
+            shareText += `#HotRunner #PPS #InjectionMolding #TechnicalAssessment`;
+            
+            // สร้างเฉลยคำตอบ
+            let answerKey = `\n\n📋 เฉลยคำตอบ:\n`;
+            quizData.forEach((q, index) => {
+                const userAnswer = userAnswers[index];
+                const isCorrect = userAnswer === q.correct;
+                const userAnswerLetter = userAnswer !== null ? String.fromCharCode(65 + userAnswer) : '-';
+                const correctAnswerLetter = String.fromCharCode(65 + q.correct);
+                
+                answerKey += `${index + 1}. ${isCorrect ? '✅' : '❌'} ตอบ: ${userAnswerLetter} (เฉลย: ${correctAnswerLetter})\n`;
+            });
+            
+            // รวมข้อความทั้งหมด
+            const fullText = shareText + answerKey;
+            
+            // แสดงใน Modal หรือ Download เป็นไฟล์
+            showShareModal(fullText);
+        }
+
+        // Show Share Modal
+        function showShareModal(text) {
+            // สร้าง Modal
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                background: rgba(0,0,0,0.8); z-index: 10000; display: flex; 
+                align-items: center; justify-content: center;
+            `;
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: white; padding: 30px; border-radius: 15px; 
+                max-width: 80%; max-height: 80%; overflow-y: auto;
+                position: relative;
+            `;
+            
+            modalContent.innerHTML = `
+                <h3>📤 แชร์ผลลัพธ์การสอบ</h3>
+                <textarea readonly style="width: 100%; height: 400px; margin: 15px 0; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-family: monospace; font-size: 12px;">${text}</textarea>
+                <div style="text-align: center; gap: 10px; display: flex; justify-content: center;">
+                    <button onclick="copyToClipboard('${text.replace(/'/g, "\\'")}'); this.textContent='✅ คัดลอกแล้ว!';" style="padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer;">📋 คัดลอก</button>
+                    <button onclick="downloadResults('${text.replace(/'/g, "\\'")}');" style="padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">💾 ดาวน์โหลด</button>
+                    <button onclick="this.closest('div').remove();" style="padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">❌ ปิด</button>
+                </div>
+            `;
+            
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+            
+            // ปิด Modal เมื่อคลิกพื้นหลัง
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+
+        // Copy to Clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).catch(() => {
+                // Fallback สำหรับ browser เก่า
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+            });
+        }
+
+        // Download Results
+        function downloadResults(text) {
+            const userName = document.getElementById('userName').value.trim();
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Hot_Runner_Quiz_Results_${userName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Review Answers
+        function reviewAnswers() {
+            document.getElementById('results').classList.remove('show');
+            document.getElementById('progressContainer').style.display = 'block';
+            document.getElementById('navigation').style.display = 'flex';
+            
+            // Show answers with explanations
+            quizData.forEach((q, index) => {
+                const questionContainer = document.getElementById(`question-${index}`);
+                const options = questionContainer.querySelectorAll('.option');
+                const explanation = document.getElementById(`explanation-${index}`);
+                
+                // Clear previous styling
+                options.forEach(opt => {
+                    opt.classList.remove('selected', 'correct', 'incorrect');
+                });
+                
+                // Show correct answer
+                options[q.correct].classList.add('correct');
+                
+                // Show user's answer if different
+                if (userAnswers[index] !== null && userAnswers[index] !== q.correct) {
+                    options[userAnswers[index]].classList.add('incorrect');
+                }
+                
+                // Show user's selection
+                if (userAnswers[index] !== null) {
+                    options[userAnswers[index]].classList.add('selected');
+                }
+                
+                // Show explanation
+                explanation.classList.add('show');
+            });
+            
+            showQuestion(0);
+        }
+
+        // Retake Quiz
+        function retakeQuiz() {
+            currentQuestion = 0;
+            userAnswers = new Array(quizData.length).fill(null);
+            
+            // Clear all selections and explanations
+            quizData.forEach((q, index) => {
+                const questionContainer = document.getElementById(`question-${index}`);
+                const options = questionContainer.querySelectorAll('.option');
+                const explanation = document.getElementById(`explanation-${index}`);
+                
+                options.forEach(opt => {
+                    opt.classList.remove('selected', 'correct', 'incorrect');
+                });
+                
+                explanation.classList.remove('show');
+            });
+            
+            document.getElementById('results').classList.remove('show');
+            startQuiz();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeQuiz();
+        });
+    </script>
+</body>
+</html>

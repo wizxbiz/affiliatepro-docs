@@ -1,0 +1,2137 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Injection Molding Simulation Pro</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Prompt', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 10px;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            transform: translateY(10px);
+            font-size: 14px;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .nav-tab {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-tab:hover {
+            transform: translateY(-2px);
+        }
+        
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #667eea;
+            border-radius: 2px;
+        }
+        
+        .input-field {
+            transition: all 0.3s ease;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .status-ready { background-color: #10b981; }
+        .status-running { background-color: #3b82f6; }
+        .status-warning { background-color: #f59e0b; }
+        .status-error { background-color: #ef4444; }
+        
+        .simulation-canvas {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .defect-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .defect-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        @media (max-width: 640px) {
+            .tooltiptext {
+                width: 200px;
+                margin-left: -100px;
+                font-size: 12px;
+            }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex flex-col sm:flex-row items-center justify-between">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-bold flex items-center gap-2">
+                        <span class="text-4xl">🏭</span>
+                        Injection Molding Simulation Pro
+                    </h1>
+                    <p class="text-sm sm:text-base opacity-90 mt-1">ระบบจำลองการฉีดพลาสติกขั้นสูง v2.0</p>
+                </div>
+                <div class="mt-4 sm:mt-0 flex items-center gap-4">
+                    <span class="status-indicator status-ready"></span>
+                    <span class="text-sm">ระบบพร้อมใช้งาน</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-10">
+        <div class="container mx-auto px-4">
+            <div class="flex overflow-x-auto gap-6 py-4">
+                <button class="nav-tab active whitespace-nowrap px-3 py-2 text-gray-700 hover:text-gray-900 font-medium" onclick="showSection('basic-params')">
+                    ⚙️ พารามิเตอร์พื้นฐาน
+                </button>
+                <button class="nav-tab whitespace-nowrap px-3 py-2 text-gray-700 hover:text-gray-900 font-medium" onclick="showSection('cavity-system')">
+                    🏗️ ระบบ Cavity
+                </button>
+                <button class="nav-tab whitespace-nowrap px-3 py-2 text-gray-700 hover:text-gray-900 font-medium" onclick="showSection('material-props')">
+                    🧪 คุณสมบัติวัสดุ
+                </button>
+                <button class="nav-tab whitespace-nowrap px-3 py-2 text-gray-700 hover:text-gray-900 font-medium" onclick="showSection('simulation')">
+                    🎬 การจำลอง
+                </button>
+                <button class="nav-tab whitespace-nowrap px-3 py-2 text-gray-700 hover:text-gray-900 font-medium" onclick="showSection('analysis')">
+                    📊 การวิเคราะห์
+                </button>
+                <button class="nav-tab whitespace-nowrap px-3 py-2 text-gray-700 hover:text-gray-900 font-medium" onclick="showSection('report')">
+                    📋 รายงาน
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Basic Parameters Section -->
+        <section id="basic-params" class="section animate-fade-in">
+            <div class="glass-effect rounded-xl p-6 mb-8">
+                <h2 class="text-2xl font-semibold mb-6 flex items-center gap-2">
+                    <span class="text-3xl">🔧</span>
+                    เลือกเครื่องจักรและวัตถุดิบ
+                </h2>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">ขนาดเครื่อง (ตัน)</label>
+                        <select id="machine-size" class="input-field w-full p-3 rounded-lg" onchange="updateRecommendedValues()">
+                            <option value="30">30 ตัน (เครื่องเล็ก)</option>
+                            <option value="50">50 ตัน</option>
+                            <option value="100">100 ตัน (เครื่องกลาง)</option>
+                            <option value="150">150 ตัน</option>
+                            <option value="200">200 ตัน (เครื่องใหญ่)</option>
+                            <option value="250">250 ตัน</option>
+                            <option value="300">300 ตัน (เครื่องใหญ่มาก)</option>
+                        </select>
+                        <span class="tooltiptext">ขนาดเครื่องฉีดพลาสติกจะกำหนดแรงหนีบ Shot Size และพลังงานที่ใช้</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">ชนิดพลาสติก</label>
+                        <select id="plastic-type" class="input-field w-full p-3 rounded-lg" onchange="updateRecommendedValues()">
+                            <option value="ABS">ABS (Acrylonitrile Butadiene Styrene)</option>
+                            <option value="PP">PP (Polypropylene)</option>
+                            <option value="PE">PE (Polyethylene)</option>
+                            <option value="PS">PS (Polystyrene)</option>
+                            <option value="PC">PC (Polycarbonate)</option>
+                            <option value="PA">PA (Nylon)</option>
+                            <option value="POM">POM (Polyoxymethylene)</option>
+                            <option value="PMMA">PMMA (Acrylic)</option>
+                        </select>
+                        <span class="tooltiptext">ชนิดพลาสติกกำหนดอุณหภูมิการหลอมเหลว ความหนืด และคุณสมบัติต่างๆ</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">ประเภท Gate</label>
+                        <select id="gate-type" class="input-field w-full p-3 rounded-lg">
+                            <option value="side">Side Gate (แรงดันปานกลาง)</option>
+                            <option value="direct">Direct Gate (แรงดันต่ำ)</option>
+                            <option value="fan">Fan Gate (การไหลดี)</option>
+                            <option value="pin">Pin Gate (รอยเล็ก)</option>
+                            <option value="submarine">Submarine Gate (Auto-degating)</option>
+                            <option value="hot-runner">Hot Runner (ไม่มี Runner waste)</option>
+                        </select>
+                        <span class="tooltiptext">ประเภท Gate ส่งผลต่อการไหลของพลาสติกและคุณภาพชิ้นงาน</span>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">ขนาด Screw (mm)</label>
+                        <input id="screw-size" type="number" value="20" class="input-field w-full p-3 rounded-lg">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Max Shot (g)</label>
+                        <input id="max-shot" type="number" value="0" class="input-field w-full p-3 rounded-lg bg-gray-50" readonly>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">แรงหนีบสูงสุด (ตัน)</label>
+                        <input id="clamping-force" type="number" value="30" class="input-field w-full p-3 rounded-lg bg-gray-50" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Temperature Settings -->
+            <div class="glass-effect rounded-xl p-6 mb-8">
+                <h2 class="text-2xl font-semibold mb-6 flex items-center gap-2">
+                    <span class="text-3xl">🌡️</span>
+                    การตั้งค่าอุณหภูมิ
+                </h2>
+                
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                    <p class="text-sm text-blue-700">
+                        <strong>คำแนะนำ:</strong> ค่าแนะนำจะแสดงใน placeholder ของแต่ละช่อง โปรดตรวจสอบให้เหมาะสมกับเงื่อนไขการผลิตจริง
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nozzle (°C) *</label>
+                        <input id="nozzle-temp" type="number" class="input-field w-full p-3 rounded-lg" placeholder="230-250 for ABS">
+                        <span class="tooltiptext">อุณหภูมิที่หัวฉีด ควรสูงกว่า Zone อื่นเล็กน้อยเพื่อป้องกันการอุดตัน</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Zone 1 (°C) *</label>
+                        <input id="zone1-temp" type="number" class="input-field w-full p-3 rounded-lg" placeholder="220-240 for ABS">
+                        <span class="tooltiptext">โซนที่ใกล้หัวฉีดที่สุด อุณหภูมิสูงสุดสำหรับการหลอมเหลว</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Zone 2 (°C) *</label>
+                        <input id="zone2-temp" type="number" class="input-field w-full p-3 rounded-lg" placeholder="210-230 for ABS">
+                        <span class="tooltiptext">โซนกลาง อุณหภูมิลดลงเล็กน้อยจาก Zone 1</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Zone 3 (°C) *</label>
+                        <input id="zone3-temp" type="number" class="input-field w-full p-3 rounded-lg" placeholder="200-220 for ABS">
+                        <span class="tooltiptext">โซนที่ใกล้ Hopper อุณหภูมิต่ำที่สุดเพื่อป้องกันการย้อนไหล</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">อุณหภูมิแม่พิมพ์ (°C)</label>
+                        <input id="mold-temp" type="number" class="input-field w-full p-3 rounded-lg" placeholder="50-80 for ABS">
+                        <span class="tooltiptext">อุณหภูมิแม่พิมพ์ส่งผลต่อการหล่อเย็นและคุณภาพผิวชิ้นงาน</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">อุณหภูมิอบแห้ง (°C)</label>
+                        <input id="drying-temp" type="number" class="input-field w-full p-3 rounded-lg" placeholder="80 for ABS">
+                        <span class="tooltiptext">อุณหภูมิสำหรับอบแห้งพลาสติกก่อนการฉีด</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">เวลาอบแห้ง (ชม.)</label>
+                        <input id="drying-time" type="number" class="input-field w-full p-3 rounded-lg" placeholder="2-4 for ABS">
+                        <span class="tooltiptext">เวลาที่ใช้ในการอบแห้งพลาสติกเพื่อขจัดความชื้น</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">ความชื้นที่ยอมรับได้ (%)</label>
+                        <input id="moisture-content" type="number" step="0.01" class="input-field w-full p-3 rounded-lg" placeholder="0.1 for ABS">
+                        <span class="tooltiptext">ปริมาณความชื้นสูงสุดที่ยอมรับได้ในวัตถุดิบ</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Injection Parameters -->
+            <div class="glass-effect rounded-xl p-6">
+                <h2 class="text-2xl font-semibold mb-6 flex items-center gap-2">
+                    <span class="text-3xl">💉</span>
+                    พารามิเตอร์การฉีด
+                </h2>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">แรงดันฉีด (bar) *</label>
+                        <input id="injection-pressure" type="number" class="input-field w-full p-3 rounded-lg" placeholder="1000-1400 for ABS">
+                        <span class="tooltiptext">แรงดันสำหรับฉีดพลาสติกเข้าแม่พิมพ์ ค่าสูงเกินไปอาจทำให้เกิดครีบ</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">ความเร็วฉีด (mm/s) *</label>
+                        <input id="injection-speed" type="number" class="input-field w-full p-3 rounded-lg" placeholder="50-100 for ABS">
+                        <span class="tooltiptext">ความเร็วในการฉีดพลาสติก ค่าสูงเกินไปอาจทำให้เกิดรอยไหม้</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">เวลาฉีด (s) *</label>
+                        <input id="injection-time" type="number" step="0.1" class="input-field w-full p-3 rounded-lg" placeholder="1-3 for ABS">
+                        <span class="tooltiptext">เวลาที่ใช้ในการฉีดพลาสติกเข้าแม่พิมพ์</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">แรงดันย้ำ (bar) *</label>
+                        <input id="holding-pressure" type="number" class="input-field w-full p-3 rounded-lg" placeholder="600-1000 for ABS">
+                        <span class="tooltiptext">แรงดันที่ใช้ย้ำชิ้นงานเพื่อชดเชยการหดตัว</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">เวลาย้ำ (s) *</label>
+                        <input id="holding-time" type="number" step="0.1" class="input-field w-full p-3 rounded-lg" placeholder="2-5 for ABS">
+                        <span class="tooltiptext">เวลาที่ใช้ในการย้ำชิ้นงาน ขึ้นอยู่กับความหนาของชิ้นงาน</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">เวลาหล่อเย็น (s) *</label>
+                        <input id="cooling-time" type="number" step="0.1" class="input-field w-full p-3 rounded-lg" placeholder="5-15 for ABS">
+                        <span class="tooltiptext">เวลาที่ใช้ในการหล่อเย็นชิ้นงานให้แข็งตัว</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Back Pressure (bar)</label>
+                        <input id="back-pressure" type="number" class="input-field w-full p-3 rounded-lg" placeholder="50-150">
+                        <span class="tooltiptext">แรงดันย้อนกลับระหว่างการเตรียมพลาสติก ช่วยให้พลาสติกผสมเป็นเนื้อเดียวกัน</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Screw Speed (rpm)</label>
+                        <input id="screw-speed" type="number" class="input-field w-full p-3 rounded-lg" placeholder="50-150">
+                        <span class="tooltiptext">ความเร็วในการหมุนสกรูเพื่อเตรียมพลาสติก</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Cushion (mm)</label>
+                        <input id="cushion" type="number" step="0.1" class="input-field w-full p-3 rounded-lg" placeholder="3-5">
+                        <span class="tooltiptext">ระยะพลาสติกที่เหลือในกระบอกหลังการฉีด เพื่อรักษาแรงดันย้ำ</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cavity System Section -->
+        <section id="cavity-system" class="section hidden animate-fade-in">
+            <div class="glass-effect rounded-xl p-6">
+                <h2 class="text-2xl font-semibold mb-6 flex items-center gap-2">
+                    <span class="text-3xl">🏗️</span>
+                    การตั้งค่าระบบ Cavity
+                </h2>
+                
+                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6">
+                    <p class="text-sm text-yellow-700">
+                        <strong>หมายเหตุ:</strong> การเพิ่มจำนวน Cavity จะเพิ่มผลผลิต แต่ต้องระวังเรื่องความสมดุลของการไหลและแรงหนีบที่ต้องการ
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">จำนวน Cavity</label>
+                        <select id="cavity-count" class="input-field w-full p-3 rounded-lg" onchange="updateCavityInfo()">
+                            <option value="1">1 Cavity (เหมาะสำหรับชิ้นงานใหญ่หรือทดสอบ)</option>
+                            <option value="2">2 Cavity (เพิ่มผลิตภาพ 2 เท่า)</option>
+                            <option value="4">4 Cavity (สมดุลระหว่างผลิตภาพและคุณภาพ)</option>
+                            <option value="8">8 Cavity (ผลิตภาพสูงสุด แต่ซับซ้อน)</option>
+                            <option value="16">16 Cavity (สำหรับชิ้นงานเล็ก)</option>
+                            <option value="32">32 Cavity (สำหรับชิ้นงานเล็กมาก)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">รูปแบบการจัดเรียง</label>
+                        <select id="cavity-layout" class="input-field w-full p-3 rounded-lg">
+                            <option value="balanced">Balanced Layout (สมดุล)</option>
+                            <option value="linear">Linear Layout (เรียงแถว)</option>
+                            <option value="circular">Circular Layout (วงกลม)</option>
+                            <option value="custom">Custom Layout (กำหนดเอง)</option>
+                        </select>
+                        <span class="tooltiptext">รูปแบบการจัดเรียง Cavity ส่งผลต่อความสมดุลของการไหล</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">น้ำหนักชิ้นงานต่อ Cavity (g) *</label>
+                        <input id="cavity-weight" type="number" step="0.01" class="input-field w-full p-3 rounded-lg" onchange="updateCavityInfo()">
+                        <span class="tooltiptext">น้ำหนักของชิ้นงานที่ต้องการผลิตต่อ 1 Cavity ไม่รวม Runner System</span>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">น้ำหนักรวมทุก Cavity (g)</label>
+                        <input id="total-cavity-weight" type="number" class="input-field w-full p-3 rounded-lg bg-gray-50" readonly>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">น้ำหนัก Runner System (g)</label>
+                        <input id="runner-weight" type="number" step="0.01" class="input-field w-full p-3 rounded-lg" onchange="updateCavityInfo()">
+                        <span class="tooltiptext">น้ำหนักของระบบ Runner รวม Sprue และ Gate</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">ประเภท Runner</label>
+                        <select id="runner-type" class="input-field w-full p-3 rounded-lg">
+                            <option value="cold">Cold Runner</option>
+                            <option value="hot">Hot Runner</option>
+                            <option value="insulated">Insulated Runner</option>
+                        </select>
+                        <span class="tooltiptext">Cold Runner: ต้นทุนต่ำแต่มี waste | Hot Runner: ไม่มี waste แต่ต้นทุนสูง</span>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Shot Size คำนวณได้ (mm)</label>
+                        <input id="calculated-shot-size" type="number" class="input-field w-full p-3 rounded-lg bg-gray-50" readonly>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Shot Size ที่ใช้จริง (mm) *</label>
+                        <input id="actual-shot-size" type="number" step="0.1" class="input-field w-full p-3 rounded-lg">
+                        <span class="tooltiptext">ระยะที่สกรูถอยหลังเพื่อเก็บพลาสติกสำหรับการฉีดในแต่ละรอบ</span>
+                    </div>
+                    
+                    <div class="col-span-1 sm:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Cavity Balance Analysis</label>
+                        <div class="bg-gray-100 p-4 rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <span>Flow Balance:</span>
+                                <span id="flow-balance" class="font-semibold text-green-600">ยังไม่คำนวณ</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span>Pressure Drop Variation:</span>
+                                <span id="pressure-variation" class="font-semibold text-blue-600">ยังไม่คำนวณ</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Material Properties Section -->
+        <section id="material-props" class="section hidden animate-fade-in">
+            <div class="glass-effect rounded-xl p-6">
+                <h2 class="text-2xl font-semibold mb-6 flex items-center gap-2">
+                    <span class="text-3xl">🧪</span>
+                    คุณสมบัติวัสดุโดยละเอียด
+                </h2>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">ความหนืด (Pa·s @ อุณหภูมิแปรรูป)</label>
+                        <input id="viscosity" type="number" step="0.01" value="0.3" class="input-field w-full p-3 rounded-lg">
+                        <span class="tooltiptext">ความหนืดของพลาสติกเมื่อหลอมเหลว ส่งผลต่อการไหลและแรงดันที่ต้องใช้</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">ความหนาแน่น (g/cm³)</label>
+                        <input id="density" type="number" step="0.01" value="1.05" class="input-field w-full p-3 rounded-lg">
+                        <span class="tooltiptext">ความหนาแน่นของพลาสติก ใช้คำนวณน้ำหนักและปริมาตร</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">การหดตัว (%)</label>
+                        <input id="shrinkage" type="number" step="0.1" value="0.5" class="input-field w-full p-3 rounded-lg">
+                        <span class="tooltiptext">เปอร์เซ็นต์การหดตัวของพลาสติกหลังเย็นตัว สำคัญต่อการออกแบบแม่พิมพ์</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Melt Flow Index (g/10min)</label>
+                        <input id="mfi" type="number" step="0.1" class="input-field w-full p-3 rounded-lg" placeholder="10-20 for ABS">
+                        <span class="tooltiptext">ค่า MFI บ่งบอกถึงความสามารถในการไหลของพลาสติกเมื่อหลอมเหลว</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Glass Transition Temp (°C)</label>
+                        <input id="glass-transition" type="number" class="input-field w-full p-3 rounded-lg" placeholder="105 for ABS">
+                        <span class="tooltiptext">อุณหภูมิที่พลาสติกเปลี่ยนจากสถานะแข็งเป็นยืดหยุ่น</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Ejection Temperature (°C)</label>
+                        <input id="ejection-temp" type="number" class="input-field w-full p-3 rounded-lg" placeholder="80 for ABS">
+                        <span class="tooltiptext">อุณหภูมิที่เหมาะสมสำหรับการดึงชิ้นงานออกจากแม่พิมพ์</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Specific Heat (J/g·K)</label>
+                        <input id="specific-heat" type="number" step="0.01" class="input-field w-full p-3 rounded-lg" placeholder="1.2-2.0">
+                        <span class="tooltiptext">ความจุความร้อนจำเพาะ ใช้คำนวณพลังงานในการหลอมเหลวและหล่อเย็น</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Thermal Conductivity (W/m·K)</label>
+                        <input id="thermal-conductivity" type="number" step="0.01" class="input-field w-full p-3 rounded-lg" placeholder="0.15-0.25">
+                        <span class="tooltiptext">ค่าการนำความร้อน ส่งผลต่อเวลาในการหล่อเย็น</span>
+                    </div>
+                    
+                    <div class="tooltip">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Max Shear Rate (1/s)</label>
+                        <input id="max-shear-rate" type="number" class="input-field w-full p-3 rounded-lg" placeholder="10000-50000">
+                        <span class="tooltiptext">อัตราการเฉือนสูงสุดที่ยอมรับได้ เกินค่านี้อาจเกิด degradation</span>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <h3 class="text-lg font-semibold mb-4">คุณสมบัติเชิงกล</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tensile Strength (MPa)</label>
+                            <input id="tensile-strength" type="number" class="input-field w-full p-3 rounded-lg" placeholder="40-50 for ABS">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Flexural Modulus (GPa)</label>
+                            <input id="flexural-modulus" type="number" step="0.1" class="input-field w-full p-3 rounded-lg" placeholder="2.0-2.5 for ABS">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Impact Strength (kJ/m²)</label>
+                            <input id="impact-strength" type="number" class="input-field w-full p-3 rounded-lg" placeholder="15-25 for ABS">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Simulation Section -->
+        <section id="simulation" class="section hidden animate-fade-in">
+            <div class="glass-effect rounded-xl p-6 mb-8">
+                <h2 class="text-2xl font-semibold mb-6 flex items-center gap-2">
+                    <span class="text-3xl">🎬</span>
+                    การจำลองกระบวนการฉีดพลาสติก
+                </h2>
+                
+                <div class="flex flex-wrap gap-4 mb-6">
+                    <button id="start-simulation" class="btn-primary px-6 py-3 text-white rounded-lg font-medium">
+                        🚀 เริ่มการจำลอง
+                    </button>
+                    <button id="pause-simulation" class="px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-medium transition-all">
+                        ⏸️ หยุดชั่วคราว
+                    </button>
+                    <button id="stop-simulation" class="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-all">
+                        ⏹️ หยุด
+                    </button>
+                    <button id="reset-simulation" class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-all">
+                        🔄 รีเซ็ต
+                    </button>
+                </div>
+                
+                <div class="mb-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium">ความคืบหน้า:</span>
+                        <span id="progress" class="font-semibold text-lg">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-3">
+                        <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-semibold mb-3">🎨 การแสดงผลการจำลอง</h3>
+                        <canvas id="simulation-animation" class="w-full h-64 bg-gray-100 rounded-lg simulation-canvas"></canvas>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-semibold mb-3">📊 กราฟแสดงผลแบบ Real-time</h3>
+                        <canvas id="simulation-chart" class="w-full h-64"></canvas>
+                    </div>
+                </div>
+                
+                <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <p class="text-sm text-gray-600">แรงดันปัจจุบัน</p>
+                        <p class="text-2xl font-bold text-blue-600" id="current-pressure">0 bar</p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <p class="text-sm text-gray-600">อุณหภูมิปัจจุบัน</p>
+                        <p class="text-2xl font-bold text-red-600" id="current-temp">0°C</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <p class="text-sm text-gray-600">ความเร็วการไหล</p>
+                        <p class="text-2xl font-bold text-green-600" id="flow-rate">0 cm³/s</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="glass-effect rounded-xl p-6">
+                <h3 class="text-xl font-semibold mb-4">📝 บันทึกการจำลอง</h3>
+                <div class="bg-gray-100 rounded-lg p-4 h-48 overflow-y-auto font-mono text-sm" id="simulation-log">
+                    <p class="text-green-600">[เริ่มต้น] ระบบพร้อมสำหรับการจำลอง</p>
+                </div>
+                <button id="clear-log" class="mt-4 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-all">
+                    🗑️ ล้างบันทึก
+                </button>
+            </div>
+        </section>
+
+        <!-- Analysis Section -->
+        <section id="analysis" class="section hidden animate-fade-in">
+            <div class="glass-effect rounded-xl p-6 mb-8">
+                <h2 class="text-2xl font-semibold mb-6 flex items-center gap-2">
+                    <span class="text-3xl">📊</span>
+                    การวิเคราะห์ผลการจำลอง
+                </h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">⚠️ การทำนายข้อบกพร่อง</h3>
+                        <div id="defect-cards" class="space-y-3">
+                            <!-- Defect cards will be dynamically added here -->
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">💡 คำแนะนำการปรับปรุง</h3>
+                        <div id="recommendation-cards" class="space-y-3">
+                            <!-- Recommendation cards will be dynamically added here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="glass-effect rounded-xl p-6 mb-8">
+                <h3 class="text-xl font-semibold mb-4">💰 การวิเคราะห์ต้นทุน</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <p class="text-sm text-gray-600">ต้นทุนวัตถุดิบ</p>
+                        <p class="text-xl font-bold" id="material-cost">0 บาท/ชิ้น</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <p class="text-sm text-gray-600">ต้นทุนพลังงาน</p>
+                        <p class="text-xl font-bold" id="energy-cost">0 บาท/ชิ้น</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <p class="text-sm text-gray-600">ต้นทุนแรงงาน</p>
+                        <p class="text-xl font-bold" id="labor-cost">0 บาท/ชิ้น</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <p class="text-sm text-gray-600">ต้นทุนรวม</p>
+                        <p class="text-xl font-bold text-green-600" id="total-cost">0 บาท/ชิ้น</p>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <h4 class="font-semibold mb-3">📈 การวิเคราะห์ผลผลิต</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <p class="text-sm text-gray-600">Cycle Time</p>
+                            <p class="text-lg font-semibold" id="cycle-time">0 วินาที</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">ผลผลิตต่อชั่วโมง</p>
+                            <p class="text-lg font-semibold" id="hourly-output">0 ชิ้น</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">OEE (Overall Equipment Effectiveness)</p>
+                            <p class="text-lg font-semibold" id="oee">0%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="glass-effect rounded-xl p-6">
+                <h3 class="text-xl font-semibold mb-4">🔬 การวิเคราะห์คุณภาพ</h3>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                        <canvas id="quality-chart"></canvas>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-3">สรุปคุณภาพ</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span>คะแนนคุณภาพรวม:</span>
+                                <span class="font-semibold" id="quality-score">0/100</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>ความเสี่ยงข้อบกพร่อง:</span>
+                                <span class="font-semibold" id="defect-risk">ต่ำ</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>ความสม่ำเสมอ:</span>
+                                <span class="font-semibold" id="consistency">ดีมาก</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Report Section -->
+        <section id="report" class="section hidden animate-fade-in">
+            <div class="glass-effect rounded-xl p-6 mb-8">
+                <h2 class="text-2xl font-semibold mb-6 flex items-center gap-2">
+                    <span class="text-3xl">📋</span>
+                    รายงานการจำลอง
+                </h2>
+                
+                <div class="flex flex-wrap gap-4 mb-6">
+                    <button id="generate-report" class="btn-primary px-6 py-3 text-white rounded-lg font-medium">
+                        📊 สร้างรายงาน
+                    </button>
+                    <button id="export-pdf" class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-all">
+                        📄 Export PDF
+                    </button>
+                    <button id="export-excel" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-all">
+                        📗 Export Excel
+                    </button>
+                    <button id="print-report" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-all">
+                        🖨️ พิมพ์รายงาน
+                    </button>
+                </div>
+                
+                <div id="report-content" class="bg-white rounded-lg p-6 shadow-inner">
+                    <p class="text-gray-500 text-center">กรุณาสร้างรายงานเพื่อดูข้อมูลสรุป</p>
+                </div>
+            </div>
+            
+            <div class="glass-effect rounded-xl p-6">
+                <h3 class="text-xl font-semibold mb-4">💾 การจัดการโปรไฟล์</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                    <input id="profile-name" type="text" placeholder="ชื่อโปรไฟล์" class="input-field p-3 rounded-lg">
+                    <select id="saved-profiles" class="input-field p-3 rounded-lg">
+                        <option value="">-- เลือกโปรไฟล์ --</option>
+                    </select>
+                </div>
+                <div class="flex flex-wrap gap-4">
+                    <button id="save-profile" class="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-all">
+                        💾 บันทึกการตั้งค่า
+                    </button>
+                    <button id="load-profile" class="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-all">
+                        📂 โหลดการตั้งค่า
+                    </button>
+                    <button id="delete-profile" class="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-all">
+                        🗑️ ลบโปรไฟล์
+                    </button>
+                    <button id="compare-profiles" class="px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-medium transition-all">
+                        📊 เปรียบเทียบโปรไฟล์
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Controls -->
+        <div class="glass-effect rounded-xl p-6 mt-8">
+            <div class="flex flex-wrap gap-4 justify-center">
+                <button id="start-full-simulation" class="btn-primary px-8 py-4 text-white rounded-lg font-medium text-lg">
+                    🚀 เริ่มจำลองแบบสมบูรณ์
+                </button>
+                <button id="validate-data" class="px-8 py-4 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium text-lg transition-all">
+                    ✅ ตรวจสอบข้อมูล
+                </button>
+                <button id="reset-all" class="px-8 py-4 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium text-lg transition-all">
+                    🔄 รีเซ็ตทั้งหมด
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p>© 2024 Injection Molding Simulation Pro | Version 2.0</p>
+            <p class="text-sm text-gray-400 mt-2">Developed for Professional Plastic Injection Analysis</p>
+        </div>
+    </footer>
+
+    <script>
+        // ========== Material Recommendations Database ==========
+        const materialRecommendations = {
+            ABS: {
+                nozzleTemp: "230-250",
+                zone1Temp: "220-240",
+                zone2Temp: "210-230",
+                zone3Temp: "200-220",
+                moldTemp: "50-80",
+                dryingTemp: "80",
+                dryingTime: "2-4",
+                injectionPressure: "1000-1400",
+                injectionSpeed: "50-100",
+                injectionTime: "1-3",
+                holdingPressure: "600-1000",
+                holdingTime: "2-5",
+                coolingTime: "5-15",
+                mfi: "10-20",
+                glassTransition: "105",
+                ejectionTemp: "80",
+                density: 1.05,
+                shrinkage: "0.4-0.7",
+                viscosity: 0.3
+            },
+            PP: {
+                nozzleTemp: "200-230",
+                zone1Temp: "190-220",
+                zone2Temp: "180-210",
+                zone3Temp: "170-200",
+                moldTemp: "20-60",
+                dryingTemp: "70",
+                dryingTime: "2-3",
+                injectionPressure: "800-1200",
+                injectionSpeed: "40-80",
+                injectionTime: "1-2",
+                holdingPressure: "500-800",
+                holdingTime: "1-4",
+                coolingTime: "4-10",
+                mfi: "8-15",
+                glassTransition: "0",
+                ejectionTemp: "60",
+                density: 0.91,
+                shrinkage: "1.0-2.5",
+                viscosity: 0.25
+            },
+            PE: {
+                nozzleTemp: "180-220",
+                zone1Temp: "170-210",
+                zone2Temp: "160-200",
+                zone3Temp: "150-190",
+                moldTemp: "20-40",
+                dryingTemp: "60",
+                dryingTime: "1-2",
+                injectionPressure: "700-1100",
+                injectionSpeed: "40-80",
+                injectionTime: "1-2",
+                holdingPressure: "400-700",
+                holdingTime: "1-3",
+                coolingTime: "3-8",
+                mfi: "5-40",
+                glassTransition: "-125",
+                ejectionTemp: "50",
+                density: 0.95,
+                shrinkage: "1.5-4.0",
+                viscosity: 0.2
+            },
+            PS: {
+                nozzleTemp: "200-250",
+                zone1Temp: "190-240",
+                zone2Temp: "180-230",
+                zone3Temp: "170-220",
+                moldTemp: "30-60",
+                dryingTemp: "70",
+                dryingTime: "2-3",
+                injectionPressure: "800-1300",
+                injectionSpeed: "50-100",
+                injectionTime: "1-3",
+                holdingPressure: "500-900",
+                holdingTime: "2-4",
+                coolingTime: "4-10",
+                mfi: "8-15",
+                glassTransition: "100",
+                ejectionTemp: "70",
+                density: 1.04,
+                shrinkage: "0.4-0.7",
+                viscosity: 0.28
+            },
+            PC: {
+                nozzleTemp: "280-310",
+                zone1Temp: "270-300",
+                zone2Temp: "260-290",
+                zone3Temp: "250-280",
+                moldTemp: "80-120",
+                dryingTemp: "120",
+                dryingTime: "3-4",
+                injectionPressure: "1200-1600",
+                injectionSpeed: "30-70",
+                injectionTime: "2-5",
+                holdingPressure: "800-1200",
+                holdingTime: "3-6",
+                coolingTime: "10-20",
+                mfi: "6-12",
+                glassTransition: "147",
+                ejectionTemp: "110",
+                density: 1.2,
+                shrinkage: "0.5-0.8",
+                viscosity: 0.5
+            },
+            PA: {
+                nozzleTemp: "260-290",
+                zone1Temp: "250-280",
+                zone2Temp: "240-270",
+                zone3Temp: "230-260",
+                moldTemp: "60-90",
+                dryingTemp: "80-90",
+                dryingTime: "4-8",
+                injectionPressure: "1000-1500",
+                injectionSpeed: "40-80",
+                injectionTime: "2-4",
+                holdingPressure: "700-1100",
+                holdingTime: "2-5",
+                coolingTime: "8-15",
+                mfi: "20-40",
+                glassTransition: "50",
+                ejectionTemp: "80",
+                density: 1.14,
+                shrinkage: "0.7-2.0",
+                viscosity: 0.35
+            },
+            POM: {
+                nozzleTemp: "190-220",
+                zone1Temp: "180-210",
+                zone2Temp: "170-200",
+                zone3Temp: "160-190",
+                moldTemp: "80-100",
+                dryingTemp: "80",
+                dryingTime: "2-3",
+                injectionPressure: "1000-1400",
+                injectionSpeed: "50-100",
+                injectionTime: "1-3",
+                holdingPressure: "700-1000",
+                holdingTime: "2-4",
+                coolingTime: "5-10",
+                mfi: "8-15",
+                glassTransition: "-60",
+                ejectionTemp: "90",
+                density: 1.41,
+                shrinkage: "2.0-2.5",
+                viscosity: 0.3
+            },
+            PMMA: {
+                nozzleTemp: "230-260",
+                zone1Temp: "220-250",
+                zone2Temp: "210-240",
+                zone3Temp: "200-230",
+                moldTemp: "50-80",
+                dryingTemp: "80",
+                dryingTime: "3-4",
+                injectionPressure: "1000-1400",
+                injectionSpeed: "30-60",
+                injectionTime: "2-4",
+                holdingPressure: "700-1000",
+                holdingTime: "2-5",
+                coolingTime: "8-15",
+                mfi: "2-8",
+                glassTransition: "105",
+                ejectionTemp: "85",
+                density: 1.18,
+                shrinkage: "0.2-0.6",
+                viscosity: 0.4
+            }
+        };
+
+        // ========== Advanced Physics Engine ==========
+        class InjectionPhysicsEngine {
+            constructor() {
+                this.viscosityModel = 'Cross-WLF'; // Cross-WLF Model for realistic viscosity
+                this.flowField = []; // 2D flow field simulation
+                this.temperatureField = [];
+                this.pressureField = [];
+                this.particleSystem = []; // Particle-based flow visualization
+                this.cavityGeometry = null;
+            }
+            
+            // Cross-WLF Viscosity Model: η = η₀ * exp(A₁(T-T*)/(A₂+(T-T*))) 
+            calculateViscosity(temperature, shearRate, material) {
+                const T_star = material.glassTransition - 273.15; // Convert to Celsius
+                const A1 = 20; // Material constant
+                const A2 = 51.6; // Material constant  
+                const tau_star = 0; // Reference temperature
+                const D1 = 1e12; // Zero-shear viscosity parameter
+                const D2 = material.glassTransition;
+                const D3 = 0; // Pressure sensitivity
+                const A = A1 * (temperature - T_star) / (A2 + (temperature - T_star));
+                const eta_0 = D1 * Math.exp(-A);
+                
+                // Power-law model for shear thinning
+                const n = 0.3; // Power law index (shear thinning)
+                const eta = eta_0 * Math.pow(shearRate, n - 1);
+                
+                return Math.max(eta, 10); // Minimum viscosity
+            }
+            
+            // Pressure drop calculation using Hagen-Poiseuille with corrections
+            calculatePressureDrop(flowRate, channelDiameter, channelLength, viscosity) {
+                const Q = flowRate / 1e6; // Convert to m³/s
+                const D = channelDiameter / 1000; // Convert to m
+                const L = channelLength / 1000; // Convert to m
+                const A = Math.PI * Math.pow(D/2, 2);
+                const v = Q / A; // Velocity
+                const shearRate = (4 * v) / (D/2);
+                
+                // Hagen-Poiseuille equation with corrections
+                const deltaPbase = (128 * viscosity * L * Q) / (Math.PI * Math.pow(D, 4));
+                
+                // Add entrance/exit losses
+                const K_entrance = 0.5;
+                const K_exit = 1.0;
+                const rho = 1000; // kg/m³
+                const deltaP_minor = (K_entrance + K_exit) * 0.5 * rho * Math.pow(v, 2);
+                
+                return (deltaPbase + deltaP_minor) / 1e5; // Convert to bar
+            }
+            
+            // Heat transfer calculation (convection + conduction)
+            calculateHeatTransfer(T_melt, T_mold, thickness, time) {
+                const k = 0.2; // Thermal conductivity W/(m·K)
+                const rho = 1000; // Density kg/m³  
+                const cp = 2000; // Specific heat J/(kg·K)
+                const alpha = k / (rho * cp); // Thermal diffusivity
+                const L = thickness / 1000; // Convert to m
+                
+                // 1D Heat conduction solution (semi-infinite solid)
+                const erfcValue = this.erfc(L / (2 * Math.sqrt(alpha * time)));
+                const T = T_mold + (T_melt - T_mold) * erfcValue;
+                
+                return T;
+            }
+            
+            // Complementary error function approximation
+            erfc(x) {
+                // Approximation of erfc(x)
+                const t = 1 / (1 + 0.5 * Math.abs(x));
+                const tau = t * Math.exp(-x*x - 1.26551223 + t * (1.00002368 + t * (0.37409196 + 
+                    t * (0.09678418 + t * (-0.18628806 + t * (0.27886807 + t * (-1.13520398 + 
+                    t * (1.48851587 + t * (-0.82215223 + t * 0.17087277)))))))));
+                return x >= 0 ? tau : 2 - tau;
+            }
+            
+            // Filling pattern simulation (fountain flow effect)
+            simulateFountainFlow(x, y, time) {
+                const radius = Math.sqrt(x*x + y*y);
+                const fillFront = time * 50; // mm/s
+                
+                if (radius < fillFront) {
+                    // Core region (slow moving)
+                    const velocity_core = 0.3;
+                    // Wall region (fast moving - fountain flow)
+                    const velocity_wall = 1.0;
+                    const y_normalized = Math.abs(y) / 50; // Normalized thickness
+                    const velocity = velocity_core + (velocity_wall - velocity_core) * Math.pow(y_normalized, 0.5);
+                    return { filled: true, velocity: velocity, shearRate: velocity / 0.001 };
+                }
+                return { filled: false, velocity: 0, shearRate: 0 };
+            }
+            
+            // Weld line prediction
+            predictWeldLines(cavityGeometry, gateLocations) {
+                const weldLines = [];
+                // Simple algorithm: find meeting points of flow fronts
+                for (let i = 0; i < gateLocations.length; i++) {
+                    for (let j = i + 1; j < gateLocations.length; j++) {
+                        const g1 = gateLocations[i];
+                        const g2 = gateLocations[j];
+                        const midpoint = {
+                            x: (g1.x + g2.x) / 2,
+                            y: (g1.y + g2.y) / 2
+                        };
+                        weldLines.push(midpoint);
+                    }
+                }
+                return weldLines;
+            }
+            
+            // Air trap prediction
+            predictAirTraps(cavityGeometry) {
+                // Predict locations where air can be trapped
+                // Typically at last-to-fill regions
+                const airTraps = [];
+                // Simplified: corners and far from gates
+                airTraps.push({ x: cavityGeometry.width * 0.9, y: cavityGeometry.height * 0.9, severity: 'high' });
+                return airTraps;
+            }
+        }
+        
+        // Initialize physics engine
+        const physicsEngine = new InjectionPhysicsEngine();
+
+        // ========== Global Variables ==========
+        let simulationProgress = 0;
+        let simulationInterval;
+        let isSimulationRunning = false;
+        let simulationData = {
+            pressure: [],
+            temperature: [],
+            flowRate: [],
+            time: [],
+            viscosity: [],
+            shearRate: [],
+            fillPercentage: []
+        };
+
+        // ========== Navigation Functions ==========
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.remove('hidden');
+            
+            // Update navigation tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        // ========== Machine & Material Functions ==========
+        function updateRecommendedValues() {
+            const machineSize = document.getElementById('machine-size').value;
+            const plasticType = document.getElementById('plastic-type').value;
+            const recommendations = materialRecommendations[plasticType] || materialRecommendations.ABS;
+            
+            // Update placeholders
+            document.getElementById('nozzle-temp').placeholder = recommendations.nozzleTemp;
+            document.getElementById('zone1-temp').placeholder = recommendations.zone1Temp;
+            document.getElementById('zone2-temp').placeholder = recommendations.zone2Temp;
+            document.getElementById('zone3-temp').placeholder = recommendations.zone3Temp;
+            document.getElementById('mold-temp').placeholder = recommendations.moldTemp;
+            document.getElementById('drying-temp').placeholder = recommendations.dryingTemp;
+            document.getElementById('drying-time').placeholder = recommendations.dryingTime;
+            document.getElementById('injection-pressure').placeholder = recommendations.injectionPressure;
+            document.getElementById('injection-speed').placeholder = recommendations.injectionSpeed;
+            document.getElementById('injection-time').placeholder = recommendations.injectionTime;
+            document.getElementById('holding-pressure').placeholder = recommendations.holdingPressure;
+            document.getElementById('holding-time').placeholder = recommendations.holdingTime;
+            document.getElementById('cooling-time').placeholder = recommendations.coolingTime;
+            document.getElementById('mfi').placeholder = recommendations.mfi;
+            document.getElementById('glass-transition').placeholder = recommendations.glassTransition;
+            document.getElementById('ejection-temp').placeholder = recommendations.ejectionTemp;
+            
+            // Update material properties
+            document.getElementById('density').value = recommendations.density;
+            document.getElementById('viscosity').value = recommendations.viscosity;
+            
+            // Update machine properties
+            document.getElementById('clamping-force').value = machineSize;
+            const screwSize = parseFloat(document.getElementById('screw-size').value);
+            const maxShot = Math.PI * Math.pow(screwSize/2, 2) * 100 * recommendations.density / 1000; // Approximate calculation
+            document.getElementById('max-shot').value = maxShot.toFixed(1);
+            
+            updateCavityInfo();
+        }
+
+        // ========== Cavity System Functions ==========
+        function updateCavityInfo() {
+            const cavityCount = parseInt(document.getElementById('cavity-count').value);
+            const cavityWeight = parseFloat(document.getElementById('cavity-weight').value) || 0;
+            const runnerWeight = parseFloat(document.getElementById('runner-weight').value) || 0;
+            const density = parseFloat(document.getElementById('density').value) || 1.05;
+            
+            const totalWeight = cavityCount * cavityWeight + runnerWeight;
+            document.getElementById('total-cavity-weight').value = totalWeight.toFixed(2);
+            
+            const calculatedShotSize = (totalWeight / density) * 1.1; // Add 10% safety factor
+            document.getElementById('calculated-shot-size').value = calculatedShotSize.toFixed(2);
+            
+            // Check flow balance
+            checkFlowBalance(cavityCount);
+        }
+
+        function checkFlowBalance(cavityCount) {
+            const layout = document.getElementById('cavity-layout').value;
+            let balanceStatus = '';
+            let pressureVariation = '';
+            
+            if (layout === 'balanced') {
+                balanceStatus = 'สมดุลดีมาก (< 5%)';
+                pressureVariation = '3-5%';
+                document.getElementById('flow-balance').className = 'font-semibold text-green-600';
+            } else if (layout === 'linear' && cavityCount <= 4) {
+                balanceStatus = 'สมดุลดี (< 10%)';
+                pressureVariation = '5-10%';
+                document.getElementById('flow-balance').className = 'font-semibold text-yellow-600';
+            } else {
+                balanceStatus = 'ต้องปรับปรุง (> 10%)';
+                pressureVariation = '10-20%';
+                document.getElementById('flow-balance').className = 'font-semibold text-red-600';
+            }
+            
+            document.getElementById('flow-balance').textContent = balanceStatus;
+            document.getElementById('pressure-variation').textContent = pressureVariation;
+        }
+
+        // ========== Simulation Functions ==========
+        const ctx = document.getElementById('simulation-animation').getContext('2d');
+        const chartCtx = document.getElementById('simulation-chart').getContext('2d');
+        
+        // Initialize simulation chart
+        const simulationChart = new Chart(chartCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'แรงดัน (bar)',
+                        data: [],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'อุณหภูมิ (°C)',
+                        data: [],
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'แรงดัน (bar)'
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'อุณหภูมิ (°C)'
+                        },
+                        grid: {
+                            drawOnChartArea: false,
+                        }
+                    }
+                }
+            }
+        });
+
+        // Draw simulation animation
+        function drawSimulation() {
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            
+            // Draw mold outline
+            ctx.strokeStyle = '#4b5563';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(50, 50, ctx.canvas.width - 100, ctx.canvas.height - 100);
+            
+            // Draw injection progress
+            const fillWidth = (simulationProgress / 100) * (ctx.canvas.width - 100);
+            const gradient = ctx.createLinearGradient(50, 0, 50 + fillWidth, 0);
+            gradient.addColorStop(0, '#3b82f6');
+            gradient.addColorStop(1, '#8b5cf6');
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(50, 50, fillWidth, ctx.canvas.height - 100);
+            
+            // Draw text
+            ctx.fillStyle = '#1f2937';
+            ctx.font = 'bold 20px Prompt';
+            ctx.textAlign = 'center';
+            ctx.fillText(`การเติม: ${simulationProgress}%`, ctx.canvas.width / 2, 30);
+            
+            // Draw cavity indicators
+            const cavityCount = parseInt(document.getElementById('cavity-count').value);
+            const cavitySize = 30;
+            const spacing = (ctx.canvas.width - 100) / (cavityCount + 1);
+            
+            for (let i = 1; i <= cavityCount; i++) {
+                const x = 50 + spacing * i;
+                const y = ctx.canvas.height / 2;
+                const filled = simulationProgress > (i - 1) * (100 / cavityCount);
+                
+                ctx.beginPath();
+                ctx.arc(x, y, cavitySize, 0, 2 * Math.PI);
+                ctx.fillStyle = filled ? '#10b981' : '#e5e7eb';
+                ctx.fill();
+                ctx.strokeStyle = '#6b7280';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                ctx.fillStyle = filled ? '#ffffff' : '#6b7280';
+                ctx.font = 'bold 16px Prompt';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(i, x, y);
+            }
+        }
+
+        // Update simulation chart with real physics
+        function updateSimulationChart() {
+            const realTime = (simulationProgress / 2).toFixed(2);
+            
+            // Get input parameters
+            const injectionPressure = parseFloat(document.getElementById('injection-pressure').value) || 1200;
+            const injectionSpeed = parseFloat(document.getElementById('injection-speed').value) || 75;
+            const nozzleTemp = parseFloat(document.getElementById('nozzle-temp').value) || 240;
+            const moldTemp = parseFloat(document.getElementById('mold-temp').value) || 60;
+            const plasticType = document.getElementById('plastic-type').value;
+            const material = materialRecommendations[plasticType];
+            
+            // Calculate phase-based values
+            let pressure, temperature, flowRate, viscosity, shearRate;
+            
+            if (simulationProgress < 20) {
+                // Injection phase - pressure build up
+                const phaseProgress = simulationProgress / 20;
+                pressure = injectionPressure * Math.pow(phaseProgress, 1.5);
+                flowRate = injectionSpeed * phaseProgress;
+                temperature = nozzleTemp;
+                shearRate = (4 * flowRate / 100) / 0.002; // γ = 4Q/πr³
+                viscosity = physicsEngine.calculateViscosity(temperature, shearRate, material);
+                
+            } else if (simulationProgress < 60) {
+                // Filling phase - steady flow
+                const phaseProgress = (simulationProgress - 20) / 40;
+                pressure = injectionPressure * (1 - 0.2 * phaseProgress);
+                flowRate = injectionSpeed * (1 - 0.3 * phaseProgress);
+                
+                // Temperature drops due to mold cooling
+                const coolingTime = realTime;
+                temperature = physicsEngine.calculateHeatTransfer(nozzleTemp, moldTemp, 3, coolingTime);
+                
+                shearRate = (4 * flowRate / 100) / 0.002;
+                viscosity = physicsEngine.calculateViscosity(temperature, shearRate, material);
+                
+            } else if (simulationProgress < 80) {
+                // Holding phase - pressure maintained
+                const holdingPressure = parseFloat(document.getElementById('holding-pressure').value) || 800;
+                pressure = holdingPressure * (1 - (simulationProgress - 60) / 40);
+                flowRate = injectionSpeed * 0.1 * (1 - (simulationProgress - 60) / 20); // Minimal flow
+                temperature = physicsEngine.calculateHeatTransfer(nozzleTemp, moldTemp, 3, realTime);
+                shearRate = 100;
+                viscosity = physicsEngine.calculateViscosity(temperature, shearRate, material);
+                
+            } else {
+                // Cooling phase - solidification
+                pressure = 0;
+                flowRate = 0;
+                temperature = moldTemp + (nozzleTemp - moldTemp) * Math.exp(-0.1 * (simulationProgress - 80));
+                shearRate = 0;
+                viscosity = physicsEngine.calculateViscosity(temperature, 0.1, material);
+            }
+            
+            // Add realistic noise
+            pressure += (Math.random() - 0.5) * pressure * 0.02;
+            temperature += (Math.random() - 0.5) * 2;
+            flowRate += (Math.random() - 0.5) * flowRate * 0.05;
+            
+            // Update chart
+            simulationChart.data.labels.push(realTime);
+            simulationChart.data.datasets[0].data.push(pressure.toFixed(1));
+            simulationChart.data.datasets[1].data.push(temperature.toFixed(1));
+            
+            // Keep only last 30 data points for better visualization
+            if (simulationChart.data.labels.length > 30) {
+                simulationChart.data.labels.shift();
+                simulationChart.data.datasets[0].data.shift();
+                simulationChart.data.datasets[1].data.shift();
+            }
+            
+            simulationChart.update('none');
+            
+            // Update display values
+            document.getElementById('current-pressure').textContent = `${pressure.toFixed(1)} bar`;
+            document.getElementById('current-temp').textContent = `${temperature.toFixed(1)}°C`;
+            document.getElementById('flow-rate').textContent = `${flowRate.toFixed(2)} cm³/s`;
+            
+            // Store simulation data
+            simulationData.pressure.push(pressure);
+            simulationData.temperature.push(temperature);
+            simulationData.flowRate.push(flowRate);
+            simulationData.viscosity.push(viscosity);
+            simulationData.shearRate.push(shearRate);
+            simulationData.fillPercentage.push(simulationProgress);
+            simulationData.time.push(realTime);
+        }
+
+        // Add log entry
+        function addLog(message, type = 'info') {
+            const log = document.getElementById('simulation-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const colors = {
+                info: 'text-blue-600',
+                success: 'text-green-600',
+                warning: 'text-yellow-600',
+                error: 'text-red-600'
+            };
+            
+            const entry = document.createElement('p');
+            entry.className = colors[type] || 'text-gray-600';
+            entry.textContent = `[${timestamp}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // ========== Simulation Event Handlers ==========
+        document.getElementById('start-simulation').addEventListener('click', () => {
+            if (isSimulationRunning) return;
+            
+            isSimulationRunning = true;
+            addLog('เริ่มการจำลองกระบวนการฉีดพลาสติก', 'success');
+            
+            simulationInterval = setInterval(() => {
+                if (simulationProgress < 100) {
+                    simulationProgress += 2;
+                    document.getElementById('progress').textContent = `${simulationProgress}%`;
+                    document.getElementById('progress-bar').style.width = `${simulationProgress}%`;
+                    drawSimulation();
+                    updateSimulationChart();
+                    
+                    // Add simulation events
+                    if (simulationProgress === 20) {
+                        addLog('เริ่มขั้นตอนการฉีด (Injection Phase)', 'info');
+                    } else if (simulationProgress === 60) {
+                        addLog('เข้าสู่ขั้นตอนการย้ำ (Holding Phase)', 'info');
+                    } else if (simulationProgress === 80) {
+                        addLog('เริ่มขั้นตอนการหล่อเย็น (Cooling Phase)', 'info');
+                    }
+                    
+                    checkDefects();
+                } else {
+                    clearInterval(simulationInterval);
+                    isSimulationRunning = false;
+                    addLog('การจำลองเสร็จสมบูรณ์', 'success');
+                    performAnalysis();
+                }
+            }, 100);
+        });
+
+        document.getElementById('pause-simulation').addEventListener('click', () => {
+            clearInterval(simulationInterval);
+            isSimulationRunning = false;
+            addLog('หยุดการจำลองชั่วคราว', 'warning');
+        });
+
+        document.getElementById('stop-simulation').addEventListener('click', () => {
+            clearInterval(simulationInterval);
+            simulationProgress = 0;
+            isSimulationRunning = false;
+            drawSimulation();
+            document.getElementById('progress').textContent = '0%';
+            document.getElementById('progress-bar').style.width = '0%';
+            addLog('หยุดการจำลอง', 'error');
+        });
+
+        document.getElementById('reset-simulation').addEventListener('click', () => {
+            clearInterval(simulationInterval);
+            simulationProgress = 0;
+            isSimulationRunning = false;
+            drawSimulation();
+            document.getElementById('progress').textContent = '0%';
+            document.getElementById('progress-bar').style.width = '0%';
+            simulationChart.data.labels = [];
+            simulationChart.data.datasets.forEach(ds => ds.data = []);
+            simulationChart.update();
+            simulationData = { pressure: [], temperature: [], flowRate: [], time: [] };
+            document.getElementById('simulation-log').innerHTML = '<p class="text-green-600">[เริ่มต้น] ระบบพร้อมสำหรับการจำลอง</p>';
+        });
+
+        document.getElementById('clear-log').addEventListener('click', () => {
+            document.getElementById('simulation-log').innerHTML = '<p class="text-green-600">[เริ่มต้น] ระบบพร้อมสำหรับการจำลอง</p>';
+        });
+
+        // ========== Defect Prediction Functions ==========
+        function checkDefects() {
+            const injectionPressure = parseFloat(document.getElementById('injection-pressure').value) || 0;
+            const injectionSpeed = parseFloat(document.getElementById('injection-speed').value) || 0;
+            const moldTemp = parseFloat(document.getElementById('mold-temp').value) || 0;
+            const nozzleTemp = parseFloat(document.getElementById('nozzle-temp').value) || 0;
+            const plasticType = document.getElementById('plastic-type').value;
+            const recommendations = materialRecommendations[plasticType];
+            
+            const defects = [];
+            
+            // Check for flash
+            if (injectionPressure > parseFloat(recommendations.injectionPressure.split('-')[1])) {
+                defects.push({
+                    type: 'Flash/Burr',
+                    severity: 'high',
+                    description: 'แรงดันฉีดสูงเกินไป อาจทำให้เกิดครีบ',
+                    solution: 'ลดแรงดันฉีดลง 10-20% หรือตรวจสอบการปิดแม่พิมพ์'
+                });
+            }
+            
+            // Check for short shot
+            if (injectionPressure < parseFloat(recommendations.injectionPressure.split('-')[0])) {
+                defects.push({
+                    type: 'Short Shot',
+                    severity: 'high',
+                    description: 'แรงดันฉีดต่ำเกินไป อาจทำให้ชิ้นงานไม่เต็ม',
+                    solution: 'เพิ่มแรงดันฉีดหรือตรวจสอบอุณหภูมิ'
+                });
+            }
+            
+            // Check for burn marks
+            if (injectionSpeed > parseFloat(recommendations.injectionSpeed.split('-')[1])) {
+                defects.push({
+                    type: 'Burn Marks',
+                    severity: 'medium',
+                    description: 'ความเร็วฉีดสูงเกินไป อาจทำให้เกิดรอยไหม้',
+                    solution: 'ลดความเร็วฉีดหรือปรับปรุงการระบายอากาศ'
+                });
+            }
+            
+            // Check for sink marks
+            const holdingPressure = parseFloat(document.getElementById('holding-pressure').value) || 0;
+            if (holdingPressure < parseFloat(recommendations.holdingPressure.split('-')[0])) {
+                defects.push({
+                    type: 'Sink Marks',
+                    severity: 'medium',
+                    description: 'แรงดันย้ำต่ำเกินไป อาจทำให้เกิดรอยยุบ',
+                    solution: 'เพิ่มแรงดันย้ำหรือเวลาย้ำ'
+                });
+            }
+            
+            // Update defect display
+            updateDefectDisplay(defects);
+        }
+
+        function updateDefectDisplay(defects) {
+            const defectCards = document.getElementById('defect-cards');
+            defectCards.innerHTML = '';
+            
+            if (defects.length === 0) {
+                defectCards.innerHTML = '<div class="bg-green-50 p-4 rounded-lg"><p class="text-green-700">✅ ไม่พบความเสี่ยงข้อบกพร่องที่สำคัญ</p></div>';
+                return;
+            }
+            
+            defects.forEach(defect => {
+                const severityColors = {
+                    high: 'bg-red-50 border-red-200',
+                    medium: 'bg-yellow-50 border-yellow-200',
+                    low: 'bg-blue-50 border-blue-200'
+                };
+                
+                const card = document.createElement('div');
+                card.className = `defect-card ${severityColors[defect.severity]} border p-4 rounded-lg`;
+                card.innerHTML = `
+                    <h4 class="font-semibold mb-2">${defect.type}</h4>
+                    <p class="text-sm text-gray-700 mb-2">${defect.description}</p>
+                    <p class="text-sm font-medium">แนะนำ: ${defect.solution}</p>
+                `;
+                defectCards.appendChild(card);
+            });
+        }
+
+        // ========== Analysis Functions ==========
+        function performAnalysis() {
+            calculateCosts();
+            calculateProductivity();
+            analyzeQuality();
+            generateRecommendations();
+        }
+
+        function calculateCosts() {
+            const cavityWeight = parseFloat(document.getElementById('cavity-weight').value) || 0;
+            const runnerWeight = parseFloat(document.getElementById('runner-weight').value) || 0;
+            const plasticType = document.getElementById('plastic-type').value;
+            const cavityCount = parseInt(document.getElementById('cavity-count').value);
+            
+            // Material cost (example rates)
+            const materialRates = {
+                ABS: 45, PP: 35, PE: 30, PS: 40, PC: 80, PA: 70, POM: 65, PMMA: 55
+            };
+            const materialRate = materialRates[plasticType] || 40; // บาท/kg
+            const materialCost = ((cavityWeight + runnerWeight/cavityCount) / 1000) * materialRate;
+            
+            // Energy cost
+            const machineSize = parseFloat(document.getElementById('machine-size').value);
+            const cycleTime = calculateCycleTime();
+            const energyCost = (machineSize * 0.75 * cycleTime / 3600) * 3.5; // 3.5 บาท/kWh
+            
+            // Labor cost
+            const laborRate = 300; // บาท/ชั่วโมง
+            const laborCost = (cycleTime / 3600) * laborRate / cavityCount;
+            
+            // Total cost
+            const totalCost = materialCost + energyCost + laborCost;
+            
+            // Update display
+            document.getElementById('material-cost').textContent = `${materialCost.toFixed(2)} บาท/ชิ้น`;
+            document.getElementById('energy-cost').textContent = `${energyCost.toFixed(2)} บาท/ชิ้น`;
+            document.getElementById('labor-cost').textContent = `${laborCost.toFixed(2)} บาท/ชิ้น`;
+            document.getElementById('total-cost').textContent = `${totalCost.toFixed(2)} บาท/ชิ้น`;
+        }
+
+        function calculateCycleTime() {
+            const injectionTime = parseFloat(document.getElementById('injection-time').value) || 0;
+            const holdingTime = parseFloat(document.getElementById('holding-time').value) || 0;
+            const coolingTime = parseFloat(document.getElementById('cooling-time').value) || 0;
+            const moldOpenCloseTime = 5; // Assume 5 seconds
+            
+            return injectionTime + holdingTime + coolingTime + moldOpenCloseTime;
+        }
+
+        function calculateProductivity() {
+            const cycleTime = calculateCycleTime();
+            const cavityCount = parseInt(document.getElementById('cavity-count').value);
+            const hourlyOutput = Math.floor((3600 / cycleTime) * cavityCount);
+            const oee = 85; // Assume 85% OEE
+            
+            document.getElementById('cycle-time').textContent = `${cycleTime} วินาที`;
+            document.getElementById('hourly-output').textContent = `${hourlyOutput} ชิ้น`;
+            document.getElementById('oee').textContent = `${oee}%`;
+        }
+
+        function analyzeQuality() {
+            // Initialize quality chart if not exists
+            const qualityCtx = document.getElementById('quality-chart');
+            if (!qualityCtx) return;
+            
+            new Chart(qualityCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['ความแข็งแรง', 'ผิวสำเร็จ', 'ขนาด', 'น้ำหนัก', 'สี'],
+                    datasets: [{
+                        label: 'คุณภาพ',
+                        data: [85, 90, 95, 92, 88],
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: '#3b82f6',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+            
+            // Update quality summary
+            document.getElementById('quality-score').textContent = '88/100';
+            document.getElementById('defect-risk').textContent = 'ต่ำ';
+            document.getElementById('consistency').textContent = 'ดีมาก';
+        }
+
+        function generateRecommendations() {
+            const recommendations = [];
+            
+            // Check injection pressure
+            const injectionPressure = parseFloat(document.getElementById('injection-pressure').value) || 0;
+            const plasticType = document.getElementById('plastic-type').value;
+            const recommended = materialRecommendations[plasticType];
+            const [minPressure, maxPressure] = recommended.injectionPressure.split('-').map(Number);
+            
+            if (injectionPressure < minPressure || injectionPressure > maxPressure) {
+                recommendations.push({
+                    category: 'แรงดัน',
+                    suggestion: `ปรับแรงดันฉีดให้อยู่ในช่วง ${recommended.injectionPressure} bar`,
+                    impact: 'ลดข้อบกพร่องและเพิ่มคุณภาพชิ้นงาน'
+                });
+            }
+            
+            // Check temperatures
+            const nozzleTemp = parseFloat(document.getElementById('nozzle-temp').value) || 0;
+            const [minNozzle, maxNozzle] = recommended.nozzleTemp.split('-').map(Number);
+            
+            if (nozzleTemp < minNozzle || nozzleTemp > maxNozzle) {
+                recommendations.push({
+                    category: 'อุณหภูมิ',
+                    suggestion: `ปรับอุณหภูมิ Nozzle ให้อยู่ในช่วง ${recommended.nozzleTemp}°C`,
+                    impact: 'ปรับปรุงการไหลและลดการเสื่อมสภาพของวัสดุ'
+                });
+            }
+            
+            // Update recommendation display
+            const recommendationCards = document.getElementById('recommendation-cards');
+            recommendationCards.innerHTML = '';
+            
+            if (recommendations.length === 0) {
+                recommendationCards.innerHTML = '<div class="bg-green-50 p-4 rounded-lg"><p class="text-green-700">✅ การตั้งค่าปัจจุบันอยู่ในช่วงที่เหมาะสม</p></div>';
+                return;
+            }
+            
+            recommendations.forEach(rec => {
+                const card = document.createElement('div');
+                card.className = 'bg-blue-50 border border-blue-200 p-4 rounded-lg';
+                card.innerHTML = `
+                    <h4 class="font-semibold mb-2">${rec.category}</h4>
+                    <p class="text-sm text-gray-700 mb-2">${rec.suggestion}</p>
+                    <p class="text-sm font-medium text-blue-600">ผลที่คาดหวัง: ${rec.impact}</p>
+                `;
+                recommendationCards.appendChild(card);
+            });
+        }
+
+        // ========== Report Generation Functions ==========
+        function generateReport() {
+            const reportContent = document.getElementById('report-content');
+            const plasticType = document.getElementById('plastic-type').value;
+            const machineSize = document.getElementById('machine-size').value;
+            const cavityCount = document.getElementById('cavity-count').value;
+            const cycleTime = calculateCycleTime();
+            
+            const reportHTML = `
+                <div class="report-header mb-6">
+                    <h1 class="text-2xl font-bold mb-2">รายงานการจำลองการฉีดพลาสติก</h1>
+                    <p class="text-gray-600">วันที่: ${new Date().toLocaleDateString('th-TH')}</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h2 class="text-lg font-semibold mb-3">ข้อมูลพื้นฐาน</h2>
+                        <table class="w-full text-sm">
+                            <tr class="border-b">
+                                <td class="py-2">ชนิดพลาสติก:</td>
+                                <td class="font-medium">${plasticType}</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-2">ขนาดเครื่อง:</td>
+                                <td class="font-medium">${machineSize} ตัน</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-2">จำนวน Cavity:</td>
+                                <td class="font-medium">${cavityCount}</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-2">Cycle Time:</td>
+                                <td class="font-medium">${cycleTime} วินาที</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div>
+                        <h2 class="text-lg font-semibold mb-3">ผลการวิเคราะห์</h2>
+                        <table class="w-full text-sm">
+                            <tr class="border-b">
+                                <td class="py-2">ผลผลิต/ชั่วโมง:</td>
+                                <td class="font-medium">${document.getElementById('hourly-output').textContent}</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-2">ต้นทุน/ชิ้น:</td>
+                                <td class="font-medium">${document.getElementById('total-cost').textContent}</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-2">คุณภาพ:</td>
+                                <td class="font-medium">${document.getElementById('quality-score').textContent}</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-2">ความเสี่ยง:</td>
+                                <td class="font-medium">${document.getElementById('defect-risk').textContent}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <h2 class="text-lg font-semibold mb-3">พารามิเตอร์การฉีด</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                        <div>
+                            <p class="text-gray-600">แรงดันฉีด:</p>
+                            <p class="font-medium">${document.getElementById('injection-pressure').value || '-'} bar</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">ความเร็วฉีด:</p>
+                            <p class="font-medium">${document.getElementById('injection-speed').value || '-'} mm/s</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">อุณหภูมิ Nozzle:</p>
+                            <p class="font-medium">${document.getElementById('nozzle-temp').value || '-'} °C</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">อุณหภูมิแม่พิมพ์:</p>
+                            <p class="font-medium">${document.getElementById('mold-temp').value || '-'} °C</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <h2 class="text-lg font-semibold mb-3">สรุปและข้อเสนอแนะ</h2>
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <p class="text-sm">การจำลองแสดงให้เห็นว่าการตั้งค่าปัจจุบันสามารถผลิตชิ้นงานได้ตามข้อกำหนด 
+                        ควรติดตามและบันทึกผลการผลิตจริงเพื่อปรับปรุงความแม่นยำของการจำลองในอนาคต</p>
+                    </div>
+                </div>
+            `;
+            
+            reportContent.innerHTML = reportHTML;
+            addLog('สร้างรายงานเรียบร้อยแล้ว', 'success');
+        }
+
+        document.getElementById('generate-report').addEventListener('click', generateReport);
+
+        document.getElementById('export-pdf').addEventListener('click', () => {
+            alert('ฟังก์ชัน Export PDF จะพร้อมใช้งานเร็วๆ นี้');
+            addLog('กำลังพัฒนาฟังก์ชัน Export PDF', 'warning');
+        });
+
+        document.getElementById('export-excel').addEventListener('click', () => {
+            alert('ฟังก์ชัน Export Excel จะพร้อมใช้งานเร็วๆ นี้');
+            addLog('กำลังพัฒนาฟังก์ชัน Export Excel', 'warning');
+        });
+
+        document.getElementById('print-report').addEventListener('click', () => {
+            window.print();
+            addLog('เริ่มการพิมพ์รายงาน', 'info');
+        });
+
+        // ========== Profile Management Functions ==========
+        function saveProfile() {
+            const profileName = document.getElementById('profile-name').value;
+            if (!profileName) {
+                alert('กรุณาใส่ชื่อโปรไฟล์');
+                return;
+            }
+            
+            const profile = {
+                name: profileName,
+                date: new Date().toISOString(),
+                settings: {
+                    machineSize: document.getElementById('machine-size').value,
+                    plasticType: document.getElementById('plastic-type').value,
+                    gateType: document.getElementById('gate-type').value,
+                    nozzleTemp: document.getElementById('nozzle-temp').value,
+                    zone1Temp: document.getElementById('zone1-temp').value,
+                    zone2Temp: document.getElementById('zone2-temp').value,
+                    zone3Temp: document.getElementById('zone3-temp').value,
+                    moldTemp: document.getElementById('mold-temp').value,
+                    injectionPressure: document.getElementById('injection-pressure').value,
+                    injectionSpeed: document.getElementById('injection-speed').value,
+                    injectionTime: document.getElementById('injection-time').value,
+                    holdingPressure: document.getElementById('holding-pressure').value,
+                    holdingTime: document.getElementById('holding-time').value,
+                    coolingTime: document.getElementById('cooling-time').value,
+                    cavityCount: document.getElementById('cavity-count').value,
+                    cavityWeight: document.getElementById('cavity-weight').value,
+                    runnerWeight: document.getElementById('runner-weight').value
+                }
+            };
+            
+            // Save to localStorage
+            let profiles = JSON.parse(localStorage.getItem('injectionProfiles') || '[]');
+            profiles.push(profile);
+            localStorage.setItem('injectionProfiles', JSON.stringify(profiles));
+            
+            updateProfileList();
+            addLog(`บันทึกโปรไฟล์ "${profileName}" เรียบร้อยแล้ว`, 'success');
+            document.getElementById('profile-name').value = '';
+        }
+
+        function loadProfile() {
+            const selectedProfile = document.getElementById('saved-profiles').value;
+            if (!selectedProfile) {
+                alert('กรุณาเลือกโปรไฟล์');
+                return;
+            }
+            
+            const profiles = JSON.parse(localStorage.getItem('injectionProfiles') || '[]');
+            const profile = profiles.find(p => p.name === selectedProfile);
+            
+            if (profile) {
+                // Load all settings
+                Object.keys(profile.settings).forEach(key => {
+                    const element = document.getElementById(key.replace(/([A-Z])/g, '-$1').toLowerCase());
+                    if (element) {
+                        element.value = profile.settings[key];
+                    }
+                });
+                
+                updateRecommendedValues();
+                updateCavityInfo();
+                addLog(`โหลดโปรไฟล์ "${selectedProfile}" เรียบร้อยแล้ว`, 'success');
+            }
+        }
+
+        function deleteProfile() {
+            const selectedProfile = document.getElementById('saved-profiles').value;
+            if (!selectedProfile) {
+                alert('กรุณาเลือกโปรไฟล์ที่ต้องการลบ');
+                return;
+            }
+            
+            if (confirm(`ต้องการลบโปรไฟล์ "${selectedProfile}" หรือไม่?`)) {
+                let profiles = JSON.parse(localStorage.getItem('injectionProfiles') || '[]');
+                profiles = profiles.filter(p => p.name !== selectedProfile);
+                localStorage.setItem('injectionProfiles', JSON.stringify(profiles));
+                
+                updateProfileList();
+                addLog(`ลบโปรไฟล์ "${selectedProfile}" เรียบร้อยแล้ว`, 'warning');
+            }
+        }
+
+        function updateProfileList() {
+            const profiles = JSON.parse(localStorage.getItem('injectionProfiles') || '[]');
+            const select = document.getElementById('saved-profiles');
+            
+            select.innerHTML = '<option value="">-- เลือกโปรไฟล์ --</option>';
+            profiles.forEach(profile => {
+                const option = document.createElement('option');
+                option.value = profile.name;
+                option.textContent = profile.name;
+                select.appendChild(option);
+            });
+        }
+
+        document.getElementById('save-profile').addEventListener('click', saveProfile);
+        document.getElementById('load-profile').addEventListener('click', loadProfile);
+        document.getElementById('delete-profile').addEventListener('click', deleteProfile);
+        document.getElementById('compare-profiles').addEventListener('click', () => {
+            alert('ฟังก์ชันเปรียบเทียบโปรไฟล์กำลังพัฒนา');
+        });
+
+        // ========== Validation Functions ==========
+        function validateData() {
+            const errors = [];
+            const warnings = [];
+            
+            // Check required fields
+            const requiredFields = [
+                { id: 'nozzle-temp', name: 'อุณหภูมิ Nozzle' },
+                { id: 'zone1-temp', name: 'อุณหภูมิ Zone 1' },
+                { id: 'zone2-temp', name: 'อุณหภูมิ Zone 2' },
+                { id: 'zone3-temp', name: 'อุณหภูมิ Zone 3' },
+                { id: 'injection-pressure', name: 'แรงดันฉีด' },
+                { id: 'injection-speed', name: 'ความเร็วฉีด' },
+                { id: 'injection-time', name: 'เวลาฉีด' },
+                { id: 'holding-pressure', name: 'แรงดันย้ำ' },
+                { id: 'holding-time', name: 'เวลาย้ำ' },
+                { id: 'cooling-time', name: 'เวลาหล่อเย็น' },
+                { id: 'cavity-weight', name: 'น้ำหนักชิ้นงาน' },
+                { id: 'actual-shot-size', name: 'Shot Size ที่ใช้จริง' }
+            ];
+            
+            requiredFields.forEach(field => {
+                const value = document.getElementById(field.id).value;
+                if (!value || value === '0') {
+                    errors.push(`กรุณาระบุ ${field.name}`);
+                }
+            });
+            
+            // Check temperature sequence
+            const nozzle = parseFloat(document.getElementById('nozzle-temp').value) || 0;
+            const zone1 = parseFloat(document.getElementById('zone1-temp').value) || 0;
+            const zone2 = parseFloat(document.getElementById('zone2-temp').value) || 0;
+            const zone3 = parseFloat(document.getElementById('zone3-temp').value) || 0;
+            
+            if (nozzle > 0 && zone1 > 0 && zone1 > nozzle) {
+                warnings.push('อุณหภูมิ Zone 1 ไม่ควรสูงกว่า Nozzle');
+            }
+            
+            if (zone1 > 0 && zone2 > 0 && zone2 > zone1) {
+                warnings.push('อุณหภูมิ Zone 2 ไม่ควรสูงกว่า Zone 1');
+            }
+            
+            if (zone2 > 0 && zone3 > 0 && zone3 > zone2) {
+                warnings.push('อุณหภูมิ Zone 3 ไม่ควรสูงกว่า Zone 2');
+            }
+            
+            // Check shot size
+            const maxShot = parseFloat(document.getElementById('max-shot').value) || 0;
+            const actualShot = parseFloat(document.getElementById('actual-shot-size').value) || 0;
+            const calculatedShot = parseFloat(document.getElementById('calculated-shot-size').value) || 0;
+            
+            if (actualShot > maxShot * 0.8) {
+                warnings.push('Shot Size ใกล้ถึงขีดจำกัดของเครื่อง (>80%)');
+            }
+            
+            if (actualShot < calculatedShot) {
+                errors.push('Shot Size ที่ใช้จริงต่ำกว่าที่คำนวณได้');
+            }
+            
+            // Display results
+            if (errors.length === 0 && warnings.length === 0) {
+                alert('✅ ข้อมูลถูกต้องและพร้อมสำหรับการจำลอง');
+                addLog('ตรวจสอบข้อมูลผ่าน - พร้อมเริ่มการจำลอง', 'success');
+            } else {
+                let message = '';
+                if (errors.length > 0) {
+                    message += '❌ ข้อผิดพลาด:\n' + errors.join('\n') + '\n\n';
+                }
+                if (warnings.length > 0) {
+                    message += '⚠️ คำเตือน:\n' + warnings.join('\n');
+                }
+                alert(message);
+                
+                if (errors.length > 0) {
+                    addLog(`พบข้อผิดพลาด ${errors.length} รายการ`, 'error');
+                } else {
+                    addLog(`พบคำเตือน ${warnings.length} รายการ`, 'warning');
+                }
+            }
+        }
+
+        // ========== Full Simulation Function ==========
+        function startFullSimulation() {
+            // Validate data first
+            validateData();
+            
+            // If validation passes, start simulation
+            if (confirm('เริ่มการจำลองแบบสมบูรณ์?')) {
+                // Reset simulation
+                simulationProgress = 0;
+                simulationData = { pressure: [], temperature: [], flowRate: [], time: [] };
+                
+                // Show simulation section
+                showSection('simulation');
+                
+                // Start simulation automatically
+                setTimeout(() => {
+                    document.getElementById('start-simulation').click();
+                }, 500);
+                
+                addLog('เริ่มการจำลองแบบสมบูรณ์', 'success');
+            }
+        }
+
+        // ========== Reset Function ==========
+        function resetAll() {
+            if (confirm('ต้องการรีเซ็ตข้อมูลทั้งหมดหรือไม่?')) {
+                // Reset all input fields
+                document.querySelectorAll('input, select').forEach(element => {
+                    if (element.type === 'number') {
+                        element.value = '';
+                    } else if (element.tagName === 'SELECT') {
+                        element.selectedIndex = 0;
+                    }
+                });
+                
+                // Reset simulation
+                simulationProgress = 0;
+                isSimulationRunning = false;
+                drawSimulation();
+                simulationChart.data.labels = [];
+                simulationChart.data.datasets.forEach(ds => ds.data = []);
+                simulationChart.update();
+                
+                // Clear logs
+                document.getElementById('simulation-log').innerHTML = '<p class="text-green-600">[เริ่มต้น] ระบบพร้อมสำหรับการจำลอง</p>';
+                
+                // Reset displays
+                document.getElementById('progress').textContent = '0%';
+                document.getElementById('progress-bar').style.width = '0%';
+                document.getElementById('report-content').innerHTML = '<p class="text-gray-500 text-center">กรุณาสร้างรายงานเพื่อดูข้อมูลสรุป</p>';
+                
+                // Show first section
+                showSection('basic-params');
+                
+                addLog('รีเซ็ตระบบเรียบร้อยแล้ว', 'warning');
+            }
+        }
+
+        // ========== Event Listeners ==========
+        document.getElementById('start-full-simulation').addEventListener('click', startFullSimulation);
+        document.getElementById('validate-data').addEventListener('click', validateData);
+        document.getElementById('reset-all').addEventListener('click', resetAll);
+
+        // Add change listeners for real-time updates
+        document.getElementById('cavity-weight').addEventListener('input', updateCavityInfo);
+        document.getElementById('runner-weight').addEventListener('input', updateCavityInfo);
+        document.getElementById('cavity-count').addEventListener('change', updateCavityInfo);
+        document.getElementById('cavity-layout').addEventListener('change', () => {
+            updateCavityInfo();
+        });
+
+        // Machine size change updates clamping force
+        document.getElementById('machine-size').addEventListener('change', (e) => {
+            document.getElementById('clamping-force').value = e.target.value;
+            updateRecommendedValues();
+        });
+
+        // ========== Initialize on Load ==========
+        window.addEventListener('load', () => {
+            updateRecommendedValues();
+            updateCavityInfo();
+            updateProfileList();
+            drawSimulation();
+            
+            // Set initial active nav
+            document.querySelector('.nav-tab').classList.add('active');
+            
+            // Add smooth scrolling
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+            
+            console.log('Injection Molding Simulation Pro v2.0 - Ready');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hot Runner ROI Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Sarabun', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .input-section, .result-section {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            color: #2d3748;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title::before {
+            content: '';
+            width: 5px;
+            height: 30px;
+            background: #667eea;
+            border-radius: 3px;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+        
+        .form-group input {
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-group span {
+            font-size: 0.85em;
+            color: #718096;
+            margin-top: 5px;
+        }
+        
+        .calculate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.3s ease;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+        
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .result-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .result-card h3 {
+            color: #4a5568;
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+        
+        .result-card .value {
+            font-size: 2em;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .result-card .unit {
+            font-size: 0.8em;
+            color: #718096;
+        }
+        
+        .roi-summary {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(72, 187, 120, 0.3);
+        }
+        
+        .roi-summary h2 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .roi-summary p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        .warning {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .breakdown {
+            margin-top: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .breakdown h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+        
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .breakdown-item:last-child {
+            border-bottom: none;
+            font-weight: 700;
+            color: #667eea;
+            font-size: 1.2em;
+            margin-top: 10px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Hot Runner ROI Calculator</h1>
+            <p>คำนวณระยะเวลาคืนทุนสำหรับระบบ Hot Runner</p>
+        </div>
+        
+        <div class="content">
+            <div class="input-section">
+                <h2 class="section-title">📋 ข้อมูลผลิตภัณฑ์และการผลิต</h2>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>น้ำหนักชิ้นงาน (กรัม/ชิ้น)</label>
+                        <input type="number" id="partWeight" value="50" step="0.1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>ปริมาณการผลิต (ชิ้น/ปี)</label>
+                        <input type="number" id="annualVolume" value="10000000" step="1000">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>จำนวน Cavity</label>
+                        <input type="number" id="cavities" value="8" step="1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>ราคาวัตถุดิบ (บาท/กก.)</label>
+                        <input type="number" id="materialPrice" value="40" step="0.1">
+                    </div>
+                </div>
+                
+                <h2 class="section-title" style="margin-top: 30px;">⏱️ ข้อมูลเวลาและ Runner</h2>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Runner Waste ปัจจุบัน (%)</label>
+                        <input type="number" id="currentWaste" value="30" step="0.1">
+                        <span>* ใส่ 0 หากใช้ Hot Runner อยู่แล้ว</span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Runner Waste หลังใช้ Hot Runner (%)</label>
+                        <input type="number" id="newWaste" value="0" step="0.1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>เวลาวงจรปัจจุบัน (วินาที)</label>
+                        <input type="number" id="currentCycle" value="20" step="0.1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>เวลาวงจรหลังใช้ Hot Runner (วินาที)</label>
+                        <input type="number" id="newCycle" value="15" step="0.1">
+                    </div>
+                </div>
+                
+                <h2 class="section-title" style="margin-top: 30px;">💰 ข้อมูลต้นทุนและคุณภาพ</h2>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>ต้นทุน Hot Runner System (บาท)</label>
+                        <input type="number" id="hotRunnerCost" value="3000000" step="1000">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>ค่าเครื่องจักร/ชั่วโมง (บาท)</label>
+                        <input type="number" id="machineRate" value="500" step="10">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Defect Rate ปัจจุบัน (%)</label>
+                        <input type="number" id="currentDefect" value="5" step="0.1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Defect Rate ใหม่ (%)</label>
+                        <input type="number" id="newDefect" value="1" step="0.1">
+                    </div>
+                </div>
+                
+                <button class="calculate-btn" onclick="calculateROI()">
+                    🧮 คำนวณ ROI
+                </button>
+            </div>
+            
+            <div class="result-section hidden" id="results">
+                <h2 class="section-title">📊 ผลการคำนวณ</h2>
+                
+                <div class="result-grid">
+                    <div class="result-card">
+                        <h3>ประหยัดวัตถุดิบ</h3>
+                        <div class="value" id="materialSaving">0</div>
+                        <div class="unit">บาท/ปี</div>
+                    </div>
+                    
+                    <div class="result-card">
+                        <h3>ประหยัดเวลาผลิต</h3>
+                        <div class="value" id="timeSaving">0</div>
+                        <div class="unit">บาท/ปี</div>
+                    </div>
+                    
+                    <div class="result-card">
+                        <h3>ประหยัดจากคุณภาพ</h3>
+                        <div class="value" id="qualitySaving">0</div>
+                        <div class="unit">บาท/ปี</div>
+                    </div>
+                    
+                    <div class="result-card">
+                        <h3>ประหยัดรวมต่อปี</h3>
+                        <div class="value" id="totalSaving">0</div>
+                        <div class="unit">บาท/ปี</div>
+                    </div>
+                </div>
+                
+                <div class="roi-summary" id="roiSummary">
+                    <h2 id="roiYears">0</h2>
+                    <p id="roiText">ระยะเวลาคืนทุน</p>
+                </div>
+                
+                <div class="breakdown">
+                    <h3>📋 รายละเอียดการคำนวณ</h3>
+                    <div class="breakdown-item">
+                        <span>ประหยัดวัตถุดิบ</span>
+                        <span id="breakMaterial">0 บาท</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>ประหยัดเวลาผลิต</span>
+                        <span id="breakTime">0 บาท</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>ประหยัดจากคุณภาพดีขึ้น</span>
+                        <span id="breakQuality">0 บาท</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>ประหยัดรวมต่อปี</span>
+                        <span id="breakTotal">0 บาท</span>
+                    </div>
+                </div>
+                
+                <div class="warning hidden" id="warning">
+                    ⚠️ ROI ยาวเกินไป อาจไม่คุ้มค่าการลงทุน ควรพิจารณาทางเลือกอื่น
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function formatNumber(num) {
+            return new Intl.NumberFormat('th-TH').format(Math.round(num));
+        }
+        
+        function calculateROI() {
+            // Get input values
+            const partWeight = parseFloat(document.getElementById('partWeight').value);
+            const annualVolume = parseFloat(document.getElementById('annualVolume').value);
+            const cavities = parseFloat(document.getElementById('cavities').value);
+            const materialPrice = parseFloat(document.getElementById('materialPrice').value);
+            const currentWaste = parseFloat(document.getElementById('currentWaste').value) / 100;
+            const newWaste = parseFloat(document.getElementById('newWaste').value) / 100;
+            const currentCycle = parseFloat(document.getElementById('currentCycle').value);
+            const newCycle = parseFloat(document.getElementById('newCycle').value);
+            const hotRunnerCost = parseFloat(document.getElementById('hotRunnerCost').value);
+            const machineRate = parseFloat(document.getElementById('machineRate').value);
+            const currentDefect = parseFloat(document.getElementById('currentDefect').value) / 100;
+            const newDefect = parseFloat(document.getElementById('newDefect').value) / 100;
+            
+            // Calculate material savings
+            const totalWeightPerYear = annualVolume * partWeight / 1000; // kg
+            const wasteReduction = currentWaste - newWaste;
+            const materialSaving = wasteReduction * totalWeightPerYear * materialPrice;
+            
+            // Calculate time savings
+            const cycleReduction = currentCycle - newCycle;
+            const shotsPerYear = annualVolume / cavities;
+            const timeSavedHours = (cycleReduction * shotsPerYear) / 3600;
+            const timeSaving = timeSavedHours * machineRate;
+            
+            // Calculate quality savings
+            const defectReduction = currentDefect - newDefect;
+            const defectCostPerPart = partWeight / 1000 * materialPrice * 1.5; // 1.5x for processing cost
+            const qualitySaving = defectReduction * annualVolume * defectCostPerPart;
+            
+            // Total savings
+            const totalSaving = materialSaving + timeSaving + qualitySaving;
+            
+            // Calculate ROI
+            const roiYears = hotRunnerCost / totalSaving;
+            const roiMonths = roiYears * 12;
+            
+            // Update display
+            document.getElementById('materialSaving').textContent = formatNumber(materialSaving);
+            document.getElementById('timeSaving').textContent = formatNumber(timeSaving);
+            document.getElementById('qualitySaving').textContent = formatNumber(qualitySaving);
+            document.getElementById('totalSaving').textContent = formatNumber(totalSaving);
+            
+            // ROI display
+            if (roiYears < 1) {
+                document.getElementById('roiYears').textContent = Math.round(roiMonths) + ' เดือน';
+            } else {
+                document.getElementById('roiYears').textContent = roiYears.toFixed(1) + ' ปี';
+            }
+            
+            // Breakdown
+            document.getElementById('breakMaterial').textContent = formatNumber(materialSaving) + ' บาท';
+            document.getElementById('breakTime').textContent = formatNumber(timeSaving) + ' บาท';
+            document.getElementById('breakQuality').textContent = formatNumber(qualitySaving) + ' บาท';
+            document.getElementById('breakTotal').textContent = formatNumber(totalSaving) + ' บาท';
+            
+            // Show results
+            document.getElementById('results').classList.remove('hidden');
+            
+            // Warning if ROI > 3 years
+            if (roiYears > 3) {
+                document.getElementById('warning').classList.remove('hidden');
+                document.getElementById('roiSummary').style.background = 'linear-gradient(135deg, #f56565 0%, #e53e3e 100%)';
+            } else if (roiYears > 2) {
+                document.getElementById('warning').classList.add('hidden');
+                document.getElementById('roiSummary').style.background = 'linear-gradient(135deg, #ed8936 0%, #dd6b20 100%)';
+            } else {
+                document.getElementById('warning').classList.add('hidden');
+                document.getElementById('roiSummary').style.background = 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)';
+            }
+            
+            // Smooth scroll to results
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Add Enter key support
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    calculateROI();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

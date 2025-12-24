@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ประกาศนียบัตร - Injection Molding Training Portal</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../assets/css/main.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <style>
+        body { padding-top: 80px; }
+        
+        .certificates-header {
+            text-align: center;
+            padding: 40px 0;
+            margin-bottom: 40px;
+        }
+
+        .certificates-header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .certificates-header p {
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Certificate Grid */
+        .certificates-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .cert-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 2px solid var(--border-color);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .cert-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .cert-card.basic { border-color: rgba(0, 217, 255, 0.3); }
+        .cert-card.advanced { border-color: rgba(255, 152, 0, 0.3); }
+        .cert-card.expert { border-color: rgba(255, 64, 129, 0.3); }
+
+        .cert-card.earned.basic { border-color: var(--primary); }
+        .cert-card.earned.advanced { border-color: var(--secondary); }
+        .cert-card.earned.expert { border-color: var(--accent); }
+
+        .cert-preview {
+            height: 200px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .cert-preview i {
+            font-size: 4em;
+            color: rgba(255, 255, 255, 0.1);
+        }
+
+        .cert-card.earned .cert-preview i {
+            color: var(--primary);
+        }
+
+        .cert-card.earned.advanced .cert-preview i {
+            color: var(--secondary);
+        }
+
+        .cert-card.earned.expert .cert-preview i {
+            color: var(--accent);
+        }
+
+        .cert-status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .cert-status.earned {
+            background: rgba(0, 200, 83, 0.2);
+            color: var(--success);
+        }
+
+        .cert-status.locked {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
+        }
+
+        .cert-info {
+            padding: 25px;
+        }
+
+        .cert-info h3 {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cert-info p {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+
+        .cert-requirements {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius-sm);
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .cert-requirements h4 {
+            font-size: 0.85em;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .cert-requirements ul {
+            list-style: none;
+            padding: 0;
+            font-size: 0.9em;
+        }
+
+        .cert-requirements li {
+            padding: 5px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+        }
+
+        .cert-requirements li i.completed {
+            color: var(--success);
+        }
+
+        .cert-requirements li i.pending {
+            color: var(--text-muted);
+        }
+
+        .cert-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .cert-actions .btn {
+            flex: 1;
+        }
+
+        /* Certificate Modal */
+        .cert-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .cert-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cert-modal-content {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .cert-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .cert-modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2em;
+            cursor: pointer;
+        }
+
+        /* Certificate Design */
+        .certificate {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 3px solid;
+            border-radius: 20px;
+            padding: 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .certificate.basic { border-color: var(--primary); }
+        .certificate.advanced { border-color: var(--secondary); }
+        .certificate.expert { border-color: var(--accent); }
+
+        .certificate::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            pointer-events: none;
+        }
+
+        .cert-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2em;
+        }
+
+        .certificate.basic .cert-logo { background: var(--primary-gradient); }
+        .certificate.advanced .cert-logo { background: var(--secondary-gradient); }
+        .certificate.expert .cert-logo { background: var(--accent-gradient); }
+
+        .cert-title {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+        }
+
+        .cert-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+
+        .cert-recipient {
+            font-size: 2em;
+            font-weight: 600;
+            margin: 30px 0;
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .cert-course {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .cert-level {
+            display: inline-block;
+            padding: 8px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .certificate.basic .cert-level { background: var(--primary-gradient); }
+        .certificate.advanced .cert-level { background: var(--secondary-gradient); }
+        .certificate.expert .cert-level { background: var(--accent-gradient); }
+
+        .cert-details {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin: 30px 0;
+            color: var(--text-secondary);
+        }
+
+        .cert-detail h4 {
+            font-size: 0.85em;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .cert-id {
+            font-family: monospace;
+            font-size: 0.9em;
+            color: var(--text-muted);
+            margin-top: 30px;
+        }
+
+        .cert-download-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        /* Progress Section */
+        .progress-section {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            margin-top: 50px;
+            border: 1px solid var(--border-color);
+        }
+
+        .progress-section h2 {
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .progress-section h2 i {
+            color: var(--primary);
+        }
+
+        .progress-levels {
+            display: flex;
+            gap: 20px;
+        }
+
+        .progress-level {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .progress-level h4 {
+            margin-bottom: 15px;
+        }
+
+        .progress-level .progress {
+            margin-bottom: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .certificates-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .progress-levels {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .certificates-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .certificate {
+                padding: 30px;
+            }
+
+            .cert-details {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="certificates-header">
+            <h1><i class="fas fa-award" style="color: gold;"></i> ประกาศนียบัตร</h1>
+            <p>
+                รวบรวมประกาศนียบัตรที่คุณได้รับจากการเรียนหลักสูตร Injection Molding Training Portal
+            </p>
+        </div>
+
+        <!-- Certificates Grid -->
+        <div class="certificates-grid">
+            <!-- Basic Certificate -->
+            <div class="cert-card basic" id="basicCertCard">
+                <div class="cert-preview">
+                    <i class="fas fa-certificate"></i>
+                    <span class="cert-status locked" id="basicStatus">
+                        <i class="fas fa-lock"></i> ยังไม่ได้รับ
+                    </span>
+                </div>
+                <div class="cert-info">
+                    <h3>
+                        <span class="badge badge-level basic">Basic</span>
+                        ประกาศนียบัตร Basic Level
+                    </h3>
+                    <p>พื้นฐาน Injection Molding และ Hot Runner</p>
+                    <div class="cert-requirements">
+                        <h4>ข้อกำหนด</h4>
+                        <ul>
+                            <li id="basicReq1">
+                                <i class="fas fa-circle pending"></i>
+                                เรียนครบ 5 บทเรียน
+                            </li>
+                            <li id="basicReq2">
+                                <i class="fas fa-circle pending"></i>
+                                ผ่านแบบทดสอบ 70%
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="cert-actions">
+                        <button onclick="viewCertificate('basic')" class="btn btn-primary" id="basicViewBtn" disabled>
+                            <i class="fas fa-eye"></i> ดู
+                        </button>
+                        <button onclick="downloadCertificate('basic')" class="btn btn-outline" id="basicDownloadBtn" disabled>
+                            <i class="fas fa-download"></i> ดาวน์โหลด
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Certificate -->
+            <div class="cert-card advanced" id="advancedCertCard">
+                <div class="cert-preview">
+                    <i class="fas fa-certificate"></i>
+                    <span class="cert-status locked" id="advancedStatus">
+                        <i class="fas fa-lock"></i> ยังไม่ได้รับ
+                    </span>
+                </div>
+                <div class="cert-info">
+                    <h3>
+                        <span class="badge badge-level advanced">Advanced</span>
+                        ประกาศนียบัตร Advanced Level
+                    </h3>
+                    <p>การควบคุม PID และการแก้ปัญหา</p>
+                    <div class="cert-requirements">
+                        <h4>ข้อกำหนด</h4>
+                        <ul>
+                            <li id="advancedReq1">
+                                <i class="fas fa-circle pending"></i>
+                                เรียนครบ 5 บทเรียน
+                            </li>
+                            <li id="advancedReq2">
+                                <i class="fas fa-circle pending"></i>
+                                ผ่านแบบทดสอบ 70%
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="cert-actions">
+                        <button onclick="viewCertificate('advanced')" class="btn btn-secondary" id="advancedViewBtn" disabled>
+                            <i class="fas fa-eye"></i> ดู
+                        </button>
+                        <button onclick="downloadCertificate('advanced')" class="btn btn-outline" id="advancedDownloadBtn" disabled>
+                            <i class="fas fa-download"></i> ดาวน์โหลด
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expert Certificate -->
+            <div class="cert-card expert" id="expertCertCard">
+                <div class="cert-preview">
+                    <i class="fas fa-certificate"></i>
+                    <span class="cert-status locked" id="expertStatus">
+                        <i class="fas fa-lock"></i> ยังไม่ได้รับ
+                    </span>
+                </div>
+                <div class="cert-info">
+                    <h3>
+                        <span class="badge badge-level expert">Expert</span>
+                        Professional Certificate
+                    </h3>
+                    <p>ผู้เชี่ยวชาญ Hot Runner System</p>
+                    <div class="cert-requirements">
+                        <h4>ข้อกำหนด</h4>
+                        <ul>
+                            <li id="expertReq1">
+                                <i class="fas fa-circle pending"></i>
+                                เรียนครบ 4 บทเรียน
+                            </li>
+                            <li id="expertReq2">
+                                <i class="fas fa-circle pending"></i>
+                                ผ่านโปรเจคจบ
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="cert-actions">
+                        <button onclick="viewCertificate('expert')" class="btn btn-accent" id="expertViewBtn" disabled style="background: var(--accent-gradient); border: none;">
+                            <i class="fas fa-eye"></i> ดู
+                        </button>
+                        <button onclick="downloadCertificate('expert')" class="btn btn-outline" id="expertDownloadBtn" disabled>
+                            <i class="fas fa-download"></i> ดาวน์โหลด
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Section -->
+        <div class="progress-section">
+            <h2><i class="fas fa-chart-line"></i> ความคืบหน้าของคุณ</h2>
+            <div class="progress-levels">
+                <div class="progress-level">
+                    <h4><span class="badge badge-level basic">Basic</span></h4>
+                    <div class="progress">
+                        <div class="progress-bar" id="basicProgress" style="width: 0%;"></div>
+                    </div>
+                    <span id="basicProgressText">0%</span>
+                </div>
+                <div class="progress-level">
+                    <h4><span class="badge badge-level advanced">Advanced</span></h4>
+                    <div class="progress">
+                        <div class="progress-bar" id="advancedProgress" style="width: 0%; background: var(--secondary-gradient);"></div>
+                    </div>
+                    <span id="advancedProgressText">0%</span>
+                </div>
+                <div class="progress-level">
+                    <h4><span class="badge badge-level expert">Expert</span></h4>
+                    <div class="progress">
+                        <div class="progress-bar" id="expertProgress" style="width: 0%; background: var(--accent-gradient);"></div>
+                    </div>
+                    <span id="expertProgressText">0%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Certificate Modal -->
+    <div class="cert-modal" id="certModal">
+        <div class="cert-modal-content">
+            <div class="cert-modal-header">
+                <h2>ประกาศนียบัตร</h2>
+                <button class="cert-modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="certificateContainer"></div>
+            <div class="cert-download-actions">
+                <button onclick="downloadAsPDF()" class="btn btn-primary btn-lg">
+                    <i class="fas fa-file-pdf"></i> ดาวน์โหลด PDF
+                </button>
+                <button onclick="downloadAsImage()" class="btn btn-outline btn-lg">
+                    <i class="fas fa-image"></i> ดาวน์โหลด PNG
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            basePath: '..',
+            storagePrefix: 'imtp_'
+        };
+    </script>
+    <script src="../assets/js/main.js"></script>
+    <script>
+        let currentLevel = '';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCertificateStatus();
+            updateProgressDisplay();
+        });
+
+        function updateCertificateStatus() {
+            // Check Basic
+            const basicProgress = ProgressTracker.getLevelProgress('basic');
+            if (basicProgress >= 100) {
+                document.getElementById('basicCertCard').classList.add('earned');
+                document.getElementById('basicStatus').innerHTML = '<i class="fas fa-check"></i> ได้รับแล้ว';
+                document.getElementById('basicStatus').classList.remove('locked');
+                document.getElementById('basicStatus').classList.add('earned');
+                document.getElementById('basicReq1').querySelector('i').classList.replace('pending', 'completed');
+                document.getElementById('basicReq1').querySelector('i').classList.replace('fa-circle', 'fa-check-circle');
+                document.getElementById('basicReq2').querySelector('i').classList.replace('pending', 'completed');
+                document.getElementById('basicReq2').querySelector('i').classList.replace('fa-circle', 'fa-check-circle');
+                document.getElementById('basicViewBtn').disabled = false;
+                document.getElementById('basicDownloadBtn').disabled = false;
+            }
+
+            // Check Advanced
+            const advancedProgress = ProgressTracker.getLevelProgress('advanced');
+            if (advancedProgress >= 100) {
+                document.getElementById('advancedCertCard').classList.add('earned');
+                document.getElementById('advancedStatus').innerHTML = '<i class="fas fa-check"></i> ได้รับแล้ว';
+                document.getElementById('advancedStatus').classList.remove('locked');
+                document.getElementById('advancedStatus').classList.add('earned');
+                document.getElementById('advancedReq1').querySelector('i').classList.replace('pending', 'completed');
+                document.getElementById('advancedReq1').querySelector('i').classList.replace('fa-circle', 'fa-check-circle');
+                document.getElementById('advancedReq2').querySelector('i').classList.replace('pending', 'completed');
+                document.getElementById('advancedReq2').querySelector('i').classList.replace('fa-circle', 'fa-check-circle');
+                document.getElementById('advancedViewBtn').disabled = false;
+                document.getElementById('advancedDownloadBtn').disabled = false;
+            }
+
+            // Check Expert
+            const expertProgress = ProgressTracker.getLevelProgress('expert');
+            if (expertProgress >= 100) {
+                document.getElementById('expertCertCard').classList.add('earned');
+                document.getElementById('expertStatus').innerHTML = '<i class="fas fa-check"></i> ได้รับแล้ว';
+                document.getElementById('expertStatus').classList.remove('locked');
+                document.getElementById('expertStatus').classList.add('earned');
+                document.getElementById('expertReq1').querySelector('i').classList.replace('pending', 'completed');
+                document.getElementById('expertReq1').querySelector('i').classList.replace('fa-circle', 'fa-check-circle');
+                document.getElementById('expertReq2').querySelector('i').classList.replace('pending', 'completed');
+                document.getElementById('expertReq2').querySelector('i').classList.replace('fa-circle', 'fa-check-circle');
+                document.getElementById('expertViewBtn').disabled = false;
+                document.getElementById('expertDownloadBtn').disabled = false;
+            }
+        }
+
+        function updateProgressDisplay() {
+            const basicProg = ProgressTracker.getLevelProgress('basic');
+            const advancedProg = ProgressTracker.getLevelProgress('advanced');
+            const expertProg = ProgressTracker.getLevelProgress('expert');
+
+            document.getElementById('basicProgress').style.width = basicProg + '%';
+            document.getElementById('basicProgressText').textContent = basicProg + '%';
+
+            document.getElementById('advancedProgress').style.width = advancedProg + '%';
+            document.getElementById('advancedProgressText').textContent = advancedProg + '%';
+
+            document.getElementById('expertProgress').style.width = expertProg + '%';
+            document.getElementById('expertProgressText').textContent = expertProg + '%';
+        }
+
+        function viewCertificate(level) {
+            currentLevel = level;
+            const user = UserManager.getUser() || { name: 'ผู้เรียน' };
+            const certId = generateCertId(level);
+            const date = new Date().toLocaleDateString('th-TH', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            const levelNames = {
+                basic: 'Basic Level',
+                advanced: 'Advanced Level',
+                expert: 'Expert Level - Professional'
+            };
+
+            const courseNames = {
+                basic: 'พื้นฐาน Injection Molding & Hot Runner',
+                advanced: 'การควบคุม PID และการแก้ปัญหา',
+                expert: 'ผู้เชี่ยวชาญ Hot Runner System'
+            };
+
+            document.getElementById('certificateContainer').innerHTML = `
+                <div class="certificate ${level}" id="certificateElement">
+                    <div class="cert-logo">
+                        <i class="fas fa-industry"></i>
+                    </div>
+                    <div class="cert-title">CERTIFICATE</div>
+                    <div class="cert-subtitle">of Completion</div>
+                    <div class="cert-recipient">${user.name}</div>
+                    <p style="color: var(--text-secondary);">ได้ผ่านการอบรมหลักสูตร</p>
+                    <div class="cert-course">${courseNames[level]}</div>
+                    <div class="cert-level">${levelNames[level]}</div>
+                    <div class="cert-details">
+                        <div class="cert-detail">
+                            <h4>วันที่ได้รับ</h4>
+                            <p>${date}</p>
+                        </div>
+                        <div class="cert-detail">
+                            <h4>ผู้มอบ</h4>
+                            <p>Injection Molding Training Portal</p>
+                        </div>
+                    </div>
+                    <div class="cert-id">Certificate ID: ${certId}</div>
+                </div>
+            `;
+
+            document.getElementById('certModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('certModal').classList.remove('active');
+        }
+
+        function generateCertId(level) {
+            const user = UserManager.getUser();
+            const prefix = level.toUpperCase().substring(0, 3);
+            const timestamp = Date.now().toString(36).toUpperCase();
+            return `IMTP-${prefix}-${timestamp}`;
+        }
+
+        async function downloadAsPDF() {
+            const { jsPDF } = window.jspdf;
+            const element = document.getElementById('certificateElement');
+            
+            Toast.info('กำลังสร้าง PDF...');
+            
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                backgroundColor: '#1a1a2e'
+            });
+            
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('landscape', 'mm', 'a4');
+            
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            pdf.save(`Certificate-${currentLevel}-IMTP.pdf`);
+            
+            Toast.success('ดาวน์โหลด PDF สำเร็จ!');
+        }
+
+        async function downloadAsImage() {
+            const element = document.getElementById('certificateElement');
+            
+            Toast.info('กำลังสร้างรูปภาพ...');
+            
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                backgroundColor: '#1a1a2e'
+            });
+            
+            const link = document.createElement('a');
+            link.download = `Certificate-${currentLevel}-IMTP.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            
+            Toast.success('ดาวน์โหลดรูปภาพสำเร็จ!');
+        }
+
+        function downloadCertificate(level) {
+            viewCertificate(level);
+        }
+
+        // Close modal on escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>

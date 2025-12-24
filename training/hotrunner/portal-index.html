@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Injection Molding Training Portal - ศูนย์ฝึกอบรมการฉีดพลาสติก</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Main CSS -->
+    <link href="assets/css/main.css" rel="stylesheet">
+    
+    <style>
+        /* Portal Specific Styles */
+        .portal-hero {
+            padding: 100px 0 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .portal-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(ellipse at 30% 30%, rgba(0, 217, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 70%, rgba(255, 107, 53, 0.1) 0%, transparent 50%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .portal-hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .portal-logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            background: linear-gradient(135deg, #ff6b35, #ff9800);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            color: white;
+            box-shadow: 0 20px 60px rgba(255, 107, 53, 0.4);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .portal-title {
+            font-size: 3.5em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #ffffff 0%, #00d9ff 50%, #ff6b35 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .portal-subtitle {
+            font-size: 1.4em;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            padding: 40px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 4em;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+
+        .stat-number.primary { color: var(--primary); }
+        .stat-number.secondary { color: var(--secondary); }
+        .stat-number.success { color: var(--success); }
+
+        .stat-label {
+            font-size: 1.1em;
+            color: var(--text-muted);
+        }
+
+        /* Course Levels */
+        .levels-section {
+            padding: 60px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .section-desc {
+            color: var(--text-secondary);
+            font-size: 1.2em;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Level Cards */
+        .level-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .level-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .level-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+        }
+
+        .level-card.basic::before { background: var(--primary-gradient); }
+        .level-card.advanced::before { background: var(--secondary-gradient); }
+        .level-card.expert::before { background: var(--expert-gradient); }
+
+        .level-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .level-card:hover .level-icon {
+            transform: scale(1.1);
+        }
+
+        .level-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            color: white;
+            transition: transform 0.3s ease;
+        }
+
+        .level-icon.basic { background: var(--primary-gradient); box-shadow: 0 15px 40px rgba(0, 217, 255, 0.3); }
+        .level-icon.advanced { background: var(--secondary-gradient); box-shadow: 0 15px 40px rgba(255, 107, 53, 0.3); }
+        .level-icon.expert { background: var(--expert-gradient); box-shadow: 0 15px 40px rgba(156, 39, 176, 0.3); }
+
+        .level-title {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .level-subtitle {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .level-desc {
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+            line-height: 1.7;
+        }
+
+        .level-meta {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 25px;
+            font-size: 0.95em;
+            color: var(--text-muted);
+        }
+
+        .level-meta span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Topics List */
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .topic-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+
+        .topic-item i {
+            color: var(--success);
+            font-size: 0.8em;
+        }
+
+        /* Quick Access Section */
+        .quick-access {
+            padding: 60px 0;
+            background: rgba(0, 217, 255, 0.03);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .quick-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 25px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .quick-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--border-hover);
+            color: inherit;
+        }
+
+        .quick-card i {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .quick-card h4 {
+            margin-bottom: 8px;
+        }
+
+        .quick-card p {
+            font-size: 0.9em;
+            color: var(--text-muted);
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 60px 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .feature-card {
+            display: flex;
+            gap: 20px;
+            padding: 25px;
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-md);
+            background: rgba(0, 217, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .feature-content h4 {
+            margin-bottom: 8px;
+        }
+
+        .feature-content p {
+            font-size: 0.95em;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .portal-footer {
+            padding: 40px 0;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .level-cards {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+                margin: 0 auto;
+            }
+
+            .quick-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .portal-title {
+                font-size: 2.5em;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .portal-title {
+                font-size: 2em;
+            }
+
+            .portal-subtitle {
+                font-size: 1.1em;
+            }
+
+            .stats-section {
+                gap: 30px;
+            }
+
+            .stat-number {
+                font-size: 2.5em;
+            }
+
+            .quick-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .topics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <div id="navbar"></div>
+
+    <!-- Hero Section -->
+    <section class="portal-hero">
+        <div class="portal-hero-content container">
+            <div class="portal-logo">
+                <i class="fas fa-industry"></i>
+            </div>
+            <h1 class="portal-title">Injection Molding Training</h1>
+            <p class="portal-subtitle">
+                ศูนย์ฝึกอบรมการฉีดพลาสติกครบวงจร<br>
+                เรียนรู้ตั้งแต่พื้นฐานจนถึงระดับผู้เชี่ยวชาญ
+            </p>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="courses/basic/index.html" class="btn btn-primary btn-lg">
+                    <i class="fas fa-play"></i> เริ่มเรียนฟรี
+                </a>
+                <a href="learning-path.html" class="btn btn-outline btn-lg">
+                    <i class="fas fa-route"></i> ดูเส้นทางการเรียน
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section container">
+        <div class="stat-item">
+            <div class="stat-number primary">3</div>
+            <div class="stat-label">ระดับหลักสูตร</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number secondary">17+</div>
+            <div class="stat-label">บทเรียน</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number success">10+</div>
+            <div class="stat-label">ชั่วโมงเรียนรู้</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number primary">∞</div>
+            <div class="stat-label">เรียนได้ตลอดชีวิต</div>
+        </div>
+    </section>
+
+    <!-- Course Levels Section -->
+    <section class="levels-section container">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-graduation-cap" style="color: var(--secondary);"></i>
+                เลือกระดับที่เหมาะกับคุณ
+            </h2>
+            <p class="section-desc">
+                เรียนรู้ทุกมิติของ Injection Molding และ Hot Runner System 
+                ตั้งแต่พื้นฐานจนถึงระดับผู้เชี่ยวชาญ
+            </p>
+        </div>
+
+        <div class="level-cards">
+            <!-- Basic Level -->
+            <div class="level-card basic">
+                <div class="level-icon basic">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <h3 class="level-title">Basic Level</h3>
+                <p class="level-subtitle">ระดับพื้นฐาน</p>
+                <p class="level-desc">
+                    เรียนรู้พื้นฐานการฉีดพลาสติก เข้าใจกระบวนการทำงาน 
+                    และรู้จักระบบ Hot Runner เบื้องต้น
+                </p>
+                <div class="level-meta">
+                    <span><i class="fas fa-book"></i> 6 บทเรียน</span>
+                    <span><i class="fas fa-clock"></i> 3.5 ชม.</span>
+                </div>
+                <div class="topics-grid">
+                    <div class="topic-item"><i class="fas fa-check"></i> Injection Molding 101</div>
+                    <div class="topic-item"><i class="fas fa-check"></i> เครื่องฉีดพลาสติก</div>
+                    <div class="topic-item"><i class="fas fa-check"></i> วัสดุพลาสติก</div>
+                    <div class="topic-item"><i class="fas fa-check"></i> Hot Runner เบื้องต้น</div>
+                    <div class="topic-item"><i class="fas fa-check"></i> ความปลอดภัย</div>
+                    <div class="topic-item"><i class="fas fa-check"></i> แบบทดสอบ</div>
+                </div>
+                <a href="courses/basic/index.html" class="btn btn-primary btn-block">
+                    <i class="fas fa-play"></i> เริ่มเรียน Basic
+                </a>
+            </div>
+
+            <!-- Advanced Level -->
+            <div class="level-card advanced">
+                <div class="level-icon advanced">
+                    <i class="fas fa-fire-alt"></i>
+                </div>
+                <h3 class="level-title">Advanced Level</h3>
+                <p class="level-subtitle" style="color: var(--secondary);">ระดับกลาง</p>
+                <p class="level-desc">
+                    เจาะลึกการควบคุมอุณหภูมิ PID การวิเคราะห์ปัญหา 
+                    และเทคนิคการเพิ่มประสิทธิภาพการผลิต
+                </p>
+                <div class="level-meta">
+                    <span><i class="fas fa-book"></i> 6 บทเรียน</span>
+                    <span><i class="fas fa-clock"></i> 4.5 ชม.</span>
+                </div>
+                <div class="topics-grid">
+                    <div class="topic-item"><i class="fas fa-check"></i> PID Control</div>
+                    <div class="topic-item"><i class="fas fa-check"></i> Troubleshooting</div>
+                    <div class="topic-item"><i class="fas fa-check"></i> Optimization</div>
+                    <div class="topic-item"><i class="fas fa-check"></i> Maintenance</div>
+                    <div class="topic-item"><i class="fas fa-check"></i> Quality Control</div>
+                    <div class="topic-item"><i class="fas fa-check"></i> แบบทดสอบ</div>
+                </div>
+                <a href="courses/advanced/index.html" class="btn btn-secondary btn-block">
+                    <i class="fas fa-play"></i> เริ่มเรียน Advanced
+                </a>
+            </div>
+
+            <!-- Expert Level -->
+            <div class="level-card expert">
+                <div class="level-icon expert">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <h3 class="level-title">Expert Level</h3>
+                <p class="level-subtitle" style="color: #e91e63;">ระดับผู้เชี่ยวชาญ</p>
+                <p class="level-desc">
+                    การจำลอง 3D การวิเคราะห์ ROI และกรณีศึกษาจริง 
+                    พร้อมรับประกาศนียบัตรรับรอง
+                </p>
+                <div class="level-meta">
+                    <span><i class="fas fa-book"></i> 5 บทเรียน</span>
+                    <span><i class="fas fa-clock"></i> 5+ ชม.</span>
+                </div>
+                <div class="topics-grid">
+                    <div class="topic-item"><i class="fas fa-check"></i> 3D Simulation</div>
+                    <div class="topic-item"><i class="fas fa-check"></i> ROI Analysis</div>
+                    <div class="topic-item"><i class="fas fa-check"></i> Hot Runner Design</div>
+                    <div class="topic-item"><i class="fas fa-check"></i> Case Studies</div>
+                    <div class="topic-item"><i class="fas fa-check"></i> ประกาศนียบัตร</div>
+                    <div class="topic-item"><i class="fas fa-check"></i> Expert Badge</div>
+                </div>
+                <a href="courses/expert/index.html" class="btn btn-block" style="background: var(--expert-gradient); color: white;">
+                    <i class="fas fa-play"></i> เริ่มเรียน Expert
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Access -->
+    <section class="quick-access">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">เข้าถึงเครื่องมือต่างๆ</h2>
+            </div>
+
+            <div class="quick-grid">
+                <a href="simulations/injection-simulation.html" class="quick-card">
+                    <i class="fas fa-cube"></i>
+                    <h4>3D Simulation</h4>
+                    <p>จำลองการฉีดพลาสติก</p>
+                </a>
+                <a href="quizzes/index.html" class="quick-card">
+                    <i class="fas fa-question-circle"></i>
+                    <h4>แบบทดสอบ</h4>
+                    <p>ทดสอบความรู้ทุกระดับ</p>
+                </a>
+                <a href="certificates/index.html" class="quick-card">
+                    <i class="fas fa-certificate"></i>
+                    <h4>ประกาศนียบัตร</h4>
+                    <p>รับใบรับรองความสำเร็จ</p>
+                </a>
+                <a href="progress-report.html" class="quick-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h4>รายงานความก้าวหน้า</h4>
+                    <p>ติดตามผลการเรียน</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section container">
+        <div class="section-header">
+            <h2 class="section-title">ทำไมต้องเรียนกับเรา?</h2>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-laptop-code"></i>
+                </div>
+                <div class="feature-content">
+                    <h4>เรียนออนไลน์ได้ทุกที่</h4>
+                    <p>เข้าถึงเนื้อหาได้ตลอด 24 ชั่วโมง ทุกอุปกรณ์</p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-vr-cardboard"></i>
+                </div>
+                <div class="feature-content">
+                    <h4>การจำลอง 3D แบบ Interactive</h4>
+                    <p>เรียนรู้ผ่านการจำลองที่เสมือนจริง</p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-award"></i>
+                </div>
+                <div class="feature-content">
+                    <h4>ประกาศนียบัตรรับรอง</h4>
+                    <p>รับใบรับรองเมื่อผ่านการอบรม</p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-route"></i>
+                </div>
+                <div class="feature-content">
+                    <h4>เส้นทางการเรียนชัดเจน</h4>
+                    <p>Basic → Advanced → Expert</p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <div class="feature-content">
+                    <h4>แบบทดสอบทุกระดับ</h4>
+                    <p>ประเมินความรู้ด้วยแบบทดสอบจริง</p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-sync"></i>
+                </div>
+                <div class="feature-content">
+                    <h4>อัปเดตเนื้อหาสม่ำเสมอ</h4>
+                    <p>เนื้อหาทันสมัยตามเทคโนโลยี</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section style="padding: 80px 0; text-align: center; background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(255, 107, 53, 0.1));">
+        <div class="container">
+            <h2 style="font-size: 2.5em; margin-bottom: 20px;">พร้อมเริ่มต้นหรือยัง?</h2>
+            <p style="font-size: 1.2em; color: var(--text-secondary); margin-bottom: 30px;">
+                เริ่มเรียนวันนี้ พัฒนาทักษะสู่ความเชี่ยวชาญ
+            </p>
+            <a href="courses/basic/index.html" class="btn btn-primary btn-lg">
+                <i class="fas fa-rocket"></i> เริ่มเรียน Basic ฟรี
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="portal-footer">
+        <div class="container">
+            <div class="footer-links">
+                <a href="index.html">หน้าแรก</a>
+                <a href="learning-path.html">เส้นทางการเรียน</a>
+                <a href="quizzes/index.html">แบบทดสอบ</a>
+                <a href="certificates/index.html">ประกาศนียบัตร</a>
+                <a href="progress-report.html">รายงาน</a>
+            </div>
+            <p>© 2025 Injection Molding Training Portal - พัฒนาสำหรับการศึกษา</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="assets/js/main.js"></script>
+    <script>
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add animation to level cards
+            const cards = document.querySelectorAll('.level-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 200 + (index * 150));
+            });
+
+            // Update progress badges based on user progress
+            updateProgressBadges();
+        });
+
+        function updateProgressBadges() {
+            const progress = ProgressTracker.getOverallProgress();
+            
+            // You can add progress badges to cards here
+            if (progress.percentage > 0) {
+                console.log('User has progress:', progress);
+            }
+        }
+    </script>
+</body>
+</html>

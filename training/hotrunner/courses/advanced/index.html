@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Level - การควบคุมและการแก้ปัญหา</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../../assets/css/main.css" rel="stylesheet">
+    
+    <style>
+        body { padding-top: 80px; }
+        
+        .course-header {
+            padding: 40px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 40px;
+        }
+
+        .course-header-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 30px;
+        }
+
+        .course-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 25px;
+            background: var(--secondary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            color: white;
+            box-shadow: 0 15px 40px rgba(255, 152, 0, 0.3);
+            flex-shrink: 0;
+        }
+
+        .course-info h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .course-info .badge {
+            margin-bottom: 15px;
+        }
+
+        .course-meta {
+            display: flex;
+            gap: 30px;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+        }
+
+        .course-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .course-meta-item i {
+            color: var(--secondary);
+        }
+
+        /* Progress Overview */
+        .progress-overview {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 25px;
+            margin-bottom: 40px;
+            border: 1px solid var(--border-color);
+        }
+
+        .progress-overview h3 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .progress-stat {
+            text-align: center;
+        }
+
+        .progress-stat-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .progress-stat-label {
+            font-size: 0.9em;
+            color: var(--text-muted);
+        }
+
+        /* Prerequisite Notice */
+        .prerequisite-notice {
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.1), rgba(255, 87, 34, 0.1));
+            border: 1px solid rgba(255, 152, 0, 0.3);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .prerequisite-notice i {
+            font-size: 2em;
+            color: var(--secondary);
+        }
+
+        .prerequisite-notice .info h4 {
+            color: var(--secondary);
+            margin-bottom: 5px;
+        }
+
+        /* Modules List */
+        .modules-section h2 {
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modules-section h2 i {
+            color: var(--secondary);
+        }
+
+        .module-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .module-card:hover {
+            border-color: rgba(255, 152, 0, 0.5);
+            transform: translateX(10px);
+        }
+
+        .module-card.locked {
+            opacity: 0.6;
+        }
+
+        .module-card.completed {
+            border-color: rgba(0, 200, 83, 0.3);
+        }
+
+        .module-content {
+            display: flex;
+            align-items: center;
+            padding: 25px;
+            gap: 20px;
+        }
+
+        .module-number {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 152, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2em;
+            flex-shrink: 0;
+            color: var(--secondary);
+        }
+
+        .module-card.completed .module-number {
+            background: var(--success-gradient);
+            color: white;
+        }
+
+        .module-card.current .module-number {
+            background: var(--secondary-gradient);
+            color: white;
+        }
+
+        .module-info {
+            flex: 1;
+        }
+
+        .module-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .module-type-badge {
+            font-size: 0.7em;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        .module-type-badge.theory { background: rgba(33, 150, 243, 0.2); color: #2196f3; }
+        .module-type-badge.practice { background: rgba(255, 152, 0, 0.2); color: #ff9800; }
+        .module-type-badge.quiz { background: rgba(156, 39, 176, 0.2); color: #9c27b0; }
+        .module-type-badge.simulation { background: rgba(0, 217, 255, 0.2); color: #00d9ff; }
+
+        .module-desc {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+            margin-bottom: 10px;
+        }
+
+        .module-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 0.85em;
+            color: var(--text-muted);
+        }
+
+        .module-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .module-action {
+            flex-shrink: 0;
+        }
+
+        .module-card.completed .module-action .btn {
+            background: rgba(0, 200, 83, 0.2);
+            color: var(--success);
+            border: 1px solid rgba(0, 200, 83, 0.3);
+        }
+
+        /* Topics Grid */
+        .topics-section {
+            margin-top: 40px;
+        }
+
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .topic-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .topic-card:hover {
+            border-color: rgba(255, 152, 0, 0.5);
+            transform: translateY(-5px);
+        }
+
+        .topic-card i {
+            font-size: 2.5em;
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+
+        .topic-card h4 {
+            margin-bottom: 10px;
+        }
+
+        .topic-card p {
+            color: var(--text-muted);
+            font-size: 0.9em;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .topics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .course-header-content {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .course-meta {
+                justify-content: center;
+            }
+
+            .module-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .module-meta {
+                justify-content: center;
+            }
+
+            .topics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-stats {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <div class="container">
+        <!-- Prerequisite Notice -->
+        <div class="prerequisite-notice">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div class="info">
+                <h4>ข้อกำหนดเบื้องต้น</h4>
+                <p style="margin: 0; color: var(--text-secondary);">
+                    ควรผ่านหลักสูตร Basic Level ก่อน หรือมีความรู้พื้นฐาน Injection Molding
+                </p>
+            </div>
+        </div>
+
+        <!-- Course Header -->
+        <div class="course-header">
+            <div class="course-header-content">
+                <div class="course-icon">
+                    <i class="fas fa-sliders-h"></i>
+                </div>
+                <div class="course-info">
+                    <span class="badge badge-level advanced">Advanced Level</span>
+                    <h1>การควบคุมและการแก้ปัญหา</h1>
+                    <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                        เจาะลึกการควบคุม PID, การวิเคราะห์ปัญหา, การแก้ไขข้อบกพร่อง และการเพิ่มประสิทธิภาพ
+                    </p>
+                    <div class="course-meta">
+                        <div class="course-meta-item">
+                            <i class="fas fa-book"></i>
+                            <span>6 บทเรียน</span>
+                        </div>
+                        <div class="course-meta-item">
+                            <i class="fas fa-clock"></i>
+                            <span>5 ชั่วโมง</span>
+                        </div>
+                        <div class="course-meta-item">
+                            <i class="fas fa-signal"></i>
+                            <span>ระดับกลาง-สูง</span>
+                        </div>
+                        <div class="course-meta-item">
+                            <i class="fas fa-certificate"></i>
+                            <span>มีประกาศนียบัตร</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Overview -->
+        <div class="progress-overview">
+            <h3><i class="fas fa-chart-pie"></i> ความคืบหน้าของคุณ</h3>
+            <div class="progress" style="height: 12px;">
+                <div class="progress-bar" id="courseProgress" style="width: 0%; background: var(--secondary-gradient);"></div>
+            </div>
+            <div class="progress-stats">
+                <div class="progress-stat">
+                    <div class="progress-stat-value" id="completedModules">0</div>
+                    <div class="progress-stat-label">บทเรียนที่เรียนจบ</div>
+                </div>
+                <div class="progress-stat">
+                    <div class="progress-stat-value" id="totalTime">0</div>
+                    <div class="progress-stat-label">นาทีที่เรียน</div>
+                </div>
+                <div class="progress-stat">
+                    <div class="progress-stat-value" id="quizScore">-</div>
+                    <div class="progress-stat-label">คะแนนทดสอบ</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modules Section -->
+        <section class="modules-section">
+            <h2><i class="fas fa-list-ol"></i> บทเรียนทั้งหมด</h2>
+
+            <!-- Module 1 -->
+            <div class="module-card" data-module="pid_control">
+                <div class="module-content">
+                    <div class="module-number">1</div>
+                    <div class="module-info">
+                        <div class="module-title">
+                            การควบคุม PID Temperature
+                            <span class="module-type-badge theory">ทฤษฎี</span>
+                        </div>
+                        <p class="module-desc">
+                            หลักการ PID Control, การ Tuning, Auto-tune และการปรับค่าพารามิเตอร์
+                        </p>
+                        <div class="module-meta">
+                            <span><i class="fas fa-clock"></i> 60 นาที</span>
+                            <span><i class="fas fa-file-alt"></i> 8 หัวข้อ</span>
+                        </div>
+                    </div>
+                    <div class="module-action">
+                        <a href="../../datacontrol.html" class="btn btn-secondary">
+                            <i class="fas fa-play"></i> เริ่มเรียน
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module 2 -->
+            <div class="module-card" data-module="controller">
+                <div class="module-content">
+                    <div class="module-number">2</div>
+                    <div class="module-info">
+                        <div class="module-title">
+                            Temperature Controller
+                            <span class="module-type-badge practice">ปฏิบัติ</span>
+                        </div>
+                        <p class="module-desc">
+                            การใช้งาน Controller ยี่ห้อต่างๆ เช่น Toshiba V30, การตั้งค่าและการบำรุงรักษา
+                        </p>
+                        <div class="module-meta">
+                            <span><i class="fas fa-clock"></i> 50 นาที</span>
+                            <span><i class="fas fa-file-alt"></i> 6 หัวข้อ</span>
+                        </div>
+                    </div>
+                    <div class="module-action">
+                        <a href="../../toshibav30.html" class="btn btn-secondary">
+                            <i class="fas fa-play"></i> เริ่มเรียน
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module 3 -->
+            <div class="module-card" data-module="troubleshooting">
+                <div class="module-content">
+                    <div class="module-number">3</div>
+                    <div class="module-info">
+                        <div class="module-title">
+                            การวิเคราะห์และแก้ปัญหา
+                            <span class="module-type-badge practice">ปฏิบัติ</span>
+                        </div>
+                        <p class="module-desc">
+                            Troubleshooting Guide: ปัญหาที่พบบ่อย สาเหตุ และวิธีแก้ไขอย่างเป็นระบบ
+                        </p>
+                        <div class="module-meta">
+                            <span><i class="fas fa-clock"></i> 60 นาที</span>
+                            <span><i class="fas fa-file-alt"></i> 10 หัวข้อ</span>
+                        </div>
+                    </div>
+                    <div class="module-action">
+                        <a href="../../problem.html" class="btn btn-secondary">
+                            <i class="fas fa-play"></i> เริ่มเรียน
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module 4 -->
+            <div class="module-card" data-module="optimization">
+                <div class="module-content">
+                    <div class="module-number">4</div>
+                    <div class="module-info">
+                        <div class="module-title">
+                            การเพิ่มประสิทธิภาพ
+                            <span class="module-type-badge theory">ทฤษฎี</span>
+                        </div>
+                        <p class="module-desc">
+                            เทคนิคการปรับปรุงคุณภาพชิ้นงาน ลด Cycle Time และเพิ่มผลผลิต
+                        </p>
+                        <div class="module-meta">
+                            <span><i class="fas fa-clock"></i> 45 นาที</span>
+                            <span><i class="fas fa-file-alt"></i> 7 หัวข้อ</span>
+                        </div>
+                    </div>
+                    <div class="module-action">
+                        <a href="module-optimization.html" class="btn btn-secondary">
+                            <i class="fas fa-play"></i> เริ่มเรียน
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module 5 -->
+            <div class="module-card" data-module="skill_test">
+                <div class="module-content">
+                    <div class="module-number">5</div>
+                    <div class="module-info">
+                        <div class="module-title">
+                            ทดสอบทักษะการแก้ปัญหา
+                            <span class="module-type-badge simulation">จำลองสถานการณ์</span>
+                        </div>
+                        <p class="module-desc">
+                            ฝึกฝนการวิเคราะห์และแก้ไขปัญหาผ่าน Simulation ที่จำลองสถานการณ์จริง
+                        </p>
+                        <div class="module-meta">
+                            <span><i class="fas fa-clock"></i> 45 นาที</span>
+                            <span><i class="fas fa-puzzle-piece"></i> 8 สถานการณ์</span>
+                        </div>
+                    </div>
+                    <div class="module-action">
+                        <a href="../../testskill.html" class="btn btn-secondary">
+                            <i class="fas fa-play"></i> เริ่มเรียน
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module 6 - Quiz -->
+            <div class="module-card" data-module="quiz_advanced">
+                <div class="module-content">
+                    <div class="module-number">6</div>
+                    <div class="module-info">
+                        <div class="module-title">
+                            แบบทดสอบ Advanced Level
+                            <span class="module-type-badge quiz">แบบทดสอบ</span>
+                        </div>
+                        <p class="module-desc">
+                            ทดสอบความรู้ความเข้าใจทั้งหมดของ Advanced Level (ต้องผ่าน 70% จึงจะได้ประกาศนียบัตร)
+                        </p>
+                        <div class="module-meta">
+                            <span><i class="fas fa-clock"></i> 30 นาที</span>
+                            <span><i class="fas fa-question-circle"></i> 20 ข้อ</span>
+                            <span><i class="fas fa-check-circle"></i> ต้องผ่าน 70%</span>
+                        </div>
+                    </div>
+                    <div class="module-action">
+                        <a href="../../quizzes/quiz-advanced.html" class="btn btn-secondary">
+                            <i class="fas fa-pencil-alt"></i> ทำแบบทดสอบ
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Topics Grid -->
+        <section class="topics-section">
+            <h2 style="margin-bottom: 25px;">
+                <i class="fas fa-th-large" style="color: var(--secondary);"></i>
+                หัวข้อที่ครอบคลุม
+            </h2>
+            <div class="topics-grid">
+                <div class="topic-card">
+                    <i class="fas fa-thermometer-half"></i>
+                    <h4>Temperature Control</h4>
+                    <p>PID, Thermocouple K/J, Heater Zones</p>
+                </div>
+                <div class="topic-card">
+                    <i class="fas fa-bug"></i>
+                    <h4>Defect Analysis</h4>
+                    <p>Short Shot, Flash, Sink Marks, Warpage</p>
+                </div>
+                <div class="topic-card">
+                    <i class="fas fa-tools"></i>
+                    <h4>Maintenance</h4>
+                    <p>PM, Heater Test, Nozzle Cleaning</p>
+                </div>
+                <div class="topic-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h4>Process Optimization</h4>
+                    <p>Cycle Time, Parameters, Quality</p>
+                </div>
+                <div class="topic-card">
+                    <i class="fas fa-microchip"></i>
+                    <h4>Controller Setup</h4>
+                    <p>Toshiba V30, OMRON, RKC</p>
+                </div>
+                <div class="topic-card">
+                    <i class="fas fa-clipboard-check"></i>
+                    <h4>Quality Control</h4>
+                    <p>SPC, Inspection, Documentation</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <div style="display: flex; justify-content: space-between; padding: 50px 0;">
+            <a href="../basic/index.html" class="btn btn-outline">
+                <i class="fas fa-arrow-left"></i> กลับ Basic Level
+            </a>
+            <a href="../expert/index.html" class="btn btn-secondary btn-lg">
+                <i class="fas fa-arrow-right"></i> ไประดับ Expert
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            basePath: '../..',
+            storagePrefix: 'imtp_'
+        };
+    </script>
+    <script src="../../assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            updateModuleStatus();
+            updateProgress();
+        });
+
+        function updateModuleStatus() {
+            const progress = ProgressTracker.getCourseProgress('advanced');
+            const modules = document.querySelectorAll('.module-card');
+            
+            modules.forEach(card => {
+                const moduleId = card.dataset.module;
+                const moduleProgress = progress.modules[moduleId];
+                
+                if (moduleProgress?.completed) {
+                    card.classList.add('completed');
+                    const btn = card.querySelector('.btn');
+                    btn.innerHTML = '<i class="fas fa-check"></i> เรียนจบแล้ว';
+                }
+            });
+        }
+
+        function updateProgress() {
+            const progress = ProgressTracker.getCourseProgress('advanced');
+            const completedCount = Object.values(progress.modules).filter(m => m.completed).length;
+            const totalModules = 6;
+            const percentage = Math.round((completedCount / totalModules) * 100);
+            
+            document.getElementById('courseProgress').style.width = percentage + '%';
+            document.getElementById('completedModules').textContent = completedCount;
+            
+            const quizHistory = QuizTracker.getHistory('advanced_quiz');
+            if (quizHistory.length > 0) {
+                document.getElementById('quizScore').textContent = quizHistory[0].score + '%';
+            }
+        }
+    </script>
+</body>
+</html>

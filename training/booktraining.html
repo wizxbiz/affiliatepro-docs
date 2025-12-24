@@ -1,0 +1,3974 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คู่มือการอบรม - Hot Runner & PPS Process Control</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sarabun', 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: white;
+        }
+
+        /* Cover Page */
+        .cover {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            page-break-after: always;
+            padding: 40px;
+        }
+
+        .cover h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .cover .subtitle {
+            font-size: 1.5em;
+            margin-bottom: 40px;
+        }
+
+        .cover .info-box {
+            background: rgba(255,255,255,0.2);
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .cover .info-box p {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+
+        /* Table of Contents */
+        .toc {
+            page-break-after: always;
+            padding: 40px;
+        }
+
+        .toc h2 {
+            color: #2E86AB;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #2E86AB;
+            padding-bottom: 10px;
+        }
+
+        .toc-list {
+            list-style: none;
+            counter-reset: section;
+        }
+
+        .toc-item {
+            padding: 15px 0;
+            border-bottom: 1px dotted #ddd;
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.1em;
+        }
+
+        .toc-item::before {
+            counter-increment: section;
+            content: counter(section) ". ";
+            font-weight: bold;
+            color: #667eea;
+            margin-right: 10px;
+        }
+
+        /* Content Pages */
+        .page {
+            padding: 30px;
+            page-break-after: always;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            border-bottom: 3px solid #2E86AB;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        .page-header h2 {
+            color: #2E86AB;
+            font-size: 2em;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .page-header .icon {
+            width: 50px;
+            height: 50px;
+            background: #2E86AB;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+        }
+
+        .section-title {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 15px 20px;
+            margin: 20px 0 15px 0;
+            border-left: 5px solid #667eea;
+            font-weight: bold;
+            font-size: 1.3em;
+            color: #2d3748;
+        }
+
+        /* Content Elements */
+        .content-box {
+            background: #f7fafc;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .highlight-box {
+            background: #fff5f5;
+            border: 2px solid #fc8181;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+
+        .highlight-box.success {
+            background: #f0fff4;
+            border-color: #48bb78;
+        }
+
+        .highlight-box.info {
+            background: #ebf8ff;
+            border-color: #4299e1;
+        }
+
+        .highlight-box h4 {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.95em;
+        }
+
+        table thead {
+            background: linear-gradient(135deg, #2E86AB 0%, #1a5f7a 100%);
+            color: white;
+        }
+
+        table th,
+        table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        table tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        table tbody tr:hover {
+            background: #e3f2fd;
+        }
+
+        /* Lists */
+        .custom-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .custom-list li {
+            padding: 10px 0;
+            padding-left: 35px;
+            position: relative;
+        }
+
+        .custom-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #48bb78;
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+
+        .numbered-list {
+            counter-reset: item;
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .numbered-list li {
+            counter-increment: item;
+            padding: 8px 0;
+            padding-left: 40px;
+            position: relative;
+        }
+
+        .numbered-list li::before {
+            content: counter(item);
+            position: absolute;
+            left: 0;
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Process Flow */
+        .process-flow {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+            gap: 10px;
+        }
+
+        .process-step {
+            flex: 1;
+            background: white;
+            border: 2px solid #2E86AB;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+        }
+
+        .process-step::after {
+            content: '→';
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2em;
+            color: #2E86AB;
+            z-index: 1;
+        }
+
+        .process-step:last-child::after {
+            display: none;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: #2E86AB;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .step-title {
+            font-weight: bold;
+            color: #2E86AB;
+            margin-bottom: 5px;
+        }
+
+        .step-desc {
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .card h4 {
+            color: #2E86AB;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        /* Formula Box */
+        .formula-box {
+            background: #f0f8ff;
+            border: 2px solid #2E86AB;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            border-radius: 8px;
+        }
+
+        /* Diagrams */
+        .diagram-container {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        /* Page Footer */
+        .page-footer {
+            position: absolute;
+            bottom: 20px;
+            left: 30px;
+            right: 30px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            font-size: 0.9em;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Notes Section */
+        .notes-section {
+            background: #fffbeb;
+            border: 2px dashed #f59e0b;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+
+        .notes-section h4 {
+            color: #f59e0b;
+            margin-bottom: 10px;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+            }
+            
+            .page {
+                page-break-inside: avoid;
+            }
+            
+            .no-print {
+                display: none;
+            }
+        }
+
+        /* Images placeholder */
+        .image-placeholder {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, #e2e8f0 25%, transparent 25%),
+                        linear-gradient(-45deg, #e2e8f0 25%, transparent 25%),
+                        linear-gradient(45deg, transparent 75%, #e2e8f0 75%),
+                        linear-gradient(-45deg, transparent 75%, #e2e8f0 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #cbd5e0;
+            border-radius: 10px;
+            color: #718096;
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+
+        /* Workshop Exercise */
+        .workshop-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+
+        .workshop-box h4 {
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .workshop-content {
+            background: white;
+            color: #333;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        /* Two Column Layout */
+        .two-column {
+            columns: 2;
+            column-gap: 30px;
+            margin: 20px 0;
+        }
+
+        .two-column p {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- COVER PAGE -->
+    <div class="cover">
+        <h1>📚 คู่มือการอบรม</h1>
+        <div class="subtitle">
+            เทคนิคการใช้งาน Hot Runner กับพลาสติก PPS<br>
+            และการควบคุม Step Process
+        </div>
+        
+        <div style="width: 80%; height: 2px; background: rgba(255,255,255,0.5); margin: 40px 0;"></div>
+        
+        <div class="info-box">
+            <p><strong>หลักสูตร:</strong> Advanced Injection Molding Techniques</p>
+            <p><strong>ระยะเวลา:</strong> 2 วัน (16 ชั่วโมง)</p>
+            <p><strong>จัดโดย:</strong> สถาบันเรียนรู้การฉีดพลาสติก IMT THAILAND</p>
+            <p><strong>ปี:</strong> 2024</p>
+        </div>
+        
+        <div style="margin-top: 60px; font-size: 1.1em;">
+            <p>📖 Version 1.0</p>
+            <p>© IMT Thailand Training Center</p>
+        </div>
+    </div>
+
+    <!-- TABLE OF CONTENTS -->
+    <!-- TABLE OF CONTENTS - อัพเดทใหม่ -->
+    <div class="toc">
+        <h2>📑 สารบัญ</h2>
+        <ul class="toc-list">
+            <li class="toc-item">
+                <span>บทนำและข้อมูลพื้นฐาน</span>
+                <span>3</span>
+            </li>
+            <li class="toc-item">
+                <span>พลาสติก PPS: คุณสมบัติและความท้าทาย</span>
+                <span>5</span>
+            </li>
+            <li class="toc-item">
+                <span>ระบบ Hot Runner และ Open Gate</span>
+                <span>8</span>
+            </li>
+            <li class="toc-item">
+                <span>การตั้งค่าพารามิเตอร์สำหรับ PPS</span>
+                <span>11</span>
+            </li>
+            <li class="toc-item">
+                <span>การควบคุม 6 Steps Process</span>
+                <span>13</span>
+            </li>
+            <li class="toc-item">
+                <span>การกำหนดระยะการฉีด (Multi-Stage Injection)</span>
+                <span>15</span>
+            </li>
+            <li class="toc-item">
+                <span>V-P Switchover Point</span>
+                <span>17</span>
+            </li>
+            <li class="toc-item">
+                <span>Holding/Packing Pressure Profile</span>
+                <span>19</span>
+            </li>
+            <li class="toc-item">
+                <span>การบำรุงรักษาระบบ Hot Runner</span>
+                <span>21</span>
+            </li>
+            <li class="toc-item">
+                <span>การแก้ไขปัญหาจากการใช้งานจริง</span>
+                <span>23</span>
+            </li>
+            <li class="toc-item">
+                <span>การเพิ่มประสิทธิภาพการผลิต</span>
+                <span>25</span>
+            </li>
+            <li class="toc-item">
+                <span>Process Window Development</span>
+                <span>27</span>
+            </li>
+            <li class="toc-item">
+                <span>กรณีศึกษาและการประยุกต์ใช้</span>
+                <span>29</span>
+            </li>
+            <li class="toc-item">
+                <span>สรุปและแนวทางการพัฒนาต่อ</span>
+                <span>30</span>
+            </li>
+            
+            <!-- เพิ่มส่วนใหม่: การคำนวณขนาดเครื่อง -->
+            <li class="toc-item" style="margin-top: 20px; border-top: 2px solid #667eea; padding-top: 15px;">
+                <span style="color: #667eea; font-weight: bold;">ส่วนที่ 2: การเลือกและคำนวณขนาดเครื่อง</span>
+                <span></span>
+            </li>
+            <li class="toc-item">
+                <span>การคำนวณขนาดเครื่องฉีดพลาสติก</span>
+                <span>31</span>
+            </li>
+            <li class="toc-item">
+                <span>ตัวอย่างการคำนวณขนาดเครื่อง</span>
+                <span>33</span>
+            </li>
+            <li class="toc-item">
+                <span>แนวทางการเลือกเครื่องฉีด</span>
+                <span>35</span>
+            </li>
+            <li class="toc-item">
+                <span>การคำนวณ Shot Size และ Screw Diameter</span>
+                <span>37</span>
+            </li>
+            <li class="toc-item">
+                <span>การประยุกต์ใช้งานจริง</span>
+                <span>39</span>
+            </li>
+            <li class="toc-item">
+                <span>การแก้ไขปัญหาที่พบบ่อย</span>
+                <span>41</span>
+            </li>
+            <li class="toc-item">
+                <span>การวิเคราะห์ต้นทุนและ ROI</span>
+                <span>43</span>
+            </li>
+            <li class="toc-item">
+                <span>เทคโนโลยีเครื่องฉีดสมัยใหม่</span>
+                <span>45</span>
+            </li>
+        </ul>
+
+        <!-- เพิ่มสรุปรายละเอียด -->
+        <div style="margin-top: 40px; padding: 25px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; color: white;">
+            <h3 style="margin-bottom: 15px; font-size: 1.5em;">📚 โครงสร้างหลักสูตร</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px;">
+                    <h4 style="margin-bottom: 10px;">📖 ส่วนที่ 1 (หน้า 3-30)</h4>
+                    <p style="font-size: 0.9em; line-height: 1.6;">
+                        Hot Runner & PPS<br>
+                        • พื้นฐานและทฤษฎี<br>
+                        • Process Control<br>
+                        • การแก้ปัญหา<br>
+                        • กรณีศึกษา
+                    </p>
+                </div>
+                <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px;">
+                    <h4 style="margin-bottom: 10px;">🔧 ส่วนที่ 2 (หน้า 31-45)</h4>
+                    <p style="font-size: 0.9em; line-height: 1.6;">
+                        Machine Selection<br>
+                        • การคำนวณขนาด<br>
+                        • การเลือกเครื่อง<br>
+                        • วิเคราะห์ต้นทุน<br>
+                        • เทคโนโลยีใหม่
+                    </p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.15); border-radius: 8px; border-left: 4px solid white;">
+                <p style="margin: 0; font-size: 0.95em;">
+                    <strong>📊 รวมทั้งหมด:</strong> 45 หน้า | 21 บท | 15+ กรณีศึกษา | พร้อม Workshop และแบบฝึกหัด
+                </p>
+            </div>
+        </div>
+
+        <!-- คำแนะนำการใช้งาน -->
+        <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px; border-left: 5px solid #667eea;">
+            <h4 style="color: #667eea; margin-bottom: 15px;">💡 แนะนำการศึกษา</h4>
+            <ul style="margin-left: 20px; line-height: 2;">
+                <li><strong>ผู้เริ่มต้น:</strong> อ่านตามลำดับหน้า 3-45</li>
+                <li><strong>ผู้มีประสบการณ์:</strong> เลือกบทที่สนใจจากสารบัญ</li>
+                <li><strong>สำหรับผู้บริหาร:</strong> มุ่งเน้นหน้า 27, 29, 43</li>
+                <li><strong>สำหรับ Engineer:</strong> ศึกษาบทที่ 5-8 และ 14-17</li>
+                <li><strong>สำหรับ Technician:</strong> มุ่งเน้นบทที่ 9, 10, 19</li>
+            </ul>
+        </div>
+
+        <!-- Legend สี -->
+        <div style="margin-top: 25px; padding: 15px; background: white; border: 2px solid #e9ecef; border-radius: 10px;">
+            <h4 style="color: #2c3e50; margin-bottom: 15px;">🎨 คำอธิบายสัญลักษณ์</h4>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 1.5em;">📖</span>
+                    <span style="font-size: 0.9em;">ทฤษฎีและความรู้</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 1.5em;">🔬</span>
+                    <span style="font-size: 0.9em;">Workshop ปฏิบัติ</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 1.5em;">📊</span>
+                    <span style="font-size: 0.9em;">กรณีศึกษา</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 1.5em;">⚙️</span>
+                    <span style="font-size: 0.9em;">การตั้งค่าเครื่อง</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 1.5em;">🔧</span>
+                    <span style="font-size: 0.9em;">การบำรุงรักษา</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 1.5em;">💡</span>
+                    <span style="font-size: 0.9em;">เคล็ดลับ</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 1: บทนำ -->
+    <div class="page">
+        <div class="page-header">
+            <h2><span class="icon">📖</span>บทที่ 1: บทนำและข้อมูลพื้นฐาน</h2>
+        </div>
+
+        <div class="section-title">1.1 วัตถุประสงค์การอบรม</div>
+        <ul class="custom-list">
+            <li>เข้าใจคุณสมบัติพิเศษของพลาสติก PPS และความท้าทายในการฉีดขึ้นรูป</li>
+            <li>รู้จักระบบ Hot Runner แบบ Open Gate และการทำงาน</li>
+            <li>สามารถตั้งค่าพารามิเตอร์การฉีดสำหรับ PPS ได้อย่างเหมาะสม</li>
+            <li>เข้าใจและควบคุม 6 Steps Process ได้อย่างมีประสิทธิภาพ</li>
+            <li>สามารถแก้ไขปัญหาที่พบบ่อยในการผลิต</li>
+            <li>เพิ่มประสิทธิภาพและลดของเสียในกระบวนการผลิต</li>
+        </ul>
+
+        <div class="section-title">1.2 โครงสร้างหลักสูตร</div>
+        <div class="grid-2">
+            <div class="card">
+                <h4>วันที่ 1: ทฤษฎีและพื้นฐาน</h4>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>PPS Properties & Challenges</li>
+                    <li>Hot Runner System</li>
+                    <li>Parameter Setting</li>
+                    <li>6 Steps Control</li>
+                    <li>Multi-Stage Injection</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4>วันที่ 2: ปฏิบัติและกรณีศึกษา</h4>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>V-P Switchover</li>
+                    <li>Holding Pressure</li>
+                    <li>Maintenance</li>
+                    <li>Troubleshooting</li>
+                    <li>Process Optimization</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-title">1.3 กระบวนการ Injection Molding</div>
+        <div class="process-flow">
+            <div class="process-step">
+                <div class="step-number">1</div>
+                <div class="step-title">Clamping</div>
+                <div class="step-desc">ปิดแม่พิมพ์</div>
+            </div>
+            <div class="process-step">
+                <div class="step-number">2</div>
+                <div class="step-title">Injection</div>
+                <div class="step-desc">ฉีดพลาสติก</div>
+            </div>
+            <div class="process-step">
+                <div class="step-number">3</div>
+                <div class="step-title">Holding</div>
+                <div class="step-desc">รักษาแรงดัน</div>
+            </div>
+            <div class="process-step">
+                <div class="step-number">4</div>
+                <div class="step-title">Cooling</div>
+                <div class="step-desc">หล่อเย็น</div>
+            </div>
+            <div class="process-step">
+                <div class="step-number">5</div>
+                <div class="step-title">Ejection</div>
+                <div class="step-desc">ดันชิ้นงาน</div>
+            </div>
+        </div>
+
+        <div class="highlight-box info">
+            <h4>💡 สิ่งสำคัญ</h4>
+            <p>การควบคุมแต่ละขั้นตอนอย่างแม่นยำเป็นกุญแจสำคัญในการผลิตชิ้นงานคุณภาพสูง โดยเฉพาะการควบคุม <strong>Temperature, Pressure, Speed</strong> และ <strong>Time</strong> ในแต่ละ Stage</p>
+        </div>
+
+        <div class="page-footer">
+            <span>หลักสูตร: Hot Runner & PPS Process Control</span>
+            <span>หน้า 3</span>
+        </div>
+    </div>
+
+    <!-- PAGE 2: คุณสมบัติ PPS -->
+    <div class="page">
+        <div class="page-header">
+            <h2><span class="icon">🔬</span>บทที่ 2: พลาสติก PPS - คุณสมบัติและความท้าทาย</h2>
+        </div>
+
+        <div class="section-title">2.1 คุณสมบัติของ PPS (Polyphenylene Sulfide)</div>
+        
+        <div class="content-box">
+            <h4>คุณสมบัติพิเศษ:</h4>
+            <div class="grid-2">
+                <ul class="custom-list">
+                    <li>ทนความร้อนสูง (ใช้งานได้ถึง 240°C)</li>
+                    <li>ทนสารเคมีได้ดีเยี่ยม</li>
+                    <li>มีเสถียรภาพเชิงมิติสูง</li>
+                </ul>
+                <ul class="custom-list">
+                    <li>เป็นวัสดุที่ติดไฟยาก</li>
+                    <li>มีความแข็งแรงและความทนทานสูง</li>
+                    <li>สามารถใช้กับเครื่องจักรที่มีอุณหภูมิสูง</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-title">2.2 ความท้าทายในการฉีด PPS</div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 30%;">ประเด็น</th>
+                    <th style="width: 35%;">ปัญหา</th>
+                    <th style="width: 35%;">แนวทางแก้ไข</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>อุณหภูมิการประมวลผลสูง</strong></td>
+                    <td>300-340°C ทำให้ควบคุมยาก</td>
+                    <td>ใช้ Hot Runner ที่มีระบบควบคุมอุณหภูมิแม่นยำ</td>
+                </tr>
+                <tr>
+                    <td><strong>ความไวต่อความชื้น</strong></td>
+                    <td>ต้องอบแห้งอย่างเหมาะสม</td>
+                    <td>อบที่ 120-150°C เป็นเวลา 3-4 ชั่วโมง ความชื้น < 0.02%</td>
+                </tr>
+                <tr>
+                    <td><strong>แนวโน้มการเกิดรอยไหม้</strong></td>
+                    <td>หากควบคุมอุณหภูมิไม่ดี</td>
+                    <td>ควบคุม Hot Runner ไม่เกิน 340°C, ระบายอากาศที่ดี</td>
+                </tr>
+                <tr>
+                    <td><strong>ความหนืดต่ำ</strong></td>
+                    <td>ทำให้ควบคุมการไหลยาก</td>
+                    <td>ใช้ Multi-stage Injection, ควบคุมความเร็วอย่างแม่นยำ</td>
+                </tr>
+                <tr>
+                    <td><strong>ต้องการแรงดันฉีดสูง</strong></td>
+                    <td>800-1200 bar</td>
+                    <td>เลือกเครื่องจักรที่มีกำลังเพียงพอ</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="section-title">2.3 การเตรียมวัตถุดิบ PPS</div>
+        
+        <div class="numbered-list" style="margin-top: 20px;">
+            <li><strong>การอบแห้ง:</strong> อบที่ 120-150°C เป็นเวลา 3-4 ชั่วโมง</li>
+            <li><strong>การควบคุมความชื้น:</strong> รักษาความชื้นให้ต่ำกว่า 0.02%</li>
+            <li><strong>การเก็บรักษา:</strong> เก็บในถังปิดสนิทป้องกันความชื้น</li>
+            <li><strong>การชั่งวัด:</strong> ชั่งน้ำหนักวัตถุดิบอย่างแม่นยำ</li>
+        </div>
+
+        <div class="highlight-box">
+            <h4>⚠️ คำเตือน</h4>
+            <p>PPS ที่มีความชื้นสูงจะทำให้เกิดฟองอากาศ, รอยไหม้, และคุณสมบัติเชิงกลลดลง การอบแห้งอย่างเหมาะสมเป็นขั้นตอนสำคัญที่สุด!</p>
+        </div>
+
+        <div class="page-footer">
+            <span>บทที่ 2: พลาสติก PPS</span>
+            <span>หน้า 5</span>
+        </div>
+    </div>
+
+    <!-- PAGE 3: Hot Runner System -->
+    <div class="page">
+        <div class="page-header">
+            <h2><span class="icon">🔥</span>บทที่ 3: ระบบ Hot Runner และ Open Gate</h2>
+        </div>
+
+        <div class="section-title">3.1 โครงสร้างระบบ Hot Runner</div>
+        
+        <div class="image-placeholder">
+            📐 Hot Runner System Diagram
+        </div>
+
+        <div class="grid-3" style="margin-top: 20px;">
+            <div class="card">
+                <h4>1. Manifold</h4>
+                <p>ส่วนกระจายพลาสติกเหลว ควบคุมอุณหภูมิที่ 310-330°C</p>
+            </div>
+            <div class="card">
+                <h4>2. Heater</h4>
+                <p>ระบบให้ความร้อน ควบคุมอุณหภูมิแม่นยำ ±2°C</p>
+            </div>
+            <div class="card">
+                <h4>3. Thermocouple</h4>
+                <p>ตัววัดอุณหภูมิ รายงานค่าแบบ Real-time</p>
+            </div>
+            <div class="card">
+                <h4>4. Nozzle</h4>
+                <p>หัวฉีดพลาสติก อุณหภูมิ 320-340°C</p>
+            </div>
+            <div class="card">
+                <h4>5. Gate</h4>
+                <p>ทางเข้าพลาสติกสู่แม่พิมพ์ ควบคุมการไหล</p>
+            </div>
+            <div class="card">
+                <h4>6. Controller</h4>
+                <p>ระบบควบคุมอุณหภูมิ มี 4-16 โซน</p>
+            </div>
+        </div>
+
+        <div class="section-title">3.2 ระบบ Open Gate สำหรับ PPS</div>
+        
+        <div class="content-box">
+            <h4>การทำงานของ Open Gate:</h4>
+            <ol class="numbered-list">
+                <li>การให้ความร้อน: ควบคุมอุณหภูมิให้เหมาะสมกับ PPS</li>
+                <li>การฉีด: ฉีดพลาสติกเหลวผ่าน Hot Runner</li>
+                <li>Open Gate: ทางเข้าพลาสติกเปิดตลอดเวลา</li>
+<li>การหล่อเย็น: ชิ้นงานเย็นตัวในแม่พิมพ์</li>
+</ol>
+</div><div class="section-title">3.3 ข้อดีและข้อเสียของ Open Gate</div>
+    
+    <div class="grid-2">
+        <div class="highlight-box success">
+            <h4>✅ ข้อดี</h4>
+            <ul class="custom-list">
+                <li>ลดความเสี่ยงของการไหม้พลาสติก</li>
+                <li>ควบคุมการไหลของพลาสติกได้ดี</li>
+                <li>ลดแรงดันในการฉีด</li>
+                <li>เหมาะกับพลาสติกที่มีความหนืดต่ำเช่น PPS</li>
+                <li>ลดรอบเวลาการผลิต</li>
+                <li>ไม่มีรอยประตูฉีดบนชิ้นงาน</li>
+            </ul>
+        </div>
+        <div class="highlight-box">
+            <h4>⚠️ ข้อควรระวัง</h4>
+            <ul class="custom-list">
+                <li>ต้องการแรงดัน Clamping สูง</li>
+                <li>ต้องควบคุมอุณหภูมิแม่นยำมาก</li>
+                <li>ต้นทุนระบบสูงกว่า Cold Runner</li>
+                <li>การบำรุงรักษาซับซ้อนกว่า</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section-title">3.4 เปรียบเทียบ Open Gate vs Valve Gate</div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>คุณสมบัติ</th>
+                <th>Open Gate</th>
+                <th>Valve Gate</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>รอยประตูฉีด</strong></td>
+                <td>ไม่มี</td>
+                <td>มี</td>
+            </tr>
+            <tr>
+                <td><strong>ความซับซ้อน</strong></td>
+                <td>ต่ำ</td>
+                <td>สูง</td>
+            </tr>
+            <tr>
+                <td><strong>ต้นทุน</strong></td>
+                <td>ต่ำกว่า</td>
+                <td>สูงกว่า</td>
+            </tr>
+            <tr>
+                <td><strong>การบำรุงรักษา</strong></td>
+                <td>ง่าย</td>
+                <td>ซับซ้อน</td>
+            </tr>
+            <tr>
+                <td><strong>เหมาะกับ PPS</strong></td>
+                <td style="color: green; font-weight: bold;">ดีมาก ✓</td>
+                <td style="color: orange;">ดี</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="page-footer">
+        <span>บทที่ 3: Hot Runner System</span>
+        <span>หน้า 8</span>
+    </div>
+</div>
+
+<!-- PAGE 4: Parameter Setting -->
+<div class="page">
+    <div class="page-header">
+        <h2><span class="icon">⚙️</span>บทที่ 4: การตั้งค่าพารามิเตอร์สำหรับ PPS</h2>
+    </div>
+
+    <div class="section-title">4.1 พารามิเตอร์การฉีดที่สำคัญ</div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>พารามิเตอร์</th>
+                <th>ค่าที่แนะนำ</th>
+                <th>หมายเหตุ</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>อุณหภูมิฉีด</strong></td>
+                <td>300-340°C</td>
+                <td>ควบคุมให้แม่นยำ ±2°C</td>
+            </tr>
+            <tr>
+                <td><strong>อุณหภูมิ Hot Runner</strong></td>
+                <td>310-330°C (Manifold)<br>320-340°C (Nozzle)</td>
+                <td>ป้องกันการแข็งตัว</td>
+            </tr>
+            <tr>
+                <td><strong>อุณหภูมิแม่พิมพ์</strong></td>
+                <td>120-150°C</td>
+                <td>สูงกว่าพลาสติกทั่วไป</td>
+            </tr>
+            <tr>
+                <td><strong>แรงดันฉีด</strong></td>
+                <td>800-1200 bar</td>
+                <td>ปรับตามความจำเป็น</td>
+            </tr>
+            <tr>
+                <td><strong>ความเร็วฉีด</strong></td>
+                <td>กลาง-สูง</td>
+                <td>Multi-stage control</td>
+            </tr>
+            <tr>
+                <td><strong>เวลารักษาแรงดัน</strong></td>
+                <td>5-15 วินาที</td>
+                <td>ขึ้นกับความหนาชิ้นงาน</td>
+            </tr>
+            <tr>
+                <td><strong>แรงดันย้อนหลัง</strong></td>
+                <td>50-150 bar</td>
+                <td>ควบคุมคุณภาพ</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="section-title">4.2 การตั้งค่าอุณหภูมิฉีด</div>
+    
+    <div class="content-box">
+        <h4>โปรไฟล์อุณหภูมิที่เหมาะสม:</h4>
+        <div class="grid-2">
+            <div>
+                <p><strong>Barrel Temperature:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>โซน 1 (Hopper): 280-300°C</li>
+                    <li>โซน 2: 300-320°C</li>
+                    <li>โซน 3: 320-340°C</li>
+                    <li>โซน 4 (Nozzle): 320-340°C</li>
+                </ul>
+            </div>
+            <div>
+                <p><strong>Hot Runner Temperature:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Manifold: 310-330°C</li>
+                    <li>Nozzle: 320-340°C</li>
+                    <li>Gate Zone: 315-335°C</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-title">4.3 การปรับแรงดันฉีด</div>
+    
+    <div class="highlight-box info">
+        <h4>💡 หลักการปรับแรงดัน</h4>
+        <ol class="numbered-list">
+            <li>เริ่มต้นที่ 800 bar แล้วปรับตามความจำเป็น</li>
+            <li>เพิ่มแรงดันหากชิ้นงานไม่เต็ม</li>
+            <li>ลดแรงดันหากเกิดแฟลชหรือรอยไหม้</li>
+            <li>ใช้แรงดันรักษาร้อยละ 50-70 ของแรงดันฉีด</li>
+            <li>ปรับเวลารักษาแรงดันตามความหนาชิ้นงาน</li>
+        </ol>
+    </div>
+
+    <div class="section-title">4.4 การควบคุมความเร็วฉีด</div>
+    
+    <div class="content-box">
+        <h4>แนวทางการควบคุม:</h4>
+        <ul class="custom-list">
+            <li>ใช้ความเร็วกลางถึงสูงสำหรับ PPS</li>
+            <li>หลีกเลี่ยงความเร็วต่ำเกินไปที่ทำให้เกิดรอยเย็น</li>
+            <li>ใช้ Multi-stage injection สำหรับชิ้นงานซับซ้อน</li>
+            <li>ปรับความเร็วตามความหนาและขนาดชิ้นงาน</li>
+        </ul>
+    </div>
+
+    <div class="workshop-box">
+        <h4>🔬 Workshop: Parameter Setting</h4>
+        <div class="workshop-content">
+            <p><strong>แบบฝึกหัด:</strong> คำนวณพารามิเตอร์สำหรับชิ้นงาน Connector Housing</p>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li>Cavity Volume: 25 cm³</li>
+                <li>Wall Thickness: 2.5 mm</li>
+                <li>Material: PPS GF-40</li>
+            </ul>
+            <p style="margin-top: 15px;"><strong>ให้นักเรียนกำหนด:</strong></p>
+            <ul style="margin-left: 20px;">
+                <li>อุณหภูมิฉีด: _____°C</li>
+                <li>แรงดันฉีด: _____ bar</li>
+                <li>เวลารักษาแรงดัน: _____ วินาที</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <span>บทที่ 4: Parameter Setting</span>
+        <span>หน้า 11</span>
+    </div>
+</div>
+
+<!-- PAGE 5: 6 Steps Control -->
+<div class="page">
+    <div class="page-header">
+        <h2><span class="icon">📋</span>บทที่ 5: การควบคุม 6 Steps Process</h2>
+    </div>
+
+    <div class="section-title">5.1 ภาพรวม 6 ขั้นตอนหลัก</div>
+    
+    <div class="content-box">
+        <div class="grid-2">
+            <div class="card">
+                <h4>Step 1: Mold Close</h4>
+                <p><strong>การปิดแม่พิมพ์</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>ความเร็วปิด: 3 ระดับ</li>
+                    <li>แรงปิด: ตามขนาดชิ้นงาน</li>
+                    <li>Clamp Protection: ตั้งค่าเหมาะสม</li>
+                    <li>เวลา: 3-5 วินาที</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4>Step 2: Injection</h4>
+                <p><strong>การฉีดพลาสติก</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Multi-stage Speed</li>
+                    <li>Pressure Limit</li>
+                    <li>Injection Time</li>
+                    <li>เวลา: 1-3 วินาที</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4>Step 3: V-P Switch</h4>
+                <p><strong>จุดเปลี่ยน V→P</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Position: 95-98%</li>
+                    <li>Pressure: 70-80%</li>
+                    <li>Time: Optional</li>
+                    <li>Critical Point</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4>Step 4: Holding</h4>
+                <p><strong>การอัดแรงดัน</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Multi-stage Pressure</li>
+                    <li>Holding Time</li>
+                    <li>Gate Seal Point</li>
+                    <li>เวลา: 5-15 วินาที</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4>Step 5: Cooling</h4>
+                <p><strong>หล่อเย็นและเตรียมพลาสติก</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Cooling Time</li>
+                    <li>Back Pressure</li>
+                    <li>Screw Speed</li>
+                    <li>เวลา: 10-30 วินาที</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4>Step 6: Mold Open</h4>
+                <p><strong>เปิดแม่พิมพ์และดันชิ้นงาน</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Opening Speed</li>
+                    <li>Ejector Forward</li>
+                    <li>Ejector Retract</li>
+                    <li>เวลา: 3-5 วินาที</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-title">5.2 Total Cycle Time</div>
+    
+    <div class="formula-box">
+        Cycle Time = Injection + Holding + Cooling + Mold Open/Close<br>
+        = (1-3) + (5-15) + (10-30) + (6-10) = 22-58 วินาที
+    </div>
+
+    <div class="highlight-box info">
+        <h4>🎯 เป้าหมายการควบคุม</h4>
+        <ul class="custom-list">
+            <li>ลดเวลา Cycle Time โดยไม่กระทบคุณภาพ</li>
+            <li>ควบคุม Variation ให้ต่ำที่สุด (Cpk > 1.33)</li>
+            <li>ป้องกันของเสียและเพิ่มประสิทธิภาพ</li>
+            <li>รักษาความสม่ำเสมอของชิ้นงาน</li>
+        </ul>
+    </div>
+
+    <div class="page-footer">
+        <span>บทที่ 5: 6 Steps Control</span>
+        <span>หน้า 13</span>
+    </div>
+</div>
+
+<!-- PAGE 6: Multi-Stage Injection -->
+<div class="page">
+    <div class="page-header">
+        <h2><span class="icon">📊</span>บทที่ 6: การกำหนดระยะการฉีด (Multi-Stage Injection)</h2>
+    </div>
+
+    <div class="section-title">6.1 หลักการ Multi-Stage Injection</div>
+    
+    <div class="content-box">
+        <p><strong>วัตถุประสงค์:</strong> ควบคุมการไหลของพลาสติกในแต่ละช่วงเพื่อลดปัญหาและเพิ่มคุณภาพชิ้นงาน</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Stage</th>
+                <th>Position</th>
+                <th>Speed</th>
+                <th>Purpose</th>
+                <th>Key Points</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Stage 1</strong></td>
+                <td>0-30 mm</td>
+                <td>40-60%</td>
+                <td>Start-up</td>
+                <td>ป้องกัน Jetting, เริ่มช้าให้พลาสติกไหลสม่ำเสมอ</td>
+            </tr>
+            <tr>
+                <td><strong>Stage 2</strong></td>
+                <td>30-50 mm</td>
+                <td>70-80%</td>
+                <td>Main Fill</td>
+                <td>ความเร็วสูงเติม 70-80% ของชิ้นงาน</td>
+            </tr>
+            <tr>
+                <td><strong>Stage 3</strong></td>
+                <td>50-70 mm</td>
+                <td>60-70%</td>
+                <td>Flow Control</td>
+                <td>ควบคุม Flow Front ป้องกัน Air Trap</td>
+            </tr>
+            <tr>
+                <td><strong>Stage 4</strong></td>
+                <td>70-85 mm</td>
+                <td>40-50%</td>
+                <td>End Fill</td>
+                <td>ลดความเร็วเตรียม V-P Switch</td>
+            </tr>
+            <tr>
+                <td><strong>Stage 5</strong></td>
+                <td>85-95 mm</td>
+                <td>20-30%</td>
+                <td>V-P Prep</td>
+                <td>ช้ามากเพื่อการเปลี่ยนที่นุ่มนวล</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="section-title">6.2 ตัวอย่างการตั้งค่า Multi-Stage</div>
+    
+    <div class="highlight-box success">
+        <h4>✅ กรณีศึกษา: PP Container (Shot Size 100 mm)</h4>
+        <table style="width: 100%; margin-top: 10px;">
+            <tr>
+                <th>Stage</th>
+                <th>Position</th>
+                <th>Speed</th>
+                <th>Pressure Limit</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>0 → 20 mm</td>
+                <td>50%</td>
+                <td>150 bar</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>20 → 60 mm</td>
+                <td>75%</td>
+                <td>180 bar</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>60 → 80 mm</td>
+                <td>60%</td>
+                <td>160 bar</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>80 → 92 mm</td>
+                <td>40%</td>
+                <td>140 bar</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>92 → 95 mm</td>
+                <td>25%</td>
+                <td>120 bar</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section-title">6.3 ประโยชน์ของ Multi-Stage</div>
+    
+    <div class="grid-2">
+        <ul class="custom-list">
+            <li>ลดปัญหา Weld Line</li>
+            <li>ป้องกัน Air Trap</li>
+            <li>ลด Burn Mark</li>
+            <li>ควบคุมการไหลได้ดีขึ้น</li>
+        </ul>
+        <ul class="custom-list">
+            <li>เพิ่มคุณภาพผิวชิ้นงาน</li>
+            <li>ลด Sink Mark</li>
+            <li>Process Window กว้างขึ้น</li>
+            <li>Repeatability สูง</li>
+        </ul>
+    </div>
+
+    <div class="notes-section">
+        <h4>📝 บันทึกการปฏิบัติ</h4>
+        <p>ให้นักเรียนบันทึกค่า Multi-Stage Setting ที่ได้จากการทดสอบจริง:</p>
+        <textarea style="width: 100%; height: 80px; margin-top: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" placeholder="Stage | Position | Speed | Result"></textarea>
+    </div>
+
+    <div class="page-footer">
+        <span>บทที่ 6: Multi-Stage Injection</span>
+        <span>หน้า 15</span>
+    </div>
+</div>
+
+<!-- PAGE 7: V-P Switchover -->
+<div class="page">
+    <div class="page-header">
+        <h2><span class="icon">🔄</span>บทที่ 7: V-P Switchover Point</h2>
+    </div>
+
+    <div class="section-title">7.1 ความสำคัญของ V-P Switchover</div>
+    
+    <div class="content-box">
+        <p><strong>V-P Switchover</strong> คือจุดที่เปลี่ยนจากการควบคุมด้วย <strong>Velocity (ความเร็ว)</strong> ไปเป็น <strong>Pressure (แรงดัน)</strong></p>
+        <p style="margin-top: 10px;">เป็นจุดสำคัญที่สุดในกระบวนการฉีด เพราะมีผลต่อ:</p>
+        <ul class="custom-list" style="margin-top: 10px;">
+            <li>คุณภาพชิ้นงาน</li>
+            <li>น้ำหนักชิ้นงาน</li>
+            <li>มิติชิ้นงาน</li>
+            <li>ของเสีย</li>
+        </ul>
+    </div>
+
+    <div class="section-title">7.2 วิธีการกำหนด V-P Switchover</div>
+    
+    <div class="grid-3">
+        <div class="card">
+            <h4>1. By Position</h4>
+            <div class="formula-box" style="margin: 10px 0;">
+                V-P = 95-98%<br>ของ Total Stroke
+            </div>
+            <p><strong>ข้อดี:</strong></p>
+            <ul style="margin-left: 15px; font-size: 0.9em;">
+                <li>ง่ายต่อการควบคุม</li>
+                <li>ความแม่นยำสูง</li>
+                <li>Repeatability ดี</li>
+            </ul>
+            <p style="margin-top: 10px;"><strong>ใช้กับ:</strong> ชิ้นงานทั่วไป</p>
+        </div>
+        
+        <div class="card">
+            <h4>2. By Pressure</h4>
+            <div class="formula-box" style="margin: 10px 0;">
+                V-P = 70-80%<br>ของ Max Pressure
+            </div>
+            <p><strong>ข้อดี:</strong></p>
+            <ul style="margin-left: 15px; font-size: 0.9em;">
+                <li>ป้องกัน Over Pack</li>
+                <li>ลด Flash</li>
+                <li>ดีสำหรับ Thin Wall</li>
+            </ul>
+            <p style="margin-top: 10px;"><strong>ใช้กับ:</strong> ชิ้นงานซับซ้อน</p>
+        </div>
+        
+        <div class="card">
+            <h4>3. By Cavity Pressure</h4>
+            <div class="formula-box" style="margin: 10px 0;">
+                Real-time<br>via Sensor
+            </div>
+            <p><strong>ข้อดี:</strong></p>
+            <ul style="margin-left: 15px; font-size: 0.9em;">
+                <li>แม่นยำที่สุด</li>
+                <li>Real-time Control</li>
+                <li>Quality Assurance</li>
+            </ul>
+            <p style="margin-top: 10px;"><strong>ใช้กับ:</strong> Precision Parts</p>
+        </div>
+    </div>
+
+    <div class="section-title">7.3 Short Shot Study Method</div>
+    
+    <div class="workshop-box">
+        <h4>🔬 วิธีการหาจุด V-P ที่เหมาะสม</h4>
+        <div class="workshop-content">
+            <ol class="numbered-list">
+                <li>ตั้งค่า Holding Pressure = 0 (ไม่มี Packing)</li>
+                <li>ฉีดด้วย Velocity Only ที่ตำแหน่งต่างๆ</li>
+                <li>ชั่งน้ำหนักชิ้นงาน</li>
+                <li>Plot กราฟความสัมพันธ์ Position vs Weight</li>
+                <li>เลือกจุดที่ชิ้นงานเต็ม 95-98%</li>
+            </ol>
+            
+            <table style="width: 100%; margin-top: 15px;">
+                <thead>
+                    <tr>
+                        <th>Test</th>
+                        <th>V-P Position</th>
+                        <th>Part Weight (g)</th>
+                        <th>Fill %</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>30 mm</td>
+                        <td>25.8</td>
+                        <td>86%</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>25 mm</td>
+                        <td>27.4</td>
+                        <td>91%</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>20 mm</td>
+                        <td>28.5</td>
+                        <td>95%</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>15 mm</td>
+                        <td>29.2</td>
+                        <td>97%</td>
+                    </tr>
+                    <tr style="background: #d4edda;">
+                        <td>5</td>
+                        <td>10 mm</td>
+                        <td>29.5</td>
+                        <td>98% ✓</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p style="margin-top: 10px; font-weight: bold; color: green;">✓ เลือก V-P Position = 10 mm (98% fill)</p>
+        </div>
+    </div>
+
+    <div class="highlight-box">
+        <h4>⚠️ ข้อควรระวัง</h4>
+        <ul class="custom-list">
+            <li>V-P Point ต้องสม่ำเสมอทุกช็อต</li>
+            <li>หาก V-P เร็วเกินไป → ชิ้นงานไม่เต็ม</li>
+            <li>หาก V-P ช้าเกินไป → เกิด Flash, Over Pack</li>
+            <li>ตรวจสอบ Cushion ต้องมี 3-5 mm</li>
+        </ul>
+    </div>
+
+    <div class="page-footer">
+        <span>บทที่ 7: V-P Switchover</span>
+        <span>หน้า 17</span>
+    </div>
+</div>
+
+<!-- PAGE 8: Holding Pressure -->
+<div class="page">
+    <div class="page-header">
+        <h2><span class="icon">💪</span>บทที่ 8: Holding/Packing Pressure Profile</h2>
+        </div><div class="section-title">8.1 วัตถุประสงค์ของ Holding Pressure</div>
+    
+    <div class="content-box">
+        <p><strong>Holding Pressure</strong> มีหน้าที่:</p>
+        <ul class="custom-list">
+            <li>ชดเชยการหดตัวของพลาสติกขณะเย็น</li>
+            <li>รักษารูปทรงและมิติชิ้นงาน</li>
+            <li>ป้องกัน Sink Mark และ Void</li>
+            <li>ควบคุมน้ำหนักชิ้นงาน</li>
+        </ul>
+    </div>
+
+    <div class="section-title">8.2 Multi-Stage Holding Pressure Setting</div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Time (sec)</th>
+                <th>Pressure (%)</th>
+                <th>Pressure (bar)</th>
+                <th>Purpose</th>
+                <th>Effect</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>0-2</td>
+                <td>80-90%</td>
+                <td>640-720</td>
+                <td>Initial Pack</td>
+                <td>เติมเต็ม Cavity ชดเชยการหดตัวเริ่มต้น</td>
+            </tr>
+            <tr>
+                <td>2-4</td>
+                <td>70-80%</td>
+                <td>560-640</td>
+                <td>Primary Hold</td>
+                <td>รักษารูปทรงชิ้นงาน ป้องกัน Sink Mark</td>
+            </tr>
+            <tr>
+                <td>4-6</td>
+                <td>50-60%</td>
+                <td>400-480</td>
+                <td>Secondary Hold</td>
+                <td>ชดเชยการหดตัวต่อเนื่อง</td>
+            </tr>
+            <tr>
+                <td>6-8</td>
+                <td>30-40%</td>
+                <td>240-320</td>
+                <td>Gate Freeze</td>
+                <td>รักษาแรงดันจนกว่า Gate จะแข็งตัว</td>
+            </tr>
+            <tr>
+                <td>8-10</td>
+                <td>10-20%</td>
+                <td>80-160</td>
+                <td>Final Hold</td>
+                <td>ป้องกัน Back Flow</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="section-title">8.3 Gate Seal Study</div>
+    
+    <div class="highlight-box info">
+        <h4>💡 วิธีการหา Gate Seal Time</h4>
+        <p><strong>Gate Seal Time</strong> คือจุดที่น้ำหนักชิ้นงานไม่เพิ่มขึ้นแล้ว แสดงว่า Gate แข็งตัวสมบูรณ์</p>
+    </div>
+
+    <div class="workshop-box">
+        <h4>🔬 ตัวอย่างการทำ Gate Seal Study</h4>
+        <div class="workshop-content">
+            <table style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>Holding Time</th>
+                        <th>Part Weight</th>
+                        <th>ΔWeight</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2 sec</td>
+                        <td>28.5 g</td>
+                        <td>-</td>
+                        <td>Start</td>
+                    </tr>
+                    <tr>
+                        <td>4 sec</td>
+                        <td>29.2 g</td>
+                        <td>+0.7 g</td>
+                        <td>Increasing</td>
+                    </tr>
+                    <tr>
+                        <td>6 sec</td>
+                        <td>29.8 g</td>
+                        <td>+0.6 g</td>
+                        <td>Increasing</td>
+                    </tr>
+                    <tr>
+                        <td>8 sec</td>
+                        <td>30.2 g</td>
+                        <td>+0.4 g</td>
+                        <td>Slowing</td>
+                    </tr>
+                    <tr>
+                        <td>10 sec</td>
+                        <td>30.3 g</td>
+                        <td>+0.1 g</td>
+                        <td>Near Seal</td>
+                    </tr>
+                    <tr style="background: #d4edda;">
+                        <td>12 sec</td>
+                        <td>30.3 g</td>
+                        <td>0.0 g</td>
+                        <td style="color: green; font-weight: bold;">✓ Gate Sealed</td>
+                    </tr>
+                    <tr>
+                        <td>14 sec</td>
+                        <td>30.3 g</td>
+                        <td>0.0 g</td>
+                        <td>Confirmed</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p style="margin-top: 15px; font-weight: bold; color: green;">
+                ✓ Gate Seal Time = 10-12 วินาที<br>
+                ✓ ตั้งค่า Holding Time = 12 วินาที (ปลอดภัย)
+            </p>
+        </div>
+    </div>
+
+    <div class="section-title">8.4 การปรับ Holding Pressure Profile</div>
+    
+    <div class="grid-2">
+        <div class="highlight-box">
+            <h4>❌ ปัญหา: Sink Mark</h4>
+            <p><strong>แนวทางแก้ไข:</strong></p>
+            <ul class="custom-list">
+                <li>เพิ่ม Holding Pressure</li>
+                <li>เพิ่ม Holding Time</li>
+                <li>ลดอุณหภูมิหลอมเหลว</li>
+                <li>เพิ่มอุณหภูมิแม่พิมพ์</li>
+            </ul>
+        </div>
+        <div class="highlight-box">
+            <h4>❌ ปัญหา: Flash</h4>
+            <p><strong>แนวทางแก้ไข:</strong></p>
+            <ul class="custom-list">
+                <li>ลด Holding Pressure</li>
+                <li>ลด Holding Time</li>
+                <li>เพิ่มแรงยึดแม่พิมพ์</li>
+                <li>ตรวจสอบแม่พิมพ์สึกหรอ</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="highlight-box success">
+        <h4>✅ หลักสำคัญ</h4>
+        <p>Holding Time ต้อง > Gate Seal Time อย่างน้อย 20% เพื่อความปลอดภัย</p>
+        <div class="formula-box" style="margin-top: 10px;">
+            Optimal Holding Time = Gate Seal Time × 1.2
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <span>บทที่ 8: Holding Pressure</span>
+        <span>หน้า 19</span>
+    </div>
+</div>
+
+<!-- PAGE 9: Maintenance -->
+<div class="page">
+    <div class="page-header">
+        <h2><span class="icon">🔧</span>บทที่ 9: การบำรุงรักษาระบบ Hot Runner</h2>
+    </div>
+
+    <div class="section-title">9.1 การทำความสะอาดระบบ</div>
+    
+    <div class="content-box">
+        <h4>ความถี่ในการทำความสะอาด:</h4>
+        <ul class="custom-list">
+            <li>ใช้สารทำความสะอาดที่เหมาะสมกับ PPS</li>
+            <li>ทำความสะอาดทุก 500-1000 ชอตการผลิต</li>
+            <li>ใช้พลาสติก Purging Compound คุณภาพดี</li>
+            <li>ทำความสะอาดตอนระบบยังร้อน</li>
+            <li>ตรวจสอบช่องทางการไหลหลังทำความสะอาด</li>
+            <li>บันทึกการทำความสะอาดทุกครั้ง</li>
+        </ul>
+    </div>
+
+    <div class="section-title">9.2 การบำรุงรักษาเชิงป้องกัน</div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>งานบำรุงรักษา</th>
+                <th>ความถี่</th>
+                <th>ความสำคัญ</th>
+                <th>เวลาที่ใช้</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>ตรวจสอบอุณหภูมิทุกโซน</td>
+                <td>รายวัน</td>
+                <td style="color: red; font-weight: bold;">สูง</td>
+                <td>5 นาที</td>
+            </tr>
+            <tr>
+                <td>ตรวจสอบการรั่วไหล</td>
+                <td>รายสัปดาห์</td>
+                <td style="color: red; font-weight: bold;">สูง</td>
+                <td>10 นาที</td>
+            </tr>
+            <tr>
+                <td>ทำความสะอาดระบบ</td>
+                <td>ทุก 500-1000 shot</td>
+                <td style="color: orange; font-weight: bold;">สูงมาก</td>
+                <td>30 นาที</td>
+            </tr>
+            <tr>
+                <td>ตรวจสอบ Heater</td>
+                <td>รายเดือน</td>
+                <td style="color: red; font-weight: bold;">สูง</td>
+                <td>15 นาที</td>
+            </tr>
+            <tr>
+                <td>เปลี่ยนหัวฉีด</td>
+                <td>ตามความจำเป็น</td>
+                <td style="color: green;">ปานกลาง</td>
+                <td>45 นาที</td>
+            </tr>
+            <tr>
+                <td>ตรวจสอบ Thermocouple</td>
+                <td>รายเดือน</td>
+                <td style="color: red; font-weight: bold;">สูง</td>
+                <td>20 นาที</td>
+            </tr>
+            <tr>
+                <td>เปลี่ยนปะเก็น</td>
+                <td>ทุก 6 เดือน</td>
+                <td style="color: green;">ปานกลาง</td>
+                <td>60 นาที</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="section-title">9.3 การเปลี่ยนหัวฉีด (Nozzle)</div>
+    
+    <div class="numbered-list">
+        <li>ปิดระบบและตัดไฟทั้งหมด</li>
+        <li>รอให้ระบบเย็นลงที่อุณหภูมิปลอดภัย (< 100°C)</li>
+        <li>ถอดหัวฉีดเก่าด้วยเครื่องมือที่เหมาะสม</li>
+        <li>ทำความสะอาดพื้นผิวติดตั้ง</li>
+        <li>ติดตั้งหัวฉีดใหม่พร้อมปะเก็นใหม่</li>
+        <li>ตรวจสอบการติดตั้งและทดสอบระบบ</li>
+    </div>
+
+    <div class="section-title">9.4 การตรวจสอบและเปลี่ยน Heater</div>
+    
+    <div class="highlight-box info">
+        <h4>💡 วิธีตรวจสอบ Heater Band</h4>
+        <ul class="custom-list">
+            <li>ตรวจสอบค่าความต้านทานด้วย Multimeter</li>
+            <li>ค่าความต้านทานปกติ: 20-50 Ohms</li>
+            <li>หากค่าผิดปกติให้เปลี่ยนทันที</li>
+            <li>ใช้ Heater ที่มีคุณสมบัติตรงตามข้อกำหนด</li>
+            <li>ติดตั้งให้แน่นและสัมผัสดี</li>
+        </ul>
+    </div>
+
+    <div class="section-title">9.5 การตรวจสอบ Thermocouple</div>
+    
+    <div class="content-box">
+        <h4>เทคนิคการตรวจสอบ:</h4>
+        <ul class="custom-list">
+            <li>ตรวจสอบการเชื่อมต่อสายสัญญาณ</li>
+            <li>ทดสอบค่าอุณหภูมิกับอุปกรณ์มาตรฐาน</li>
+            <li>ความผิดพลาดที่ยอมรับได้: ±5°C</li>
+            <li>เปลี่ยนหากพบค่าผิดปกติ</li>
+            <li>ใช้ Thermocouple Type K สำหรับ Hot Runner</li>
+        </ul>
+    </div>
+
+    <div class="workshop-box">
+        <h4>📋 Maintenance Checklist</h4>
+        <div class="workshop-content">
+            <table style="width: 100%;">
+                <tr>
+                    <th style="width: 50%;">รายการตรวจสอบ</th>
+                    <th style="width: 20%;">สถานะ</th>
+                    <th style="width: 30%;">หมายเหตุ</th>
+                </tr>
+                <tr>
+                    <td>□ อุณหภูมิทุกโซนปกติ</td>
+                    <td>___</td>
+                    <td>___________</td>
+                </tr>
+                <tr>
+                    <td>□ ไม่มีการรั่วไหล</td>
+                    <td>___</td>
+                    <td>___________</td>
+                </tr>
+                <tr>
+                    <td>□ Heater ทำงานปกติ</td>
+                    <td>___</td>
+                    <td>___________</td>
+                </tr>
+                <tr>
+                    <td>□ Thermocouple แม่นยำ</td>
+                    <td>___</td>
+                    <td>___________</td>
+                </tr>
+                <tr>
+                    <td>□ หัวฉีดสะอาด</td>
+                    <td>___</td>
+                    <td>___________</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <span>บทที่ 9: การบำรุงรักษา</span>
+        <span>หน้า 21</span>
+    </div>
+</div>
+
+<!-- PAGE 10: Troubleshooting -->
+<div class="page">
+    <div class="page-header">
+        <h2><span class="icon">🔍</span>บทที่ 10: การแก้ไขปัญหาจากการใช้งานจริง</h2>
+    </div>
+
+    <div class="section-title">10.1 ปัญหาที่พบบ่อย</div>
+    
+    <div class="highlight-box">
+        <h4>❌ ปัญหา 1: เกิดรอยไหม้บนชิ้นงาน (Burn Marks)</h4>
+        <p><strong>สาเหตุที่เป็นไปได้:</strong></p>
+        <ul style="margin-left: 20px;">
+            <li>อุณหภูมิ Hot Runner สูงเกินไป</li>
+            <li>พลาสติกค้างในระบบนานเกินไป</li>
+            <li>การระบายอากาศในแม่พิมพ์ไม่ดี</li>
+            <li>ความเร็วฉีดสูงเกินไป</li>
+        </ul>
+        <p style="margin-top: 10px;"><strong>✓ วิธีแก้ไข:</strong></p>
+        <ul class="custom-list" style="margin-left: 20px;">
+            <li>ลดอุณหภูมิ Hot Runner 5-10°C</li>
+            <li>ทำความสะอาดระบบ</li>
+            <li>เพิ่มช่องระบายอากาศ</li>
+            <li>ลดความเร็วฉีด</li>
+        </ul>
+    </div>
+
+    <div class="highlight-box">
+        <h4>❌ ปัญหา 2: ชิ้นงานไม่เต็ม (Short Shot)</h4>
+        <p><strong>สาเหตุที่เป็นไปได้:</strong></p>
+        <ul style="margin-left: 20px;">
+            <li>แรงดันฉีดไม่เพียงพอ</li>
+            <li>อุณหภูมิต่ำเกินไป</li>
+            <li>ปริมาณพลาสติกไม่พอ</li>
+            <li>ช่องทางการไหลอุดตัน</li>
+        </ul>
+        <p style="margin-top: 10px;"><strong>✓ วิธีแก้ไข:</strong></p>
+        <ul class="custom-list" style="margin-left: 20px;">
+            <li>เพิ่มแรงดันฉีด</li>
+            <li>เพิ่มอุณหภูมิ</li>
+            <li>เพิ่มปริมาณฉีด</li>
+            <li>ทำความสะอาดระบบ</li>
+        </ul>
+    </div>
+
+    <div class="highlight-box">
+        <h4>❌ ปัญหา 3: เกิดแฟลช (Flash/Burr)</h4>
+        <p><strong>สาเหตุที่เป็นไปได้:</strong></p>
+        <ul style="margin-left: 20px;">
+            <li>แรงดันฉีดสูงเกินไป</li>
+            <li>แรงยึดแม่พิมพ์ไม่เพียงพอ</li>
+            <li>แม่พิมพ์สึกหรอ</li>
+            <li>อุณหภูมิพลาสติกสูงเกินไป</li>
+        </ul>
+        <p style="margin-top: 10px;"><strong>✓ วิธีแก้ไข:</strong></p>
+        <ul class="custom-list" style="margin-left: 20px;">
+            <li>ลดแรงดันฉีด</li>
+            <li>เพิ่มแรงยึดแม่พิมพ์</li>
+            <li>ซ่อมแซมแม่พิมพ์</li>
+            <li>ลดอุณหภูมิ</li>
+        </ul>
+    </div>
+
+    <div class="page-footer">
+        <span>บทที่ 10: Troubleshooting</span>
+        <span>หน้า 23</span>
+    </div>
+</div>
+
+<!-- Continuing with more pages... -->
+
+<!-- PAGE 11: Process Optimization -->
+<div class="page">
+    <div class="page-header">
+        <h2><span class="icon">📈</span>บทที่ 11: การเพิ่มประสิทธิภาพการผลิต</h2>
+    </div>
+
+    <div class="section-title">11.1 การลดรอบเวลาการผลิต (Cycle Time Reduction)</div>
+    
+    <div class="content-box">
+        <h4>กลยุทธ์การลดเวลา:</h4>
+        <ul class="custom-list">
+            <li>ปรับอุณหภูมิแม่พิมพ์ให้เหมาะสม</li>
+            <li>ใช้ระบบหล่อเย็นที่มีประสิทธิภาพ</li>
+            <li>ปรับพารามิเตอร์การฉีดให้เหมาะสม</li>
+            <li>ลดเวลารักษาแรงดันโดยไม่กระทบคุณภาพ</li>
+            <li>ใช้ระบบอัตโนมัติในการหยิบจับชิ้นงาน</li>
+            <li>วางแผนการผลิตอย่างมีประสิทธิภาพ</li>
+        </ul>
+    </div>
+
+    <div class="section-title">11.2 การลดของเสีย (Scrap Reduction)</div>
+    
+    <div class="grid-2">
+        <div class="card">
+            <h4>เป้าหมายของเสีย</h4>
+            <div class="formula-box" style="margin: 10px 0;">
+                Target Scrap < 2%
+            </div>
+            <ul style="margin-left: 15px;">
+                <li>วิเคราะห์สาเหตุของเสีย</li>
+                <li>ตั้งเป้าลด 50%</li>
+                <li>ปรับกระบวนการผลิต</li>
+                <li>ติดตามผลอย่างต่อเนื่อง</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>วิธีการลดของเสีย</h4>
+            <ul class="custom-list">
+                <li>ควบคุมพารามิเตอร์ให้คงที่</li>
+                <li>ตรวจสอบวัตถุดิบอย่างสม่ำเสมอ</li>
+                <li>บำรุงรักษาเครื่องจักรเป็นประจำ</li>
+                <li>ฝึกอบรมพนักงานอย่างต่อเนื่อง</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section-title">11.3 การเพิ่มคุณภาพชิ้นงาน</div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>แนวทาง</th>
+                <th>วิธีการ</th>
+                <th>ผลลัพธ์</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Process Control</strong></td>
+                <td>ควบคุมพารามิเตอร์ให้คงที่</td>
+                <td>Cpk > 1.33</td>
+            </tr>
+            <tr>
+                <td><strong>Material Control</strong></td>
+                <td>ตรวจสอบวัตถุดิบอย่างสม่ำเสมอ</td>
+                <td>ลดความแปรปรวน</td>
+            </tr>
+            <tr>
+                <td><strong>Equipment Maintenance</strong></td>
+                <td>บำรุงรักษาเชิงป้องกัน</td>
+                <td>ลด Downtime</td>
+            </tr>
+            <tr>
+                <td><strong>Operator Training</strong></td>
+                <td>ฝึกอบรมพนักงานอย่างต่อเนื่อง</td>
+                <td>เพิ่มทักษะ</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="page-footer">
+        <span>บทที่ 11: Process Optimization</span>
+        <span>หน้า 25</span>
+    </div>
+</div>
+
+<!-- PAGE 12: Process Window -->
+<div class="page">
+    <div class="page-header">
+        <h2><span class="icon">📊</span>บทที่ 12: Process Window Development</h2>
+    </div>
+
+    <div class="section-title">12.1 ความหมายของ Process Window</div>
+    
+    <div class="content-box">
+        <p><strong>Process Window</strong> คือช่วงของพารามิเตอร์การผลิตที่สามารถผลิตชิ้นงานคุณภาพดีได้</p>
+        <p style="margin-top: 10px;"><strong>ยิ่ง Process Window กว้าง = ยิ่งควบคุมง่าย</strong></p>
+    </div>
+
+    <div class="section-title">12.2 การสร้าง Process Window</div>
+    
+    <div class="numbered-list">
+        <li>กำหนดพารามิเตอร์ที่ต้องการศึกษา (เช่น Injection Speed, Pack Pressure)</li>
+        <li>กำหนดช่วงค่าสูงสุด-ต่ำสุด</li>
+        <li>ทำการทดสอบแบบ DOE (Design of Experiments)</li>
+        <li>บันทึกผลลัพธ์และข้อบกพร่อง</li>
+        <li>Plot กราฟ Process Window</li>
+        <li>เลือกจุด Optimal ที่อยู่ตรงกลาง Window</li>
+    </div>
+
+    <div class="section-title">12.3 DOE Setup (2³ Factorial)</div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Factor</th>
+                <th>Low (-)</th>
+                <th>Center (0)</th>
+                <th>High (+)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>A: Melt Temp</strong></td>
+                <td>240°C</td>
+                <td>250°C</td>
+                <td>260°C</td>
+            </tr>
+            <tr>
+                <td><strong>B: Injection Speed</strong></td>
+                <td>50 mm/s</td>
+                <td>65 mm/s</td>
+                <td>80 mm/s</td>
+            </tr>
+            <tr>
+                <td><strong>C: Pack Pressure</strong></td>
+                <td>60 bar</td>
+                <td>75 bar</td>
+                <td>90 bar</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="section-title">12.4 Process Capability (Cpk)</div>
+    
+    <div class="formula-box">
+        Cpk = Min[(USL-μ)/3σ, (μ-LSL)/3σ]
+    </div>
+
+    <div class="grid-2" style="margin-top: 20px;">
+        <div class="card">
+            <h4>เกณฑ์ Cpk</h4>
+            <ul style="margin-left: 15px;">
+                <li>Cpk > 1.67: Excellent</li>
+                <li>Cpk > 1.33: Good</li>
+                <liCpk > 1.00: Acceptable</li>
+<li>Cpk < 1.00: Need Improvement</li>
+</ul>
+</div>
+<div class="card">
+<h4>ความหมาย</h4>
+<p><strong>Cpk สูง</strong> = กระบวนการมีความสามารถสูง สามารถผลิตได้ภายในขอบเขตที่กำหนด</p>
+<p style="margin-top: 10px;"><strong>เป้าหมาย:</strong> Cpk > 1.33</p>
+</div>
+</div><div class="page-footer">
+        <span>บทที่ 12: Process Window</span>
+        <span>หน้า 27</span>
+    </div>
+</div>
+
+<!-- PAGE 13: Case Studies -->
+<div class="page">
+    <div class="page-header">
+        <h2><span class="icon">📚</span>บทที่ 13: กรณีศึกษาและการประยุกต์ใช้</h2>
+    </div>
+
+    <div class="section-title">13.1 กรณีศึกษา 1: อุตสาหกรรมยานยนต์</div>
+    
+    <div class="highlight-box success">
+        <h4>✅ Connector Housing สำหรับระบบไฟฟ้า</h4>
+        <p><strong>ข้อมูลชิ้นงาน:</strong></p>
+        <ul style="margin-left: 20px; margin-top: 10px;">
+            <li>Cavity Volume: 45 cm³</li>
+            <li>Shot Size: 52 cm³ (with runner)</li>
+            <li>Material: PPS GF-40</li>
+            <li>Wall Thickness: 2.0-2.5 mm</li>
+            <li>Tolerance: ±0.1 mm</li>
+        </ul>
+        
+        <p style="margin-top: 15px;"><strong>ปัญหาเดิม:</strong></p>
+        <ul style="margin-left: 20px;">
+            <li>ของเสีย 8%</li>
+            <li>รอบเวลาการผลิต 45 วินาที</li>
+            <li>Weld Line ที่เห็นได้ชัด</li>
+        </ul>
+        
+        <p style="margin-top: 15px;"><strong>การแก้ไข:</strong></p>
+        <ul class="custom-list" style="margin-left: 20px;">
+            <li>ปรับระบบ Hot Runner และพารามิเตอร์</li>
+            <li>ใช้ Multi-stage Injection 5 ขั้นตอน</li>
+            <li>หาจุด V-P ที่เหมาะสมด้วย Short Shot Study</li>
+            <li>ออกแบบ Holding Profile ใหม่</li>
+        </ul>
+        
+        <p style="margin-top: 15px;"><strong>ผลลัพธ์:</strong></p>
+        <ul style="margin-left: 20px; color: green; font-weight: bold;">
+            <li>✓ ของเสียลดเหลือ 2%</li>
+            <li>✓ รอบเวลา 32 วินาที</li>
+            <li>✓ ประหยัด 2.5 ล้านบาท/ปี</li>
+            <li>✓ ROI: 18 เดือน</li>
+        </ul>
+    </div>
+
+    <div class="section-title">13.2 กรณีศึกษา 2: อุตสาหกรรมอิเล็กทรอนิกส์</div>
+    
+    <div class="highlight-box success">
+        <h4>✅ Electronic Connector ขนาดเล็ก</h4>
+        <p><strong>ความท้าทาย:</strong> ความแม่นยำสูง, ผนังบาง 0.8mm</p>
+        
+        <p style="margin-top: 15px;"><strong>โซลูชัน:</strong></p>
+        <ul class="custom-list" style="margin-left: 20px;">
+            <li>ใช้ Open Gate 8 จุด</li>
+            <li>ควบคุมอุณหภูมิแม่นยำ ±1°C</li>
+            <li>ใช้ Cavity Pressure Sensor</li>
+            <li>Decoupled Molding Technique</li>
+        </ul>
+        
+        <p style="margin-top: 15px;"><strong>ผลลัพธ์:</strong></p>
+        <ul style="margin-left: 20px; color: green; font-weight: bold;">
+            <li>✓ คุณภาพเพิ่มขึ้น 35%</li>
+            <li>✓ ลดเวลาผลิต 20%</li>
+            <li>✓ Production Rate: 1500 ชิ้น/ชม.</li>
+            <li>✓ ผลตอบแทน: 1.8 ล้านบาท/ปี</li>
+        </ul>
+    </div>
+
+    <div class="section-title">13.3 กรณีศึกษา 3: เครื่องใช้ไฟฟ้า</div>
+    
+    <div class="highlight-box success">
+        <h4>✅ Switch Housing สำหรับเครื่องใช้ไฟฟ้า</h4>
+        <p><strong>ข้อกำหนด:</strong> ทนความร้อน 200°C, ทนสารเคมี, ผ่านมาตรฐาน UL94 V-0</p>
+        
+        <p style="margin-top: 15px;"><strong>การออกแบบ:</strong></p>
+        <ul class="custom-list" style="margin-left: 20px;">
+            <li>ใช้ Hot Runner 4 โซน</li>
+            <li>Open Gate Design</li>
+            <li>เพิ่มช่องระบายอากาศ</li>
+        </ul>
+        
+        <p style="margin-top: 15px;"><strong>ผลการทดสอบ:</strong></p>
+        <ul style="margin-left: 20px; color: green; font-weight: bold;">
+            <li>✓ ผ่านมาตรฐาน UL94 V-0</li>
+            <li>✓ ผลิตได้ 50,000 ชิ้น/วัน</li>
+            <li>✓ ความพึงพอใจลูกค้า 40% เพิ่มขึ้น</li>
+        </ul>
+    </div>
+
+    <div class="page-footer">
+        <span>บทที่ 13: กรณีศึกษา</span>
+        <span>หน้า 29</span>
+    </div>
+</div>
+<!-- PAGE 14: Machine Sizing (เพิ่มหลังหน้า 30) -->
+    <div class="page">
+        <div class="page-header">
+            <h2><span class="icon">🏭</span>บทที่ 14: การคำนวณขนาดเครื่องฉีดพลาสติก</h2>
+        </div>
+
+        <div class="section-title">14.1 ความสำคัญของการเลือกขนาดเครื่อง</div>
+        
+        <div class="content-box">
+            <p>การเลือกขนาดเครื่องฉีดที่เหมาะสมเป็นปัจจัยสำคัญที่ส่งผลต่อ:</p>
+            <ul class="custom-list">
+                <li>คุณภาพชิ้นงาน</li>
+                <li>ต้นทุนการผลิต</li>
+                <li>ประสิทธิภาพการผลิต</li>
+                <li>อายุการใช้งานแม่พิมพ์</li>
+                <li>การประหยัดพลังงาน</li>
+            </ul>
+        </div>
+
+        <div class="section-title">14.2 พื้นฐานการคำนวณ Clamping Force</div>
+        
+        <div class="highlight-box info">
+            <h4>💡 สูตรการคำนวณแรงยึดแม่พิมพ์</h4>
+            <div class="formula-box">
+                Clamping Force (ton) = Projected Area (cm²) × Cavity Pressure (kg/cm²) ÷ 1000
+            </div>
+            <p style="margin-top: 15px;"><strong>โดยที่:</strong></p>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>Projected Area</strong> = พื้นที่หน้าตัดแม่พิมพ์ (รวมชิ้นงาน + runner)</li>
+                <li><strong>Cavity Pressure</strong> = แรงดันในโพรง (ขึ้นกับชนิดพลาสติก)</li>
+            </ul>
+        </div>
+
+        <div class="section-title">14.3 วิธีการคำนวณพื้นที่การฉายภาพ (Projected Area)</div>
+        
+        <div class="grid-2">
+            <div class="card">
+                <h4>วิธีที่ 1: คำนวณจากขนาดชิ้นงาน</h4>
+                <div class="formula-box" style="font-size: 0.9em;">
+                    Projected Area =<br>
+                    Length × Width × Cavity Count
+                </div>
+                <p style="margin-top: 10px;"><strong>ตัวอย่าง:</strong></p>
+                <ul style="margin-left: 15px; font-size: 0.9em;">
+                    <li>ความยาว: 150 mm</li>
+                    <li>ความกว้าง: 100 mm</li>
+                    <li>จำนวน Cavity: 4</li>
+                    <li>Projected Area = 150 × 100 × 4 = 60,000 mm²</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h4>วิธีที่ 2: วัดจากแบบ 3D/2D</h4>
+                <div class="formula-box" style="font-size: 0.9em;">
+                    Projected Area =<br>
+                    Part Area + Runner + Other
+                </div>
+                <p style="margin-top: 10px;"><strong>รวมพื้นที่:</strong></p>
+                <ul style="margin-left: 15px; font-size: 0.9em;">
+                    <li>พื้นที่ชิ้นงาน</li>
+                    <li>ระบบรันเนอร์</li>
+                    <li>พื้นที่อื่นๆ ที่แรงดันกระทำ</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-title">14.4 ค่าความดันฉีดสำหรับพลาสติกแต่ละชนิด</div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>ชนิดพลาสติก</th>
+                    <th>ชื่อเต็ม</th>
+                    <th>ความดัน (kg/cm²)</th>
+                    <th>ความดัน (bar)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>PE</strong></td>
+                    <td>Polyethylene</td>
+                    <td>200-350</td>
+                    <td>200-500</td>
+                </tr>
+                <tr>
+                    <td><strong>PP</strong></td>
+                    <td>Polypropylene</td>
+                    <td>250-400</td>
+                    <td>300-600</td>
+                </tr>
+                <tr>
+                    <td><strong>PS</strong></td>
+                    <td>Polystyrene</td>
+                    <td>300-450</td>
+                    <td>400-700</td>
+                </tr>
+                <tr>
+                    <td><strong>ABS</strong></td>
+                    <td>Acrylonitrile Butadiene Styrene</td>
+                    <td>350-500</td>
+                    <td>500-800</td>
+                </tr>
+                <tr>
+                    <td><strong>PMMA</strong></td>
+                    <td>Acrylic</td>
+                    <td>350-550</td>
+                    <td>500-800</td>
+                </tr>
+                <tr>
+                    <td><strong>PC</strong></td>
+                    <td>Polycarbonate</td>
+                    <td>500-700</td>
+                    <td>700-1000</td>
+                </tr>
+                <tr>
+                    <td><strong>PA</strong></td>
+                    <td>Nylon</td>
+                    <td>600-850</td>
+                    <td>800-1200</td>
+                </tr>
+                <tr>
+                    <td><strong>PVC</strong></td>
+                    <td>Polyvinyl Chloride</td>
+                    <td>450-650</td>
+                    <td>600-900</td>
+                </tr>
+                <tr>
+                    <td><strong>POM</strong></td>
+                    <td>Acetal</td>
+                    <td>450-650</td>
+                    <td>600-900</td>
+                </tr>
+                <tr>
+                    <td><strong>PBT/PET</strong></td>
+                    <td>Polyester</td>
+                    <td>500-700</td>
+                    <td>700-1000</td>
+                </tr>
+                <tr>
+                    <td><strong>PPS</strong></td>
+                    <td>Polyphenylene Sulfide</td>
+                    <td>500-700</td>
+                    <td>700-1000</td>
+                </tr>
+                <tr>
+                    <td><strong>PEEK</strong></td>
+                    <td>Polyetheretherketone</td>
+                    <td>600-850</td>
+                    <td>800-1200</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="page-footer">
+            <span>บทที่ 14: การคำนวณขนาดเครื่อง</span>
+            <span>หน้า 31</span>
+        </div>
+    </div>
+
+    <!-- PAGE 15: Calculation Examples -->
+    <div class="page">
+        <div class="page-header">
+            <h2><span class="icon">📐</span>บทที่ 15: ตัวอย่างการคำนวณขนาดเครื่อง</h2>
+        </div>
+
+        <div class="section-title">15.1 ตัวอย่างที่ 1: ชิ้นงานขนาดเล็ก (ABS)</div>
+        
+        <div class="highlight-box success">
+            <h4>📋 ข้อมูลชิ้นงาน</h4>
+            <ul style="margin-left: 20px;">
+                <li>ชิ้นงาน: กล่องพลาสติก ABS</li>
+                <li>ขนาด: 120 mm × 80 mm</li>
+                <li>จำนวน Cavity: 2</li>
+                <li>วัสดุ: ABS (ความดัน 500 kg/cm²)</li>
+            </ul>
+            
+            <p style="margin-top: 15px;"><strong>🔢 การคำนวณ:</strong></p>
+            <div class="formula-box" style="background: white; color: #333; text-align: left;">
+                <strong>1. คำนวณ Projected Area:</strong><br>
+                &nbsp;&nbsp;Area = 120 × 80 × 2 = 19,200 mm²<br>
+                &nbsp;&nbsp;Area = 192 cm²<br><br>
+                
+                <strong>2. คำนวณ Clamping Force:</strong><br>
+                &nbsp;&nbsp;Force = 192 × 500 ÷ 1000<br>
+                &nbsp;&nbsp;Force = 96 ton<br><br>
+                
+                <strong>3. เพิ่ม Safety Factor (×1.2):</strong><br>
+                &nbsp;&nbsp;Recommended = 96 × 1.2 = 115.2 ton
+            </div>
+            
+            <p style="margin-top: 15px; color: green; font-weight: bold;">
+                ✅ แนะนำเครื่องฉีด: <u>120-150 ton</u>
+            </p>
+        </div>
+
+        <div class="section-title">15.2 ตัวอย่างที่ 2: ชิ้นงานขนาดกลาง (PP)</div>
+        
+        <div class="highlight-box success">
+            <h4>📋 ข้อมูลชิ้นงาน</h4>
+            <ul style="margin-left: 20px;">
+                <li>ชิ้นงาน: ฝาถัง PP</li>
+                <li>ขนาด: 250 mm × 250 mm</li>
+                <li>จำนวน Cavity: 1</li>
+                <li>วัสดุ: PP (ความดัน 350 kg/cm²)</li>
+            </ul>
+            
+            <p style="margin-top: 15px;"><strong>🔢 การคำนวณ:</strong></p>
+            <div class="formula-box" style="background: white; color: #333; text-align: left;">
+                <strong>1. คำนวณ Projected Area:</strong><br>
+                &nbsp;&nbsp;Area = 250 × 250 × 1 = 62,500 mm²<br>
+                &nbsp;&nbsp;Area = 625 cm²<br><br>
+                
+                <strong>2. คำนวณ Clamping Force:</strong><br>
+                &nbsp;&nbsp;Force = 625 × 350 ÷ 1000<br>
+                &nbsp;&nbsp;Force = 218.75 ton<br><br>
+                
+                <strong>3. เพิ่ม Safety Factor (×1.2):</strong><br>
+                &nbsp;&nbsp;Recommended = 218.75 × 1.2 = 262.5 ton
+            </div>
+            
+            <p style="margin-top: 15px; color: green; font-weight: bold;">
+                ✅ แนะนำเครื่องฉีด: <u>280-320 ton</u>
+            </p>
+        </div>
+
+        <div class="section-title">15.3 ตัวอย่างที่ 3: ชิ้นงาน Multi-Cavity (PS)</div>
+        
+        <div class="highlight-box success">
+            <h4>📋 ข้อมูลชิ้นงาน</h4>
+            <ul style="margin-left: 20px;">
+                <li>ชิ้นงาน: ช้อนพลาสติก PS</li>
+                <li>ขนาด: 160 mm × 40 mm</li>
+                <li>จำนวน Cavity: 8</li>
+                <li>วัสดุ: PS (ความดัน 400 kg/cm²)</li>
+            </ul>
+            
+            <p style="margin-top: 15px;"><strong>🔢 การคำนวณ:</strong></p>
+            <div class="formula-box" style="background: white; color: #333; text-align: left;">
+                <strong>1. คำนวณ Projected Area:</strong><br>
+                &nbsp;&nbsp;Area per cavity = 160 × 40 = 6,400 mm²<br>
+                &nbsp;&nbsp;Total Area = 6,400 × 8 = 51,200 mm²<br>
+                &nbsp;&nbsp;Area = 512 cm²<br><br>
+                
+                <strong>2. คำนวณ Clamping Force:</strong><br>
+                &nbsp;&nbsp;Force = 512 × 400 ÷ 1000<br>
+                &nbsp;&nbsp;Force = 204.8 ton<br><br>
+                
+                <strong>3. เพิ่ม Safety Factor (×1.2):</strong><br>
+                &nbsp;&nbsp;Recommended = 204.8 × 1.2 = 245.76 ton
+            </div>
+            
+            <p style="margin-top: 15px; color: green; font-weight: bold;">
+                ✅ แนะนำเครื่องฉีด: <u>250-280 ton</u>
+            </p>
+        </div>
+
+        <div class="page-footer">
+            <span>บทที่ 15: ตัวอย่างการคำนวณ</span>
+            <span>หน้า 33</span>
+        </div>
+    </div>
+
+    <!-- PAGE 16: Machine Selection Guide -->
+    <div class="page">
+        <div class="page-header">
+            <h2><span class="icon">⚙️</span>บทที่ 16: แนวทางการเลือกเครื่องฉีด</h2>
+        </div>
+
+        <div class="section-title">16.1 ช่วงขนาดเครื่องฉีดและพื้นที่การใช้งาน</div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>ขนาดเครื่อง (ton)</th>
+                    <th>Projected Area (mm²)</th>
+                    <th>การใช้งาน</th>
+                    <th>ตัวอย่างชิ้นงาน</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>50-80</strong></td>
+                    <td>0 - 10,000</td>
+                    <td>ชิ้นงานขนาดจิ๋ว</td>
+                    <td>ชิ้นส่วนอิเล็กทรอนิกส์, ฝาขวด</td>
+                </tr>
+                <tr>
+                    <td><strong>100-150</strong></td>
+                    <td>10,000 - 25,000</td>
+                    <td>ชิ้นงานขนาดเล็ก</td>
+                    <td>ของเล่น, อุปกรณ์ครัวเรือน</td>
+                </tr>
+                <tr>
+                    <td><strong>180-250</strong></td>
+                    <td>25,000 - 45,000</td>
+                    <td>ชิ้นงานขนาดกลาง</td>
+                    <td>กล่องพลาสติก, ชิ้นส่วนยานยนต์</td>
+                </tr>
+                <tr>
+                    <td><strong>280-400</strong></td>
+                    <td>45,000 - 80,000</td>
+                    <td>ชิ้นงานขนาดกลาง-ใหญ่</td>
+                    <td>ถังน้ำ, คอนเทนเนอร์</td>
+                </tr>
+                <tr>
+                    <td><strong>450-650</strong></td>
+                    <td>80,000 - 130,000</td>
+                    <td>ชิ้นงานขนาดใหญ่</td>
+                    <td>แผงประตู, กันชนรถยนต์</td>
+                </tr>
+                <tr>
+                    <td><strong>700-1000</strong></td>
+                    <td>130,000 - 200,000</td>
+                    <td>ชิ้นงานใหญ่พิเศษ</td>
+                    <td>ตัวถัง, พาเลท</td>
+                </tr>
+                <tr>
+                    <td><strong>1200+</strong></td>
+                    <td>200,000+</td>
+                    <td>งานอุตสาหกรรมหนัก</td>
+                    <td>ถังขยะใหญ่, ชิ้นส่วนเรือ</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="section-title">16.2 ปัจจัยอื่นๆ ที่ต้องพิจารณา</div>
+        
+        <div class="grid-2">
+            <div class="card">
+                <h4>📏 Shot Size (ปริมาตรการฉีด)</h4>
+                <div class="formula-box" style="font-size: 0.9em;">
+                    Shot Size = Part Volume × Cavity × 1.2
+                </div>
+                <ul style="margin-left: 15px; margin-top: 10px; font-size: 0.9em;">
+                    <li>ต้องมากกว่าปริมาตรชิ้นงาน</li>
+                    <li>รวม runner + sprue</li>
+                    <li>Safety factor 20-30%</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h4>📐 Platen Size (ขนาดแผ่นรอง)</h4>
+                <ul style="margin-left: 15px; font-size: 0.9em;">
+                    <li>ต้องรองรับแม่พิมพ์ได้</li>
+                    <li>พื้นที่เหลือสำหรับติดตั้ง</li>
+                    <li>พิจารณาระยะเปิด-ปิด</li>
+                    <li>ตำแหน่งหัวฉีด</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-title">16.3 ปัญหาจากการเลือกเครื่องไม่เหมาะสม</div>
+        
+        <div class="grid-2">
+            <div class="highlight-box">
+                <h4>⚠️ เครื่องเล็กเกินไป</h4>
+                <ul class="custom-list">
+                    <li>แรงปิดไม่เพียงพอ → Flash</li>
+                    <li>แม่พิมพ์เปิดระหว่างฉีด</li>
+                    <li>คุณภาพไม่สม่ำเสมอ</li>
+                    <li>Shot size ไม่เพียงพอ</li>
+                    <li>เครื่องทำงานหนักเกินไป</li>
+                </ul>
+            </div>
+            
+            <div class="highlight-box info">
+                <h4>💰 เครื่องใหญ่เกินไป</h4>
+                <ul class="custom-list">
+                    <li>ลงทุนสูงเกินความจำเป็น</li>
+                    <li>สิ้นเปลืองพลังงาน</li>
+                    <li>ต้นทุนการผลิตสูง</li>
+                    <li>เสียพื้นที่โรงงาน</li>
+                    <li>ROI ต่ำ</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="notes-section">
+            <h4>📝 เคล็ดลับการเลือกเครื่อง</h4>
+            <ul class="custom-list">
+                <li>เลือกเครื่องที่ใหญ่กว่าการคำนวณ 10-20%</li>
+                <li>พิจารณาแผนการขยายธุรกิจในอนาคต</li>
+                <li>ดูประสิทธิภาพการใช้พลังงาน</li>
+                <li>เช็ควงจรการทำงาน (Cycle Time)</li>
+                <li>ตรวจสอบระบบควบคุม</li>
+                <li>พิจารณาบริการหลังการขาย</li>
+            </ul>
+        </div>
+
+        <div class="page-footer">
+            <span>บทที่ 16: การเลือกเครื่องฉีด</span>
+            <span>หน้า 35</span>
+        </div>
+    </div>
+
+    <!-- PAGE 17: Shot Size Calculation -->
+    <div class="page">
+        <div class="page-header">
+            <h2><span class="icon">💉</span>บทที่ 17: การคำนวณ Shot Size และ Screw Diameter</h2>
+        </div>
+
+        <div class="section-title">17.1 การคำนวณ Shot Size</div>
+        
+        <div class="content-box">
+            <h4>สูตรการคำนวณ Shot Size:</h4>
+            <div class="formula-box">
+                Shot Size (cm³) = (Part Volume + Runner Volume) × Cavity × Safety Factor
+            </div>
+            <p style="margin-top: 10px;"><strong>โดยที่:</strong></p>
+            <ul style="margin-left: 20px;">
+                <li><strong>Part Volume</strong> = ปริมาตรชิ้นงาน (cm³)</li>
+                <li><strong>Runner Volume</strong> = ปริมาตรระบบรันเนอร์</li>
+                <li><strong>Safety Factor</strong> = 1.2 - 1.3 (20-30%)</li>
+            </ul>
+        </div>
+
+        <div class="section-title">17.2 การคำนวณปริมาตรชิ้นงาน</div>
+        
+        <div class="grid-2">
+            <div class="card">
+                <h4>วิธีที่ 1: จาก CAD/3D Model</h4>
+                <ul style="margin-left: 15px;">
+                    <li>ใช้ CAD Software</li>
+                    <li>คำนวณ Volume โดยตรง</li>
+                    <li>แม่นยำที่สุด</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h4>วิธีที่ 2: ชั่งน้ำหนัก</h4>
+                <div class="formula-box" style="font-size: 0.85em;">
+                    Volume = Weight ÷ Density
+                </div>
+                <ul style="margin-left: 15px; font-size: 0.9em;">
+                    <li>ชั่งชิ้นงานจริง</li>
+                    <li>หารด้วยความหนาแน่น</li>
+                    <li>เหมาะสำหรับชิ้นงานที่มีแล้ว</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-title">17.3 ตัวอย่างการคำนวณ Shot Size</div>
+        
+        <div class="workshop-box">
+            <h4>📊 กรณีศึกษา: กล่องอาหาร PP</h4>
+            <div class="workshop-content">
+                <p><strong>ข้อมูล:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>ปริมาตรชิ้นงาน: 180 cm³</li>
+                    <li>ปริมาตรรันเนอร์: 20 cm³</li>
+                    <li>จำนวน Cavity: 2</li>
+                    <li>Safety Factor: 1.25</li>
+                </ul>
+                
+                <p style="margin-top: 15px;"><strong>การคำนวณ:</strong></p>
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 10px;">
+                    Shot Size = (180 + 20) × 2 × 1.25<br>
+                    Shot Size = 200 × 2 × 1.25<br>
+                    Shot Size = 500 cm³<br><br>
+                    <strong style="color: green;">✅ แนะนำเครื่องที่มี Shot Size: 550-650 cm³</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">17.4 การเลือก Screw Diameter</div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Shot Size (cm³)</th>
+                    <th>Screw Diameter (mm)</th>
+                    <th>L/D Ratio</th>
+                    <th>การใช้งาน</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>50-150</td>
+                    <td>28-32</td>
+                    <td>18-22</td>
+                    <td>ชิ้นงานขนาดเล็กมาก</td>
+                </tr>
+                <tr>
+                    <td>150-300</td>
+                    <td>35-42</td>
+                    <td>20-22</td>
+                    <td>ชิ้นงานเล็ก</td>
+                </tr>
+                <tr>
+                    <td>300-600</td>
+                    <td>45-55</td>
+                    <td>20-24</td>
+                    <td>ชิ้นงานกลาง</td>
+                </tr>
+                <tr>
+                    <td>600-1200</td>
+                    <td>60-75</td>
+                    <td>22-26</td>
+                    <td>ชิ้นงานใหญ่</td>
+                </tr>
+                <tr>
+                    <td>1200-2500</td>
+                    <td>80-100</td>
+                    <td>24-28</td>
+                    <td>ชิ้นงานใหญ่มาก</td>
+                </tr>
+            </tbody>
+        </table>
+
+         <div class="page">
+        <div class="page-header">
+            <h2><span class="icon">📐</span>L/D Ratio (Length to Diameter Ratio)</h2>
+        </div>
+
+        <div class="section-title">ความหมายของ L/D Ratio</div>
+        
+        <div class="content-box">
+            <p><strong>L/D Ratio</strong> คืออัตราส่วนระหว่างความยาว (Length) และเส้นผ่านศูนย์กลาง (Diameter) ของสกรูในเครื่องฉีดพลาสติก</p>
+            
+            <div class="formula-box">
+                L/D Ratio = ความยาวสกรู (L) ÷ เส้นผ่านศูนย์กลางสกรู (D)
+            </div>
+            
+            <p style="margin-top: 15px;">อัตราส่วนนี้มีความสำคัญเพราะส่งผลต่อ:</p>
+            <ul class="custom-list">
+                <li>ประสิทธิภาพการหลอมเหลวพลาสติก</li>
+                <li>ความสม่ำเสมอของอุณหภูมิพลาสติกเหลว</li>
+                <li>ความสามารถในการผสมสีและสารเติมแต่ง</li>
+                <li>แรงเฉือนและความเสียหายจากความร้อน</li>
+            </ul>
+        </div>
+
+        <div class="section-title">ประเภท L/D Ratio และการใช้งาน</div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 20%;">L/D Ratio</th>
+                    <th style="width: 30%;">เหมาะสำหรับพลาสติก</th>
+                    <th style="width: 50%;">คุณสมบัติและการใช้งาน</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>18-20:1</strong></td>
+                    <td>PE, PP</td>
+                    <td>เหมาะสำหรับพลาสติกทั่วไปที่มีความหนืดต่ำ ต้องการแรงเฉือนต่ำ</td>
+                </tr>
+                <tr>
+                    <td><strong>20-22:1</strong></td>
+                    <td>PS, ABS, PVC</td>
+                    <td>มาตรฐานสำหรับพลาสติกทั่วไป ให้สมดุลระหว่างการหลอมเหลวและแรงเฉือน</td>
+                </tr>
+                <tr>
+                    <td><strong>22-24:1</strong></td>
+                    <td>PC, Nylon, PBT</td>
+                    <td>เหมาะสำหรับ Engineering Plastic ที่ต้องการการหลอมเหลวที่ดีและความสม่ำเสมอ</td>
+                </tr>
+                <tr>
+                    <td><strong>24-28:1</strong></td>
+                    <td>PPS, PEEK, LCP</td>
+                    <td>สำหรับพลาสติกประสิทธิภาพสูงที่ต้องการ Mixing สูงและการหลอมเหลวที่สมบูรณ์</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="section-title">ผลกระทบของ L/D Ratio ต่อกระบวนการผลิต</div>
+        
+        <div class="grid-2">
+            <div class="highlight-box success">
+                <h4>✅ L/D Ratio สูง</h4>
+                <ul class="custom-list">
+                    <li>เวลาหลอมเหลวนานขึ้น</li>
+                    <li>การกระจายความร้อนดีขึ้น</li>
+                    <li>ความสม่ำเสมอของอุณหภูมิดี</li>
+                    <li>เหมาะสำหรับพลาสติกที่ละลายยาก</li>
+                    <li>การผสมสารเติมแต่งดีขึ้น</li>
+                </ul>
+            </div>
+            
+            <div class="highlight-box">
+                <h4>⚠️ L/D Ratio ต่ำ</h4>
+                <ul class="custom-list">
+                    <li>เวลาหลอมเหลวสั้นลง</li>
+                    <li>เหมาะสำหรับพลาสติกที่ไวต่อความร้อน</li>
+                    <li>ลดโอกาสการสลายตัวจากความร้อน</li>
+                    <li>ประหยัดพลังงาน</li>
+                    <li>เหมาะสำหรับการผลิตเร็ว</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-title">การเลือก L/D Ratio สำหรับ PPS</div>
+        
+        <div class="content-box">
+            <h4>ข้อแนะนำสำหรับ PPS:</h4>
+            <ul class="custom-list">
+                <li><strong>แนะนำ:</strong> L/D Ratio 24:1 ขึ้นไป</li>
+                <li><strong>เหตุผล:</strong> PPS ต้องการการหลอมเหลวที่สมบูรณ์และอุณหภูมิสูง</li>
+                <li><strong>ประโยชน์:</strong> การกระจายความร้อนที่ดี ลดการเกิดรอยไหม้</li>
+                <li><strong>การผสม:</strong> เหมาะกับการผสมไฟเบอร์และสารเติมแต่ง</li>
+            </ul>
+        </div>
+
+        <div class="section-title">การคำนวณและตรวจสอบ L/D Ratio</div>
+        
+        <div class="numbered-list">
+            <li><strong>วัดความยาวสกรู (L):</strong> วัดจากปลายสกรูถึงตำแหน่งเริ่มต้นของ flight</li>
+            <li><strong>วัดเส้นผ่านศูนย์กลาง (D):</strong> วัดเส้นผ่านศูนย์กลางที่ใหญ่ที่สุดของสกรู</li>
+            <li><strong>คำนวณอัตราส่วน:</strong> L ÷ D = L/D Ratio</li>
+            <li><strong>ตรวจสอบความเหมาะสม:</strong> เปรียบเทียบกับประเภทพลาสติกที่ใช้</li>
+            <li><strong>ปรับปรุงหากจำเป็น:</strong> พิจารณาเปลี่ยนสกรูหากไม่เหมาะสม</li>
+        </div>
+
+        <div class="highlight-box info">
+            <h4>💡 สิ่งสำคัญ</h4>
+            <p>L/D Ratio ที่เหมาะสมช่วยเพิ่มคุณภาพชิ้นงาน ลดของเสีย และยืดอายุการใช้งานเครื่องจักร ควรเลือก L/D Ratio ให้เหมาะสมกับประเภทพลาสติกและลักษณะชิ้นงาน</p>
+        </div>
+
+        <div class="image-placeholder">
+            📏 แผนภาพแสดง L/D Ratio ของสกรู
+        </div>
+
+        <div class="page-footer">
+            <span>หัวข้อ: L/D Ratio</span>
+            <span>หน้า 31</span>
+        </div>
+    </div>
+        <div class="page-footer">
+            <span>บทที่ 17: Shot Size Calculation</span>
+            <span>หน้า 37</span>
+        </div>
+    </div>
+
+    <!-- PAGE 18: Practical Application -->
+    <div class="page-header">
+<h2><span class="icon">🔨</span>บทที่ 18: การประยุกต์ใช้งานจริง</h2>
+</div>
+<div class="section-title">18.1 Worksheet: การคำนวณขนาดเครื่อง</div>
+    
+    <div class="workshop-box">
+        <h4>📝 แบบฟอร์มการคำนวณ</h4>
+        <div class="workshop-content">
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr style="background: #f8f9fa;">
+                    <td colspan="2" style="padding: 10px; font-weight: bold; border: 1px solid #ddd;">
+                        ข้อมูลชิ้นงาน
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd; width: 50%;">
+                        ชื่อชิ้นงาน:
+                    </td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">
+                        _______________________
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">
+                        ความยาว (mm):
+                    </td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">
+                        _______________________
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">
+                        ความกว้าง (mm):
+                    </td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">
+                        _______________________
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">
+                        จำนวน Cavity:
+                    </td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">
+                        _______________________
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">
+                        ชนิดพลาสติก:
+                    </td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">
+                        _______________________
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">
+                        ความดันฉีด (kg/cm²):
+                    </td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">
+                        _______________________
+                    </td>
+                </tr>
+                <tr style="background: #f8f9fa;">
+                    <td colspan="2" style="padding: 10px; font-weight: bold; border: 1px solid #ddd;">
+                        การคำนวณ
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">
+                        Projected Area (mm²):
+                    </td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">
+                        _______________________
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">
+                        Projected Area (cm²):
+                    </td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">
+                        _______________________
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">
+                        Clamping Force (ton):
+                    </td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">
+                        _______________________
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">
+                        + Safety Factor 20%:
+                    </td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">
+                        _______________________
+                    </td>
+                </tr>
+                <tr style="background: #d4edda;">
+                    <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">
+                        ขนาดเครื่องที่แนะนำ:
+                    </td>
+                    <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">
+                        _______________________
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="section-title">18.2 กรณีศึกษา: อุตสาหกรรมยานยนต์</div>
+    
+    <div class="highlight-box success">
+        <h4>🚗 ชิ้นงาน: แผงหน้าปัดรถยนต์</h4>
+        
+        <div class="grid-2" style="margin-top: 15px;">
+            <div>
+                <p><strong>ข้อมูลทางเทคนิค:</strong></p>
+                <ul style="margin-left: 20px; margin-top: 5px;">
+                    <li>ขนาด: 800 × 300 mm</li>
+                    <li>ความหนา: 3-5 mm</li>
+                    <li>วัสดุ: ABS+PC</li>
+                    <li>จำนวน Cavity: 1</li>
+                    <li>น้ำหนัก: 2.8 kg</li>
+                    <li>Cycle Time: 65 วินาที</li>
+                </ul>
+            </div>
+            <div>
+                <p><strong>การคำนวณ:</strong></p>
+                <ul style="margin-left: 20px; margin-top: 5px;">
+                    <li>Area = 800 × 300 = 240,000 mm²</li>
+                    <li>Area = 2,400 cm²</li>
+                    <li>ความดัน = 550 kg/cm²</li>
+                    <li>Force = 2,400 × 550 ÷ 1000</li>
+                    <li>Force = 1,320 ton</li>
+                    <li>+ Safety 20% = 1,584 ton</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div style="background: white; color: #333; padding: 15px; border-radius: 8px; margin-top: 15px;">
+            <p style="font-weight: bold; color: green; font-size: 1.1em;">
+                ✅ แนะนำเครื่องฉีด: 1,600-1,800 ton
+            </p>
+            <p style="margin-top: 10px;"><strong>พิจารณาเพิ่มเติม:</strong></p>
+            <ul style="margin-left: 20px;">
+                <li>Shot Size: ประมาณ 3,500 cm³</li>
+                <li>Platen Size: 1,200 × 1,200 mm</li>
+                <li>Opening Stroke: 800 mm</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section-title">18.3 กรณีศึกษา: บรรจุภัณฑ์</div>
+    
+    <div class="highlight-box success">
+        <h4>📦 ชิ้นงาน: ขวดน้ำดื่ม PET</h4>
+        
+        <div class="grid-2" style="margin-top: 15px;">
+            <div>
+                <p><strong>ข้อมูลทางเทคนิค:</strong></p>
+                <ul style="margin-left: 20px; margin-top: 5px;">
+                    <li>ขนาด: ⌀85 × 180 mm</li>
+                    <li>ความหนา: 0.3-0.5 mm</li>
+                    <li>วัสดุ: PET</li>
+                    <li>จำนวน Cavity: 4</li>
+                    <li>น้ำหนัก: 28 g/ชิ้น</li>
+                    <li>Cycle Time: 22 วินาที</li>
+                </ul>
+            </div>
+            <div>
+                <p><strong>การคำนวณ:</strong></p>
+                <ul style="margin-left: 20px; margin-top: 5px;">
+                    <li>Area ต่อชิ้น = π × 42.5² = 5,674 mm²</li>
+                    <li>Total Area = 5,674 × 4 = 22,696 mm²</li>
+                    <li>Area = 227 cm²</li>
+                    <li>ความดัน = 700 kg/cm²</li>
+                    <li>Force = 227 × 700 ÷ 1000</li>
+                    <li>Force = 158.9 ton</li>
+                    <li>+ Safety 20% = 190.7 ton</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div style="background: white; color: #333; padding: 15px; border-radius: 8px; margin-top: 15px;">
+            <p style="font-weight: bold; color: green; font-size: 1.1em;">
+                ✅ แนะนำเครื่องฉีด: 200-250 ton
+            </p>
+            <p style="margin-top: 10px;"><strong>ข้อพิจารณาพิเศษ:</strong></p>
+            <ul style="margin-left: 20px;">
+                <li>ใช้เทคโนโลยี Stretch Blow Molding</li>
+                <li>ต้องการระบบ Pre-form</li>
+                <li>ความเร็วสูงสำหรับการผลิตจำนวนมาก</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <span>บทที่ 18: การประยุกต์ใช้งาน</span>
+        <span>หน้า 39</span>
+    </div>
+</div>
+
+<!-- PAGE 19: Troubleshooting Machine Selection -->
+<div class="page">
+    <div class="page-header">
+        <h2><span class="icon">🔧</span>บทที่ 19: การแก้ไขปัญหาที่พบบ่อย</h2>
+    </div>
+
+    <div class="section-title">19.1 ปัญหาจากการเลือกเครื่องไม่เหมาะสม</div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 30%;">อาการ</th>
+                <th style="width: 35%;">สาเหตุ</th>
+                <th style="width: 35%;">แนวทางแก้ไข</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>เกิด Flash</strong></td>
+                <td>
+                    • แรงยึดไม่เพียงพอ<br>
+                    • เครื่องเล็กเกินไป<br>
+                    • แม่พิมพ์เปิดระหว่างฉีด
+                </td>
+                <td>
+                    • เพิ่มแรงยึด<br>
+                    • เปลี่ยนเครื่องใหญ่ขึ้น<br>
+                    • ลดแรงดันฉีด
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Short Shot</strong></td>
+                <td>
+                    • Shot Size ไม่พอ<br>
+                    • แรงดันไม่เพียงพอ<br>
+                    • อุณหภูมิต่ำเกินไป
+                </td>
+                <td>
+                    • เพิ่ม Shot Size<br>
+                    • เพิ่มแรงดัน<br>
+                    • ปรับอุณหภูมิ
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Sink Mark</strong></td>
+                <td>
+                    • Holding Pressure ไม่พอ<br>
+                    • Cooling Time สั้นเกินไป<br>
+                    • ผนังหนาไม่สม่ำเสมอ
+                </td>
+                <td>
+                    • เพิ่ม Holding Pressure<br>
+                    • เพิ่ม Cooling Time<br>
+                    • ปรับความหนาผนัง
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Weld Line</strong></td>
+                <td>
+                    • Flow Front ไม่ดี<br>
+                    • อุณหภูมิต่ำ<br>
+                    • ความเร็วฉีดช้า
+                </td>
+                <td>
+                    • ปรับตำแหน่ง Gate<br>
+                    • เพิ่มอุณหภูมิ<br>
+                    • เพิ่มความเร็ว
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Warpage</strong></td>
+                <td>
+                    • Cooling ไม่สม่ำเสมอ<br>
+                    • Shrinkage ไม่เท่ากัน<br>
+                    • Ejection ไม่สมดุล
+                </td>
+                <td>
+                    • ปรับระบบ Cooling<br>
+                    • ควบคุม Process<br>
+                    • ปรับ Ejector
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="section-title">19.2 การตรวจสอบความเหมาะสมของเครื่อง</div>
+    
+    <div class="highlight-box info">
+        <h4>📋 Checklist การตรวจสอบ</h4>
+        <table style="width: 100%; margin-top: 10px;">
+            <tr>
+                <td style="width: 60%; padding: 8px;">
+                    ☐ Clamping Force เพียงพอ (≥ Required + 20%)
+                </td>
+                <td style="padding: 8px; text-align: center;">
+                    _____ ton
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;">
+                    ☐ Shot Size เพียงพอ (≥ Required + 20%)
+                </td>
+                <td style="padding: 8px; text-align: center;">
+                    _____ cm³
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;">
+                    ☐ Platen Size รองรับแม่พิมพ์ได้
+                </td>
+                <td style="padding: 8px; text-align: center;">
+                    _____ mm
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;">
+                    ☐ Opening Stroke เพียงพอสำหรับดันชิ้นงาน
+                </td>
+                <td style="padding: 8px; text-align: center;">
+                    _____ mm
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;">
+                    ☐ Injection Pressure เพียงพอ
+                </td>
+                <td style="padding: 8px; text-align: center;">
+                    _____ bar
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;">
+                    ☐ Injection Rate เหมาะสม
+                </td>
+                <td style="padding: 8px; text-align: center;">
+                    _____ cm³/s
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;">
+                    ☐ Screw L/D Ratio เหมาะกับวัสดุ
+                </td>
+                <td style="padding: 8px; text-align: center;">
+                    _____
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section-title">19.3 เทคนิคการปรับแต่ง Process</div>
+    
+    <div class="grid-2">
+        <div class="card">
+            <h4>⚙️ เมื่อเครื่องเล็กเกินไป</h4>
+            <p><strong>วิธีปรับแต่ง:</strong></p>
+            <ul class="custom-list" style="margin-top: 10px;">
+                <li>ลด Cavity Count</li>
+                <li>ปรับความหนาผนังให้บางลง</li>
+                <li>ใช้พลาสติกที่มี Flow ดีกว่า</li>
+                <li>เพิ่มอุณหภูมิหลอมเหลว</li>
+                <li>ปรับ Gate Location</li>
+            </ul>
+            <p style="margin-top: 10px; color: #e74c3c;"><strong>⚠️ แนะนำ:</strong> หากปรับไม่ได้ควรเปลี่ยนเครื่อง</p>
+        </div>
+        
+        <div class="card">
+            <h4>💰 เมื่อเครื่องใหญ่เกินไป</h4>
+            <p><strong>วิธีเพิ่มประสิทธิภาพ:</strong></p>
+            <ul class="custom-list" style="margin-top: 10px;">
+                <li>เพิ่ม Cavity Count</li>
+                <li>ผลิตชิ้นงานหลายแบบ</li>
+                <li>ใช้แม่พิมพ์ Family Mold</li>
+                <li>ลด Cycle Time</li>
+                <li>เพิ่มกำลังการผลิต</li>
+            </ul>
+            <p style="margin-top: 10px; color: #27ae60;"><strong>💡 ข้อดี:</strong> มี Capacity สำรองสำหรับอนาคต</p>
+        </div>
+    </div>
+
+    <div class="notes-section">
+        <h4>📝 บันทึกสำคัญ</h4>
+        <p><strong>กรณีที่ต้องปรึกษาผู้เชี่ยวชาญ:</strong></p>
+        <ul class="custom-list">
+            <li>ชิ้นงานมีรูปร่างซับซ้อนมาก</li>
+            <li>ใช้วัสดุพิเศษ (PEEK, PPS, LCP)</li>
+            <li>ต้องการความแม่นยำสูง (Medical, Aerospace)</li>
+            <li>ผลิตจำนวนมากมาก (> 1 ล้านชิ้น/ปี)</li>
+            <li>มีข้อจำกัดด้านงบประมาณ</li>
+            <li>ต้องการระบบอัตโนมัติ</li>
+        </ul>
+    </div>
+
+    <div class="page-footer">
+        <span>บทที่ 19: การแก้ไขปัญหา</span>
+        <span>หน้า 41</span>
+    </div>
+</div>
+
+<!-- PAGE 20: Cost Analysis -->
+<div class="page">
+    <div class="page-header">
+        <h2><span class="icon">💰</span>บทที่ 20: การวิเคราะห์ต้นทุนและ ROI</h2>
+    </div>
+
+    <div class="section-title">20.1 องค์ประกอบต้นทุนเครื่องฉีด</div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 30%;">รายการ</th>
+                <th style="width: 20%;">สัดส่วน</th>
+                <th style="width: 50%;">รายละเอียด</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>ราคาเครื่อง</strong></td>
+                <td style="text-align: center;">60-70%</td>
+                <td>
+                    • ขึ้นกับขนาดและยี่ห้อ<br>
+                    • 80 ton: 1.5-2.5 ล้านบาท<br>
+                    • 250 ton: 4-6 ล้านบาท<br>
+                    • 500 ton: 8-12 ล้านบาท
+                </td>
+            </tr>
+            <tr>
+                <td><strong>ติดตั้งและฝึกอบรม</strong></td>
+                <td style="text-align: center;">5-10%</td>
+                <td>
+                    • ค่าขนส่งและติดตั้ง<br>
+                    • ฝึกอบรมพนักงาน<br>
+                    • Test Run
+                </td>
+            </tr>
+            <tr>
+                <td><strong>อุปกรณ์เสริม</strong></td>
+                <td style="text-align: center;">10-15%</td>
+                <td>
+                    • Dryer<br>
+                    • Chiller<br>
+                    • Robot<br>
+                    • Mold Temperature Controller
+                </td>
+            </tr>
+            <tr>
+                <td><strong>โครงสร้างโรงงาน</strong></td>
+                <td style="text-align: center;">5-10%</td>
+                <td>
+                    • Foundation<br>
+                    • Crane<br>
+                    • ระบบไฟฟ้า<br>
+                    • ระบบระบายอากาศ
+                </td>
+            </tr>
+            <tr>
+                <td><strong>ค่าใช้จ่ายอื่นๆ</strong></td>
+                <td style="text-align: center;">5-10%</td>
+                <td>
+                    • อะไหล่สำรอง<br>
+                    • เอกสาร/คู่มือ<br>
+                    • ประกันภัย
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="section-title">20.2 การคำนวณ ROI (Return on Investment)</div>
+    
+    <div class="workshop-box">
+        <h4>📊 ตัวอย่างการคำนวณ ROI</h4>
+        <div class="workshop-content">
+            <p><strong>สมมติฐาน:</strong></p>
+            <ul style="margin-left: 20px;">
+                <li>ราคาเครื่อง 250 ton: 5,000,000 บาท</li>
+                <li>อุปกรณ์เสริม: 500,000 บาท</li>
+                <li>ค่าติดตั้ง: 300,000 บาท</li>
+                <li><strong>รวมลงทุน: 5,800,000 บาท</strong></li>
+            </ul>
+            
+            <p style="margin-top: 15px;"><strong>รายได้ต่อเดือน:</strong></p>
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 10px;">
+                • Cycle Time: 40 วินาที<br>
+                • ผลิต/ชม: 90 ชิ้น<br>
+                • ทำงาน 20 ชม./วัน × 26 วัน<br>
+                • = 46,800 ชิ้น/เดือน<br><br>
+                
+                • กำไร/ชิ้น: 8 บาท<br>
+                • <strong>กำไร/เดือน: 374,400 บาท</strong><br><br>
+                
+                • ลบต้นทุนคงที่ (50,000 บาท/เดือน)<br>
+                • <strong>กำไรสุทธิ: 324,400 บาท/เดือน</strong>
+            </div>
+            
+            <p style="margin-top: 15px;"><strong>การคำนวณ ROI:</strong></p>
+            <div style="background: #d4edda; padding: 15px; border-radius: 8px; margin-top: 10px;">
+                <strong style="color: green; font-size: 1.2em;">
+                    Payback Period = 5,800,000 ÷ 324,400<br>
+                    = 17.9 เดือน ≈ 1.5 ปี
+                </strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-title">20.3 ต้นทุนการดำเนินงานรายเดือน</div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>รายการ</th>
+                <th>ค่าใช้จ่าย (บาท/เดือน)</th>
+                <th>หมายเหตุ</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>ค่าไฟฟ้า</strong></td>
+                <td>15,000 - 30,000</td>
+                <td>ขึ้นกับขนาดเครื่องและชั่วโมงใช้งาน</td>
+            </tr>
+            <tr>
+                <td><strong>ค่าบำรุงรักษา</strong></td>
+                <td>10,000 - 20,000</td>
+                <td>PM, อะไหล่, หล่อลื่น</td>
+            </tr>
+            <tr>
+                <td><strong>ค่าแรงงาน</strong></td>
+                <td>20,000 - 40,000</td>
+                <td>Operator + Technician</td>
+            </tr>
+            <tr>
+                <td><strong>ค่าน้ำ</strong></td>
+                <td>2,000 - 5,000</td>
+                <td>สำหรับระบบ Cooling</td>
+            </tr>
+            <tr>
+                <td><strong>ค่าเสื่อมราคา</strong></td>
+                <td>40,000 - 60,000</td>
+                <td>คิดจากอายุการใช้งาน 10 ปี</td>
+            </tr>
+            <tr style="background: #fff3cd;">
+                <td><strong>รวมต้นทุนคงที่</strong></td>
+                <td><strong>87,000 - 155,000</strong></td>
+                <td>ไม่รวมวัตถุดิบ</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="highlight-box info">
+        <h4>💡 เคล็ดลับการลดต้นทุน</h4>
+        <ul class="custom-list">
+            <li><strong>ปรับ Cycle Time:</strong> ลด 5 วินาที = เพิ่มกำลังผลิต 10-15%</li>
+            <li><strong>PM สม่ำเสมอ:</strong> ลดค่าซ่อม 30-40%</li>
+            <li><strong>ควบคุมคุณภาพ:</strong> ลดของเสีย < 2%</li>
+            <li><strong>ฝึกอบรมพนักงาน:</strong> เพิ่มประสิทธิภาพ 20%</li>
+            <li><strong>ใช้พลังงานอย่างมีประสิทธิภาพ:</strong> ประหยัดค่าไฟ 15-25%</li>
+        </ul>
+    </div>
+
+    <div class="page-footer">
+        <span>บทที่ 20: การวิเคราะห์ต้นทุน</span>
+<span>หน้า 43</span>
+</div>
+</div><!-- PAGE 21: Technology Comparison -->
+<div class="page">
+    <div class="page-header">
+        <h2><span class="icon">🔬</span>บทที่ 21: เทคโนโลยีเครื่องฉีดสมัยใหม่</h2>
+    </div>
+
+    <div class="section-title">21.1 เปรียบเทียบเทคโนโลยีเครื่องฉีด</div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 20%;">ประเภท</th>
+                <th style="width: 25%;">ข้อดี</th>
+                <th style="width: 25%;">ข้อเสีย</th>
+                <th style="width: 30%;">การใช้งาน</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Hydraulic</strong><br>(ไฮดรอลิก)</td>
+                <td>
+                    • แรงปิดสูง<br>
+                    • ราคาต่ำกว่า<br>
+                    • เหมาะงานหนัก<br>
+                    • ซ่อมง่าย
+                </td>
+                <td>
+                    • ใช้พลังงานมาก<br>
+                    • เสียงดัง<br>
+                    • ต้องบำรุงบ่อย<br>
+                    • มีน้ำมันรั่ว
+                </td>
+                <td>
+                    • งานทั่วไป<br>
+                    • ชิ้นงานใหญ่<br>
+                    • งบประมาณจำกัด
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Electric</strong><br>(ไฟฟ้า)</td>
+                <td>
+                    • ประหยัดพลังงาน 30-50%<br>
+                    • เสียงเงียบ<br>
+                    • ควบคุมแม่นยำ<br>
+                    • สะอาด
+                </td>
+                <td>
+                    • ราคาสูง<br>
+                    • แรงปิดจำกัด<br>
+                    • ซ่อมยาก<br>
+                    • ต้นทุนอะไหล่สูง
+                </td>
+                <td>
+                    • Clean Room<br>
+                    • Precision Parts<br>
+                    • Medical<br>
+                    • Electronics
+                </td>
+            </tr>
+            <tr>
+                <td><strong>Hybrid</strong><br>(ไฮบริด)</td>
+                <td>
+                    • ประหยัดพลังงาน 20-30%<br>
+                    • แรงปิดสูง<br>
+                    • ควบคุมดี<br>
+                    • สมดุล
+                </td>
+                <td>
+                    • ราคากลางๆ<br>
+                    • ซับซ้อนกว่า<br>
+                    • บำรุงพิเศษ
+                </td>
+                <td>
+                    • งานทั่วไป<br>
+                    • ต้องการความแม่นยำ<br>
+                    • ประหยัดพลังงาน
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="section-title">21.2 ฟีเจอร์สมัยใหม่</div>
+    
+    <div class="grid-3">
+        <div class="card">
+            <h4>🤖 Industry 4.0</h4>
+            <ul style="margin-left: 15px; font-size: 0.9em;">
+                <li>IoT Integration</li>
+                <li>Real-time Monitoring</li>
+                <li>Predictive Maintenance</li>
+                <li>Cloud Connection</li>
+                <li>AI Quality Control</li>
+            </ul>
+        </div>
+        
+        <div class="card">
+            <h4>⚡ Energy Saving</h4>
+            <ul style="margin-left: 15px; font-size: 0.9em;">
+                <li>Servo Motor</li>
+                <li>Variable Speed Drive</li>
+                <li>Sleep Mode</li>
+                <li>Heat Recovery</li>
+                <li>Smart Cooling</li>
+            </ul>
+        </div>
+        
+        <div class="card">
+            <h4>🎯 Precision Control</h4>
+            <ul style="margin-left: 15px; font-size: 0.9em;">
+                <li>Cavity Pressure Sensor</li>
+                <li>Multi-stage Control</li>
+                <li>Adaptive Control</li>
+                <li>Process Monitoring</li>
+                <li>Quality Prediction</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section-title">21.3 การเลือกเทคโนโลยีที่เหมาะสม</div>
+    
+    <div class="highlight-box success">
+        <h4>✅ แนะนำเลือก Electric เมื่อ:</h4>
+        <ul class="custom-list">
+            <li>ผลิตชิ้นงาน Precision สูง</li>
+            <li>ต้องการความสะอาด (Clean Room)</li>
+            <li>มีงบประมาณเพียงพอ</li>
+            <li>ต้องการประหยัดพลังงานระยะยาว</li>
+            <li>ชิ้นงานขนาดเล็กถึงกลาง</li>
+        </ul>
+    </div>
+
+    <div class="highlight-box info">
+        <h4>💡 แนะนำเลือก Hydraulic เมื่อ:</h4>
+        <ul class="custom-list">
+            <li>งบประมาณจำกัด</li>
+            <li>ชิ้นงานใหญ่ ต้องการแรงปิดสูง</li>
+            <li>ไม่ต้องการความแม่นยำสูงมาก</li>
+            <li>มีช่างที่ชำนาญระบบไฮดรอลิก</li>
+            <li>อะไหล่หาได้ง่ายในท้องถิ่น</li>
+        </ul>
+    </div>
+
+    <div class="highlight-box">
+        <h4>⚖️ แนะนำเลือก Hybrid เมื่อ:</h4>
+        <ul class="custom-list">
+            <li>ต้องการสมดุลระหว่างราคาและประสิทธิภาพ</li>
+            <li>ชิ้นงานหลากหลายขนาด</li>
+            <li>ต้องการประหยัดพลังงานแต่งบจำกัด</li>
+            <li>ผลิตปริมาณปานกลางถึงสูง</li>
+            <li>ต้องการความยืดหยุ่นในการผลิต</li>
+        </ul>
+    </div>
+
+    <div class="section-title">21.4 เทรนด์อนาคต</div>
+    
+    <div class="content-box">
+        <h4>🚀 นวัตกรรมที่กำลังมา:</h4>
+        <div class="grid-2" style="margin-top: 15px;">
+            <ul class="custom-list">
+                <li><strong>AI-Powered Process Control</strong></li>
+                <li><strong>Digital Twin Technology</strong></li>
+                <li><strong>Automated Quality Inspection</strong></li>
+                <li><strong>5G Connectivity</strong></li>
+            </ul>
+            <ul class="custom-list">
+                <li><strong>Augmented Reality Training</strong></li>
+                <li><strong>Zero Defect Manufacturing</strong></li>
+                <li><strong>Circular Economy Design</strong></li>
+                <li><strong>Carbon Neutral Production</strong></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <span>บทที่ 21: เทคโนโลยีสมัยใหม่</span>
+        <span>หน้า 45</span>
+    </div>
+</div>
+
+<!-- อัพเดทสารบัญ (เพิ่มในหน้า TOC) -->
+<!-- เพิ่มรายการต่อไปนี้ใน TOC หลังหน้า 13 -->
+
+<!-- FINAL PAGE: Summary & Conclusion -->
+<div class="page">
+    <div class="page-header">
+        <h2><span class="icon">✅</span>สรุป: ทักษะที่ต้องมี</h2>
+    </div>
+
+    <div class="section-title">สรุปหลักสูตร</div>
+    
+    <div class="grid-2">
+        <div class="highlight-box success">
+            <h4>✅ Process Setup</h4>
+            <ul class="custom-list">
+                <li>กำหนด Multi-stage Injection Profile</li>
+                <li>หาจุด V-P Switchover ที่เหมาะสม</li>
+                <li>ออกแบบ Holding Pressure Profile</li>
+                <li>ทำ Gate Seal Study</li>
+                <li>ตั้งค่าอุณหภูมิทุกโซน</li>
+            </ul>
+        </div>
+        
+        <div class="highlight-box success">
+            <h4>✅ Optimization</h4>
+            <ul class="custom-list">
+                <li>สร้าง Process Window</li>
+                <li>ใช้ DOE เพื่อหา Optimal Setting</li>
+                <li>Apply Decoupled Molding</li>
+                <li>คำนวณ Process Capability</li>
+                <li>ลดรอบเวลาและของเสีย</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section-title">Troubleshooting Skills</div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ปัญหา</th>
+                <th>สาเหตุหลัก</th>
+                <th>แนวทางแก้ไข</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Burn Mark</td>
+                <td>อุณหภูมิสูง, ระบายอากาศไม่ดี</td>
+                <td>ลดอุณหภูมิ, เพิ่มช่องระบายอากาศ</td>
+            </tr>
+            <tr>
+                <td>Short Shot</td>
+                <td>แรงดันต่ำ, อุณหภูมิต่ำ</td>
+                <td>เพิ่มแรงดัน, เพิ่มอุณหภูมิ</td>
+            </tr>
+            <tr>
+                <td>Flash</td>
+                <td>แรงดันสูง, แม่พิมพ์สึก</td>
+                <td>ลดแรงดัน, ซ่อมแม่พิมพ์</td>
+            </tr>
+            <tr>
+                <td>Sink Mark</td>
+                <td>Holding ไม่พอ</td>
+                <td>เพิ่ม Holding Pressure/Time</td>
+            </tr>
+            <tr>
+                <td>Weld Line</td>
+                <td>การไหลไม่เหมาะสม</td>
+                <td>เพิ่มอุณหภูมิ, ปรับความเร็ว</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="section-title">แนวทางการพัฒนาต่อ</div>
+    
+    <div class="numbered-list">
+        <li><strong>ฝึกปฏิบัติ:</strong> ทำ Workshop และกรณีศึกษาจริง</li>
+        <li><strong>ศึกษาเพิ่มเติม:</strong> เทคนิคขั้นสูง เช่น Gas Assist, Sequential Valve Gate</li>
+        <li><strong>ติดตามเทคโนโลยี:</strong> Industry 4.0, Smart Manufacturing</li>
+        <li><strong>แลกเปลี่ยนประสบการณ์:</strong> เข้าร่วมกลุ่มวิชาชีพ</li>
+        <li><strong>บันทึกข้อมูล:</strong> เก็บ Process Sheet ทุกครั้ง</li>
+    </div>
+
+    <div class="workshop-box" style="margin-top: 30px;">
+        <h4>🎓 ใบประกาศนียบัตร</h4>
+        <div class="workshop-content">
+            <p style="text-align: center; font-size: 1.1em;">
+                ผู้เข้ารับการอบรมที่ผ่านการทดสอบจะได้รับใบประกาศนียบัตร
+            </p>
+            <div style="margin-top: 20px; padding: 20px; border: 2px solid #667eea; border-radius: 10px;">
+                <p style="text-align: center;"><strong>ชื่อผู้เข้าอบรม:</strong> _______________________________</p>
+                <p style="text-align: center; margin-top: 10px;"><strong>คะแนนทดสอบ:</strong> _______/100</p>
+                <p style="text-align: center; margin-top: 10px;"><strong>วันที่สำเร็จการอบรม:</strong> _______________</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="highlight-box info" style="margin-top: 30px;">
+        <h4>📞 ติดต่อสอบถามเพิ่มเติม</h4>
+        <p><strong>สถาบันเรียนรู้การฉีดพลาสติก IMT THAILAND</strong></p>
+        <p>Email: training@imt-thailand.com</p>
+        <p>Tel: 02-XXX-XXXX</p>
+        <p>Website: www.imt-thailand.com</p>
+    </div>
+
+    <div style="margin-top: 50px; padding: 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center; border-radius: 15px;">
+        <h3 style="margin-bottom: 15px;">ขอบคุณที่เข้าร่วมการอบรม!</h3>
+        <p style="font-size: 1.2em;">ขอให้นำความรู้ไปใช้ในการพัฒนาคุณภาพการผลิตของท่าน</p>
+        <p style="margin-top: 20px; font-size: 0.9em;">© 2024 IMT Thailand Training Center. All rights reserved.</p>
+    </div>
+
+    <div class="page-footer">
+        <span>สรุปหลักสูตร</span>
+        <span>หน้า 30</span>
+    </div>
+</div>
+<!-- Print and Export Options -->
+<div style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;" class="no-print">
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+        <button onclick="window.print()" style="
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            🖨️ พิมพ์คู่มือ
+        </button>
+        
+        <button onclick="exportToPDF()" style="
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            📄 บันทึกเป็น PDF
+        </button>
+        
+        <button onclick="exportToWord()" style="
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            📝 บันทึกเป็น Word
+        </button>
+    </div>
+</div>
+
+<!-- Export Modal -->
+<div id="exportModal" style="
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+">
+    <div style="
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        max-width: 500px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    ">
+        <h3 style="color: #2E86AB; margin-bottom: 20px;">กำลังสร้างไฟล์...</h3>
+        <div id="exportMessage" style="margin-bottom: 20px;">
+            กำลังประมวลผลไฟล์ กรุณารอสักครู่
+        </div>
+        <div style="
+            width: 100%;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        ">
+            <div id="progressBar" style="
+                width: 0%;
+                height: 100%;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                transition: width 0.5s ease;
+            "></div>
+        </div>
+        <button onclick="closeExportModal()" style="
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+        ">ปิด</button>
+    </div>
+</div>
+<script>
+    // เพิ่มใน TOC list
+    const additionalTOC = `
+        <li class="toc-item">
+            <span>การคำนวณขนาดเครื่องฉีดพลาสติก</span>
+            <span>31</span>
+        </li>
+        <li class="toc-item">
+            <span>ตัวอย่างการคำนวณขนาดเครื่อง</span>
+            <span>33</span>
+        </li>
+        <li class="toc-item">
+            <span>แนวทางการเลือกเครื่องฉีด</span>
+            <span>35</span>
+        </li>
+        <li class="toc-item">
+            <span>การคำนวณ Shot Size และ Screw Diameter</span>
+            <span>37</span>
+        </li>
+        <li class="toc-item">
+            <span>การประยุกต์ใช้งานจริง</span>
+            <span>39</span>
+        </li>
+        <li class="toc-item">
+            <span>การแก้ไขปัญหาที่พบบ่อย</span>
+            <span>41</span>
+        </li>
+        <li class="toc-item">
+            <span>การวิเคราะห์ต้นทุนและ ROI</span>
+            <span>43</span>
+        </li>
+        <li class="toc-item">
+            <span>เทคโนโลยีเครื่องฉีดสมัยใหม่</span>
+            <span>45</span>
+        </li>
+    `;
+</script>
+<script>
+// ฟังก์ชันสำหรับการส่งออกเป็น PDF
+function exportToPDF() {
+    showExportModal("กำลังสร้างไฟล์ PDF...");
+    
+    // จำลองการโหลด
+    simulateProgress(() => {
+        // ใช้ html2pdf.js สำหรับการสร้าง PDF
+        const element = document.body;
+        
+        // ตรวจสอบว่า html2pdf พร้อมใช้งานหรือไม่
+        if (typeof html2pdf !== 'undefined') {
+            const opt = {
+                margin: 10,
+                filename: 'คู่มือการอบรม_HotRunner_PPS.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { 
+                    scale: 2,
+                    useCORS: true,
+                    logging: false
+                },
+                jsPDF: { 
+                    unit: 'mm', 
+                    format: 'a4', 
+                    orientation: 'portrait' 
+                }
+            };
+            
+            html2pdf().set(opt).from(element).save().then(() => {
+                document.getElementById('exportMessage').innerHTML = 'สร้างไฟล์ PDF สำเร็จแล้ว!';
+                document.getElementById('progressBar').style.width = '100%';
+            }).catch(error => {
+                console.error('PDF export error:', error);
+                document.getElementById('exportMessage').innerHTML = 'เกิดข้อผิดพลาดในการสร้าง PDF';
+                document.getElementById('progressBar').style.width = '100%';
+            });
+        } else {
+            // ถ้าไม่มี html2pdf ให้ใช้ print เป็นทางเลือก
+            window.print();
+            document.getElementById('exportMessage').innerHTML = 'กำลังพิมพ์เป็น PDF...';
+            document.getElementById('progressBar').style.width = '100%';
+        }
+    });
+}
+
+// ฟังก์ชันสำหรับการส่งออกเป็น Word
+function exportToWord() {
+    showExportModal("กำลังสร้างไฟล์ Word...");
+    
+    // จำลองการโหลด
+    simulateProgress(() => {
+        try {
+            // สร้างเนื้อหา HTML สำหรับ Word
+            const content = document.documentElement.outerHTML;
+            
+            // สร้าง Blob และดาวน์โหลด
+            const blob = new Blob([`
+                <!DOCTYPE html>
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' 
+                      xmlns:w='urn:schemas-microsoft-com:office:word' 
+                      xmlns='http://www.w3.org/TR/REC-html40'>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>คู่มือการอบรม - Hot Runner & PPS Process Control</title>
+                    <style>
+                        body { 
+                            font-family: 'Sarabun', 'Segoe UI', sans-serif; 
+                            margin: 20px;
+                            line-height: 1.6;
+                        }
+                        .no-print { display: none; }
+                        .page { 
+                            page-break-after: always; 
+                            margin-bottom: 30px;
+                            padding: 20px;
+                        }
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin: 15px 0;
+                        }
+                        table, th, td {
+                            border: 1px solid #ddd;
+                        }
+                        th, td {
+                            padding: 8px;
+                            text-align: left;
+                        }
+                        th {
+                            background-color: #f2f2f2;
+                        }
+                        .cover {
+                            text-align: center;
+                            padding: 50px 20px;
+                        }
+                        .section-title {
+                            background-color: #f5f5f5;
+                            padding: 10px;
+                            margin: 15px 0;
+                            font-weight: bold;
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${content}
+                </body>
+                </html>
+            `], { type: 'application/msword' });
+            
+            // สร้างลิงก์ดาวน์โหลด
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'คู่มือการอบรม_HotRunner_PPS.doc';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            document.getElementById('exportMessage').innerHTML = 'สร้างไฟล์ Word สำเร็จแล้ว!';
+            document.getElementById('progressBar').style.width = '100%';
+        } catch (error) {
+            console.error('Word export error:', error);
+            document.getElementById('exportMessage').innerHTML = 'เกิดข้อผิดพลาดในการสร้างไฟล์ Word';
+            document.getElementById('progressBar').style.width = '100%';
+        }
+    });
+}
+
+// ฟังก์ชันแสดงโมดอลการส่งออก
+function showExportModal(message) {
+    document.getElementById('exportMessage').innerHTML = message;
+    document.getElementById('progressBar').style.width = '0%';
+    document.getElementById('exportModal').style.display = 'flex';
+}
+
+// ฟังก์ชันปิดโมดอล
+function closeExportModal() {
+    document.getElementById('exportModal').style.display = 'none';
+}
+
+// จำลองแถบความคืบหน้า
+function simulateProgress(callback) {
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += 5;
+        document.getElementById('progressBar').style.width = progress + '%';
+        
+        if (progress >= 90) {
+            clearInterval(interval);
+            setTimeout(callback, 500);
+        }
+    }, 100);
+}
+
+// เพิ่มสไตล์สำหรับการพิมพ์ที่ดีขึ้น
+const printStyles = `
+@media print {
+    body {
+        margin: 0;
+        padding: 0;
+        background: white;
+        font-size: 12pt;
+        line-height: 1.4;
+    }
+    
+    .cover {
+        height: 100vh;
+        page-break-after: always;
+        display: flex !important;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .page {
+        page-break-after: always;
+        min-height: 100vh;
+        position: relative;
+        padding: 15mm;
+    }
+    
+    .page-footer {
+        position: absolute;
+        bottom: 10mm;
+        left: 15mm;
+        right: 15mm;
+        font-size: 10pt;
+        color: #666;
+    }
+    
+    .no-print {
+        display: none !important;
+    }
+    
+    .highlight-box, .content-box, .card {
+        break-inside: avoid;
+        margin: 10pt 0;
+    }
+    
+    table {
+        break-inside: avoid;
+        font-size: 10pt;
+    }
+    
+    .process-flow {
+        break-inside: avoid;
+    }
+    
+    .grid-2, .grid-3 {
+        break-inside: avoid;
+    }
+    
+    h1, h2, h3, h4 {
+        break-after: avoid;
+    }
+    
+    .section-title {
+        break-after: avoid;
+    }
+}
+`;
+
+// เพิ่มสไตล์การพิมพ์
+const styleSheet = document.createElement("style");
+styleSheet.type = "text/css";
+styleSheet.innerText = printStyles;
+document.head.appendChild(styleSheet);
+
+// เพิ่มการจัดการข้อผิดพลาด
+window.addEventListener('error', function(e) {
+    console.error('Error occurred:', e.error);
+});
+</script>
+</body>
+</html>

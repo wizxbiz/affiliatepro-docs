@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เส้นทางการเรียนรู้ Hot Runner - Hot Runner Training Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 70px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            margin-bottom: 20px;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #00d9ff;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .page-title {
+            font-family: 'Prompt', sans-serif;
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .page-title i {
+            color: #ff6b35;
+        }
+
+        .page-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.2em;
+        }
+
+        /* Progress Overview */
+        .progress-overview {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+
+        .overview-card {
+            background: linear-gradient(145deg, rgba(30, 42, 61, 0.9), rgba(22, 32, 46, 0.9));
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .overview-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 1.5em;
+        }
+
+        .overview-icon.total { background: linear-gradient(135deg, #00d9ff, #0066ff); }
+        .overview-icon.completed { background: linear-gradient(135deg, #00c853, #00e676); }
+        .overview-icon.inprogress { background: linear-gradient(135deg, #ff9800, #ffb74d); }
+        .overview-icon.hours { background: linear-gradient(135deg, #9c27b0, #ba68c8); }
+
+        .overview-value {
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .overview-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9em;
+        }
+
+        /* Learning Path */
+        .learning-path {
+            position: relative;
+        }
+
+        .path-line {
+            position: absolute;
+            left: 45px;
+            top: 80px;
+            bottom: 80px;
+            width: 4px;
+            background: linear-gradient(180deg, #00d9ff, #ff6b35);
+            border-radius: 2px;
+        }
+
+        .level-section {
+            margin-bottom: 40px;
+        }
+
+        .level-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+            padding-left: 10px;
+        }
+
+        .level-badge {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            color: white;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .level-badge.basic { background: linear-gradient(135deg, #00d9ff, #0066ff); }
+        .level-badge.intermediate { background: linear-gradient(135deg, #ff9800, #ff6b35); }
+        .level-badge.advanced { background: linear-gradient(135deg, #9c27b0, #e91e63); }
+
+        .level-info h2 {
+            font-family: 'Prompt', sans-serif;
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        .level-desc {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .level-progress {
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .level-percent {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #00d9ff;
+        }
+
+        /* Module Cards */
+        .modules-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-left: 95px;
+        }
+
+        .module-card {
+            background: linear-gradient(145deg, rgba(30, 42, 61, 0.9), rgba(22, 32, 46, 0.9));
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 217, 255, 0.3);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .module-card.completed {
+            border-color: rgba(0, 200, 83, 0.3);
+        }
+
+        .module-card.locked {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .module-status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .status-badge.completed {
+            background: rgba(0, 200, 83, 0.2);
+            color: #00c853;
+        }
+
+        .status-badge.inprogress {
+            background: rgba(255, 152, 0, 0.2);
+            color: #ff9800;
+        }
+
+        .status-badge.locked {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .status-badge.available {
+            background: rgba(0, 217, 255, 0.2);
+            color: #00d9ff;
+        }
+
+        .module-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+        }
+
+        .module-icon.theory { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .module-icon.practice { background: linear-gradient(135deg, #00d9ff, #0066ff); }
+        .module-icon.quiz { background: linear-gradient(135deg, #ff6b35, #ff9800); }
+        .module-icon.simulation { background: linear-gradient(135deg, #00c853, #00e676); }
+
+        .module-title {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .module-desc {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .module-meta {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 0.85em;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 15px;
+        }
+
+        .module-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .module-progress {
+            margin-bottom: 15px;
+        }
+
+        .progress-bar-mini {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-bar-mini .fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .module-card.completed .progress-bar-mini .fill {
+            background: linear-gradient(90deg, #00c853, #00e676);
+        }
+
+        .module-card.inprogress .progress-bar-mini .fill {
+            background: linear-gradient(90deg, #ff9800, #ffb74d);
+        }
+
+        .module-action {
+            display: block;
+            width: 100%;
+            text-align: center;
+            padding: 10px 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .module-action.start {
+            background: linear-gradient(135deg, #00d9ff, #0066ff);
+            color: white;
+        }
+
+        .module-action.continue {
+            background: linear-gradient(135deg, #ff9800, #ff6b35);
+            color: white;
+        }
+
+        .module-action.review {
+            background: rgba(0, 200, 83, 0.2);
+            color: #00c853;
+            border: 1px solid rgba(0, 200, 83, 0.3);
+        }
+
+        .module-action.locked {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.3);
+            cursor: not-allowed;
+        }
+
+        /* Achievement Badge */
+        .achievements-section {
+            margin-top: 60px;
+            text-align: center;
+        }
+
+        .achievements-section h2 {
+            font-family: 'Prompt', sans-serif;
+            font-size: 1.8em;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .achievements-section h2 i {
+            color: #ffd700;
+        }
+
+        .achievements-grid {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .achievement-item {
+            width: 100px;
+            text-align: center;
+        }
+
+        .achievement-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 2em;
+            transition: all 0.3s ease;
+        }
+
+        .achievement-icon.unlocked {
+            background: linear-gradient(135deg, #ffd700, #ff9800);
+            color: white;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .achievement-icon.locked {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.3);
+            filter: grayscale(100%);
+        }
+
+        .achievement-name {
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .achievement-item.locked .achievement-name {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .progress-overview {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .modules-container {
+                margin-left: 0;
+            }
+
+            .path-line {
+                display: none;
+            }
+
+            .level-header {
+                flex-wrap: wrap;
+            }
+
+            .level-progress {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .progress-overview {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title {
+                font-size: 1.8em;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .level-badge {
+                width: 50px;
+                height: 50px;
+                font-size: 1.3em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <div id="navbar"></div>
+
+    <div class="container">
+        <a href="index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i> กลับไปหน้า Hot Runner
+        </a>
+
+        <!-- Header -->
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-fire"></i>
+                เส้นทางการเรียนรู้ Hot Runner
+            </h1>
+            <p class="page-subtitle">พัฒนาทักษะของคุณจากพื้นฐานสู่ผู้เชี่ยวชาญ</p>
+        </div>
+
+        <!-- Progress Overview -->
+        <div class="progress-overview">
+            <div class="overview-card">
+                <div class="overview-icon total">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div class="overview-value" id="totalModules">12</div>
+                <div class="overview-label">บทเรียนทั้งหมด</div>
+            </div>
+            <div class="overview-card">
+                <div class="overview-icon completed">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="overview-value" id="completedModules">0</div>
+                <div class="overview-label">เรียนจบแล้ว</div>
+            </div>
+            <div class="overview-card">
+                <div class="overview-icon inprogress">
+                    <i class="fas fa-spinner"></i>
+                </div>
+                <div class="overview-value" id="inProgressModules">0</div>
+                <div class="overview-label">กำลังเรียน</div>
+            </div>
+            <div class="overview-card">
+                <div class="overview-icon hours">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="overview-value" id="totalHours">0</div>
+                <div class="overview-label">ชั่วโมงเรียน</div>
+            </div>
+        </div>
+
+        <!-- Learning Path -->
+        <div class="learning-path">
+            <div class="path-line"></div>
+
+            <!-- Basic Level -->
+            <div class="level-section">
+                <div class="level-header">
+                    <div class="level-badge basic">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <div class="level-info">
+                        <h2>ระดับพื้นฐาน</h2>
+                        <p class="level-desc">เรียนรู้พื้นฐานระบบ Hot Runner</p>
+                    </div>
+                    <div class="level-progress">
+                        <div class="level-percent" id="basicProgress">0%</div>
+                        <div class="level-desc">ความคืบหน้า</div>
+                    </div>
+                </div>
+
+                <div class="modules-container" id="basicModules">
+                    <!-- Modules will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Intermediate Level -->
+            <div class="level-section">
+                <div class="level-header">
+                    <div class="level-badge intermediate">
+                        <i class="fas fa-fire-alt"></i>
+                    </div>
+                    <div class="level-info">
+                        <h2>ระดับกลาง</h2>
+                        <p class="level-desc">เรียนรู้การใช้งานและแก้ปัญหา</p>
+                    </div>
+                    <div class="level-progress">
+                        <div class="level-percent" id="intermediateProgress">0%</div>
+                        <div class="level-desc">ความคืบหน้า</div>
+                    </div>
+                </div>
+
+                <div class="modules-container" id="intermediateModules">
+                    <!-- Modules will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Advanced Level -->
+            <div class="level-section">
+                <div class="level-header">
+                    <div class="level-badge advanced">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="level-info">
+                        <h2>ระดับขั้นสูง</h2>
+                        <p class="level-desc">เชี่ยวชาญและประยุกต์ใช้</p>
+                    </div>
+                    <div class="level-progress">
+                        <div class="level-percent" id="advancedProgress">0%</div>
+                        <div class="level-desc">ความคืบหน้า</div>
+                    </div>
+                </div>
+
+                <div class="modules-container" id="advancedModules">
+                    <!-- Modules will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Achievements -->
+        <div class="achievements-section">
+            <h2><i class="fas fa-award"></i> รางวัลความสำเร็จ</h2>
+            <div class="achievements-grid" id="achievementsGrid">
+                <!-- Achievements will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/components.js"></script>
+    <script>
+        // Learning Path Data
+        const learningPath = {
+            basic: [
+                {
+                    id: 'hr_intro',
+                    title: 'รู้จัก Hot Runner System',
+                    description: 'เรียนรู้พื้นฐานและหลักการทำงานของระบบ Hot Runner',
+                    icon: 'theory',
+                    duration: 30,
+                    link: 'basic-hotrunner.html',
+                    type: 'theory'
+                },
+                {
+                    id: 'hr_components',
+                    title: 'ส่วนประกอบระบบ Hot Runner',
+                    description: 'Manifold, Nozzle, Heater, Thermocouple และอุปกรณ์ต่างๆ',
+                    icon: 'theory',
+                    duration: 45,
+                    link: 'hotlearn.html',
+                    type: 'theory'
+                },
+                {
+                    id: 'hr_thermocouple',
+                    title: 'Thermocouple Type K และ J',
+                    description: 'ความแตกต่างและการใช้งาน Thermocouple',
+                    icon: 'practice',
+                    duration: 30,
+                    link: 'thermo-k-j.html',
+                    type: 'practice'
+                },
+                {
+                    id: 'hr_basic_quiz',
+                    title: 'แบบทดสอบพื้นฐาน',
+                    description: 'ทดสอบความรู้พื้นฐาน Hot Runner',
+                    icon: 'quiz',
+                    duration: 15,
+                    link: 'quiz-hotrunner.html',
+                    type: 'quiz'
+                }
+            ],
+            intermediate: [
+                {
+                    id: 'hr_controller',
+                    title: 'Temperature Controller',
+                    description: 'การตั้งค่าและควบคุมอุณหภูมิ PID Control',
+                    icon: 'theory',
+                    duration: 45,
+                    link: 'datacontrol.html',
+                    type: 'theory'
+                },
+                {
+                    id: 'hr_toshiba',
+                    title: 'Toshiba V30 Controller',
+                    description: 'การใช้งาน Controller รุ่น V30',
+                    icon: 'practice',
+                    duration: 40,
+                    link: 'toshibav30.html',
+                    type: 'practice'
+                },
+                {
+                    id: 'hr_troubleshooting',
+                    title: 'การแก้ปัญหา Hot Runner',
+                    description: 'วิเคราะห์และแก้ไขปัญหาที่พบบ่อย',
+                    icon: 'practice',
+                    duration: 60,
+                    link: 'problem.html',
+                    type: 'practice'
+                },
+                {
+                    id: 'hr_skill_test',
+                    title: 'ทดสอบทักษะ',
+                    description: 'แบบทดสอบการแก้ปัญหาจริง',
+                    icon: 'quiz',
+                    duration: 20,
+                    link: 'testskill.html',
+                    type: 'quiz'
+                }
+            ],
+            advanced: [
+                {
+                    id: 'hr_3d_simulation',
+                    title: 'Hot Runner 3D Simulation',
+                    description: 'จำลองการทำงานแบบ 3 มิติ',
+                    icon: 'simulation',
+                    duration: 45,
+                    link: 'injection-simulation.html',
+                    type: 'simulation'
+                },
+                {
+                    id: 'hr_roi',
+                    title: 'ROI Calculator',
+                    description: 'คำนวณผลตอบแทนการลงทุน Hot Runner',
+                    icon: 'practice',
+                    duration: 30,
+                    link: 'roi-ralculator.html',
+                    type: 'practice'
+                },
+                {
+                    id: 'hr_advanced',
+                    title: 'Advanced Hot Runner',
+                    description: 'เทคนิคขั้นสูงและการประยุกต์ใช้',
+                    icon: 'theory',
+                    duration: 60,
+                    link: 'advancehot.html',
+                    type: 'theory'
+                },
+                {
+                    id: 'hr_certification',
+                    title: 'ใบประกาศนียบัตร',
+                    description: 'รับประกาศนียบัตรเมื่อผ่านทุกบทเรียน',
+                    icon: 'quiz',
+                    duration: 30,
+                    link: 'certificate-hotrunner.html',
+                    type: 'certificate'
+                }
+            ]
+        };
+
+        // Achievements
+        const achievements = [
+            { id: 'starter', name: 'เริ่มต้น', icon: 'fa-play', condition: 'เริ่มบทเรียนแรก' },
+            { id: 'basic_master', name: 'Basic Master', icon: 'fa-star', condition: 'จบระดับพื้นฐาน' },
+            { id: 'quiz_ace', name: 'Quiz Ace', icon: 'fa-trophy', condition: 'ผ่านแบบทดสอบ 100%' },
+            { id: 'quick_learner', name: 'เรียนเร็ว', icon: 'fa-bolt', condition: 'จบบทเรียนใน 1 ชม.' },
+            { id: 'intermediate', name: 'Intermediate', icon: 'fa-fire', condition: 'จบระดับกลาง' },
+            { id: 'expert', name: 'Expert', icon: 'fa-crown', condition: 'จบทุกบทเรียน' }
+        ];
+
+        // Progress Data
+        let userProgress = {};
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProgress();
+            renderModules();
+            renderAchievements();
+            updateOverview();
+        });
+
+        // Load Progress
+        function loadProgress() {
+            const saved = localStorage.getItem('hotrunner_progress');
+            if (saved) {
+                userProgress = JSON.parse(saved);
+            }
+        }
+
+        // Save Progress
+        function saveProgress() {
+            localStorage.setItem('hotrunner_progress', JSON.stringify(userProgress));
+        }
+
+        // Get Module Status
+        function getModuleStatus(module, level, index) {
+            if (userProgress[module.id]) {
+                const progress = userProgress[module.id];
+                if (progress >= 100) return 'completed';
+                if (progress > 0) return 'inprogress';
+            }
+            
+            // Check if previous module is completed
+            if (index > 0) {
+                const prevModule = learningPath[level][index - 1];
+                if (!userProgress[prevModule.id] || userProgress[prevModule.id] < 100) {
+                    return 'locked';
+                }
+            }
+            
+            // For first module of intermediate/advanced, check previous level
+            if (index === 0) {
+                if (level === 'intermediate') {
+                    const basicComplete = learningPath.basic.every(m => userProgress[m.id] >= 100);
+                    if (!basicComplete) return 'locked';
+                }
+                if (level === 'advanced') {
+                    const intermediateComplete = learningPath.intermediate.every(m => userProgress[m.id] >= 100);
+                    if (!intermediateComplete) return 'locked';
+                }
+            }
+            
+            return 'available';
+        }
+
+        // Render Modules
+        function renderModules() {
+            ['basic', 'intermediate', 'advanced'].forEach(level => {
+                const container = document.getElementById(`${level}Modules`);
+                container.innerHTML = learningPath[level].map((module, index) => {
+                    const status = getModuleStatus(module, level, index);
+                    const progress = userProgress[module.id] || 0;
+                    
+                    return `
+                        <div class="module-card ${status}">
+                            <div class="module-status">
+                                <span class="status-badge ${status}">
+                                    ${getStatusText(status)}
+                                </span>
+                            </div>
+                            <div class="module-icon ${module.icon}">
+                                <i class="fas ${getIconClass(module.type)}"></i>
+                            </div>
+                            <h3 class="module-title">${module.title}</h3>
+                            <p class="module-desc">${module.description}</p>
+                            <div class="module-meta">
+                                <span><i class="fas fa-clock"></i> ${module.duration} นาที</span>
+                                <span><i class="fas ${getTypeIcon(module.type)}"></i> ${getTypeName(module.type)}</span>
+                            </div>
+                            <div class="module-progress">
+                                <div class="progress-bar-mini">
+                                    <div class="fill" style="width: ${progress}%"></div>
+                                </div>
+                            </div>
+                            ${getActionButton(module, status)}
+                        </div>
+                    `;
+                }).join('');
+                
+                // Update level progress
+                const levelModules = learningPath[level];
+                const levelProgress = levelModules.reduce((sum, m) => sum + (userProgress[m.id] || 0), 0);
+                const levelPercent = Math.round(levelProgress / levelModules.length);
+                document.getElementById(`${level}Progress`).textContent = `${levelPercent}%`;
+            });
+        }
+
+        // Get Status Text
+        function getStatusText(status) {
+            switch(status) {
+                case 'completed': return '<i class="fas fa-check"></i> เรียนจบแล้ว';
+                case 'inprogress': return '<i class="fas fa-spinner"></i> กำลังเรียน';
+                case 'locked': return '<i class="fas fa-lock"></i> ล็อค';
+                default: return '<i class="fas fa-play"></i> พร้อมเรียน';
+            }
+        }
+
+        // Get Icon Class
+        function getIconClass(type) {
+            switch(type) {
+                case 'theory': return 'fa-book-open';
+                case 'practice': return 'fa-tools';
+                case 'quiz': return 'fa-question-circle';
+                case 'simulation': return 'fa-cube';
+                case 'certificate': return 'fa-certificate';
+                default: return 'fa-book';
+            }
+        }
+
+        // Get Type Icon
+        function getTypeIcon(type) {
+            switch(type) {
+                case 'theory': return 'fa-graduation-cap';
+                case 'practice': return 'fa-wrench';
+                case 'quiz': return 'fa-clipboard-check';
+                case 'simulation': return 'fa-vr-cardboard';
+                case 'certificate': return 'fa-award';
+                default: return 'fa-book';
+            }
+        }
+
+        // Get Type Name
+        function getTypeName(type) {
+            switch(type) {
+                case 'theory': return 'ทฤษฎี';
+                case 'practice': return 'ปฏิบัติ';
+                case 'quiz': return 'แบบทดสอบ';
+                case 'simulation': return 'จำลอง';
+                case 'certificate': return 'ประกาศนียบัตร';
+                default: return 'บทเรียน';
+            }
+        }
+
+        // Get Action Button
+        function getActionButton(module, status) {
+            switch(status) {
+                case 'completed':
+                    return `<a href="${module.link}" class="module-action review" onclick="trackStart('${module.id}')">
+                        <i class="fas fa-redo"></i> ทบทวน
+                    </a>`;
+                case 'inprogress':
+                    return `<a href="${module.link}" class="module-action continue" onclick="trackStart('${module.id}')">
+                        <i class="fas fa-play"></i> เรียนต่อ
+                    </a>`;
+                case 'locked':
+                    return `<span class="module-action locked">
+                        <i class="fas fa-lock"></i> ปลดล็อค
+                    </span>`;
+                default:
+                    return `<a href="${module.link}" class="module-action start" onclick="trackStart('${module.id}')">
+                        <i class="fas fa-play"></i> เริ่มเรียน
+                    </a>`;
+            }
+        }
+
+        // Render Achievements
+        function renderAchievements() {
+            const container = document.getElementById('achievementsGrid');
+            const unlockedAchievements = JSON.parse(localStorage.getItem('hotrunner_achievements') || '[]');
+            
+            container.innerHTML = achievements.map(achievement => {
+                const unlocked = unlockedAchievements.includes(achievement.id);
+                return `
+                    <div class="achievement-item ${unlocked ? '' : 'locked'}">
+                        <div class="achievement-icon ${unlocked ? 'unlocked' : 'locked'}">
+                            <i class="fas ${achievement.icon}"></i>
+                        </div>
+                        <div class="achievement-name">${achievement.name}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update Overview
+        function updateOverview() {
+            const allModules = [...learningPath.basic, ...learningPath.intermediate, ...learningPath.advanced];
+            const completed = allModules.filter(m => userProgress[m.id] >= 100).length;
+            const inProgress = allModules.filter(m => userProgress[m.id] > 0 && userProgress[m.id] < 100).length;
+            const totalDuration = allModules.filter(m => userProgress[m.id] > 0)
+                .reduce((sum, m) => sum + (m.duration * (userProgress[m.id] / 100)), 0);
+            
+            document.getElementById('totalModules').textContent = allModules.length;
+            document.getElementById('completedModules').textContent = completed;
+            document.getElementById('inProgressModules').textContent = inProgress;
+            document.getElementById('totalHours').textContent = Math.round(totalDuration / 60);
+        }
+
+        // Track Module Start
+        function trackStart(moduleId) {
+            if (!userProgress[moduleId]) {
+                userProgress[moduleId] = 10; // Started
+                saveProgress();
+                
+                // Check starter achievement
+                const unlockedAchievements = JSON.parse(localStorage.getItem('hotrunner_achievements') || '[]');
+                if (!unlockedAchievements.includes('starter')) {
+                    unlockedAchievements.push('starter');
+                    localStorage.setItem('hotrunner_achievements', JSON.stringify(unlockedAchievements));
+                }
+            }
+        }
+
+        // For demo: simulate progress
+        function simulateProgress(moduleId, progress) {
+            userProgress[moduleId] = progress;
+            saveProgress();
+            renderModules();
+            updateOverview();
+        }
+    </script>
+</body>
+</html>

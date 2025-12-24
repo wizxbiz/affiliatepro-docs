@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expert Level - ผู้เชี่ยวชาญ Hot Runner</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../../assets/css/main.css" rel="stylesheet">
+    
+    <style>
+        body { padding-top: 80px; }
+        
+        .course-header {
+            padding: 40px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 40px;
+        }
+
+        .course-header-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 30px;
+        }
+
+        .course-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 25px;
+            background: var(--accent-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            color: white;
+            box-shadow: 0 15px 40px rgba(255, 64, 129, 0.3);
+            flex-shrink: 0;
+        }
+
+        .course-info h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .course-info .badge {
+            margin-bottom: 15px;
+        }
+
+        .course-meta {
+            display: flex;
+            gap: 30px;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+        }
+
+        .course-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .course-meta-item i {
+            color: var(--accent);
+        }
+
+        /* Expert Badge */
+        .expert-badge {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        /* Progress Overview */
+        .progress-overview {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 25px;
+            margin-bottom: 40px;
+            border: 1px solid var(--border-color);
+        }
+
+        .progress-overview h3 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .progress-stat {
+            text-align: center;
+        }
+
+        .progress-stat-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .progress-stat-label {
+            font-size: 0.9em;
+            color: var(--text-muted);
+        }
+
+        /* Prerequisite Notice */
+        .prerequisite-notice {
+            background: linear-gradient(135deg, rgba(255, 64, 129, 0.1), rgba(255, 75, 43, 0.1));
+            border: 1px solid rgba(255, 64, 129, 0.3);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .prerequisite-notice i {
+            font-size: 2em;
+            color: var(--accent);
+        }
+
+        .prerequisite-notice .info h4 {
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+
+        /* Modules List */
+        .modules-section h2 {
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modules-section h2 i {
+            color: var(--accent);
+        }
+
+        .module-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .module-card:hover {
+            border-color: rgba(255, 64, 129, 0.5);
+            transform: translateX(10px);
+        }
+
+        .module-card.locked {
+            opacity: 0.6;
+        }
+
+        .module-card.completed {
+            border-color: rgba(0, 200, 83, 0.3);
+        }
+
+        .module-content {
+            display: flex;
+            align-items: center;
+            padding: 25px;
+            gap: 20px;
+        }
+
+        .module-number {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 64, 129, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2em;
+            flex-shrink: 0;
+            color: var(--accent);
+        }
+
+        .module-card.completed .module-number {
+            background: var(--success-gradient);
+            color: white;
+        }
+
+        .module-card.current .module-number {
+            background: var(--accent-gradient);
+            color: white;
+        }
+
+        .module-info {
+            flex: 1;
+        }
+
+        .module-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .module-type-badge {
+            font-size: 0.7em;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        .module-type-badge.theory { background: rgba(33, 150, 243, 0.2); color: #2196f3; }
+        .module-type-badge.practice { background: rgba(255, 152, 0, 0.2); color: #ff9800; }
+        .module-type-badge.quiz { background: rgba(156, 39, 176, 0.2); color: #9c27b0; }
+        .module-type-badge.simulation { background: rgba(0, 217, 255, 0.2); color: #00d9ff; }
+        .module-type-badge.project { background: rgba(255, 64, 129, 0.2); color: #ff4081; }
+
+        .module-desc {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+            margin-bottom: 10px;
+        }
+
+        .module-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 0.85em;
+            color: var(--text-muted);
+        }
+
+        .module-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .module-action {
+            flex-shrink: 0;
+        }
+
+        .btn-accent {
+            background: var(--accent-gradient);
+            color: white;
+            border: none;
+        }
+
+        .btn-accent:hover {
+            box-shadow: 0 10px 30px rgba(255, 64, 129, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .module-card.completed .module-action .btn {
+            background: rgba(0, 200, 83, 0.2);
+            color: var(--success);
+            border: 1px solid rgba(0, 200, 83, 0.3);
+        }
+
+        /* Certification Section */
+        .certification-section {
+            background: linear-gradient(135deg, rgba(255, 64, 129, 0.1), rgba(255, 75, 43, 0.05));
+            border: 1px solid rgba(255, 64, 129, 0.3);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .certification-section h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .certification-section h3 i {
+            color: gold;
+        }
+
+        .cert-benefits {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .cert-benefit {
+            text-align: center;
+        }
+
+        .cert-benefit i {
+            font-size: 2em;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        /* Expert Skills */
+        .skills-section {
+            margin-top: 40px;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .skill-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 25px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .skill-item:hover {
+            border-color: rgba(255, 64, 129, 0.5);
+        }
+
+        .skill-item i {
+            font-size: 1.5em;
+            color: var(--accent);
+            margin-top: 3px;
+        }
+
+        .skill-item h4 {
+            margin-bottom: 5px;
+        }
+
+        .skill-item p {
+            color: var(--text-muted);
+            font-size: 0.9em;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .course-header-content {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .course-meta {
+                justify-content: center;
+            }
+
+            .module-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .module-meta {
+                justify-content: center;
+            }
+
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-stats {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .cert-benefits {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <div class="container">
+        <!-- Prerequisite Notice -->
+        <div class="prerequisite-notice">
+            <i class="fas fa-star"></i>
+            <div class="info">
+                <h4>หลักสูตรสำหรับผู้เชี่ยวชาญ</h4>
+                <p style="margin: 0; color: var(--text-secondary);">
+                    ควรผ่านหลักสูตร Basic และ Advanced Level หรือมีประสบการณ์ทำงานกับ Hot Runner อย่างน้อย 1 ปี
+                </p>
+            </div>
+        </div>
+
+        <!-- Course Header -->
+        <div class="course-header">
+            <div class="course-header-content">
+                <div class="course-icon">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <div class="course-info">
+                    <span class="expert-badge">
+                        <i class="fas fa-award"></i> Expert Level
+                    </span>
+                    <h1>ผู้เชี่ยวชาญ Hot Runner System</h1>
+                    <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                        Simulation 3D, การวิเคราะห์ ROI, การออกแบบระบบ และกรณีศึกษาขั้นสูง
+                    </p>
+                    <div class="course-meta">
+                        <div class="course-meta-item">
+                            <i class="fas fa-book"></i>
+                            <span>5 บทเรียน</span>
+                        </div>
+                        <div class="course-meta-item">
+                            <i class="fas fa-clock"></i>
+                            <span>6 ชั่วโมง</span>
+                        </div>
+                        <div class="course-meta-item">
+                            <i class="fas fa-signal"></i>
+                            <span>ระดับผู้เชี่ยวชาญ</span>
+                        </div>
+                        <div class="course-meta-item">
+                            <i class="fas fa-trophy"></i>
+                            <span>Professional Certificate</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Overview -->
+        <div class="progress-overview">
+            <h3><i class="fas fa-chart-pie"></i> ความคืบหน้าของคุณ</h3>
+            <div class="progress" style="height: 12px;">
+                <div class="progress-bar" id="courseProgress" style="width: 0%; background: var(--accent-gradient);"></div>
+            </div>
+            <div class="progress-stats">
+                <div class="progress-stat">
+                    <div class="progress-stat-value" id="completedModules">0</div>
+                    <div class="progress-stat-label">บทเรียนที่เรียนจบ</div>
+                </div>
+                <div class="progress-stat">
+                    <div class="progress-stat-value" id="totalTime">0</div>
+                    <div class="progress-stat-label">นาทีที่เรียน</div>
+                </div>
+                <div class="progress-stat">
+                    <div class="progress-stat-value" id="quizScore">-</div>
+                    <div class="progress-stat-label">คะแนนโปรเจค</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modules Section -->
+        <section class="modules-section">
+            <h2><i class="fas fa-list-ol"></i> บทเรียนทั้งหมด</h2>
+
+            <!-- Module 1 -->
+            <div class="module-card" data-module="simulation">
+                <div class="module-content">
+                    <div class="module-number">1</div>
+                    <div class="module-info">
+                        <div class="module-title">
+                            3D Simulation & Analysis
+                            <span class="module-type-badge simulation">Simulation</span>
+                        </div>
+                        <p class="module-desc">
+                            จำลองการทำงาน Hot Runner แบบ 3D, การวิเคราะห์การไหลของพลาสติก และการตรวจสอบปัญหา
+                        </p>
+                        <div class="module-meta">
+                            <span><i class="fas fa-clock"></i> 90 นาที</span>
+                            <span><i class="fas fa-cube"></i> 3D Interactive</span>
+                        </div>
+                    </div>
+                    <div class="module-action">
+                        <a href="../../injection-simulation.html" class="btn btn-accent">
+                            <i class="fas fa-play"></i> เริ่มเรียน
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module 2 -->
+            <div class="module-card" data-module="roi">
+                <div class="module-content">
+                    <div class="module-number">2</div>
+                    <div class="module-info">
+                        <div class="module-title">
+                            ROI & Cost Analysis
+                            <span class="module-type-badge practice">ปฏิบัติ</span>
+                        </div>
+                        <p class="module-desc">
+                            การคำนวณ Return on Investment, วิเคราะห์ต้นทุน-ผลประโยชน์ และการตัดสินใจลงทุน
+                        </p>
+                        <div class="module-meta">
+                            <span><i class="fas fa-clock"></i> 60 นาที</span>
+                            <span><i class="fas fa-calculator"></i> Calculator Tool</span>
+                        </div>
+                    </div>
+                    <div class="module-action">
+                        <a href="../../roi-ralculator.html" class="btn btn-accent">
+                            <i class="fas fa-play"></i> เริ่มเรียน
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module 3 -->
+            <div class="module-card" data-module="design">
+                <div class="module-content">
+                    <div class="module-number">3</div>
+                    <div class="module-info">
+                        <div class="module-title">
+                            Hot Runner System Design
+                            <span class="module-type-badge theory">ทฤษฎี</span>
+                        </div>
+                        <p class="module-desc">
+                            หลักการออกแบบระบบ Hot Runner, การเลือก Nozzle Type, Manifold Design และ Gate Location
+                        </p>
+                        <div class="module-meta">
+                            <span><i class="fas fa-clock"></i> 75 นาที</span>
+                            <span><i class="fas fa-file-alt"></i> 10 หัวข้อ</span>
+                        </div>
+                    </div>
+                    <div class="module-action">
+                        <a href="../../advancehot.html" class="btn btn-accent">
+                            <i class="fas fa-play"></i> เริ่มเรียน
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module 4 -->
+            <div class="module-card" data-module="case_study">
+                <div class="module-content">
+                    <div class="module-number">4</div>
+                    <div class="module-info">
+                        <div class="module-title">
+                            Case Studies
+                            <span class="module-type-badge project">โปรเจค</span>
+                        </div>
+                        <p class="module-desc">
+                            กรณีศึกษาจากโรงงานจริง: การแก้ปัญหาซับซ้อน, การปรับปรุงระบบ และบทเรียนจากผู้เชี่ยวชาญ
+                        </p>
+                        <div class="module-meta">
+                            <span><i class="fas fa-clock"></i> 60 นาที</span>
+                            <span><i class="fas fa-briefcase"></i> 5 Case Studies</span>
+                        </div>
+                    </div>
+                    <div class="module-action">
+                        <a href="module-case-studies.html" class="btn btn-accent">
+                            <i class="fas fa-play"></i> เริ่มเรียน
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module 5 - Final Project -->
+            <div class="module-card" data-module="final_project">
+                <div class="module-content">
+                    <div class="module-number">5</div>
+                    <div class="module-info">
+                        <div class="module-title">
+                            Final Certification Project
+                            <span class="module-type-badge project">โปรเจคจบ</span>
+                        </div>
+                        <p class="module-desc">
+                            โปรเจคประเมินผลครบทุกทักษะ: ออกแบบระบบ, วิเคราะห์ปัญหา, คำนวณ ROI และนำเสนอผลงาน
+                        </p>
+                        <div class="module-meta">
+                            <span><i class="fas fa-clock"></i> 90 นาที</span>
+                            <span><i class="fas fa-trophy"></i> รับ Certificate เมื่อผ่าน</span>
+                        </div>
+                    </div>
+                    <div class="module-action">
+                        <a href="../../certificates/expert-project.html" class="btn btn-accent">
+                            <i class="fas fa-award"></i> เริ่มโปรเจค
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Expert Skills -->
+        <section class="skills-section">
+            <h2 style="margin-bottom: 25px;">
+                <i class="fas fa-brain" style="color: var(--accent);"></i>
+                ทักษะที่คุณจะได้รับ
+            </h2>
+            <div class="skills-grid">
+                <div class="skill-item">
+                    <i class="fas fa-cube"></i>
+                    <div>
+                        <h4>3D Visualization</h4>
+                        <p>วิเคราะห์การทำงานแบบ 3 มิติ เข้าใจการไหลของพลาสติก</p>
+                    </div>
+                </div>
+                <div class="skill-item">
+                    <i class="fas fa-chart-pie"></i>
+                    <div>
+                        <h4>Financial Analysis</h4>
+                        <p>คำนวณและวิเคราะห์ความคุ้มค่าในการลงทุน</p>
+                    </div>
+                </div>
+                <div class="skill-item">
+                    <i class="fas fa-drafting-compass"></i>
+                    <div>
+                        <h4>System Design</h4>
+                        <p>ออกแบบระบบ Hot Runner ที่เหมาะสมกับงาน</p>
+                    </div>
+                </div>
+                <div class="skill-item">
+                    <i class="fas fa-lightbulb"></i>
+                    <div>
+                        <h4>Problem Solving</h4>
+                        <p>แก้ปัญหาซับซ้อนอย่างเป็นระบบ</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Certification Section -->
+        <section class="certification-section">
+            <h3><i class="fas fa-certificate"></i> Professional Certificate</h3>
+            <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 30px;">
+                เมื่อผ่านหลักสูตร Expert Level คุณจะได้รับประกาศนียบัตรวิชาชีพ 
+                "Hot Runner System Expert" ที่ได้รับการรับรอง
+            </p>
+            <div class="cert-benefits">
+                <div class="cert-benefit">
+                    <i class="fas fa-check-circle"></i>
+                    <p>รับรองความรู้ครบ 3 ระดับ</p>
+                </div>
+                <div class="cert-benefit">
+                    <i class="fas fa-qrcode"></i>
+                    <p>QR Code ตรวจสอบได้</p>
+                </div>
+                <div class="cert-benefit">
+                    <i class="fas fa-download"></i>
+                    <p>ดาวน์โหลด PDF</p>
+                </div>
+            </div>
+            <a href="../../certificates/index.html" class="btn btn-accent btn-lg">
+                <i class="fas fa-medal"></i> ดูประกาศนียบัตรของฉัน
+            </a>
+        </section>
+
+        <!-- Navigation -->
+        <div style="display: flex; justify-content: space-between; padding: 50px 0;">
+            <a href="../advanced/index.html" class="btn btn-outline">
+                <i class="fas fa-arrow-left"></i> กลับ Advanced Level
+            </a>
+            <a href="../../portal-index.html" class="btn btn-primary btn-lg">
+                <i class="fas fa-home"></i> กลับหน้าหลัก
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            basePath: '../..',
+            storagePrefix: 'imtp_'
+        };
+    </script>
+    <script src="../../assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            updateModuleStatus();
+            updateProgress();
+        });
+
+        function updateModuleStatus() {
+            const progress = ProgressTracker.getCourseProgress('expert');
+            const modules = document.querySelectorAll('.module-card');
+            
+            modules.forEach(card => {
+                const moduleId = card.dataset.module;
+                const moduleProgress = progress.modules[moduleId];
+                
+                if (moduleProgress?.completed) {
+                    card.classList.add('completed');
+                    const btn = card.querySelector('.btn');
+                    btn.innerHTML = '<i class="fas fa-check"></i> เรียนจบแล้ว';
+                }
+            });
+        }
+
+        function updateProgress() {
+            const progress = ProgressTracker.getCourseProgress('expert');
+            const completedCount = Object.values(progress.modules).filter(m => m.completed).length;
+            const totalModules = 5;
+            const percentage = Math.round((completedCount / totalModules) * 100);
+            
+            document.getElementById('courseProgress').style.width = percentage + '%';
+            document.getElementById('completedModules').textContent = completedCount;
+        }
+    </script>
+</body>
+</html>

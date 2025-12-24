@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบทดสอบก่อนอบรม - Hot Runner & PPS Training</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Login Section */
+        .login-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .login-section h1 {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .login-section p {
+            color: #718096;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Quiz Section */
+        .quiz-section {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .quiz-header h2 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .quiz-info {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+        }
+
+        .quiz-info-item {
+            text-align: center;
+        }
+
+        .quiz-info-item .label {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .quiz-info-item .value {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+
+        .question-card {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border-left: 5px solid #667eea;
+        }
+
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            color: #2d3748;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background: white;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 15px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .btn-nav {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-prev {
+            background: #e2e8f0;
+            color: #2d3748;
+        }
+
+        .btn-prev:hover {
+            background: #cbd5e0;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Result Section */
+        .result-section {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .result-score {
+            font-size: 4rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 20px 0;
+        }
+
+        .result-message {
+            font-size: 1.3rem;
+            color: #2d3748;
+            margin-bottom: 30px;
+        }
+
+        .result-details {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .result-details h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .result-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .recommendation {
+            background: #fff5f5;
+            border: 2px solid #fc8181;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .recommendation.good {
+            background: #f0fff4;
+            border-color: #48bb78;
+        }
+
+        .recommendation h3 {
+            color: #e53e3e;
+            margin-bottom: 10px;
+        }
+
+        .recommendation.good h3 {
+            color: #38a169;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn-share {
+            background: #48bb78;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-share:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.3);
+        }
+
+        .btn-retry {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-retry:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-continue {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-continue:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Certificate Preview */
+        .certificate-preview {
+            background: white;
+            border: 3px solid #667eea;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .certificate-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .certificate-title {
+            font-size: 1.5rem;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .certificate-body {
+            text-align: left;
+            line-height: 1.8;
+            color: #2d3748;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            
+            .btn-group, .navigation-buttons {
+                display: none;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .login-section, .quiz-section, .result-section {
+                padding: 20px;
+            }
+
+            .result-score {
+                font-size: 3rem;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Login Section -->
+        <div class="login-section" id="loginSection">
+            <h1>🎓 แบบทดสอบความรู้เบื้องต้น</h1>
+            <p>หลักสูตร: เทคนิคการใช้งาน Hot Runner กับพลาสติก PPS</p>
+            <p style="color: #e53e3e; font-weight: 600;">⚠️ กรุณาทำแบบทดสอบให้ได้คะแนนอย่างน้อย 40% เพื่อเข้าสู่หลักสูตร</p>
+            
+            <form id="loginForm" onsubmit="startQuiz(event)">
+                <div class="form-group">
+                    <label for="studentName">ชื่อ-นามสกุล *</label>
+                    <input type="text" id="studentName" required placeholder="กรอกชื่อ-นามสกุลของคุณ">
+                </div>
+                
+                <div class="form-group">
+                    <label for="studentEmail">อีเมล *</label>
+                    <input type="email" id="studentEmail" required placeholder="example@email.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="studentDept">แผนก/ฝ่าย *</label>
+                    <input type="text" id="studentDept" required placeholder="แผนกที่สังกัด">
+                </div>
+                
+                <button type="submit" class="btn-primary">เริ่มทำแบบทดสอบ</button>
+            </form>
+            
+            <div style="margin-top: 30px; padding: 20px; background: #f7fafc; border-radius: 10px; text-align: left;">
+                <h3 style="color: #667eea; margin-bottom: 10px;">📋 รายละเอียดการทดสอบ</h3>
+                <ul style="color: #4a5568; line-height: 2;">
+                    <li>จำนวนข้อสอบ: 15 ข้อ</li>
+                    <li>เวลาในการทำ: ไม่จำกัด</li>
+                    <li>คะแนนผ่าน: 40% (6 ข้อขึ้นไป)</li>
+                    <li>สามารถทำซ้ำได้หากไม่ผ่าน</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading" id="loadingSection">
+            <div class="spinner"></div>
+            <p style="color: white; font-size: 1.2rem;">กำลังเตรียมแบบทดสอบ...</p>
+        </div>
+
+        <!-- Quiz Section -->
+        <div class="quiz-section" id="quizSection">
+            <div class="quiz-header">
+                <h2>แบบทดสอบความรู้เบื้องต้น</h2>
+                <div class="quiz-info">
+                    <div class="quiz-info-item">
+                        <div class="label">ผู้เข้าสอบ</div>
+                        <div class="value" id="displayName">-</div>
+                    </div>
+                    <div class="quiz-info-item">
+                        <div class="label">ข้อที่</div>
+                        <div class="value"><span id="currentQuestion">1</span>/15</div>
+                    </div>
+                    <div class="quiz-info-item">
+                        <div class="label">ตอบแล้ว</div>
+                        <div class="value" id="answeredCount">0/15</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div id="questionsContainer"></div>
+
+            <div class="navigation-buttons">
+                <button class="btn-nav btn-prev" onclick="previousQuestion()" id="btnPrev">← ย้อนกลับ</button>
+                <button class="btn-nav btn-next" onclick="nextQuestion()" id="btnNext">ถัดไป →</button>
+                <button class="btn-nav btn-next" onclick="submitQuiz()" id="btnSubmit" style="display: none;">ส่งคำตอบ ✓</button>
+            </div>
+        </div>
+
+        <!-- Result Section -->
+        <div class="result-section" id="resultSection">
+            <h1>📊 ผลการทดสอบ</h1>
+            <div class="result-score" id="scoreDisplay">0%</div>
+            <div class="result-message" id="resultMessage"></div>
+
+            <div class="result-details">
+                <h3>ข้อมูลผู้เข้าสอบ</h3>
+                <div class="result-item">
+                    <strong>ชื่อ-นามสกุล:</strong> <span id="resultName"></span>
+                </div>
+                <div class="result-item">
+                    <strong>อีเมล:</strong> <span id="resultEmail"></span>
+                </div>
+                <div class="result-item">
+                    <strong>แผนก/ฝ่าย:</strong> <span id="resultDept"></span>
+                </div>
+                <div class="result-item">
+                    <strong>คะแนนที่ได้:</strong> <span id="resultScore"></span>
+                </div>
+                <div class="result-item">
+                    <strong>วันที่ทดสอบ:</strong> <span id="resultDate"></span>
+                </div>
+            </div>
+
+            <div class="recommendation" id="recommendation">
+                <h3>💡 คำแนะนำ</h3>
+                <p id="recommendationText"></p>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-share" onclick="sharePDF()">📄 แชร์ผลคะแนน (PDF)</button>
+                <button class="btn-retry" onclick="retryQuiz()" id="btnRetry">🔄 ทำใหม่</button>
+                <button class="btn-continue" onclick="gotoCourse()" id="btnGotoCourse" style="display: none;">➡️ เข้าสู่หลักสูตร</button>
+            </div>
+
+            <!-- Certificate Preview (Hidden, used for PDF generation) -->
+            <div class="certificate-preview" id="certificatePreview">
+                <div class="certificate-header">
+                    <div class="certificate-title">📋 ผลการทดสอบความรู้เบื้องต้น</div>
+                    <div style="color: #718096; margin-top: 10px;">หลักสูตร: เทคนิคการใช้งาน Hot Runner กับพลาสติก PPS</div>
+                    <div style="color: #718096;">สถาบันเรียนรู้การฉีดพลาสติก IMT THAILAND</div>
+                </div>
+                <hr style="margin: 20px 0; border: 1px solid #e2e8f0;">
+                <div class="certificate-body" id="certificateBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <script>
+        // Quiz Data
+        const quizData = [
+            {
+                question: "PPS ย่อมาจากอะไร?",
+                options: [
+                    "Polypropylene Sulfide",
+                    "Polyphenylene Sulfide",
+                    "Polyethylene Sulfide",
+                    "Polystyrene Sulfide"
+                ],
+                correct: 1,
+                category: "พื้นฐาน PPS"
+            },
+            {
+                question: "อุณหภูมิการฉีดที่เหมาะสมสำหรับ PPS คือเท่าไร?",
+                options: [
+                    "200-240°C",
+                    "250-280°C",
+                    "300-340°C",
+                    "350-400°C"
+                ],
+                correct: 2,
+                category: "พารามิเตอร์การฉีด"
+            },
+            {
+                question: "คุณสมบัติพิเศษที่สำคัญที่สุดของ PPS คือข้อใด?",
+                options: [
+                    "ราคาถูก",
+                    "ทนความร้อนสูงและทนสารเคมี",
+                    "โปร่งใส",
+                    "ยืดหยุ่นสูง"
+                ],
+                correct: 1,
+                category: "พื้นฐาน PPS"
+            },
+            {
+                question: "Hot Runner System คืออะไร?",
+                options: [
+                    "ระบบทำความเย็นในแม่พิมพ์",
+                    "ระบบกระจายพลาสติกเหลวที่มีการควบคุมความร้อน",
+                    "ระบบหล่อลื่นแม่พิมพ์",
+                    "ระบบยกชิ้นงาน"
+                ],
+                correct: 1,
+                category: "Hot Runner"
+            },
+            {
+                question: "ข้อดีหลักของการใช้ Open Gate กับ PPS คือข้อใด?",
+                options: [
+                    "มีรอยประตูฉีดที่สวยงาม",
+                    "ราคาถูกและบำรุงรักษาง่าย",
+                    "ความเร็วในการฉีดสูงที่สุด",
+                    "ใช้แรงดันต่ำที่สุด"
+                ],
+                correct: 1,
+                category: "Hot Runner"
+            },
+            {
+                question: "ก่อนการฉีด PPS ต้องอบแห้งที่อุณหภูมิเท่าไร?",
+                options: [
+                    "60-80°C",
+                    "90-110°C",
+                    "120-150°C",
+                    "180-200°C"
+                ],
+                correct: 2,
+                category: "การเตรียมวัตถุดิบ"
+            },
+            {
+                question: "ความชื้นสูงสุดที่ยอมรับได้ใน PPS ก่อนฉีดคือเท่าไร?",
+                options: [
+                    "< 0.02%",
+                    "< 0.05%",
+                    "< 0.1%",
+                    "< 0.5%"
+                ],
+                correct: 0,
+                category: "การเตรียมวัตถุดิบ"
+            },
+            {
+                question: "แรงดันฉีดที่แนะนำสำหรับ PPS คือเท่าไร?",
+                options: [
+                    "400-600 bar",
+                    "600-800 bar",
+                    "800-1200 bar",
+                    "1200-1500 bar"
+                ],
+                correct: 2,
+                category: "พารามิเตอร์การฉีด"
+            },
+            {
+                question: "อุณหภูมิแม่พิมพ์ที่เหมาะสมสำหรับ PPS คือเท่าไร?",
+                options: [
+                    "60-80°C",
+                    "90-110°C",
+                    "120-150°C",
+                    "160-180°C"
+                ],
+                correct: 2,
+                category: "พารามิเตอร์การฉีด"
+            },
+            {
+                question: "ควรทำความสะอาด Hot Runner ทุกกี่ shot?",
+                options: [
+                    "100-200 shot",
+                    "300-400 shot",
+                    "500-1000 shot",
+                    "1500-2000 shot"
+                ],
+                correct: 2,
+                category: "การบำรุงรักษา"
+            },
+            {
+                question: "สาเหตุหลักของการเกิดรอยไหม้บนชิ้นงาน PPS คือข้อใด?",
+                options: [
+                    "อุณหภูมิต่ำเกินไป",
+                    "อุณหภูมิสูงเกินไปหรือการระบายอากาศไม่ดี",
+                    "แรงดันต่ำเกินไป",
+                    "ความเร็วฉีดช้าเกินไป"
+                ],
+                correct: 1,
+                category: "การแก้ไขปัญหา"
+            },
+            {
+                question: "ปัญหา Short Shot (ชิ้นงานไม่เต็ม) แก้ไขได้อย่างไร?",
+                options: [
+                    "ลดอุณหภูมิและแรงดัน",
+                    "เพิ่มอุณหภูมิและแรงดันฉีด",
+                    "ลดความเร็วฉีด",
+                    "เพิ่มเวลาหล่อเย็น"
+                ],
+                correct: 1,
+                category: "การแก้ไขปัญหา"
+            },
+            {
+                question: "อุปกรณ์ใดที่สำคัญที่สุดในระบบควบคุมอุณหภูมิ Hot Runner?",
+                options: [
+                    "Heater Band",
+                    "Thermocouple",
+                    "PID Controller",
+                    "ทุกข้อถูกต้อง"
+                ],
+                correct: 3,
+                category: "Hot Runner"
+            },
+            {
+                question: "วัตถุประสงค์หลักของการใช้ Hot Runner คือข้อใด?",
+                options: [
+                    "ลดต้นทุนแม่พิมพ์",
+                    "ลดของเสียและเพิ่มประสิทธิภาพการผลิต",
+                    "เพิ่มความสวยงามของชิ้นงาน",
+                    "ลดเวลาการออกแบบ"
+                ],
+                correct: 1,
+                category: "Hot Runner"
+            },
+            {
+                question: "PPS เหมาะสมกับการผลิตชิ้นงานประเภทใดมากที่สุด?",
+                options: [
+                    "ของเล่นเด็ก",
+                    "บรรจุภัณฑ์อาหาร",
+                    "ชิ้นส่วนอิเล็กทรอนิกส์และยานยนต์ที่ต้องทนความร้อนสูง",
+                    "เฟอร์นิเจอร์"
+                ],
+                correct: 2,
+                category: "การประยุกต์ใช้"
+            }
+        ];
+
+        // Global Variables
+        let studentInfo = {};
+        let currentQuestionIndex = 0;
+        let userAnswers = Array(quizData.length).fill(null);
+        let startTime = null;
+
+        // Start Quiz
+        function startQuiz(event) {
+            event.preventDefault();
+            
+            // Get student info
+            studentInfo = {
+                name: document.getElementById('studentName').value,
+                email: document.getElementById('studentEmail').value,
+                department: document.getElementById('studentDept').value,
+                startTime: new Date()
+            };
+
+            // Show loading
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('loadingSection').style.display = 'block';
+
+            // Simulate loading and start quiz
+            setTimeout(() => {
+                document.getElementById('loadingSection').style.display = 'none';
+                document.getElementById('quizSection').style.display = 'block';
+                document.getElementById('displayName').textContent = studentInfo.name;
+                startTime = new Date();
+                loadQuestion();
+            }, 1500);
+        }
+
+        // Load Question
+        function loadQuestion() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+
+            quizData.forEach((q, index) => {
+                const questionCard = document.createElement('div');
+                questionCard.className = 'question-card';
+                questionCard.style.display = index === currentQuestionIndex ? 'block' : 'none';
+                questionCard.id = `question-${index}`;
+
+                let optionsHTML = '';
+                q.options.forEach((option, optIndex) => {
+                    const isSelected = userAnswers[index] === optIndex;
+                    optionsHTML += `
+                        <label class="option ${isSelected ? 'selected' : ''}" onclick="selectAnswer(${index}, ${optIndex})">
+                            <input type="radio" name="question${index}" value="${optIndex}" ${isSelected ? 'checked' : ''}>
+                            <span>${option}</span>
+                        </label>
+                    `;
+                });
+
+                questionCard.innerHTML = `
+                    <div class="question-number">ข้อที่ ${index + 1} จาก 15 | หมวด: ${q.category}</div>
+                    <div class="question-text">${q.question}</div>
+                    <div class="options">
+                        ${optionsHTML}
+                    </div>
+                `;
+
+                container.appendChild(questionCard);
+            });
+
+            updateProgress();
+            updateNavigationButtons();
+        }
+
+        // Select Answer
+        function selectAnswer(questionIndex, optionIndex) {
+            userAnswers[questionIndex] = optionIndex;
+            
+            // Update UI
+            const options = document.querySelectorAll(`#question-${questionIndex} .option`);
+            options.forEach((opt, idx) => {
+                if (idx === optionIndex) {
+                    opt.classList.add('selected');
+                    opt.querySelector('input').checked = true;
+                } else {
+                    opt.classList.remove('selected');
+                    opt.querySelector('input').checked = false;
+                }
+            });
+
+            updateProgress();
+        }
+
+        // Next Question
+        function nextQuestion() {
+            if (currentQuestionIndex < quizData.length - 1) {
+                document.getElementById(`question-${currentQuestionIndex}`).style.display = 'none';
+                currentQuestionIndex++;
+                document.getElementById(`question-${currentQuestionIndex}`).style.display = 'block';
+                updateProgress();
+                updateNavigationButtons();
+            }
+        }
+
+        // Previous Question
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                document.getElementById(`question-${currentQuestionIndex}`).style.display = 'none';
+                currentQuestionIndex--;
+                document.getElementById(`question-${currentQuestionIndex}`).style.display = 'block';
+                updateProgress();
+                updateNavigationButtons();
+            }
+        }
+
+        // Update Progress
+        function updateProgress() {
+            const answeredCount = userAnswers.filter(a => a !== null).length;
+            const progressPercent = (answeredCount / quizData.length) * 100;
+            
+            document.getElementById('progressFill').style.width = `${progressPercent}%`;
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            document.getElementById('answeredCount').textContent = `${answeredCount}/15`;
+        }
+
+        // Update Navigation Buttons
+        function updateNavigationButtons() {
+            const btnPrev = document.getElementById('btnPrev');
+            const btnNext = document.getElementById('btnNext');
+            const btnSubmit = document.getElementById('btnSubmit');
+
+            btnPrev.style.display = currentQuestionIndex === 0 ? 'none' : 'block';
+            
+            if (currentQuestionIndex === quizData.length - 1) {
+                btnNext.style.display = 'none';
+                btnSubmit.style.display = 'block';
+            } else {
+                btnNext.style.display = 'block';
+                btnSubmit.style.display = 'none';
+            }
+        }
+
+        // Submit Quiz
+        function submitQuiz() {
+            const unanswered = userAnswers.filter(a => a === null).length;
+            
+            if (unanswered > 0) {
+                if (!confirm(`คุณยังไม่ได้ตอบ ${unanswered} ข้อ\nต้องการส่งคำตอบหรือไม่?`)) {
+                    return;
+                }
+            }
+
+            calculateResults();
+        }
+
+        // Calculate Results
+        function calculateResults() {
+            const endTime = new Date();
+            const timeTaken = Math.round((endTime - startTime) / 1000 / 60); // minutes
+            
+            let correctCount = 0;
+            let categoryScores = {};
+
+            quizData.forEach((q, index) => {
+                const category = q.category;
+                if (!categoryScores[category]) {
+                    categoryScores[category] = { correct: 0, total: 0 };
+                }
+                categoryScores[category].total++;
+
+                if (userAnswers[index] === q.correct) {
+                    correctCount++;
+                    categoryScores[category].correct++;
+                }
+            });
+
+            const scorePercent = Math.round((correctCount / quizData.length) * 100);
+            const passed = scorePercent >= 40;
+
+            // Display results
+            displayResults(correctCount, scorePercent, passed, timeTaken, categoryScores);
+        }
+
+        // Display Results
+        function displayResults(correctCount, scorePercent, passed, timeTaken, categoryScores) {
+            document.getElementById('quizSection').style.display = 'none';
+            document.getElementById('resultSection').style.display = 'block';
+
+            // Update result display
+            document.getElementById('scoreDisplay').textContent = `${scorePercent}%`;
+            document.getElementById('resultName').textContent = studentInfo.name;
+            document.getElementById('resultEmail').textContent = studentInfo.email;
+            document.getElementById('resultDept').textContent = studentInfo.department;
+            document.getElementById('resultScore').textContent = `${correctCount}/15 (${scorePercent}%)`;
+            document.getElementById('resultDate').textContent = new Date().toLocaleDateString('th-TH', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            // Result message
+            let message = '';
+            if (scorePercent >= 80) {
+                message = '🎉 ยอดเยี่ยม! คุณมีพื้นฐานความรู้ที่แข็งแกร่งมาก';
+            } else if (scorePercent >= 60) {
+                message = '👍 ดีมาก! คุณมีความรู้พื้นฐานที่ดี';
+            } else if (scorePercent >= 40) {
+                message = '✅ ผ่าน! คุณมีความรู้พื้นฐานที่เพียงพอ';
+            } else {
+                message = '❌ ไม่ผ่าน - กรุณาทำแบบทดสอบใหม่';
+            }
+            document.getElementById('resultMessage').textContent = message;
+
+            // Recommendation
+            const recommendationDiv = document.getElementById('recommendation');
+            const recommendationText = document.getElementById('recommendationText');
+            
+            if (passed) {
+                recommendationDiv.classList.add('good');
+                if (scorePercent >= 80) {
+                    recommendationText.innerHTML = `
+                        <strong>คุณมีความรู้พื้นฐานที่ดีเยี่ยม!</strong><br>
+                        • คุณพร้อมที่จะเริ่มเรียนหลักสูตรนี้แล้ว<br>
+                        • แนะนำให้ทบทวนเนื้อหาขั้นสูงเพิ่มเติม<br>
+                        • สามารถเข้าสู่หลักสูตรได้ทันที
+                    `;
+                } else if (scorePercent >= 60) {
+                    recommendationText.innerHTML = `
+                        <strong>คุณมีพื้นฐานที่ดี</strong><br>
+                        • แนะนำให้ทบทวนหัวข้อที่ยังไม่แข็งแกร่ง<br>
+                        • ระหว่างเรียนควรให้ความสนใจกับรายละเอียด<br>
+                        • จดบันทึกประเด็นสำคัญระหว่างเรียน
+                    `;
+                } else {
+                    recommendationText.innerHTML = `
+                        <strong>คุณผ่านเกณฑ์ขั้นต่ำ</strong><br>
+                        • แนะนำให้ทบทวนเนื้อหาพื้นฐานก่อนเรียน<br>
+                        • ควรศึกษาเอกสารประกอบการเรียนล่วงหน้า<br>
+                        • ระหว่างเรียนควรถามคำถามเมื่อไม่เข้าใจ
+                    `;
+                }
+            } else {
+                recommendationDiv.classList.remove('good');
+                recommendationText.innerHTML = `
+                    <strong>คุณควรทบทวนความรู้พื้นฐานก่อนเข้าเรียน</strong><br><br>
+                    📚 <strong>หัวข้อที่ควรศึกษาเพิ่มเติม:</strong><br>
+                    ${generateWeakTopics(categoryScores)}<br><br>
+                    💡 <strong>คำแนะนำ:</strong><br>
+                    • ศึกษาเอกสารพื้นฐานเกี่ยวกับ PPS และ Hot Runner<br>
+                    • ทำความเข้าใจพารามิเตอร์การฉีดพลาสติก<br>
+                    • ทบทวนกระบวนการผลิตและการแก้ไขปัญหา<br>
+                    • ทำแบบทดสอบใหม่เมื่อพร้อม<br><br>
+                    <strong>เวลาที่ใช้ในการทำ:</strong> ${timeTaken} นาที
+                `;
+            }
+
+            // Show/hide buttons
+            document.getElementById('btnRetry').style.display = 'inline-block';
+            document.getElementById('btnGotoCourse').style.display = passed ? 'inline-block' : 'none';
+
+            // Generate certificate data
+            generateCertificateData(correctCount, scorePercent, passed, timeTaken, categoryScores);
+        }
+
+        // Generate Weak Topics
+        function generateWeakTopics(categoryScores) {
+            let weakTopics = [];
+            for (let category in categoryScores) {
+                const score = categoryScores[category];
+                const percent = Math.round((score.correct / score.total) * 100);
+                if (percent < 50) {
+                    weakTopics.push(`  • ${category} (ได้ ${score.correct}/${score.total} = ${percent}%)`);
+                }
+            }
+            return weakTopics.length > 0 ? weakTopics.join('<br>') : '  • แนะนำให้ทบทวนทุกหัวข้อ';
+        }
+
+        // Generate Certificate Data
+        function generateCertificateData(correctCount, scorePercent, passed, timeTaken, categoryScores) {
+            const certificateBody = document.getElementById('certificateBody');
+            
+            let categoryHTML = '';
+            for (let category in categoryScores) {
+                const score = categoryScores[category];
+                const percent = Math.round((score.correct / score.total) * 100);
+                categoryHTML += `
+                    <div style="margin: 10px 0; padding: 10px; background: #f7fafc; border-radius: 5px;">
+                        <strong>${category}:</strong> ${score.correct}/${score.total} (${percent}%)
+                    </div>
+                `;
+            }
+
+            certificateBody.innerHTML = `
+                <div style="margin: 20px 0;">
+                    <p><strong>ชื่อ-นามสกุล:</strong> ${studentInfo.name}</p>
+                    <p><strong>อีเมล:</strong> ${studentInfo.email}</p>
+                    <p><strong>แผนก/ฝ่าย:</strong> ${studentInfo.department}</p>
+                    <p><strong>วันที่ทดสอบ:</strong> ${new Date().toLocaleDateString('th-TH', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })}</p>
+                </div>
+                <hr style="margin: 20px 0;">
+                <div style="margin: 20px 0;">
+                    <p><strong>คะแนนที่ได้:</strong> ${correctCount}/15 (${scorePercent}%)</p>
+                    <p><strong>เวลาที่ใช้:</strong> ${timeTaken} นาที</p>
+                    <p><strong>ผลการทดสอบ:</strong> <span style="color: ${passed ? '#38a169' : '#e53e3e'}; font-weight: bold;">${passed ? '✅ ผ่าน' : '❌ ไม่ผ่าน'}</span></p>
+                </div>
+                <hr style="margin: 20px 0;">
+                <div style="margin: 20px 0;">
+                    <h4 style="color: #667eea; margin-bottom: 10px;">คะแนนแยกตามหมวด:</h4>
+                    ${categoryHTML}
+                </div>
+                <hr style="margin: 20px 0;">
+                <div style="margin: 20px 0; padding: 15px; background: ${passed ? '#f0fff4' : '#fff5f5'}; border-radius: 10px;">
+                    <h4 style="color: ${passed ? '#38a169' : '#e53e3e'}; margin-bottom: 10px;">คำแนะนำ:</h4>
+                    <p style="line-height: 1.8;">${document.getElementById('recommendationText').innerHTML}</p>
+                </div>
+                ${passed ? `
+                <div style="margin-top: 30px; text-align: center; padding: 20px; background: #f0fff4; border: 2px solid #38a169; border-radius: 10px;">
+                    <p style="color: #38a169; font-size: 1.2rem; font-weight: bold;">✅ ผู้เข้าทดสอบสามารถเข้าเรียนหลักสูตรได้</p>
+                </div>
+                ` : ''}
+            `;
+        }
+
+        // Share as PDF
+        async function sharePDF() {
+            const certificatePreview = document.getElementById('certificatePreview');
+            certificatePreview.style.display = 'block';
+
+            try {
+                const canvas = await html2canvas(certificatePreview, {
+                    scale: 2,
+                    backgroundColor: '#ffffff'
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                
+                const imgWidth = 210;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                
+                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                
+                const fileName = `ผลทดสอบ_${studentInfo.name.replace(/\s/g, '_')}_${new Date().getTime()}.pdf`;
+                pdf.save(fileName);
+
+                alert('✅ สร้างไฟล์ PDF สำเร็จ!');
+            } catch (error) {
+                console.error('Error generating PDF:', error);
+                alert('❌ เกิดข้อผิดพลาดในการสร้าง PDF');
+            } finally {
+                certificatePreview.style.display = 'none';
+            }
+        }
+
+        // Retry Quiz
+        function retryQuiz() {
+            if (confirm('คุณต้องการทำแบบทดสอบใหม่หรือไม่?')) {
+                // Reset variables
+                currentQuestionIndex = 0;
+                userAnswers = Array(quizData.length).fill(null);
+                startTime = null;
+
+                // Reset UI
+                document.getElementById('resultSection').style.display = 'none';
+                document.getElementById('quizSection').style.display = 'block';
+                
+                loadQuestion();
+            }
+        }
+
+        // Go to Course
+        function gotoCourse() {
+            if (confirm('คุณต้องการเข้าสู่หลักสูตรหรือไม่?')) {
+                // Save completion status
+                localStorage.setItem('preTestPassed', 'true');
+                localStorage.setItem('studentInfo', JSON.stringify(studentInfo));
+                
+                // Redirect to main course (ppstraining.html)
+                window.location.href = 'ppstraining.html';
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if already passed
+            const preTestPassed = localStorage.getItem('preTestPassed');
+            if (preTestPassed === 'true') {
+                const savedInfo = JSON.parse(localStorage.getItem('studentInfo') || '{}');
+                if (savedInfo.name) {
+                    document.getElementById('studentName').value = savedInfo.name;
+                    document.getElementById('studentEmail').value = savedInfo.email;
+                    document.getElementById('studentDept').value = savedInfo.department;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

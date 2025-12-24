@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hot Runner Training Center - ศูนย์การเรียนรู้ระบบ Hot Runner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 15px 30px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #00d9ff;
+            text-decoration: none;
+        }
+
+        .logo i {
+            font-size: 1.8em;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+
+        .nav-links a:hover {
+            background: rgba(0, 217, 255, 0.2);
+            color: #00d9ff;
+        }
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #00d9ff 0%, #0066ff 100%);
+            color: #fff;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.4);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 140px 30px 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 217, 255, 0.15) 0%, transparent 70%);
+            top: -200px;
+            right: -200px;
+            border-radius: 50%;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.15) 0%, transparent 70%);
+            bottom: -100px;
+            left: -100px;
+            border-radius: 50%;
+        }
+
+        .hero h1 {
+            font-size: 3.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff 0%, #00d9ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero p {
+            font-size: 1.3em;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 700px;
+            margin: 0 auto 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00d9ff 0%, #0066ff 100%);
+            color: #fff;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 217, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #fff;
+            padding: 15px 40px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #00d9ff;
+        }
+
+        /* Stats Section */
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            padding: 40px 30px;
+            margin-top: 40px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: 700;
+            color: #00d9ff;
+            display: block;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1em;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 30px;
+        }
+
+        /* Section Title */
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .section-title p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.2em;
+        }
+
+        /* Learning Modules Grid */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .module-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--card-color-1, #00d9ff), var(--card-color-2, #0066ff));
+        }
+
+        .module-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .module-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--card-color-1, #00d9ff), var(--card-color-2, #0066ff));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .module-card h3 {
+            font-size: 1.4em;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        .module-card p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .module-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .module-duration {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9em;
+        }
+
+        .module-level {
+            background: rgba(0, 217, 255, 0.2);
+            color: #00d9ff;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        /* Card Color Variations */
+        .module-card.hot-runner {
+            --card-color-1: #ff6b6b;
+            --card-color-2: #ee5a24;
+        }
+
+        .module-card.pps-training {
+            --card-color-1: #4ecdc4;
+            --card-color-2: #44a08d;
+        }
+
+        .module-card.injection {
+            --card-color-1: #667eea;
+            --card-color-2: #764ba2;
+        }
+
+        .module-card.simulation {
+            --card-color-1: #f093fb;
+            --card-color-2: #f5576c;
+        }
+
+        .module-card.quiz {
+            --card-color-1: #4facfe;
+            --card-color-2: #00f2fe;
+        }
+
+        .module-card.advanced {
+            --card-color-1: #fa709a;
+            --card-color-2: #fee140;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .quick-actions h3 {
+            font-size: 1.5em;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .quick-actions h3 i {
+            color: #00d9ff;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 15px 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .action-btn:hover {
+            background: rgba(0, 217, 255, 0.2);
+            border-color: #00d9ff;
+            transform: translateY(-2px);
+        }
+
+        .action-btn i {
+            font-size: 1.2em;
+        }
+
+        /* Learning Path */
+        .learning-path {
+            margin-bottom: 60px;
+        }
+
+        .path-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .path-container::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            z-index: 0;
+        }
+
+        .path-step {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px 30px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            min-width: 180px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .path-step:hover {
+            background: rgba(0, 217, 255, 0.2);
+            border-color: #00d9ff;
+            transform: scale(1.05);
+        }
+
+        .path-step.active {
+            background: linear-gradient(135deg, #00d9ff 0%, #0066ff 100%);
+        }
+
+        .path-step.completed {
+            background: linear-gradient(135deg, #00c853 0%, #00e676 100%);
+        }
+
+        .path-number {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2em;
+            margin: 0 auto 12px;
+        }
+
+        .path-step.completed .path-number {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .path-step.completed .path-number::after {
+            content: '✓';
+        }
+
+        .path-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .path-desc {
+            font-size: 0.85em;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Features Section */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 60px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            color: #00d9ff;
+        }
+
+        .feature-card h4 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95em;
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 40px 30px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #00d9ff;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .footer p {
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #00d9ff;
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .nav-links {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2.5em;
+            }
+
+            .stats {
+                flex-wrap: wrap;
+                gap: 30px;
+            }
+
+            .path-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .path-container::before {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2em;
+            }
+
+            .hero p {
+                font-size: 1.1em;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Login Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 25px;
+            padding: 40px;
+            max-width: 450px;
+            width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: #ff6b6b;
+        }
+
+        .modal h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.8em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #00d9ff;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .modal .btn-primary {
+            width: 100%;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .modal-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .modal-footer a {
+            color: #00d9ff;
+            text-decoration: none;
+        }
+
+        /* Tab Buttons */
+        .tab-buttons {
+            display: flex;
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 5px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #00d9ff 0%, #0066ff 100%);
+            color: #fff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* User Profile Badge (when logged in) */
+        .user-badge {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 15px;
+            border-radius: 25px;
+        }
+
+        .user-badge.active {
+            display: flex;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #00d9ff 0%, #0066ff 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .user-name {
+            font-weight: 500;
+        }
+
+        .user-progress {
+            font-size: 0.85em;
+            color: #00d9ff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-fire-flame-curved"></i>
+                <span>Hot Runner Pro</span>
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="#modules"><i class="fas fa-book"></i> หลักสูตร</a></li>
+                <li><a href="#path"><i class="fas fa-road"></i> เส้นทางการเรียน</a></li>
+                <li><a href="hotrunner/index.html"><i class="fas fa-fire"></i> Hot Runner Portal</a></li>
+                <li><a href="../wizmobiz.com/academy.html"><i class="fas fa-graduation-cap"></i> Academy</a></li>
+                <li><a href="../wizmobiz.com/index.html" style="background: linear-gradient(135deg, #00d9ff, #0066ff); color: white;"><i class="fas fa-rocket"></i> Wizmobiz</a></li>
+            </ul>
+
+            <div class="nav-user">
+                <div class="user-badge" id="userBadge">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <div>
+                        <div class="user-name" id="userName">ผู้ใช้งาน</div>
+                        <div class="user-progress">Progress: 0%</div>
+                    </div>
+                </div>
+                <button class="btn-login" id="btnLogin" onclick="openModal('login')">
+                    <i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบ
+                </button>
+                <button class="menu-toggle" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>🔥 Hot Runner Training Center</h1>
+        <p>ศูนย์การเรียนรู้ระบบ Hot Runner และเทคนิคการฉีดพลาสติกแบบครบวงจร พร้อมแบบจำลอง 3D และแบบทดสอบประเมินความรู้</p>
+        
+        <div class="hero-buttons">
+            <a href="#modules" class="btn-primary">
+                <i class="fas fa-play-circle"></i> เริ่มเรียนเลย
+            </a>
+            <a href="HtmlPro/hotrunner/index.html" class="btn-secondary">
+                <i class="fas fa-cube"></i> ดูโมเดล 3D
+            </a>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-number" id="totalModules">6</span>
+                <span class="stat-label">หลักสูตร</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="totalQuizzes">50+</span>
+                <span class="stat-label">ข้อสอบ</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="totalHours">10+</span>
+                <span class="stat-label">ชั่วโมงเรียน</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="totalUsers">100+</span>
+                <span class="stat-label">ผู้เรียน</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <h3><i class="fas fa-bolt"></i> เข้าถึงด่วน</h3>
+            <div class="action-buttons">
+                <a href="pretest.html" class="action-btn">
+                    <i class="fas fa-clipboard-question"></i> Pre-Test
+                </a>
+                <a href="protest.html" class="action-btn">
+                    <i class="fas fa-clipboard-check"></i> Post-Test
+                </a>
+                <a href="quiz.html" class="action-btn">
+                    <i class="fas fa-question-circle"></i> แบบทดสอบ
+                </a>
+                <a href="hotrunner/index.html" class="action-btn">
+                    <i class="fas fa-cube"></i> 3D Model
+                </a>
+                <a href="certificate.html" class="action-btn">
+                    <i class="fas fa-certificate"></i> ประกาศนียบัตร
+                </a>
+                <a href="booktraining.html" class="action-btn">
+                    <i class="fas fa-book-open"></i> คู่มือการอบรม
+                </a>
+            </div>
+        </div>
+
+        <!-- Learning Path -->
+        <section class="learning-path" id="path">
+            <div class="section-title">
+                <h2>🎯 เส้นทางการเรียนรู้</h2>
+                <p>เรียนรู้ทีละขั้นตอนจากพื้นฐานสู่ระดับสูง</p>
+            </div>
+
+            <div class="path-container">
+                <div class="path-step" onclick="location.href='pretest.html'">
+                    <div class="path-number">1</div>
+                    <div class="path-title">Pre-Test</div>
+                    <div class="path-desc">ทดสอบก่อนเรียน</div>
+                </div>
+                <div class="path-step" onclick="location.href='HtmlPro/hotrunner/basic-hotrunner.html'">
+                    <div class="path-number">2</div>
+                    <div class="path-title">Basic</div>
+                    <div class="path-desc">ความรู้พื้นฐาน</div>
+                </div>
+                <div class="path-step" onclick="location.href='hottraining.html'">
+                    <div class="path-number">3</div>
+                    <div class="path-title">Hot Runner</div>
+                    <div class="path-desc">ระบบ Hot Runner</div>
+                </div>
+                <div class="path-step" onclick="location.href='hotrunner/index.html'">
+                    <div class="path-number">4</div>
+                    <div class="path-title">3D Simulation</div>
+                    <div class="path-desc">ฝึกจำลอง</div>
+                </div>
+                <div class="path-step" onclick="location.href='quiz.html'">
+                    <div class="path-number">5</div>
+                    <div class="path-title">Quiz</div>
+                    <div class="path-desc">แบบทดสอบ</div>
+                </div>
+                <div class="path-step" onclick="location.href='protest.html'">
+                    <div class="path-number">6</div>
+                    <div class="path-title">Post-Test</div>
+                    <div class="path-desc">ทดสอบหลังเรียน</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Learning Modules -->
+        <section id="modules">
+            <div class="section-title">
+                <h2>📚 หลักสูตรการเรียนรู้</h2>
+                <p>เลือกหลักสูตรที่ต้องการเรียนรู้</p>
+            </div>
+
+            <div class="modules-grid">
+                <!-- Module 1: Basic Hot Runner -->
+                <a href="HtmlPro/hotrunner/basic-hotrunner.html" class="module-card hot-runner">
+                    <div class="module-icon">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <h3>ความรู้เบื้องต้น Hot Runner</h3>
+                    <p>เรียนรู้หลักการทำงานพื้นฐานของระบบ Hot Runner, ประเภทต่างๆ และส่วนประกอบสำคัญ</p>
+                    <div class="module-meta">
+                        <div class="module-duration">
+                            <i class="fas fa-clock"></i> 2 ชั่วโมง
+                        </div>
+                        <span class="module-level">พื้นฐาน</span>
+                    </div>
+                </a>
+
+                <!-- Module 2: Hot Runner Advanced -->
+                <a href="hottraining.html" class="module-card pps-training">
+                    <div class="module-icon">
+                        <i class="fas fa-temperature-high"></i>
+                    </div>
+                    <h3>Hot Runner Open Gate System</h3>
+                    <p>เจาะลึกระบบ Open Gate สำหรับพลาสติก PPS พร้อมเทคนิคการตั้งค่าอุณหภูมิ</p>
+                    <div class="module-meta">
+                        <div class="module-duration">
+                            <i class="fas fa-clock"></i> 3 ชั่วโมง
+                        </div>
+                        <span class="module-level">ปานกลาง</span>
+                    </div>
+                </a>
+
+                <!-- Module 3: Quiz System -->
+                <a href="quiz.html" class="module-card injection">
+                    <div class="module-icon">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <h3>ระบบแบบทดสอบ</h3>
+                    <p>แบบทดสอบออนไลน์พร้อมระบบจับเวลาและคะแนนอัตโนมัติ</p>
+                    <div class="module-meta">
+                        <div class="module-duration">
+                            <i class="fas fa-clock"></i> 1 ชั่วโมง
+                        </div>
+                        <span class="module-level">ทดสอบ</span>
+                    </div>
+                </a>
+
+                <!-- Module 4: 3D Model -->
+                <a href="hotrunner/index.html" class="module-card simulation">
+                    <div class="module-icon">
+                        <i class="fas fa-cube"></i>
+                    </div>
+                    <h3>โมเดล 3D Hot Runner</h3>
+                    <p>สื่อการสอน 3D โต้ตอบได้ เรียนรู้ส่วนประกอบของระบบแบบเสมือนจริง</p>
+                    <div class="module-meta">
+                        <div class="module-duration">
+                            <i class="fas fa-clock"></i> 1.5 ชั่วโมง
+                        </div>
+                        <span class="module-level">Interactive</span>
+                    </div>
+                </a>
+
+                <!-- Module 5: Certificate -->
+                <a href="certificate.html" class="module-card quiz">
+                    <div class="module-icon">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <h3>ประกาศนียบัตร</h3>
+                    <p>ระบบออกใบประกาศนียบัตรอัตโนมัติหลังผ่านการทดสอบ</p>
+                    <div class="module-meta">
+                        <div class="module-duration">
+                            <i class="fas fa-clock"></i> อัตโนมัติ
+                        </div>
+                        <span class="module-level">รับรอง</span>
+                    </div>
+                </a>
+
+                <!-- Module 6: Training Book -->
+                <a href="booktraining.html" class="module-card advanced">
+                    <div class="module-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h3>คู่มือการอบรม</h3>
+                    <p>เอกสารคู่มือการอบรมฉบับสมบูรณ์สำหรับการพิมพ์</p>
+                    <div class="module-meta">
+                        <div class="module-duration">
+                            <i class="fas fa-clock"></i> อ่านออนไลน์
+                        </div>
+                        <span class="module-level">เอกสาร</span>
+                    </div>
+                </a>
+
+                <!-- Module 7: Injection Molding Academy -->
+                <a href="injection-molding/index.html" class="module-card" style="--card-color-1: #10B981; --card-color-2: #059669;">
+                    <div class="module-icon">
+                        <i class="fas fa-industry"></i>
+                    </div>
+                    <h3>🏭 Injection Molding Academy</h3>
+                    <p>หลักสูตรการฉีดพลาสติก 6 ระดับ ตั้งแต่ Mindset จนถึง Industry 4.0 พร้อม XP, Badges และ Leaderboard</p>
+                    <div class="module-meta">
+                        <div class="module-duration">
+                            <i class="fas fa-layer-group"></i> 24 บทเรียน
+                        </div>
+                        <span class="module-level" style="background: rgba(16, 185, 129, 0.2); color: #10B981;">NEW!</span>
+                    </div>
+                </a>
+
+                <!-- Module 8: Hot Runner Training Portal -->
+                <a href="hotrunner/index.html" class="module-card" style="--card-color-1: #00d9ff; --card-color-2: #ff9800;">
+                    <div class="module-icon">
+                        <i class="fas fa-fire-alt"></i>
+                    </div>
+                    <h3>🔥 Hot Runner Training Portal</h3>
+                    <p>ศูนย์เรียนรู้ Hot Runner แบบครบวงจร พร้อม 3D Simulation, PID Controller และเครื่องมือ Interactive</p>
+                    <div class="module-meta">
+                        <div class="module-duration">
+                            <i class="fas fa-tools"></i> 10+ เครื่องมือ
+                        </div>
+                        <span class="module-level" style="background: rgba(0, 217, 255, 0.2); color: #00d9ff;">Premium</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="features">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h4>เนื้อหาครบถ้วน</h4>
+                <p>ครอบคลุมตั้งแต่พื้นฐานไปจนถึงระดับสูง</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-vr-cardboard"></i>
+                </div>
+                <h4>3D Interactive</h4>
+                <p>โมเดล 3 มิติโต้ตอบได้ เข้าใจง่าย</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <h4>แบบทดสอบ</h4>
+                <p>วัดผลก่อน-หลังเรียน พร้อมใบรับรอง</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h4>รองรับทุกอุปกรณ์</h4>
+                <p>เรียนได้ทุกที่ ทุกเวลา</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <i class="fas fa-fire-flame-curved"></i>
+                Hot Runner Training Center
+            </div>
+            <p>ระบบการเรียนรู้ออนไลน์สำหรับพนักงานในอุตสาหกรรมพลาสติก</p>
+            <div class="footer-links">
+                <a href="index.html">หน้าหลัก</a>
+                <a href="#modules">หลักสูตร</a>
+                <a href="admin_panel.html">สำหรับผู้ดูแล</a>
+                <a href="#">ติดต่อเรา</a>
+            </div>
+            <p>&copy; 2025 Hot Runner Training Center. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Login/Register Modal -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <h2 id="modalTitle">เข้าสู่ระบบ</h2>
+
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="switchTab('login')">เข้าสู่ระบบ</button>
+                <button class="tab-btn" onclick="switchTab('register')">ลงทะเบียน</button>
+            </div>
+
+            <!-- Login Form -->
+            <div class="tab-content active" id="loginTab">
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label>อีเมล</label>
+                        <input type="email" id="loginEmail" placeholder="example@company.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>รหัสพนักงาน</label>
+                        <input type="text" id="loginCode" placeholder="กรอกรหัสพนักงาน" required>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบ
+                    </button>
+                </form>
+            </div>
+
+            <!-- Register Form -->
+            <div class="tab-content" id="registerTab">
+                <form id="registerForm" onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label>ชื่อ-นามสกุล</label>
+                        <input type="text" id="regName" placeholder="กรอกชื่อ-นามสกุล" required>
+                    </div>
+                    <div class="form-group">
+                        <label>อีเมล</label>
+                        <input type="email" id="regEmail" placeholder="example@company.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>ตำแหน่ง</label>
+                        <input type="text" id="regPosition" placeholder="กรอกตำแหน่ง" required>
+                    </div>
+                    <div class="form-group">
+                        <label>แผนก</label>
+                        <input type="text" id="regDepartment" placeholder="กรอกแผนก" required>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-user-plus"></i> ลงทะเบียน
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // User State Management
+        let currentUser = JSON.parse(localStorage.getItem('hotrunner_user')) || null;
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkUserState();
+            animateStats();
+        });
+
+        // Check user state
+        function checkUserState() {
+            if (currentUser) {
+                document.getElementById('btnLogin').style.display = 'none';
+                document.getElementById('userBadge').classList.add('active');
+                document.getElementById('userName').textContent = currentUser.name;
+                document.getElementById('userAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+                
+                // Update progress
+                const progress = localStorage.getItem('learning_progress') || 0;
+                document.querySelector('.user-progress').textContent = `Progress: ${progress}%`;
+            }
+        }
+
+        // Modal Functions
+        function openModal(type) {
+            document.getElementById('authModal').classList.add('active');
+            switchTab(type);
+        }
+
+        function closeModal() {
+            document.getElementById('authModal').classList.remove('active');
+        }
+
+        function switchTab(tab) {
+            // Update buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            if (tab === 'login') {
+                document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
+                document.getElementById('loginTab').classList.add('active');
+                document.getElementById('modalTitle').textContent = 'เข้าสู่ระบบ';
+            } else {
+                document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
+                document.getElementById('registerTab').classList.add('active');
+                document.getElementById('modalTitle').textContent = 'ลงทะเบียน';
+            }
+        }
+
+        // Handle Login
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const code = document.getElementById('loginCode').value;
+
+            // Get registered users
+            const users = JSON.parse(localStorage.getItem('hotrunner_users')) || [];
+            const user = users.find(u => u.email === email);
+
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('hotrunner_user', JSON.stringify(user));
+                closeModal();
+                checkUserState();
+                showNotification('เข้าสู่ระบบสำเร็จ! ยินดีต้อนรับ ' + user.name, 'success');
+            } else {
+                showNotification('ไม่พบข้อมูลผู้ใช้ กรุณาลงทะเบียนก่อน', 'error');
+            }
+        }
+
+        // Handle Register
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const position = document.getElementById('regPosition').value;
+            const department = document.getElementById('regDepartment').value;
+
+            const newUser = {
+                id: Date.now(),
+                name,
+                email,
+                position,
+                department,
+                registeredAt: new Date().toISOString(),
+                progress: 0
+            };
+
+            // Save to localStorage
+            const users = JSON.parse(localStorage.getItem('hotrunner_users')) || [];
+            
+            // Check if email already exists
+            if (users.find(u => u.email === email)) {
+                showNotification('อีเมลนี้ลงทะเบียนแล้ว กรุณาเข้าสู่ระบบ', 'error');
+                return;
+            }
+
+            users.push(newUser);
+            localStorage.setItem('hotrunner_users', JSON.stringify(users));
+            
+            // Auto login
+            currentUser = newUser;
+            localStorage.setItem('hotrunner_user', JSON.stringify(newUser));
+            
+            closeModal();
+            checkUserState();
+            showNotification('ลงทะเบียนสำเร็จ! ยินดีต้อนรับ ' + name, 'success');
+        }
+
+        // Logout
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('hotrunner_user');
+            document.getElementById('btnLogin').style.display = 'block';
+            document.getElementById('userBadge').classList.remove('active');
+            showNotification('ออกจากระบบแล้ว', 'info');
+        }
+
+        // Show Notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                padding: 15px 25px;
+                background: ${type === 'success' ? '#00c853' : type === 'error' ? '#ff5252' : '#00d9ff'};
+                color: white;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                z-index: 3000;
+                animation: slideInRight 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Animate Stats
+        function animateStats() {
+            const stats = document.querySelectorAll('.stat-number');
+            stats.forEach(stat => {
+                const target = parseInt(stat.textContent);
+                let current = 0;
+                const increment = target / 50;
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        clearInterval(timer);
+                        current = target;
+                    }
+                    stat.textContent = Math.floor(current) + (stat.textContent.includes('+') ? '+' : '');
+                }, 30);
+            });
+        }
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('authModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Add keyframe animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100px); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // User badge click to show menu
+        document.getElementById('userBadge').addEventListener('click', function() {
+            if (confirm('คุณต้องการออกจากระบบหรือไม่?')) {
+                logout();
+            }
+        });
+    </script>
+</body>
+</html>

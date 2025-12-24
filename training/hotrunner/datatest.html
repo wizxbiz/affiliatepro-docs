@@ -1,0 +1,1931 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>โปรแกรมจำลองการฉีดพลาสติก - Injection Molding Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            text-align: center;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: scale(1.02);
+        }
+
+        .form-group input.error {
+            border-color: #f56565;
+            background-color: #fed7d7;
+        }
+
+        .form-group input.result {
+            color: #e53e3e;
+            font-weight: bold;
+            background: linear-gradient(135deg, #fed7e2 0%, #fbb6ce 100%);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+        }
+
+        .results-panel {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 5px solid #667eea;
+        }
+
+        .results-panel h4 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+        }
+
+        .result-item strong {
+            color: #667eea;
+        }
+
+        .machine-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .phase-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .phase-input label {
+            min-width: 80px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .temperature-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            font-weight: 600;
+        }
+
+        .alert-success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #68d391;
+        }
+
+        .alert-warning {
+            background: #fefcbf;
+            color: #744210;
+            border: 1px solid #f6e05e;
+        }
+
+        .alert-danger {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #fc8181;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 300px;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #718096;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .simulation-log {
+            max-height: 400px;
+            overflow-y: auto;
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 2px 0;
+        }
+
+        .log-entry.success {
+            color: #68d391;
+        }
+
+        .log-entry.warning {
+            color: #fbd38d;
+        }
+
+        .log-entry.error {
+            color: #fc8181;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .machine-info {
+                flex-direction: column;
+            }
+            
+            .temperature-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏭 โปรแกรมจำลองการฉีดพลาสติก</h1>
+            <p>Injection Molding Simulation & Analysis Tool</p>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('basic')">⚙️ พารามิเตอร์พื้นฐาน</button>
+            <button class="tab" onclick="switchTab('advanced')">🔬 การตั้งค่าขั้นสูง</button>
+            <button class="tab" onclick="switchTab('analysis')">📊 การวิเคราะห์ผล</button>
+            <button class="tab" onclick="switchTab('report')">📋 รายงานผล</button>
+        </div>
+
+        <!-- Basic Parameters Tab -->
+        <div id="basic" class="tab-content active">
+            <!-- Machine & Material Selection -->
+            <div class="card">
+                <h3>🔧 เลือกเครื่องจักรและวัตถุดิบ</h3>
+                <div class="machine-info">
+                    <div class="form-group">
+                        <label for="machineSize">ขนาดเครื่อง (ตัน)</label>
+                        <select id="machineSize" onchange="updateMachineInfo()">
+                            <option value="30">30 ตัน</option>
+                            <option value="50">50 ตัน</option>
+                            <option value="100">100 ตัน</option>
+                            <option value="150">150 ตัน</option>
+                            <option value="200">200 ตัน</option>
+                            <option value="250">250 ตัน</option>
+                            <option value="300">300 ตัน</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="plasticType">ชนิดพลาสติก</label>
+                        <select id="plasticType" onchange="updatePlasticProperties()">
+                            <option value="ABS">ABS</option>
+                            <option value="PP">PP</option>
+                            <option value="PE">PE</option>
+                            <option value="PS">PS</option>
+                            <option value="PC">PC</option>
+                            <option value="PA">PA (Nylon)</option>
+                            <option value="POM">POM</option>
+                            <option value="PMMA">PMMA</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="gateType">ประเภท Gate</label>
+                        <select id="gateType">
+                            <option value="Side Gate">Side Gate</option>
+                            <option value="Direct Gate">Direct Gate</option>
+                            <option value="Fan Gate">Fan Gate</option>
+                            <option value="Pin Gate">Pin Gate</option>
+                            <option value="Submarine Gate">Submarine Gate</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>ขนาด Screw: <span id="screwSize">20</span> mm</label>
+                        <label>Max Shot: <span id="maxShot">0</span> g</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Part Weight & Shot Size -->
+            <div class="card">
+                <h3>⚖️ น้ำหนักชิ้นงานและ Shot Size</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="partWeight">น้ำหนักชิ้นงาน (g) *</label>
+                        <input type="number" id="partWeight" step="0.1" oninput="calculateShotSize()">
+                    </div>
+                    <div class="form-group">
+                        <label for="runnerWeight">น้ำหนัก Runner (g)</label>
+                        <input type="number" id="runnerWeight" step="0.1" value="5" oninput="calculateShotSize()">
+                    </div>
+                    <div class="form-group">
+                        <label>Shot Size คำนวณได้ (mm)</label>
+                        <input type="number" id="calculatedShotSize" readonly class="result">
+                    </div>
+                    <div class="form-group">
+                        <label for="actualShotSize">Shot Size ที่ใช้จริง (mm) *</label>
+                        <input type="number" id="actualShotSize" step="0.1">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Temperature Settings -->
+            <div class="card">
+                <h3>🌡️ การตั้งค่าอุณหภูมิ</h3>
+                <div class="temperature-grid">
+                    <div class="form-group">
+                        <label for="tempHN">Nozzle (°C) *</label>
+                        <input type="number" id="tempHN" step="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="tempH1">Zone 1 (°C) *</label>
+                        <input type="number" id="tempH1" step="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="tempH2">Zone 2 (°C) *</label>
+                        <input type="number" id="tempH2" step="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="tempH3">Zone 3 (°C) *</label>
+                        <input type="number" id="tempH3" step="1">
+                    </div>
+                </div>
+                <div class="form-grid" style="margin-top: 15px;">
+                    <div class="form-group">
+                        <label for="moldTemp">อุณหภูมิแม่พิมพ์ (°C)</label>
+                        <input type="number" id="moldTemp" step="1" value="60">
+                    </div>
+                    <div class="form-group">
+                        <label for="dryTemp">อุณหภูมิอบแห้ง (°C)</label>
+                        <input type="number" id="dryTemp" step="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="dryTime">เวลาอบแห้ง (ชม.)</label>
+                        <input type="number" id="dryTime" step="0.5">
+                    </div>
+                </div>
+            </div>
+
+                <!-- Multi-Step Injection Control -->
+            <div class="card">
+                <h3>💉 การควบคุมการฉีดแบบ Multi-Step</h3>
+                
+                <!-- Injection Profile Visualization -->
+                <div class="injection-profile">
+                    <div class="profile-header">
+                        <h4>📊 Injection Profile</h4>
+                        <div class="profile-controls">
+                            <button class="btn btn-sm" onclick="addInjectionStep()">+ เพิ่ม Step</button>
+                            <button class="btn btn-sm btn-warning" onclick="removeInjectionStep()">- ลด Step</button>
+                            <button class="btn btn-sm btn-success" onclick="previewProfile()">👁️ Preview</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Visual Flow Direction -->
+                    <div class="flow-direction">
+                        <div class="flow-arrow">
+                            <span>Direction: Nozzle → Gate → Cavity</span>
+                            <div class="arrow-line">→→→→→→→→→→</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step Controls -->
+                    <div class="step-controls" id="injectionSteps">
+                        <!-- Steps will be generated dynamically -->
+                    </div>
+                    
+                    <!-- Visual Graph -->
+                    <div class="injection-graph">
+                        <canvas id="injectionChart" width="800" height="300"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Traditional Parameters (for compatibility) -->
+                <div class="traditional-params" style="margin-top: 20px;">
+                    <h4>⚙️ พารามิเตอร์แบบดั้งเดิม</h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="injectionPressure">แรงดันฉีด (bar) *</label>
+                            <input type="number" id="injectionPressure" step="1" value="75">
+                        </div>
+                        <div class="form-group">
+                            <label for="injectionSpeed">ความเร็วฉีด (mm/s) *</label>
+                            <input type="number" id="injectionSpeed" step="1" value="50">
+                        </div>
+                        <div class="form-group">
+                            <label for="injectionTime">เวลาฉีด (s) *</label>
+                            <input type="number" id="injectionTime" step="0.1" value="2">
+                        </div>
+                        <div class="form-group">
+                            <label for="holdPressure">แรงดันย้ำ (bar) *</label>
+                            <input type="number" id="holdPressure" step="1" value="50">
+                        </div>
+                        <div class="form-group">
+                            <label for="holdTime">เวลาย้ำ (s) *</label>
+                            <input type="number" id="holdTime" step="0.1" value="5">
+                        </div>
+                        <div class="form-group">
+                            <label for="coolingTime">เวลาหล่อเย็น (s) *</label>
+                            <input type="number" id="coolingTime" step="0.1" value="20">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <!-- Advanced Settings Tab -->
+        <div id="advanced" class="tab-content">
+            <!-- Multi-Phase Injection -->
+            <div class="card">
+                <h3>🔄 การฉีดแบบหลายระยะ (Multi-Phase Injection)</h3>
+                <div id="phaseInputs">
+                    <!-- Phase inputs will be generated dynamically -->
+                </div>
+                <button class="btn btn-success" onclick="addPhase()">+ เพิ่มระยะ</button>
+                <button class="btn btn-warning" onclick="removePhase()">- ลดระยะ</button>
+            </div>
+
+            <!-- Screw Parameters -->
+            <div class="card">
+                <h3>🌀 พารามิเตอร์สกรู</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="screwSpeed">ความเร็วสกรู (RPM)</label>
+                        <input type="number" id="screwSpeed" step="1" value="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="backPressure">แรงดันต้าน (bar)</label>
+                        <input type="number" id="backPressure" step="1" value="5">
+                    </div>
+                    <div class="form-group">
+                        <label for="cushion">Cushion (mm)</label>
+                        <input type="number" id="cushion" step="0.1" readonly class="result">
+                    </div>
+                    <div class="form-group">
+                        <label for="screwRecoveryTime">เวลา Recovery (s)</label>
+                        <input type="number" id="screwRecoveryTime" step="0.1" readonly class="result">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quality Parameters -->
+            <div class="card">
+                <h3>✅ พารามิเตอร์คุณภาพ</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="viscosity">ความหนืด (Pa·s)</label>
+                        <input type="number" id="viscosity" step="0.01" value="0.3">
+                    </div>
+                    <div class="form-group">
+                        <label for="shrinkage">การหดตัว (%)</label>
+                        <input type="number" id="shrinkage" step="0.01" value="0.5">
+                    </div>
+                    <div class="form-group">
+                        <label for="gateArea">พื้นที่ Gate (mm²)</label>
+                        <input type="number" id="gateArea" step="0.1" value="2">
+                    </div>
+                    <div class="form-group">
+                        <label for="flowLength">ระยะทางการไหล (mm)</label>
+                        <input type="number" id="flowLength" step="1" value="100">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analysis Tab -->
+        <div id="analysis" class="tab-content">
+            <!-- Real-time Calculations -->
+            <div class="card">
+                <h3>⚡ การคำนวณแบบเรียลไทม์</h3>
+                <div class="results-panel">
+                    <h4>📊 ผลการคำนวณ</h4>
+                    <div id="calculationResults">
+                        <!-- Results will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Process Monitoring -->
+            <div class="card">
+                <h3>📈 การติดตามกระบวนการ</h3>
+                <div class="chart-container">
+                    <canvas id="processChart" width="400" height="200"></canvas>
+                </div>
+                <div style="text-align: center; margin-top: 15px;">
+                    <button class="btn" onclick="startProcessSimulation()">🚀 เริ่มจำลองกระบวนการ</button>
+                    <button class="btn btn-warning" onclick="pauseSimulation()">⏸️ หยุดชั่วคราว</button>
+                    <button class="btn btn-danger" onclick="stopSimulation()">⏹️ หยุด</button>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="processProgress"></div>
+                </div>
+                <p style="text-align: center; margin-top: 10px;">
+                    ความคืบหน้า: <span id="progressText">0%</span>
+                </p>
+            </div>
+
+            <!-- Quality Analysis -->
+            <div class="card">
+                <h3>🔍 การวิเคราะห์คุณภาพ</h3>
+                <div id="qualityAnalysis">
+                    <!-- Quality analysis results -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Tab -->
+        <div id="report" class="tab-content">
+            <!-- Simulation Results -->
+            <div class="card">
+                <h3>📋 รายงานผลการจำลอง</h3>
+                <div class="loading" id="loadingIndicator">
+                    <div class="spinner"></div>
+                    <p>กำลังประมวลผล...</p>
+                </div>
+                <div id="simulationReport">
+                    <!-- Detailed report will be generated here -->
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn btn-success" onclick="generateReport()">📊 สร้างรายงาน</button>
+                    <button class="btn" onclick="exportToPDF()">📄 Export PDF</button>
+                    <button class="btn" onclick="exportToExcel()">📗 Export Excel</button>
+                </div>
+            </div>
+
+            <!-- Simulation Log -->
+            <div class="card">
+                <h3>📝 บันทึกการจำลอง</h3>
+                <div class="simulation-log" id="simulationLog">
+                    <!-- Log entries will appear here -->
+                </div>
+                <button class="btn btn-warning" onclick="clearLog()">🗑️ ล้างบันทึก</button>
+            </div>
+        </div>
+
+        <!-- Main Action Buttons -->
+        <div style="text-align: center; margin: 30px 0;">
+            <button class="btn btn-success" onclick="runFullSimulation()">🚀 เริ่มจำลองแบบสมบูรณ์</button>
+            <button class="btn" onclick="validateInputs()">✅ ตรวจสอบข้อมูล</button>
+            <button class="btn btn-warning" onclick="resetAll()">🔄 รีเซ็ตทั้งหมด</button>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentPhases = 3;
+        let simulationRunning = false;
+        let simulationInterval = null;
+        let processChart = null;
+
+        // Material properties database
+        const materialProperties = {
+            ABS: {
+                temperatures: [210, 220, 210, 200],
+                dryTemp: 80,
+                dryTime: 2,
+                viscosity: 0.3,
+                shrinkage: 0.5,
+                density: 1.05
+            },
+            PP: {
+                temperatures: [200, 210, 200, 190],
+                dryTemp: 60,
+                dryTime: 3,
+                viscosity: 0.25,
+                shrinkage: 1.2,
+                density: 0.9
+            },
+            PE: {
+                temperatures: [180, 190, 180, 170],
+                dryTemp: 60,
+                dryTime: 2,
+                viscosity: 0.2,
+                shrinkage: 2.0,
+                density: 0.92
+            },
+            PS: {
+                temperatures: [180, 200, 190, 180],
+                dryTemp: 60,
+                dryTime: 3.5,
+                viscosity: 0.35,
+                shrinkage: 0.4,
+                density: 1.04
+            },
+            PC: {
+                temperatures: [280, 300, 280, 260],
+                dryTemp: 120,
+                dryTime: 4,
+                viscosity: 0.5,
+                shrinkage: 0.6,
+                density: 1.2
+            },
+            PA: {
+                temperatures: [240, 260, 240, 230],
+                dryTemp: 80,
+                dryTime: 5,
+                viscosity: 0.45,
+                shrinkage: 1.0,
+                density: 1.14
+            },
+            POM: {
+                temperatures: [190, 200, 190, 180],
+                dryTemp: 80,
+                dryTime: 3,
+                viscosity: 0.3,
+                shrinkage: 2.0,
+                density: 1.41
+            },
+            PMMA: {
+                temperatures: [230, 250, 230, 220],
+                dryTemp: 80,
+                dryTime: 3,
+                viscosity: 0.4,
+                shrinkage: 0.5,
+                density: 1.18
+            }
+        };
+
+        // Machine specifications
+        const machineSpecs = {
+            30: { screwSize: 20, maxShot: 45, clampForce: 30 },
+            50: { screwSize: 25, maxShot: 85, clampForce: 50 },
+            100: { screwSize: 30, maxShot: 140, clampForce: 100 },
+            150: { screwSize: 35, maxShot: 210, clampForce: 150 },
+            200: { screwSize: 40, maxShot: 290, clampForce: 200 },
+            250: { screwSize: 45, maxShot: 380, clampForce: 250 },
+            300: { screwSize: 50, maxShot: 480, clampForce: 300 }
+        };
+
+        // Gate area coefficients
+        const gateCoefficients = {
+            'Side Gate': 0.5,
+            'Direct Gate': 1.0,
+            'Fan Gate': 0.7,
+            'Pin Gate': 0.4,
+            'Submarine Gate': 0.3
+        };
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePhaseInputs();
+            updateMachineInfo();
+            updatePlasticProperties();
+            logMessage('ระบบเริ่มต้นพร้อมใช้งาน', 'success');
+        });
+
+        // Tab switching
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+            
+            logMessage(`เปลี่ยนไปแท็บ: ${tabName}`, 'info');
+        }
+
+        // Update machine information
+        function updateMachineInfo() {
+            const machineSize = document.getElementById('machineSize').value;
+            const specs = machineSpecs[machineSize];
+            
+            document.getElementById('screwSize').textContent = specs.screwSize;
+            document.getElementById('maxShot').textContent = specs.maxShot;
+            
+            // Auto-calculate some parameters based on machine size
+            document.getElementById('gateArea').value = specs.screwSize * 0.1;
+            
+            calculateShotSize();
+            logMessage(`อัปเดตข้อมูlเครื่อง: ${machineSize} ตัน, Screw ${specs.screwSize}mm`, 'info');
+        }
+
+        // Update plastic properties
+        function updatePlasticProperties() {
+            const plasticType = document.getElementById('plasticType').value;
+            const properties = materialProperties[plasticType];
+            
+            // Update temperatures
+            document.getElementById('tempHN').value = properties.temperatures[0];
+            document.getElementById('tempH1').value = properties.temperatures[1];
+            document.getElementById('tempH2').value = properties.temperatures[2];
+            document.getElementById('tempH3').value = properties.temperatures[3];
+            
+            // Update drying parameters
+            document.getElementById('dryTemp').value = properties.dryTemp;
+            document.getElementById('dryTime').value = properties.dryTime;
+            
+            // Update other properties
+            document.getElementById('viscosity').value = properties.viscosity;
+            document.getElementById('shrinkage').value = properties.shrinkage;
+            
+            calculateShotSize();
+            logMessage(`อัปเดตคุณสมบัติพลาสติก: ${plasticType}`, 'info');
+        }
+
+        // Calculate shot size from part weight
+        function calculateShotSize() {
+            const partWeight = parseFloat(document.getElementById('partWeight').value) || 0;
+            const runnerWeight = parseFloat(document.getElementById('runnerWeight').value) || 0;
+            const plasticType = document.getElementById('plasticType').value;
+            const machineSize = document.getElementById('machineSize').value;
+            
+            const density = materialProperties[plasticType].density;
+            const screwSize = machineSpecs[machineSize].screwSize;
+            
+            if (partWeight > 0) {
+                const totalWeight = partWeight + runnerWeight;
+                const volume = totalWeight / density; // cm³
+                
+                // Calculate shot size (screw retraction distance)
+                const screwArea = Math.PI * Math.pow(screwSize / 20, 2); // cm²
+                const shotSize = volume / screwArea * 10; // Convert to mm
+                
+                document.getElementById('calculatedShotSize').value = shotSize.toFixed(2);
+                document.getElementById('actualShotSize').value = shotSize.toFixed(2);
+                
+                // Calculate cushion
+                calculateCushion();
+                
+                logMessage(`คำนวณ Shot Size: ${shotSize.toFixed(2)} mm สำหรับน้ำหนัก ${totalWeight} g`, 'success');
+            }
+        }
+
+        // Calculate cushion
+        function calculateCushion() {
+            const actualShotSize = parseFloat(document.getElementById('actualShotSize').value) || 0;
+            const holdTime = parseFloat(document.getElementById('holdTime').value) || 0;
+            const holdPressure = parseFloat(document.getElementById('holdPressure').value) || 0;
+            
+            // Simplified cushion calculation
+            const cushionFactor = holdPressure / 100 * holdTime / 10;
+            const cushion = actualShotSize * 0.1 + cushionFactor;
+            
+            document.getElementById('cushion').value = cushion.toFixed(2);
+        }
+
+        // Initialize phase inputs for multi-phase injection
+        function initializePhaseInputs() {
+            generatePhaseInputs();
+        }
+
+        // Generate phase input fields
+        function generatePhaseInputs() {
+            const container = document.getElementById('phaseInputs');
+            container.innerHTML = '';
+            
+            for (let i = 1; i <= currentPhases; i++) {
+                const phaseDiv = document.createElement('div');
+                phaseDiv.className = 'phase-input';
+                phaseDiv.innerHTML = `
+                    <label>Phase ${i}:</label>
+                    <input type="number" placeholder="Position (mm)" id="pos${i}" step="0.1">
+                    <input type="number" placeholder="Speed (mm/s)" id="speed${i}" step="1">
+                    <input type="number" placeholder="Pressure (bar)" id="pressure${i}" step="1">
+                `;
+                container.appendChild(phaseDiv);
+            }
+        }
+
+        // Add injection phase
+        function addPhase() {
+            if (currentPhases < 10) {
+                currentPhases++;
+                generatePhaseInputs();
+                logMessage(`เพิ่มระยะการฉีด: Phase ${currentPhases}`, 'info');
+            }
+        }
+
+        // Remove injection phase
+        function removePhase() {
+            if (currentPhases > 1) {
+                currentPhases--;
+                generatePhaseInputs();
+                logMessage(`ลดระยะการฉีด: Phase ${currentPhases} ถูกลบ`, 'warning');
+            }
+        }
+
+        // Validate all inputs
+        function validateInputs() {
+            const requiredFields = [
+                'partWeight', 'actualShotSize', 'tempHN', 'tempH1', 'tempH2', 'tempH3',
+                'injectionPressure', 'injectionSpeed', 'injectionTime', 
+                'holdPressure', 'holdTime', 'coolingTime'
+            ];
+            
+            let isValid = true;
+            let missingFields = [];
+            
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                const value = parseFloat(field.value);
+                
+                if (!value || value <= 0) {
+                    field.classList.add('error');
+                    missingFields.push(field.previousElementSibling.textContent);
+                    isValid = false;
+                } else {
+                    field.classList.remove('error');
+                }
+            });
+            
+            if (isValid) {
+                showAlert('✅ ข้อมูลครบถ้วนและถูกต้อง!', 'success');
+                logMessage('ตรวจสอบข้อมูล: ผ่าน', 'success');
+            } else {
+                showAlert(`❌ กรุณากรอกข้อมูลให้ครบถ้วน:\n${missingFields.join(', ')}`, 'danger');
+                logMessage(`ตรวจสอบข้อมูล: ไม่ผ่าน - ขาดข้อมูล ${missingFields.length} รายการ`, 'error');
+            }
+            
+            return isValid;
+        }
+
+        // Run full simulation
+        function runFullSimulation() {
+            if (!validateInputs()) {
+                return;
+            }
+            
+            showAlert('🚀 เริ่มต้นการจำลองแบบสมบูรณ์...', 'info');
+            logMessage('เริ่มการจำลองแบบสมบูรณ์', 'info');
+            
+            // Show loading
+            document.getElementById('loadingIndicator').style.display = 'block';
+            
+            // Simulate processing delay
+            setTimeout(() => {
+                performCalculations();
+                generateReport();
+                document.getElementById('loadingIndicator').style.display = 'none';
+                showAlert('✅ การจำลองเสร็จสมบูรณ์!', 'success');
+                logMessage('การจำลองเสร็จสมบูรณ์', 'success');
+            }, 2000);
+        }
+
+        // Perform all calculations
+        function performCalculations() {
+            const results = {};
+            
+            // Get input values
+            const partWeight = parseFloat(document.getElementById('partWeight').value);
+            const runnerWeight = parseFloat(document.getElementById('runnerWeight').value);
+            const injectionPressure = parseFloat(document.getElementById('injectionPressure').value);
+            const injectionSpeed = parseFloat(document.getElementById('injectionSpeed').value);
+            const injectionTime = parseFloat(document.getElementById('injectionTime').value);
+            const holdPressure = parseFloat(document.getElementById('holdPressure').value);
+            const holdTime = parseFloat(document.getElementById('holdTime').value);
+            const coolingTime = parseFloat(document.getElementById('coolingTime').value);
+            const actualShotSize = parseFloat(document.getElementById('actualShotSize').value);
+            const viscosity = parseFloat(document.getElementById('viscosity').value);
+            const gateArea = parseFloat(document.getElementById('gateArea').value);
+            const flowLength = parseFloat(document.getElementById('flowLength').value);
+            
+            const plasticType = document.getElementById('plasticType').value;
+            const machineSize = document.getElementById('machineSize').value;
+            const gateType = document.getElementById('gateType').value;
+            
+            // Calculate various parameters
+            const totalWeight = partWeight + runnerWeight;
+            const density = materialProperties[plasticType].density;
+            const shrinkage = materialProperties[plasticType].shrinkage;
+            const specs = machineSpecs[machineSize];
+            
+            // Flow rate calculation
+            results.flowRate = (actualShotSize * Math.PI * Math.pow(specs.screwSize/20, 2)) / injectionTime;
+            
+            // Pressure drop in gate
+            results.pressureDrop = (8 * viscosity * results.flowRate * flowLength) / (Math.PI * Math.pow(gateArea/2, 4));
+            
+            // Mold pressure
+            results.moldPressure = injectionPressure - results.pressureDrop;
+            
+            // Filling time calculation
+            results.fillingTime = (actualShotSize / injectionSpeed);
+            
+            // Cycle time
+            results.cycleTime = injectionTime + holdTime + coolingTime + 3; // +3s for mold open/close
+            
+            // Production rate
+            results.hourlyProduction = 3600 / results.cycleTime;
+            
+            // Screw recovery time
+            const backPressure = parseFloat(document.getElementById('backPressure').value) || 5;
+            const screwSpeed = parseFloat(document.getElementById('screwSpeed').value) || 100;
+            results.recoveryTime = (actualShotSize / screwSpeed) * (1 + backPressure/100);
+            document.getElementById('screwRecoveryTime').value = results.recoveryTime.toFixed(2);
+            
+            // Quality predictions
+            results.shrinkageAmount = totalWeight * shrinkage / 100;
+            results.qualityIndex = calculateQualityIndex(results);
+            
+            // Update results display
+            updateCalculationResults(results);
+            
+            return results;
+        }
+
+        // Calculate quality index
+        function calculateQualityIndex(results) {
+            let qualityScore = 100;
+            
+            // Deduct points for various factors
+            if (results.pressureDrop > 50) qualityScore -= 10;
+            if (results.fillingTime > 3) qualityScore -= 15;
+            if (results.moldPressure < 20) qualityScore -= 20;
+            if (results.recoveryTime > results.cycleTime * 0.8) qualityScore -= 10;
+            
+            return Math.max(qualityScore, 0);
+        }
+
+        // Update calculation results display
+        function updateCalculationResults(results) {
+            const container = document.getElementById('calculationResults');
+            container.innerHTML = `
+                <div class="result-item">
+                    <span>อัตราการไหล:</span>
+                    <strong>${results.flowRate.toFixed(2)} cm³/s</strong>
+                </div>
+                <div class="result-item">
+                    <span>แรงดันใน Gate:</span>
+                    <strong>${results.pressureDrop.toFixed(2)} bar</strong>
+                </div>
+                <div class="result-item">
+                    <span>แรงดันในแม่พิมพ์:</span>
+                    <strong>${results.moldPressure.toFixed(2)} bar</strong>
+                </div>
+                <div class="result-item">
+                    <span>เวลาการเติม:</span>
+                    <strong>${results.fillingTime.toFixed(2)} s</strong>
+                </div>
+                <div class="result-item">
+                    <span>เวลารอบการผลิต:</span>
+                    <strong>${results.cycleTime.toFixed(1)} s</strong>
+                </div>
+                <div class="result-item">
+                    <span>อัตราการผลิต:</span>
+                    <strong>${results.hourlyProduction.toFixed(0)} ชิ้น/ชม.</strong>
+                </div>
+                <div class="result-item">
+                    <span>ดัชนีคุณภาพ:</span>
+                    <strong style="color: ${results.qualityIndex > 80 ? 'green' : results.qualityIndex > 60 ? 'orange' : 'red'}">
+                        ${results.qualityIndex.toFixed(1)}%
+                    </strong>
+                </div>
+            `;
+            
+            // Update quality analysis
+            updateQualityAnalysis(results);
+        }
+
+        // Update quality analysis
+        function updateQualityAnalysis(results) {
+            const container = document.getElementById('qualityAnalysis');
+            let analysisHtml = '<h4>📊 การวิเคราะห์คุณภาพ</h4>';
+            
+            // Pressure analysis
+            if (results.moldPressure < 20) {
+                analysisHtml += '<div class="alert alert-danger">⚠️ แรงดันในแม่พิมพ์ต่ำเกินไป อาจทำให้ชิ้นงานไม่เต็ม</div>';
+            } else if (results.moldPressure > 100) {
+                analysisHtml += '<div class="alert alert-warning">⚠️ แรงดันในแม่พิมพ์สูงเกินไป อาจทำให้เกิดครีบ</div>';
+            } else {
+                analysisHtml += '<div class="alert alert-success">✅ แรงดันในแม่พิมพ์อยู่ในช่วงที่เหมาะสม</div>';
+            }
+            
+            // Filling time analysis
+            if (results.fillingTime > 3) {
+                analysisHtml += '<div class="alert alert-warning">⚠️ เวลาการเติมนานเกินไป อาจทำให้พลาสติกเย็นตัวก่อนเติมเต็ม</div>';
+            } else {
+                analysisHtml += '<div class="alert alert-success">✅ เวลาการเติมเหมาะสม</div>';
+            }
+            
+            // Recovery time analysis
+            if (results.recoveryTime > results.cycleTime * 0.8) {
+                analysisHtml += '<div class="alert alert-danger">⚠️ เวลา Recovery นานเกินไป จำกัดอัตราการผลิต</div>';
+            }
+            
+            // Quality recommendations
+            analysisHtml += '<div style="margin-top: 20px;"><h5>💡 คำแนะนำการปรับปรุง:</h5><ul>';
+            
+            if (results.qualityIndex < 80) {
+                if (results.pressureDrop > 50) {
+                    analysisHtml += '<li>ลดความหนืดโดยเพิ่มอุณหภูมิ หรือขยาย Gate ให้ใหญ่ขึ้น</li>';
+                }
+                if (results.fillingTime > 3) {
+                    analysisHtml += '<li>เพิ่มความเร็วในการฉีด หรือเพิ่มอุณหภูมิพลาสติก</li>';
+                }
+                if (results.moldPressure < 20) {
+                    analysisHtml += '<li>เพิ่มแรงดันการฉีด หรือลดการสูญเสียแรงดันใน Gate</li>';
+                }
+            } else {
+                analysisHtml += '<li>พารามิเตอร์อยู่ในช่วงที่ดี ควรรักษาค่าเดิม</li>';
+            }
+            
+            analysisHtml += '</ul></div>';
+            container.innerHTML = analysisHtml;
+        }
+
+        // Generate detailed report
+        function generateReport() {
+            const results = performCalculations();
+            const reportContainer = document.getElementById('simulationReport');
+            
+            // Get all input values for report
+            const inputs = {
+                machineSize: document.getElementById('machineSize').value,
+                plasticType: document.getElementById('plasticType').value,
+                gateType: document.getElementById('gateType').value,
+                partWeight: document.getElementById('partWeight').value,
+                runnerWeight: document.getElementById('runnerWeight').value,
+                actualShotSize: document.getElementById('actualShotSize').value,
+                tempHN: document.getElementById('tempHN').value,
+                tempH1: document.getElementById('tempH1').value,
+                tempH2: document.getElementById('tempH2').value,
+                tempH3: document.getElementById('tempH3').value,
+                moldTemp: document.getElementById('moldTemp').value,
+                injectionPressure: document.getElementById('injectionPressure').value,
+                injectionSpeed: document.getElementById('injectionSpeed').value,
+                injectionTime: document.getElementById('injectionTime').value,
+                holdPressure: document.getElementById('holdPressure').value,
+                holdTime: document.getElementById('holdTime').value,
+                coolingTime: document.getElementById('coolingTime').value
+            };
+            
+            const reportHtml = `
+                <div style="padding: 20px; background: white; border-radius: 10px;">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <h2>📋 รายงานการจำลองการฉีดพลาสติก</h2>
+                        <p>วันที่: ${new Date().toLocaleDateString('th-TH')}</p>
+                        <p>เวลา: ${new Date().toLocaleTimeString('th-TH')}</p>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                        <div>
+                            <h3>🔧 ข้อมูลเครื่องจักรและวัตถุดิบ</h3>
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <tr><td>ขนาดเครื่อง:</td><td><strong>${inputs.machineSize} ตัน</strong></td></tr>
+                                <tr><td>ชนิดพลาสติก:</td><td><strong>${inputs.plasticType}</strong></td></tr>
+                                <tr><td>ประเภท Gate:</td><td><strong>${inputs.gateType}</strong></td></tr>
+                                <tr><td>ขนาด Screw:</td><td><strong>${machineSpecs[inputs.machineSize].screwSize} mm</strong></td></tr>
+                                <tr><td>น้ำหนักชิ้นงาน:</td><td><strong>${inputs.partWeight} g</strong></td></tr>
+                                <tr><td>น้ำหนัก Runner:</td><td><strong>${inputs.runnerWeight} g</strong></td></tr>
+                            </table>
+                        </div>
+                        
+                        <div>
+                            <h3>🌡️ พารามิเตอร์อุณหภูมิ</h3>
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <tr><td>Nozzle:</td><td><strong>${inputs.tempHN} °C</strong></td></tr>
+                                <tr><td>Zone 1:</td><td><strong>${inputs.tempH1} °C</strong></td></tr>
+                                <tr><td>Zone 2:</td><td><strong>${inputs.tempH2} °C</strong></td></tr>
+                                <tr><td>Zone 3:</td><td><strong>${inputs.tempH3} °C</strong></td></tr>
+                                <tr><td>แม่พิมพ์:</td><td><strong>${inputs.moldTemp} °C</strong></td></tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div style="margin: 30px 0;">
+                        <h3>💉 พารามิเตอร์การฉีด</h3>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                            <div>
+                                <strong>การฉีด:</strong><br>
+                                แรงดัน: ${inputs.injectionPressure} bar<br>
+                                ความเร็ว: ${inputs.injectionSpeed} mm/s<br>
+                                เวลา: ${inputs.injectionTime} s<br>
+                                Shot Size: ${inputs.actualShotSize} mm
+                            </div>
+                            <div>
+                                <strong>การย้ำ:</strong><br>
+                                แรงดัน: ${inputs.holdPressure} bar<br>
+                                เวลา: ${inputs.holdTime} s<br>
+                                Cushion: ${document.getElementById('cushion').value} mm
+                            </div>
+                            <div>
+                                <strong>การหล่อเย็น:</strong><br>
+                                เวลา: ${inputs.coolingTime} s<br>
+                                เวลารอบ: ${results.cycleTime.toFixed(1)} s<br>
+                                อัตราผลิต: ${results.hourlyProduction.toFixed(0)} ชิ้น/ชม.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin: 30px 0;">
+                        <h3>📊 ผลการคำนวณ</h3>
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                                <div>อัตราการไหล: <strong>${results.flowRate.toFixed(2)} cm³/s</strong></div>
+                                <div>แรงดันใน Gate: <strong>${results.pressureDrop.toFixed(2)} bar</strong></div>
+                                <div>แรงดันในแม่พิมพ์: <strong>${results.moldPressure.toFixed(2)} bar</strong></div>
+                                <div>เวลาการเติม: <strong>${results.fillingTime.toFixed(2)} s</strong></div>
+                                <div>เวลา Recovery: <strong>${results.recoveryTime.toFixed(2)} s</strong></div>
+                                <div>ดัชนีคุณภาพ: <strong style="color: ${results.qualityIndex > 80 ? 'green' : results.qualityIndex > 60 ? 'orange' : 'red'}">${results.qualityIndex.toFixed(1)}%</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin: 30px 0;">
+                        <h3>💡 สรุปและข้อเสนอแนะ</h3>
+                        <div id="reportSummary">
+                            ${generateRecommendations(results)}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            reportContainer.innerHTML = reportHtml;
+            
+            // Switch to report tab
+            switchTab('report');
+            document.querySelector('[onclick="switchTab(\'report\')"]').classList.add('active');
+            
+            logMessage('สร้างรายงานเสร็จสิ้น', 'success');
+        }
+
+        // Generate recommendations
+        function generateRecommendations(results) {
+            let recommendations = '';
+            
+            if (results.qualityIndex >= 90) {
+                recommendations = `
+                    <div class="alert alert-success">
+                        <strong>✅ คุณภาพดีเยี่ยม!</strong><br>
+                        พารามิเตอร์ทั้งหมดอยู่ในช่วงที่เหมาะสม สามารถใช้ค่าเหล่านี้ในการผลิตจริงได้
+                    </div>
+                `;
+            } else if (results.qualityIndex >= 70) {
+                recommendations = `
+                    <div class="alert alert-warning">
+                        <strong>⚠️ คุณภาพพอใช้</strong><br>
+                        ควรปรับปรุงบางพารามิเตอร์เพื่อให้ได้คุณภาพที่ดีขึ้น
+                    </div>
+                `;
+            } else {
+                recommendations = `
+                    <div class="alert alert-danger">
+                        <strong>❌ คุณภาพไม่เหมาะสม</strong><br>
+                        จำเป็นต้องปรับปรุงพารามิเตอร์อย่างมากก่อนใช้ในการผลิตจริง
+                    </div>
+                `;
+            }
+            
+            // Add specific recommendations
+            recommendations += '<div style="margin-top: 15px;"><strong>ข้อเสนะแนะเฉพาะ:</strong><ul>';
+            
+            if (results.pressureDrop > 50) {
+                recommendations += '<li>ลดการสูญเสียแรงดันโดยขยาย Gate หรือเพิ่มอุณหภูมิ</li>';
+            }
+            if (results.fillingTime > 3) {
+                recommendations += '<li>เพิ่มความเร็วการฉีดหรือเพิ่มอุณหภูมิพลาสติก</li>';
+            }
+            if (results.recoveryTime > results.cycleTime * 0.7) {
+                recommendations += '<li>ปรับความเร็วสกรูหรือลดแรงดันต้านเพื่อลดเวลา Recovery</li>';
+            }
+            if (results.moldPressure < 30) {
+                recommendations += '<li>เพิ่มแรงดันการฉีดหรือปรับปรุงระบบทางน้ำ</li>';
+            }
+            
+            recommendations += '</ul></div>';
+            
+            return recommendations;
+        }
+
+        // Start process simulation with animation
+        function startProcessSimulation() {
+            if (simulationRunning) return;
+            
+            simulationRunning = true;
+            let progress = 0;
+            const totalTime = 60; // 60 seconds simulation
+            
+            simulationInterval = setInterval(() => {
+                progress += 1;
+                const percentage = (progress / totalTime) * 100;
+                
+                document.getElementById('processProgress').style.width = percentage + '%';
+                document.getElementById('progressText').textContent = percentage.toFixed(1) + '%';
+                
+                // Log simulation phases
+                if (progress === 5) logMessage('เริ่มการหลอมเหลว...', 'info');
+                if (progress === 15) logMessage('เริ่มการฉีด...', 'info');
+                if (progress === 25) logMessage('การเติมเสร็จสิ้น', 'success');
+                if (progress === 35) logMessage('เริ่มการย้ำ...', 'info');
+                if (progress === 45) logMessage('เริ่มการหล่อเย็น...', 'info');
+                if (progress === 55) logMessage('เตรียมเปิดแม่พิมพ์...', 'info');
+                
+                if (progress >= totalTime) {
+                    clearInterval(simulationInterval);
+                    simulationRunning = false;
+                    logMessage('การจำลองเสร็จสิ้น!', 'success');
+                    showAlert('✅ การจำลองกระบวนการเสร็จสิ้น!', 'success');
+                }
+            }, 1000);
+            
+            logMessage('เริ่มการจำลองกระบวนการ', 'info');
+        }
+
+        // Pause simulation
+        function pauseSimulation() {
+            if (simulationInterval) {
+                clearInterval(simulationInterval);
+                simulationRunning = false;
+                logMessage('หยุดการจำลองชั่วคราว', 'warning');
+            }
+        }
+
+        // Stop simulation
+        function stopSimulation() {
+            if (simulationInterval) {
+                clearInterval(simulationInterval);
+                simulationRunning = false;
+                document.getElementById('processProgress').style.width = '0%';
+                document.getElementById('progressText').textContent = '0%';
+                logMessage('หยุดการจำลอง', 'error');
+            }
+        }
+
+        // Reset all inputs
+        function resetAll() {
+            if (confirm('คุณต้องการรีเซ็ตข้อมูลทั้งหมดหรือไม่?')) {
+                // Reset all form inputs
+                document.querySelectorAll('input[type="number"]').forEach(input => {
+                    if (!input.readOnly) {
+                        input.value = '';
+                        input.classList.remove('error');
+                    }
+                });
+                
+                // Reset dropdowns to default
+                document.getElementById('machineSize').value = '30';
+                document.getElementById('plasticType').value = 'ABS';
+                document.getElementById('gateType').value = 'Side Gate';
+                
+                // Clear results
+                document.getElementById('calculationResults').innerHTML = '';
+                document.getElementById('qualityAnalysis').innerHTML = '';
+                document.getElementById('simulationReport').innerHTML = '';
+                
+                // Reset progress
+                document.getElementById('processProgress').style.width = '0%';
+                document.getElementById('progressText').textContent = '0%';
+                
+                // Reset phases
+                currentPhases = 3;
+                generatePhaseInputs();
+                
+                // Update machine info and plastic properties
+                updateMachineInfo();
+                updatePlasticProperties();
+                
+                logMessage('รีเซ็ตข้อมูลทั้งหมดเรียบร้อย', 'warning');
+                showAlert('🔄 รีเซ็ตข้อมูลทั้งหมดเรียบร้อย', 'warning');
+            }
+        }
+
+        // Export to PDF
+        function exportToPDF() {
+            const reportContent = document.getElementById('simulationReport').innerHTML;
+            if (!reportContent) {
+                showAlert('❌ กรุณาสร้างรายงานก่อนการ Export', 'danger');
+                return;
+            }
+            
+            // Create a new window for printing
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>รายงานการจำลองการฉีดพลาสติก</title>
+                        <style>
+                            body { font-family: 'Sarabun', Arial, sans-serif; margin: 20px; }
+                            table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+                            td, th { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                            .alert { padding: 10px; margin: 10px 0; border-radius: 5px; }
+                            .alert-success { background: #d4edda; border: 1px solid #c3e6cb; }
+                            .alert-warning { background: #fff3cd; border: 1px solid #ffeaa7; }
+                            .alert-danger { background: #f8d7da; border: 1px solid #f5c6cb; }
+                            h2, h3 { color: #333; }
+                            @media print { body { margin: 0; } }
+                        </style>
+                    </head>
+                    <body>
+                        ${reportContent}
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+            
+            logMessage('Export PDF เรียบร้อย', 'success');
+        }
+
+        // Export to Excel (CSV format)
+        function exportToExcel() {
+            const results = performCalculations();
+            if (!results) {
+                showAlert('❌ กรุณาคำนวณผลก่อนการ Export', 'danger');
+                return;
+            }
+            
+            // Get input values
+            const inputs = {
+                machineSize: document.getElementById('machineSize').value,
+                plasticType: document.getElementById('plasticType').value,
+                gateType: document.getElementById('gateType').value,
+                partWeight: document.getElementById('partWeight').value,
+                runnerWeight: document.getElementById('runnerWeight').value,
+                actualShotSize: document.getElementById('actualShotSize').value,
+                injectionPressure: document.getElementById('injectionPressure').value,
+                injectionSpeed: document.getElementById('injectionSpeed').value,
+                injectionTime: document.getElementById('injectionTime').value,
+                holdPressure: document.getElementById('holdPressure').value,
+                holdTime: document.getElementById('holdTime').value,
+                coolingTime: document.getElementById('coolingTime').value
+            };
+            
+            // Create CSV content
+            const csvContent = `
+รายการ,ค่า,หน่วย
+วันที่,${new Date().toLocaleDateString('th-TH')},
+เวลา,${new Date().toLocaleTimeString('th-TH')},
+
+ข้อมูลเครื่องจักร,,
+ขนาดเครื่อง,${inputs.machineSize},ตัน
+ชนิดพลาสติก,${inputs.plasticType},
+ประเภท Gate,${inputs.gateType},
+ขนาด Screw,${machineSpecs[inputs.machineSize].screwSize},mm
+
+ข้อมูลชิ้นงาน,,
+น้ำหนักชิ้นงาน,${inputs.partWeight},g
+น้ำหนัก Runner,${inputs.runnerWeight},g
+Shot Size,${inputs.actualShotSize},mm
+
+พารามิเตอร์การฉีด,,
+แรงดันฉีด,${inputs.injectionPressure},bar
+ความเร็วฉีด,${inputs.injectionSpeed},mm/s  
+เวลาฉีด,${inputs.injectionTime},s
+แรงดันย้ำ,${inputs.holdPressure},bar
+เวลาย้ำ,${inputs.holdTime},s
+เวลาหล่อเย็น,${inputs.coolingTime},s
+
+ผลการคำนวณ,,
+อัตราการไหล,${results.flowRate.toFixed(2)},cm³/s
+แรงดันใน Gate,${results.pressureDrop.toFixed(2)},bar
+แรงดันในแม่พิมพ์,${results.moldPressure.toFixed(2)},bar
+เวลาการเติม,${results.fillingTime.toFixed(2)},s
+เวลารอบการผลิต,${results.cycleTime.toFixed(1)},s
+อัตราการผลิต,${results.hourlyProduction.toFixed(0)},ชิ้น/ชม.
+เวลา Recovery,${results.recoveryTime.toFixed(2)},s
+ดัชนีคุณภาพ,${results.qualityIndex.toFixed(1)},%
+            `.trim();
+            
+            // Create and download CSV file
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `injection_molding_report_${new Date().toISOString().slice(0,10)}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            logMessage('Export Excel (CSV) เรียบร้อย', 'success');
+            showAlert('📗 Export Excel เรียบร้อย!', 'success');
+        }
+
+        // Show alert message
+        function showAlert(message, type = 'info') {
+            // Remove existing alerts
+            const existingAlerts = document.querySelectorAll('.temp-alert');
+            existingAlerts.forEach(alert => alert.remove());
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} temp-alert`;
+            alertDiv.style.position = 'fixed';
+            alertDiv.style.top = '20px';
+            alertDiv.style.right = '20px';
+            alertDiv.style.zIndex = '10000';
+            alertDiv.style.maxWidth = '400px';
+            alertDiv.style.animation = 'slideIn 0.3s ease-out';
+            alertDiv.innerHTML = message;
+            
+            document.body.appendChild(alertDiv);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.style.animation = 'slideOut 0.3s ease-in';
+                    setTimeout(() => {
+                        if (alertDiv.parentNode) {
+                            alertDiv.remove();
+                        }
+                    }, 300);
+                }
+            }, 5000);
+        }
+
+        // Log message to simulation log
+        function logMessage(message, type = 'info') {
+            const logContainer = document.getElementById('simulationLog');
+            const timestamp = new Date().toLocaleTimeString('th-TH');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.innerHTML = `[${timestamp}] ${message}`;
+            
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            
+            // Keep only last 100 log entries
+            const logEntries = logContainer.children;
+            if (logEntries.length > 100) {
+                logContainer.removeChild(logEntries[0]);
+            }
+        }
+
+        // Clear log
+        function clearLog() {
+            document.getElementById('simulationLog').innerHTML = '';
+            logMessage('ล้างบันทึกเรียบร้อย', 'info');
+        }
+
+        // Advanced calculations for multi-phase injection
+        function calculateMultiPhaseInjection() {
+            const phases = [];
+            
+            for (let i = 1; i <= currentPhases; i++) {
+                const position = parseFloat(document.getElementById(`pos${i}`).value) || 0;
+                const speed = parseFloat(document.getElementById(`speed${i}`).value) || 0;
+                const pressure = parseFloat(document.getElementById(`pressure${i}`).value) || 0;
+                
+                if (position > 0 && speed > 0 && pressure > 0) {
+                    phases.push({ position, speed, pressure });
+                }
+            }
+            
+            if (phases.length === 0) return null;
+            
+            // Calculate total filling time for multi-phase
+            let totalTime = 0;
+            let previousPosition = 0;
+            
+            phases.forEach(phase => {
+                const distance = phase.position - previousPosition;
+                const time = distance / phase.speed;
+                totalTime += time;
+                previousPosition = phase.position;
+            });
+            
+            return {
+                phases: phases,
+                totalFillingTime: totalTime,
+                averageSpeed: previousPosition / totalTime,
+                averagePressure: phases.reduce((sum, p) => sum + p.pressure, 0) / phases.length
+            };
+        }
+
+        // Real-time input validation
+        document.addEventListener('input', function(e) {
+            if (e.target.type === 'number') {
+                const value = parseFloat(e.target.value);
+                
+                // Remove error class if value is valid
+                if (value && value > 0) {
+                    e.target.classList.remove('error');
+                }
+                
+                // Auto-calculate dependent values
+                if (e.target.id === 'partWeight' || e.target.id === 'runnerWeight') {
+                    calculateShotSize();
+                }
+                
+                if (e.target.id === 'holdTime' || e.target.id === 'holdPressure') {
+                    calculateCushion();
+                }
+                
+                // Real-time calculation updates
+                if (['injectionPressure', 'injectionSpeed', 'actualShotSize', 'viscosity', 'gateArea'].includes(e.target.id)) {
+                    const results = performCalculations();
+                    if (results) {
+                        updateCalculationResults(results);
+                    }
+                }
+            }
+        });
+
+        // Add CSS animations
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+            
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); }
+            }
+            
+            .btn:active {
+                animation: pulse 0.2s ease-in-out;
+            }
+            
+            .form-group input:focus {
+                animation: pulse 0.3s ease-in-out;
+            }
+            
+            .result-item {
+                transition: all 0.3s ease;
+            }
+            
+            .result-item:hover {
+                background: rgba(102, 126, 234, 0.1);
+                transform: translateX(5px);
+            }
+        `;
+        document.head.appendChild(styleSheet);
+
+        // Advanced quality control calculations
+        function performAdvancedQualityControl() {
+            const results = performCalculations();
+            if (!results) return;
+            
+            // Calculate additional quality metrics
+            const partWeight = parseFloat(document.getElementById('partWeight').value);
+            const plasticType = document.getElementById('plasticType').value;
+            const shrinkage = materialProperties[plasticType].shrinkage;
+            
+            // Dimensional accuracy prediction
+            const dimensionalAccuracy = 100 - (shrinkage * 0.8) - (results.pressureDrop > 50 ? 5 : 0);
+            
+            // Surface quality prediction
+            const surfaceQuality = 100 - (results.fillingTime > 3 ? 10 : 0) - (results.moldPressure < 30 ? 15 : 0);
+            
+            // Mechanical properties prediction
+            const mechanicalProperties = 100 - (results.qualityIndex < 80 ? 20 : 0);
+            
+            // Overall quality score
+            const overallQuality = (dimensionalAccuracy + surfaceQuality + mechanicalProperties) / 3;
+            
+            return {
+                dimensionalAccuracy: Math.max(dimensionalAccuracy, 0),
+                surfaceQuality: Math.max(surfaceQuality, 0),
+                mechanicalProperties: Math.max(mechanicalProperties, 0),
+                overallQuality: Math.max(overallQuality, 0)
+            };
+        }
+
+        // Predictive analysis for defect prevention
+        function predictDefects() {
+            const results = performCalculations();
+            if (!results) return [];
+            
+            const defects = [];
+            
+            // Short shot prediction
+            if (results.moldPressure < 20 || results.fillingTime > 4) {
+                defects.push({
+                    type: 'Short Shot',
+                    probability: 'สูง',
+                    description: 'ชิ้นงานอาจไม่เต็มเนื่องจากแรงดันต่ำหรือเวลาเติมนาน',
+                    solution: 'เพิ่มแรงดันฉีดหรือความเร็วการฉีด'
+                });
+            }
+            
+            // Flash prediction
+            if (results.moldPressure > 120) {
+                defects.push({
+                    type: 'Flash',
+                    probability: 'ปานกลาง',
+                    description: 'อาจเกิดครีบเนื่องจากแรงดันสูงเกินไป',
+                    solution: 'ลดแรงดันฉีดหรือเพิ่มแรงหนีบแม่พิมพ์'
+                });
+            }
+            
+            // Sink mark prediction
+            const holdPressure = parseFloat(document.getElementById('holdPressure').value);
+            const holdTime = parseFloat(document.getElementById('holdTime').value);
+            if (holdPressure < 30 || holdTime < 3) {
+                defects.push({
+                    type: 'Sink Mark',
+                    probability: 'ปานกลาง',
+                    description: 'อาจเกิดรอยยุบเนื่องจากแรงดันย้ำหรือเวลาย้ำไม่เพียงพอ',
+                    solution: 'เพิ่มแรงดันย้ำและเวลาย้ำ'
+                });
+            }
+            
+            // Warpage prediction
+            const coolingTime = parseFloat(document.getElementById('coolingTime').value);
+            if (coolingTime < 15) {
+                defects.push({
+                    type: 'Warpage',
+                    probability: 'ต่ำ',
+                    description: 'อาจเกิดการบิดงอเนื่องจากเวลาหล่อเย็นสั้น',
+                    solution: 'เพิ่มเวลาหล่อเย็นหรือปรับอุณหภูมิแม่พิมพ์'
+                });
+            }
+            
+            return defects;
+        }
+
+        // Energy consumption calculation
+        function calculateEnergyConsumption() {
+            const machineSize = parseInt(document.getElementById('machineSize').value);
+            const cycleTime = parseFloat(document.getElementById('injectionTime').value) + 
+                             parseFloat(document.getElementById('holdTime').value) + 
+                             parseFloat(document.getElementById('coolingTime').value) + 3;
+            
+            // Estimated power consumption (kW) based on machine size
+            const powerConsumption = machineSize * 0.8; // Approximate formula
+            
+            // Energy per cycle (kWh)
+            const energyPerCycle = (powerConsumption * cycleTime) / 3600;
+            
+            // Daily energy consumption (assuming 16 hours operation)
+            const cyclesPerHour = 3600 / cycleTime;
+            const dailyEnergy = energyPerCycle * cyclesPerHour * 16;
+            
+            return {
+                powerConsumption,
+                energyPerCycle,
+                cyclesPerHour: Math.floor(cyclesPerHour),
+                dailyEnergy,
+                monthlyCost: dailyEnergy * 30 * 4 // Assuming 4 THB/kWh
+            };
+        }
+
+        // Cost analysis
+        function calculateProductionCost() {
+            const partWeight = parseFloat(document.getElementById('partWeight').value) || 0;
+            const runnerWeight = parseFloat(document.getElementById('runnerWeight').value) || 0;
+            const plasticType = document.getElementById('plasticType').value;
+            
+            // Material cost per kg (estimated prices in THB)
+            const materialCosts = {
+                ABS: 45, PP: 35, PE: 32, PS: 38, PC: 85, PA: 65, POM: 55, PMMA: 48
+            };
+            
+            const materialCostPerKg = materialCosts[plasticType] || 40;
+            const totalWeight = (partWeight + runnerWeight) / 1000; // Convert to kg
+            const materialCostPerPart = totalWeight * materialCostPerKg;
+            
+            // Energy cost
+            const energyData = calculateEnergyConsumption();
+            const energyCostPerPart = (energyData.dailyEnergy * 4) / (energyData.cyclesPerHour * 16);
+            
+            // Labor cost (estimated)
+            const laborCostPerHour = 300; // THB
+            const laborCostPerPart = laborCostPerHour / energyData.cyclesPerHour;
+            
+            // Total cost per part
+            const totalCostPerPart = materialCostPerPart + energyCostPerPart + laborCostPerPart;
+            
+            return {
+                materialCost: materialCostPerPart,
+                energyCost: energyCostPerPart,
+                laborCost: laborCostPerPart,
+                totalCost: totalCostPerPart,
+                dailyProduction: energyData.cyclesPerHour * 16,
+                dailyRevenue: energyData.cyclesPerHour * 16 * totalCostPerPart
+            };
+        }
+
+        // Environmental impact calculator
+        function calculateEnvironmentalImpact() {
+            const energyData = calculateEnergyConsumption();
+            const partWeight = parseFloat(document.getElementById('partWeight').value) || 0;
+            const runnerWeight = parseFloat(document.getElementById('runnerWeight').value) || 0;
+            
+            // CO2 emissions (kg CO2/kWh for Thailand's electricity mix ≈ 0.5)
+            const co2Factor = 0.5;
+            const dailyCO2 = energyData.dailyEnergy * co2Factor;
+            
+            // Material waste (runner percentage)
+            const wastePercentage = (runnerWeight / (partWeight + runnerWeight)) * 100;
+            
+            // Recyclability score based on plastic type
+            const recyclabilityScores = {
+                ABS: 70, PP: 90, PE: 95, PS: 80, PC: 60, PA: 40, POM: 30, PMMA: 50
+            };
+            const plasticType = document.getElementById('plasticType').value;
+            const recyclabilityScore = recyclabilityScores[plasticType] || 60;
+            
+            return {
+                dailyCO2Emissions: dailyCO2,
+                materialWastePercentage: wastePercentage,
+                recyclabilityScore: recyclabilityScore,
+                environmentalScore: Math.max(100 - dailyCO2 - wastePercentage + recyclabilityScore/2, 0)
+            };
+        }
+
+        // Generate comprehensive analysis report
+        function generateComprehensiveReport() {
+            const basicResults = performCalculations();
+            const qualityMetrics = performAdvancedQualityControl();
+            const defectPredictions = predictDefects();
+            const energyData = calculateEnergyConsumption();
+            const costData = calculateProductionCost();
+            const environmentalData = calculateEnvironmentalImpact();
+            
+            // Add comprehensive data to report
+            const comprehensiveData = {
+                basic: basicResults,
+                quality: qualityMetrics,
+                defects: defectPredictions,
+                energy: energyData,
+                cost: costData,
+                environmental: environmentalData
+            };
+            
+            // Store data for detailed report generation
+            window.comprehensiveAnalysisData = comprehensiveData;
+            
+            return comprehensiveData;
+        }
+
+        // Initialize tooltips for help information
+        function initializeTooltips() {
+            const tooltips = {
+                'partWeight': 'น้ำหนักของชิ้นงานที่ต้องการผลิต ไม่รวม Runner',
+                'injectionPressure': 'แรงดันในการฉีดพลาสติกเข้าแม่พิมพ์ ค่าสูงเกินไปอาจทำให้เกิดครีบ',
+                'holdPressure': 'แรงดันที่ใช้ย้ำชิ้นงานเพื่อชดเชยการหดตัว',
+                'coolingTime': 'เวลาที่ใช้ในการหล่อเย็นชิ้นงานให้แข็งตัว',
+                'actualShotSize': 'ระยะที่สกรูถอยหลังเพื่อเก็บพลาสติกสำหรับการฉีด'
+            };
+            
+            Object.keys(tooltips).forEach(id => {
+                const element = document.querySelector(`label[for="${id}"]`);
+                if (element) {
+                    element.classList.add('tooltip');
+                    element.innerHTML += ` <span class="tooltiptext">${tooltips[id]}</span>`;
+                }
+            });
+        }
+
+        // Initialize all systems when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePhaseInputs();
+            updateMachineInfo();
+            updatePlasticProperties();
+            initializeTooltips();
+            logMessage('ระบบพร้อมใช้งาน - Injection Molding Simulator v2.0', 'success');
+            
+            // Auto-save functionality
+            setInterval(() => {
+                const formData = new FormData();
+                document.querySelectorAll('input, select').forEach(input => {
+                    if (input.value) {
+                        formData.append(input.id, input.value);
+                    }
+                });
+                // Could implement localStorage saving here if needed
+            }, 30000); // Auto-save every 30 seconds
+        });
+    </script>
+</body>
+</html>
