@@ -1,0 +1,336 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ====================================
+    // 🔐 HELPER FUNCTIONS
+    // ====================================
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function getUserData(userId) {
+      let userRef = /databases/$(database)/documents/users/$(userId);
+      return exists(userRef) ? get(userRef).data : null;
+    }
+
+    function isSuperAdmin() {
+      let uid = isAuthenticated() ? request.auth.uid : null;
+      let email = isAuthenticated() ? request.auth.token.email : null;
+      let userData = uid != null ? getUserData(uid) : null;
+
+      return uid != null && (
+        uid == 'Ud9bec6d2ea945cf4330a69cb74ac93cf' ||
+        email == 'imtthailand2019@gmail.com' ||
+        (userData != null && (
+          userData.adminRole == 'super_admin' ||
+          userData.role == 'super_admin' ||
+          userData.isSuperAdmin == true
+        ))
+      );
+    }
+
+    function isAdmin() {
+      let uid = isAuthenticated() ? request.auth.uid : null;
+      let userData = uid != null ? getUserData(uid) : null;
+
+      return uid != null && (
+        (userData != null && (
+          userData.role == 'admin' ||
+          userData.adminRole == 'admin' ||
+          userData.adminRole == 'super_admin'
+        )) || isSuperAdmin()
+      );
+    }
+
+    // ====================================
+    // 📊 USERS COLLECTION
+    // ====================================
+    match /users/{userId} {
+      // อ่านได้: เจ้าของหรือ Admin
+      allow read: if isOwner(userId) || isAdmin();
+
+      // เขียนได้: เจ้าของ (สร้าง/อัปเดตข้อมูลตัวเอง)
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId) || isAdmin();
+
+      // ลบได้: Super Admin เท่านั้น
+      allow delete: if isSuperAdmin();
+    }
+
+    // ====================================
+    // 💬 SUPER ADMIN CHATS COLLECTION
+    // ====================================
+    match /super_admin_chats/{sessionId} {
+      // อ่านได้: Super Admin (ทุก session ของตัวเอง)
+      allow read: if isSuperAdmin();
+
+      // เขียนได้: Super Admin
+      allow create: if isSuperAdmin();
+      allow update: if isSuperAdmin();
+
+      // ลบได้: Super Admin
+      allow delete: if isSuperAdmin();
+
+      // Messages subcollection
+      match /messages/{messageId} {
+        // อ่านได้: Super Admin
+        allow read: if isSuperAdmin();
+
+        // เขียนได้: Super Admin
+        allow create: if isSuperAdmin();
+        allow update: if isSuperAdmin();
+
+        // ลบได้: Super Admin
+        allow delete: if isSuperAdmin();
+      }
+    }
+
+    // ====================================
+    // 👥 LINE USERS COLLECTION
+    // ====================================
+    match /line_users/{lineUserId} {
+      // อ่านได้: Super Admin และ Admin
+      allow read: if isAdmin();
+
+      // เขียนได้: Super Admin เท่านั้น
+      allow create, update: if isSuperAdmin();
+
+      // ลบได้: Super Admin เท่านั้น
+      allow delete: if isSuperAdmin();
+    }
+
+    // ====================================
+    // 🧠 CONVERSATION MEMORY COLLECTION
+    // ====================================
+    match /conversation_memory/{memoryId} {
+      // อ่านได้: Super Admin
+      allow read: if isSuperAdmin();
+
+      // เขียนได้: Super Admin
+      allow create, update: if isSuperAdmin();
+
+      // ลบได้: Super Admin
+      allow delete: if isSuperAdmin();
+    }
+
+    // ====================================
+    // 🎥 VIDEOS COLLECTION
+    // ====================================
+    match /videos/{videoId} {
+      // อ่านได้: ทุกคนที่ล็อกอิน
+      allow read: if isAuthenticated();
+
+      // เขียนได้: Admin เท่านั้น
+      allow create, update: if isAdmin();
+
+      // ลบได้: Admin เท่านั้น
+      allow delete: if isAdmin();
+    }
+
+    // ====================================
+    // 📝 ADMIN LOGS COLLECTION
+    // ====================================
+    match /admin_logs/{logId} {
+      // อ่านได้: Admin เท่านั้น
+      allow read: if isAdmin();
+
+      // เขียนได้: Admin เท่านั้น
+      allow create: if isAdmin();
+
+      // ไม่อนุญาตให้ update หรือ delete logs
+      allow update, delete: if false;
+    }
+
+    // ====================================
+    // 🚨 USER REPORTS COLLECTION
+    // ====================================
+    match /user_reports/{reportId} {
+      // อ่านได้: Admin และเจ้าของรายงาน
+      allow read: if isAdmin() || (isAuthenticated() && resource.data.reportedBy == request.auth.uid);
+
+      // สร้างได้: ผู้ใช้ที่ล็อกอิน
+      allow create: if isAuthenticated() && request.resource.data.reportedBy == request.auth.uid;
+
+      // อัปเดตได้: Admin เท่านั้น
+      allow update: if isAdmin();
+
+      // ลบได้: Admin เท่านั้น
+      allow delete: if isAdmin();
+    }
+
+    // ====================================
+    // 💾 AI MEMORY COLLECTION (สำหรับ Super Admin)
+    // ====================================
+    match /ai_memory/{memoryId} {
+      // อ่านได้: Super Admin เท่านั้น
+      allow read: if isSuperAdmin();
+
+      // เขียนได้: Super Admin เท่านั้น
+      allow create, update, delete: if isSuperAdmin();
+    }
+
+    // ====================================
+    // 📊 ANALYTICS COLLECTION
+    // ====================================
+    match /analytics/{docId} {
+      // อ่านได้: Admin เท่านั้น
+      allow read: if isAdmin();
+
+      // เขียนได้: System only (จาก Cloud Functions)
+      allow create, update: if false;
+
+      // ลบได้: Super Admin เท่านั้น
+      allow delete: if isSuperAdmin();
+    }
+
+    // ====================================
+    // 🔔 NOTIFICATIONS COLLECTION
+    // ====================================
+    match /notifications/{notificationId} {
+      // อ่านได้: เจ้าของหรือ Admin
+      allow read: if isAuthenticated() && (
+        resource.data.userId == request.auth.uid || isAdmin()
+      );
+
+      // สร้างได้: Admin หรือ System
+      allow create: if isAdmin();
+
+      // อัปเดตได้: เจ้าของ (สำหรับ mark as read) หรือ Admin
+      allow update: if isAuthenticated() && (
+        resource.data.userId == request.auth.uid || isAdmin()
+      );
+
+      // ลบได้: Admin เท่านั้น
+      allow delete: if isAdmin();
+    }
+
+    // ====================================
+    // ⚙️ SETTINGS COLLECTION
+    // ====================================
+    match /settings/{settingId} {
+      // อ่านได้: ทุกคนที่ล็อกอิน
+      allow read: if isAuthenticated();
+
+      // เขียนได้: Super Admin เท่านั้น
+      allow create, update, delete: if isSuperAdmin();
+    }
+
+    // ====================================
+    // ⭐ FEEDBACK COLLECTION
+    // ====================================
+    match /feedback/{feedbackId} {
+      // Allow reading for admins
+      allow read: if isAdmin();
+      // Allow creating from Cloud Functions (no auth) or authenticated users
+      allow create: if true; // Cloud Functions จะเขียนโดยไม่มี auth
+      // Allow update/delete for admins only
+      allow update, delete: if isAdmin();
+    }
+
+    // ====================================
+    // � TRAINING SYSTEM COLLECTIONS
+    // ====================================
+    
+    // Training Users
+    match /training_users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId) || isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // Training Courses
+    match /training_courses/{courseId} {
+      allow read: if resource.data.isPublished == true || isAdmin();
+      allow create, update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+    
+    // Training Modules
+    match /training_modules/{moduleId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Training Lessons
+    match /training_lessons/{lessonId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Training Quizzes
+    match /training_quizzes/{quizId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Training Questions
+    match /training_questions/{questionId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Training Quiz Results
+    match /training_quiz_results/{resultId} {
+      allow read: if isAuthenticated() && (
+        resource.data.userId == request.auth.uid || isAdmin()
+      );
+      allow create: if isAuthenticated() && 
+        request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false; // Results are immutable
+    }
+    
+    // Training Progress
+    match /training_progress/{progressId} {
+      allow read: if isAuthenticated() && (
+        resource.data.userId == request.auth.uid || isAdmin()
+      );
+      allow create: if isAuthenticated() && 
+        request.resource.data.userId == request.auth.uid;
+      allow update: if isAuthenticated() && 
+        resource.data.userId == request.auth.uid;
+      allow delete: if isAdmin();
+    }
+    
+    // Training Certificates
+    match /training_certificates/{certId} {
+      allow read: if true; // Public for verification
+      allow create: if isAuthenticated();
+      allow update: if isAdmin();
+      allow delete: if false; // Certificates cannot be deleted
+    }
+    
+    // Training Activity Log
+    match /training_activity_log/{logId} {
+      allow read: if isAuthenticated() && (
+        resource.data.userId == request.auth.uid || isAdmin()
+      );
+      allow create: if isAuthenticated() && 
+        request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false; // Logs are immutable
+    }
+
+    // ====================================    // 📝 USER ACTIVITY LOGS (WEB)
+    // ====================================
+    match /user_activity/{activityId} {
+      allow read: if isAuthenticated() && (
+        resource.data.userId == request.auth.uid || isAdmin()
+      );
+      allow create: if isAuthenticated() && 
+        request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // ====================================    // �🚫 DEFAULT RULE - DENY ALL
+    // ====================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
