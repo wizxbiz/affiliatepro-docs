@@ -45,6 +45,67 @@
             color: var(--dark);
         }
         
+        /* AI Data Badge */
+        .ai-data-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .ai-data-badge i {
+            font-size: 1.2rem;
+        }
+        
+        .ai-data-badge span {
+            flex: 1;
+        }
+        
+        .ai-data-badge button {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        /* Toast Notification */
+        .toast-notification {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #333;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 500;
+            z-index: 3000;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .toast-notification.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        .toast-notification.success {
+            background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+        }
+        
         /* Header */
         .header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
@@ -725,6 +786,111 @@
         // State
         let selectedImage = null;
         let selectedCategory = '';
+        let aiData = null;
+        let lineUserId = null;
+
+        // Check for AI data from URL parameter
+        function checkAIData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const aidataParam = urlParams.get('aidata');
+            
+            if (aidataParam) {
+                try {
+                    aiData = JSON.parse(decodeURIComponent(atob(aidataParam)));
+                    console.log('📱 Received AI data:', aiData);
+                    
+                    // Store lineUserId
+                    if (aiData.lineUserId) {
+                        lineUserId = aiData.lineUserId;
+                    }
+                    
+                    // Auto-fill form with AI data
+                    fillFormWithAIData(aiData);
+                    
+                    // Show success toast
+                    showToast('✨ ข้อมูลจาก AI พร้อมใช้แล้ว!', 'success');
+                    
+                    // Clean URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    
+                } catch (error) {
+                    console.error('Error parsing AI data:', error);
+                }
+            }
+        }
+        
+        // Fill form with AI generated data
+        function fillFormWithAIData(data) {
+            // Fill product name
+            if (data.productName) {
+                document.getElementById('productName').value = data.productName;
+            }
+            
+            // Fill price
+            if (data.price) {
+                document.getElementById('productPrice').value = data.price;
+            }
+            
+            // Fill description
+            if (data.description) {
+                document.getElementById('productDescription').value = data.description;
+            }
+            
+            // Select category
+            if (data.category) {
+                const categoryBtn = document.querySelector(`.category-btn[data-category="${data.category}"]`);
+                if (categoryBtn) {
+                    categoryBtn.click();
+                } else {
+                    // Try to find matching category
+                    const otherBtn = document.querySelector('.category-btn[data-category="other"]');
+                    if (otherBtn) otherBtn.click();
+                }
+            }
+            
+            // Show AI badge
+            showAIBadge();
+        }
+        
+        // Show AI data badge
+        function showAIBadge() {
+            const formCard = document.querySelector('.form-card');
+            const existingBadge = document.querySelector('.ai-data-badge');
+            if (existingBadge) existingBadge.remove();
+            
+            const badge = document.createElement('div');
+            badge.className = 'ai-data-badge';
+            badge.innerHTML = `
+                <i class="fas fa-robot"></i>
+                <span>ข้อมูลจาก AI สร้างโพสต์</span>
+                <button type="button" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            formCard.insertBefore(badge, formCard.firstChild);
+        }
+        
+        // Show toast notification
+        function showToast(message, type = 'default') {
+            let toast = document.getElementById('toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toast';
+                toast.className = 'toast-notification';
+                document.body.appendChild(toast);
+            }
+            
+            toast.textContent = message;
+            toast.className = 'toast-notification show';
+            if (type === 'success') toast.classList.add('success');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Call on load
+        checkAIData();
 
         // Elements
         const imageUploadArea = document.getElementById('imageUploadArea');

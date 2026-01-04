@@ -1196,6 +1196,183 @@
             gap: 10px;
         }
         
+        .ai-actions-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .ai-post-btn {
+            background: linear-gradient(135deg, #FF5722 0%, #E64A19 100%);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .ai-post-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4);
+        }
+        
+        .ai-post-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .ai-fb-btn {
+            background: linear-gradient(135deg, #1877F2 0%, #0d65d9 100%);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .ai-fb-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(24, 119, 242, 0.4);
+        }
+        
+        .ai-usage-badge {
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.85rem;
+        }
+        
+        .ai-usage-badge.premium {
+            background: linear-gradient(135deg, #FFF8E1 0%, #FFECB3 100%);
+        }
+        
+        .ai-usage-badge.exhausted {
+            background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%);
+        }
+        
+        /* Membership Modal */
+        .membership-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .membership-modal {
+            background: white;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 100%;
+            overflow: hidden;
+            animation: slideUp 0.3s ease;
+        }
+        
+        .membership-header {
+            background: linear-gradient(135deg, #00C300 0%, #00A000 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .membership-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+        
+        .membership-header .close-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .membership-body {
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .membership-benefits {
+            margin: 20px 0;
+        }
+        
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .benefit-item i {
+            color: #4CAF50;
+            font-size: 1.2rem;
+        }
+        
+        .benefit-item.premium {
+            background: linear-gradient(135deg, #FFF8E1 0%, #FFECB3 100%);
+        }
+        
+        .benefit-item.premium i {
+            color: #FFB300;
+        }
+        
+        .line-add-btn {
+            display: block;
+            background: linear-gradient(135deg, #00C300 0%, #00A000 100%);
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-weight: 600;
+            margin: 20px 0;
+            transition: all 0.3s;
+        }
+        
+        .line-add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 195, 0, 0.4);
+            color: white;
+        }
+        
+        .hint-text {
+            font-size: 0.85rem;
+            color: #888;
+        }
+        
         .ai-copy-btn {
             background: #4CAF50;
             color: white;
@@ -1706,12 +1883,30 @@
                         <div class="ai-post-hashtags" id="aiPostHashtags"></div>
                     </div>
                     
+                    <!-- Usage Badge -->
+                    <div class="ai-usage-badge" id="aiUsageBadge">
+                        <span id="aiUsageText">🎁 ใช้ฟรีคงเหลือ: 3/3 ครั้ง</span>
+                        <a href="https://line.me/R/ti/p/@563eikqn" target="_blank" style="color:#667eea;text-decoration:none;font-weight:600;">
+                            <i class="fab fa-line"></i> เป็นสมาชิก
+                        </a>
+                    </div>
+                    
                     <div class="ai-actions">
                         <button class="ai-copy-btn" onclick="copyAIPost()">
                             <i class="fas fa-copy"></i> คัดลอก
                         </button>
                         <button class="ai-share-btn" onclick="shareToLine()">
                             <i class="fab fa-line"></i> แชร์ LINE
+                        </button>
+                    </div>
+                    
+                    <!-- New Action Buttons -->
+                    <div class="ai-actions-row">
+                        <button class="ai-post-btn" id="aiSellBtn" onclick="postToMarketplace()">
+                            <i class="fas fa-store"></i> ลงขายสินค้า
+                        </button>
+                        <button class="ai-fb-btn" onclick="shareToFacebookPost()">
+                            <i class="fab fa-facebook-f"></i> โพสต์ Facebook
                         </button>
                     </div>
                     
@@ -2376,6 +2571,9 @@
             
             const hashtags = data.hashtags ? data.hashtags.map(h => `#${h}`).join(' ') : '';
             document.getElementById('aiPostHashtags').textContent = hashtags;
+            
+            // Update usage badge
+            updateUsageBadge();
         }
         
         // เครดิต
@@ -2410,6 +2608,157 @@
             const encoded = encodeURIComponent(text);
             
             window.open(`https://line.me/R/share?text=${encoded}`, '_blank');
+        }
+        
+        // ========================================
+        // POST TO MARKETPLACE & FACEBOOK
+        // ========================================
+        
+        // Post to Marketplace - ลงขายสินค้าพร้อมข้อมูลอัตโนมัติ
+        function postToMarketplace() {
+            if (!currentAIPost) {
+                showToast('❌ ไม่มีข้อมูลสินค้า', 'error');
+                return;
+            }
+            
+            // ตรวจสอบสิทธิ์การใช้งาน
+            if (!lineUserId) {
+                // ยังไม่ได้เป็นสมาชิก LINE OA - แจ้งให้เพิ่มเพื่อน
+                showMembershipModal();
+                return;
+            }
+            
+            // สร้าง URL พร้อมข้อมูลสินค้าที่ AI สร้าง
+            const productData = {
+                productName: currentAIPost.productName || currentAIPost.title,
+                price: extractPrice(currentAIPost.suggestedPrice),
+                description: `${currentAIPost.title}\n\n${currentAIPost.description}\n\n${currentAIPost.callToAction}`,
+                category: mapCategory(currentAIPost.category),
+                hashtags: currentAIPost.hashtags || [],
+                fromAI: true,
+                lineUserId: lineUserId
+            };
+            
+            // Encode data และส่งไปหน้า post-product
+            const encodedData = btoa(encodeURIComponent(JSON.stringify(productData)));
+            window.location.href = `post-product.html?aidata=${encodedData}`;
+        }
+        
+        // Share to Facebook
+        function shareToFacebookPost() {
+            if (!currentAIPost) return;
+            
+            const hashtags = currentAIPost.hashtags ? currentAIPost.hashtags.map(h => `#${h}`).join(' ') : '';
+            const text = `${currentAIPost.title}\n\n${currentAIPost.description}\n\n${currentAIPost.callToAction}\n\n${hashtags}${AI_POST_CREDIT}`;
+            
+            // Facebook share dialog
+            const fbUrl = `https://www.facebook.com/sharer/sharer.php?quote=${encodeURIComponent(text)}`;
+            window.open(fbUrl, '_blank', 'width=600,height=400');
+        }
+        
+        // Extract price number from suggested price string
+        function extractPrice(priceStr) {
+            if (!priceStr) return 0;
+            // ดึงตัวเลขแรกที่พบ
+            const match = priceStr.match(/[\d,]+/);
+            if (match) {
+                return parseInt(match[0].replace(/,/g, '')) || 0;
+            }
+            return 0;
+        }
+        
+        // Map AI category to marketplace category
+        function mapCategory(aiCategory) {
+            if (!aiCategory) return 'other';
+            const cat = aiCategory.toLowerCase();
+            if (cat.includes('อิเล็ก') || cat.includes('electronic') || cat.includes('โทรศัพท์') || cat.includes('คอมพิวเตอร์')) return 'electronics';
+            if (cat.includes('แฟชั่น') || cat.includes('เสื้อผ้า') || cat.includes('fashion') || cat.includes('รองเท้า') || cat.includes('กระเป๋า')) return 'fashion';
+            if (cat.includes('บ้าน') || cat.includes('home') || cat.includes('เฟอร์นิเจอร์')) return 'home';
+            if (cat.includes('ความงาม') || cat.includes('beauty') || cat.includes('เครื่องสำอาง')) return 'beauty';
+            if (cat.includes('กีฬา') || cat.includes('sport') || cat.includes('ออกกำลัง')) return 'sports';
+            if (cat.includes('ยานยนต์') || cat.includes('รถ') || cat.includes('มอเตอร์ไซค์')) return 'vehicle';
+            return 'other';
+        }
+        
+        // Show membership modal for non-members
+        function showMembershipModal() {
+            const modal = document.createElement('div');
+            modal.className = 'membership-modal-overlay';
+            modal.innerHTML = `
+                <div class="membership-modal">
+                    <div class="membership-header">
+                        <h3><i class="fab fa-line"></i> เป็นสมาชิก LINE OA</h3>
+                        <button class="close-btn" onclick="this.closest('.membership-modal-overlay').remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="membership-body">
+                        <p>เพื่อใช้งานฟีเจอร์ <strong>ลงขายสินค้า</strong></p>
+                        <p>กรุณาเพิ่มเพื่อน LINE OA ก่อน</p>
+                        
+                        <div class="membership-benefits">
+                            <div class="benefit-item">
+                                <i class="fas fa-gift"></i>
+                                <span>สมาชิกฟรี ใช้ได้ 3 ครั้ง</span>
+                            </div>
+                            <div class="benefit-item premium">
+                                <i class="fas fa-crown"></i>
+                                <span>Premium ใช้ได้ตลอดชีพ</span>
+                            </div>
+                        </div>
+                        
+                        <a href="https://line.me/R/ti/p/@563eikqn" target="_blank" class="line-add-btn">
+                            <i class="fab fa-line"></i> เพิ่มเพื่อน LINE OA
+                        </a>
+                        <p class="hint-text">หลังเพิ่มเพื่อนแล้ว พิมพ์ <strong>/โพสต์</strong> เพื่อใช้งาน</p>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            // Click outside to close
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+        
+        // Update usage badge based on lineUserId
+        async function updateUsageBadge() {
+            const badge = document.getElementById('aiUsageBadge');
+            const text = document.getElementById('aiUsageText');
+            const sellBtn = document.getElementById('aiSellBtn');
+            
+            if (!lineUserId) {
+                badge.className = 'ai-usage-badge';
+                text.innerHTML = '🔓 <a href="https://line.me/R/ti/p/@563eikqn" target="_blank" style="color:#667eea;">เพิ่มเพื่อน LINE OA</a> เพื่อลงขายสินค้า';
+                return;
+            }
+            
+            try {
+                // ดึงข้อมูลการใช้งานจาก Firestore
+                const usageDoc = await db.collection('ai_post_usage').doc(lineUserId).get();
+                const userData = usageDoc.exists ? usageDoc.data() : { count: 0 };
+                const isPremium = userData.isPremium || false;
+                const usedCount = userData.count || 0;
+                const FREE_LIMIT = 3;
+                
+                if (isPremium) {
+                    badge.className = 'ai-usage-badge premium';
+                    text.innerHTML = '👑 <strong>Premium</strong> - ใช้ได้ไม่จำกัดตลอดชีพ';
+                    sellBtn.disabled = false;
+                } else if (usedCount < FREE_LIMIT) {
+                    const remaining = FREE_LIMIT - usedCount;
+                    badge.className = 'ai-usage-badge';
+                    text.innerHTML = `🎁 ใช้ฟรีคงเหลือ: <strong>${remaining}/${FREE_LIMIT}</strong> ครั้ง`;
+                    sellBtn.disabled = false;
+                } else {
+                    badge.className = 'ai-usage-badge exhausted';
+                    text.innerHTML = '🔒 หมดสิทธิ์ใช้ฟรีแล้ว - <a href="https://line.me/R/ti/p/@563eikqn" target="_blank" style="color:#667eea;font-weight:600;">อัพเกรด Premium</a>';
+                    sellBtn.disabled = true;
+                }
+            } catch (error) {
+                console.error('Error fetching usage:', error);
+            }
         }
         
         // Reset AI Generator
