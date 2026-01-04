@@ -548,135 +548,160 @@ async function handleAIPostCommand(context, userId, replyToken) {
     // 1. ตรวจสอบการใช้ฟรีก่อน
     const usageInfo = await getAIPostUsage(userId);
     
-    // ถ้าหมดสิทธิ์ใช้ฟรี - แจ้งเตือน
-    if (!usageInfo.canUseForFree) {
-      await lineClient.replyMessage(replyToken, {
-        type: "flex",
-        altText: "🔒 หมดสิทธิ์ใช้ฟรี",
-        contents: {
-          type: "bubble",
-          size: "kilo",
-          header: {
-            type: "box",
-            layout: "vertical",
-            contents: [
-              {type: "text", text: "🔒 หมดสิทธิ์ใช้ฟรี", weight: "bold", color: "#ffffff", size: "lg", align: "center"},
-            ],
-            backgroundColor: "#FF5722",
-            paddingAll: "15px",
-          },
-          body: {
-            type: "box",
-            layout: "vertical",
-            spacing: "md",
-            contents: [
-              {type: "text", text: `คุณใช้ฟรีครบ ${FREE_AI_POST_LIMIT} ครั้งแล้ว`, size: "sm", wrap: true, align: "center"},
-              {type: "text", text: "🌟 สมัคร Premium เพื่อใช้ได้ไม่จำกัด!", size: "sm", wrap: true, align: "center", margin: "md", color: "#667eea", weight: "bold"},
-            ],
-            paddingAll: "15px",
-          },
-          footer: {
-            type: "box",
-            layout: "vertical",
-            spacing: "sm",
-            contents: [
-              {
-                type: "button",
-                style: "primary",
-                color: "#667eea",
-                action: {type: "message", label: "💎 สมัคร Premium", text: "/premium"},
-                height: "sm",
-              },
-            ],
-            paddingAll: "15px",
-          },
-        },
-      });
-      return;
-    }
-
-    // 2. Set user state to waiting for AI vision image
-    await setUserMarketplaceState(userId, "WAITING_FOR_AI_POST_IMAGE", {
-      startedAt: new Date(),
-    });
-
+    // สร้าง URL พร้อม userId สำหรับติดตามการใช้งาน
+    const webUrl = `${WEB_BASE_URL}/marketplace.html?aipost=1&lineUserId=${encodeURIComponent(userId)}`;
+    
     // แสดงจำนวนครั้งที่เหลือ
     const usageText = usageInfo.isPremium 
       ? "👑 Premium: ใช้ได้ไม่จำกัด" 
-      : `🎁 ใช้ฟรีคงเหลือ: ${usageInfo.remaining}/${FREE_AI_POST_LIMIT} ครั้ง`;
+      : usageInfo.canUseForFree 
+        ? `🎁 ใช้ฟรีคงเหลือ: ${usageInfo.remaining}/${FREE_AI_POST_LIMIT} ครั้ง`
+        : `🔒 หมดสิทธิ์ใช้ฟรีแล้ว (${FREE_AI_POST_LIMIT}/${FREE_AI_POST_LIMIT})`;
+    
+    const usageBgColor = usageInfo.isPremium ? "#1a1a2e" : (usageInfo.canUseForFree ? "#E8F5E9" : "#FFEBEE");
+    const usageTextColor = usageInfo.isPremium ? "#FFD700" : (usageInfo.canUseForFree ? "#4CAF50" : "#F44336");
 
-    // 3. Send instruction message with usage info
-    const instructionFlex = {
-    type: "flex",
-    altText: "🤖 ส่งรูปสินค้าให้ AI ช่วยสร้างโพสต์",
-    contents: {
-      type: "bubble",
-      size: "kilo",
-      header: {
-        type: "box",
-        layout: "vertical",
-        contents: [
-          {type: "text", text: "🤖 AI ช่วยสร้างโพสต์", weight: "bold", color: "#ffffff", size: "lg", align: "center"},
-          {type: "text", text: "ส่งรูปสินค้ามาเลย!", color: "#ffffffcc", size: "sm", align: "center", margin: "sm"},
-        ],
-        backgroundColor: "#667eea",
-        paddingAll: "20px",
+    // 2. ส่ง Flex Message นำทางไปเว็บ (ไม่รอรับรูปจาก LINE แล้ว)
+    const navigateFlex = {
+      type: "flex",
+      altText: "🤖 AI ช่วยสร้างโพสต์ - กดเปิดเว็บ",
+      contents: {
+        type: "bubble",
+        size: "mega",
+        header: {
+          type: "box",
+          layout: "vertical",
+          contents: [
+            {
+              type: "box",
+              layout: "horizontal",
+              contents: [
+                {type: "text", text: "🤖", size: "xxl"},
+                {
+                  type: "box",
+                  layout: "vertical",
+                  contents: [
+                    {type: "text", text: "AI สร้างโพสต์", weight: "bold", color: "#ffffff", size: "xl"},
+                    {type: "text", text: "วิเคราะห์รูปสินค้าอัตโนมัติ", color: "#ffffffcc", size: "sm"},
+                  ],
+                  flex: 1,
+                  margin: "lg",
+                },
+              ],
+              alignItems: "center",
+            },
+          ],
+          backgroundColor: "#667eea",
+          paddingAll: "20px",
+        },
+        body: {
+          type: "box",
+          layout: "vertical",
+          spacing: "lg",
+          contents: [
+            // Usage Badge
+            {
+              type: "box",
+              layout: "horizontal",
+              contents: [
+                {type: "text", text: usageText, size: "sm", color: usageTextColor, align: "center", flex: 1, weight: "bold"},
+              ],
+              backgroundColor: usageBgColor,
+              paddingAll: "12px",
+              cornerRadius: "25px",
+            },
+            // Features List
+            {
+              type: "box",
+              layout: "vertical",
+              spacing: "sm",
+              contents: [
+                {type: "text", text: "✨ ฟีเจอร์ AI วิเคราะห์รูป", size: "md", weight: "bold", color: "#333333"},
+                {
+                  type: "box",
+                  layout: "horizontal",
+                  contents: [
+                    {type: "text", text: "📸", size: "sm"},
+                    {type: "text", text: "อัพโหลดรูปสินค้าจากเครื่อง", size: "sm", color: "#666666", flex: 1, margin: "sm"},
+                  ],
+                  margin: "md",
+                },
+                {
+                  type: "box",
+                  layout: "horizontal",
+                  contents: [
+                    {type: "text", text: "🎯", size: "sm"},
+                    {type: "text", text: "AI วิเคราะห์และสร้างโพสต์ทันที", size: "sm", color: "#666666", flex: 1, margin: "sm"},
+                  ],
+                },
+                {
+                  type: "box",
+                  layout: "horizontal",
+                  contents: [
+                    {type: "text", text: "📋", size: "sm"},
+                    {type: "text", text: "คัดลอกข้อความได้เลย", size: "sm", color: "#666666", flex: 1, margin: "sm"},
+                  ],
+                },
+                {
+                  type: "box",
+                  layout: "horizontal",
+                  contents: [
+                    {type: "text", text: "✏️", size: "sm"},
+                    {type: "text", text: "แก้ไขได้ก่อนใช้งาน", size: "sm", color: "#666666", flex: 1, margin: "sm"},
+                  ],
+                },
+              ],
+              margin: "md",
+            },
+            // Tip Box
+            {
+              type: "box",
+              layout: "vertical",
+              contents: [
+                {type: "text", text: "💡 เคล็ดลับ: ถ่ายรูปให้ชัดเจน", size: "xs", color: "#FF9800", align: "center"},
+                {type: "text", text: "แสงสว่างดี เห็นรายละเอียดสินค้า", size: "xs", color: "#FF9800", align: "center"},
+              ],
+              backgroundColor: "#FFF3E0",
+              paddingAll: "12px",
+              cornerRadius: "10px",
+              margin: "lg",
+            },
+          ],
+          paddingAll: "20px",
+        },
+        footer: {
+          type: "box",
+          layout: "vertical",
+          spacing: "sm",
+          contents: [
+            {
+              type: "button",
+              style: "primary",
+              color: "#667eea",
+              action: {
+                type: "uri",
+                label: "🚀 เปิดหน้าสร้างโพสต์",
+                uri: webUrl,
+              },
+              height: "md",
+            },
+            {
+              type: "box",
+              layout: "horizontal",
+              contents: [
+                {type: "text", text: "เปิดใน LINE Browser", size: "xs", color: "#999999", align: "center", flex: 1},
+              ],
+              margin: "sm",
+            },
+          ],
+          paddingAll: "15px",
+        },
       },
-      body: {
-        type: "box",
-        layout: "vertical",
-        spacing: "md",
-        contents: [
-          // Usage Badge
-          {
-            type: "box",
-            layout: "horizontal",
-            contents: [
-              {type: "text", text: usageText, size: "xs", color: usageInfo.isPremium ? "#FFD700" : "#4CAF50", align: "center", flex: 1},
-            ],
-            backgroundColor: usageInfo.isPremium ? "#1a1a2e" : "#E8F5E9",
-            paddingAll: "8px",
-            cornerRadius: "20px",
-          },
-          {type: "text", text: "📸 ถ่ายรูปสินค้าแล้วส่งมา", size: "sm", wrap: true, margin: "lg"},
-          {type: "text", text: "🤖 AI จะวิเคราะห์รูปและสร้าง:", size: "sm", wrap: true, margin: "md"},
-          {type: "text", text: "• ชื่อสินค้า + ราคาแนะนำ", size: "xs", color: "#666666", margin: "sm"},
-          {type: "text", text: "• ข้อความโพสต์น่าสนใจ", size: "xs", color: "#666666"},
-          {type: "text", text: "• Hashtags + Emoji ดึงดูด", size: "xs", color: "#666666"},
-          {
-            type: "box",
-            layout: "vertical",
-            contents: [
-              {type: "text", text: "💡 เคล็ดลับ: ถ่ายรูปให้ชัด", size: "xs", color: "#FF9800", align: "center"},
-              {type: "text", text: "แสงสว่างดี เห็นสินค้าชัด", size: "xs", color: "#FF9800", align: "center"},
-            ],
-            backgroundColor: "#FFF3E0",
-            paddingAll: "10px",
-            cornerRadius: "8px",
-            margin: "lg",
-          },
-        ],
-        paddingAll: "15px",
-      },
-      footer: {
-        type: "box",
-        layout: "vertical",
-        contents: [
-          {
-            type: "button",
-            style: "secondary",
-            action: {type: "message", label: "❌ ยกเลิก", text: "ยกเลิก"},
-            height: "sm",
-          },
-        ],
-        paddingAll: "10px",
-      },
-    },
     };
 
     // Use retry with backoff for sending message
     await retryWithBackoff(async () => {
-      await lineClient.replyMessage(replyToken, instructionFlex);
+      await lineClient.replyMessage(replyToken, navigateFlex);
     }, 3, 1000);
   } catch (error) {
     console.error("❌ Error in handleAIPostCommand:", error);
