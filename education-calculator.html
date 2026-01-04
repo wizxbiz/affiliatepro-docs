@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎓 Education Hub Pro - ศูนย์คำนวณเพื่อการศึกษาระดับสูง</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #3498db, #2c3e50);
+            --secondary-gradient: linear-gradient(135deg, #e74c3c, #c0392b);
+            --success-gradient: linear-gradient(135deg, #27ae60, #219653);
+            --warning-gradient: linear-gradient(135deg, #f39c12, #e67e22);
+            --dark-gradient: linear-gradient(135deg, #2c3e50, #34495e);
+            --light-gradient: linear-gradient(135deg, #ecf0f1, #bdc3c7);
+            
+            --shadow-light: 0 8px 25px rgba(0,0,0,0.08);
+            --shadow-medium: 0 15px 35px rgba(0,0,0,0.12);
+            --shadow-heavy: 0 20px 40px rgba(0,0,0,0.2);
+            
+            --radius-sm: 12px;
+            --radius-md: 20px;
+            --radius-lg: 30px;
+            
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.4s ease;
+            --transition-slow: 0.6s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: #2c3e50;
+            overflow-x: hidden;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: linear-gradient(to bottom, #ecf0f1, #bdc3c7);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-gradient);
+            border-radius: 10px;
+            box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #2980b9, #2c3e50);
+        }
+        
+        /* Header with Parallax */
+        .parallax-header {
+            background: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80') center center / cover no-repeat fixed;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow-heavy);
+        }
+        
+        .parallax-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.85), rgba(44, 62, 80, 0.9));
+            z-index: 1;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            color: white;
+            padding: 0 20px;
+        }
+        
+        .header-content h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            letter-spacing: 1px;
+        }
+        
+        .header-content p {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* Floating Home Button */
+        .home-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-medium);
+            z-index: 1000;
+            transition: all var(--transition-normal);
+            color: #3498db;
+            text-decoration: none;
+            font-size: 1.5rem;
+        }
+        
+        .home-btn:hover {
+            transform: scale(1.1) rotate(360deg);
+            box-shadow: var(--shadow-heavy);
+            color: #2980b9;
+        }
+        
+        /* Enhanced Cards */
+        .card-custom {
+            background: white;
+            border-radius: var(--radius-md);
+            border: none;
+            box-shadow: var(--shadow-light);
+            transition: all var(--transition-normal);
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 2rem;
+            height: 100%;
+        }
+        
+        .card-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--primary-gradient);
+            transition: width var(--transition-normal);
+        }
+        
+        .card-custom:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-medium);
+        }
+        
+        .card-custom:hover::before {
+            width: 8px;
+        }
+        
+        .card-header-custom {
+            background: white;
+            border-bottom: 2px solid #ecf0f1;
+            padding: 1.5rem 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            border-radius: var(--radius-md) var(--radius-md) 0 0 !important;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .card-header-custom i {
+            font-size: 1.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .card-body-custom {
+            padding: 2rem;
+        }
+        
+        /* Enhanced Tabs */
+        .nav-tabs-custom {
+            border: none;
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 10px;
+            box-shadow: var(--shadow-light);
+            margin-bottom: 3rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .nav-tabs-custom .nav-link {
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 1rem 2rem;
+            color: #7f8c8d;
+            font-weight: 600;
+            transition: all var(--transition-normal);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-tabs-custom .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-gradient);
+            transition: left var(--transition-normal);
+            z-index: -1;
+        }
+        
+        .nav-tabs-custom .nav-link.active {
+            color: white;
+            box-shadow: var(--shadow-light);
+        }
+        
+        .nav-tabs-custom .nav-link.active::before {
+            left: 0;
+        }
+        
+        .nav-tabs-custom .nav-link:hover:not(.active) {
+            background: #ecf0f1;
+            transform: translateY(-3px);
+        }
+        
+        /* Enhanced Forms */
+        .form-control-custom {
+            border: 2px solid #dfe6e9;
+            border-radius: var(--radius-sm);
+            padding: 0.75rem 1.25rem;
+            font-size: 1rem;
+            transition: all var(--transition-fast);
+            background: #f8f9fa;
+        }
+        
+        .form-control-custom:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+            background: white;
+            transform: scale(1.02);
+        }
+        
+        .form-label-custom {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Enhanced Buttons */
+        .btn-custom-primary {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-light);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-custom-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .btn-custom-primary:hover::before {
+            left: 100%;
+        }
+        
+        .btn-custom-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-medium);
+        }
+        
+        .btn-custom-secondary {
+            background: var(--secondary-gradient);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-light);
+        }
+        
+        .btn-custom-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-medium);
+            color: white;
+        }
+        
+        /* Result Boxes */
+        .result-box-custom {
+            background: linear-gradient(135deg, #eaf5ff, #d6eaf8);
+            border-radius: var(--radius-sm);
+            padding: 2rem;
+            margin-top: 2rem;
+            border-left: 6px solid #3498db;
+            box-shadow: var(--shadow-light);
+            animation: fadeIn 0.8s ease;
+            display: none;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-value-custom {
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        
+        .result-unit-custom {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+        
+        /* Progress Indicators */
+        .progress-custom {
+            height: 8px;
+            background-color: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        
+        .progress-bar-custom {
+            background: var(--primary-gradient);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+        
+        /* Grade Visualizer */
+        .grade-visualizer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            gap: 10px;
+        }
+        
+        .grade-bar {
+            flex: 1;
+            text-align: center;
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            background: #ecf0f1;
+            transition: all var(--transition-normal);
+            cursor: pointer;
+        }
+        
+        .grade-bar:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-light);
+        }
+        
+        .grade-bar.grade-a { background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; }
+        .grade-bar.grade-b { background: linear-gradient(135deg, #3498db, #2980b9); color: white; }
+        .grade-bar.grade-c { background: linear-gradient(135deg, #f39c12, #f1c40f); color: white; }
+        .grade-bar.grade-d { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
+        .grade-bar.grade-f { background: linear-gradient(135deg, #7f8c8d, #95a5a6); color: white; }
+        
+        /* Dashboard Widgets */
+        .dashboard-widget {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            box-shadow: var(--shadow-light);
+            text-align: center;
+            transition: all var(--transition-normal);
+            height: 100%;
+        }
+        
+        .dashboard-widget:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-medium);
+        }
+        
+        .widget-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2.5rem;
+            color: white;
+        }
+        
+        .widget-1 .widget-icon { background: var(--primary-gradient); }
+        .widget-2 .widget-icon { background: var(--secondary-gradient); }
+        .widget-3 .widget-icon { background: var(--success-gradient); }
+        .widget-4 .widget-icon { background: var(--warning-gradient); }
+        
+        /* Chart Container */
+        .chart-container {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            box-shadow: var(--shadow-light);
+            margin-bottom: 2rem;
+        }
+        
+        /* Footer */
+        .footer-custom {
+            background: var(--dark-gradient);
+            color: white;
+            padding: 3rem 0 2rem;
+            margin-top: 5rem;
+            border-top-left-radius: var(--radius-lg);
+            border-top-right-radius: var(--radius-lg);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav-tabs-custom .nav-link {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .result-value-custom {
+                font-size: 2.5rem;
+            }
+        }
+        
+        /* Particle Background */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        /* Loading Animation */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        
+        .spinner-custom {
+            width: 60px;
+            height: 60px;
+            border: 5px solid #ecf0f1;
+            border-top-color: #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Badge System */
+        .badge-custom {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .badge-success { background: var(--success-gradient); color: white; }
+        .badge-warning { background: var(--warning-gradient); color: white; }
+        .badge-danger { background: var(--secondary-gradient); color: white; }
+        .badge-info { background: var(--primary-gradient); color: white; }
+    </style>
+</head>
+<body>
+    <!-- Particles Background -->
+    <div id="particles-js"></div>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner-custom"></div>
+    </div>
+    
+    <!-- Floating Home Button -->
+    <a href="calculator.html" class="home-btn animate__animated animate__fadeInLeft" title="กลับหน้าหลัก">
+        <i class="fas fa-home"></i>
+    </a>
+    
+    <!-- Parallax Header -->
+    <div class="parallax-header">
+        <div class="header-content">
+            <h1 class="animate__animated animate__fadeInDown">🎓 Education Hub Pro</h1>
+            <p class="animate__animated animate__fadeInUp animate__delay-1s">ศูนย์คำนวณเพื่อการศึกษาระดับสูง | เครื่องมือครบวงจรสำหรับนักเรียน นักศึกษา และครูผู้สอน</p>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- Dashboard Widgets -->
+        <div class="row mb-5">
+            <div class="col-md-3 col-sm-6">
+                <div class="dashboard-widget widget-1 animate__animated animate__fadeInLeft">
+                    <div class="widget-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3><span id="totalCalculations">0</span>+</h3>
+                    <p>การคำนวณทั้งหมด</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="dashboard-widget widget-2 animate__animated animate__fadeInLeft animate__delay-1s">
+                    <div class="widget-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3><span id="activeUsers">0</span>+</h3>
+                    <p>ผู้ใช้งานออนไลน์</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="dashboard-widget widget-3 animate__animated animate__fadeInRight animate__delay-1s">
+                    <div class="widget-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <h3><span id="toolsCount">15</span>+</h3>
+                    <p>เครื่องมือคำนวณ</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="dashboard-widget widget-4 animate__animated animate__fadeInRight">
+                    <div class="widget-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3><span id="accuracyRate">99.8</span>%</h3>
+                    <p>ความแม่นยำ</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-tabs-custom" id="educationTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="gpa-tab" data-bs-toggle="tab" data-bs-target="#gpa" type="button">
+                    <i class="fas fa-star"></i> GPA & เกรด
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="science-tab" data-bs-toggle="tab" data-bs-target="#science" type="button">
+                    <i class="fas fa-flask"></i> วิทยาศาสตร์
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="math-tab" data-bs-toggle="tab" data-bs-target="#math" type="button">
+                    <i class="fas fa-square-root-alt"></i> คณิตศาสตร์
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="finance-tab" data-bs-toggle="tab" data-bs-target="#finance" type="button">
+                    <i class="fas fa-coins"></i> การเงินการศึกษา
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="stats-tab" data-bs-toggle="tab" data-bs-target="#stats" type="button">
+                    <i class="fas fa-chart-bar"></i> สถิติ & ความน่าจะเป็น
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tools-tab" data-bs-toggle="tab" data-bs-target="#tools" type="button">
+                    <i class="fas fa-tools"></i> เครื่องมือช่วยเรียน
+                </button>
+            </li>
+        </ul>
+        
+        <!-- Tab Content -->
+        <div class="tab-content" id="educationTabContent">
+            
+            <!-- 1. GPA Calculator (Enhanced) -->
+            <div class="tab-pane fade show active" id="gpa" role="tabpanel">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card-custom">
+                            <div class="card-header-custom">
+                                <span><i class="fas fa-chart-line"></i> คำนวณเกรดเฉลี่ยแบบละเอียด (GPA Calculator Pro)</span>
+                                <div>
+                                    <span class="badge-custom badge-info">ระดับมหาวิทยาลัย</span>
+                                    <span class="badge-custom badge-success">ระดับมัธยม</span>
+                                </div>
+                            </div>
+                            <div class="card-body-custom">
+                                <div class="mb-4">
+                                    <label class="form-label-custom">เลือกระบบการศึกษา</label>
+                                    <div class="d-flex gap-3">
+                                        <button class="btn btn-custom-primary" onclick="setGpaSystem('university')">
+                                            <i class="fas fa-university"></i> ระบบมหาวิทยาลัย (4.0)
+                                        </button>
+                                        <button class="btn btn-custom-secondary" onclick="setGpaSystem('highschool')">
+                                            <i class="fas fa-school"></i> ระบบมัธยมศึกษา (5.0)
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div id="subjectsContainerPro" class="mb-4">
+                                    <!-- Dynamic subjects will be added here -->
+                                </div>
+                                
+                                <div class="d-flex justify-content-between mb-4">
+                                    <button class="btn btn-custom-primary" onclick="addSubjectPro()">
+                                        <i class="fas fa-plus-circle"></i> เพิ่มวิชา
+                                    </button>
+                                    <button class="btn btn-outline-danger" onclick="clearAllSubjects()">
+                                        <i class="fas fa-trash-alt"></i> ล้างทั้งหมด
+                                    </button>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label-custom">GPA เป้าหมายที่ต้องการ</label>
+                                            <input type="number" class="form-control-custom" id="targetGPA" min="0" max="4" step="0.01" placeholder="เช่น 3.50">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <button class="btn btn-custom-primary w-100 h-100" onclick="calculateGPAPro()">
+                                            <i class="fas fa-calculator"></i> คำนวณ GPA
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Results -->
+                                <div class="result-box-custom" id="gpaResultPro">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-4">
+                                                <div class="result-value-custom" id="gpaValuePro">0.00</div>
+                                                <div class="result-unit-custom">เกรดเฉลี่ย (GPA)</div>
+                                                <div class="progress-custom mt-3">
+                                                    <div class="progress-bar-custom" id="gpaProgress" style="width: 0%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <h5><i class="fas fa-chart-pie"></i> สถิติ</h5>
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <div class="text-center p-2 bg-light rounded">
+                                                            <div class="h4 text-primary" id="totalCreditsPro">0</div>
+                                                            <small>หน่วยกิตรวม</small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <div class="text-center p-2 bg-light rounded">
+                                                            <div class="h4 text-success" id="totalPointsPro">0</div>
+                                                            <small>คะแนนรวม</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Grade Distribution -->
+                                    <div class="mt-4">
+                                        <h5><i class="fas fa-chart-bar"></i> การกระจายเกรด</h5>
+                                        <div class="grade-visualizer">
+                                            <div class="grade-bar grade-a" onclick="showGradeInfo('A')">
+                                                <div class="h5">A</div>
+                                                <div id="gradeACount">0</div>
+                                            </div>
+                                            <div class="grade-bar grade-b" onclick="showGradeInfo('B')">
+                                                <div class="h5">B</div>
+                                                <div id="gradeBCount">0</div>
+                                            </div>
+                                            <div class="grade-bar grade-c" onclick="showGradeInfo('C')">
+                                                <div class="h5">C</div>
+                                                <div id="gradeCCount">0</div>
+                                            </div>
+                                            <div class="grade-bar grade-d" onclick="showGradeInfo('D')">
+                                                <div class="h5">D</div>
+                                                <div id="gradeDCount">0</div>
+                                            </div>
+                                            <div class="grade-bar grade-f" onclick="showGradeInfo('F')">
+                                                <div class="h5">F</div>
+                                                <div id="gradeFCount">0</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Predictions -->
+                                    <div class="mt-4">
+                                        <h5><i class="fas fa-crystal-ball"></i> การทำนาย</h5>
+                                        <div id="gpaPrediction">
+                                            <p class="mb-2">หากต้องการ GPA <span id="targetDisplay">3.50</span>:</p>
+                                            <div class="alert alert-info">
+                                                <i class="fas fa-lightbulb"></i> คุณต้องได้เกรด A ในอีก <span id="requiredA">0</span> วิชา หรือเกรด B+ ในอีก <span id="requiredBPlus">0</span> วิชา
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4">
+                        <!-- GPA Chart -->
+                        <div class="chart-container">
+                            <h5><i class="fas fa-chart-line"></i> กราฟ GPA Trend</h5>
+                            <canvas id="gpaChart" height="250"></canvas>
+                        </div>
+                        
+                        <!-- Quick Stats -->
+                        <div class="card-custom">
+                            <div class="card-header-custom">
+                                <i class="fas fa-tachometer-alt"></i> สถิติด่วน
+                            </div>
+                            <div class="card-body-custom">
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>คะแนนเฉลี่ยต่อหน่วยกิต</span>
+                                        <span id="avgPerCredit">0.00</span>
+                                    </div>
+                                    <div class="progress-custom">
+                                        <div class="progress-bar-custom" id="avgPerCreditBar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>ประสิทธิภาพการเรียน</span>
+                                        <span id="studyEfficiency">0%</span>
+                                    </div>
+                                    <div class="progress-custom">
+                                        <div class="progress-bar-custom" id="studyEfficiencyBar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-center mt-4">
+                                    <button class="btn btn-custom-primary" onclick="exportGPAReport()">
+                                        <i class="fas fa-download"></i> ส่งออกรายงาน
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 2. Science Calculator (Enhanced) -->
+            <div class="tab-pane fade" id="science" role="tabpanel">
+                <!-- Science content will be here -->
+                <div class="text-center p-5">
+                    <h3><i class="fas fa-flask"></i> วิทยาศาสตร์ (กำลังพัฒนา)</h3>
+                    <p class="text-muted">เครื่องมือคำนวณวิทยาศาสตร์ขั้นสูงกำลังอยู่ระหว่างการพัฒนา</p>
+                </div>
+            </div>
+            
+            <!-- 3. Math Calculator (Enhanced) -->
+            <div class="tab-pane fade" id="math" role="tabpanel">
+                <!-- Math content will be here -->
+                <div class="text-center p-5">
+                    <h3><i class="fas fa-square-root-alt"></i> คณิตศาสตร์ (กำลังพัฒนา)</h3>
+                    <p class="text-muted">เครื่องมือคำนวณคณิตศาสตร์ขั้นสูงกำลังอยู่ระหว่างการพัฒนา</p>
+                </div>
+            </div>
+            
+            <!-- 4. Finance Calculator -->
+            <div class="tab-pane fade" id="finance" role="tabpanel">
+                <!-- Finance content will be here -->
+                <div class="text-center p-5">
+                    <h3><i class="fas fa-coins"></i> การเงินการศึกษา (กำลังพัฒนา)</h3>
+                    <p class="text-muted">เครื่องมือคำนวณทางการเงินเพื่อการศึกษากำลังอยู่ระหว่างการพัฒนา</p>
+                </div>
+            </div>
+            
+            <!-- 5. Statistics & Probability -->
+            <div class="tab-pane fade" id="stats" role="tabpanel">
+                <!-- Statistics content will be here -->
+                <div class="text-center p-5">
+                    <h3><i class="fas fa-chart-bar"></i> สถิติ & ความน่าจะเป็น (กำลังพัฒนา)</h3>
+                    <p class="text-muted">เครื่องมือวิเคราะห์ทางสถิติกำลังอยู่ระหว่างการพัฒนา</p>
+                </div>
+            </div>
+            
+            <!-- 6. Study Tools -->
+            <div class="tab-pane fade" id="tools" role="tabpanel">
+                <!-- Tools content will be here -->
+                <div class="text-center p-5">
+                    <h3><i class="fas fa-tools"></i> เครื่องมือช่วยเรียน (กำลังพัฒนา)</h3>
+                    <p class="text-muted">เครื่องมือช่วยการเรียนรู้กำลังอยู่ระหว่างการพัฒนา</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Calculations -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card-custom">
+                    <div class="card-header-custom">
+                        <i class="fas fa-history"></i> ประวัติการคำนวณล่าสุด
+                    </div>
+                    <div class="card-body-custom">
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="calculationHistory">
+                                <thead>
+                                    <tr>
+                                        <th>วันที่</th>
+                                        <th>เครื่องมือ</th>
+                                        <th>รายละเอียด</th>
+                                        <th>ผลลัพธ์</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer-custom mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h4>Education Hub Pro</h4>
+                    <p>เครื่องมือคำนวณเพื่อการศึกษาที่ครบวงจรที่สุด</p>
+                    <div class="social-icons mt-3">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-line fa-lg"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h5>เครื่องมือยอดนิยม</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light text-decoration-none">คำนวณ GPA</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">แปลงหน่วย</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">คำนวณทางวิทยาศาสตร์</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>ติดต่อเรา</h5>
+                    <p><i class="fas fa-envelope me-2"></i> support@educationhub.com</p>
+                    <p><i class="fas fa-phone me-2"></i> 02-123-4567</p>
+                </div>
+            </div>
+            <hr class="bg-light my-4">
+            <div class="text-center">
+                <p>&copy; 2024 Education Hub Pro. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    
+    <script>
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hide loading
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                }, 500);
+            }, 1500);
+            
+            // Initialize dashboard counters
+            animateCounter('totalCalculations', 0, 1247, 2000);
+            animateCounter('activeUsers', 0, 342, 1500);
+            animateCounter('toolsCount', 0, 15, 1000);
+            
+            // Initialize GPA system
+            initializeGPAPro();
+            
+            // Initialize particles
+            if (typeof particlesJS !== 'undefined') {
+                particlesJS('particles-js', {
+                    particles: {
+                        number: { value: 80, density: { enable: true, value_area: 800 } },
+                        color: { value: "#3498db" },
+                        shape: { type: "circle" },
+                        opacity: { value: 0.5, random: true },
+                        size: { value: 3, random: true },
+                        line_linked: {
+                            enable: true,
+                            distance: 150,
+                            color: "#3498db",
+                            opacity: 0.2,
+                            width: 1
+                        },
+                        move: { enable: true, speed: 2 }
+                    }
+                });
+            }
+            
+            // Initialize Chart
+            initializeGPAChart();
+            
+            // Load history
+            loadCalculationHistory();
+        });
+        
+        // Counter Animation
+        function animateCounter(elementId, start, end, duration) {
+            let current = start;
+            const increment = end > start ? 1 : -1;
+            const stepTime = Math.abs(Math.floor(duration / (end - start)));
+            const element = document.getElementById(elementId);
+            
+            const timer = setInterval(() => {
+                current += increment;
+                element.textContent = current.toLocaleString();
+                if (current === end) {
+                    clearInterval(timer);
+                }
+            }, stepTime);
+        }
+        
+        // GPA Pro System
+        let gpaSystem = 'university';
+        let subjects = [];
+        
+        function setGpaSystem(system) {
+            gpaSystem = system;
+            const buttons = document.querySelectorAll('#gpa .btn-custom-primary, #gpa .btn-custom-secondary');
+            buttons.forEach(btn => {
+                if (btn.textContent.includes(system === 'university' ? 'มหาวิทยาลัย' : 'มัธยม')) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            updateGradeOptions();
+        }
+        
+        function initializeGPAPro() {
+            subjects = [];
+            addSubjectPro();
+            addSubjectPro();
+            addSubjectPro();
+            updateGradeOptions();
+        }
+        
+        function addSubjectPro() {
+            const container = document.getElementById('subjectsContainerPro');
+            const id = subjects.length + 1;
+            const subject = {
+                id: id,
+                name: '',
+                credit: 3,
+                grade: 3.5
+            };
+            subjects.push(subject);
+            
+            const div = document.createElement('div');
+            div.className = 'subject-row row align-items-center mb-3';
+            div.id = `subject-${id}`;
+            div.innerHTML = `
+                <div class="col-md-4">
+                    <input type="text" class="form-control-custom subject-name" placeholder="ชื่อวิชา (เช่น แคลคูลัส)" 
+                           oninput="updateSubjectName(${id}, this.value)">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-control-custom subject-credit" onchange="updateSubjectCredit(${id}, this.value)">
+                        <option value="1">1 หน่วยกิต</option>
+                        <option value="2">2 หน่วยกิต</option>
+                        <option value="3" selected>3 หน่วยกิต</option>
+                        <option value="4">4 หน่วยกิต</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <select class="form-control-custom subject-grade" onchange="updateSubjectGrade(${id}, this.value)">
+                        <!-- Will be populated by updateGradeOptions -->
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-danger btn-sm" onclick="removeSubjectPro(${id})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            container.appendChild(div);
+            updateGradeOptions();
+        }
+        
+        function updateGradeOptions() {
+            const gradeOptions = gpaSystem === 'university' ? [
+                { value: 4, label: 'A (4.0)' },
+                { value: 3.5, label: 'B+ (3.5)' },
+                { value: 3, label: 'B (3.0)' },
+                { value: 2.5, label: 'C+ (2.5)' },
+                { value: 2, label: 'C (2.0)' },
+                { value: 1.5, label: 'D+ (1.5)' },
+                { value: 1, label: 'D (1.0)' },
+                { value: 0, label: 'F (0.0)' }
+            ] : [
+                { value: 5, label: 'A (5.0)' },
+                { value: 4, label: 'B+ (4.0)' },
+                { value: 3.5, label: 'B (3.5)' },
+                { value: 3, label: 'C+ (3.0)' },
+                { value: 2.5, label: 'C (2.5)' },
+                { value: 2, label: 'D+ (2.0)' },
+                { value: 1, label: 'D (1.0)' },
+                { value: 0, label: 'F (0.0)' }
+            ];
+            
+            document.querySelectorAll('.subject-grade').forEach((select, index) => {
+                select.innerHTML = '';
+                gradeOptions.forEach(option => {
+                    const opt = document.createElement('option');
+                    opt.value = option.value;
+                    opt.textContent = option.label;
+                    select.appendChild(opt);
+                });
+                if (subjects[index]) {
+                    select.value = subjects[index].grade;
+                }
+            });
+        }
+        
+        function updateSubjectName(id, value) {
+            const subject = subjects.find(s => s.id === id);
+            if (subject) subject.name = value;
+        }
+        
+        function updateSubjectCredit(id, value) {
+            const subject = subjects.find(s => s.id === id);
+            if (subject) subject.credit = parseFloat(value);
+        }
+        
+        function updateSubjectGrade(id, value) {
+            const subject = subjects.find(s => s.id === id);
+            if (subject) subject.grade = parseFloat(value);
+        }
+        
+        function removeSubjectPro(id) {
+            subjects = subjects.filter(s => s.id !== id);
+            const element = document.getElementById(`subject-${id}`);
+            if (element) element.remove();
+            updateGradeOptions();
+        }
+        
+        function clearAllSubjects() {
+            if (confirm('คุณแน่ใจหรือไม่ว่าต้องการล้างวิชาทั้งหมด?')) {
+                subjects = [];
+                document.getElementById('subjectsContainerPro').innerHTML = '';
+                addSubjectPro();
+                addSubjectPro();
+                addSubjectPro();
+                document.getElementById('gpaResultPro').style.display = 'none';
+            }
+        }
+        
+        function calculateGPAPro() {
+            let totalCredits = 0;
+            let totalPoints = 0;
+            const gradeCount = { A: 0, B: 0, C: 0, D: 0, F: 0 };
+            
+            subjects.forEach(subject => {
+                totalCredits += subject.credit;
+                totalPoints += (subject.credit * subject.grade);
+                
+                // Count grades
+                if (subject.grade >= 3.5) gradeCount.A++;
+                else if (subject.grade >= 2.5) gradeCount.B++;
+                else if (subject.grade >= 1.5) gradeCount.C++;
+                else if (subject.grade >= 0.5) gradeCount.D++;
+                else gradeCount.F++;
+            });
+            
+            const gpa = totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : 0;
+            const gpaPercent = (gpa / (gpaSystem === 'university' ? 4 : 5)) * 100;
+            
+            // Update results
+            document.getElementById('gpaValuePro').textContent = gpa;
+            document.getElementById('totalCreditsPro').textContent = totalCredits;
+            document.getElementById('totalPointsPro').textContent = totalPoints.toFixed(2);
+            document.getElementById('gpaProgress').style.width = `${gpaPercent}%`;
+            
+            // Update grade counts
+            document.getElementById('gradeACount').textContent = gradeCount.A;
+            document.getElementById('gradeBCount').textContent = gradeCount.B;
+            document.getElementById('gradeCCount').textContent = gradeCount.C;
+            document.getElementById('gradeDCount').textContent = gradeCount.D;
+            document.getElementById('gradeFCount').textContent = gradeCount.F;
+            
+            // Update stats
+            const avgPerCredit = totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : 0;
+            document.getElementById('avgPerCredit').textContent = avgPerCredit;
+            document.getElementById('avgPerCreditBar').style.width = `${(avgPerCredit / 4) * 100}%`;
+            
+            const studyEfficiency = ((gradeCount.A + gradeCount.B) / subjects.length * 100).toFixed(0);
+            document.getElementById('studyEfficiency').textContent = `${studyEfficiency}%`;
+            document.getElementById('studyEfficiencyBar').style.width = `${studyEfficiency}%`;
+            
+            // Show prediction
+            const targetGPA = parseFloat(document.getElementById('targetGPA').value) || 3.5;
+            document.getElementById('targetDisplay').textContent = targetGPA;
+            
+            const requiredPoints = (targetGPA * totalCredits) - totalPoints;
+            const requiredA = Math.ceil(requiredPoints / (4 * 3));
+            const requiredBPlus = Math.ceil(requiredPoints / (3.5 * 3));
+            
+            document.getElementById('requiredA').textContent = requiredA;
+            document.getElementById('requiredBPlus').textContent = requiredBPlus;
+            
+            // Show result
+            document.getElementById('gpaResultPro').style.display = 'block';
+            
+            // Add to history
+            addToHistory('GPA Calculator', `${subjects.length} วิชา`, gpa);
+            
+            // Update chart
+            updateGPAChart();
+        }
+        
+        function initializeGPAChart() {
+            const ctx = document.getElementById('gpaChart').getContext('2d');
+            window.gpaChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['เทอม 1', 'เทอม 2', 'เทอม 3', 'เทอม 4', 'เทอม 5', 'เทอม 6'],
+                    datasets: [{
+                        label: 'GPA',
+                        data: [3.25, 3.40, 3.60, 3.45, 3.75, 3.80],
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 2.0,
+                            max: 4.0
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateGPAChart() {
+            if (window.gpaChart) {
+                // Simulate random GPA trend
+                const newData = window.gpaChart.data.datasets[0].data;
+                const lastValue = newData[newData.length - 1];
+                const newValue = parseFloat(document.getElementById('gpaValuePro').textContent);
+                
+                // Add new data point with smoothing
+                const smoothedValue = (lastValue * 0.7 + newValue * 0.3);
+                newData.push(smoothedValue.toFixed(2));
+                newData.shift();
+                
+                window.gpaChart.update();
+            }
+        }
+        
+        function showGradeInfo(grade) {
+            const messages = {
+                A: 'เกรด A: ยอดเยี่ยม! คุณมีผลการเรียนที่โดดเด่น',
+                B: 'เกรด B: ดีมาก! พยายามอีกนิดเพื่อให้ได้ A',
+                C: 'เกรด C: พอใช้! ควรเพิ่มความพยายามในการเรียน',
+                D: 'เกรด D: ผ่านเกณฑ์! ควรปรับปรุงอย่างเร่งด่วน',
+                F: 'เกรด F: ไม่ผ่าน! ต้องทบทวนและปรับปรุงวิธีการเรียน'
+            };
+            
+            alert(messages[grade]);
+        }
+        
+        function exportGPAReport() {
+            const report = `
+                รายงานผลการเรียน
+                ===============
+                วันที่: ${new Date().toLocaleDateString('th-TH')}
+                ระบบ: ${gpaSystem === 'university' ? 'มหาวิทยาลัย (4.0)' : 'มัธยมศึกษา (5.0)'}
+                
+                สรุปผล
+                -------
+                GPA: ${document.getElementById('gpaValuePro').textContent}
+                หน่วยกิตรวม: ${document.getElementById('totalCreditsPro').textContent}
+                คะแนนรวม: ${document.getElementById('totalPointsPro').textContent}
+                
+                การกระจายเกรด
+                -------------
+                A: ${document.getElementById('gradeACount').textContent} วิชา
+                B: ${document.getElementById('gradeBCount').textContent} วิชา
+                C: ${document.getElementById('gradeCCount').textContent} วิชา
+                D: ${document.getElementById('gradeDCount').textContent} วิชา
+                F: ${document.getElementById('gradeFCount').textContent} วิชา
+                
+                คำแนะนำ
+                -------
+                ${getStudyRecommendation()}
+            `;
+            
+            // Create download
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `gpa-report-${new Date().getTime()}.txt`;
+            a.click();
+            
+            alert('ส่งออกรายงานเรียบร้อยแล้ว!');
+        }
+        
+        function getStudyRecommendation() {
+            const gpa = parseFloat(document.getElementById('gpaValuePro').textContent);
+            
+            if (gpa >= 3.5) return 'คุณมีผลการเรียนที่ดีเยี่ยม! รักษาระดับนี้ไว้ให้ดี';
+            if (gpa >= 3.0) return 'ผลการเรียนดี! ลองเพิ่มชั่วโมงอ่านหนังสืออีก 2-3 ชั่วโมงต่อสัปดาห์';
+            if (gpa >= 2.5) return 'ผลการเรียนพอใช้! ควรปรับปรุงวิธีการเรียนและเพิ่มเวลาเตรียมตัวก่อนสอบ';
+            if (gpa >= 2.0) return 'ต้องการปรับปรุง! พิจารณาหาติวเตอร์หรือเข้าคลินิกวิชาการของมหาวิทยาลัย';
+            return 'ต้องปรับปรุงเร่งด่วน! ควรปรึกษาอาจารย์ที่ปรึกษาเพื่อวางแผนการเรียนใหม่';
+        }
+        
+        // History Management
+        function addToHistory(tool, details, result) {
+            const history = JSON.parse(localStorage.getItem('calcHistory') || '[]');
+            const entry = {
+                id: Date.now(),
+                date: new Date().toLocaleString('th-TH'),
+                tool: tool,
+                details: details,
+                result: result
+            };
+            
+            history.unshift(entry);
+            if (history.length > 10) history.pop();
+            
+            localStorage.setItem('calcHistory', JSON.stringify(history));
+            loadCalculationHistory();
+        }
+        
+        function loadCalculationHistory() {
+            const history = JSON.parse(localStorage.getItem('calcHistory') || '[]');
+            const tbody = document.querySelector('#calculationHistory tbody');
+            tbody.innerHTML = '';
+            
+            history.forEach(entry => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${entry.date}</td>
+                    <td>${entry.tool}</td>
+                    <td>${entry.details}</td>
+                    <td><strong>${entry.result}</strong></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" onclick="deleteHistoryEntry(${entry.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+            });
+            
+            if (history.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">
+                            <i class="fas fa-history fa-2x mb-3"></i>
+                            <p>ยังไม่มีประวัติการคำนวณ</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+        
+        function deleteHistoryEntry(id) {
+            if (confirm('ลบรายการนี้หรือไม่?')) {
+                let history = JSON.parse(localStorage.getItem('calcHistory') || '[]');
+                history = history.filter(entry => entry.id !== id);
+                localStorage.setItem('calcHistory', JSON.stringify(history));
+                loadCalculationHistory();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌾 WIT 365 Calculator Pro - เครื่องคิดเลขเกษตรอัจฉริยะ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2ecc71;
+            --secondary-color: #27ae60;
+            --accent-color: #f1c40f;
+            --text-color: #2c3e50;
+            --bg-color: #f0f9f4;
+        }
+        
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 2px solid var(--bg-color);
+            font-weight: 600;
+            color: var(--secondary-color);
+            border-radius: 15px 15px 0 0 !important;
+            padding: 1rem 1.5rem;
+        }
+        
+        .btn-calc {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-calc:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+            color: white;
+        }
+        
+        .result-box {
+            background-color: #e8f8f5;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            border-left: 5px solid var(--primary-color);
+            display: none;
+        }
+        
+        .nav-pills .nav-link.active {
+            background-color: var(--primary-color);
+        }
+        
+        .nav-pills .nav-link {
+            color: var(--text-color);
+            margin-right: 10px;
+            margin-bottom: 10px;
+            border-radius: 20px;
+        }
+        
+        .crop-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .crop-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 3px 10px rgba(46, 204, 113, 0.2);
+        }
+        
+        .crop-card.selected {
+            border-color: var(--primary-color);
+            background-color: #e8f8f5;
+        }
+
+        .api-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .api-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .data-table {
+            font-size: 0.9rem;
+        }
+
+        .data-table th {
+            background: rgba(46, 204, 113, 0.1);
+            font-weight: 600;
+        }
+
+        .price-up {
+            color: #27ae60;
+        }
+
+        .price-down {
+            color: #e74c3c;
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading-spinner.active {
+            display: block;
+        }
+
+        .api-badge {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .stat-box {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-box .value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+
+        .stat-box .label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .province-select {
+            max-width: 300px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header text-center position-relative">
+        <a href="calculator.html" class="btn btn-light position-absolute top-0 start-0 m-3 rounded-circle shadow-sm" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; z-index: 10;" title="กลับหน้าหลัก">
+            <i class="fas fa-home text-success"></i>
+        </a>
+        <div class="container">
+            <h1><i class="fas fa-seedling"></i> WIT 365 เครื่องมือเกษตรอัจฉริยะ</h1>
+            <p class="lead">เครื่องมือคำนวณเกษตรอัจฉริยะแบบครบวงจร - เพื่อคนไทย</p>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+        <ul class="nav nav-pills mb-4 justify-content-center flex-wrap" id="pills-tab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="pills-fertilizer-tab" data-bs-toggle="pill" data-bs-target="#pills-fertilizer" type="button" role="tab"><i class="fas fa-flask"></i> คำนวณปุ๋ย</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="pills-crop-tab" data-bs-toggle="pill" data-bs-target="#pills-crop" type="button" role="tab"><i class="fas fa-leaf"></i> แนะนำสูตร</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="pills-cost-tab" data-bs-toggle="pill" data-bs-target="#pills-cost" type="button" role="tab"><i class="fas fa-coins"></i> ต้นทุน-ผลตอบแทน</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="pills-area-tab" data-bs-toggle="pill" data-bs-target="#pills-area" type="button" role="tab"><i class="fas fa-map-marked-alt"></i> พื้นที่ & การปลูก</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="pills-water-tab" data-bs-toggle="pill" data-bs-target="#pills-water" type="button" role="tab"><i class="fas fa-tint"></i> ระบบน้ำ</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="pills-calendar-tab" data-bs-toggle="pill" data-bs-target="#pills-calendar" type="button" role="tab"><i class="fas fa-calendar-alt"></i> ปฏิทินเกษตร</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="pills-nabc-tab" data-bs-toggle="pill" data-bs-target="#pills-nabc" type="button" role="tab"><i class="fas fa-database"></i> ข้อมูล NABC</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="pills-tabContent">
+            
+            <!-- 1. Advanced Fertilizer Calculator -->
+            <div class="tab-pane fade show active" id="pills-fertilizer" role="tabpanel">
+                <div class="row justify-content-center">
+                    <div class="col-md-10">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-calculator"></i> คำนวณสูตรปุ๋ยผสมแบบละเอียด (NPK + ธาตุรอง + ไมโคร)
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label"><strong>สูตรปุ๋ยหลัก (N-P-K %)</strong></label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="targetN" placeholder="N" value="15">
+                                            <input type="number" class="form-control" id="targetP" placeholder="P" value="15">
+                                            <input type="number" class="form-control" id="targetK" placeholder="K" value="15">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">ธาตุรอง (Ca-Mg-S %)</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="targetCa" placeholder="Ca" value="0">
+                                            <input type="number" class="form-control" id="targetMg" placeholder="Mg" value="0">
+                                            <input type="number" class="form-control" id="targetS" placeholder="S" value="0">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">ปริมาณที่ต้องการ (กก.)</label>
+                                        <input type="number" class="form-control" id="targetWeight" placeholder="ระบุน้ำหนัก" value="100">
+                                        <small class="text-muted d-block mt-1">ราคารวมประมาณ: <span id="fertCost" class="fw-bold text-success">0</span> บาท</small>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">แม่ปุ๋ยที่มี</label>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" checked disabled>
+                                                <label class="form-check-label">Urea (46-0-0) <small class="text-muted">12 บ/กก.</small></label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" checked disabled>
+                                                <label class="form-check-label">DAP (18-46-0) <small class="text-muted">18 บ/กก.</small></label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" checked disabled>
+                                                <label class="form-check-label">MOP (0-0-60) <small class="text-muted">15 บ/กก.</small></label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="useDolomite">
+                                                <label class="form-check-label">Dolomite (Ca+Mg) <small class="text-muted">8 บ/กก.</small></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-calc" onclick="calculateFertilizerAdvanced()">คำนวณส่วนผสมแบบละเอียด</button>
+                                
+                                <div class="result-box" id="fertilizerResult">
+                                    <h5><i class="fas fa-check-circle"></i> ผลการคำนวณ</h5>
+                                    <div id="fertilizerDetails"></div>
+                                    <div class="mt-3 p-3 bg-white rounded">
+                                        <strong><i class="fas fa-lightbulb text-warning"></i> คำแนะนำ:</strong>
+                                        <ul class="mb-0 mt-2" id="fertTips">
+                                            <li>ผสมให้เข้ากันก่อนใช้งาน</li>
+                                            <li>เก็บในที่แห้ง ร่มเย็น หลีกเลี่ยงแสงแดด</li>
+                                            <li>ใช้ภายใน 6 เดือนหลังผสม</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Crop Recommendation System -->
+            <div class="tab-pane fade" id="pills-crop" role="tabpanel">
+                <div class="row justify-content-center">
+                    <div class="col-md-10">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-leaf"></i> ระบบแนะนำสูตรปุ๋ยตามพืช
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label"><strong>เลือกประเภทพืช:</strong></label>
+                                </div>
+                                <div class="row g-3" id="cropSelector">
+                                    <!-- Cards generated by JS -->
+                                </div>
+                                <div class="result-box mt-3" id="cropRecommendResult" style="display:block;">
+                                    <div id="cropRecommendDetails">
+                                        <p class="text-center text-muted"><i class="fas fa-hand-pointer"></i> เลือกพืชเพื่อดูคำแนะนำ</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Cost-Benefit Analysis -->
+            <div class="tab-pane fade" id="pills-cost" role="tabpanel">
+                <div class="row justify-content-center">
+                    <div class="col-md-10">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-chart-pie"></i> วิเคราะห์ต้นทุนและผลตอบแทน (ROI Calculator)
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label"><strong>ต้นทุนคงที่</strong></label>
+                                        <div class="mb-2">
+                                            <label class="small">ค่าที่ดิน/เช่า (บาท/ปี)</label>
+                                            <input type="number" class="form-control" id="landCost" value="0">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="small">โรงเรือน/อุปกรณ์ (บาท)</label>
+                                            <input type="number" class="form-control" id="equipmentCost" value="0">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="small">ค่าไฟฟ้า/น้ำ (บาท/เดือน)</label>
+                                            <input type="number" class="form-control" id="utilityCost" value="0">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label"><strong>ต้นทุนผันแปร (ต่อรอบการเพาะปลูก)</strong></label>
+                                        <div class="mb-2">
+                                            <label class="small">พันธุ์พืช/กล้า (บาท)</label>
+                                            <input type="number" class="form-control" id="seedCost" value="0">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="small">ปุ๋ย/ยา (บาท)</label>
+                                            <input type="number" class="form-control" id="fertilCost2" value="0">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="small">ค่าแรงงาน (บาท)</label>
+                                            <input type="number" class="form-control" id="laborCost" value="0">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">จำนวนรอบต่อปี</label>
+                                        <input type="number" class="form-control" id="cyclePerYear" value="2">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">ผลผลิตเฉลี่ย (กก./รอบ)</label>
+                                        <input type="number" class="form-control" id="expectedYield2" value="1000">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">ราคาขาย (บาท/กก.)</label>
+                                        <input type="number" class="form-control" id="sellingPrice2" value="50">
+                                    </div>
+                                </div>
+                                <button class="btn btn-calc" onclick="calculateCostBenefit()">วิเคราะห์ความคุ้มค่า</button>
+                                <div class="result-box" id="costResult">
+                                    <div id="costDetails"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Area & Planting Calculator -->
+            <div class="tab-pane fade" id="pills-area" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-ruler-combined"></i> แปลงหน่วยพื้นที่
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">จำนวนไร่-งาน-ตารางวา</label>
+                                    <div class="input-group mb-2">
+                                        <input type="number" class="form-control" id="rai" placeholder="ไร่" value="1">
+                                        <input type="number" class="form-control" id="ngan" placeholder="งาน" value="0">
+                                        <input type="number" class="form-control" id="wah" placeholder="ตร.วา" value="0">
+                                    </div>
+                                </div>
+                                <button class="btn btn-calc" onclick="convertArea()">แปลงหน่วย</button>
+                                <div class="result-box" id="areaResult">
+                                    <div id="areaDetails"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-tree"></i> คำนวณจำนวนต้นไม้
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <label class="form-label">ระยะระหว่างต้น (ม.)</label>
+                                        <input type="number" class="form-control" id="plantSpace" value="2">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label">ระยะระหว่างแถว (ม.)</label>
+                                        <input type="number" class="form-control" id="rowSpace" value="2">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">พื้นที่ปลูก (ไร่)</label>
+                                    <input type="number" class="form-control" id="plantArea" value="1">
+                                </div>
+                                <button class="btn btn-calc" onclick="calculatePlants()">คำนวณจำนวนต้น</button>
+                                <div class="result-box" id="plantResult">
+                                    <h4 class="text-center text-success" id="plantCount">0 ต้น</h4>
+                                    <p class="text-center small text-muted mb-0">ความหนาแน่น: <span id="plantDensity">0</span> ต้น/ไร่</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Water System Calculator -->
+            <div class="tab-pane fade" id="pills-water" role="tabpanel">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-tint"></i> คำนวณความต้องการน้ำแบบละเอียด (ETc Method)
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">ชนิดพืช (ค่า Kc)</label>
+                                    <select class="form-select" id="cropType">
+                                        <option value="0.8">พืชผัก (Kc = 0.8)</option>
+                                        <option value="1.0" selected>พืชไร่ทั่วไป (Kc = 1.0)</option>
+                                        <option value="1.1">ปาล์มน้ำมัน (Kc = 1.1)</option>
+                                        <option value="1.2">ไม้ผล - ทุเรียน/มังคุด (Kc = 1.2)</option>
+                                        <option value="1.5">ข้าว (Kc = 1.5)</option>
+                                        <option value="1.3">อ้อย (Kc = 1.3)</option>
+                                    </select>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">พื้นที่ปลูก (ไร่)</label>
+                                        <input type="number" class="form-control" id="waterArea" value="1">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">การระเหยน้ำ ET0 (mm/วัน)</label>
+                                        <input type="number" class="form-control" id="evaporation" value="5" placeholder="ค่าเฉลี่ย 4-6">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">ประสิทธิภาพระบบน้ำ (%)</label>
+                                    <select class="form-select" id="irrigationEfficiency">
+                                        <option value="0.9">ระบบน้ำหยด (90%)</option>
+                                        <option value="0.75">สปริงเกลอร์ (75%)</option>
+                                        <option value="0.6" selected>ท่อน้ำทั่วไป (60%)</option>
+                                        <option value="0.4">น้ำท่วมธรรมชาติ (40%)</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-calc" onclick="calculateWater()">คำนวณปริมาณน้ำ</button>
+                                <div class="result-box" id="waterResult">
+                                    <div class="row text-center">
+                                        <div class="col-4">
+                                            <h6>ต่อวัน</h6>
+                                            <h4 class="text-primary" id="waterDaily">0 ลิตร</h4>
+                                        </div>
+                                        <div class="col-4">
+                                            <h6>ต่อเดือน</h6>
+                                            <h4 class="text-info" id="waterMonthly">0 ลบ.ม.</h4>
+                                        </div>
+                                        <div class="col-4">
+                                            <h6>ต่อปี</h6>
+                                            <h4 class="text-success" id="waterYearly">0 ลบ.ม.</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. Planting Calendar -->
+            <div class="tab-pane fade" id="pills-calendar" role="tabpanel">
+                <div class="row justify-content-center">
+                    <div class="col-md-10">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-calendar-check"></i> ปฏิทินเกษตรกรรม - แนะนำช่วงเวลาเพาะปลูก
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label"><strong>เลือกภูมิภาค:</strong></label>
+                                    <select class="form-select" id="regionSelect" onchange="updateCalendar()">
+                                        <option value="north">ภาคเหนือ</option>
+                                        <option value="northeast" selected>ภาคอีสาน</option>
+                                        <option value="central">ภาคกลาง</option>
+                                        <option value="south">ภาคใต้</option>
+                                    </select>
+                                </div>
+                                <div id="calendarDisplay">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>พืช</th>
+                                                    <th>ช่วงปลูกที่ดี</th>
+                                                    <th>เก็บเกี่ยว</th>
+                                                    <th>หมายเหตุ</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="calendarBody">
+                                                <!-- Generated by JS -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7. NABC API Data -->
+            <div class="tab-pane fade" id="pills-nabc" role="tabpanel">
+                <div class="row justify-content-center">
+                    <div class="col-12">
+                        <!-- API Header -->
+                        <div class="api-card text-center mb-4">
+                            <div class="icon"><i class="fas fa-satellite-dish"></i></div>
+                            <h4>ข้อมูลเกษตรจาก NABC API</h4>
+                            <p class="mb-2">เชื่อมต่อกับ สำนักงานเศรษฐกิจการเกษตร (สศก.)</p>
+                            <span class="api-badge"><i class="fas fa-link"></i> agriapi.nabc.go.th</span>
+                        </div>
+
+                        <!-- Loading Spinner -->
+                        <div class="loading-spinner" id="nabcLoading">
+                            <div class="spinner-border text-success" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">กำลังโหลดข้อมูล...</p>
+                        </div>
+
+                        <!-- Filters -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-filter"></i> ตัวกรองข้อมูล
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">จังหวัด</label>
+                                        <select class="form-select province-select" id="nabcProvince">
+                                            <option value="">ทั้งประเทศ</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">ปีการผลิต</label>
+                                        <select class="form-select" id="nabcYear">
+                                            <option value="2568">2568</option>
+                                            <option value="2567" selected>2567</option>
+                                            <option value="2566">2566</option>
+                                            <option value="2565">2565</option>
+                                            <option value="2564">2564</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 d-flex align-items-end">
+                                        <button class="btn btn-calc" onclick="refreshNABCData()">
+                                            <i class="fas fa-sync-alt"></i> รีเฟรชข้อมูล
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Crop Selection Cards -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-seedling"></i> เลือกพืชเศรษฐกิจ
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3" id="nabcCropCards">
+                                    <!-- Generated by JS -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Production Summary -->
+                        <div id="nabcSummary">
+                            <!-- Generated by JS -->
+                        </div>
+
+                        <!-- Crop Details (hidden until selected) -->
+                        <div id="nabcCropDetails" style="display: none;">
+                            <!-- Generated by JS -->
+                        </div>
+
+                        <!-- Price Data Section -->
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <i class="fas fa-chart-line"></i> ราคาสินค้าเกษตร
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">เลือกสินค้า</label>
+                                        <select class="form-select" id="nabcPriceCrop">
+                                            <option value="rice">ข้าวเปลือกเจ้า</option>
+                                            <option value="sugarcane">อ้อย</option>
+                                            <option value="cassava">มันสำปะหลัง</option>
+                                            <option value="corn">ข้าวโพดเลี้ยงสัตว์</option>
+                                            <option value="rubber">ยางพาราแผ่น</option>
+                                            <option value="palm">ปาล์มน้ำมัน</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 d-flex align-items-end">
+                                        <button class="btn btn-calc" onclick="fetchNABCPriceData()">
+                                            <i class="fas fa-search"></i> ดูราคา
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="nabcPriceChart">
+                                    <p class="text-center text-muted"><i class="fas fa-chart-area"></i> เลือกสินค้าเพื่อดูข้อมูลราคา</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- API Info Footer -->
+                        <div class="alert alert-info mt-4">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>หมายเหตุ:</strong> ข้อมูลจาก NABC Agriculture API - Production API
+                            <br><small>แหล่งข้อมูล: <a href="https://agriapi.nabc.go.th/home/production-api" target="_blank" rel="noopener noreferrer">https://agriapi.nabc.go.th/home/production-api</a></small>
+                            <br><small>* ข้อมูลตัวอย่างสำหรับการสาธิต - กรุณาลงทะเบียน API Key เพื่อใช้งานจริง</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Crop Database
+        const CROP_DATABASE = {
+            rice: {
+                name: 'ข้าว',
+                icon: 'fas fa-wheat-awn',
+                npk: '16-20-0',
+                notes: 'ใส่ปุ๋ยแบ่ง 3 ครั้ง: ก่อนปักดำ, ระยะแตกกอ, ระยะออกดอก',
+                ratePerRai: '50-60 กก./ไร่',
+                timing: 'พ.ค.-มิ.ย. (นาปี), พ.ย.-ธ.ค. (นาปรัง)'
+            },
+            corn: {
+                name: 'ข้าวโพด',
+                icon: 'fas fa-corn',
+                npk: '15-15-15',
+                notes: 'ใส่รองพื้น + ใส่ตามหลังปลูก 30 วัน',
+                ratePerRai: '40-50 กก./ไร่',
+                timing: 'เม.ย.-มิ.ย.'
+            },
+            cassava: {
+                name: 'มันสำปะหลัง',
+                icon: 'fas fa-carrot',
+                npk: '13-13-21',
+                notes: 'เน้น K สูงช่วยให้แป้งมาก',
+                ratePerRai: '30-40 กก./ไร่',
+                timing: 'ต.ค.-พ.ย.'
+            },
+            durian: {
+                name: 'ทุเรียน',
+                icon: 'fas fa-apple-alt',
+                npk: '12-24-12 + Ca+Mg',
+                notes: 'ใส่ปุ๋ยปีละ 4 ครั้ง, เพิ่ม Ca/Mg ป้องกันผลแตก',
+                ratePerRai: '80-100 กก./ไร่ (ต้นโต)',
+                timing: 'มี.ค.-เม.ย. (ติดดอก)'
+            },
+            mango: {
+                name: 'มะม่วง',
+                icon: 'fas fa-lemon',
+                npk: '13-13-21',
+                notes: 'เน้น K ก่อนออกดอก เพิ่ม Ca ช่วงผลโต',
+                ratePerRai: '60-80 กก./ไร่',
+                timing: 'ธ.ค.-ม.ค. (บังคับดอก)'
+            },
+            palm: {
+                name: 'ปาล์มน้ำมัน',
+                icon: 'fas fa-tree',
+                npk: '15-15-15 + Mg+B',
+                notes: 'ต้องการ Mg สูง, ใส่ปีละ 2-3 ครั้ง',
+                ratePerRai: '120-150 กก./ไร่',
+                timing: 'ต้นฝน-กลางปี'
+            },
+            sugarcane: {
+                name: 'อ้อย',
+                icon: 'fas fa-candy-cane',
+                npk: '16-8-8',
+                notes: 'เน้น N ในระยะต้น, ลด N ก่อนเก็บเกี่ยว',
+                ratePerRai: '50-60 กก./ไร่',
+                timing: 'ต.ค.-ธ.ค.'
+            },
+            vegetable: {
+                name: 'ผักทั่วไป',
+                icon: 'fas fa-leaf',
+                npk: '15-15-15',
+                notes: 'ใส่ปุ๋ยทุก 7-10 วัน',
+                ratePerRai: '30-40 กก./ไร่',
+                timing: 'ตลอดปี (เลือกตามฤดู)'
+            }
+        };
+
+        // Planting Calendar Data
+        const PLANTING_CALENDAR = {
+            northeast: [
+                { crop: 'ข้าว (นาปี)', plant: 'พ.ค.-มิ.ย.', harvest: 'ต.ค.-พ.ย.', note: 'รอฝนตก' },
+                { crop: 'ข้าว (นาปรัง)', plant: 'พ.ย.-ธ.ค.', harvest: 'มี.ค.-เม.ย.', note: 'ต้องมีน้ำเพียงพอ' },
+                { crop: 'มันสำปะหลัง', plant: 'ต.ค.-พ.ย.', harvest: '10-12 เดือน', note: 'หลังเก็บเกี่ยวข้าว' },
+                { crop: 'อ้อย', plant: 'ต.ค.-ธ.ค.', harvest: '12-14 เดือน', note: 'หลังฤดูฝน' },
+                { crop: 'ผักกาดหอม', plant: 'ต.ค.-ธ.ค.', harvest: '40-50 วัน', note: 'อากาศเย็น' },
+            ],
+            central: [
+                { crop: 'ข้าว', plant: 'พ.ค.-มิ.ย.', harvest: 'ต.ค.-พ.ย.', note: 'หลังฝนตก' },
+                { crop: 'ผักต่างๆ', plant: 'ต.ค.-ก.พ.', harvest: '30-60 วัน', note: 'ฤดูแล้ง' },
+                { crop: 'มะม่วง (บังคับดอก)', plant: 'ธ.ค.-ม.ค.', harvest: 'มี.ค.-เม.ย.', note: 'ระวังฝนช่วงดอกบาน' },
+            ],
+            north: [
+                { crop: 'ข้าว', plant: 'มิ.ย.-ก.ค.', harvest: 'พ.ย.-ธ.ค.', note: 'หลังฝนตก' },
+                { crop: 'กาแฟ (เก็บเกี่ยว)', plant: '-', harvest: 'ต.ค.-ก.พ.', note: 'ผลสุกแดง' },
+                { crop: 'สตรอเบอร์รี่', plant: 'ก.ย.-ต.ค.', harvest: 'ธ.ค.-ก.พ.', note: 'ที่สูง อากาศเย็น' },
+            ],
+            south: [
+                { crop: 'ทุเรียน (ติดดอก)', plant: 'มี.ค.-เม.ย.', harvest: 'มิ.ย.-ส.ค.', note: 'ระวังฝนตกหนัก' },
+                { crop: 'มังคุด', plant: '-', harvest: 'พ.ค.-ส.ค.', note: 'ผลสุกม่วง' },
+                { crop: 'ยางพารา (กรีด)', plant: '-', harvest: 'ตลอดปี', note: 'หยุดกรีดหากฝนตก' },
+            ]
+        };
+
+        // Initialize crop selector
+        function initCropSelector() {
+            const container = document.getElementById('cropSelector');
+            Object.entries(CROP_DATABASE).forEach(([key, crop]) => {
+                const card = `
+                    <div class="col-md-4 col-6">
+                        <div class="crop-card" onclick="selectCrop('${key}')">
+                            <div class="text-center">
+                                <i class="${crop.icon} fa-3x text-success mb-2"></i>
+                                <h6 class="mb-0">${crop.name}</h6>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        }
+
+        function selectCrop(cropKey) {
+            const crop = CROP_DATABASE[cropKey];
+            const result = `
+                <h5 class="text-success"><i class="${crop.icon}"></i> ${crop.name}</h5>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="p-3 bg-white rounded mb-2">
+                            <strong>สูตรปุ๋ยแนะนำ:</strong> <span class="badge bg-success">${crop.npk}</span>
+                        </div>
+                        <div class="p-3 bg-white rounded mb-2">
+                            <strong>อัตราใส่:</strong> ${crop.ratePerRai}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-white rounded mb-2">
+                            <strong>ช่วงเวลาที่เหมาะสม:</strong><br>${crop.timing}
+                        </div>
+                        <div class="p-3 bg-white rounded">
+                            <strong>หมายเหตุ:</strong><br>${crop.notes}
+                        </div>
+                    </div>
+                </div>
+                <div class="alert alert-info mt-3 mb-0">
+                    <i class="fas fa-info-circle"></i> คำแนะนำเพิ่มเติม: ควรทำการวิเคราะห์ดินก่อนใส่ปุ๋ยทุกครั้ง เพื่อปรับสูตรให้เหมาะสมกับดินของท่าน
+                </div>
+            `;
+            document.getElementById('cropRecommendDetails').innerHTML = result;
+        }
+
+        // Update calendar based on region
+        function updateCalendar() {
+            const region = document.getElementById('regionSelect').value;
+            const data = PLANTING_CALENDAR[region];
+            const tbody = document.getElementById('calendarBody');
+            tbody.innerHTML = '';
+            
+            data.forEach(item => {
+                const row = `
+                    <tr>
+                        <td><strong>${item.crop}</strong></td>
+                        <td><span class="badge bg-success">${item.plant}</span></td>
+                        <td><span class="badge bg-info">${item.harvest}</span></td>
+                        <td class="small">${item.note}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // Advanced Fertilizer Calculation
+        function calculateFertilizerAdvanced() {
+            const targetN = parseFloat(document.getElementById('targetN').value) || 0;
+            const targetP = parseFloat(document.getElementById('targetP').value) || 0;
+            const targetK = parseFloat(document.getElementById('targetK').value) || 0;
+            const targetCa = parseFloat(document.getElementById('targetCa').value) || 0;
+            const targetMg = parseFloat(document.getElementById('targetMg').value) || 0;
+            const targetS = parseFloat(document.getElementById('targetS').value) || 0;
+            const weight = parseFloat(document.getElementById('targetWeight').value) || 0;
+            const useDolomite = document.getElementById('useDolomite').checked;
+
+            if (weight === 0) {
+                alert('กรุณาระบุน้ำหนักปุ๋ยที่ต้องการ');
+                return;
+            }
+
+            // Prices per kg
+            const prices = { urea: 12, dap: 18, mop: 15, dolomite: 8 };
+
+            // Calculate main NPK
+            const dapRatio = targetP / 46;
+            const dapAmount = dapRatio * weight;
+            const nFromDap = (dapAmount * 0.18) / weight * 100;
+            
+            let remainingN = targetN - nFromDap;
+            if (remainingN < 0) remainingN = 0;
+            const ureaAmount = (remainingN / 46) * weight;
+            
+            const mopAmount = (targetK / 60) * weight;
+            
+            // Calculate dolomite for Ca+Mg
+            let dolomiteAmount = 0;
+            if (useDolomite && (targetCa > 0 || targetMg > 0)) {
+                // Dolomite มี CaMg(CO3)2 ประมาณ 20% Ca และ 10% Mg
+                const caFromDolomite = (targetCa / 20) * weight;
+                const mgFromDolomite = (targetMg / 10) * weight;
+                dolomiteAmount = Math.max(caFromDolomite, mgFromDolomite);
+            }
+            
+            const totalFertilizer = dapAmount + ureaAmount + mopAmount + dolomiteAmount;
+            const filler = weight - totalFertilizer;
+
+            // Calculate cost
+            const totalCost = (ureaAmount * prices.urea) + (dapAmount * prices.dap) + 
+                            (mopAmount * prices.mop) + (dolomiteAmount * prices.dolomite);
+
+            document.getElementById('fertCost').innerText = totalCost.toFixed(0);
+
+            const resultHtml = `
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>แม่ปุ๋ย</th>
+                                <th>สูตร</th>
+                                <th>ปริมาณ (กก.)</th>
+                                <th>ราคา (บาท)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Urea (ยูเรีย)</td>
+                                <td>46-0-0</td>
+                                <td class="fw-bold text-primary">${ureaAmount.toFixed(2)}</td>
+                                <td>${(ureaAmount * prices.urea).toFixed(0)}</td>
+                            </tr>
+                            <tr>
+                                <td>DAP</td>
+                                <td>18-46-0</td>
+                                <td class="fw-bold text-primary">${dapAmount.toFixed(2)}</td>
+                                <td>${(dapAmount * prices.dap).toFixed(0)}</td>
+                            </tr>
+                            <tr>
+                                <td>MOP</td>
+                                <td>0-0-60</td>
+                                <td class="fw-bold text-primary">${mopAmount.toFixed(2)}</td>
+                                <td>${(mopAmount * prices.mop).toFixed(0)}</td>
+                            </tr>
+                            ${dolomiteAmount > 0 ? `
+                            <tr>
+                                <td>Dolomite</td>
+                                <td>Ca+Mg</td>
+                                <td class="fw-bold text-primary">${dolomiteAmount.toFixed(2)}</td>
+                                <td>${(dolomiteAmount * prices.dolomite).toFixed(0)}</td>
+                            </tr>` : ''}
+                            <tr class="table-secondary">
+                                <td>Filler (ดิน/ทราย)</td>
+                                <td>-</td>
+                                <td class="fw-bold">${filler > 0 ? filler.toFixed(2) : 0}</td>
+                                <td>-</td>
+                            </tr>
+                            <tr class="table-success">
+                                <td colspan="2" class="fw-bold">รวมทั้งหมด</td>
+                                <td class="fw-bold">${weight.toFixed(2)}</td>
+                                <td class="fw-bold">${totalCost.toFixed(0)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="small text-muted mb-0">* สูตรคำนวณโดยประมาณ ราคาอาจแตกต่างตามท้องตลาด</p>
+            `;
+            
+            document.getElementById('fertilizerDetails').innerHTML = resultHtml;
+            document.getElementById('fertilizerResult').style.display = 'block';
+        }
+
+        // Cost-Benefit Analysis
+        function calculateCostBenefit() {
+            const landCost = parseFloat(document.getElementById('landCost').value) || 0;
+            const equipmentCost = parseFloat(document.getElementById('equipmentCost').value) || 0;
+            const utilityCost = parseFloat(document.getElementById('utilityCost').value) || 0;
+            const seedCost = parseFloat(document.getElementById('seedCost').value) || 0;
+            const fertilCost = parseFloat(document.getElementById('fertilCost2').value) || 0;
+            const laborCost = parseFloat(document.getElementById('laborCost').value) || 0;
+            const cyclePerYear = parseFloat(document.getElementById('cyclePerYear').value) || 1;
+            const yieldPerCycle = parseFloat(document.getElementById('expectedYield2').value) || 0;
+            const price = parseFloat(document.getElementById('sellingPrice2').value) || 0;
+
+            // Calculate costs
+            const annualFixedCost = landCost + (equipmentCost / 5) + (utilityCost * 12); // Equipment depreciation 5 years
+            const costPerCycle = seedCost + fertilCost + laborCost;
+            const annualVariableCost = costPerCycle * cyclePerYear;
+            const totalAnnualCost = annualFixedCost + annualVariableCost;
+
+            // Calculate revenue
+            const revenuePerCycle = yieldPerCycle * price;
+            const annualRevenue = revenuePerCycle * cyclePerYear;
+            const annualProfit = annualRevenue - totalAnnualCost;
+
+            // Calculate ROI
+            const roi = ((annualProfit / totalAnnualCost) * 100);
+            const breakEvenKg = totalAnnualCost / price;
+            const paybackMonths = equipmentCost > 0 ? (equipmentCost / (annualProfit / 12)) : 0;
+
+            let profitClass = annualProfit >= 0 ? 'text-success' : 'text-danger';
+            let profitIcon = annualProfit >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
+
+            const resultHtml = `
+                <div class="row text-center mb-3">
+                    <div class="col-md-3">
+                        <div class="p-3 bg-light rounded">
+                            <h6 class="text-muted small">รายได้ต่อปี</h6>
+                            <h4 class="text-primary">${annualRevenue.toLocaleString()}</h4>
+                            <small class="text-muted">บาท</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3 bg-light rounded">
+                            <h6 class="text-muted small">ต้นทุนต่อปี</h6>
+                            <h4 class="text-warning">${totalAnnualCost.toLocaleString()}</h4>
+                            <small class="text-muted">บาท</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3 bg-light rounded">
+                            <h6 class="text-muted small">กำไรสุทธิ</h6>
+                            <h4 class="${profitClass}"><i class="fas ${profitIcon}"></i> ${annualProfit.toLocaleString()}</h4>
+                            <small class="text-muted">บาท/ปี</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3 bg-light rounded">
+                            <h6 class="text-muted small">ROI</h6>
+                            <h4 class="${profitClass}">${roi.toFixed(1)}%</h4>
+                            <small class="text-muted">ผลตอบแทน</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="alert alert-info">
+                            <strong><i class="fas fa-balance-scale"></i> จุดคุ้มทุน:</strong><br> 
+                            ต้องผลิตให้ได้ <strong>${breakEvenKg.toLocaleString()} กก./ปี</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="alert alert-success">
+                            <strong><i class="fas fa-clock"></i> ระยะเวลาคืนทุน:</strong><br>
+                            <strong>${paybackMonths > 0 ? paybackMonths.toFixed(1) + ' เดือน' : 'N/A'}</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert alert-warning mb-0">
+                    <strong><i class="fas fa-lightbulb"></i> คำแนะนำ:</strong><br>
+                    ${roi > 20 ? '✅ ผลตอบแทนดีมาก คุ้มค่าการลงทุน' : 
+                      roi > 10 ? '⚠️ ผลตอบแทนปานกลาง พิจารณาลดต้นทุนหรือเพิ่มราคาขาย' :
+                      '❌ ผลตอบแทนต่ำ ควรปรับแผนการผลิตหรือหาพืชทดแทน'}
+                </div>
+            `;
+            
+            document.getElementById('costDetails').innerHTML = resultHtml;
+            document.getElementById('costResult').style.display = 'block';
+        }
+
+        // Area Conversion
+        function convertArea() {
+            const rai = parseFloat(document.getElementById('rai').value) || 0;
+            const ngan = parseFloat(document.getElementById('ngan').value) || 0;
+            const wah = parseFloat(document.getElementById('wah').value) || 0;
+
+            const totalWah = (rai * 400) + (ngan * 100) + wah;
+            const totalSqm = totalWah * 4;
+            const totalAcre = totalSqm / 4046.86;
+            const totalHectare = totalSqm / 10000;
+
+            const resultHtml = `
+                <div class="row text-center">
+                    <div class="col-6 mb-2">
+                        <strong>${totalWah.toLocaleString()}</strong><br>
+                        <small class="text-muted">ตารางวา</small>
+                    </div>
+                    <div class="col-6 mb-2">
+                        <strong>${totalSqm.toLocaleString()}</strong><br>
+                        <small class="text-muted">ตารางเมตร</small>
+                    </div>
+                    <div class="col-6">
+                        <strong>${totalAcre.toFixed(2)}</strong><br>
+                        <small class="text-muted">เอเคอร์</small>
+                    </div>
+                    <div class="col-6">
+                        <strong>${totalHectare.toFixed(2)}</strong><br>
+                        <small class="text-muted">เฮกตาร์</small>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('areaDetails').innerHTML = resultHtml;
+            document.getElementById('areaResult').style.display = 'block';
+        }
+
+        function calculatePlants() {
+            const plantSpace = parseFloat(document.getElementById('plantSpace').value) || 0;
+            const rowSpace = parseFloat(document.getElementById('rowSpace').value) || 0;
+            const areaRai = parseFloat(document.getElementById('plantArea').value) || 0;
+
+            if (plantSpace === 0 || rowSpace === 0 || areaRai === 0) {
+                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+                return;
+            }
+
+            const areaSqm = areaRai * 1600;
+            const areaPerPlant = plantSpace * rowSpace;
+            const totalPlants = Math.floor(areaSqm / areaPerPlant);
+            const density = Math.floor(1600 / areaPerPlant);
+
+            document.getElementById('plantCount').innerText = `${totalPlants.toLocaleString()} ต้น`;
+            document.getElementById('plantDensity').innerText = density.toLocaleString();
+            document.getElementById('plantResult').style.display = 'block';
+        }
+
+        // Water Calculation
+        function calculateWater() {
+            const kc = parseFloat(document.getElementById('cropType').value);
+            const areaRai = parseFloat(document.getElementById('waterArea').value) || 0;
+            const et0 = parseFloat(document.getElementById('evaporation').value) || 0;
+            const efficiency = parseFloat(document.getElementById('irrigationEfficiency').value);
+
+            if (areaRai === 0) {
+                alert('กรุณาระบุพื้นที่ปลูก');
+                return;
+            }
+
+            const areaSqm = areaRai * 1600;
+            const etc = kc * et0; // mm/day
+            const waterLitersDaily = (etc * areaSqm) / efficiency;
+            const waterCubicMonthly = (waterLitersDaily * 30) / 1000;
+            const waterCubicYearly = (waterLitersDaily * 365) / 1000;
+
+            document.getElementById('waterDaily').innerText = `${waterLitersDaily.toLocaleString()} ลิตร`;
+            document.getElementById('waterMonthly').innerText = `${waterCubicMonthly.toLocaleString()} ลบ.ม.`;
+            document.getElementById('waterYearly').innerText = `${waterCubicYearly.toLocaleString()} ลบ.ม.`;
+            document.getElementById('waterResult').style.display = 'block';
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            initCropSelector();
+            updateCalendar();
+            initNABCData();
+        });
+
+        // ==================== NABC API Integration ====================
+        const NABC_API_BASE = 'https://agriapi.nabc.go.th';
+
+        // Thai provinces list
+        const thaiProvinces = [
+            'กรุงเทพมหานคร', 'กระบี่', 'กาญจนบุรี', 'กาฬสินธุ์', 'กำแพงเพชร',
+            'ขอนแก่น', 'จันทบุรี', 'ฉะเชิงเทรา', 'ชลบุรี', 'ชัยนาท',
+            'ชัยภูมิ', 'ชุมพร', 'เชียงราย', 'เชียงใหม่', 'ตรัง',
+            'ตราด', 'ตาก', 'นครนายก', 'นครปฐม', 'นครพนม',
+            'นครราชสีมา', 'นครศรีธรรมราช', 'นครสวรรค์', 'นนทบุรี', 'นราธิวาส',
+            'น่าน', 'บึงกาฬ', 'บุรีรัมย์', 'ปทุมธานี', 'ประจวบคีรีขันธ์',
+            'ปราจีนบุรี', 'ปัตตานี', 'พระนครศรีอยุธยา', 'พังงา', 'พัทลุง',
+            'พิจิตร', 'พิษณุโลก', 'เพชรบุรี', 'เพชรบูรณ์', 'แพร่',
+            'ภูเก็ต', 'มหาสารคาม', 'มุกดาหาร', 'แม่ฮ่องสอน', 'ยโสธร',
+            'ยะลา', 'ร้อยเอ็ด', 'ระนอง', 'ระยอง', 'ราชบุรี',
+            'ลพบุรี', 'ลำปาง', 'ลำพูน', 'เลย', 'ศรีสะเกษ',
+            'สกลนคร', 'สงขลา', 'สตูล', 'สมุทรปราการ', 'สมุทรสงคราม',
+            'สมุทรสาคร', 'สระแก้ว', 'สระบุรี', 'สิงห์บุรี', 'สุโขทัย',
+            'สุพรรณบุรี', 'สุราษฎร์ธานี', 'สุรินทร์', 'หนองคาย', 'หนองบัวลำภู',
+            'อ่างทอง', 'อำนาจเจริญ', 'อุดรธานี', 'อุตรดิตถ์', 'อุทัยธานี',
+            'อุบลราชธานี'
+        ];
+
+        // Crop categories for NABC
+        const nabcCropCategories = [
+            { id: 'rice', name: 'ข้าว', icon: 'fa-wheat-awn' },
+            { id: 'sugarcane', name: 'อ้อย', icon: 'fa-candy-cane' },
+            { id: 'cassava', name: 'มันสำปะหลัง', icon: 'fa-carrot' },
+            { id: 'corn', name: 'ข้าวโพด', icon: 'fa-seedling' },
+            { id: 'rubber', name: 'ยางพารา', icon: 'fa-tree' },
+            { id: 'palm', name: 'ปาล์มน้ำมัน', icon: 'fa-leaf' },
+            { id: 'fruit', name: 'ไม้ผล', icon: 'fa-apple-whole' },
+            { id: 'vegetable', name: 'พืชผัก', icon: 'fa-carrot' }
+        ];
+
+        function initNABCData() {
+            // Populate province select
+            const provinceSelect = document.getElementById('nabcProvince');
+            if (provinceSelect) {
+                thaiProvinces.forEach(province => {
+                    const option = document.createElement('option');
+                    option.value = province;
+                    option.textContent = province;
+                    provinceSelect.appendChild(option);
+                });
+            }
+
+            // Render crop category cards
+            renderNABCCropCards();
+
+            // Load initial data (simulated)
+            loadNABCProductionData();
+        }
+
+        function renderNABCCropCards() {
+            const container = document.getElementById('nabcCropCards');
+            if (!container) return;
+
+            container.innerHTML = nabcCropCategories.map(crop => `
+                <div class="col-md-3 col-6">
+                    <div class="stat-box" onclick="selectNABCCrop('${crop.id}')" id="nabc-crop-${crop.id}">
+                        <i class="fas ${crop.icon} fa-2x mb-2 text-success"></i>
+                        <div class="label">${crop.name}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectNABCCrop(cropId) {
+            // Update selection UI
+            document.querySelectorAll('#nabcCropCards .stat-box').forEach(box => {
+                box.classList.remove('selected');
+                box.style.borderColor = 'transparent';
+            });
+            const selected = document.getElementById(`nabc-crop-${cropId}`);
+            if (selected) {
+                selected.style.borderColor = 'var(--primary-color)';
+                selected.style.border = '2px solid var(--primary-color)';
+            }
+
+            // Load data for selected crop
+            loadNABCCropData(cropId);
+        }
+
+        async function loadNABCProductionData() {
+            showNABCLoading(true);
+
+            try {
+                // Note: This is a demo implementation
+                // In production, you would call the actual NABC API
+                // const response = await fetch(`${NABC_API_BASE}/api/production/summary`);
+                // const data = await response.json();
+
+                // Simulated data for demonstration
+                const demoData = generateDemoProductionData();
+                displayNABCProductionSummary(demoData);
+            } catch (error) {
+                console.error('Error loading NABC data:', error);
+                displayNABCError('ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่อีกครั้ง');
+            } finally {
+                showNABCLoading(false);
+            }
+        }
+
+        async function loadNABCCropData(cropId) {
+            showNABCLoading(true);
+
+            try {
+                const province = document.getElementById('nabcProvince')?.value || '';
+                const year = document.getElementById('nabcYear')?.value || new Date().getFullYear();
+
+                // In production: call actual API
+                // const url = `${NABC_API_BASE}/api/production/${cropId}?province=${province}&year=${year}`;
+                // const response = await fetch(url);
+                // const data = await response.json();
+
+                const demoData = generateDemoCropData(cropId, province, year);
+                displayNABCCropDetails(demoData);
+            } catch (error) {
+                console.error('Error loading crop data:', error);
+                displayNABCError('ไม่สามารถโหลดข้อมูลพืชได้');
+            } finally {
+                showNABCLoading(false);
+            }
+        }
+
+        async function fetchNABCPriceData() {
+            showNABCLoading(true);
+
+            try {
+                const crop = document.getElementById('nabcPriceCrop')?.value || 'rice';
+
+                // Demo price data
+                const priceData = generateDemoPriceData(crop);
+                displayNABCPrices(priceData);
+            } catch (error) {
+                console.error('Error loading price data:', error);
+                displayNABCError('ไม่สามารถโหลดข้อมูลราคาได้');
+            } finally {
+                showNABCLoading(false);
+            }
+        }
+
+        function generateDemoProductionData() {
+            return {
+                totalArea: 149234567,
+                totalProduction: 89234123,
+                avgYield: 598,
+                topCrops: [
+                    { name: 'ข้าว', area: 59234567, production: 31234123, change: 2.5 },
+                    { name: 'อ้อย', area: 12234567, production: 102345678, change: -1.2 },
+                    { name: 'มันสำปะหลัง', area: 9234567, production: 31234567, change: 3.8 },
+                    { name: 'ข้าวโพด', area: 7234567, production: 5234567, change: 1.5 },
+                    { name: 'ยางพารา', area: 23234567, production: 4567890, change: -0.5 }
+                ],
+                lastUpdated: new Date().toLocaleDateString('th-TH')
+            };
+        }
+
+        function generateDemoCropData(cropId, province, year) {
+            const cropNames = {
+                rice: 'ข้าว', sugarcane: 'อ้อย', cassava: 'มันสำปะหลัง',
+                corn: 'ข้าวโพด', rubber: 'ยางพารา', palm: 'ปาล์มน้ำมัน',
+                fruit: 'ไม้ผล', vegetable: 'พืชผัก'
+            };
+
+            return {
+                crop: cropNames[cropId] || cropId,
+                province: province || 'ทั้งประเทศ',
+                year: year,
+                plantedArea: Math.floor(Math.random() * 10000000) + 1000000,
+                harvestedArea: Math.floor(Math.random() * 9000000) + 900000,
+                production: Math.floor(Math.random() * 50000000) + 5000000,
+                yield: Math.floor(Math.random() * 500) + 300,
+                pricePerTon: Math.floor(Math.random() * 5000) + 3000,
+                topProvinces: [
+                    { name: 'นครราชสีมา', area: 1234567, production: 2345678 },
+                    { name: 'ขอนแก่น', area: 1123456, production: 2123456 },
+                    { name: 'อุบลราชธานี', area: 1012345, production: 1912345 },
+                    { name: 'สุรินทร์', area: 901234, production: 1701234 },
+                    { name: 'บุรีรัมย์', area: 801234, production: 1501234 }
+                ]
+            };
+        }
+
+        function generateDemoPriceData(crop) {
+            const basePrice = {
+                rice: 12500, sugarcane: 1100, cassava: 2800,
+                corn: 9500, rubber: 45000, palm: 5500
+            }[crop] || 5000;
+
+            const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
+                           'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+
+            return months.map((month, i) => ({
+                month: month,
+                price: basePrice + Math.floor(Math.random() * 2000) - 1000,
+                change: (Math.random() * 10 - 5).toFixed(2)
+            }));
+        }
+
+        function displayNABCProductionSummary(data) {
+            const container = document.getElementById('nabcSummary');
+            if (!container) return;
+
+            container.innerHTML = `
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3 col-6">
+                        <div class="stat-box">
+                            <div class="value">${(data.totalArea / 1000000).toFixed(1)}M</div>
+                            <div class="label">พื้นที่เพาะปลูก (ไร่)</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-box">
+                            <div class="value">${(data.totalProduction / 1000000).toFixed(1)}M</div>
+                            <div class="label">ผลผลิตรวม (ตัน)</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-box">
+                            <div class="value">${data.avgYield}</div>
+                            <div class="label">ผลผลิตเฉลี่ย (กก./ไร่)</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-box">
+                            <div class="value">77</div>
+                            <div class="label">จังหวัด</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-bar"></i> ข้อมูลพืชเศรษฐกิจหลัก
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table data-table">
+                                <thead>
+                                    <tr>
+                                        <th>พืช</th>
+                                        <th class="text-end">พื้นที่ (ไร่)</th>
+                                        <th class="text-end">ผลผลิต (ตัน)</th>
+                                        <th class="text-end">เปลี่ยนแปลง</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${data.topCrops.map(crop => `
+                                        <tr>
+                                            <td><i class="fas fa-seedling text-success me-2"></i>${crop.name}</td>
+                                            <td class="text-end">${crop.area.toLocaleString()}</td>
+                                            <td class="text-end">${crop.production.toLocaleString()}</td>
+                                            <td class="text-end ${crop.change >= 0 ? 'price-up' : 'price-down'}">
+                                                <i class="fas fa-arrow-${crop.change >= 0 ? 'up' : 'down'}"></i>
+                                                ${Math.abs(crop.change)}%
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                        <small class="text-muted">อัปเดตล่าสุด: ${data.lastUpdated}</small>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayNABCCropDetails(data) {
+            const container = document.getElementById('nabcCropDetails');
+            if (!container) return;
+
+            container.style.display = 'block';
+            container.innerHTML = `
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <i class="fas fa-info-circle"></i> ข้อมูล${data.crop} - ${data.province} (ปี ${data.year})
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-3 col-6">
+                                <div class="stat-box">
+                                    <div class="value">${(data.plantedArea / 1000000).toFixed(2)}M</div>
+                                    <div class="label">พื้นที่ปลูก (ไร่)</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <div class="stat-box">
+                                    <div class="value">${(data.production / 1000000).toFixed(2)}M</div>
+                                    <div class="label">ผลผลิต (ตัน)</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <div class="stat-box">
+                                    <div class="value">${data.yield}</div>
+                                    <div class="label">ผลผลิต (กก./ไร่)</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <div class="stat-box">
+                                    <div class="value">฿${data.pricePerTon.toLocaleString()}</div>
+                                    <div class="label">ราคา (บาท/ตัน)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h6><i class="fas fa-map-marker-alt text-danger"></i> จังหวัดที่ปลูกมากที่สุด</h6>
+                        <div class="table-responsive">
+                            <table class="table data-table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>จังหวัด</th>
+                                        <th class="text-end">พื้นที่ (ไร่)</th>
+                                        <th class="text-end">ผลผลิต (ตัน)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${data.topProvinces.map((prov, i) => `
+                                        <tr>
+                                            <td>${i + 1}</td>
+                                            <td>${prov.name}</td>
+                                            <td class="text-end">${prov.area.toLocaleString()}</td>
+                                            <td class="text-end">${prov.production.toLocaleString()}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayNABCPrices(priceData) {
+            const container = document.getElementById('nabcPriceChart');
+            if (!container) return;
+
+            container.innerHTML = `
+                <div class="table-responsive">
+                    <table class="table data-table">
+                        <thead>
+                            <tr>
+                                <th>เดือน</th>
+                                <th class="text-end">ราคา (บาท/ตัน)</th>
+                                <th class="text-end">เปลี่ยนแปลง (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${priceData.map(row => `
+                                <tr>
+                                    <td>${row.month}</td>
+                                    <td class="text-end fw-bold">${row.price.toLocaleString()}</td>
+                                    <td class="text-end ${parseFloat(row.change) >= 0 ? 'price-up' : 'price-down'}">
+                                        <i class="fas fa-arrow-${parseFloat(row.change) >= 0 ? 'up' : 'down'}"></i>
+                                        ${Math.abs(row.change)}%
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function displayNABCError(message) {
+            const container = document.getElementById('nabcSummary');
+            if (container) {
+                container.innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i> ${message}
+                    </div>
+                `;
+            }
+        }
+
+        function showNABCLoading(show) {
+            const loader = document.getElementById('nabcLoading');
+            if (loader) {
+                loader.classList.toggle('active', show);
+            }
+        }
+
+        function refreshNABCData() {
+            loadNABCProductionData();
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
