@@ -316,6 +316,62 @@ service cloud.firestore {
       allow update, delete: if false; // Logs are immutable
     }
 
+    // ====================================
+    // 🛒 MARKETPLACE COLLECTION
+    // ====================================
+    match /marketplace_items/{itemId} {
+      // อ่านได้: ทุกคน (public marketplace)
+      allow read: if true;
+      
+      // สร้างได้: ผู้ใช้ที่ล็อกอิน
+      allow create: if isAuthenticated();
+      
+      // อัปเดตได้: เจ้าของหรือ Admin
+      allow update: if isAuthenticated() && (
+        resource.data.sellerId == request.auth.uid || isAdmin()
+      );
+      
+      // ลบได้: เจ้าของหรือ Admin
+      allow delete: if isAuthenticated() && (
+        resource.data.sellerId == request.auth.uid || isAdmin()
+      );
+    }
+
+    // Marketplace Categories
+    match /marketplace_categories/{categoryId} {
+      allow read: if true;  // Public
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Marketplace Stats
+    match /marketplace_stats/{statId} {
+      allow read: if true;  // Public stats
+      allow create, update: if isAdmin();
+      allow delete: if isSuperAdmin();
+    }
+
+    // ====================================
+    // 🎁 AI POST USAGE TRACKING
+    // ====================================
+    match /ai_post_usage/{userId} {
+      // อ่านได้: Admin และ Cloud Functions
+      allow read: if isAdmin();
+      
+      // เขียนได้: Cloud Functions เท่านั้น (ผ่าน service account)
+      allow create, update: if false; // Cloud Functions will use admin SDK
+      
+      // ลบได้: Admin เท่านั้น
+      allow delete: if isAdmin();
+    }
+
+    // ====================================
+    // 🛒 USER MARKETPLACE STATES
+    // ====================================
+    match /user_marketplace_states/{userId} {
+      // Cloud Functions access only
+      allow read, write: if false;
+    }
+
     // ====================================    // 📝 USER ACTIVITY LOGS (WEB)
     // ====================================
     match /user_activity/{activityId} {

@@ -498,6 +498,418 @@
             transform: translateY(-3px);
         }
         
+        /* AI Generator Button */
+        .ai-generator-btn {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 25px rgba(102, 126, 234, 0.5);
+            transition: all 0.3s;
+            z-index: 998;
+            animation: pulse-ai 2s infinite;
+        }
+        
+        @keyframes pulse-ai {
+            0%, 100% { box-shadow: 0 5px 25px rgba(102, 126, 234, 0.5); }
+            50% { box-shadow: 0 5px 35px rgba(102, 126, 234, 0.8); }
+        }
+        
+        .ai-generator-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        /* AI Modal Styles */
+        .ai-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .ai-modal-overlay.show {
+            display: flex;
+        }
+        
+        .ai-modal {
+            background: white;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .ai-modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+        }
+        
+        .ai-modal-header h3 {
+            margin: 0 0 5px 0;
+            font-weight: 600;
+        }
+        
+        .ai-modal-header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .ai-modal-body {
+            padding: 25px;
+        }
+        
+        .ai-upload-area {
+            border: 3px dashed #e0e0e0;
+            border-radius: 16px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+        
+        .ai-upload-area:hover {
+            border-color: #667eea;
+            background: #f5f7ff;
+        }
+        
+        .ai-upload-area.drag-over {
+            border-color: #667eea;
+            background: #f0f3ff;
+        }
+        
+        .ai-upload-icon {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .ai-upload-text {
+            color: #666;
+            font-size: 1rem;
+        }
+        
+        .ai-upload-text small {
+            display: block;
+            margin-top: 8px;
+            color: #999;
+        }
+        
+        .ai-preview-container {
+            display: none;
+            margin-top: 20px;
+        }
+        
+        .ai-preview-image {
+            width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+            border-radius: 12px;
+            background: #f5f5f5;
+        }
+        
+        .ai-extra-info {
+            margin-top: 20px;
+        }
+        
+        .ai-extra-info label {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .ai-extra-info textarea {
+            width: 100%;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 0.95rem;
+            resize: none;
+            transition: border-color 0.3s;
+        }
+        
+        .ai-extra-info textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .ai-generate-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        
+        .ai-generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .ai-generate-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* AI Result */
+        .ai-result {
+            display: none;
+            margin-top: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf5 100%);
+            border-radius: 16px;
+            padding: 20px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .ai-result-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .ai-result-header i {
+            font-size: 1.5rem;
+            color: #667eea;
+        }
+        
+        .ai-result-header h4 {
+            margin: 0;
+            color: #333;
+        }
+        
+        .ai-product-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .ai-info-item {
+            background: white;
+            padding: 10px 12px;
+            border-radius: 8px;
+        }
+        
+        .ai-info-item label {
+            font-size: 0.75rem;
+            color: #888;
+            display: block;
+        }
+        
+        .ai-info-item span {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .ai-info-item.price span {
+            color: #FF5722;
+        }
+        
+        .ai-post-content {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .ai-post-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .ai-post-description {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        
+        .ai-post-cta {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+        
+        .ai-post-hashtags {
+            color: #2196F3;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .ai-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .ai-copy-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .ai-copy-btn:hover {
+            background: #43A047;
+        }
+        
+        .ai-copy-btn.copied {
+            background: #2E7D32;
+        }
+        
+        .ai-share-btn {
+            background: var(--gradient-success);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .ai-share-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .ai-new-btn {
+            width: 100%;
+            background: #f5f5f5;
+            color: #666;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        
+        .ai-new-btn:hover {
+            background: #e0e0e0;
+        }
+        
+        .ai-modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+        
+        .ai-modal-close:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        /* Loading Animation */
+        .ai-loading {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .ai-loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #e0e0e0;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Toast Notification */
+        .ai-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #333;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 500;
+            z-index: 3000;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        
+        .ai-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        .ai-toast.success {
+            background: #4CAF50;
+        }
+        
         /* Responsive */
         @media (max-width: 768px) {
             .logo {
@@ -700,6 +1112,114 @@
     <button class="scroll-top" id="scrollTop">
         <i class="fas fa-arrow-up"></i>
     </button>
+    
+    <!-- AI Generator Button -->
+    <button class="ai-generator-btn" id="aiGeneratorBtn" title="AI สร้างโพสต์ขาย">
+        <i class="fas fa-magic"></i>
+    </button>
+    
+    <!-- AI Modal -->
+    <div class="ai-modal-overlay" id="aiModal">
+        <div class="ai-modal">
+            <div class="ai-modal-header" style="position: relative;">
+                <button class="ai-modal-close" onclick="closeAIModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+                <h3><i class="fas fa-robot"></i> AI สร้างโพสต์ขาย</h3>
+                <p>ส่งรูปสินค้า ให้ AI ช่วยเขียนข้อความขาย</p>
+            </div>
+            <div class="ai-modal-body">
+                <!-- Upload Section -->
+                <div id="aiUploadSection">
+                    <div class="ai-upload-area" id="aiUploadArea" onclick="document.getElementById('aiFileInput').click()">
+                        <div class="ai-upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <div class="ai-upload-text">
+                            <strong>คลิกหรือลากรูปมาวาง</strong>
+                            <small>รองรับ JPG, PNG ขนาดไม่เกิน 5MB</small>
+                        </div>
+                    </div>
+                    <input type="file" id="aiFileInput" accept="image/*" style="display: none;" onchange="handleImageSelect(event)">
+                    
+                    <!-- Preview -->
+                    <div class="ai-preview-container" id="aiPreviewContainer">
+                        <img id="aiPreviewImage" class="ai-preview-image" src="" alt="Preview">
+                        <button class="ai-new-btn" onclick="resetAIUpload()">
+                            <i class="fas fa-redo"></i> เลือกรูปใหม่
+                        </button>
+                    </div>
+                    
+                    <!-- Extra Info -->
+                    <div class="ai-extra-info">
+                        <label><i class="fas fa-info-circle"></i> ข้อมูลเพิ่มเติม (ไม่บังคับ)</label>
+                        <textarea id="aiExtraInfo" rows="2" placeholder="เช่น ราคา, สภาพสินค้า, รายละเอียดพิเศษ..."></textarea>
+                    </div>
+                    
+                    <button class="ai-generate-btn" id="aiGenerateBtn" onclick="generateAIPost()" disabled>
+                        <i class="fas fa-sparkles"></i> สร้างข้อความขาย
+                    </button>
+                </div>
+                
+                <!-- Loading -->
+                <div class="ai-loading" id="aiLoading">
+                    <div class="ai-loading-spinner"></div>
+                    <p>🤖 AI กำลังวิเคราะห์รูปภาพ...</p>
+                    <small>กรุณารอสักครู่</small>
+                </div>
+                
+                <!-- Result -->
+                <div class="ai-result" id="aiResult">
+                    <div class="ai-result-header">
+                        <i class="fas fa-check-circle"></i>
+                        <h4>AI สร้างข้อความเสร็จแล้ว!</h4>
+                    </div>
+                    
+                    <div class="ai-product-info">
+                        <div class="ai-info-item">
+                            <label>📦 สินค้า</label>
+                            <span id="aiProductName">-</span>
+                        </div>
+                        <div class="ai-info-item price">
+                            <label>💰 ราคาแนะนำ</label>
+                            <span id="aiSuggestedPrice">-</span>
+                        </div>
+                        <div class="ai-info-item">
+                            <label>📁 หมวดหมู่</label>
+                            <span id="aiCategory">-</span>
+                        </div>
+                        <div class="ai-info-item">
+                            <label>✨ อีโมจิ</label>
+                            <span id="aiEmojis">-</span>
+                        </div>
+                    </div>
+                    
+                    <div class="ai-post-content">
+                        <div class="ai-post-title" id="aiPostTitle"></div>
+                        <div class="ai-post-description" id="aiPostDescription"></div>
+                        <div class="ai-post-cta" id="aiPostCta"></div>
+                        <div class="ai-post-hashtags" id="aiPostHashtags"></div>
+                    </div>
+                    
+                    <div class="ai-actions">
+                        <button class="ai-copy-btn" onclick="copyAIPost()">
+                            <i class="fas fa-copy"></i> คัดลอก
+                        </button>
+                        <button class="ai-share-btn" onclick="shareToLine()">
+                            <i class="fab fa-line"></i> แชร์ LINE
+                        </button>
+                    </div>
+                    
+                    <button class="ai-new-btn" onclick="resetAIGenerator()">
+                        <i class="fas fa-redo"></i> สร้างใหม่อีกครั้ง
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast -->
+    <div class="ai-toast" id="aiToast"></div>
     
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -994,6 +1514,281 @@
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             loadProducts();
+            initAIGenerator();
+        });
+        
+        // ========================================
+        // AI POST GENERATOR
+        // ========================================
+        
+        let selectedImage = null;
+        let currentAIPost = null;
+        
+        // Initialize AI Generator
+        function initAIGenerator() {
+            const btn = document.getElementById('aiGeneratorBtn');
+            const modal = document.getElementById('aiModal');
+            const uploadArea = document.getElementById('aiUploadArea');
+            
+            // Open modal
+            btn.addEventListener('click', () => {
+                modal.classList.add('show');
+            });
+            
+            // Close on overlay click
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeAIModal();
+                }
+            });
+            
+            // Drag and drop
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('drag-over');
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('drag-over');
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('drag-over');
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    processImage(file);
+                }
+            });
+        }
+        
+        // Close modal
+        function closeAIModal() {
+            document.getElementById('aiModal').classList.remove('show');
+        }
+        
+        // Handle image select
+        function handleImageSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                processImage(file);
+            }
+        }
+        
+        // Process image
+        function processImage(file) {
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('❌ ไฟล์ใหญ่เกินไป (ไม่เกิน 5MB)', 'error');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                selectedImage = e.target.result;
+                document.getElementById('aiPreviewImage').src = selectedImage;
+                document.getElementById('aiUploadArea').style.display = 'none';
+                document.getElementById('aiPreviewContainer').style.display = 'block';
+                document.getElementById('aiGenerateBtn').disabled = false;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Reset upload
+        function resetAIUpload() {
+            selectedImage = null;
+            document.getElementById('aiFileInput').value = '';
+            document.getElementById('aiUploadArea').style.display = 'block';
+            document.getElementById('aiPreviewContainer').style.display = 'none';
+            document.getElementById('aiGenerateBtn').disabled = true;
+        }
+        
+        // Generate AI Post
+        async function generateAIPost() {
+            if (!selectedImage) {
+                showToast('❌ กรุณาเลือกรูปสินค้าก่อน', 'error');
+                return;
+            }
+            
+            const extraInfo = document.getElementById('aiExtraInfo').value;
+            
+            // Show loading
+            document.getElementById('aiUploadSection').style.display = 'none';
+            document.getElementById('aiLoading').style.display = 'block';
+            document.getElementById('aiResult').style.display = 'none';
+            
+            try {
+                // Call Gemini API directly (client-side)
+                const result = await callGeminiVision(selectedImage, extraInfo);
+                
+                if (result.success) {
+                    currentAIPost = result.data;
+                    displayAIResult(result.data);
+                    showToast('✅ สร้างข้อความสำเร็จ!', 'success');
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (error) {
+                console.error('AI Error:', error);
+                showToast('❌ เกิดข้อผิดพลาด: ' + error.message, 'error');
+                resetAIGenerator();
+            }
+        }
+        
+        // Call Firebase Function for AI Vision
+        async function callGeminiVision(imageData, extraInfo) {
+            // Use Firebase Function instead of direct API key (more secure)
+            const API_URL = 'https://us-central1-appinjproject.cloudfunctions.net/marketplaceAIGeneratePost';
+            
+            // Remove data URL prefix
+            const base64Data = imageData.replace(/^data:image\/\w+;base64,/, '');
+            
+            const requestBody = {
+                imageBase64: base64Data,
+                additionalInfo: extraInfo || ''
+            };
+            
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || 'API request failed');
+            }
+            
+            const data = await response.json();
+            
+            if (!data.success) {
+                throw new Error(data.error || 'AI processing failed');
+            }
+            
+            return data.data;  // Return parsed AI result directly
+        }
+        
+        // Display AI Result
+        function displayAIResult(data) {
+            document.getElementById('aiLoading').style.display = 'none';
+            document.getElementById('aiResult').style.display = 'block';
+            
+            document.getElementById('aiProductName').textContent = data.productName || '-';
+            document.getElementById('aiSuggestedPrice').textContent = data.suggestedPrice || '-';
+            document.getElementById('aiCategory').textContent = data.category || '-';
+            document.getElementById('aiEmojis').textContent = data.emojis || '✨';
+            
+            document.getElementById('aiPostTitle').textContent = data.title || '';
+            document.getElementById('aiPostDescription').textContent = data.description || '';
+            document.getElementById('aiPostCta').textContent = data.callToAction || '';
+            
+            const hashtags = data.hashtags ? data.hashtags.map(h => `#${h}`).join(' ') : '';
+            document.getElementById('aiPostHashtags').textContent = hashtags;
+        }
+        
+        // Copy AI Post
+        function copyAIPost() {
+            if (!currentAIPost) return;
+            
+            const hashtags = currentAIPost.hashtags ? currentAIPost.hashtags.map(h => `#${h}`).join(' ') : '';
+            const fullPost = `${currentAIPost.title}\n\n${currentAIPost.description}\n\n${currentAIPost.callToAction}\n\n${hashtags}`;
+            
+            navigator.clipboard.writeText(fullPost).then(() => {
+                const btn = document.querySelector('.ai-copy-btn');
+                btn.innerHTML = '<i class="fas fa-check"></i> คัดลอกแล้ว!';
+                btn.classList.add('copied');
+                showToast('📋 คัดลอกข้อความเรียบร้อย!', 'success');
+                
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fas fa-copy"></i> คัดลอก';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+        
+        // Share to LINE
+        function shareToLine() {
+            if (!currentAIPost) return;
+            
+            const hashtags = currentAIPost.hashtags ? currentAIPost.hashtags.map(h => `#${h}`).join(' ') : '';
+            const text = `${currentAIPost.title}\n\n${currentAIPost.description}\n\n${currentAIPost.callToAction}\n\n${hashtags}`;
+            const encoded = encodeURIComponent(text);
+            
+            window.open(`https://line.me/R/share?text=${encoded}`, '_blank');
+        }
+        
+        // Reset AI Generator
+        function resetAIGenerator() {
+            document.getElementById('aiUploadSection').style.display = 'block';
+            document.getElementById('aiLoading').style.display = 'none';
+            document.getElementById('aiResult').style.display = 'none';
+            resetAIUpload();
+            document.getElementById('aiExtraInfo').value = '';
+            currentAIPost = null;
+        }
+        
+        // Show toast
+        function showToast(message, type = 'default') {
+            const toast = document.getElementById('aiToast');
+            toast.textContent = message;
+            toast.className = 'ai-toast show';
+            if (type === 'success') toast.classList.add('success');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // =====================================================
+        // 📱 LINE AI POST DATA RECEIVER
+        // รับข้อมูลจาก LINE OA ผ่าน URL Parameter
+        // =====================================================
+        
+        function checkLineAIPostData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const aipostData = urlParams.get('aipost');
+            
+            if (aipostData) {
+                try {
+                    // Decode base64 data from LINE
+                    const decodedData = JSON.parse(atob(decodeURIComponent(aipostData)));
+                    console.log('📱 Received AI Post from LINE:', decodedData);
+                    
+                    // Set current AI post
+                    currentAIPost = decodedData;
+                    
+                    // Auto open modal and display result
+                    setTimeout(() => {
+                        // Open the AI modal
+                        const aiModal = new bootstrap.Modal(document.getElementById('aiGeneratorModal'));
+                        aiModal.show();
+                        
+                        // Show result directly (skip upload section)
+                        document.getElementById('aiUploadSection').style.display = 'none';
+                        document.getElementById('aiLoading').style.display = 'none';
+                        document.getElementById('aiResult').style.display = 'block';
+                        
+                        // Display the data
+                        displayAIResult(currentAIPost);
+                        
+                        // Show welcome toast
+                        showToast('🎉 โพสต์จาก LINE OA พร้อมคัดลอก!', 'success');
+                        
+                        // Clean URL (remove aipost param)
+                        const cleanUrl = window.location.pathname;
+                        window.history.replaceState({}, document.title, cleanUrl);
+                    }, 500);
+                    
+                } catch (error) {
+                    console.error('❌ Error parsing LINE AI Post data:', error);
+                }
+            }
+        }
+        
+        // Check on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLineAIPostData();
         });
     </script>
 </body>
