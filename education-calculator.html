@@ -331,8 +331,16 @@
             margin-top: 2rem;
             border-left: 6px solid #3498db;
             box-shadow: var(--shadow-light);
-            animation: fadeIn 0.8s ease;
+            animation: fadeInResult 0.5s ease;
+        }
+        
+        .result-box-custom.hidden {
             display: none;
+        }
+        
+        @keyframes fadeInResult {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         @keyframes fadeIn {
@@ -797,46 +805,759 @@
             
             <!-- 2. Science Calculator (Enhanced) -->
             <div class="tab-pane fade" id="science" role="tabpanel">
-                <!-- Science content will be here -->
-                <div class="text-center p-5">
-                    <h3><i class="fas fa-flask"></i> วิทยาศาสตร์ (กำลังพัฒนา)</h3>
-                    <p class="text-muted">เครื่องมือคำนวณวิทยาศาสตร์ขั้นสูงกำลังอยู่ระหว่างการพัฒนา</p>
+                <div class="row">
+                    <!-- Physics Calculator -->
+                    <div class="col-lg-6">
+                        <div class="card-custom">
+                            <div class="card-header-custom">
+                                <span><i class="fas fa-atom"></i> ฟิสิกส์ - กฎของโอห์ม & การเคลื่อนที่</span>
+                                <span class="badge-custom badge-info">Physics</span>
+                            </div>
+                            <div class="card-body-custom">
+                                <div class="mb-4">
+                                    <label class="form-label-custom">เลือกสูตรที่ต้องการ</label>
+                                    <select class="form-control-custom" id="physicsFormula" onchange="updatePhysicsInputs()">
+                                        <option value="ohm-v">กฎโอห์ม: หา V (แรงดัน)</option>
+                                        <option value="ohm-i">กฎโอห์ม: หา I (กระแส)</option>
+                                        <option value="ohm-r">กฎโอห์ม: หา R (ความต้านทาน)</option>
+                                        <option value="power">กำลังไฟฟ้า P = VI</option>
+                                        <option value="velocity">ความเร็ว v = s/t</option>
+                                        <option value="acceleration">ความเร่ง a = (v-u)/t</option>
+                                        <option value="force">แรง F = ma</option>
+                                        <option value="kinetic">พลังงานจลน์ KE = ½mv²</option>
+                                        <option value="potential">พลังงานศักย์ PE = mgh</option>
+                                    </select>
+                                </div>
+                                <div id="physicsInputs" class="mb-4">
+                                    <div class="row">
+                                        <div class="col-6 mb-3">
+                                            <label class="form-label-custom">กระแสไฟฟ้า I (A)</label>
+                                            <input type="number" class="form-control-custom" id="phys1" placeholder="กรอกค่า">
+                                        </div>
+                                        <div class="col-6 mb-3">
+                                            <label class="form-label-custom">ความต้านทาน R (Ω)</label>
+                                            <input type="number" class="form-control-custom" id="phys2" placeholder="กรอกค่า">
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-custom-primary w-100" onclick="calculatePhysics()">
+                                    <i class="fas fa-calculator"></i> คำนวณ
+                                </button>
+                                <div class="result-box-custom" id="physicsResult">
+                                    <div class="result-value-custom" id="physicsValue">0</div>
+                                    <div class="result-unit-custom" id="physicsUnit">หน่วย</div>
+                                    <div class="mt-3 p-3 bg-white rounded">
+                                        <strong><i class="fas fa-lightbulb text-warning"></i> สูตร:</strong>
+                                        <div id="physicsFormulaTip" class="mt-2 text-primary"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Chemistry Calculator -->
+                    <div class="col-lg-6">
+                        <div class="card-custom">
+                            <div class="card-header-custom">
+                                <span><i class="fas fa-flask"></i> เคมี - โมล & สารละลาย</span>
+                                <span class="badge-custom badge-success">Chemistry</span>
+                            </div>
+                            <div class="card-body-custom">
+                                <div class="mb-4">
+                                    <label class="form-label-custom">เลือกการคำนวณ</label>
+                                    <select class="form-control-custom" id="chemFormula" onchange="updateChemInputs()">
+                                        <option value="mole">จำนวนโมล n = m/M</option>
+                                        <option value="molarity">ความเข้มข้น M = n/V</option>
+                                        <option value="dilution">การเจือจาง M₁V₁ = M₂V₂</option>
+                                        <option value="ideal-gas">กฎแก๊สอุดมคติ PV = nRT</option>
+                                        <option value="ph">pH = -log[H⁺]</option>
+                                        <option value="poh">pOH = -log[OH⁻]</option>
+                                    </select>
+                                </div>
+                                <div id="chemInputs" class="mb-4">
+                                    <div class="row">
+                                        <div class="col-6 mb-3">
+                                            <label class="form-label-custom">มวล m (g)</label>
+                                            <input type="number" class="form-control-custom" id="chem1" placeholder="กรอกค่า">
+                                        </div>
+                                        <div class="col-6 mb-3">
+                                            <label class="form-label-custom">มวลโมเลกุล M (g/mol)</label>
+                                            <input type="number" class="form-control-custom" id="chem2" placeholder="กรอกค่า">
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-custom-secondary w-100" onclick="calculateChemistry()">
+                                    <i class="fas fa-calculator"></i> คำนวณ
+                                </button>
+                                <div class="result-box-custom" id="chemResult">
+                                    <div class="result-value-custom" id="chemValue">0</div>
+                                    <div class="result-unit-custom" id="chemUnit">หน่วย</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Unit Converter -->
+                    <div class="col-lg-12 mt-4">
+                        <div class="card-custom">
+                            <div class="card-header-custom">
+                                <span><i class="fas fa-exchange-alt"></i> แปลงหน่วยวิทยาศาสตร์</span>
+                            </div>
+                            <div class="card-body-custom">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label class="form-label-custom">ประเภท</label>
+                                        <select class="form-control-custom" id="unitType" onchange="updateUnitOptions()">
+                                            <option value="length">ความยาว</option>
+                                            <option value="mass">มวล</option>
+                                            <option value="volume">ปริมาตร</option>
+                                            <option value="temperature">อุณหภูมิ</option>
+                                            <option value="pressure">ความดัน</option>
+                                            <option value="energy">พลังงาน</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label-custom">ค่าที่ต้องการแปลง</label>
+                                        <input type="number" class="form-control-custom" id="unitValue" placeholder="กรอกค่า" oninput="convertUnits()">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label-custom">จาก</label>
+                                        <select class="form-control-custom" id="unitFrom" onchange="convertUnits()"></select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label-custom">เป็น</label>
+                                        <select class="form-control-custom" id="unitTo" onchange="convertUnits()"></select>
+                                    </div>
+                                </div>
+                                <div class="mt-4 text-center">
+                                    <div class="result-value-custom" id="unitResult">0</div>
+                                    <div class="result-unit-custom" id="unitResultLabel">ผลลัพธ์</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
             <!-- 3. Math Calculator (Enhanced) -->
             <div class="tab-pane fade" id="math" role="tabpanel">
-                <!-- Math content will be here -->
-                <div class="text-center p-5">
-                    <h3><i class="fas fa-square-root-alt"></i> คณิตศาสตร์ (กำลังพัฒนา)</h3>
-                    <p class="text-muted">เครื่องมือคำนวณคณิตศาสตร์ขั้นสูงกำลังอยู่ระหว่างการพัฒนา</p>
+                <div class="row">
+                    <!-- Quadratic Equation -->
+                    <div class="col-lg-6">
+                        <div class="card-custom">
+                            <div class="card-header-custom">
+                                <span><i class="fas fa-superscript"></i> สมการกำลังสอง ax² + bx + c = 0</span>
+                            </div>
+                            <div class="card-body-custom">
+                                <div class="row mb-3">
+                                    <div class="col-4">
+                                        <label class="form-label-custom">a</label>
+                                        <input type="number" class="form-control-custom" id="quadA" value="1" placeholder="a">
+                                    </div>
+                                    <div class="col-4">
+                                        <label class="form-label-custom">b</label>
+                                        <input type="number" class="form-control-custom" id="quadB" value="0" placeholder="b">
+                                    </div>
+                                    <div class="col-4">
+                                        <label class="form-label-custom">c</label>
+                                        <input type="number" class="form-control-custom" id="quadC" value="0" placeholder="c">
+                                    </div>
+                                </div>
+                                <button class="btn btn-custom-primary w-100" onclick="solveQuadratic()">
+                                    <i class="fas fa-calculator"></i> หาคำตอบ
+                                </button>
+                                <div class="result-box-custom" id="quadResult">
+                                    <h5><i class="fas fa-check-circle text-success"></i> คำตอบ</h5>
+                                    <div id="quadSolutions"></div>
+                                    <div class="mt-3 p-3 bg-white rounded">
+                                        <strong>ดิสคริมิแนนต์ (D):</strong> <span id="discriminant">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Triangle Calculator -->
+                    <div class="col-lg-6">
+                        <div class="card-custom">
+                            <div class="card-header-custom">
+                                <span><i class="fas fa-drafting-compass"></i> พีทาโกรัส & พื้นที่สามเหลี่ยม</span>
+                            </div>
+                            <div class="card-body-custom">
+                                <div class="mb-3">
+                                    <label class="form-label-custom">เลือกการคำนวณ</label>
+                                    <select class="form-control-custom" id="triangleCalc" onchange="updateTriangleInputs()">
+                                        <option value="pythagoras">ทฤษฎีบทพีทาโกรัส</option>
+                                        <option value="area-base">พื้นที่ (ฐาน x สูง)</option>
+                                        <option value="area-heron">พื้นที่ (สูตรฮีรอน)</option>
+                                        <option value="perimeter">เส้นรอบรูป</option>
+                                    </select>
+                                </div>
+                                <div id="triangleInputs" class="mb-3">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label class="form-label-custom">ด้านประกอบ a</label>
+                                            <input type="number" class="form-control-custom" id="triA" placeholder="a">
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label-custom">ด้านประกอบ b</label>
+                                            <input type="number" class="form-control-custom" id="triB" placeholder="b">
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-custom-secondary w-100" onclick="calculateTriangle()">
+                                    <i class="fas fa-calculator"></i> คำนวณ
+                                </button>
+                                <div class="result-box-custom" id="triangleResult">
+                                    <div class="result-value-custom" id="triangleValue">0</div>
+                                    <div class="result-unit-custom" id="triangleUnit">หน่วย</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Area & Volume Calculator -->
+                    <div class="col-lg-6 mt-4">
+                        <div class="card-custom">
+                            <div class="card-header-custom">
+                                <span><i class="fas fa-shapes"></i> พื้นที่ & ปริมาตร</span>
+                            </div>
+                            <div class="card-body-custom">
+                                <div class="mb-3">
+                                    <label class="form-label-custom">เลือกรูปทรง</label>
+                                    <select class="form-control-custom" id="shapeType" onchange="updateShapeInputs()">
+                                        <option value="circle">วงกลม (พื้นที่)</option>
+                                        <option value="rectangle">สี่เหลี่ยมผืนผ้า</option>
+                                        <option value="triangle">สามเหลี่ยม</option>
+                                        <option value="sphere">ทรงกลม (ปริมาตร)</option>
+                                        <option value="cylinder">ทรงกระบอก</option>
+                                        <option value="cone">กรวย</option>
+                                        <option value="cube">ลูกบาศก์</option>
+                                    </select>
+                                </div>
+                                <div id="shapeInputs" class="mb-3">
+                                    <label class="form-label-custom">รัศมี r</label>
+                                    <input type="number" class="form-control-custom" id="shapeR" placeholder="r">
+                                </div>
+                                <button class="btn btn-custom-primary w-100" onclick="calculateShape()">
+                                    <i class="fas fa-calculator"></i> คำนวณ
+                                </button>
+                                <div class="result-box-custom" id="shapeResult">
+                                    <div class="result-value-custom" id="shapeValue">0</div>
+                                    <div class="result-unit-custom" id="shapeUnit">ตร.หน่วย</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Percentage Calculator -->
+                    <div class="col-lg-6 mt-4">
+                        <div class="card-custom">
+                            <div class="card-header-custom">
+                                <span><i class="fas fa-percentage"></i> ร้อยละ & สัดส่วน</span>
+                            </div>
+                            <div class="card-body-custom">
+                                <div class="mb-3">
+                                    <label class="form-label-custom">เลือกประเภท</label>
+                                    <select class="form-control-custom" id="percentType" onchange="updatePercentInputs()">
+                                        <option value="of">X% ของ Y เท่ากับเท่าไหร่?</option>
+                                        <option value="is">X เป็นกี่ % ของ Y?</option>
+                                        <option value="change">เปลี่ยนแปลงกี่ % จาก X เป็น Y?</option>
+                                        <option value="increase">เพิ่ม X% จาก Y</option>
+                                        <option value="decrease">ลด X% จาก Y</option>
+                                    </select>
+                                </div>
+                                <div id="percentInputs" class="mb-3">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label class="form-label-custom">X</label>
+                                            <input type="number" class="form-control-custom" id="percentX" placeholder="X">
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label-custom">Y</label>
+                                            <input type="number" class="form-control-custom" id="percentY" placeholder="Y">
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-custom-secondary w-100" onclick="calculatePercent()">
+                                    <i class="fas fa-calculator"></i> คำนวณ
+                                </button>
+                                <div class="result-box-custom" id="percentResult">
+                                    <div class="result-value-custom" id="percentValue">0</div>
+                                    <div class="result-unit-custom" id="percentUnit">ผลลัพธ์</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
             <!-- 4. Finance Calculator -->
             <div class="tab-pane fade" id="finance" role="tabpanel">
-                <!-- Finance content will be here -->
-                <div class="text-center p-5">
-                    <h3><i class="fas fa-coins"></i> การเงินการศึกษา (กำลังพัฒนา)</h3>
-                    <p class="text-muted">เครื่องมือคำนวณทางการเงินเพื่อการศึกษากำลังอยู่ระหว่างการพัฒนา</p>
+                <div class="row">
+                    <!-- Education Loan Calculator -->
+                    <div class="col-lg-6">
+                        <div class="card-custom">
+                            <div class="card-header-custom">
+                                <span><i class="fas fa-university"></i> คำนวณเงินกู้การศึกษา (กยศ./กรอ.)</span>
+                            </div>
+                            <div class="card-body-custom">
+                                <div class="mb-3">
+                                    <label class="form-label-custom">จำนวนเงินกู้ (บาท)</label>
+                                    <input type="number" class="form-control-custom" id="loanAmount" value="200000" placeholder="เช่น 200000">
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <label class="form-label-custom">อัตราดอกเบี้ย (%/ปี)</label>
+                                        <input type="number" class="form-control-custom" id="loanRate" value="1" step="0.1" placeholder="1">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label-custom">ระยะเวลา (ปี)</label>
+                                        <input type="number" class="form-control-custom" id="loanYears" value="15" placeholder="15">
+                                    </div>
+                                </div>
+                                <button class="btn btn-custom-primary w-100" onclick="calculateLoan()">
+                                    <i class="fas fa-calculator"></i> คำนวณ
+                                </button>
+                                <div class="result-box-custom" id="loanResult">
+                                    <div class="row text-center">
+                                        <div class="col-6">
+                                            <div class="h4 text-primary" id="monthlyPayment">0</div>
+                                            <small>ผ่อนต่อเดือน (บาท)</small>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="h4 text-success" id="totalPayment">0</div>
+                                            <small>รวมทั้งหมด (บาท)</small>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 text-center">
+                                        <div class="h5 text-danger" id="totalInterest">0</div>
+                                        <small>ดอกเบี้ยรวม (บาท)</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tuition Fee Calculator -->
+                    <div class="col-lg-6">
+                        <div class="card-custom">
+                            <div class="card-header-custom">
+                                <span><i class="fas fa-graduation-cap"></i> คำนวณค่าเทอม & ค่าใช้จ่าย</span>
+                            </div>
+                            <div class="card-body-custom">
+                                <div class="mb-3">
+                                    <label class="form-label-custom">ประเภทมหาวิทยาลัย</label>
+                                    <select class="form-control-custom" id="uniType" onchange="updateTuitionEstimate()">
+                                        <option value="public">มหาวิทยาลัยรัฐบาล</option>
+                                        <option value="private">มหาวิทยาลัยเอกชน</option>
+                                        <option value="inter">หลักสูตรนานาชาติ</option>
+                                    </select>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <label class="form-label-custom">ค่าเทอม (บาท)</label>
+                                        <input type="number" class="form-control-custom" id="tuitionFee" value="25000">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label-custom">จำนวนเทอม</label>
+                                        <input type="number" class="form-control-custom" id="totalSemesters" value="8">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <label class="form-label-custom">ค่าหอพัก/เดือน</label>
+                                        <input type="number" class="form-control-custom" id="dormFee" value="3000">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label-custom">ค่าครองชีพ/เดือน</label>
+                                        <input type="number" class="form-control-custom" id="livingCost" value="8000">
+                                    </div>
+                                </div>
+                                <button class="btn btn-custom-secondary w-100" onclick="calculateTotalCost()">
+                                    <i class="fas fa-calculator"></i> คำนวณค่าใช้จ่ายทั้งหมด
+                                </button>
+                                <div class="result-box-custom" id="tuitionResult">
+                                    <div class="row text-center">
+                                        <div class="col-4">
+                                            <div class="h5 text-primary" id="totalTuition">0</div>
+                                            <small>ค่าเทอมรวม</small>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="h5 text-info" id="totalLiving">0</div>
+                                            <small>ค่าครองชีพรวม</small>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="h5 text-success" id="grandTotal">0</div>
+                                            <small>รวมทั้งสิ้น</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Savings Goal Calculator -->
+                    <div class="col-lg-12 mt-4">
+                        <div class="card-custom">
+                            <div class="card-header-custom">
+                                <span><i class="fas fa-piggy-bank"></i> วางแผนออมเงินเพื่อการศึกษา</span>
+                            </div>
+                            <div class="card-body-custom">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label class="form-label-custom">เป้าหมาย (บาท)</label>
+                                        <input type="number" class="form-control-custom" id="savingsGoal" value="500000">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label-custom">ระยะเวลา (ปี)</label>
+                                        <input type="number" class="form-control-custom" id="savingsYears" value="5">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label-custom">ดอกเบี้ยเงินฝาก (%)</label>
+                                        <input type="number" class="form-control-custom" id="savingsRate" value="2" step="0.1">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button class="btn btn-custom-primary w-100 h-100" onclick="calculateSavings()">
+                                            <i class="fas fa-calculator"></i> คำนวณ
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="result-box-custom" id="savingsResult">
+                                    <div class="row text-center">
+                                        <div class="col-md-4">
+                                            <div class="result-value-custom" id="monthlySave">0</div>
+                                            <div class="result-unit-custom">ต้องออมต่อเดือน (บาท)</div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="h3 text-success" id="totalSaved">0</div>
+                                            <small>เงินต้นรวม</small>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="h3 text-info" id="interestEarned">0</div>
+                                            <small>ดอกเบี้ยที่ได้รับ</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
             <!-- 5. Statistics & Probability -->
             <div class="tab-pane fade" id="stats" role="tabpanel">
-                <!-- Statistics content will be here -->
-                <div class="text-center p-5">
-                    <h3><i class="fas fa-chart-bar"></i> สถิติ & ความน่าจะเป็น (กำลังพัฒนา)</h3>
-                    <p class="text-muted">เครื่องมือวิเคราะห์ทางสถิติกำลังอยู่ระหว่างการพัฒนา</p>
+                <div class="row">
+                    <!-- Basic Statistics -->
+                    <div class="col-lg-6">
+                        <div class="card-custom">
+                            <div class="card-header-custom">
+                                <span><i class="fas fa-chart-bar"></i> สถิติพื้นฐาน</span>
+                            </div>
+                            <div class="card-body-custom">
+                                <div class="mb-3">
+                                    <label class="form-label-custom">ข้อมูล (คั่นด้วยเครื่องหมาย ,)</label>
+                                    <textarea class="form-control-custom" id="statsData" rows="3" placeholder="เช่น 85, 90, 78, 92, 88, 76, 95"></textarea>
+                                </div>
+                                <button class="btn btn-custom-primary w-100" onclick="calculateStatistics()">
+                                    <i class="fas fa-calculator"></i> วิเคราะห์ข้อมูล
+                                </button>
+                                <div class="result-box-custom" id="statsResult">
+                                    <div class="row text-center">
+                                        <div class="col-4 mb-3">
+                                            <div class="h4 text-primary" id="statsMean">0</div>
+                                            <small>ค่าเฉลี่ย (Mean)</small>
+                                        </div>
+                                        <div class="col-4 mb-3">
+                                            <div class="h4 text-info" id="statsMedian">0</div>
+                                            <small>มัธยฐาน (Median)</small>
+                                        </div>
+                                        <div class="col-4 mb-3">
+                                            <div class="h4 text-success" id="statsMode">0</div>
+                                            <small>ฐานนิยม (Mode)</small>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="h4 text-warning" id="statsRange">0</div>
+                                            <small>พิสัย (Range)</small>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="h4 text-danger" id="statsSD">0</div>
+                                            <small>ส่วนเบี่ยงเบน (SD)</small>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="h4 text-secondary" id="statsVar">0</div>
+                                            <small>ความแปรปรวน</small>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <div class="d-flex justify-content-between">
+                                            <span>ค่าต่ำสุด: <strong id="statsMin">0</strong></span>
+                                            <span>ค่าสูงสุด: <strong id="statsMax">0</strong></span>
+                                            <span>จำนวนข้อมูล: <strong id="statsCount">0</strong></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Probability Calculator -->
+                    <div class="col-lg-6">
+                        <div class="card-custom">
+                            <div class="card-header-custom">
+                                <span><i class="fas fa-dice"></i> ความน่าจะเป็น</span>
+                            </div>
+                            <div class="card-body-custom">
+                                <div class="mb-3">
+                                    <label class="form-label-custom">ประเภทการคำนวณ</label>
+                                    <select class="form-control-custom" id="probType" onchange="updateProbInputs()">
+                                        <option value="simple">ความน่าจะเป็นพื้นฐาน P(A) = n(A)/n(S)</option>
+                                        <option value="combination">การจัดหมู่ C(n,r)</option>
+                                        <option value="permutation">การเรียงสับเปลี่ยน P(n,r)</option>
+                                        <option value="binomial">การแจกแจงทวินาม</option>
+                                    </select>
+                                </div>
+                                <div id="probInputs" class="mb-3">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label class="form-label-custom">เหตุการณ์ที่สนใจ n(A)</label>
+                                            <input type="number" class="form-control-custom" id="probA" placeholder="n(A)">
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label-custom">เหตุการณ์ทั้งหมด n(S)</label>
+                                            <input type="number" class="form-control-custom" id="probS" placeholder="n(S)">
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-custom-secondary w-100" onclick="calculateProbability()">
+                                    <i class="fas fa-calculator"></i> คำนวณ
+                                </button>
+                                <div class="result-box-custom" id="probResult">
+                                    <div class="result-value-custom" id="probValue">0</div>
+                                    <div class="result-unit-custom" id="probUnit">ความน่าจะเป็น</div>
+                                    <div class="mt-3 text-center">
+                                        <span class="h5" id="probPercent">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Normal Distribution -->
+                    <div class="col-lg-12 mt-4">
+                        <div class="card-custom">
+                            <div class="card-header-custom">
+                                <span><i class="fas fa-bell"></i> การแจกแจงปกติ (Normal Distribution)</span>
+                            </div>
+                            <div class="card-body-custom">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label class="form-label-custom">ค่าที่ต้องการหา (X)</label>
+                                        <input type="number" class="form-control-custom" id="normX" placeholder="X">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label-custom">ค่าเฉลี่ย (μ)</label>
+                                        <input type="number" class="form-control-custom" id="normMean" placeholder="μ">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label-custom">ส่วนเบี่ยงเบน (σ)</label>
+                                        <input type="number" class="form-control-custom" id="normSD" placeholder="σ">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button class="btn btn-custom-primary w-100 h-100" onclick="calculateZScore()">
+                                            <i class="fas fa-calculator"></i> คำนวณ Z-Score
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="result-box-custom mt-3" id="normResult">
+                                    <div class="row text-center">
+                                        <div class="col-md-6">
+                                            <div class="result-value-custom" id="zScore">0</div>
+                                            <div class="result-unit-custom">Z-Score</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="h3 text-success" id="zPercent">0%</div>
+                                            <small>พื้นที่ใต้กราฟ (ด้านซ้าย)</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
             <!-- 6. Study Tools -->
             <div class="tab-pane fade" id="tools" role="tabpanel">
-                <!-- Tools content will be here -->
-                <div class="text-center p-5">
-                    <h3><i class="fas fa-tools"></i> เครื่องมือช่วยเรียน (กำลังพัฒนา)</h3>
-                    <p class="text-muted">เครื่องมือช่วยการเรียนรู้กำลังอยู่ระหว่างการพัฒนา</p>
+                <div class="row">
+                    <!-- Pomodoro Timer -->
+                    <div class="col-lg-6">
+                        <div class="card-custom">
+                            <div class="card-header-custom">
+                                <span><i class="fas fa-clock"></i> Pomodoro Timer - จับเวลาอ่านหนังสือ</span>
+                            </div>
+                            <div class="card-body-custom text-center">
+                                <div class="mb-4">
+                                    <div class="result-value-custom" id="timerDisplay" style="font-size: 5rem;">25:00</div>
+                                    <div class="result-unit-custom" id="timerStatus">พร้อมเริ่ม</div>
+                                </div>
+                                <div class="mb-4">
+                                    <div class="btn-group">
+                                        <button class="btn btn-custom-primary" onclick="setTimer(25)">25 นาที</button>
+                                        <button class="btn btn-custom-secondary" onclick="setTimer(45)">45 นาที</button>
+                                        <button class="btn btn-outline-primary" onclick="setTimer(5)">พัก 5 นาที</button>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-center gap-3">
+                                    <button class="btn btn-success btn-lg" onclick="startTimer()">
+                                        <i class="fas fa-play"></i> เริ่ม
+                                    </button>
+                                    <button class="btn btn-warning btn-lg" onclick="pauseTimer()">
+                                        <i class="fas fa-pause"></i> หยุดชั่วคราว
+                                    </button>
+                                    <button class="btn btn-danger btn-lg" onclick="resetTimer()">
+                                        <i class="fas fa-redo"></i> รีเซ็ต
+                                    </button>
+                                </div>
+                                <div class="mt-4">
+                                    <small class="text-muted">รอบที่อ่านวันนี้: <span id="pomodoroCount">0</span> รอบ</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Grade Target Calculator -->
+                    <div class="col-lg-6">
+                        <div class="card-custom">
+                            <div class="card-header-custom">
+                                <span><i class="fas fa-bullseye"></i> คำนวณคะแนนที่ต้องการ</span>
+                            </div>
+                            <div class="card-body-custom">
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <label class="form-label-custom">คะแนนปัจจุบัน</label>
+                                        <input type="number" class="form-control-custom" id="currentScore" placeholder="เช่น 75">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label-custom">สัดส่วน %</label>
+                                        <input type="number" class="form-control-custom" id="currentWeight" placeholder="เช่น 40" value="40">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <label class="form-label-custom">เกรดที่ต้องการ</label>
+                                        <select class="form-control-custom" id="targetGradeCalc">
+                                            <option value="80">A (80+)</option>
+                                            <option value="75">B+ (75-79)</option>
+                                            <option value="70">B (70-74)</option>
+                                            <option value="65">C+ (65-69)</option>
+                                            <option value="60">C (60-64)</option>
+                                            <option value="55">D+ (55-59)</option>
+                                            <option value="50">D (50-54)</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label-custom">สัดส่วนสอบ Final %</label>
+                                        <input type="number" class="form-control-custom" id="finalWeight" placeholder="เช่น 60" value="60">
+                                    </div>
+                                </div>
+                                <button class="btn btn-custom-primary w-100" onclick="calculateRequiredScore()">
+                                    <i class="fas fa-calculator"></i> คำนวณคะแนนที่ต้องได้
+                                </button>
+                                <div class="result-box-custom" id="requiredResult">
+                                    <div class="text-center">
+                                        <div class="result-value-custom" id="requiredScore">0</div>
+                                        <div class="result-unit-custom">คะแนน Final ที่ต้องได้ (จากเต็ม 100)</div>
+                                    </div>
+                                    <div class="mt-3 alert" id="scoreAlert"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Base Converter -->
+                    <div class="col-lg-6 mt-4">
+                        <div class="card-custom">
+                            <div class="card-header-custom">
+                                <span><i class="fas fa-exchange-alt"></i> แปลงเลขฐาน</span>
+                            </div>
+                            <div class="card-body-custom">
+                                <div class="mb-3">
+                                    <label class="form-label-custom">ใส่ตัวเลข</label>
+                                    <input type="text" class="form-control-custom" id="baseInput" placeholder="เช่น 255" oninput="convertBase()">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label-custom">ฐานเริ่มต้น</label>
+                                    <select class="form-control-custom" id="baseFrom" onchange="convertBase()">
+                                        <option value="10" selected>ฐาน 10 (Decimal)</option>
+                                        <option value="2">ฐาน 2 (Binary)</option>
+                                        <option value="8">ฐาน 8 (Octal)</option>
+                                        <option value="16">ฐาน 16 (Hexadecimal)</option>
+                                    </select>
+                                </div>
+                                <div class="result-box-custom" style="display: block;">
+                                    <div class="row text-center">
+                                        <div class="col-6 mb-3">
+                                            <div class="h5 text-primary" id="baseBinary">0</div>
+                                            <small>ฐาน 2 (Binary)</small>
+                                        </div>
+                                        <div class="col-6 mb-3">
+                                            <div class="h5 text-success" id="baseDecimal">0</div>
+                                            <small>ฐาน 10 (Decimal)</small>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="h5 text-warning" id="baseOctal">0</div>
+                                            <small>ฐาน 8 (Octal)</small>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="h5 text-danger" id="baseHex">0</div>
+                                            <small>ฐาน 16 (Hex)</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Study Schedule -->
+                    <div class="col-lg-6 mt-4">
+                        <div class="card-custom">
+                            <div class="card-header-custom">
+                                <span><i class="fas fa-calendar-check"></i> วางแผนการอ่านหนังสือ</span>
+                            </div>
+                            <div class="card-body-custom">
+                                <div class="row mb-3">
+                                    <div class="col-6">
+                                        <label class="form-label-custom">จำนวนหน้าที่ต้องอ่าน</label>
+                                        <input type="number" class="form-control-custom" id="totalPages" placeholder="เช่น 500">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label-custom">จำนวนวันที่มี</label>
+                                        <input type="number" class="form-control-custom" id="totalDays" placeholder="เช่น 14">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label-custom">ความเร็วในการอ่าน (หน้า/ชั่วโมง)</label>
+                                    <input type="number" class="form-control-custom" id="readingSpeed" value="30" placeholder="30">
+                                </div>
+                                <button class="btn btn-custom-secondary w-100" onclick="calculateStudyPlan()">
+                                    <i class="fas fa-calculator"></i> วางแผน
+                                </button>
+                                <div class="result-box-custom" id="studyPlanResult">
+                                    <div class="row text-center">
+                                        <div class="col-6">
+                                            <div class="h4 text-primary" id="pagesPerDay">0</div>
+                                            <small>หน้า/วัน</small>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="h4 text-success" id="hoursPerDay">0</div>
+                                            <small>ชั่วโมง/วัน</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1336,6 +2057,783 @@
                 loadCalculationHistory();
             }
         }
+        
+        // ===========================================
+        // PHYSICS CALCULATOR
+        // ===========================================
+        function updatePhysicsInputs() {
+            const formula = document.getElementById('physicsFormula').value;
+            let html = '<div class="row">';
+            const formulas = {
+                'ohm-v': [['I', 'กระแสไฟฟ้า I (A)', 'phys1'], ['R', 'ความต้านทาน R (Ω)', 'phys2']],
+                'ohm-i': [['V', 'แรงดัน V (V)', 'phys1'], ['R', 'ความต้านทาน R (Ω)', 'phys2']],
+                'ohm-r': [['V', 'แรงดัน V (V)', 'phys1'], ['I', 'กระแสไฟฟ้า I (A)', 'phys2']],
+                'power': [['V', 'แรงดัน V (V)', 'phys1'], ['I', 'กระแสไฟฟ้า I (A)', 'phys2']],
+                'velocity': [['s', 'ระยะทาง s (m)', 'phys1'], ['t', 'เวลา t (s)', 'phys2']],
+                'acceleration': [['v', 'ความเร็วสุดท้าย v (m/s)', 'phys1'], ['u', 'ความเร็วเริ่มต้น u (m/s)', 'phys2'], ['t', 'เวลา t (s)', 'phys3']],
+                'force': [['m', 'มวล m (kg)', 'phys1'], ['a', 'ความเร่ง a (m/s²)', 'phys2']],
+                'kinetic': [['m', 'มวล m (kg)', 'phys1'], ['v', 'ความเร็ว v (m/s)', 'phys2']],
+                'potential': [['m', 'มวล m (kg)', 'phys1'], ['h', 'ความสูง h (m)', 'phys2']]
+            };
+            
+            const inputs = formulas[formula] || formulas['ohm-v'];
+            inputs.forEach((inp, i) => {
+                html += `<div class="col-${12/Math.min(inputs.length, 3)} mb-3">
+                    <label class="form-label-custom">${inp[1]}</label>
+                    <input type="number" class="form-control-custom" id="${inp[2]}" placeholder="${inp[0]}">
+                </div>`;
+            });
+            html += '</div>';
+            document.getElementById('physicsInputs').innerHTML = html;
+        }
+        
+        function calculatePhysics() {
+            const formula = document.getElementById('physicsFormula').value;
+            const p1 = parseFloat(document.getElementById('phys1')?.value) || 0;
+            const p2 = parseFloat(document.getElementById('phys2')?.value) || 0;
+            const p3 = parseFloat(document.getElementById('phys3')?.value) || 0;
+            
+            let result = 0, unit = '', tip = '';
+            
+            switch(formula) {
+                case 'ohm-v': result = p1 * p2; unit = 'V (โวลต์)'; tip = 'V = I × R'; break;
+                case 'ohm-i': result = p1 / p2; unit = 'A (แอมแปร์)'; tip = 'I = V / R'; break;
+                case 'ohm-r': result = p1 / p2; unit = 'Ω (โอห์ม)'; tip = 'R = V / I'; break;
+                case 'power': result = p1 * p2; unit = 'W (วัตต์)'; tip = 'P = V × I'; break;
+                case 'velocity': result = p1 / p2; unit = 'm/s'; tip = 'v = s / t'; break;
+                case 'acceleration': result = (p1 - p2) / p3; unit = 'm/s²'; tip = 'a = (v - u) / t'; break;
+                case 'force': result = p1 * p2; unit = 'N (นิวตัน)'; tip = 'F = m × a'; break;
+                case 'kinetic': result = 0.5 * p1 * p2 * p2; unit = 'J (จูล)'; tip = 'KE = ½mv²'; break;
+                case 'potential': result = p1 * 9.81 * p2; unit = 'J (จูล)'; tip = 'PE = mgh (g=9.81)'; break;
+            }
+            
+            document.getElementById('physicsValue').textContent = result.toFixed(4);
+            document.getElementById('physicsUnit').textContent = unit;
+            document.getElementById('physicsFormulaTip').textContent = tip;
+            document.getElementById('physicsResult').style.display = 'block';
+            
+            addToHistory('ฟิสิกส์', tip, result.toFixed(4) + ' ' + unit);
+        }
+        
+        // ===========================================
+        // CHEMISTRY CALCULATOR
+        // ===========================================
+        function updateChemInputs() {
+            const formula = document.getElementById('chemFormula').value;
+            let html = '<div class="row">';
+            const formulas = {
+                'mole': [['m', 'มวล m (g)', 'chem1'], ['M', 'มวลโมเลกุล M (g/mol)', 'chem2']],
+                'molarity': [['n', 'จำนวนโมล n (mol)', 'chem1'], ['V', 'ปริมาตร V (L)', 'chem2']],
+                'dilution': [['M₁', 'ความเข้มข้นเริ่มต้น M₁ (M)', 'chem1'], ['V₁', 'ปริมาตรเริ่มต้น V₁ (L)', 'chem2'], ['V₂', 'ปริมาตรสุดท้าย V₂ (L)', 'chem3']],
+                'ideal-gas': [['P', 'ความดัน P (atm)', 'chem1'], ['V', 'ปริมาตร V (L)', 'chem2'], ['T', 'อุณหภูมิ T (K)', 'chem3']],
+                'ph': [['[H⁺]', 'ความเข้มข้น H⁺ (M)', 'chem1']],
+                'poh': [['[OH⁻]', 'ความเข้มข้น OH⁻ (M)', 'chem1']]
+            };
+            
+            const inputs = formulas[formula] || formulas['mole'];
+            inputs.forEach((inp) => {
+                html += `<div class="col-${12/Math.min(inputs.length, 3)} mb-3">
+                    <label class="form-label-custom">${inp[1]}</label>
+                    <input type="number" class="form-control-custom" id="${inp[2]}" placeholder="${inp[0]}" step="any">
+                </div>`;
+            });
+            html += '</div>';
+            document.getElementById('chemInputs').innerHTML = html;
+        }
+        
+        function calculateChemistry() {
+            const formula = document.getElementById('chemFormula').value;
+            const c1 = parseFloat(document.getElementById('chem1')?.value) || 0;
+            const c2 = parseFloat(document.getElementById('chem2')?.value) || 0;
+            const c3 = parseFloat(document.getElementById('chem3')?.value) || 0;
+            
+            let result = 0, unit = '';
+            
+            switch(formula) {
+                case 'mole': result = c1 / c2; unit = 'mol (โมล)'; break;
+                case 'molarity': result = c1 / c2; unit = 'M (โมลาร์)'; break;
+                case 'dilution': result = (c1 * c2) / c3; unit = 'M (ความเข้มข้นใหม่)'; break;
+                case 'ideal-gas': result = (c1 * c2) / (0.0821 * c3); unit = 'mol (R=0.0821)'; break;
+                case 'ph': result = -Math.log10(c1); unit = 'pH'; break;
+                case 'poh': result = -Math.log10(c1); unit = 'pOH'; break;
+            }
+            
+            document.getElementById('chemValue').textContent = isFinite(result) ? result.toFixed(4) : 'Error';
+            document.getElementById('chemUnit').textContent = unit;
+            document.getElementById('chemResult').style.display = 'block';
+            
+            addToHistory('เคมี', formula, result.toFixed(4) + ' ' + unit);
+        }
+        
+        // ===========================================
+        // UNIT CONVERTER
+        // ===========================================
+        const unitData = {
+            length: {
+                units: ['m', 'cm', 'mm', 'km', 'in', 'ft', 'mi'],
+                names: ['เมตร', 'เซนติเมตร', 'มิลลิเมตร', 'กิโลเมตร', 'นิ้ว', 'ฟุต', 'ไมล์'],
+                toBase: [1, 0.01, 0.001, 1000, 0.0254, 0.3048, 1609.34]
+            },
+            mass: {
+                units: ['kg', 'g', 'mg', 'lb', 'oz'],
+                names: ['กิโลกรัม', 'กรัม', 'มิลลิกรัม', 'ปอนด์', 'ออนซ์'],
+                toBase: [1, 0.001, 0.000001, 0.453592, 0.0283495]
+            },
+            volume: {
+                units: ['L', 'mL', 'm3', 'gal', 'cup'],
+                names: ['ลิตร', 'มิลลิลิตร', 'ลบ.เมตร', 'แกลลอน', 'ถ้วย'],
+                toBase: [1, 0.001, 1000, 3.78541, 0.236588]
+            },
+            temperature: {
+                units: ['C', 'F', 'K'],
+                names: ['เซลเซียส', 'ฟาเรนไฮต์', 'เคลวิน'],
+                special: true
+            },
+            pressure: {
+                units: ['Pa', 'atm', 'bar', 'psi', 'mmHg'],
+                names: ['ปาสกาล', 'บรรยากาศ', 'บาร์', 'psi', 'mmHg'],
+                toBase: [1, 101325, 100000, 6894.76, 133.322]
+            },
+            energy: {
+                units: ['J', 'kJ', 'cal', 'kcal', 'eV', 'kWh'],
+                names: ['จูล', 'กิโลจูล', 'แคลอรี', 'กิโลแคลอรี', 'อิเล็กตรอนโวลต์', 'กิโลวัตต์-ชั่วโมง'],
+                toBase: [1, 1000, 4.184, 4184, 1.602e-19, 3600000]
+            }
+        };
+        
+        function updateUnitOptions() {
+            const type = document.getElementById('unitType').value;
+            const data = unitData[type];
+            const fromSelect = document.getElementById('unitFrom');
+            const toSelect = document.getElementById('unitTo');
+            
+            fromSelect.innerHTML = data.units.map((u, i) => `<option value="${u}">${data.names[i]} (${u})</option>`).join('');
+            toSelect.innerHTML = data.units.map((u, i) => `<option value="${u}">${data.names[i]} (${u})</option>`).join('');
+            
+            if (data.units.length > 1) toSelect.selectedIndex = 1;
+            convertUnits();
+        }
+        
+        function convertUnits() {
+            const type = document.getElementById('unitType').value;
+            const value = parseFloat(document.getElementById('unitValue').value) || 0;
+            const from = document.getElementById('unitFrom').value;
+            const to = document.getElementById('unitTo').value;
+            const data = unitData[type];
+            
+            let result = 0;
+            
+            if (type === 'temperature') {
+                let celsius = 0;
+                if (from === 'C') celsius = value;
+                else if (from === 'F') celsius = (value - 32) * 5/9;
+                else if (from === 'K') celsius = value - 273.15;
+                
+                if (to === 'C') result = celsius;
+                else if (to === 'F') result = celsius * 9/5 + 32;
+                else if (to === 'K') result = celsius + 273.15;
+            } else {
+                const fromIdx = data.units.indexOf(from);
+                const toIdx = data.units.indexOf(to);
+                const baseValue = value * data.toBase[fromIdx];
+                result = baseValue / data.toBase[toIdx];
+            }
+            
+            document.getElementById('unitResult').textContent = result.toPrecision(6);
+            document.getElementById('unitResultLabel').textContent = `${from} → ${to}`;
+        }
+        
+        // ===========================================
+        // QUADRATIC EQUATION SOLVER
+        // ===========================================
+        function solveQuadratic() {
+            const a = parseFloat(document.getElementById('quadA').value) || 0;
+            const b = parseFloat(document.getElementById('quadB').value) || 0;
+            const c = parseFloat(document.getElementById('quadC').value) || 0;
+            
+            if (a === 0) {
+                document.getElementById('quadSolutions').innerHTML = '<div class="text-danger">a ต้องไม่เท่ากับ 0</div>';
+                return;
+            }
+            
+            const D = b * b - 4 * a * c;
+            document.getElementById('discriminant').textContent = D.toFixed(4);
+            
+            let html = '';
+            if (D > 0) {
+                const x1 = (-b + Math.sqrt(D)) / (2 * a);
+                const x2 = (-b - Math.sqrt(D)) / (2 * a);
+                html = `<div class="h5 text-success">x₁ = ${x1.toFixed(4)}</div>
+                        <div class="h5 text-success">x₂ = ${x2.toFixed(4)}</div>
+                        <small class="text-muted">มี 2 คำตอบจริง (D > 0)</small>`;
+                addToHistory('สมการกำลังสอง', `${a}x² + ${b}x + ${c} = 0`, `x₁=${x1.toFixed(2)}, x₂=${x2.toFixed(2)}`);
+            } else if (D === 0) {
+                const x = -b / (2 * a);
+                html = `<div class="h5 text-primary">x = ${x.toFixed(4)}</div>
+                        <small class="text-muted">มี 1 คำตอบซ้ำ (D = 0)</small>`;
+                addToHistory('สมการกำลังสอง', `${a}x² + ${b}x + ${c} = 0`, `x=${x.toFixed(2)}`);
+            } else {
+                const real = -b / (2 * a);
+                const imag = Math.sqrt(-D) / (2 * a);
+                html = `<div class="h5 text-info">x₁ = ${real.toFixed(4)} + ${imag.toFixed(4)}i</div>
+                        <div class="h5 text-info">x₂ = ${real.toFixed(4)} - ${imag.toFixed(4)}i</div>
+                        <small class="text-muted">คำตอบเชิงซ้อน (D < 0)</small>`;
+            }
+            
+            document.getElementById('quadSolutions').innerHTML = html;
+            document.getElementById('quadResult').style.display = 'block';
+        }
+        
+        // ===========================================
+        // TRIANGLE CALCULATOR
+        // ===========================================
+        function updateTriangleInputs() {
+            const calc = document.getElementById('triangleCalc').value;
+            let html = '<div class="row">';
+            
+            switch(calc) {
+                case 'pythagoras':
+                    html += `<div class="col-6"><label class="form-label-custom">ด้านประกอบ a</label>
+                            <input type="number" class="form-control-custom" id="triA" placeholder="a"></div>
+                            <div class="col-6"><label class="form-label-custom">ด้านประกอบ b</label>
+                            <input type="number" class="form-control-custom" id="triB" placeholder="b"></div>`;
+                    break;
+                case 'area-base':
+                    html += `<div class="col-6"><label class="form-label-custom">ฐาน</label>
+                            <input type="number" class="form-control-custom" id="triA" placeholder="ฐาน"></div>
+                            <div class="col-6"><label class="form-label-custom">สูง</label>
+                            <input type="number" class="form-control-custom" id="triB" placeholder="สูง"></div>`;
+                    break;
+                case 'area-heron':
+                case 'perimeter':
+                    html += `<div class="col-4"><label class="form-label-custom">ด้าน a</label>
+                            <input type="number" class="form-control-custom" id="triA" placeholder="a"></div>
+                            <div class="col-4"><label class="form-label-custom">ด้าน b</label>
+                            <input type="number" class="form-control-custom" id="triB" placeholder="b"></div>
+                            <div class="col-4"><label class="form-label-custom">ด้าน c</label>
+                            <input type="number" class="form-control-custom" id="triC" placeholder="c"></div>`;
+                    break;
+            }
+            html += '</div>';
+            document.getElementById('triangleInputs').innerHTML = html;
+        }
+        
+        function calculateTriangle() {
+            const calc = document.getElementById('triangleCalc').value;
+            const a = parseFloat(document.getElementById('triA')?.value) || 0;
+            const b = parseFloat(document.getElementById('triB')?.value) || 0;
+            const c = parseFloat(document.getElementById('triC')?.value) || 0;
+            
+            let result = 0, unit = 'หน่วย';
+            
+            switch(calc) {
+                case 'pythagoras':
+                    result = Math.sqrt(a * a + b * b);
+                    unit = 'หน่วย (ด้านตรงข้ามมุมฉาก)';
+                    break;
+                case 'area-base':
+                    result = 0.5 * a * b;
+                    unit = 'ตร.หน่วย';
+                    break;
+                case 'area-heron':
+                    const s = (a + b + c) / 2;
+                    result = Math.sqrt(s * (s-a) * (s-b) * (s-c));
+                    unit = 'ตร.หน่วย';
+                    break;
+                case 'perimeter':
+                    result = a + b + c;
+                    unit = 'หน่วย';
+                    break;
+            }
+            
+            document.getElementById('triangleValue').textContent = result.toFixed(4);
+            document.getElementById('triangleUnit').textContent = unit;
+            document.getElementById('triangleResult').style.display = 'block';
+            
+            addToHistory('สามเหลี่ยม', calc, result.toFixed(2) + ' ' + unit);
+        }
+        
+        // ===========================================
+        // SHAPE CALCULATOR
+        // ===========================================
+        function updateShapeInputs() {
+            const shape = document.getElementById('shapeType').value;
+            let html = '';
+            
+            const inputs = {
+                'circle': [['r', 'รัศมี r']],
+                'rectangle': [['l', 'ความยาว'], ['w', 'ความกว้าง']],
+                'triangle': [['b', 'ฐาน'], ['h', 'ความสูง']],
+                'sphere': [['r', 'รัศมี r']],
+                'cylinder': [['r', 'รัศมี r'], ['h', 'ความสูง h']],
+                'cone': [['r', 'รัศมี r'], ['h', 'ความสูง h']],
+                'cube': [['a', 'ด้าน a']]
+            };
+            
+            const fields = inputs[shape] || inputs['circle'];
+            html = '<div class="row">';
+            fields.forEach((f, i) => {
+                html += `<div class="col-${12/fields.length}">
+                    <label class="form-label-custom">${f[1]}</label>
+                    <input type="number" class="form-control-custom" id="shape${String.fromCharCode(65+i)}" placeholder="${f[0]}">
+                </div>`;
+            });
+            html += '</div>';
+            document.getElementById('shapeInputs').innerHTML = html;
+        }
+        
+        function calculateShape() {
+            const shape = document.getElementById('shapeType').value;
+            const a = parseFloat(document.getElementById('shapeA')?.value) || 0;
+            const b = parseFloat(document.getElementById('shapeB')?.value) || 0;
+            
+            let result = 0, unit = '';
+            
+            switch(shape) {
+                case 'circle': result = Math.PI * a * a; unit = 'ตร.หน่วย'; break;
+                case 'rectangle': result = a * b; unit = 'ตร.หน่วย'; break;
+                case 'triangle': result = 0.5 * a * b; unit = 'ตร.หน่วย'; break;
+                case 'sphere': result = (4/3) * Math.PI * Math.pow(a, 3); unit = 'ลบ.หน่วย'; break;
+                case 'cylinder': result = Math.PI * a * a * b; unit = 'ลบ.หน่วย'; break;
+                case 'cone': result = (1/3) * Math.PI * a * a * b; unit = 'ลบ.หน่วย'; break;
+                case 'cube': result = Math.pow(a, 3); unit = 'ลบ.หน่วย'; break;
+            }
+            
+            document.getElementById('shapeValue').textContent = result.toFixed(4);
+            document.getElementById('shapeUnit').textContent = unit;
+            document.getElementById('shapeResult').style.display = 'block';
+            
+            addToHistory('รูปทรง', shape, result.toFixed(2) + ' ' + unit);
+        }
+        
+        // ===========================================
+        // PERCENTAGE CALCULATOR
+        // ===========================================
+        function calculatePercent() {
+            const type = document.getElementById('percentType').value;
+            const x = parseFloat(document.getElementById('percentX').value) || 0;
+            const y = parseFloat(document.getElementById('percentY').value) || 0;
+            
+            let result = 0, unit = '';
+            
+            switch(type) {
+                case 'of': result = (x / 100) * y; unit = `${x}% ของ ${y}`; break;
+                case 'is': result = (x / y) * 100; unit = '%'; break;
+                case 'change': result = ((y - x) / x) * 100; unit = '% เปลี่ยนแปลง'; break;
+                case 'increase': result = y + (x / 100) * y; unit = `เพิ่ม ${x}%`; break;
+                case 'decrease': result = y - (x / 100) * y; unit = `ลด ${x}%`; break;
+            }
+            
+            document.getElementById('percentValue').textContent = result.toFixed(4);
+            document.getElementById('percentUnit').textContent = unit;
+            document.getElementById('percentResult').style.display = 'block';
+            
+            addToHistory('ร้อยละ', type, result.toFixed(2) + ' ' + unit);
+        }
+        
+        // ===========================================
+        // FINANCE CALCULATORS
+        // ===========================================
+        function calculateLoan() {
+            const principal = parseFloat(document.getElementById('loanAmount').value) || 0;
+            const rate = parseFloat(document.getElementById('loanRate').value) / 100 / 12;
+            const months = parseFloat(document.getElementById('loanYears').value) * 12;
+            
+            let monthly, total, interest;
+            
+            if (rate === 0) {
+                monthly = principal / months;
+                total = principal;
+                interest = 0;
+            } else {
+                monthly = principal * (rate * Math.pow(1 + rate, months)) / (Math.pow(1 + rate, months) - 1);
+                total = monthly * months;
+                interest = total - principal;
+            }
+            
+            document.getElementById('monthlyPayment').textContent = Math.round(monthly).toLocaleString();
+            document.getElementById('totalPayment').textContent = Math.round(total).toLocaleString();
+            document.getElementById('totalInterest').textContent = Math.round(interest).toLocaleString();
+            document.getElementById('loanResult').style.display = 'block';
+            
+            addToHistory('เงินกู้ กยศ.', principal.toLocaleString() + ' บาท', Math.round(monthly).toLocaleString() + ' บาท/เดือน');
+        }
+        
+        function updateTuitionEstimate() {
+            const type = document.getElementById('uniType').value;
+            const estimates = {
+                'public': 25000,
+                'private': 50000,
+                'inter': 120000
+            };
+            document.getElementById('tuitionFee').value = estimates[type];
+        }
+        
+        function calculateTotalCost() {
+            const tuition = parseFloat(document.getElementById('tuitionFee').value) || 0;
+            const semesters = parseFloat(document.getElementById('totalSemesters').value) || 0;
+            const dorm = parseFloat(document.getElementById('dormFee').value) || 0;
+            const living = parseFloat(document.getElementById('livingCost').value) || 0;
+            
+            const totalTuition = tuition * semesters;
+            const months = semesters * 4;
+            const totalLiving = (dorm + living) * months;
+            const grandTotal = totalTuition + totalLiving;
+            
+            document.getElementById('totalTuition').textContent = Math.round(totalTuition).toLocaleString();
+            document.getElementById('totalLiving').textContent = Math.round(totalLiving).toLocaleString();
+            document.getElementById('grandTotal').textContent = Math.round(grandTotal).toLocaleString();
+            document.getElementById('tuitionResult').style.display = 'block';
+            
+            addToHistory('ค่าใช้จ่ายการศึกษา', semesters + ' เทอม', Math.round(grandTotal).toLocaleString() + ' บาท');
+        }
+        
+        function calculateSavings() {
+            const goal = parseFloat(document.getElementById('savingsGoal').value) || 0;
+            const years = parseFloat(document.getElementById('savingsYears').value) || 1;
+            const rate = parseFloat(document.getElementById('savingsRate').value) / 100 / 12;
+            const months = years * 12;
+            
+            let monthly;
+            if (rate === 0) {
+                monthly = goal / months;
+            } else {
+                monthly = goal * rate / (Math.pow(1 + rate, months) - 1);
+            }
+            
+            const totalSaved = monthly * months;
+            const interest = goal - totalSaved;
+            
+            document.getElementById('monthlySave').textContent = Math.round(monthly).toLocaleString();
+            document.getElementById('totalSaved').textContent = Math.round(totalSaved).toLocaleString();
+            document.getElementById('interestEarned').textContent = Math.round(interest).toLocaleString();
+            document.getElementById('savingsResult').style.display = 'block';
+            
+            addToHistory('ออมเงินเพื่อการศึกษา', goal.toLocaleString() + ' บาท', Math.round(monthly).toLocaleString() + ' บาท/เดือน');
+        }
+        
+        // ===========================================
+        // STATISTICS CALCULATORS
+        // ===========================================
+        function calculateStatistics() {
+            const input = document.getElementById('statsData').value;
+            const data = input.split(',').map(x => parseFloat(x.trim())).filter(x => !isNaN(x));
+            
+            if (data.length === 0) {
+                alert('กรุณาใส่ข้อมูลที่ถูกต้อง');
+                return;
+            }
+            
+            const sorted = [...data].sort((a, b) => a - b);
+            const n = data.length;
+            
+            const sum = data.reduce((a, b) => a + b, 0);
+            const mean = sum / n;
+            
+            let median;
+            if (n % 2 === 0) {
+                median = (sorted[n/2 - 1] + sorted[n/2]) / 2;
+            } else {
+                median = sorted[Math.floor(n/2)];
+            }
+            
+            const freq = {};
+            data.forEach(x => freq[x] = (freq[x] || 0) + 1);
+            const maxFreq = Math.max(...Object.values(freq));
+            const modes = Object.keys(freq).filter(x => freq[x] === maxFreq);
+            const mode = modes.length === n ? 'ไม่มี' : modes.join(', ');
+            
+            const range = sorted[n-1] - sorted[0];
+            
+            const variance = data.reduce((acc, x) => acc + Math.pow(x - mean, 2), 0) / n;
+            const sd = Math.sqrt(variance);
+            
+            document.getElementById('statsMean').textContent = mean.toFixed(2);
+            document.getElementById('statsMedian').textContent = median.toFixed(2);
+            document.getElementById('statsMode').textContent = mode;
+            document.getElementById('statsRange').textContent = range.toFixed(2);
+            document.getElementById('statsSD').textContent = sd.toFixed(2);
+            document.getElementById('statsVar').textContent = variance.toFixed(2);
+            document.getElementById('statsMin').textContent = sorted[0];
+            document.getElementById('statsMax').textContent = sorted[n-1];
+            document.getElementById('statsCount').textContent = n;
+            document.getElementById('statsResult').style.display = 'block';
+            
+            addToHistory('สถิติ', n + ' ข้อมูล', 'Mean=' + mean.toFixed(2) + ', SD=' + sd.toFixed(2));
+        }
+        
+        function updateProbInputs() {
+            const type = document.getElementById('probType').value;
+            let html = '<div class="row">';
+            
+            switch(type) {
+                case 'simple':
+                    html += `<div class="col-6"><label class="form-label-custom">เหตุการณ์ที่สนใจ n(A)</label>
+                            <input type="number" class="form-control-custom" id="probA" placeholder="n(A)"></div>
+                            <div class="col-6"><label class="form-label-custom">เหตุการณ์ทั้งหมด n(S)</label>
+                            <input type="number" class="form-control-custom" id="probS" placeholder="n(S)"></div>`;
+                    break;
+                case 'combination':
+                case 'permutation':
+                    html += `<div class="col-6"><label class="form-label-custom">n (จำนวนทั้งหมด)</label>
+                            <input type="number" class="form-control-custom" id="probA" placeholder="n"></div>
+                            <div class="col-6"><label class="form-label-custom">r (จำนวนที่เลือก)</label>
+                            <input type="number" class="form-control-custom" id="probS" placeholder="r"></div>`;
+                    break;
+                case 'binomial':
+                    html += `<div class="col-4"><label class="form-label-custom">n (จำนวนครั้ง)</label>
+                            <input type="number" class="form-control-custom" id="probA" placeholder="n"></div>
+                            <div class="col-4"><label class="form-label-custom">k (สำเร็จ)</label>
+                            <input type="number" class="form-control-custom" id="probS" placeholder="k"></div>
+                            <div class="col-4"><label class="form-label-custom">p (โอกาสสำเร็จ)</label>
+                            <input type="number" class="form-control-custom" id="probP" placeholder="0.5" step="0.01"></div>`;
+                    break;
+            }
+            html += '</div>';
+            document.getElementById('probInputs').innerHTML = html;
+        }
+        
+        function factorial(n) {
+            if (n <= 1) return 1;
+            let result = 1;
+            for (let i = 2; i <= n; i++) result *= i;
+            return result;
+        }
+        
+        function calculateProbability() {
+            const type = document.getElementById('probType').value;
+            const a = parseInt(document.getElementById('probA')?.value) || 0;
+            const s = parseInt(document.getElementById('probS')?.value) || 0;
+            const p = parseFloat(document.getElementById('probP')?.value) || 0.5;
+            
+            let result = 0, unit = '';
+            
+            switch(type) {
+                case 'simple':
+                    result = a / s;
+                    unit = 'P(A)';
+                    break;
+                case 'combination':
+                    result = factorial(a) / (factorial(s) * factorial(a - s));
+                    unit = `C(${a},${s})`;
+                    break;
+                case 'permutation':
+                    result = factorial(a) / factorial(a - s);
+                    unit = `P(${a},${s})`;
+                    break;
+                case 'binomial':
+                    const comb = factorial(a) / (factorial(s) * factorial(a - s));
+                    result = comb * Math.pow(p, s) * Math.pow(1 - p, a - s);
+                    unit = 'P(X=k)';
+                    break;
+            }
+            
+            document.getElementById('probValue').textContent = type === 'combination' || type === 'permutation' ? result.toLocaleString() : result.toFixed(6);
+            document.getElementById('probUnit').textContent = unit;
+            document.getElementById('probPercent').textContent = (result * 100).toFixed(2) + '%';
+            document.getElementById('probResult').style.display = 'block';
+            
+            addToHistory('ความน่าจะเป็น', unit, result.toFixed(4));
+        }
+        
+        function calculateZScore() {
+            const x = parseFloat(document.getElementById('normX').value) || 0;
+            const mean = parseFloat(document.getElementById('normMean').value) || 0;
+            const sd = parseFloat(document.getElementById('normSD').value) || 1;
+            
+            const z = (x - mean) / sd;
+            
+            function normalCDF(z) {
+                const a1 =  0.254829592;
+                const a2 = -0.284496736;
+                const a3 =  1.421413741;
+                const a4 = -1.453152027;
+                const a5 =  1.061405429;
+                const p  =  0.3275911;
+                
+                const sign = z < 0 ? -1 : 1;
+                z = Math.abs(z) / Math.sqrt(2);
+                const t = 1.0 / (1.0 + p * z);
+                const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-z * z);
+                return 0.5 * (1.0 + sign * y);
+            }
+            
+            const cdf = normalCDF(z) * 100;
+            
+            document.getElementById('zScore').textContent = z.toFixed(4);
+            document.getElementById('zPercent').textContent = cdf.toFixed(2) + '%';
+            document.getElementById('normResult').style.display = 'block';
+            
+            addToHistory('Z-Score', 'X=' + x, 'Z=' + z.toFixed(2));
+        }
+        
+        // ===========================================
+        // STUDY TOOLS
+        // ===========================================
+        let timerInterval = null;
+        let timerSeconds = 25 * 60;
+        let pomodoroCount = parseInt(localStorage.getItem('pomodoroCount') || '0');
+        
+        function setTimer(minutes) {
+            timerSeconds = minutes * 60;
+            updateTimerDisplay();
+            document.getElementById('timerStatus').textContent = minutes + ' นาที - พร้อมเริ่ม';
+        }
+        
+        function updateTimerDisplay() {
+            const mins = Math.floor(timerSeconds / 60);
+            const secs = timerSeconds % 60;
+            document.getElementById('timerDisplay').textContent = 
+                String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+        }
+        
+        function startTimer() {
+            if (timerInterval) return;
+            document.getElementById('timerStatus').textContent = 'กำลังนับเวลา...';
+            timerInterval = setInterval(() => {
+                timerSeconds--;
+                updateTimerDisplay();
+                if (timerSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    document.getElementById('timerStatus').textContent = '🎉 ครบเวลา!';
+                    pomodoroCount++;
+                    localStorage.setItem('pomodoroCount', pomodoroCount);
+                    document.getElementById('pomodoroCount').textContent = pomodoroCount;
+                    try {
+                        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2telezkfVJHA6Nt9QABJmbTq54xQAkSIsN/qlWYgPIWs2eylaC82gaPd7KlxLzN+oNntr3gzM3me1e+zfDUyeJvT8LaBNy95mNHwtIU4Lnid0/CzgzcueJrS8bKCOC54mdLxs4I4Lnic0/KzgzcueJrT8bOCOC54m9PxsoI4');
+                        audio.play();
+                    } catch(e) {}
+                    alert('⏰ หมดเวลาแล้ว! พักผ่อนสักครู่');
+                }
+            }, 1000);
+        }
+        
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            document.getElementById('timerStatus').textContent = 'หยุดชั่วคราว';
+        }
+        
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            timerSeconds = 25 * 60;
+            updateTimerDisplay();
+            document.getElementById('timerStatus').textContent = 'พร้อมเริ่ม';
+        }
+        
+        function calculateRequiredScore() {
+            const current = parseFloat(document.getElementById('currentScore').value) || 0;
+            const currentWeight = parseFloat(document.getElementById('currentWeight').value) / 100 || 0.4;
+            const target = parseFloat(document.getElementById('targetGradeCalc').value) || 60;
+            const finalWeight = parseFloat(document.getElementById('finalWeight').value) / 100 || 0.6;
+            
+            const currentContribution = current * currentWeight;
+            const needed = (target - currentContribution) / finalWeight;
+            
+            document.getElementById('requiredScore').textContent = needed.toFixed(1);
+            
+            const alertDiv = document.getElementById('scoreAlert');
+            if (needed > 100) {
+                alertDiv.className = 'alert alert-danger';
+                alertDiv.innerHTML = '❌ ไม่สามารถทำได้ ต้องได้มากกว่า 100 คะแนน';
+            } else if (needed <= 0) {
+                alertDiv.className = 'alert alert-success';
+                alertDiv.innerHTML = '✅ ยินดีด้วย! คุณผ่านแล้วโดยไม่ต้องสอบ Final';
+            } else if (needed <= 60) {
+                alertDiv.className = 'alert alert-success';
+                alertDiv.innerHTML = '✅ ไม่ยากเกินไป สู้ๆ!';
+            } else if (needed <= 80) {
+                alertDiv.className = 'alert alert-warning';
+                alertDiv.innerHTML = '⚠️ ต้องตั้งใจหน่อย แต่ทำได้!';
+            } else {
+                alertDiv.className = 'alert alert-danger';
+                alertDiv.innerHTML = '⚠️ ค่อนข้างยาก ต้องเตรียมตัวให้ดี';
+            }
+            
+            document.getElementById('requiredResult').style.display = 'block';
+            addToHistory('คะแนนที่ต้องการ', 'เกรด ' + target, needed.toFixed(1) + ' คะแนน');
+        }
+        
+        function convertBase() {
+            const input = document.getElementById('baseInput').value.toUpperCase();
+            const from = parseInt(document.getElementById('baseFrom').value);
+            
+            if (!input) {
+                document.getElementById('baseBinary').textContent = '0';
+                document.getElementById('baseDecimal').textContent = '0';
+                document.getElementById('baseOctal').textContent = '0';
+                document.getElementById('baseHex').textContent = '0';
+                return;
+            }
+            
+            try {
+                const decimal = parseInt(input, from);
+                if (isNaN(decimal)) throw new Error('Invalid');
+                
+                document.getElementById('baseBinary').textContent = decimal.toString(2);
+                document.getElementById('baseDecimal').textContent = decimal.toString(10);
+                document.getElementById('baseOctal').textContent = decimal.toString(8);
+                document.getElementById('baseHex').textContent = decimal.toString(16).toUpperCase();
+            } catch(e) {
+                document.getElementById('baseBinary').textContent = 'Error';
+                document.getElementById('baseDecimal').textContent = 'Error';
+                document.getElementById('baseOctal').textContent = 'Error';
+                document.getElementById('baseHex').textContent = 'Error';
+            }
+        }
+        
+        function calculateStudyPlan() {
+            const pages = parseFloat(document.getElementById('totalPages').value) || 0;
+            const days = parseFloat(document.getElementById('totalDays').value) || 1;
+            const speed = parseFloat(document.getElementById('readingSpeed').value) || 30;
+            
+            const pagesPerDay = Math.ceil(pages / days);
+            const hoursPerDay = (pagesPerDay / speed).toFixed(1);
+            
+            document.getElementById('pagesPerDay').textContent = pagesPerDay;
+            document.getElementById('hoursPerDay').textContent = hoursPerDay;
+            document.getElementById('studyPlanResult').style.display = 'block';
+            
+            addToHistory('วางแผนอ่านหนังสือ', pages + ' หน้า/' + days + ' วัน', pagesPerDay + ' หน้า/วัน');
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            animateCounters();
+            loadCalculationHistory();
+            
+            // Initialize Pomodoro count
+            if (document.getElementById('pomodoroCount')) {
+                document.getElementById('pomodoroCount').textContent = pomodoroCount;
+            }
+            
+            // Initialize unit converter
+            if (document.getElementById('unitType')) {
+                updateUnitOptions();
+            }
+            
+            // Initialize physics inputs
+            if (document.getElementById('physicsFormula')) {
+                updatePhysicsInputs();
+            }
+            
+            // Initialize chem inputs
+            if (document.getElementById('chemFormula')) {
+                updateChemInputs();
+            }
+            
+            // Initialize triangle inputs
+            if (document.getElementById('triangleCalc')) {
+                updateTriangleInputs();
+            }
+            
+            // Initialize shape inputs
+            if (document.getElementById('shapeType')) {
+                updateShapeInputs();
+            }
+        });
     </script>
 </body>
 </html>
