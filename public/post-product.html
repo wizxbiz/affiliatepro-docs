@@ -6,10 +6,11 @@
     <meta name="description" content="ลงขายสินค้า WiT Marketplace - โพสต์ขายสินค้าออนไลน์ฟรี">
     <title>ลงขายสินค้า - WiT Marketplace</title>
     
-    <!-- Firebase SDK (Auth not needed - backend handles LINE auth) -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -166,105 +167,6 @@
             font-size: 1.3rem;
         }
         
-        /* Close Modal Button */
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: #f5f5f5;
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #666;
-            transition: all 0.2s;
-        }
-        
-        .close-modal:hover {
-            background: #e0e0e0;
-            color: #333;
-        }
-        
-        .login-card {
-            position: relative;
-        }
-        
-        /* Login Steps */
-        .login-steps {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 15px;
-            margin: 20px 0;
-            text-align: left;
-        }
-        
-        .login-steps .step {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 10px 0;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        
-        .login-steps .step:last-child {
-            border-bottom: none;
-        }
-        
-        .step-number {
-            background: var(--line-green);
-            color: white;
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 0.85rem;
-            flex-shrink: 0;
-        }
-        
-        .step-content strong {
-            font-size: 0.95rem;
-            display: block;
-            margin-bottom: 2px;
-        }
-        
-        .step-content p {
-            margin: 0;
-            font-size: 0.85rem;
-            color: #666;
-        }
-        
-        /* QR Code Section */
-        .qr-section {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px dashed #e0e0e0;
-        }
-        
-        .qr-section p {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 10px;
-        }
-        
-        .qr-code {
-            width: 150px;
-            height: 150px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .login-desc {
-            color: var(--gray);
-            margin-bottom: 15px;
-        }
-        
         /* User Badge (Logged in) */
         .user-badge {
             background: linear-gradient(135deg, #00C300 0%, #00A300 100%);
@@ -353,41 +255,6 @@
         
         .nav-link-header:hover {
             color: #FFE0B2;
-        }
-        
-        /* Login Button in Header */
-        .btn-header-login {
-            background: linear-gradient(135deg, #00C300 0%, #00A300 100%);
-            color: white;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 25px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-            margin-left: 15px;
-        }
-        
-        .btn-header-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,195,0,0.4);
-            color: white;
-        }
-        
-        .btn-header-login.logged-in {
-            background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
-        }
-        
-        .btn-header-login img {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 2px solid white;
         }
         
         /* Main Content */
@@ -799,18 +666,13 @@
                 <a href="marketplace.html" class="logo">
                     <i class="fas fa-store"></i> WiT Marketplace
                 </a>
-                <nav class="d-flex align-items-center">
+                <nav>
                     <a href="marketplace.html" class="nav-link-header">
                         <i class="fas fa-shopping-bag"></i> ตลาด
                     </a>
                     <a href="marketplace-howto.html" class="nav-link-header">
                         <i class="fas fa-question-circle"></i> วิธีใช้
                     </a>
-                    <!-- Login/User Button -->
-                    <button type="button" class="btn-header-login" id="headerLoginBtn" onclick="handleHeaderLogin()">
-                        <i class="fab fa-line"></i>
-                        <span id="headerLoginText">เข้าสู่ระบบ</span>
-                    </button>
                 </nav>
             </div>
         </div>
@@ -1011,51 +873,17 @@
     <!-- Login Required Modal -->
     <div class="login-modal" id="loginModal">
         <div class="login-card">
-            <button type="button" class="close-modal" onclick="hideLoginModal()">
-                <i class="fas fa-times"></i>
-            </button>
             <div class="icon">
                 <i class="fab fa-line"></i>
             </div>
-            <h3>🔐 เข้าสู่ระบบผ่าน LINE</h3>
-            <p class="login-desc">เพื่อลงขายสินค้าใน Marketplace<br>กรุณาทำตามขั้นตอนด้านล่าง</p>
-            
-            <div class="login-steps">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <strong>เพิ่มเพื่อน LINE OA</strong>
-                        <p>แตะปุ่มด้านล่างเพื่อเพิ่มเพื่อน</p>
-                    </div>
-                </div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <strong>ส่งข้อความ "โพสต์" หรือ "/โพสต์"</strong>
-                        <p>เพื่อเริ่มต้นการลงขายสินค้า</p>
-                    </div>
-                </div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <strong>ส่งรูปสินค้า</strong>
-                        <p>AI จะช่วยสร้างโพสต์ให้อัตโนมัติ!</p>
-                    </div>
-                </div>
-            </div>
-            
+            <h3>กรุณาเข้าสู่ระบบ</h3>
+            <p>เพื่อลงขายสินค้าใน Marketplace<br>กรุณาเพิ่มเพื่อน LINE OA ก่อนค่ะ</p>
             <a href="https://line.me/R/ti/p/@563eikqn" target="_blank" class="btn-line-login" rel="noopener">
                 <i class="fab fa-line"></i>
                 เพิ่มเพื่อน LINE OA
             </a>
-            
-            <div class="qr-section">
-                <p>หรือสแกน QR Code</p>
-                <img src="https://qr-official.line.me/sid/L/563eikqn.png" alt="LINE QR Code" class="qr-code">
-            </div>
-            
             <div class="mt-3">
-                <small class="text-muted">มีบัญชี LINE OA แล้ว? <a href="https://line.me/R/oaMessage/@563eikqn/?โพสต์" target="_blank">ส่งข้อความเลย</a></small>
+                <small class="text-muted">หลังเพิ่มเพื่อนแล้ว ส่ง /โพสต์ เพื่อเริ่มขาย</small>
             </div>
         </div>
     </div>
@@ -1093,6 +921,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const storage = firebase.storage();
+        const auth = firebase.auth();
 
         // State
         let selectedImage = null;
@@ -1100,8 +929,9 @@
         let aiData = null;
         let lineUserId = null;
         let currentUser = null;
+        let idToken = null;
 
-        // Check authentication on page load (simplified - no Firebase Auth needed)
+        // Check authentication on page load
         async function checkAuthentication() {
             const urlParams = new URLSearchParams(window.location.search);
             const lineUserIdParam = urlParams.get('lineUserId');
@@ -1140,10 +970,10 @@
             }
             
             // Show loading state
-            showToast('🔐 กำลังตรวจสอบผู้ใช้...', 'info');
+            showToast('🔐 กำลังเข้าสู่ระบบ...', 'info');
             
             try {
-                // Verify LINE user exists in database (simplified - no Firebase Auth needed)
+                // Get custom token from backend
                 const response = await fetch(`${API_BASE_URL}/marketplaceLineAuth`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1163,10 +993,14 @@
                     return false;
                 }
                 
-                // Store user info (no need for Firebase Auth sign-in)
+                // Sign in with custom token
+                await auth.signInWithCustomToken(result.customToken);
                 currentUser = result.user;
                 
-                console.log('✅ Verified LINE user:', currentUser.displayName);
+                // Get ID token for API calls
+                idToken = await auth.currentUser.getIdToken();
+                
+                console.log('✅ Logged in as:', currentUser.displayName);
                 showUserBadge(currentUser);
                 showToast(`ยินดีต้อนรับ ${currentUser.displayName}!`, 'success');
                 
@@ -1194,42 +1028,6 @@
                 </div>
             `;
             formCard.insertBefore(badge, formCard.firstChild);
-            
-            // Update header login button to show user
-            updateHeaderLoginButton(user);
-        }
-        
-        // Update header login button based on login state
-        function updateHeaderLoginButton(user = null) {
-            const btn = document.getElementById('headerLoginBtn');
-            const text = document.getElementById('headerLoginText');
-            
-            if (user && lineUserId) {
-                // Logged in - show user info
-                btn.classList.add('logged-in');
-                btn.innerHTML = `
-                    <img src="${user.pictureUrl || 'https://via.placeholder.com/24'}" alt="${user.displayName}">
-                    <span>${user.displayName}</span>
-                `;
-            } else {
-                // Not logged in
-                btn.classList.remove('logged-in');
-                btn.innerHTML = `
-                    <i class="fab fa-line"></i>
-                    <span>เข้าสู่ระบบ</span>
-                `;
-            }
-        }
-        
-        // Handle header login button click
-        function handleHeaderLogin() {
-            if (lineUserId && currentUser) {
-                // Already logged in - show user info toast
-                showToast(`✅ คุณเข้าสู่ระบบแล้ว: ${currentUser.displayName}`, 'success');
-            } else {
-                // Not logged in - show login modal
-                showLoginModal();
-            }
         }
         
         // Show login modal
@@ -1241,13 +1039,6 @@
         function hideLoginModal() {
             document.getElementById('loginModal').classList.remove('show');
         }
-        
-        // Close modal when clicking outside
-        document.getElementById('loginModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                hideLoginModal();
-            }
-        });
 
         // Check for AI data from URL parameter
         function checkAIData() {
@@ -1444,10 +1235,10 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Check if logged in via LINE (lineUserId)
-            if (!lineUserId) {
+            // Check if logged in
+            if (!auth.currentUser || !idToken) {
                 showLoginModal();
-                showToast('กรุณาเข้าสู่ระบบผ่าน LINE ก่อนลงขายสินค้า', 'error');
+                showToast('กรุณาเข้าสู่ระบบก่อนลงขายสินค้า', 'error');
                 return;
             }
             
@@ -1487,14 +1278,14 @@
                 // Generate tags
                 const tags = generateTags(productName, selectedCategory);
                 
-                // Post via API with lineUserId (no Bearer token needed)
+                // Post via API
                 const response = await fetch(`${API_BASE_URL}/marketplacePostProduct`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${idToken}`
                     },
                     body: JSON.stringify({
-                        lineUserId: lineUserId,
                         productData: {
                             productName,
                             price,

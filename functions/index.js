@@ -7008,7 +7008,275 @@ ${additionalInfo ? `ข้อมูลเพิ่มเติม: ${additionalI
 });
 
 /**
- * 📞 HANDLE UNLOCK REQUESTS - Admin Command
+ * 🔐 LINE Auth for Marketplace
+ * POST /api/marketplace/line-auth
+ * Body: { lineUserId: "LINE_USER_ID" }
+ * Returns: User info (no Firebase token needed - backend handles auth)
+ */
+exports.marketplaceLineAuth = onRequest({
+  region: "us-central1",
+  memory: "256MiB",
+  cors: true,
+}, async (req, res) => {
+  try {
+    // Handle CORS preflight
+    if (req.method === "OPTIONS") {
+      res.set("Access-Control-Allow-Origin", "*");
+      res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+      res.set("Access-Control-Allow-Headers", "Content-Type");
+      res.status(204).send("");
+      return;
+    }
+
+    if (req.method !== "POST") {
+      res.status(405).json({success: false, error: "Method not allowed"});
+      return;
+    }
+
+    const {lineUserId} = req.body;
+
+    if (!lineUserId) {
+      res.status(400).json({success: false, error: "lineUserId is required"});
+      return;
+    }
+
+    console.log("🔐 Verifying LINE user for marketplace:", lineUserId);
+
+    const admin = require("firebase-admin");
+    const db = admin.firestore();
+
+    // Check if LINE user exists in our system
+    const lineUserDoc = await db.collection("line_users").doc(lineUserId).get();
+
+    if (!lineUserDoc.exists) {
+      console.log("⚠️ LINE user not found in line_users:", lineUserId);
+      
+      // Try to find in users collection as fallback
+      const usersSnapshot = await db.collection("users")
+          .where("lineUserId", "==", lineUserId)
+          .limit(1)
+          .get();
+      
+      if (!usersSnapshot.empty) {
+        // Found in users collection
+        const userData = usersSnapshot.docs[0].data();
+        console.log("✅ Found user in users collection:", userData.displayName);
+        
+        // Create line_users document for future use
+        await db.collection("line_users").doc(lineUserId).set({
+          lineUserId: lineUserId,
+          displayName: userData.displayName || "LINE User",
+          pictureUrl: userData.pictureUrl || null,
+          isPremium: userData.isPremium || false,
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+        
+        // Get usage count for AI post
+        const usageRef = db.collection("ai_post_usage").doc(lineUserId);
+        const usageDoc = await usageRef.get();
+        const usageData = usageDoc.exists ? usageDoc.data() : {count: 0};
+        
+        res.set("Access-Control-Allow-Origin", "*");
+        res.status(200).json({
+          success: true,
+          user: {
+            lineUserId: lineUserId,
+            displayName: userData.displayName || "LINE User",
+            pictureUrl: userData.pictureUrl || null,
+            isPremium: userData.isPremium || false,
+            aiPostUsage: usageData.count || 0,
+            aiPostLimit: 3,
+          },
+        });
+        return;
+      }
+      
+      // Not found anywhere - require add friend
+      res.set("Access-Control-Allow-Origin", "*");
+      res.status(404).json({
+        success: false,
+        error: "ไม่พบข้อมูลผู้ใช้ กรุณาเพิ่มเพื่อน LINE OA ก่อน",
+        requireAddFriend: true,
+      });
+      return;
+    }
+
+    const userData = lineUserDoc.data();
+
+    // Get usage count for AI post
+    const usageRef = db.collection("ai_post_usage").doc(lineUserId);
+    const usageDoc = await usageRef.get();
+    const usageData = usageDoc.exists ? usageDoc.data() : {count: 0};
+
+    console.log("✅ LINE user verified:", lineUserId, userData.displayName);
+
+    res.set("Access-Control-Allow-Origin", "*");
+    res.status(200).json({
+      success: true,
+      user: {
+        lineUserId: lineUserId,
+        displayName: userData.displayName || "LINE User",
+        pictureUrl: userData.pictureUrl || null,
+        isPremium: userData.isPremium || false,
+        aiPostUsage: usageData.count || 0,
+        aiPostLimit: 3,
+      },
+    });
+  } catch (error) {
+    console.error("❌ LINE Auth error:", error);
+    res.set("Access-Control-Allow-Origin", "*");
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+/**
+ * 📦 Post Product to Marketplace (LINE Auth)
+ * POST /api/marketplace/post-product
+ * Body: { productData: {...}, lineUserId: "LINE_USER_ID", imageBase64: "..." }
+ */
+exports.marketplacePostProduct = onRequest({
+  region: "us-central1",
+  memory: "512MiB",
+  timeoutSeconds: 60,
+  cors: true,
+}, async (req, res) => {
+  try {
+    // Handle CORS preflight
+    if (req.method === "OPTIONS") {
+      res.set("Access-Control-Allow-Origin", "*");
+      res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+      res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+      res.status(204).send("");
+      return;
+    }
+
+    if (req.method !== "POST") {
+      res.set("Access-Control-Allow-Origin", "*");
+      res.status(405).json({success: false, error: "Method not allowed"});
+      return;
+    }
+
+    const admin = require("firebase-admin");
+    const db = admin.firestore();
+
+    const {productData, lineUserId, imageBase64} = req.body;
+
+    // Validate lineUserId
+    if (!lineUserId) {
+      res.set("Access-Control-Allow-Origin", "*");
+      res.status(400).json({success: false, error: "lineUserId is required"});
+      return;
+    }
+
+    // Verify LINE user exists in our database
+    const lineUserDoc = await db.collection("line_users").doc(lineUserId).get();
+    let userData = null;
+    
+    if (lineUserDoc.exists) {
+      userData = lineUserDoc.data();
+    } else {
+      // Try users collection
+      const usersSnapshot = await db.collection("users")
+          .where("lineUserId", "==", lineUserId)
+          .limit(1)
+          .get();
+      
+      if (!usersSnapshot.empty) {
+        userData = usersSnapshot.docs[0].data();
+      }
+    }
+    
+    if (!userData) {
+      res.set("Access-Control-Allow-Origin", "*");
+      res.status(401).json({
+        success: false,
+        error: "ไม่พบข้อมูลผู้ใช้ กรุณาเพิ่มเพื่อน LINE OA ก่อน",
+        requireAddFriend: true,
+      });
+      return;
+    }
+
+    console.log("📦 Posting product for LINE user:", lineUserId, userData.displayName);
+
+    if (!productData || !productData.productName) {
+      res.set("Access-Control-Allow-Origin", "*");
+      res.status(400).json({success: false, error: "productData is required"});
+      return;
+    }
+
+    let imageUrl = productData.imageUrl;
+
+    // Upload image if base64 provided
+    if (imageBase64 && !imageUrl) {
+      try {
+        const bucket = admin.storage().bucket();
+        const fileName = `marketplace/${Date.now()}_${userId}.jpg`;
+        const file = bucket.file(fileName);
+
+        const imageBuffer = Buffer.from(imageBase64, "base64");
+
+        await file.save(imageBuffer, {
+          metadata: {
+            contentType: "image/jpeg",
+          },
+        });
+
+        await file.makePublic();
+        imageUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
+        console.log("📸 Image uploaded:", imageUrl);
+      } catch (uploadError) {
+        console.error("Image upload error:", uploadError);
+        res.status(500).json({success: false, error: "Failed to upload image"});
+        return;
+      }
+    }
+
+    // Prepare product document
+    const newProduct = {
+      productName: productData.productName,
+      price: parseInt(productData.price) || 0,
+      description: productData.description || "",
+      category: productData.category || "other",
+      imageUrl: imageUrl || "",
+      tags: productData.tags || [productData.category || "other"],
+      sellerName: productData.sellerName || userData.displayName || "LINE User",
+      sellerPhone: productData.sellerPhone || "",
+      sellerLineId: productData.sellerLineId || "",
+      sellerLocation: productData.sellerLocation || "",
+      sellerId: lineUserId, // LINE userId
+      status: "active",
+      viewCount: 0,
+      contactCount: 0,
+      source: "web",
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    };
+
+    const docRef = await db.collection("marketplace_items").add(newProduct);
+
+    console.log("✅ Product posted:", docRef.id);
+
+    res.set("Access-Control-Allow-Origin", "*");
+    res.status(200).json({
+      success: true,
+      productId: docRef.id,
+      message: "สินค้าลงขายสำเร็จ!",
+    });
+  } catch (error) {
+    console.error("❌ Post product error:", error);
+    res.set("Access-Control-Allow-Origin", "*");
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+/**
+ * �📞 HANDLE UNLOCK REQUESTS - Admin Command
  * แสดงรายการ unlock requests ที่รอค้างอยู่ (สำหรับกรณี rate limit 429)
  */
 async function handleUnlockRequests(db, adminUserId, lineClient, replyToken) {
@@ -17552,6 +17820,8 @@ module.exports = {
   marketplaceGetRelated: exports.marketplaceGetRelated,
   marketplaceRecordContact: exports.marketplaceRecordContact,
   marketplaceAIGeneratePost: exports.marketplaceAIGeneratePost,
+  marketplaceLineAuth: exports.marketplaceLineAuth,
+  marketplacePostProduct: exports.marketplacePostProduct,
 
   utilityFunctions: {
     // Core Systems

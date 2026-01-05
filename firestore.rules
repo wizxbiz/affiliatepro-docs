@@ -323,16 +323,16 @@ service cloud.firestore {
       // อ่านได้: ทุกคน (public marketplace)
       allow read: if true;
       
-      // สร้างได้: ผู้ใช้ที่ล็อกอิน
-      allow create: if isAuthenticated();
+      // สร้างได้: ผู้ใช้ที่ล็อกอิน (LINE Auth หรือ Firebase Auth)
+      allow create: if request.auth != null;
       
       // อัปเดตได้: เจ้าของหรือ Admin
-      allow update: if isAuthenticated() && (
+      allow update: if request.auth != null && (
         resource.data.sellerId == request.auth.uid || isAdmin()
       );
       
       // ลบได้: เจ้าของหรือ Admin
-      allow delete: if isAuthenticated() && (
+      allow delete: if request.auth != null && (
         resource.data.sellerId == request.auth.uid || isAdmin()
       );
     }

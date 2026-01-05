@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Injection Molding Calculator</title>
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            font-family: 'Sarabun', sans-serif;
+        }
+        .card {
+            background-color: #2d2d2d;
+            border: 1px solid #404040;
+            margin-bottom: 15px;
+        }
+        .form-control, .form-select {
+            background-color: #3d3d3d;
+            border-color: #505050;
+            color: #fff;
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: #454545;
+            color: #fff;
+            border-color: #00b900;
+            box-shadow: 0 0 0 0.25rem rgba(0, 185, 0, 0.25);
+        }
+        .btn-primary {
+            background-color: #00b900;
+            border-color: #00b900;
+            font-weight: bold;
+        }
+        .btn-primary:hover {
+            background-color: #009900;
+            border-color: #009900;
+        }
+        .nav-tabs .nav-link {
+            color: #aaa;
+        }
+        .nav-tabs .nav-link.active {
+            background-color: #2d2d2d;
+            color: #00b900;
+            border-color: #404040 #404040 #2d2d2d;
+        }
+        .nav-tabs {
+            border-bottom-color: #404040;
+        }
+        h5 {
+            color: #00b900;
+        }
+    </style>
+</head>
+<body class="p-3">
+    <div class="container">
+        <h4 class="text-center mb-4">🧮 เครื่องคำนวณงานฉีด</h4>
+
+        <ul class="nav nav-tabs mb-3" id="calcTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="clamp-tab" data-bs-toggle="tab" data-bs-target="#clamp" type="button">Clamp</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="cooling-tab" data-bs-toggle="tab" data-bs-target="#cooling" type="button">Cooling</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="shot-tab" data-bs-toggle="tab" data-bs-target="#shot" type="button">Shot</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="calcTabContent">
+            <!-- Clamp Force Tab -->
+            <div class="tab-pane fade show active" id="clamp" role="tabpanel">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>🔧 แรงปิดแม่พิมพ์ (Clamping Force)</h5>
+                        <form id="formClamp">
+                            <div class="mb-3">
+                                <label class="form-label">พื้นที่ฉายภาพ (Projected Area)</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="clampArea" placeholder="เช่น 400" required>
+                                    <span class="input-group-text bg-secondary text-white">cm²</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">ความดันในโพรง (Cavity Pressure)</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="clampPressure" placeholder="ปกติ 30-60" value="60" required>
+                                    <span class="input-group-text bg-secondary text-white">MPa</span>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">คำนวณ</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cooling Time Tab -->
+            <div class="tab-pane fade" id="cooling" role="tabpanel">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>❄️ เวลาเย็นตัว (Cooling Time)</h5>
+                        <form id="formCooling">
+                            <div class="mb-3">
+                                <label class="form-label">ความหนาชิ้นงาน (Thickness)</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="coolThick" step="0.1" placeholder="เช่น 2.5" required>
+                                    <span class="input-group-text bg-secondary text-white">mm</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="coolMat">วัสดุ (Material)</label>
+                                <select class="form-select" id="coolMat">
+                                    <option value="ABS">ABS</option>
+                                    <option value="PP">PP</option>
+                                    <option value="PE">PE</option>
+                                    <option value="PC">PC</option>
+                                    <option value="PA6">PA6</option>
+                                    <option value="POM">POM</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">คำนวณ</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shot Size Tab -->
+            <div class="tab-pane fade" id="shot" role="tabpanel">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>💉 ขนาดการฉีด (Shot Size)</h5>
+                        <form id="formShot">
+                            <div class="mb-3">
+                                <label class="form-label">น้ำหนักชิ้นงานรวม Runner</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="shotWeight" placeholder="เช่น 150" required>
+                                    <span class="input-group-text bg-secondary text-white">g</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="shotMat">วัสดุ (Material)</label>
+                                <select class="form-select" id="shotMat">
+                                    <option value="ABS">ABS</option>
+                                    <option value="PP">PP</option>
+                                    <option value="PC">PC</option>
+                                    <option value="PS">PS</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">คำนวณ</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ⚠️ REPLACE WITH YOUR LIFF ID
+        const LIFF_ID = "YOUR_LIFF_ID_HERE"; 
+
+        async function main() {
+            try {
+                await liff.init({ liffId: LIFF_ID });
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                }
+            } catch (err) {
+                console.error("LIFF Init failed", err);
+                // alert("LIFF Init failed: " + err.message); // Uncomment for debugging
+            }
+        }
+        main();
+
+        function sendCommand(text) {
+            if (liff.isInClient()) {
+                liff.sendMessages([{
+                    type: 'text',
+                    text: text
+                }]).then(() => {
+                    liff.closeWindow();
+                }).catch((err) => {
+                    console.error('Error sending message:', err);
+                    alert('Error sending message: ' + err.message);
+                });
+            } else {
+                // Fallback for external browser (just alert)
+                alert('Command that would be sent: ' + text);
+            }
+        }
+
+        // Clamp Form
+        document.getElementById('formClamp').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const area = document.getElementById('clampArea').value;
+            const pressure = document.getElementById('clampPressure').value;
+            sendCommand(`/clamp area=${area} pressure=${pressure}`);
+        });
+
+        // Cooling Form
+        document.getElementById('formCooling').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const thick = document.getElementById('coolThick').value;
+            const mat = document.getElementById('coolMat').value;
+            sendCommand(`/cooling ${thick} ${mat}`);
+        });
+
+        // Shot Form
+        document.getElementById('formShot').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const weight = document.getElementById('shotWeight').value;
+            const mat = document.getElementById('shotMat').value;
+            sendCommand(`/shot ${weight} ${mat}`);
+        });
+    </script>
+</body>
+</html>
