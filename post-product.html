@@ -338,21 +338,40 @@
             margin-bottom: 30px;
         }
         
-        /* Image Upload */
+        /* Image Upload - ทำให้เด่นชัดขึ้น */
         .image-upload-area {
-            border: 3px dashed var(--border);
-            border-radius: 15px;
-            padding: 40px 20px;
+            border: 3px dashed var(--primary);
+            border-radius: 20px;
+            padding: 50px 20px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
-            background: var(--light);
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
             margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .image-upload-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,87,34,0.1) 0%, rgba(255,152,0,0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .image-upload-area:hover::before {
+            opacity: 1;
         }
         
         .image-upload-area:hover {
-            border-color: var(--primary);
-            background: #FFF3E0;
+            border-color: var(--primary-dark);
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(255,87,34,0.2);
         }
         
         .image-upload-area.dragover {
@@ -364,21 +383,37 @@
             padding: 15px;
             border-style: solid;
             border-color: var(--success);
+            background: white;
         }
         
         .upload-icon {
-            font-size: 3rem;
-            color: var(--gray);
+            font-size: 4rem;
+            color: var(--primary);
             margin-bottom: 15px;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
         }
         
         .image-upload-area:hover .upload-icon {
-            color: var(--primary);
+            color: var(--primary-dark);
         }
         
         .upload-text {
-            color: var(--gray);
+            color: var(--dark);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .upload-subtext {
+            color: var(--primary);
             font-size: 1rem;
+            font-weight: 500;
         }
         
         .upload-hint {
@@ -844,9 +879,10 @@
                             <div class="image-upload-area" id="imageUploadArea">
                                 <div id="uploadPlaceholder">
                                     <div class="upload-icon">
-                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <i class="fas fa-camera"></i>
                                     </div>
-                                    <div class="upload-text">คลิกหรือลากรูปมาวางที่นี่</div>
+                                    <div class="upload-text">📸 แตะเพื่อถ่ายรูป/เลือกรูปสินค้า</div>
+                                    <div class="upload-subtext">หรือลากรูปมาวางที่นี่</div>
                                     <div class="upload-hint">รองรับ JPG, PNG ขนาดไม่เกิน 5MB</div>
                                 </div>
                                 <div class="preview-container" id="previewContainer" style="display: none;">
@@ -1071,11 +1107,13 @@
         // API Base URL
         const API_BASE_URL = 'https://us-central1-appinjproject.cloudfunctions.net';
         
-        // LINE LIFF ID - ใช้สำหรับ LINE browser authentication
+        // LINE LIFF ID - ใช้สำหรับ authentication (ถ้ามี)
+        // หมายเหตุ: ถ้า LIFF ไม่พร้อมใช้งาน จะใช้ lineUserId จาก URL parameter แทน
         const LIFF_ID = '2006737061-QJWoVjwA';
         
-        // LINE Login Channel ID - สำหรับ external browser
-        const LINE_CHANNEL_ID = '2006737061';
+        // Flag สำหรับตรวจสอบว่าเปิดจาก LINE OA หรือไม่
+        const isFromLineOA = new URLSearchParams(window.location.search).has('lineUserId') || 
+                             new URLSearchParams(window.location.search).has('aidata');
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
@@ -1096,15 +1134,21 @@
         // LINE AUTHENTICATION SYSTEM
         // ========================================
         
-        // Initialize LIFF (for LINE browser)
+        // Initialize LIFF (for LINE browser) - ไม่จำเป็นถ้ามี lineUserId จาก URL
         async function initLiff() {
+            // ถ้าเปิดจาก LINE OA (มี lineUserId) ไม่ต้อง init LIFF
+            if (isFromLineOA) {
+                console.log('📱 Opened from LINE OA, skip LIFF init');
+                return false;
+            }
+            
             try {
                 await liff.init({ liffId: LIFF_ID });
                 isLiffInitialized = true;
                 console.log('✅ LIFF initialized, isInClient:', liff.isInClient());
                 return true;
             } catch (error) {
-                console.warn('⚠️ LIFF init failed (may be external browser):', error.message);
+                console.warn('⚠️ LIFF init failed:', error.message);
                 return false;
             }
         }
@@ -1114,36 +1158,34 @@
             return isLiffInitialized && liff.isInClient();
         }
         
-        // LINE Login for external browser
+        // LINE Login for external browser - ใช้ LIFF Login เท่านั้น
         function lineLogin() {
             // Save current URL for redirect back
             localStorage.setItem('wit_redirect_url', window.location.href);
             
-            // Check if LIFF is available
-            if (isLiffInitialized && !liff.isLoggedIn()) {
-                // Use LIFF login
-                liff.login({ redirectUri: window.location.href });
+            // Always use LIFF login (works in both LINE browser and external browser)
+            if (isLiffInitialized) {
+                if (!liff.isLoggedIn()) {
+                    // LIFF Login - จะ redirect ไปหน้า LINE Login แล้วกลับมา
+                    liff.login({ redirectUri: window.location.href });
+                } else {
+                    // Already logged in, just refresh
+                    window.location.reload();
+                }
                 return;
             }
             
-            // Fallback: Redirect to LINE Login OAuth
-            const redirectUri = encodeURIComponent(window.location.origin + '/post-product.html');
-            const state = btoa(JSON.stringify({ 
-                redirect: window.location.href,
-                timestamp: Date.now() 
-            }));
-            
-            const lineLoginUrl = `https://access.line.me/oauth2/v2.1/authorize?` +
-                `response_type=code&` +
-                `client_id=${LINE_CHANNEL_ID}&` +
-                `redirect_uri=${redirectUri}&` +
-                `state=${state}&` +
-                `scope=profile%20openid`;
-            
-            window.location.href = lineLoginUrl;
+            // LIFF not initialized - try to init and login
+            initLiff().then(() => {
+                if (isLiffInitialized && !liff.isLoggedIn()) {
+                    liff.login({ redirectUri: window.location.href });
+                } else {
+                    showToast('❌ ไม่สามารถเชื่อมต่อ LINE ได้ กรุณาลองใหม่', 'error');
+                }
+            });
         }
         
-        // Handle LINE Login callback (OAuth code)
+        // Handle LINE Login callback (LIFF handles this automatically)
         async function handleLineLoginCallback() {
             const urlParams = new URLSearchParams(window.location.search);
             const code = urlParams.get('code');
