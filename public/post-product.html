@@ -12,6 +12,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
     
+    <!-- LINE LIFF SDK -->
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -167,6 +170,35 @@
             font-size: 1.3rem;
         }
         
+        /* Add Friend Button */
+        .btn-add-friend {
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid #ddd;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        
+        .btn-add-friend:hover {
+            background: #e0e0e0;
+            color: #333;
+        }
+        
+        /* Divider */
+        .divider-text {
+            color: #aaa;
+            margin: 15px 0;
+            font-size: 0.9rem;
+        }
+        
         /* User Badge (Logged in) */
         .user-badge {
             background: linear-gradient(135deg, #00C300 0%, #00A300 100%);
@@ -197,6 +229,24 @@
         .user-badge .user-status {
             font-size: 0.85rem;
             opacity: 0.9;
+        }
+        
+        .user-badge .btn-logout {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .user-badge .btn-logout:hover {
+            background: rgba(255,255,255,0.3);
         }
         
         /* Toast Notification */
@@ -361,6 +411,87 @@
         .preview-container {
             position: relative;
             display: inline-block;
+        }
+        
+        /* AI Analyze Button */
+        .ai-analyze-btn {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s;
+            z-index: 10;
+        }
+        
+        .ai-analyze-btn:hover {
+            transform: translateX(-50%) scale(1.05);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .ai-analyze-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        
+        .ai-analyze-btn.loading {
+            pointer-events: none;
+        }
+        
+        .ai-analyze-btn.loading i {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* AI Result Badge */
+        .ai-result-badge {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            animation: slideDown 0.3s ease;
+        }
+        
+        .ai-result-badge.show {
+            display: flex;
+        }
+        
+        .ai-result-badge i {
+            font-size: 1.2rem;
+        }
+        
+        .ai-result-badge span {
+            flex: 1;
+        }
+        
+        .ai-result-badge button {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
         }
         
         /* Form Fields */
@@ -695,6 +826,15 @@
                         </div>
                     </div>
                     
+                    <!-- AI Result Badge (shown after AI analysis) -->
+                    <div class="ai-result-badge" id="aiResultBadge">
+                        <i class="fas fa-robot"></i>
+                        <span id="aiResultText">AI กรอกข้อมูลให้แล้ว ตรวจสอบและแก้ไขได้เลย!</span>
+                        <button type="button" onclick="hideAIResultBadge()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
                     <form id="postProductForm">
                         <!-- Image Upload -->
                         <div class="mb-4">
@@ -713,6 +853,9 @@
                                     <img id="imagePreview" alt="Preview">
                                     <button type="button" class="remove-image" onclick="removeImage()">
                                         <i class="fas fa-times"></i>
+                                    </button>
+                                    <button type="button" class="ai-analyze-btn" id="aiAnalyzeBtn" onclick="analyzeWithAI()">
+                                        <i class="fas fa-magic"></i> AI วิเคราะห์รูป
                                     </button>
                                 </div>
                             </div>
@@ -877,13 +1020,24 @@
                 <i class="fab fa-line"></i>
             </div>
             <h3>กรุณาเข้าสู่ระบบ</h3>
-            <p>เพื่อลงขายสินค้าใน Marketplace<br>กรุณาเพิ่มเพื่อน LINE OA ก่อนค่ะ</p>
-            <a href="https://line.me/R/ti/p/@563eikqn" target="_blank" class="btn-line-login" rel="noopener">
+            <p>เพื่อลงขายสินค้าใน Marketplace</p>
+            
+            <!-- LINE Login Button -->
+            <button onclick="lineLogin()" class="btn-line-login" id="lineLoginBtn">
                 <i class="fab fa-line"></i>
+                เข้าสู่ระบบด้วย LINE
+            </button>
+            
+            <div class="divider-text">หรือ</div>
+            
+            <!-- Add Friend for LINE OA users -->
+            <a href="https://line.me/R/ti/p/@563eikqn" target="_blank" class="btn-add-friend" rel="noopener">
+                <i class="fas fa-user-plus"></i>
                 เพิ่มเพื่อน LINE OA
             </a>
+            
             <div class="mt-3">
-                <small class="text-muted">หลังเพิ่มเพื่อนแล้ว ส่ง /โพสต์ เพื่อเริ่มขาย</small>
+                <small class="text-muted">เข้าสู่ระบบครั้งเดียว ใช้ได้ทุก browser</small>
             </div>
         </div>
     </div>
@@ -916,6 +1070,12 @@
 
         // API Base URL
         const API_BASE_URL = 'https://us-central1-appinjproject.cloudfunctions.net';
+        
+        // LINE LIFF ID - ใช้สำหรับ LINE browser authentication
+        const LIFF_ID = '2006737061-QJWoVjwA';
+        
+        // LINE Login Channel ID - สำหรับ external browser
+        const LINE_CHANNEL_ID = '2006737061';
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
@@ -930,54 +1090,269 @@
         let lineUserId = null;
         let currentUser = null;
         let idToken = null;
+        let isLiffInitialized = false;
+
+        // ========================================
+        // LINE AUTHENTICATION SYSTEM
+        // ========================================
+        
+        // Initialize LIFF (for LINE browser)
+        async function initLiff() {
+            try {
+                await liff.init({ liffId: LIFF_ID });
+                isLiffInitialized = true;
+                console.log('✅ LIFF initialized, isInClient:', liff.isInClient());
+                return true;
+            } catch (error) {
+                console.warn('⚠️ LIFF init failed (may be external browser):', error.message);
+                return false;
+            }
+        }
+        
+        // Check if running in LINE app
+        function isInLineApp() {
+            return isLiffInitialized && liff.isInClient();
+        }
+        
+        // LINE Login for external browser
+        function lineLogin() {
+            // Save current URL for redirect back
+            localStorage.setItem('wit_redirect_url', window.location.href);
+            
+            // Check if LIFF is available
+            if (isLiffInitialized && !liff.isLoggedIn()) {
+                // Use LIFF login
+                liff.login({ redirectUri: window.location.href });
+                return;
+            }
+            
+            // Fallback: Redirect to LINE Login OAuth
+            const redirectUri = encodeURIComponent(window.location.origin + '/post-product.html');
+            const state = btoa(JSON.stringify({ 
+                redirect: window.location.href,
+                timestamp: Date.now() 
+            }));
+            
+            const lineLoginUrl = `https://access.line.me/oauth2/v2.1/authorize?` +
+                `response_type=code&` +
+                `client_id=${LINE_CHANNEL_ID}&` +
+                `redirect_uri=${redirectUri}&` +
+                `state=${state}&` +
+                `scope=profile%20openid`;
+            
+            window.location.href = lineLoginUrl;
+        }
+        
+        // Handle LINE Login callback (OAuth code)
+        async function handleLineLoginCallback() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const state = urlParams.get('state');
+            
+            if (code) {
+                console.log('🔐 Processing LINE Login callback...');
+                showToast('🔐 กำลังเข้าสู่ระบบ...', 'info');
+                
+                try {
+                    // Exchange code for user info via backend
+                    const response = await fetch(`${API_BASE_URL}/lineLoginCallback`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            code, 
+                            redirectUri: window.location.origin + '/post-product.html'
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success && result.user) {
+                        // Save user to localStorage (persistent)
+                        saveUserSession(result.user);
+                        lineUserId = result.user.lineUserId;
+                        currentUser = result.user;
+                        
+                        // Clean URL
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        
+                        // Show success
+                        showUserBadge(currentUser);
+                        hideLoginModal();
+                        showToast(`ยินดีต้อนรับ ${currentUser.displayName}!`, 'success');
+                        return true;
+                    } else {
+                        throw new Error(result.error || 'Login failed');
+                    }
+                } catch (error) {
+                    console.error('LINE Login callback error:', error);
+                    showToast('❌ เข้าสู่ระบบไม่สำเร็จ', 'error');
+                    return false;
+                }
+            }
+            return false;
+        }
+        
+        // Save user session to localStorage (persistent across browsers)
+        function saveUserSession(user) {
+            const sessionData = {
+                lineUserId: user.lineUserId,
+                displayName: user.displayName,
+                pictureUrl: user.pictureUrl,
+                isPremium: user.isPremium || false,
+                aiPostUsage: user.aiPostUsage || 0,
+                aiPostLimit: user.aiPostLimit || 3,
+                savedAt: Date.now(),
+                expiresAt: Date.now() + (30 * 24 * 60 * 60 * 1000) // 30 days
+            };
+            localStorage.setItem('wit_line_session', JSON.stringify(sessionData));
+            // Also save to sessionStorage for backward compatibility
+            sessionStorage.setItem('lineUserId', user.lineUserId);
+        }
+        
+        // Get saved user session
+        function getSavedSession() {
+            try {
+                const saved = localStorage.getItem('wit_line_session');
+                if (!saved) return null;
+                
+                const session = JSON.parse(saved);
+                
+                // Check if expired (30 days)
+                if (session.expiresAt && Date.now() > session.expiresAt) {
+                    localStorage.removeItem('wit_line_session');
+                    return null;
+                }
+                
+                return session;
+            } catch (e) {
+                return null;
+            }
+        }
+        
+        // Logout
+        function logout() {
+            localStorage.removeItem('wit_line_session');
+            sessionStorage.removeItem('lineUserId');
+            lineUserId = null;
+            currentUser = null;
+            
+            // Remove user badge
+            const badge = document.querySelector('.user-badge');
+            if (badge) badge.remove();
+            
+            // Logout from LIFF if available
+            if (isLiffInitialized && liff.isLoggedIn()) {
+                liff.logout();
+            }
+            
+            showLoginModal();
+            showToast('ออกจากระบบแล้ว', 'info');
+        }
 
         // Check authentication on page load
         async function checkAuthentication() {
             const urlParams = new URLSearchParams(window.location.search);
             const lineUserIdParam = urlParams.get('lineUserId');
             const aidataParam = urlParams.get('aidata');
+            const code = urlParams.get('code'); // LINE OAuth callback
             
-            // Priority 1: Get lineUserId from URL parameter
-            if (lineUserIdParam) {
-                lineUserId = lineUserIdParam;
-                sessionStorage.setItem('lineUserId', lineUserId);
+            // Initialize LIFF first
+            await initLiff();
+            
+            // Handle LINE Login OAuth callback
+            if (code) {
+                const callbackResult = await handleLineLoginCallback();
+                if (callbackResult) return true;
             }
             
-            // Priority 2: Get from AI data
+            // Priority 1: Check LIFF login (LINE browser)
+            if (isLiffInitialized && liff.isLoggedIn()) {
+                try {
+                    const profile = await liff.getProfile();
+                    lineUserId = profile.userId;
+                    console.log('🔐 LIFF Profile:', profile.displayName);
+                    
+                    // Verify with backend and get user data
+                    const verified = await verifyLineUser(lineUserId);
+                    if (verified) {
+                        saveUserSession(currentUser);
+                        return true;
+                    }
+                } catch (e) {
+                    console.error('LIFF getProfile error:', e);
+                }
+            }
+            
+            // Priority 2: Get lineUserId from URL parameter (from LINE OA)
+            if (lineUserIdParam) {
+                lineUserId = lineUserIdParam;
+                const verified = await verifyLineUser(lineUserId);
+                if (verified) {
+                    saveUserSession(currentUser);
+                    // Clean URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    return true;
+                }
+            }
+            
+            // Priority 3: Get from AI data parameter
             if (!lineUserId && aidataParam) {
                 try {
                     const decoded = JSON.parse(decodeURIComponent(atob(aidataParam)));
                     if (decoded.lineUserId) {
                         lineUserId = decoded.lineUserId;
-                        sessionStorage.setItem('lineUserId', lineUserId);
+                        const verified = await verifyLineUser(lineUserId);
+                        if (verified) {
+                            saveUserSession(currentUser);
+                            return true;
+                        }
                     }
                 } catch (e) {
                     console.error('Error parsing aidata:', e);
                 }
             }
             
-            // Priority 3: Get from sessionStorage
+            // Priority 4: Check saved session (localStorage - persistent)
+            const savedSession = getSavedSession();
+            if (savedSession && savedSession.lineUserId) {
+                console.log('🔐 Found saved session:', savedSession.displayName);
+                lineUserId = savedSession.lineUserId;
+                
+                // Refresh user data from backend
+                const verified = await verifyLineUser(lineUserId, true);
+                if (verified) {
+                    return true;
+                }
+            }
+            
+            // Priority 5: Legacy - Get from sessionStorage
             if (!lineUserId) {
                 lineUserId = sessionStorage.getItem('lineUserId');
+                if (lineUserId) {
+                    const verified = await verifyLineUser(lineUserId);
+                    if (verified) {
+                        saveUserSession(currentUser);
+                        return true;
+                    }
+                }
             }
             
-            console.log('🔐 Checking authentication, lineUserId:', lineUserId);
-            
-            if (!lineUserId) {
-                // No LINE user ID - show login modal
-                showLoginModal();
-                return false;
+            console.log('🔐 No valid session found, showing login modal');
+            showLoginModal();
+            return false;
+        }
+        
+        // Verify LINE user with backend
+        async function verifyLineUser(userId, silent = false) {
+            if (!silent) {
+                showToast('🔐 กำลังเข้าสู่ระบบ...', 'info');
             }
-            
-            // Show loading state
-            showToast('🔐 กำลังเข้าสู่ระบบ...', 'info');
             
             try {
-                // Get custom token from backend
                 const response = await fetch(`${API_BASE_URL}/marketplaceLineAuth`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ lineUserId })
+                    body: JSON.stringify({ lineUserId: userId })
                 });
                 
                 const result = await response.json();
@@ -987,27 +1362,29 @@
                     console.error('Auth failed:', result.error);
                     if (result.requireAddFriend) {
                         showLoginModal();
-                    } else {
+                    } else if (!silent) {
                         showToast('❌ ' + (result.error || 'เกิดข้อผิดพลาด'), 'error');
                     }
                     return false;
                 }
                 
-                // Sign in with custom token
-                await auth.signInWithCustomToken(result.customToken);
                 currentUser = result.user;
-                
-                // Get ID token for API calls
-                idToken = await auth.currentUser.getIdToken();
+                lineUserId = userId;
                 
                 console.log('✅ Logged in as:', currentUser.displayName);
                 showUserBadge(currentUser);
-                showToast(`ยินดีต้อนรับ ${currentUser.displayName}!`, 'success');
+                hideLoginModal();
+                
+                if (!silent) {
+                    showToast(`ยินดีต้อนรับ ${currentUser.displayName}!`, 'success');
+                }
                 
                 return true;
             } catch (error) {
                 console.error('Auth error:', error);
-                showLoginModal();
+                if (!silent) {
+                    showLoginModal();
+                }
                 return false;
             }
         }
@@ -1024,8 +1401,11 @@
                 <img src="${user.pictureUrl || 'https://via.placeholder.com/40'}" alt="${user.displayName}">
                 <div class="user-info">
                     <div class="user-name">${user.displayName}</div>
-                    <div class="user-status">${user.isPremium ? '⭐ Premium' : `ฟรี ${user.aiPostUsage}/${user.aiPostLimit} ครั้ง`}</div>
+                    <div class="user-status">${user.isPremium ? '⭐ Premium' : `ฟรี ${user.aiPostUsage || 0}/${user.aiPostLimit || 3} ครั้ง`}</div>
                 </div>
+                <button onclick="logout()" class="btn-logout" title="ออกจากระบบ">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
             `;
             formCard.insertBefore(badge, formCard.firstChild);
         }
@@ -1119,6 +1499,144 @@
                 </button>
             `;
             formCard.insertBefore(badge, formCard.firstChild);
+        }
+        
+        // ========================================
+        // AI Image Analysis Feature
+        // ========================================
+        
+        // Analyze image with AI
+        async function analyzeWithAI() {
+            if (!selectedImage) {
+                showToast('กรุณาเลือกรูปสินค้าก่อน', 'error');
+                return;
+            }
+            
+            const analyzeBtn = document.getElementById('aiAnalyzeBtn');
+            
+            try {
+                // Show loading state
+                analyzeBtn.classList.add('loading');
+                analyzeBtn.disabled = true;
+                analyzeBtn.innerHTML = '<i class="fas fa-spinner"></i> กำลังวิเคราะห์...';
+                showToast('🤖 AI กำลังวิเคราะห์รูปภาพ...', 'info');
+                
+                // Convert image to base64
+                const base64Image = await fileToBase64(selectedImage);
+                
+                // Call AI API
+                const response = await fetch(`${API_BASE_URL}/marketplaceAIGeneratePost`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        imageBase64: base64Image,
+                        additionalInfo: '',
+                        lineUserId: lineUserId || null
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.error || 'AI วิเคราะห์ไม่สำเร็จ');
+                }
+                
+                // Fill form with AI result
+                const aiResult = result.data;
+                
+                if (aiResult.productName) {
+                    document.getElementById('productName').value = aiResult.productName;
+                }
+                
+                // Use suggestedPrice if available
+                if (aiResult.suggestedPrice) {
+                    // Extract number from price string (e.g., "฿1,500" -> 1500)
+                    const priceNum = parseInt(aiResult.suggestedPrice.replace(/[^\d]/g, ''));
+                    if (priceNum > 0) {
+                        document.getElementById('productPrice').value = priceNum;
+                    }
+                } else if (aiResult.price) {
+                    document.getElementById('productPrice').value = aiResult.price;
+                }
+                
+                // Build description from AI data
+                let description = '';
+                if (aiResult.title) description += aiResult.title + '\n\n';
+                if (aiResult.description) description += aiResult.description + '\n\n';
+                if (aiResult.callToAction) description += aiResult.callToAction + '\n\n';
+                if (aiResult.hashtags && Array.isArray(aiResult.hashtags)) {
+                    description += aiResult.hashtags.map(h => '#' + h).join(' ');
+                }
+                if (description) {
+                    document.getElementById('productDescription').value = description.trim();
+                }
+                
+                if (aiResult.category) {
+                    // Map AI category to form category
+                    const categoryMap = {
+                        'อิเล็กทรอนิกส์': 'electronics',
+                        'เสื้อผ้า/แฟชั่น': 'fashion',
+                        'แฟชั่น': 'fashion',
+                        'ของใช้ในบ้าน': 'home',
+                        'ความงาม': 'beauty',
+                        'กีฬา': 'sports',
+                        'อื่นๆ': 'other'
+                    };
+                    const mappedCategory = categoryMap[aiResult.category] || 'other';
+                    const categoryBtn = document.querySelector(`.category-btn[data-category="${mappedCategory}"]`);
+                    if (categoryBtn) {
+                        document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                        categoryBtn.classList.add('active');
+                        selectedCategory = mappedCategory;
+                        document.getElementById('productCategory').value = mappedCategory;
+                    }
+                }
+                
+                // Show success badge
+                showAIResultBadge();
+                showToast('✨ AI วิเคราะห์เสร็จแล้ว!', 'success');
+                
+            } catch (error) {
+                console.error('AI Analysis error:', error);
+                showToast('❌ ' + error.message, 'error');
+            } finally {
+                // Reset button state
+                analyzeBtn.classList.remove('loading');
+                analyzeBtn.disabled = false;
+                analyzeBtn.innerHTML = '<i class="fas fa-magic"></i> AI วิเคราะห์รูป';
+            }
+        }
+        
+        // Convert file to base64
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    // Remove data URL prefix to get pure base64
+                    const base64 = reader.result.split(',')[1];
+                    resolve(base64);
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        // Show AI Result Badge
+        function showAIResultBadge() {
+            const badge = document.getElementById('aiResultBadge');
+            if (badge) {
+                badge.classList.add('show');
+            }
+        }
+        
+        // Hide AI Result Badge
+        function hideAIResultBadge() {
+            const badge = document.getElementById('aiResultBadge');
+            if (badge) {
+                badge.classList.remove('show');
+            }
         }
         
         // Show toast notification
