@@ -1,6 +1,13 @@
 .vscode/
 backup_local/
 
+# Sensitive files - DO NOT UPLOAD
+functions/index.js
+functions/*.key
+functions/*.pem
+service-account*.json
+*-credentials.json
+
 # OS/editor noise
 .DS_Store
 Thumbs.db
