@@ -2497,6 +2497,26 @@
                 return;
             }
             
+            // ตรวจสอบโควต้าก่อนวิเคราะห์
+            if (lineUserId) {
+                try {
+                    const usageDoc = await db.collection('ai_post_usage').doc(lineUserId).get();
+                    const userData = usageDoc.exists ? usageDoc.data() : { count: 0 };
+                    const isPremium = userData.isPremium || false;
+                    const usedCount = userData.count || 0;
+                    const FREE_LIMIT = 3;
+                    
+                    if (!isPremium && usedCount >= FREE_LIMIT) {
+                        showToast('🔒 หมดสิทธิ์ใช้ฟรีแล้ว กรุณาอัพเกรด Premium', 'error');
+                        // แสดง modal แนะนำ Premium
+                        showPremiumUpgradeModal();
+                        return;
+                    }
+                } catch (error) {
+                    console.error('Error checking quota:', error);
+                }
+            }
+            
             const extraInfo = document.getElementById('aiExtraInfo').value;
             
             // Show loading
@@ -2722,6 +2742,58 @@
             });
         }
         
+        // Show Premium Upgrade Modal when quota exhausted
+        function showPremiumUpgradeModal() {
+            const modal = document.createElement('div');
+            modal.className = 'membership-modal-overlay';
+            modal.innerHTML = `
+                <div class="membership-modal">
+                    <div class="membership-header" style="background: linear-gradient(135deg, #FFD700, #FFA500);">
+                        <h3><i class="fas fa-crown"></i> อัพเกรด Premium</h3>
+                        <button class="close-btn" onclick="this.closest('.membership-modal-overlay').remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="membership-body">
+                        <p style="font-size: 1.2em; color: #F44336; margin-bottom: 15px;">
+                            🔒 คุณใช้สิทธิ์ฟรีครบ 3 ครั้งแล้ว
+                        </p>
+                        <p>อัพเกรดเป็น <strong style="color: #FFD700;">Premium</strong> เพื่อใช้ได้ไม่จำกัด!</p>
+                        
+                        <div class="membership-benefits">
+                            <div class="benefit-item">
+                                <i class="fas fa-infinity" style="color: #667eea;"></i>
+                                <span>สร้างโพสต์ AI ได้ไม่จำกัด</span>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="fas fa-bolt" style="color: #667eea;"></i>
+                                <span>ประมวลผลเร็วกว่าปกติ</span>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="fas fa-star" style="color: #667eea;"></i>
+                                <span>สิทธิพิเศษตลอดชีพ</span>
+                            </div>
+                            <div class="benefit-item">
+                                <i class="fas fa-headset" style="color: #667eea;"></i>
+                                <span>รับบริการพิเศษจากทีมงาน</span>
+                            </div>
+                        </div>
+                        
+                        <a href="https://line.me/R/ti/p/@563eikqn?text=%E0%B8%AA%E0%B8%99%E0%B9%83%E0%B8%88%20Premium%20AI%20Post" target="_blank" class="line-add-btn" style="background: linear-gradient(135deg, #FFD700, #FFA500);">
+                            <i class="fas fa-crown"></i> สมัคร Premium ตอนนี้
+                        </a>
+                        <p class="hint-text">💬 แชทกับเราเพื่อสมัคร Premium</p>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            // Click outside to close
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+        
         // Update usage badge based on lineUserId
         async function updateUsageBadge() {
             const badge = document.getElementById('aiUsageBadge');
@@ -2754,7 +2826,8 @@
                 } else {
                     badge.className = 'ai-usage-badge exhausted';
                     text.innerHTML = '🔒 หมดสิทธิ์ใช้ฟรีแล้ว - <a href="https://line.me/R/ti/p/@563eikqn" target="_blank" style="color:#667eea;font-weight:600;">อัพเกรด Premium</a>';
-                    sellBtn.disabled = true;
+                    // ไม่ disable ปุ่ม - ให้เข้าได้ แล้วเช็คตอน generate แทน
+                    sellBtn.disabled = false;
                 }
             } catch (error) {
                 console.error('Error fetching usage:', error);

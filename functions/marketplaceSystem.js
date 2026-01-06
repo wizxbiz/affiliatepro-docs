@@ -64,7 +64,7 @@ const BOT_LINE_ID = "@563eikqn"; // LINE Bot ID for VOOM sharing
 const MARKETPLACE_COLLECTION = "marketplace_items";
 const USER_STATE_COLLECTION = "user_marketplace_states";
 const AI_POST_USAGE_COLLECTION = "ai_post_usage"; // สำหรับนับการใช้ฟรี
-const WEB_BASE_URL = "https://wizmobiz.com";
+const WEB_BASE_URL = "https://appinjproject.web.app";
 const FREE_AI_POST_LIMIT = 3; // จำกัดการใช้ฟรี 3 ครั้ง
 
 // User States for State Machine
