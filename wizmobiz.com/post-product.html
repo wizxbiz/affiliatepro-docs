@@ -1,0 +1,2037 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ลงขายสินค้า WiT Marketplace - โพสต์ขายสินค้าออนไลน์ฟรี">
+    <title>ลงขายสินค้า - WiT Marketplace</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    
+    <!-- LINE LIFF SDK -->
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #FF5722;
+            --primary-dark: #E64A19;
+            --secondary: #2196F3;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --dark: #212121;
+            --light: #FAFAFA;
+            --gray: #757575;
+            --border: #E0E0E0;
+            --line-green: #00C300;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+            min-height: 100vh;
+            color: var(--dark);
+        }
+        
+        /* AI Data Badge */
+        .ai-data-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .ai-data-badge i {
+            font-size: 1.2rem;
+        }
+        
+        .ai-data-badge span {
+            flex: 1;
+        }
+        
+        .ai-data-badge button {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        /* Login Required Modal */
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .login-modal.show {
+            display: flex;
+        }
+        
+        .login-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 400px;
+            text-align: center;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .login-card .icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #00C300 0%, #00A300 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+        
+        .login-card .icon i {
+            font-size: 2.5rem;
+            color: white;
+        }
+        
+        .login-card h3 {
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .login-card p {
+            color: var(--gray);
+            margin-bottom: 25px;
+        }
+        
+        .btn-line-login {
+            background: linear-gradient(135deg, #00C300 0%, #00A300 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        
+        .btn-line-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,195,0,0.4);
+            color: white;
+        }
+        
+        .btn-line-login i {
+            font-size: 1.3rem;
+        }
+        
+        /* Add Friend Button */
+        .btn-add-friend {
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid #ddd;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        
+        .btn-add-friend:hover {
+            background: #e0e0e0;
+            color: #333;
+        }
+        
+        /* Divider */
+        .divider-text {
+            color: #aaa;
+            margin: 15px 0;
+            font-size: 0.9rem;
+        }
+        
+        /* User Badge (Logged in) */
+        .user-badge {
+            background: linear-gradient(135deg, #00C300 0%, #00A300 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .user-badge img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        
+        .user-badge .user-info {
+            flex: 1;
+        }
+        
+        .user-badge .user-name {
+            font-weight: 600;
+        }
+        
+        .user-badge .user-status {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+        
+        .user-badge .btn-logout {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .user-badge .btn-logout:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        /* Toast Notification */
+        .toast-notification {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #333;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 500;
+            z-index: 3000;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .toast-notification.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        .toast-notification.success {
+            background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .logo:hover {
+            color: #FFE0B2;
+        }
+        
+        .nav-link-header {
+            color: white;
+            margin-left: 20px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .nav-link-header:hover {
+            color: #FFE0B2;
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 30px 0 60px;
+        }
+        
+        .form-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .form-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .form-subtitle {
+            text-align: center;
+            color: var(--gray);
+            margin-bottom: 30px;
+        }
+        
+        /* Image Upload - ทำให้เด่นชัดขึ้น */
+        .image-upload-area {
+            border: 3px dashed var(--primary);
+            border-radius: 20px;
+            padding: 50px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .image-upload-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,87,34,0.1) 0%, rgba(255,152,0,0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .image-upload-area:hover::before {
+            opacity: 1;
+        }
+        
+        .image-upload-area:hover {
+            border-color: var(--primary-dark);
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(255,87,34,0.2);
+        }
+        
+        .image-upload-area.dragover {
+            border-color: var(--primary);
+            background: #FFCCBC;
+        }
+        
+        .image-upload-area.has-image {
+            padding: 15px;
+            border-style: solid;
+            border-color: var(--success);
+            background: white;
+        }
+        
+        .upload-icon {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        .image-upload-area:hover .upload-icon {
+            color: var(--primary-dark);
+        }
+        
+        .upload-text {
+            color: var(--dark);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .upload-subtext {
+            color: var(--primary);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        
+        .upload-hint {
+            color: #BDBDBD;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+        
+        #imagePreview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .remove-image {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(244, 67, 54, 0.9);
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .preview-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        /* AI Analyze Button */
+        .ai-analyze-btn {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s;
+            z-index: 10;
+        }
+        
+        .ai-analyze-btn:hover {
+            transform: translateX(-50%) scale(1.05);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .ai-analyze-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        
+        .ai-analyze-btn.loading {
+            pointer-events: none;
+        }
+        
+        .ai-analyze-btn.loading i {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* AI Result Badge */
+        .ai-result-badge {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            animation: slideDown 0.3s ease;
+        }
+        
+        .ai-result-badge.show {
+            display: flex;
+        }
+        
+        .ai-result-badge i {
+            font-size: 1.2rem;
+        }
+        
+        .ai-result-badge span {
+            flex: 1;
+        }
+        
+        .ai-result-badge button {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        /* Form Fields */
+        .form-label {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+        
+        .form-label .required {
+            color: #F44336;
+        }
+        
+        .form-control {
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.1);
+        }
+        
+        .form-control::placeholder {
+            color: #BDBDBD;
+        }
+        
+        .input-group-text {
+            background: var(--light);
+            border: 2px solid var(--border);
+            border-right: none;
+            border-radius: 12px 0 0 12px;
+            padding: 14px 18px;
+            color: var(--gray);
+        }
+        
+        .input-group .form-control {
+            border-radius: 0 12px 12px 0;
+        }
+        
+        /* Category Select */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .category-btn {
+            padding: 12px 10px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .category-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .category-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .category-btn i {
+            display: block;
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+        
+        /* Contact Section */
+        .contact-section {
+            background: #E3F2FD;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+        
+        .contact-section h5 {
+            color: #1976D2;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        /* Submit Button */
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 87, 34, 0.3);
+        }
+        
+        .btn-submit:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* LINE Login Notice */
+        .line-notice {
+            background: linear-gradient(135deg, var(--line-green) 0%, #00A000 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .line-notice i {
+            font-size: 2rem;
+        }
+        
+        .line-notice-text h6 {
+            margin: 0 0 5px;
+            font-weight: 600;
+        }
+        
+        .line-notice-text p {
+            margin: 0;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        /* Success Modal */
+        .success-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .success-modal.show {
+            display: flex;
+        }
+        
+        .success-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            margin: 20px;
+            animation: popIn 0.3s ease;
+        }
+        
+        @keyframes popIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 2.5rem;
+        }
+        
+        .success-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .success-message {
+            color: var(--gray);
+            margin-bottom: 25px;
+        }
+        
+        .btn-line-chat {
+            background: var(--line-green);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        
+        .btn-line-chat:hover {
+            background: #00A000;
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+        }
+        
+        .footer a {
+            color: #FFD740;
+            text-decoration: none;
+        }
+        
+        /* Loading Overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.9);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        .loading-overlay.show {
+            display: flex;
+        }
+        
+        .spinner-large {
+            width: 60px;
+            height: 60px;
+            border: 5px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            margin-top: 20px;
+            font-size: 1.1rem;
+            color: var(--gray);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-card {
+                padding: 25px 20px;
+                border-radius: 15px;
+            }
+            
+            .category-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .form-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="marketplace.html" class="logo">
+                    <i class="fas fa-store"></i> WiT Marketplace
+                </a>
+                <nav>
+                    <a href="marketplace.html" class="nav-link-header">
+                        <i class="fas fa-shopping-bag"></i> ตลาด
+                    </a>
+                    <a href="marketplace-howto.html" class="nav-link-header">
+                        <i class="fas fa-question-circle"></i> วิธีใช้
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="form-container">
+                <div class="form-card">
+                    <h1 class="form-title">📦 ลงขายสินค้า</h1>
+                    <p class="form-subtitle">กรอกข้อมูลสินค้าของคุณ แล้วลงขายได้เลย!</p>
+                    
+                    <!-- LINE Notice -->
+                    <div class="line-notice">
+                        <i class="fab fa-line"></i>
+                        <div class="line-notice-text">
+                            <h6>เชื่อมต่อกับ LINE OA</h6>
+                            <p>สินค้าจะแสดงในตลาด และคุณจะได้รับแจ้งเตือนผ่าน LINE เมื่อมีคนสนใจ</p>
+                        </div>
+                    </div>
+                    
+                    <!-- AI Result Badge (shown after AI analysis) -->
+                    <div class="ai-result-badge" id="aiResultBadge">
+                        <i class="fas fa-robot"></i>
+                        <span id="aiResultText">AI กรอกข้อมูลให้แล้ว ตรวจสอบและแก้ไขได้เลย!</span>
+                        <button type="button" onclick="hideAIResultBadge()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <form id="postProductForm">
+                        <!-- Image Upload -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-camera"></i> รูปสินค้า <span class="required">*</span>
+                            </label>
+                            <div class="image-upload-area" id="imageUploadArea">
+                                <div id="uploadPlaceholder">
+                                    <div class="upload-icon">
+                                        <i class="fas fa-camera"></i>
+                                    </div>
+                                    <div class="upload-text">📸 แตะเพื่อถ่ายรูป/เลือกรูปสินค้า</div>
+                                    <div class="upload-subtext">หรือลากรูปมาวางที่นี่</div>
+                                    <div class="upload-hint">รองรับ JPG, PNG ขนาดไม่เกิน 5MB</div>
+                                </div>
+                                <div class="preview-container" id="previewContainer" style="display: none;">
+                                    <img id="imagePreview" alt="Preview">
+                                    <button type="button" class="remove-image" onclick="removeImage()">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                    <button type="button" class="ai-analyze-btn" id="aiAnalyzeBtn" onclick="analyzeWithAI()">
+                                        <i class="fas fa-magic"></i> AI วิเคราะห์รูป
+                                    </button>
+                                </div>
+                            </div>
+                            <input type="file" id="imageInput" accept="image/*" hidden>
+                        </div>
+                        
+                        <!-- Product Name -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-tag"></i> ชื่อสินค้า <span class="required">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="productName" 
+                                   placeholder="เช่น iPhone 14 Pro Max 256GB สีม่วง" required maxlength="100">
+                        </div>
+                        
+                        <!-- Price -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-money-bill-wave"></i> ราคา <span class="required">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text">฿</span>
+                                <input type="number" class="form-control" id="productPrice" 
+                                       placeholder="0" required min="1" max="9999999">
+                            </div>
+                        </div>
+                        
+                        <!-- Category -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-folder"></i> หมวดหมู่ <span class="required">*</span>
+                            </label>
+                            <div class="category-grid">
+                                <div class="category-btn" data-category="electronics">
+                                    <i class="fas fa-laptop"></i>
+                                    อิเล็กทรอนิกส์
+                                </div>
+                                <div class="category-btn" data-category="fashion">
+                                    <i class="fas fa-tshirt"></i>
+                                    แฟชั่น
+                                </div>
+                                <div class="category-btn" data-category="home">
+                                    <i class="fas fa-home"></i>
+                                    ของใช้ในบ้าน
+                                </div>
+                                <div class="category-btn" data-category="beauty">
+                                    <i class="fas fa-spa"></i>
+                                    ความงาม
+                                </div>
+                                <div class="category-btn" data-category="sports">
+                                    <i class="fas fa-running"></i>
+                                    กีฬา
+                                </div>
+                                <div class="category-btn" data-category="other">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                    อื่นๆ
+                                </div>
+                            </div>
+                            <input type="hidden" id="productCategory" required>
+                        </div>
+                        
+                        <!-- Description -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-align-left"></i> รายละเอียดสินค้า
+                            </label>
+                            <textarea class="form-control" id="productDescription" rows="4" 
+                                      placeholder="อธิบายสภาพสินค้า, อุปกรณ์ที่ให้, เหตุผลที่ขาย ฯลฯ" maxlength="500"></textarea>
+                        </div>
+                        
+                        <!-- Contact Section -->
+                        <div class="contact-section">
+                            <h5><i class="fas fa-address-book"></i> ข้อมูลติดต่อ</h5>
+                            
+                            <!-- Seller Name -->
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    ชื่อผู้ขาย <span class="required">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="sellerName" 
+                                       placeholder="ชื่อที่ต้องการให้แสดง" required maxlength="50">
+                            </div>
+                            
+                            <!-- Phone -->
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-phone"></i> เบอร์โทรศัพท์
+                                </label>
+                                <input type="tel" class="form-control" id="sellerPhone" 
+                                       placeholder="08x-xxx-xxxx" pattern="[0-9]{9,10}">
+                            </div>
+                            
+                            <!-- LINE ID -->
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    <i class="fab fa-line"></i> LINE ID
+                                </label>
+                                <input type="text" class="form-control" id="sellerLineId" 
+                                       placeholder="@yourlineid หรือ phone number">
+                            </div>
+                            
+                            <!-- Location -->
+                            <div class="mb-0">
+                                <label class="form-label">
+                                    <i class="fas fa-map-marker-alt"></i> พื้นที่/จังหวัด
+                                </label>
+                                <input type="text" class="form-control" id="sellerLocation" 
+                                       placeholder="เช่น กรุงเทพฯ, เชียงใหม่">
+                            </div>
+                        </div>
+                        
+                        <!-- Terms -->
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                            <label class="form-check-label" for="agreeTerms">
+                                ฉันยอมรับ <a href="terms.html" target="_blank">เงื่อนไขการใช้งาน</a> 
+                                และรับรองว่าสินค้านี้ไม่ผิดกฎหมาย
+                            </label>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn-submit" id="submitBtn">
+                            <i class="fas fa-paper-plane"></i> ลงขายสินค้าเลย!
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Success Modal -->
+    <div class="success-modal" id="successModal">
+        <div class="success-content">
+            <div class="success-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <h2 class="success-title">ลงขายสำเร็จ! 🎉</h2>
+            <p class="success-message">
+                สินค้าของคุณแสดงในตลาดแล้ว<br>
+                เพิ่มเพื่อน LINE OA เพื่อรับแจ้งเตือนเมื่อมีคนสนใจ
+            </p>
+            <a href="https://line.me/R/ti/p/@563eikqn" target="_blank" class="btn-line-chat">
+                <i class="fab fa-line"></i>
+                เพิ่มเพื่อน LINE OA
+            </a>
+            <div class="mt-3">
+                <a href="marketplace.html" class="text-muted">ดูสินค้าในตลาด →</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner-large"></div>
+        <div class="loading-text">กำลังอัปโหลดสินค้า...</div>
+    </div>
+    
+    <!-- Login Required Modal -->
+    <div class="login-modal" id="loginModal">
+        <div class="login-card">
+            <div class="icon">
+                <i class="fab fa-line"></i>
+            </div>
+            <h3>กรุณาเข้าสู่ระบบ</h3>
+            <p>เพื่อลงขายสินค้าใน Marketplace</p>
+            
+            <!-- LINE Login Button -->
+            <button onclick="lineLogin()" class="btn-line-login" id="lineLoginBtn">
+                <i class="fab fa-line"></i>
+                เข้าสู่ระบบด้วย LINE
+            </button>
+            
+            <div class="divider-text">หรือ</div>
+            
+            <!-- Add Friend for LINE OA users -->
+            <a href="https://line.me/R/ti/p/@563eikqn" target="_blank" class="btn-add-friend" rel="noopener">
+                <i class="fas fa-user-plus"></i>
+                เพิ่มเพื่อน LINE OA
+            </a>
+            
+            <div class="mt-3">
+                <small class="text-muted">เข้าสู่ระบบครั้งเดียว ใช้ได้ทุก browser</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>
+                <a href="marketplace.html">ตลาด</a> | 
+                <a href="marketplace-howto.html">วิธีใช้</a> | 
+                <a href="terms.html">เงื่อนไข</a>
+            </p>
+            <p class="mt-2 text-muted">© 2025 WiT Marketplace by Wizmobiz</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD92Lw0vd32ce6m4J2nBVBWZRYBy4aDB_s",
+            authDomain: "appinjproject.firebaseapp.com",
+            projectId: "appinjproject",
+            storageBucket: "appinjproject.firebasestorage.app",
+            messagingSenderId: "408718656984",
+            appId: "1:408718656984:web:76e9cc7a89e9b4c9d5a8ab"
+        };
+
+        // API Base URL
+        const API_BASE_URL = 'https://us-central1-appinjproject.cloudfunctions.net';
+        
+        // LINE LIFF ID - ใช้สำหรับ authentication (ถ้ามี)
+        // หมายเหตุ: ถ้า LIFF ไม่พร้อมใช้งาน จะใช้ lineUserId จาก URL parameter แทน
+        const LIFF_ID = '2006737061-QJWoVjwA';
+        
+        // Flag สำหรับตรวจสอบว่าเปิดจาก LINE OA หรือไม่
+        const isFromLineOA = new URLSearchParams(window.location.search).has('lineUserId') || 
+                             new URLSearchParams(window.location.search).has('aidata');
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+        const auth = firebase.auth();
+
+        // State
+        let selectedImage = null;
+        let selectedCategory = '';
+        let aiData = null;
+        let lineUserId = null;
+        let currentUser = null;
+        let idToken = null;
+        let isLiffInitialized = false;
+
+        // ========================================
+        // LINE AUTHENTICATION SYSTEM
+        // ========================================
+        
+        // Initialize LIFF (for LINE browser) - ไม่จำเป็นถ้ามี lineUserId จาก URL
+        async function initLiff() {
+            // ถ้าเปิดจาก LINE OA (มี lineUserId) ไม่ต้อง init LIFF
+            if (isFromLineOA) {
+                console.log('📱 Opened from LINE OA, skip LIFF init');
+                return false;
+            }
+            
+            try {
+                await liff.init({ liffId: LIFF_ID });
+                isLiffInitialized = true;
+                console.log('✅ LIFF initialized, isInClient:', liff.isInClient());
+                return true;
+            } catch (error) {
+                console.warn('⚠️ LIFF init failed:', error.message);
+                return false;
+            }
+        }
+        
+        // Check if running in LINE app
+        function isInLineApp() {
+            return isLiffInitialized && liff.isInClient();
+        }
+        
+        // LINE Login for external browser - ใช้ LIFF Login เท่านั้น
+        function lineLogin() {
+            // Save current URL for redirect back
+            localStorage.setItem('wit_redirect_url', window.location.href);
+            
+            // Always use LIFF login (works in both LINE browser and external browser)
+            if (isLiffInitialized) {
+                if (!liff.isLoggedIn()) {
+                    // LIFF Login - จะ redirect ไปหน้า LINE Login แล้วกลับมา
+                    liff.login({ redirectUri: window.location.href });
+                } else {
+                    // Already logged in, just refresh
+                    window.location.reload();
+                }
+                return;
+            }
+            
+            // LIFF not initialized - try to init and login
+            initLiff().then(() => {
+                if (isLiffInitialized && !liff.isLoggedIn()) {
+                    liff.login({ redirectUri: window.location.href });
+                } else {
+                    showToast('❌ ไม่สามารถเชื่อมต่อ LINE ได้ กรุณาลองใหม่', 'error');
+                }
+            });
+        }
+        
+        // Handle LINE Login callback (LIFF handles this automatically)
+        async function handleLineLoginCallback() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const state = urlParams.get('state');
+            
+            if (code) {
+                console.log('🔐 Processing LINE Login callback...');
+                showToast('🔐 กำลังเข้าสู่ระบบ...', 'info');
+                
+                try {
+                    // Exchange code for user info via backend
+                    const response = await fetch(`${API_BASE_URL}/lineLoginCallback`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            code, 
+                            redirectUri: window.location.origin + '/post-product.html'
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success && result.user) {
+                        // Save user to localStorage (persistent)
+                        saveUserSession(result.user);
+                        lineUserId = result.user.lineUserId;
+                        currentUser = result.user;
+                        
+                        // Clean URL
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        
+                        // Show success
+                        showUserBadge(currentUser);
+                        hideLoginModal();
+                        showToast(`ยินดีต้อนรับ ${currentUser.displayName}!`, 'success');
+                        return true;
+                    } else {
+                        throw new Error(result.error || 'Login failed');
+                    }
+                } catch (error) {
+                    console.error('LINE Login callback error:', error);
+                    showToast('❌ เข้าสู่ระบบไม่สำเร็จ', 'error');
+                    return false;
+                }
+            }
+            return false;
+        }
+        
+        // Save user session to localStorage (persistent across browsers)
+        function saveUserSession(user) {
+            const sessionData = {
+                lineUserId: user.lineUserId,
+                displayName: user.displayName,
+                pictureUrl: user.pictureUrl,
+                isPremium: user.isPremium || false,
+                aiPostUsage: user.aiPostUsage || 0,
+                aiPostLimit: user.aiPostLimit || 3,
+                savedAt: Date.now(),
+                expiresAt: Date.now() + (30 * 24 * 60 * 60 * 1000) // 30 days
+            };
+            localStorage.setItem('wit_line_session', JSON.stringify(sessionData));
+            // Also save to sessionStorage for backward compatibility
+            sessionStorage.setItem('lineUserId', user.lineUserId);
+        }
+        
+        // Get saved user session
+        function getSavedSession() {
+            try {
+                const saved = localStorage.getItem('wit_line_session');
+                if (!saved) return null;
+                
+                const session = JSON.parse(saved);
+                
+                // Check if expired (30 days)
+                if (session.expiresAt && Date.now() > session.expiresAt) {
+                    localStorage.removeItem('wit_line_session');
+                    return null;
+                }
+                
+                return session;
+            } catch (e) {
+                return null;
+            }
+        }
+        
+        // Logout
+        function logout() {
+            localStorage.removeItem('wit_line_session');
+            sessionStorage.removeItem('lineUserId');
+            lineUserId = null;
+            currentUser = null;
+            
+            // Remove user badge
+            const badge = document.querySelector('.user-badge');
+            if (badge) badge.remove();
+            
+            // Logout from LIFF if available
+            if (isLiffInitialized && liff.isLoggedIn()) {
+                liff.logout();
+            }
+            
+            showLoginModal();
+            showToast('ออกจากระบบแล้ว', 'info');
+        }
+
+        // Check authentication on page load
+        async function checkAuthentication() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const lineUserIdParam = urlParams.get('lineUserId');
+            const aidataParam = urlParams.get('aidata');
+            const code = urlParams.get('code'); // LINE OAuth callback
+            
+            // Initialize LIFF first
+            await initLiff();
+            
+            // Handle LINE Login OAuth callback
+            if (code) {
+                const callbackResult = await handleLineLoginCallback();
+                if (callbackResult) return true;
+            }
+            
+            // Priority 1: Check LIFF login (LINE browser)
+            if (isLiffInitialized && liff.isLoggedIn()) {
+                try {
+                    const profile = await liff.getProfile();
+                    lineUserId = profile.userId;
+                    console.log('🔐 LIFF Profile:', profile.displayName);
+                    
+                    // Verify with backend and get user data
+                    const verified = await verifyLineUser(lineUserId);
+                    if (verified) {
+                        saveUserSession(currentUser);
+                        return true;
+                    }
+                } catch (e) {
+                    console.error('LIFF getProfile error:', e);
+                }
+            }
+            
+            // Priority 2: Get lineUserId from URL parameter (from LINE OA)
+            if (lineUserIdParam) {
+                lineUserId = lineUserIdParam;
+                const verified = await verifyLineUser(lineUserId);
+                if (verified) {
+                    saveUserSession(currentUser);
+                    // Clean URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    return true;
+                }
+            }
+            
+            // Priority 3: Get from AI data parameter
+            if (!lineUserId && aidataParam) {
+                try {
+                    const decoded = JSON.parse(decodeURIComponent(atob(aidataParam)));
+                    if (decoded.lineUserId) {
+                        lineUserId = decoded.lineUserId;
+                        const verified = await verifyLineUser(lineUserId);
+                        if (verified) {
+                            saveUserSession(currentUser);
+                            return true;
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error parsing aidata:', e);
+                }
+            }
+            
+            // Priority 4: Check saved session (localStorage - persistent)
+            const savedSession = getSavedSession();
+            if (savedSession && savedSession.lineUserId) {
+                console.log('🔐 Found saved session:', savedSession.displayName);
+                lineUserId = savedSession.lineUserId;
+                
+                // Refresh user data from backend
+                const verified = await verifyLineUser(lineUserId, true);
+                if (verified) {
+                    return true;
+                }
+            }
+            
+            // Priority 5: Legacy - Get from sessionStorage
+            if (!lineUserId) {
+                lineUserId = sessionStorage.getItem('lineUserId');
+                if (lineUserId) {
+                    const verified = await verifyLineUser(lineUserId);
+                    if (verified) {
+                        saveUserSession(currentUser);
+                        return true;
+                    }
+                }
+            }
+            
+            console.log('🔐 No valid session found, showing login modal');
+            showLoginModal();
+            return false;
+        }
+        
+        // Verify LINE user with backend
+        async function verifyLineUser(userId, silent = false) {
+            if (!silent) {
+                showToast('🔐 กำลังเข้าสู่ระบบ...', 'info');
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/marketplaceLineAuth`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ lineUserId: userId })
+                });
+                
+                const result = await response.json();
+                console.log('🔐 Auth response:', result);
+                
+                if (!result.success) {
+                    console.error('Auth failed:', result.error);
+                    if (result.requireAddFriend) {
+                        showLoginModal();
+                    } else if (!silent) {
+                        showToast('❌ ' + (result.error || 'เกิดข้อผิดพลาด'), 'error');
+                    }
+                    return false;
+                }
+                
+                currentUser = result.user;
+                lineUserId = userId;
+                
+                console.log('✅ Logged in as:', currentUser.displayName);
+                showUserBadge(currentUser);
+                hideLoginModal();
+                
+                if (!silent) {
+                    showToast(`ยินดีต้อนรับ ${currentUser.displayName}!`, 'success');
+                }
+                
+                return true;
+            } catch (error) {
+                console.error('Auth error:', error);
+                if (!silent) {
+                    showLoginModal();
+                }
+                return false;
+            }
+        }
+        
+        // Show user badge when logged in
+        function showUserBadge(user) {
+            const formCard = document.querySelector('.form-card');
+            const existingBadge = document.querySelector('.user-badge');
+            if (existingBadge) existingBadge.remove();
+            
+            const badge = document.createElement('div');
+            badge.className = 'user-badge';
+            badge.innerHTML = `
+                <img src="${user.pictureUrl || 'https://via.placeholder.com/40'}" alt="${user.displayName}">
+                <div class="user-info">
+                    <div class="user-name">${user.displayName}</div>
+                    <div class="user-status">${user.isPremium ? '⭐ Premium' : `ฟรี ${user.aiPostUsage || 0}/${user.aiPostLimit || 3} ครั้ง`}</div>
+                </div>
+                <button onclick="logout()" class="btn-logout" title="ออกจากระบบ">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            `;
+            formCard.insertBefore(badge, formCard.firstChild);
+        }
+        
+        // Show login modal
+        function showLoginModal() {
+            document.getElementById('loginModal').classList.add('show');
+        }
+        
+        // Hide login modal
+        function hideLoginModal() {
+            document.getElementById('loginModal').classList.remove('show');
+        }
+
+        // Check for AI data from URL parameter
+        function checkAIData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const aidataParam = urlParams.get('aidata');
+            
+            if (aidataParam) {
+                try {
+                    aiData = JSON.parse(decodeURIComponent(atob(aidataParam)));
+                    console.log('📱 Received AI data:', aiData);
+                    
+                    // Store lineUserId
+                    if (aiData.lineUserId) {
+                        lineUserId = aiData.lineUserId;
+                    }
+                    
+                    // Auto-fill form with AI data
+                    fillFormWithAIData(aiData);
+                    
+                    // Show success toast
+                    showToast('✨ ข้อมูลจาก AI พร้อมใช้แล้ว!', 'success');
+                    
+                    // Clean URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    
+                } catch (error) {
+                    console.error('Error parsing AI data:', error);
+                }
+            }
+        }
+        
+        // Fill form with AI generated data
+        function fillFormWithAIData(data) {
+            // Fill product name
+            if (data.productName) {
+                document.getElementById('productName').value = data.productName;
+            }
+            
+            // Fill price
+            if (data.price) {
+                document.getElementById('productPrice').value = data.price;
+            }
+            
+            // Fill description
+            if (data.description) {
+                document.getElementById('productDescription').value = data.description;
+            }
+            
+            // Select category
+            if (data.category) {
+                const categoryBtn = document.querySelector(`.category-btn[data-category="${data.category}"]`);
+                if (categoryBtn) {
+                    categoryBtn.click();
+                } else {
+                    // Try to find matching category
+                    const otherBtn = document.querySelector('.category-btn[data-category="other"]');
+                    if (otherBtn) otherBtn.click();
+                }
+            }
+            
+            // Show AI badge
+            showAIBadge();
+        }
+        
+        // Show AI data badge
+        function showAIBadge() {
+            const formCard = document.querySelector('.form-card');
+            const existingBadge = document.querySelector('.ai-data-badge');
+            if (existingBadge) existingBadge.remove();
+            
+            const badge = document.createElement('div');
+            badge.className = 'ai-data-badge';
+            badge.innerHTML = `
+                <i class="fas fa-robot"></i>
+                <span>ข้อมูลจาก AI สร้างโพสต์</span>
+                <button type="button" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            formCard.insertBefore(badge, formCard.firstChild);
+        }
+        
+        // ========================================
+        // AI Image Analysis Feature
+        // ========================================
+        
+        // Analyze image with AI
+        async function analyzeWithAI() {
+            if (!selectedImage) {
+                showToast('กรุณาเลือกรูปสินค้าก่อน', 'error');
+                return;
+            }
+            
+            const analyzeBtn = document.getElementById('aiAnalyzeBtn');
+            
+            try {
+                // Show loading state
+                analyzeBtn.classList.add('loading');
+                analyzeBtn.disabled = true;
+                analyzeBtn.innerHTML = '<i class="fas fa-spinner"></i> กำลังวิเคราะห์...';
+                showToast('🤖 AI กำลังวิเคราะห์รูปภาพ...', 'info');
+                
+                // Convert image to base64
+                const base64Image = await fileToBase64(selectedImage);
+                
+                // Call AI API
+                const response = await fetch(`${API_BASE_URL}/marketplaceAIGeneratePost`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        imageBase64: base64Image,
+                        additionalInfo: '',
+                        lineUserId: lineUserId || null
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.error || 'AI วิเคราะห์ไม่สำเร็จ');
+                }
+                
+                // Fill form with AI result
+                const aiResult = result.data;
+                
+                if (aiResult.productName) {
+                    document.getElementById('productName').value = aiResult.productName;
+                }
+                
+                // Use suggestedPrice if available
+                if (aiResult.suggestedPrice) {
+                    // Extract number from price string (e.g., "฿1,500" -> 1500)
+                    const priceNum = parseInt(aiResult.suggestedPrice.replace(/[^\d]/g, ''));
+                    if (priceNum > 0) {
+                        document.getElementById('productPrice').value = priceNum;
+                    }
+                } else if (aiResult.price) {
+                    document.getElementById('productPrice').value = aiResult.price;
+                }
+                
+                // Build description from AI data
+                let description = '';
+                if (aiResult.title) description += aiResult.title + '\n\n';
+                if (aiResult.description) description += aiResult.description + '\n\n';
+                if (aiResult.callToAction) description += aiResult.callToAction + '\n\n';
+                if (aiResult.hashtags && Array.isArray(aiResult.hashtags)) {
+                    description += aiResult.hashtags.map(h => '#' + h).join(' ');
+                }
+                if (description) {
+                    document.getElementById('productDescription').value = description.trim();
+                }
+                
+                if (aiResult.category) {
+                    // Map AI category to form category
+                    const categoryMap = {
+                        'อิเล็กทรอนิกส์': 'electronics',
+                        'เสื้อผ้า/แฟชั่น': 'fashion',
+                        'แฟชั่น': 'fashion',
+                        'ของใช้ในบ้าน': 'home',
+                        'ความงาม': 'beauty',
+                        'กีฬา': 'sports',
+                        'อื่นๆ': 'other'
+                    };
+                    const mappedCategory = categoryMap[aiResult.category] || 'other';
+                    const categoryBtn = document.querySelector(`.category-btn[data-category="${mappedCategory}"]`);
+                    if (categoryBtn) {
+                        document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                        categoryBtn.classList.add('active');
+                        selectedCategory = mappedCategory;
+                        document.getElementById('productCategory').value = mappedCategory;
+                    }
+                }
+                
+                // Show success badge
+                showAIResultBadge();
+                showToast('✨ AI วิเคราะห์เสร็จแล้ว!', 'success');
+                
+            } catch (error) {
+                console.error('AI Analysis error:', error);
+                // ตรวจสอบว่าเป็น quota exhausted หรือไม่
+                if (error.message.includes('หมดสิทธิ์') || error.message.includes('Premium')) {
+                    showPremiumUpgradeModal();
+                } else {
+                    showToast('❌ ' + error.message, 'error');
+                }
+            } finally {
+                // Reset button state
+                analyzeBtn.classList.remove('loading');
+                analyzeBtn.disabled = false;
+                analyzeBtn.innerHTML = '<i class="fas fa-magic"></i> AI วิเคราะห์รูป';
+            }
+        }
+        
+        // Convert file to base64
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    // Remove data URL prefix to get pure base64
+                    const base64 = reader.result.split(',')[1];
+                    resolve(base64);
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        // Show AI Result Badge
+        function showAIResultBadge() {
+            const badge = document.getElementById('aiResultBadge');
+            if (badge) {
+                badge.classList.add('show');
+            }
+        }
+        
+        // Hide AI Result Badge
+        function hideAIResultBadge() {
+            const badge = document.getElementById('aiResultBadge');
+            if (badge) {
+                badge.classList.remove('show');
+            }
+        }
+        
+        // Show toast notification
+        function showToast(message, type = 'default') {
+            let toast = document.getElementById('toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toast';
+                toast.className = 'toast-notification';
+                document.body.appendChild(toast);
+            }
+            
+            toast.textContent = message;
+            toast.className = 'toast-notification show';
+            if (type === 'success') toast.classList.add('success');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Show Premium Upgrade Modal when quota exhausted
+        function showPremiumUpgradeModal() {
+            // Remove existing modal if any
+            const existingModal = document.querySelector('.premium-modal-overlay');
+            if (existingModal) existingModal.remove();
+            
+            const modal = document.createElement('div');
+            modal.className = 'premium-modal-overlay';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.7);
+                backdrop-filter: blur(5px);
+                z-index: 9999;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+            `;
+            modal.innerHTML = `
+                <div style="
+                    background: white;
+                    border-radius: 20px;
+                    max-width: 400px;
+                    width: 100%;
+                    overflow: hidden;
+                    animation: popIn 0.3s ease;
+                ">
+                    <div style="
+                        background: linear-gradient(135deg, #FFD700, #FFA500);
+                        padding: 20px;
+                        text-align: center;
+                        color: white;
+                    ">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span></span>
+                            <h3 style="margin: 0; font-size: 1.3rem;"><i class="fas fa-crown"></i> อัพเกรด Premium</h3>
+                            <button onclick="this.closest('.premium-modal-overlay').remove()" style="
+                                background: rgba(255,255,255,0.2);
+                                border: none;
+                                color: white;
+                                width: 32px;
+                                height: 32px;
+                                border-radius: 50%;
+                                cursor: pointer;
+                                font-size: 1rem;
+                            "><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                    <div style="padding: 25px; text-align: center;">
+                        <p style="font-size: 1.2em; color: #F44336; margin-bottom: 15px;">
+                            🔒 คุณใช้สิทธิ์ฟรีครบ 3 ครั้งแล้ว
+                        </p>
+                        <p style="color: #666; margin-bottom: 20px;">อัพเกรดเป็น <strong style="color: #FFD700;">Premium</strong> เพื่อใช้ AI สร้างโพสต์ได้ไม่จำกัด!</p>
+                        
+                        <div style="text-align: left; background: #f5f5f5; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                <i class="fas fa-infinity" style="color: #667eea;"></i>
+                                <span>สร้างโพสต์ AI ได้ไม่จำกัด</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                <i class="fas fa-bolt" style="color: #667eea;"></i>
+                                <span>ประมวลผลเร็วกว่าปกติ</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-star" style="color: #667eea;"></i>
+                                <span>สิทธิพิเศษตลอดชีพ</span>
+                            </div>
+                        </div>
+                        
+                        <a href="https://line.me/R/ti/p/@563eikqn?text=%E0%B8%AA%E0%B8%99%E0%B9%83%E0%B8%88%20Premium%20AI%20Post" target="_blank" style="
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 10px;
+                            background: linear-gradient(135deg, #FFD700, #FFA500);
+                            color: white;
+                            padding: 14px 28px;
+                            border-radius: 30px;
+                            text-decoration: none;
+                            font-weight: 600;
+                            font-size: 1rem;
+                            margin-bottom: 15px;
+                        ">
+                            <i class="fas fa-crown"></i> สมัคร Premium ตอนนี้
+                        </a>
+                        
+                        <p style="color: #999; font-size: 0.85rem;">💬 แชทกับเราเพื่อสมัคร Premium</p>
+                        
+                        <button onclick="this.closest('.premium-modal-overlay').remove()" style="
+                            margin-top: 10px;
+                            background: transparent;
+                            border: 1px solid #ddd;
+                            padding: 10px 25px;
+                            border-radius: 20px;
+                            cursor: pointer;
+                            color: #666;
+                        ">ปิด</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            // Click outside to close
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+        
+        // Initialize on page load
+        async function initialize() {
+            // First check authentication
+            await checkAuthentication();
+            
+            // Then check for AI data
+            checkAIData();
+        }
+        
+        // Call initialize on load
+        initialize();
+
+        // Elements
+        const imageUploadArea = document.getElementById('imageUploadArea');
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewContainer = document.getElementById('previewContainer');
+        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+        const form = document.getElementById('postProductForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const successModal = document.getElementById('successModal');
+
+        // Image Upload Handlers
+        imageUploadArea.addEventListener('click', () => imageInput.click());
+        
+        imageUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            imageUploadArea.classList.add('dragover');
+        });
+        
+        imageUploadArea.addEventListener('dragleave', () => {
+            imageUploadArea.classList.remove('dragover');
+        });
+        
+        imageUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            imageUploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                handleImageSelect(file);
+            }
+        });
+        
+        imageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleImageSelect(file);
+            }
+        });
+
+        function handleImageSelect(file) {
+            // Validate file size (5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('ไฟล์ใหญ่เกินไป กรุณาเลือกไฟล์ขนาดไม่เกิน 5MB');
+                return;
+            }
+            
+            selectedImage = file;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+                previewContainer.style.display = 'inline-block';
+                uploadPlaceholder.style.display = 'none';
+                imageUploadArea.classList.add('has-image');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeImage() {
+            selectedImage = null;
+            imageInput.value = '';
+            imagePreview.src = '';
+            imagePreview.style.display = 'none';
+            previewContainer.style.display = 'none';
+            uploadPlaceholder.style.display = 'block';
+            imageUploadArea.classList.remove('has-image');
+        }
+
+        // Category Selection
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedCategory = btn.dataset.category;
+                document.getElementById('productCategory').value = selectedCategory;
+            });
+        });
+
+        // Form Submit
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Check if logged in with LINE
+            if (!lineUserId || !currentUser) {
+                showLoginModal();
+                showToast('กรุณาเข้าสู่ระบบก่อนลงขายสินค้า', 'error');
+                return;
+            }
+            
+            // Validate
+            if (!selectedImage) {
+                alert('กรุณาเลือกรูปสินค้า');
+                return;
+            }
+            
+            if (!selectedCategory) {
+                alert('กรุณาเลือกหมวดหมู่สินค้า');
+                return;
+            }
+            
+            // Get form data
+            const productName = document.getElementById('productName').value.trim();
+            const price = parseInt(document.getElementById('productPrice').value);
+            const description = document.getElementById('productDescription').value.trim();
+            const sellerName = document.getElementById('sellerName').value.trim();
+            const sellerPhone = document.getElementById('sellerPhone').value.trim();
+            const sellerLineId = document.getElementById('sellerLineId').value.trim();
+            const sellerLocation = document.getElementById('sellerLocation').value.trim();
+            
+            // Show loading
+            loadingOverlay.classList.add('show');
+            submitBtn.disabled = true;
+            
+            try {
+                // Convert image to base64
+                const reader = new FileReader();
+                const imageBase64 = await new Promise((resolve, reject) => {
+                    reader.onload = () => resolve(reader.result.split(',')[1]);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(selectedImage);
+                });
+                
+                // Generate tags
+                const tags = generateTags(productName, selectedCategory);
+                
+                // Post via API with lineUserId
+                const response = await fetch(`${API_BASE_URL}/marketplacePostProduct`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        lineUserId: lineUserId,
+                        productData: {
+                            productName,
+                            price,
+                            description,
+                            category: selectedCategory,
+                            tags,
+                            sellerName,
+                            sellerPhone,
+                            sellerLineId,
+                            sellerLocation
+                        },
+                        imageBase64
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.error || 'Failed to post product');
+                }
+                
+                // Hide loading, show success
+                loadingOverlay.classList.remove('show');
+                successModal.classList.add('show');
+                
+                // Reset form
+                form.reset();
+                removeImage();
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                selectedCategory = '';
+                
+            } catch (error) {
+                console.error('Error posting product:', error);
+                loadingOverlay.classList.remove('show');
+                submitBtn.disabled = false;
+                alert('เกิดข้อผิดพลาด: ' + error.message);
+            }
+        });
+
+        // Generate tags from product name and category
+        function generateTags(productName, category) {
+            const tags = [category];
+            
+            // Split product name into words
+            const words = productName.toLowerCase()
+                .replace(/[^a-zA-Zก-๙0-9\s]/g, '')
+                .split(/\s+/)
+                .filter(w => w.length > 1);
+            
+            // Add unique words as tags (max 5)
+            const uniqueWords = [...new Set(words)];
+            tags.push(...uniqueWords.slice(0, 5));
+            
+            return tags;
+        }
+
+        // Close success modal when clicking outside
+        successModal.addEventListener('click', (e) => {
+            if (e.target === successModal) {
+                successModal.classList.remove('show');
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Phone number formatting
+        document.getElementById('sellerPhone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 10) value = value.slice(0, 10);
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html>
