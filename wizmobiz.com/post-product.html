@@ -1053,7 +1053,7 @@
     <div class="login-modal" id="loginModal">
         <div class="login-card">
             <div class="icon">
-                <i class="fab fa-line"></i>
+                <i class="fas fa-store"></i>
             </div>
             <h3>กรุณาเข้าสู่ระบบ</h3>
             <p>เพื่อลงขายสินค้าใน Marketplace</p>
@@ -1066,17 +1066,80 @@
             
             <div class="divider-text">หรือ</div>
             
-            <!-- Add Friend for LINE OA users -->
-            <a href="https://line.me/R/ti/p/@563eikqn" target="_blank" class="btn-add-friend" rel="noopener">
-                <i class="fas fa-user-plus"></i>
-                เพิ่มเพื่อน LINE OA
-            </a>
+            <!-- Google Login Button -->
+            <button onclick="googleLogin()" class="btn-google-login">
+                <i class="fab fa-google"></i>
+                เข้าสู่ระบบด้วย Google
+            </button>
+            
+            <div class="divider-text">หรือ</div>
+            
+            <!-- Guest Mode Button -->
+            <button onclick="guestMode()" class="btn-guest-mode">
+                <i class="fas fa-user"></i>
+                ลงขายแบบไม่ต้องเข้าระบบ
+            </button>
             
             <div class="mt-3">
-                <small class="text-muted">เข้าสู่ระบบครั้งเดียว ใช้ได้ทุก browser</small>
+                <small class="text-muted">เลือกวิธีที่สะดวกสำหรับคุณ</small>
             </div>
         </div>
     </div>
+    
+    <style>
+        .btn-google-login {
+            background: white;
+            color: #333;
+            border: 2px solid #ddd;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        .btn-google-login:hover {
+            background: #f5f5f5;
+            border-color: #4285f4;
+        }
+        .btn-google-login i {
+            color: #4285f4;
+        }
+        .btn-guest-mode {
+            background: #f0f0f0;
+            color: #666;
+            border: 2px dashed #ccc;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            justify-content: center;
+        }
+        .btn-guest-mode:hover {
+            background: #e8e8e8;
+            border-color: #999;
+        }
+        .login-card .icon {
+            background: linear-gradient(135deg, #FF5722 0%, #E64A19 100%) !important;
+        }
+        .btn-line-login {
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+    </style>
 
     <!-- Footer -->
     <footer class="footer">
@@ -1156,6 +1219,65 @@
         // Check if running in LINE app
         function isInLineApp() {
             return isLiffInitialized && liff.isInClient();
+        }
+        
+        // ========================================
+        // GOOGLE LOGIN
+        // ========================================
+        async function googleLogin() {
+            try {
+                showLoading('กำลังเข้าสู่ระบบ Google...');
+                const provider = new firebase.auth.GoogleAuthProvider();
+                const result = await auth.signInWithPopup(provider);
+                
+                if (result.user) {
+                    currentUser = {
+                        lineUserId: 'google_' + result.user.uid,
+                        displayName: result.user.displayName || 'Google User',
+                        pictureUrl: result.user.photoURL || 'https://via.placeholder.com/100'
+                    };
+                    lineUserId = currentUser.lineUserId;
+                    
+                    // Save to localStorage
+                    localStorage.setItem('wit_line_user', JSON.stringify(currentUser));
+                    localStorage.setItem('wit_line_user_id', lineUserId);
+                    
+                    console.log('✅ Google Login success:', currentUser.displayName);
+                    hideLoginModal();
+                    updateUserDisplay();
+                    showToast(`✅ สวัสดี ${currentUser.displayName}!`, 'success');
+                }
+                hideLoading();
+            } catch (error) {
+                console.error('❌ Google Login error:', error);
+                hideLoading();
+                showToast('❌ เข้าสู่ระบบ Google ไม่สำเร็จ: ' + error.message, 'error');
+            }
+        }
+        
+        // ========================================
+        // GUEST MODE (No Login Required)
+        // ========================================
+        function guestMode() {
+            // Generate a random guest ID
+            const guestId = 'guest_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            
+            currentUser = {
+                lineUserId: guestId,
+                displayName: 'ผู้เยี่ยมชม',
+                pictureUrl: 'https://via.placeholder.com/100?text=Guest',
+                isGuest: true
+            };
+            lineUserId = guestId;
+            
+            // Save to localStorage (for this session)
+            localStorage.setItem('wit_line_user', JSON.stringify(currentUser));
+            localStorage.setItem('wit_line_user_id', lineUserId);
+            
+            console.log('✅ Guest Mode activated:', guestId);
+            hideLoginModal();
+            updateUserDisplay();
+            showToast('✅ เข้าสู่ระบบในโหมดผู้เยี่ยมชม', 'success');
         }
         
         // LINE Login for external browser - ใช้ LIFF Login เท่านั้น

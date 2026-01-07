@@ -2274,32 +2274,33 @@
             });
         }
 
-        // Load products from Firestore
+        // API Base URL
+        const API_BASE_URL = 'https://us-central1-appinjproject.cloudfunctions.net';
+
+        // Load products from API
         async function loadProducts() {
             try {
-                // Listen for real-time updates
-                db.collection('marketplace_items')
-                    .where('status', 'in', ['active', 'sold'])
-                    .orderBy('createdAt', 'desc')
-                    .limit(50)
-                    .onSnapshot(snapshot => {
-                        allProducts = [];
-                        snapshot.forEach(doc => {
-                            allProducts.push({ id: doc.id, ...doc.data() });
-                        });
-                        
-                        filterProducts();
-                        updateStats();
-                    }, error => {
-                        console.error('Error loading products:', error);
-                        document.getElementById('productContainer').innerHTML = 
-                            renderEmptyState('เกิดข้อผิดพลาดในการโหลดสินค้า');
-                    });
-                    
+                console.log('🔄 Loading products from API...');
+                
+                const response = await fetch(`${API_BASE_URL}/marketplaceGetProducts?limit=50`);
+                const result = await response.json();
+                
+                console.log('📦 API Response:', result);
+                
+                if (result.success && result.data && result.data.products) {
+                    allProducts = result.data.products;
+                    console.log(`✅ Loaded ${allProducts.length} products`);
+                    filterProducts();
+                    updateStats();
+                } else {
+                    console.error('❌ API Error:', result);
+                    document.getElementById('productContainer').innerHTML = 
+                        renderEmptyState('ไม่พบสินค้า');
+                }
             } catch (error) {
-                console.error('Error:', error);
+                console.error('❌ Error loading products:', error);
                 document.getElementById('productContainer').innerHTML = 
-                    renderEmptyState('เกิดข้อผิดพลาด กรุณาลองใหม่');
+                    renderEmptyState('เกิดข้อผิดพลาดในการโหลดสินค้า');
             }
         }
 
@@ -2532,9 +2533,15 @@
                 currentAIPost = result;
                 displayAIResult(result);
                 showToast('✅ สร้างข้อความสำเร็จ!', 'success');
+                
+                // อัพเดท usage badge หลังสำเร็จ
+                updateUsageBadge();
             } catch (error) {
                 console.error('AI Error:', error);
-                showToast('❌ เกิดข้อผิดพลาด: ' + error.message, 'error');
+                // ไม่แสดง toast ถ้าเป็น QUOTA_EXHAUSTED (แสดง modal แทน)
+                if (error.message !== 'QUOTA_EXHAUSTED') {
+                    showToast('❌ เกิดข้อผิดพลาด: ' + error.message, 'error');
+                }
                 resetAIGenerator();
             }
         }
@@ -2563,12 +2570,22 @@
             
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
+                // ถ้าหมดโควต้า ให้แสดง Premium modal
+                if (errorData.quotaExhausted) {
+                    showPremiumUpgradeModal();
+                    throw new Error('QUOTA_EXHAUSTED');
+                }
                 throw new Error(errorData.error || 'API request failed');
             }
             
             const data = await response.json();
             
             if (!data.success) {
+                // ตรวจสอบ quotaExhausted ด้วย
+                if (data.quotaExhausted) {
+                    showPremiumUpgradeModal();
+                    throw new Error('QUOTA_EXHAUSTED');
+                }
                 throw new Error(data.error || 'AI processing failed');
             }
             
@@ -2861,19 +2878,20 @@
         // รับข้อมูลจาก LINE OA ผ่าน URL Parameter
         // =====================================================
         
-        // เก็บ LINE User ID สำหรับติดตามการใช้งาน
-        let lineUserId = sessionStorage.getItem('lineUserId') || null;
+        // เก็บ LINE User ID สำหรับติดตามการใช้งาน (ใช้ localStorage เพื่อให้คงอยู่)
+        let lineUserId = localStorage.getItem('lineUserId') || sessionStorage.getItem('lineUserId') || null;
         
         function checkLineAIPostData() {
             const urlParams = new URLSearchParams(window.location.search);
             const aipostParam = urlParams.get('aipost');
             const lineUserIdParam = urlParams.get('lineUserId');
             
-            // เก็บ LINE User ID (from URL or sessionStorage)
+            // เก็บ LINE User ID (from URL) - ใช้ localStorage เพื่อให้คงอยู่
             if (lineUserIdParam) {
                 lineUserId = lineUserIdParam;
-                sessionStorage.setItem('lineUserId', lineUserId);
-                console.log('📱 LINE User ID stored:', lineUserId);
+                localStorage.setItem('lineUserId', lineUserId);
+                sessionStorage.setItem('lineUserId', lineUserId); // backup
+                console.log('📱 LINE User ID stored (persistent):', lineUserId);
             }
             
             // Case 1: aipost=1 - เปิด modal ให้อัพโหลดรูป (มาจาก LINE)

@@ -1053,7 +1053,7 @@
     <div class="login-modal" id="loginModal">
         <div class="login-card">
             <div class="icon">
-                <i class="fab fa-line"></i>
+                <i class="fas fa-store"></i>
             </div>
             <h3>กรุณาเข้าสู่ระบบ</h3>
             <p>เพื่อลงขายสินค้าใน Marketplace</p>
@@ -1066,17 +1066,80 @@
             
             <div class="divider-text">หรือ</div>
             
-            <!-- Add Friend for LINE OA users -->
-            <a href="https://line.me/R/ti/p/@563eikqn" target="_blank" class="btn-add-friend" rel="noopener">
-                <i class="fas fa-user-plus"></i>
-                เพิ่มเพื่อน LINE OA
-            </a>
+            <!-- Google Login Button -->
+            <button onclick="googleLogin()" class="btn-google-login">
+                <i class="fab fa-google"></i>
+                เข้าสู่ระบบด้วย Google
+            </button>
+            
+            <div class="divider-text">หรือ</div>
+            
+            <!-- Guest Mode Button -->
+            <button onclick="guestMode()" class="btn-guest-mode">
+                <i class="fas fa-user"></i>
+                ลงขายแบบไม่ต้องเข้าระบบ
+            </button>
             
             <div class="mt-3">
-                <small class="text-muted">เข้าสู่ระบบครั้งเดียว ใช้ได้ทุก browser</small>
+                <small class="text-muted">เลือกวิธีที่สะดวกสำหรับคุณ</small>
             </div>
         </div>
     </div>
+    
+    <style>
+        .btn-google-login {
+            background: white;
+            color: #333;
+            border: 2px solid #ddd;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        .btn-google-login:hover {
+            background: #f5f5f5;
+            border-color: #4285f4;
+        }
+        .btn-google-login i {
+            color: #4285f4;
+        }
+        .btn-guest-mode {
+            background: #f0f0f0;
+            color: #666;
+            border: 2px dashed #ccc;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            justify-content: center;
+        }
+        .btn-guest-mode:hover {
+            background: #e8e8e8;
+            border-color: #999;
+        }
+        .login-card .icon {
+            background: linear-gradient(135deg, #FF5722 0%, #E64A19 100%) !important;
+        }
+        .btn-line-login {
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+    </style>
 
     <!-- Footer -->
     <footer class="footer">
@@ -1156,6 +1219,65 @@
         // Check if running in LINE app
         function isInLineApp() {
             return isLiffInitialized && liff.isInClient();
+        }
+        
+        // ========================================
+        // GOOGLE LOGIN
+        // ========================================
+        async function googleLogin() {
+            try {
+                showLoading('กำลังเข้าสู่ระบบ Google...');
+                const provider = new firebase.auth.GoogleAuthProvider();
+                const result = await auth.signInWithPopup(provider);
+                
+                if (result.user) {
+                    currentUser = {
+                        lineUserId: 'google_' + result.user.uid,
+                        displayName: result.user.displayName || 'Google User',
+                        pictureUrl: result.user.photoURL || 'https://via.placeholder.com/100'
+                    };
+                    lineUserId = currentUser.lineUserId;
+                    
+                    // Save to localStorage
+                    localStorage.setItem('wit_line_user', JSON.stringify(currentUser));
+                    localStorage.setItem('wit_line_user_id', lineUserId);
+                    
+                    console.log('✅ Google Login success:', currentUser.displayName);
+                    hideLoginModal();
+                    updateUserDisplay();
+                    showToast(`✅ สวัสดี ${currentUser.displayName}!`, 'success');
+                }
+                hideLoading();
+            } catch (error) {
+                console.error('❌ Google Login error:', error);
+                hideLoading();
+                showToast('❌ เข้าสู่ระบบ Google ไม่สำเร็จ: ' + error.message, 'error');
+            }
+        }
+        
+        // ========================================
+        // GUEST MODE (No Login Required)
+        // ========================================
+        function guestMode() {
+            // Generate a random guest ID
+            const guestId = 'guest_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            
+            currentUser = {
+                lineUserId: guestId,
+                displayName: 'ผู้เยี่ยมชม',
+                pictureUrl: 'https://via.placeholder.com/100?text=Guest',
+                isGuest: true
+            };
+            lineUserId = guestId;
+            
+            // Save to localStorage (for this session)
+            localStorage.setItem('wit_line_user', JSON.stringify(currentUser));
+            localStorage.setItem('wit_line_user_id', lineUserId);
+            
+            console.log('✅ Guest Mode activated:', guestId);
+            hideLoginModal();
+            updateUserDisplay();
+            showToast('✅ เข้าสู่ระบบในโหมดผู้เยี่ยมชม', 'success');
         }
         
         // LINE Login for external browser - ใช้ LIFF Login เท่านั้น
@@ -1642,7 +1764,12 @@
                 
             } catch (error) {
                 console.error('AI Analysis error:', error);
-                showToast('❌ ' + error.message, 'error');
+                // ตรวจสอบว่าเป็น quota exhausted หรือไม่
+                if (error.message.includes('หมดสิทธิ์') || error.message.includes('Premium')) {
+                    showPremiumUpgradeModal();
+                } else {
+                    showToast('❌ ' + error.message, 'error');
+                }
             } finally {
                 // Reset button state
                 analyzeBtn.classList.remove('loading');
@@ -1698,6 +1825,117 @@
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);
+        }
+        
+        // Show Premium Upgrade Modal when quota exhausted
+        function showPremiumUpgradeModal() {
+            // Remove existing modal if any
+            const existingModal = document.querySelector('.premium-modal-overlay');
+            if (existingModal) existingModal.remove();
+            
+            const modal = document.createElement('div');
+            modal.className = 'premium-modal-overlay';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.7);
+                backdrop-filter: blur(5px);
+                z-index: 9999;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+            `;
+            modal.innerHTML = `
+                <div style="
+                    background: white;
+                    border-radius: 20px;
+                    max-width: 400px;
+                    width: 100%;
+                    overflow: hidden;
+                    animation: popIn 0.3s ease;
+                ">
+                    <div style="
+                        background: linear-gradient(135deg, #FFD700, #FFA500);
+                        padding: 20px;
+                        text-align: center;
+                        color: white;
+                    ">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span></span>
+                            <h3 style="margin: 0; font-size: 1.3rem;"><i class="fas fa-crown"></i> อัพเกรด Premium</h3>
+                            <button onclick="this.closest('.premium-modal-overlay').remove()" style="
+                                background: rgba(255,255,255,0.2);
+                                border: none;
+                                color: white;
+                                width: 32px;
+                                height: 32px;
+                                border-radius: 50%;
+                                cursor: pointer;
+                                font-size: 1rem;
+                            "><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                    <div style="padding: 25px; text-align: center;">
+                        <p style="font-size: 1.2em; color: #F44336; margin-bottom: 15px;">
+                            🔒 คุณใช้สิทธิ์ฟรีครบ 3 ครั้งแล้ว
+                        </p>
+                        <p style="color: #666; margin-bottom: 20px;">อัพเกรดเป็น <strong style="color: #FFD700;">Premium</strong> เพื่อใช้ AI สร้างโพสต์ได้ไม่จำกัด!</p>
+                        
+                        <div style="text-align: left; background: #f5f5f5; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                <i class="fas fa-infinity" style="color: #667eea;"></i>
+                                <span>สร้างโพสต์ AI ได้ไม่จำกัด</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                <i class="fas fa-bolt" style="color: #667eea;"></i>
+                                <span>ประมวลผลเร็วกว่าปกติ</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-star" style="color: #667eea;"></i>
+                                <span>สิทธิพิเศษตลอดชีพ</span>
+                            </div>
+                        </div>
+                        
+                        <a href="https://line.me/R/ti/p/@563eikqn?text=%E0%B8%AA%E0%B8%99%E0%B9%83%E0%B8%88%20Premium%20AI%20Post" target="_blank" style="
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 10px;
+                            background: linear-gradient(135deg, #FFD700, #FFA500);
+                            color: white;
+                            padding: 14px 28px;
+                            border-radius: 30px;
+                            text-decoration: none;
+                            font-weight: 600;
+                            font-size: 1rem;
+                            margin-bottom: 15px;
+                        ">
+                            <i class="fas fa-crown"></i> สมัคร Premium ตอนนี้
+                        </a>
+                        
+                        <p style="color: #999; font-size: 0.85rem;">💬 แชทกับเราเพื่อสมัคร Premium</p>
+                        
+                        <button onclick="this.closest('.premium-modal-overlay').remove()" style="
+                            margin-top: 10px;
+                            background: transparent;
+                            border: 1px solid #ddd;
+                            padding: 10px 25px;
+                            border-radius: 20px;
+                            cursor: pointer;
+                            color: #666;
+                        ">ปิด</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            // Click outside to close
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
         }
         
         // Initialize on page load
@@ -1795,8 +2033,8 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Check if logged in
-            if (!auth.currentUser || !idToken) {
+            // Check if logged in with LINE
+            if (!lineUserId || !currentUser) {
                 showLoginModal();
                 showToast('กรุณาเข้าสู่ระบบก่อนลงขายสินค้า', 'error');
                 return;
@@ -1838,14 +2076,14 @@
                 // Generate tags
                 const tags = generateTags(productName, selectedCategory);
                 
-                // Post via API
+                // Post via API with lineUserId
                 const response = await fetch(`${API_BASE_URL}/marketplacePostProduct`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${idToken}`
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
+                        lineUserId: lineUserId,
                         productData: {
                             productName,
                             price,
