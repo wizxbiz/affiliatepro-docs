@@ -2274,32 +2274,33 @@
             });
         }
 
-        // Load products from Firestore
+        // API Base URL
+        const API_BASE_URL = 'https://us-central1-appinjproject.cloudfunctions.net';
+
+        // Load products from API
         async function loadProducts() {
             try {
-                // Listen for real-time updates
-                db.collection('marketplace_items')
-                    .where('status', 'in', ['active', 'sold'])
-                    .orderBy('createdAt', 'desc')
-                    .limit(50)
-                    .onSnapshot(snapshot => {
-                        allProducts = [];
-                        snapshot.forEach(doc => {
-                            allProducts.push({ id: doc.id, ...doc.data() });
-                        });
-                        
-                        filterProducts();
-                        updateStats();
-                    }, error => {
-                        console.error('Error loading products:', error);
-                        document.getElementById('productContainer').innerHTML = 
-                            renderEmptyState('เกิดข้อผิดพลาดในการโหลดสินค้า');
-                    });
-                    
+                console.log('🔄 Loading products from API...');
+                
+                const response = await fetch(`${API_BASE_URL}/marketplaceGetProducts?limit=50`);
+                const result = await response.json();
+                
+                console.log('📦 API Response:', result);
+                
+                if (result.success && result.data && result.data.products) {
+                    allProducts = result.data.products;
+                    console.log(`✅ Loaded ${allProducts.length} products`);
+                    filterProducts();
+                    updateStats();
+                } else {
+                    console.error('❌ API Error:', result);
+                    document.getElementById('productContainer').innerHTML = 
+                        renderEmptyState('ไม่พบสินค้า');
+                }
             } catch (error) {
-                console.error('Error:', error);
+                console.error('❌ Error loading products:', error);
                 document.getElementById('productContainer').innerHTML = 
-                    renderEmptyState('เกิดข้อผิดพลาด กรุณาลองใหม่');
+                    renderEmptyState('เกิดข้อผิดพลาดในการโหลดสินค้า');
             }
         }
 
