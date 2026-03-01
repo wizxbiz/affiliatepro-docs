@@ -59,6 +59,7 @@ func main() {
 	}
 
 	feedService := services.NewFeedService(repo)
+	analyticsService := services.NewAnalyticsService()
 
 	// 3. Gin Router with Performance Middlewares
 	r := gin.New()
@@ -145,6 +146,32 @@ func main() {
 			}()
 
 			c.JSON(http.StatusAccepted, gin.H{"status": "queued limit processed"})
+		})
+
+		// Advanced Analytics Routes
+		v1.GET("/analytics/seller/:id", func(c *gin.Context) {
+			sellerId := c.Param("id")
+			if sellerId == "" {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "sellerId is required"})
+				return
+			}
+			data := analyticsService.GetSellerDashboardStats(sellerId)
+			c.JSON(http.StatusOK, data)
+		})
+
+		v1.POST("/analytics/live_event", func(c *gin.Context) {
+			type LiveEventPayload struct {
+				StreamID  string `json:"streamId"`
+				EventType string `json:"eventType"`
+				UserID    string `json:"userId"`
+			}
+			var payload LiveEventPayload
+			if err := c.ShouldBindJSON(&payload); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid payload"})
+				return
+			}
+			analyticsService.LogLiveCommerceEvent(payload.StreamID, payload.EventType, payload.UserID)
+			c.JSON(http.StatusOK, gin.H{"status": "event_logged"})
 		})
 	}
 
