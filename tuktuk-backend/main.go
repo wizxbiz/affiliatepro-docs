@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"tuktuk-backend/internal/cache"
+	"tuktuk-backend/internal/models"
 	"tuktuk-backend/internal/repository"
 	"tuktuk-backend/internal/services"
 
@@ -127,6 +128,23 @@ func main() {
 				return
 			}
 			c.JSON(http.StatusOK, gin.H{"status": "viewed"})
+		})
+
+		v1.POST("/telemetry", func(c *gin.Context) {
+			var payload models.TelemetryPayload
+			if err := c.ShouldBindJSON(&payload); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid payload"})
+				return
+			}
+
+			// Fire & Forget Background Worker for AI Pipeline
+			go func() {
+				// E.g., Push to Vertex AI or write to BigQuery/Firestore
+				log.Printf("📊 [Telemetry] Session %s from User %s recorded %d events (duration: %d ms)",
+					payload.SessionID, payload.UserID, len(payload.Events), payload.DurationSoFar)
+			}()
+
+			c.JSON(http.StatusAccepted, gin.H{"status": "queued limit processed"})
 		})
 	}
 
