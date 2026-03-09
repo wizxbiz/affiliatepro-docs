@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>TukTuk - Live Commerce Studio</title>
+    <!-- LIFF Config (แก้ LIFF ID ที่นี่จุดเดียว) -->
+    <script src="/js/liff-config.js"></script>
     <!-- LIFF SDK -->
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -285,16 +287,25 @@
     </div>
 
     <script>
-        const API_BASE = 'http://localhost:8080/api/v1';
+        const API_BASE = (window.TUKTUK_LIFF?.apiBase || 'https://us-central1-appinjproject.cloudfunctions.net') + '/api/v1';
         let isLive = false;
         let streamId = "stream_" + Date.now();
         let sellerId = "anonymous";
         let localStream;
 
         async function initLIFF() {
+            const liffId = window.TUKTUK_LIFF?.live || "";
+            if (!liffId) {
+                document.body.innerHTML = `
+                  <div style="padding:40px 30px;text-align:center;background:#000;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff">
+                    <div style="font-size:3.5rem;margin-bottom:20px">⚙️</div>
+                    <h2 style="color:#FF0050;margin-bottom:12px">ยังไม่ได้ตั้งค่า LIFF ID</h2>
+                    <p style="color:#94a3b8;line-height:1.7;font-size:0.9rem">แก้ไข <code style="color:#58a6ff">public/js/liff-config.js</code><br>ใส่ <strong>live</strong> LIFF ID จาก LINE Developers Console</p>
+                  </div>`;
+                return;
+            }
             try {
-                // For demonstration, use dummy ID or assume Sandbox
-                await liff.init({ liffId: "USER_LIFF_ID_LIVE", withLoginOnExternalBrowser: true });
+                await liff.init({ liffId, withLoginOnExternalBrowser: true });
                 if (liff.isLoggedIn()) {
                     const profile = await liff.getProfile();
                     sellerId = profile.userId;
