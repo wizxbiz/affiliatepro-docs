@@ -1,0 +1,2034 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>WIN RIDER — บริการรับส่งใกล้บ้านคุณ</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Leaflet Maps -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <!-- AOS Animation -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+  <style>
+    /* ========================================
+       DESIGN SYSTEM & VARIABLES
+       ======================================== */
+    :root {
+      --primary: #00D2FF;
+      --primary-dark: #0088CC;
+      --primary-gradient: linear-gradient(135deg, #00D2FF 0%, #0088CC 100%);
+      --secondary: #FF6B2B;
+      --secondary-gradient: linear-gradient(135deg, #FF6B2B 0%, #FF4500 100%);
+      --success: #00E676;
+      --success-gradient: linear-gradient(135deg, #00E676 0%, #00C853 100%);
+      --warning: #FFD600;
+      --warning-gradient: linear-gradient(135deg, #FFD600 0%, #FFB300 100%);
+      --purple: #8B5CF6;
+      --purple-gradient: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
+      --bg: #0A0E21;
+      --surface: rgba(18, 25, 45, 0.95);
+      --surface-light: rgba(28, 38, 60, 0.95);
+      --card: rgba(22, 30, 50, 0.9);
+      --text: #FFFFFF;
+      --text-secondary: rgba(255, 255, 255, 0.7);
+      --text-muted: rgba(255, 255, 255, 0.5);
+      --border: rgba(0, 210, 255, 0.15);
+      --border-light: rgba(255, 255, 255, 0.05);
+      --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+      --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+      --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      --blur: blur(20px);
+      --border-radius-sm: 8px;
+      --border-radius-md: 12px;
+      --border-radius-lg: 20px;
+      --border-radius-xl: 28px;
+      --border-radius-2xl: 36px;
+      --border-radius-full: 9999px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Kanit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Animated Background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 20% 30%, rgba(0, 210, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(255, 107, 43, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ========================================
+       PREMIUM TOP BAR
+       ======================================== */
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(10, 14, 33, 0.9);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+      height: 64px;
+      animation: slideDown 0.5s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .topbar-back {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--border-radius-full);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      text-decoration: none;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .topbar-back:hover {
+      background: var(--primary);
+      color: var(--bg);
+      transform: scale(1.1) rotate(-10deg);
+    }
+
+    .topbar-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      flex: 1;
+    }
+
+    .topbar-online {
+      background: linear-gradient(135deg, rgba(0, 230, 118, 0.1), rgba(0, 230, 118, 0.05));
+      border: 1px solid rgba(0, 230, 118, 0.3);
+      border-radius: var(--border-radius-full);
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--success);
+      animation: fadeIn 0.8s ease;
+    }
+
+    .dot-pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      animation: pulse 1.5s ease-in-out infinite;
+      box-shadow: 0 0 10px var(--success);
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      50% {
+        transform: scale(1.5);
+        opacity: 0.5;
+      }
+    }
+
+    /* ========================================
+       MAP CONTAINER
+       ======================================== */
+    #map {
+      position: fixed;
+      top: 64px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1;
+    }
+
+    .leaflet-tile {
+      filter: brightness(0.7) saturate(0.8) hue-rotate(180deg);
+    }
+
+    .leaflet-container {
+      background: var(--bg);
+      font-family: 'Kanit', sans-serif;
+    }
+
+    .leaflet-control-attribution {
+      display: none;
+    }
+
+    /* Custom Popup */
+    .rider-popup {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      min-width: 220px;
+      color: var(--text);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .rider-popup .name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .rider-popup .meta {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin: 8px 0;
+    }
+
+    .rider-popup .stars {
+      color: #FFD700;
+      font-size: 0.9rem;
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+    }
+
+    .rider-popup .call-btn {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 12px;
+      background: var(--primary-gradient);
+      color: var(--bg);
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 8px;
+      font-family: 'Kanit', sans-serif;
+    }
+
+    .rider-popup .call-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 210, 255, 0.3);
+    }
+
+    /* ========================================
+       MY LOCATION BUTTON
+       ======================================== */
+    .locate-btn {
+      position: fixed;
+      bottom: 120px;
+      right: 20px;
+      z-index: 600;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: rgba(18, 25, 45, 0.9);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      color: var(--primary);
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-lg);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      animation: fadeInUp 0.6s ease 0.3s both;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .locate-btn:hover {
+      transform: scale(1.15) rotate(15deg);
+      background: var(--primary-gradient);
+      color: var(--bg);
+    }
+
+    /* ========================================
+       BOTTOM SHEET (PREMIUM)
+       ======================================== */
+    .bottom-sheet {
+      position: fixed;
+      bottom: 0px;
+      left: 0px;
+      right: 0px;
+      z-index: 500;
+      background: rgba(14, 20, 35, 0.85);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border-top: 1px solid rgba(0, 210, 255, 0.2);
+      border-radius: 40px 40px 0 0;
+      padding: 16px 20px 30px;
+      transform: translateY(0);
+      transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .bottom-sheet.collapsed {
+      transform: translateY(calc(100% - 145px));
+    }
+
+    .sheet-handle {
+      width: 48px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: var(--border-radius-full);
+      margin: 0 auto 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .sheet-handle:hover {
+      width: 64px;
+      background: var(--primary);
+    }
+
+    /* ========================================
+       PREMIUM TAB BAR
+       ======================================== */
+    .tab-bar {
+      display: flex;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: var(--border-radius-full);
+      padding: 6px;
+      margin-bottom: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 12px;
+      background: transparent;
+      border: none;
+      border-radius: var(--border-radius-full);
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: 'Kanit', sans-serif;
+    }
+
+    .tab-btn i {
+      font-size: 1rem;
+    }
+
+    .tab-btn.active {
+      background: rgba(0, 210, 255, 0.15);
+      color: var(--primary);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .req-badge {
+      background: var(--secondary-gradient);
+      color: var(--bg);
+      border-radius: var(--border-radius-full);
+      padding: 2px 8px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-left: 4px;
+      display: none;
+    }
+
+    /* ========================================
+       SECTION TITLES
+       ======================================== */
+    .sheet-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .sheet-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    /* ========================================
+       PREMIUM RIDER CARDS
+       ======================================== */
+    .rider-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .rider-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(0, 210, 255, 0.1) 0%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: 0;
+    }
+
+    .rider-card:hover::before,
+    .rider-card.selected::before {
+      opacity: 1;
+    }
+
+    .rider-card>* {
+      z-index: 1;
+      position: relative;
+    }
+
+    .rider-card:hover,
+    .rider-card.selected {
+      background: rgba(0, 210, 255, 0.08);
+      border-color: rgba(0, 210, 255, 0.4);
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 210, 255, 0.1);
+    }
+
+    .rider-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 2px solid rgba(0, 210, 255, 0.5);
+      background: linear-gradient(135deg, rgba(0, 210, 255, 0.15), rgba(255, 107, 43, 0.15));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      flex-shrink: 0;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .rider-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .rider-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .rider-name {
+      font-weight: 700;
+      color: var(--text);
+      font-size: 1.05rem;
+      margin-bottom: 2px;
+      letter-spacing: 0.3px;
+    }
+
+    .rider-meta {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .rider-stats {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .rider-stat {
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.08);
+      padding: 4px 8px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 500;
+    }
+
+    .rider-stat i {
+      color: var(--primary);
+    }
+
+    .rider-dist {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--success);
+      text-align: right;
+      flex-shrink: 0;
+      background: rgba(0, 230, 118, 0.1);
+      padding: 6px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 230, 118, 0.2);
+    }
+
+    /* ========================================
+       PREMIUM BOOK BUTTON
+       ======================================== */
+    .book-btn {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 20px;
+      background: var(--primary-gradient);
+      color: var(--bg);
+      font-weight: 800;
+      font-size: 1.1rem;
+      cursor: pointer;
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      overflow: hidden;
+      font-family: 'Kanit', sans-serif;
+    }
+
+    .book-btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .book-btn:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .book-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(0, 210, 255, 0.4);
+    }
+
+    .book-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ========================================
+       PREMIUM FORM
+       ======================================== */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .form-group label i {
+      color: var(--primary);
+      margin-right: 6px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.3s ease;
+      font-family: 'Kanit', sans-serif;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0, 210, 255, 0.1);
+    }
+
+    .form-group textarea {
+      resize: none;
+      height: 80px;
+    }
+
+    /* ========================================
+       PREMIUM STATUS TRACKER
+       ======================================== */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0;
+      margin: 20px 0;
+      position: relative;
+    }
+
+    .status-bar::before {
+      content: '';
+      position: absolute;
+      top: 40px;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      z-index: 0;
+      border-radius: var(--border-radius-full);
+    }
+
+    .status-step {
+      text-align: center;
+      flex: 1;
+      position: relative;
+      z-index: 1;
+    }
+
+    .status-step .icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.3);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin: 0 auto 8px;
+      transition: all 0.3s ease;
+    }
+
+    .status-step.active .icon {
+      background: var(--primary-gradient);
+      border-color: transparent;
+      box-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+      animation: stepPulse 1s infinite;
+    }
+
+    .status-step.done .icon {
+      background: var(--success-gradient);
+      border-color: transparent;
+      color: var(--bg);
+    }
+
+    @keyframes stepPulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.1);
+      }
+    }
+
+    .status-step .label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .status-step.active .label {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .status-step.done .label {
+      color: var(--success);
+    }
+
+    /* ========================================
+       PREMIUM REQUEST CARDS
+       ======================================== */
+    .req-card {
+      background: linear-gradient(135deg, rgba(0, 210, 255, 0.05), rgba(0, 136, 204, 0.02));
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+      margin-bottom: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .req-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0, 210, 255, 0.1);
+    }
+
+    .req-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .req-card-title {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .req-card-addr {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .req-card-addr i {
+      font-size: 0.7rem;
+      color: var(--primary);
+    }
+
+    .req-card-status {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .req-card-status .icon {
+      font-size: 1.8rem;
+      filter: drop-shadow(0 0 10px currentColor);
+    }
+
+    .req-card-status .label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .req-rider-info {
+      margin-top: 12px;
+      padding: 12px;
+      background: rgba(0, 210, 255, 0.08);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+
+    .req-rider-info .title {
+      font-size: 0.75rem;
+      color: var(--primary);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .req-rider-info a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .req-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .req-action-btn {
+      flex: 1;
+      padding: 10px;
+      border-radius: 14px;
+      background: rgba(0, 210, 255, 0.1);
+      border: 1px solid var(--border);
+      color: var(--primary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      display: block;
+      transition: all 0.3s ease;
+    }
+
+    .req-action-btn:hover {
+      background: var(--primary-gradient);
+      color: var(--bg);
+      transform: translateY(-2px);
+    }
+
+    .req-action-call {
+      background: rgba(0, 230, 118, 0.1);
+      border-color: rgba(0, 230, 118, 0.3);
+      color: var(--success);
+    }
+
+    .req-action-call:hover {
+      background: var(--success-gradient);
+      color: var(--bg);
+    }
+
+    /* ========================================
+       SPINNER & EMPTY STATES
+       ======================================== */
+    .spinner {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-secondary);
+    }
+
+    .spinner i {
+      font-size: 2.5rem;
+      color: var(--primary);
+      display: block;
+      margin-bottom: 16px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* ── Missing map animations ── */
+    @keyframes ping {
+      0% { transform: scale(1); opacity: 0.8; }
+      75%, 100% { transform: scale(2.5); opacity: 0; }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+
+    /* ── Leaflet dark popup theme ── */
+    .dark-popup .leaflet-popup-content-wrapper {
+      background: rgba(10, 14, 33, 0.96) !important;
+      border: 1px solid rgba(0, 210, 255, 0.25) !important;
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      border-radius: 16px !important;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 210, 255, 0.1) !important;
+      color: #fff !important;
+      padding: 0 !important;
+    }
+    .dark-popup .leaflet-popup-content {
+      margin: 0 !important;
+      color: #fff !important;
+    }
+    .dark-popup .leaflet-popup-tip {
+      background: rgba(10, 14, 33, 0.96) !important;
+      box-shadow: none !important;
+    }
+    .dark-popup .leaflet-popup-tip-container {
+      filter: drop-shadow(0 2px 4px rgba(0, 210, 255, 0.15));
+    }
+    .dark-popup .leaflet-popup-close-button {
+      color: rgba(255, 255, 255, 0.4) !important;
+      top: 10px !important;
+      right: 10px !important;
+      font-size: 18px !important;
+    }
+    .dark-popup .leaflet-popup-close-button:hover {
+      color: rgba(255, 255, 255, 0.9) !important;
+    }
+
+    /* ── Station zone circles ── */
+    .station-label {
+      background: rgba(0, 230, 118, 0.9);
+      color: #0A0E21;
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: 'Kanit', sans-serif;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      border: none !important;
+    }
+
+    /* ── Route line pulse ── */
+    .route-dash {
+      animation: routeFlow 1.5s linear infinite;
+      stroke-dashoffset: 0;
+    }
+    @keyframes routeFlow {
+      to { stroke-dashoffset: -24; }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .empty-state i {
+      font-size: 4rem;
+      color: rgba(255, 255, 255, 0.1);
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    .empty-state p {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .empty-state .hint {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* ========================================
+       TOAST NOTIFICATION
+       ======================================== */
+    .toast {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-30px);
+      z-index: 2000;
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: var(--border-radius-lg);
+      padding: 14px 24px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: var(--shadow-xl);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: 90vw;
+      width: fit-content;
+    }
+
+    .toast.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast.success {
+      border-color: var(--success);
+    }
+
+    .toast.error {
+      border-color: #FF3B3B;
+    }
+
+    .toast.info {
+      border-color: var(--primary);
+    }
+
+    .toast-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .toast.success .toast-icon {
+      background: rgba(0, 230, 118, 0.2);
+      color: var(--success);
+    }
+
+    .toast.error .toast-icon {
+      background: rgba(255, 59, 59, 0.2);
+      color: #FF3B3B;
+    }
+
+    .toast.info .toast-icon {
+      background: rgba(0, 210, 255, 0.2);
+      color: var(--primary);
+    }
+
+    .toast-content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .toast-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.6;
+    }
+
+    /* ========================================
+       RESPONSIVE DESIGN
+       ======================================== */
+    @media (min-width: 768px) {
+      .bottom-sheet {
+        left: 20%;
+        right: 20%;
+        width: 60%;
+        margin: 0 auto;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .tab-btn span {
+        display: none;
+      }
+
+      .tab-btn i {
+        font-size: 1.2rem;
+      }
+
+      .rider-stats {
+        gap: 6px;
+      }
+
+      .rider-stat {
+        font-size: 0.7rem;
+        padding: 2px 6px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <a href="javascript:history.back()" class="topbar-back" aria-label="กลับ">
+      <i class="fas fa-arrow-left" aria-hidden="true"></i>
+    </a>
+    <span class="topbar-title">WIN RIDER</span>
+    <div class="topbar-online">
+      <div class="dot-pulse"></div>
+      <span id="onlineCount">กำลังโหลด...</span>
+    </div>
+  </div>
+
+  <!-- MAP -->
+  <div id="map"></div>
+
+  <!-- MY LOCATION BUTTON -->
+  <button type="button" class="locate-btn" onclick="centerOnUser()" aria-label="ตำแหน่งของฉัน">
+    <i class="fas fa-crosshairs"></i>
+  </button>
+
+  <!-- BOTTOM SHEET -->
+  <div class="bottom-sheet collapsed" id="bottomSheet">
+    <div class="sheet-handle" role="button" tabindex="0" aria-label="ขยาย/ย่อ" onclick="toggleSheet()"></div>
+
+    <!-- PREMIUM TAB BAR -->
+    <div class="tab-bar">
+      <button type="button" id="tabNear" class="tab-btn active" onclick="switchTab('near')">
+        <i class="fas fa-motorcycle"></i>
+        <span>วินใกล้คุณ</span>
+      </button>
+      <button type="button" id="tabMyReq" class="tab-btn" onclick="switchTab('myreq')">
+        <i class="fas fa-clock"></i>
+        <span>คำขอของฉัน</span>
+        <span id="myReqBadge" class="req-badge"></span>
+      </button>
+    </div>
+
+    <!-- STATE: LIST (วินใกล้คุณ) -->
+    <div id="stateList">
+      <div class="sheet-title">🏍️ วินไรเดอร์ใกล้คุณ</div>
+      <div class="sheet-subtitle" id="sheetSubtitle">กำลังค้นหา...</div>
+      <div id="riderList">
+        <div class="spinner">
+          <i class="fas fa-spinner fa-spin"></i>
+          กำลังโหลดวิน...
+        </div>
+      </div>
+    </div>
+
+    <!-- STATE: MY REQUESTS -->
+    <div id="stateMyReq" style="display:none;">
+      <div class="sheet-title">📋 คำขอวินของฉัน</div>
+      <div id="myReqList">
+        <div class="spinner">
+          <i class="fas fa-spinner fa-spin"></i>
+          กำลังโหลด...
+        </div>
+      </div>
+    </div>
+
+    <!-- STATE: BOOKING FORM -->
+    <div id="stateBook" style="display:none;">
+      <div style="display:flex; align-items:center; gap:16px; margin-bottom:20px;">
+        <button type="button" onclick="backToList()"
+          style="background:none; border:none; color:var(--primary); font-size:1.2rem; cursor:pointer;">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <div class="sheet-title" id="bookTitle">เรียกวิน</div>
+      </div>
+
+      <div id="riderSelectedCard" style="margin-bottom:20px;"></div>
+
+      <div class="form-group">
+        <label><i class="fas fa-map-marker-alt"></i> จุดรับ</label>
+        <input type="text" id="bookPickup" placeholder="ที่อยู่จุดรับ / ร้านค้า">
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-flag-checkered"></i> จุดส่ง</label>
+        <input type="text" id="bookDelivery" placeholder="ที่อยู่ปลายทาง">
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-phone"></i> เบอร์โทรผู้รับ</label>
+        <input type="tel" id="bookPhone" placeholder="08x-xxx-xxxx">
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-sticky-note"></i> หมายเหตุ</label>
+        <textarea id="bookNote" placeholder="เช่น ของแตกง่าย, จอดหน้าปากซอย"></textarea>
+      </div>
+
+      <div
+        style="background:rgba(0,210,255,0.05); border:1px solid var(--border); border-radius:16px; padding:16px; margin-bottom:16px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <i class="fas fa-info-circle" style="color:var(--primary);"></i>
+          <span style="font-size:0.85rem; color:var(--text-secondary);">ค่าบริการขึ้นอยู่กับระยะทาง
+            ตกลงกับวินโดยตรง</span>
+        </div>
+      </div>
+
+      <button type="button" class="book-btn" id="confirmBookBtn" onclick="confirmBooking()">
+        <i class="fas fa-motorcycle"></i> ยืนยันเรียกวิน
+      </button>
+    </div>
+
+    <!-- STATE: TRACKING -->
+    <div id="stateTrack" style="display:none;">
+      <div class="sheet-title">📍 สถานะการรับส่ง</div>
+      <div class="status-bar">
+        <div class="status-step" id="step1">
+          <div class="icon">📋</div>
+          <div class="label">ส่งคำขอ</div>
+        </div>
+        <div class="status-step" id="step2">
+          <div class="icon">🏍️</div>
+          <div class="label">วินรับงาน</div>
+        </div>
+        <div class="status-step" id="step3">
+          <div class="icon">📦</div>
+          <div class="label">กำลังส่ง</div>
+        </div>
+        <div class="status-step" id="step4">
+          <div class="icon">✅</div>
+          <div class="label">ส่งแล้ว</div>
+        </div>
+      </div>
+      <div id="trackDetail" style="text-align:center; color:var(--text-secondary); font-size:0.95rem; padding:20px 0;">
+      </div>
+      <button type="button" onclick="backToList()"
+        style="width:100%; padding:14px; border-radius:16px; background:rgba(0,210,255,0.1); border:1px solid var(--border); color:var(--primary); font-weight:700; cursor:pointer; font-family:'Kanit'; margin-top:8px;">
+        <i class="fas fa-arrow-left"></i> กลับ
+      </button>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast" id="toast">
+    <div class="toast-icon" id="toastIcon"><i class="fas fa-info-circle"></i></div>
+    <div class="toast-content">
+      <div class="toast-title" id="toastTitle">System Alert</div>
+      <div id="toastMessage">Message Content</div>
+    </div>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+  <script>
+    // ============================================
+    // CONFIGURATION
+    // ============================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyD92Lw0vd32ce6m4J2nBVBWZRYBy4aDB_s",
+      authDomain: "appinjproject.firebaseapp.com",
+      projectId: "appinjproject",
+      storageBucket: "appinjproject.firebasestorage.app",
+      messagingSenderId: "408718656984",
+      appId: "1:408718656984:web:76e9cc7a89e9b4c9d5a8ab"
+    };
+
+    // ============================================
+    // GLOBAL VARIABLES
+    // ============================================
+    let db;
+    let map, userMarker, userLat = 13.7563, userLng = 100.5018; // Default Bangkok
+    let riderMarkers = {};
+    let riders = [];
+    let selectedRider = null;
+    let activeRequestId = null;
+    let requestListener = null;
+    let myReqListener = null;
+    let ridersListener = null;   // real-time rider listener
+    let routeLine = null;        // route polyline on map
+    let currentTab = 'near';
+    const sheetEl = document.getElementById('bottomSheet');
+
+    // ============================================
+    // TOAST FUNCTION
+    // ============================================
+    function showToast(msg, type = 'info', title = 'System Alert', duration = 3500) {
+      const toast = document.getElementById('toast');
+      const icon = document.getElementById('toastIcon');
+      const titleEl = document.getElementById('toastTitle');
+      const msgEl = document.getElementById('toastMessage');
+
+      const icons = {
+        success: '<i class="fas fa-check-circle"></i>',
+        error: '<i class="fas fa-exclamation-triangle"></i>',
+        info: '<i class="fas fa-info-circle"></i>',
+        warning: '<i class="fas fa-exclamation-circle"></i>'
+      };
+
+      icon.innerHTML = icons[type] || icons.info;
+      titleEl.textContent = title;
+      msgEl.textContent = msg;
+
+      toast.className = `toast ${type} show`;
+
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, duration);
+    }
+
+    // ============================================
+    // FIREBASE INIT
+    // ============================================
+    try {
+      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+      db = firebase.firestore();
+      console.log('✅ Firebase initialized');
+    } catch (e) {
+      console.error('❌ Firebase init error:', e);
+      showToast('ไม่สามารถเชื่อมต่อฐานข้อมูล', 'error', 'Connection Error');
+    }
+
+    // ============================================
+    // SESSION MANAGEMENT
+    // ============================================
+    function getSession() {
+      try {
+        const raw = localStorage.getItem('wizmobiz_session');
+        return raw ? JSON.parse(raw) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    // ============================================
+    // DISTANCE CALCULATION (Haversine)
+    // ============================================
+    function haversine(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Earth radius in km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+
+    // ============================================
+    // MAP INITIALIZATION
+    // ============================================
+    function initMap(lat, lng) {
+      map = L.map('map', {
+        zoomControl: false,
+        attributionControl: false,
+        fadeAnimation: true,
+        zoomAnimation: true,
+        markerZoomAnimation: true
+      }).setView([lat, lng], 15);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: ''
+      }).addTo(map);
+
+      // Premium User Marker
+      const userIcon = L.divIcon({
+        className: '',
+        html: `<div style="position:relative;">
+      <div style="width:24px; height:24px; border-radius:50%; background:var(--primary); border:3px solid white; box-shadow:0 0 0 8px rgba(0,210,255,0.3); animation:pulse 1.5s infinite;"></div>
+      <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:40px; height:40px; border-radius:50%; background:rgba(0,210,255,0.2); animation:ping 2s infinite;"></div>
+    </div>`,
+        iconSize: [40, 40],
+        iconAnchor: [20, 20]
+      });
+
+      userMarker = L.marker([lat, lng], { icon: userIcon, zIndexOffset: 1000 }).addTo(map);
+      userLat = lat;
+      userLng = lng;
+
+      // Load station zones after map is ready
+      loadStations();
+
+      // Invalidate size when sheet expands/collapses so tiles fill correctly
+      map.on('moveend zoomend', () => map.invalidateSize());
+    }
+
+    // ============================================
+    // RIDER ICON
+    // ============================================
+    function riderIcon(online, type) {
+      const color = online ? '#00FF88' : '#607D8B';
+      const icon = type === 'delivery' ? '📦' : type === 'passenger' ? '🧑' : '⚡';
+
+      return L.divIcon({
+        className: '',
+        html: `<div style="font-size:32px; filter:drop-shadow(0 2px 10px ${color}); animation:${online ? 'float 3s ease-in-out infinite' : 'none'}; position:relative;">
+      🏍️
+      <div style="position:absolute; top:-5px; right:-5px; font-size:14px; background:${color}; color:#000; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; border:2px solid var(--bg);">${icon}</div>
+    </div>`,
+        iconSize: [40, 40],
+        iconAnchor: [20, 20]
+      });
+    }
+
+    // ============================================
+    // LOAD RIDERS — real-time onSnapshot
+    // ============================================
+    function loadRiders() {
+      if (!db) {
+        document.getElementById('riderList').innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-database"></i>
+        <p>ไม่สามารถเชื่อมต่อฐานข้อมูล</p>
+      </div>`;
+        return;
+      }
+
+      // Cancel previous listener
+      if (ridersListener) { ridersListener(); ridersListener = null; }
+
+      ridersListener = db.collection('win_riders')
+        .where('isOnline', '==', true)
+        .limit(50)
+        .onSnapshot(snap => {
+          const onlineCount = snap.size;
+          document.getElementById('onlineCount').textContent = `${onlineCount} วินออนไลน์`;
+
+          riders = [];
+          snap.docs.forEach(d => {
+            const r = { id: d.id, ...d.data() };
+            if (r.lat && r.lng) riders.push(r);
+          });
+
+          // Calculate & sort by distance
+          riders.forEach(r => {
+            r._dist = haversine(userLat, userLng, r.lat, r.lng);
+          });
+          riders.sort((a, b) => (a._dist || 999) - (b._dist || 999));
+
+          renderRiderMarkers();
+          renderRiderList();
+          expandSheet();
+
+          if (riders.length > 0) {
+            showToast(`พบ ${riders.length} วินใกล้คุณ`, 'success', 'ค้นหาเสร็จสิ้น', 2000);
+          }
+        }, e => {
+          console.error('Load riders error:', e);
+          // Fallback: try without isVerified filter (index may not exist)
+          document.getElementById('riderList').innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>ไม่สามารถโหลดข้อมูลวินได้</p>
+          <div class="hint">กรุณาลองใหม่อีกครั้ง</div>
+        </div>`;
+        });
+    }
+
+    // ============================================
+    // LOAD WIN STATIONS — zone circles + markers
+    // ============================================
+    async function loadStations() {
+      if (!db || !map) return;
+      try {
+        const snap = await db.collection('win_stations').get();
+        if (snap.empty) return;
+
+        snap.docs.forEach(doc => {
+          const s = { id: doc.id, ...doc.data() };
+          if (!s.lat || !s.lng) return;
+
+          const name = s.name || s.stationName || 'สถานีวิน';
+
+          // Service radius (large, dashed)
+          L.circle([s.lat, s.lng], {
+            radius: s.serviceRadiusM || 3000,
+            color: '#00D2FF',
+            fillColor: '#00D2FF',
+            fillOpacity: 0.04,
+            weight: 1,
+            dashArray: '6, 6',
+            interactive: false,
+          }).addTo(map);
+
+          // Priority zone (small, solid)
+          L.circle([s.lat, s.lng], {
+            radius: s.priorityRadiusM || 500,
+            color: '#00E676',
+            fillColor: '#00E676',
+            fillOpacity: 0.08,
+            weight: 1.5,
+            interactive: false,
+          }).addTo(map);
+
+          // Station label marker
+          const stationIcon = L.divIcon({
+            className: 'station-label',
+            html: `📍 ${name}`,
+            iconAnchor: [40, 10],
+          });
+          L.marker([s.lat, s.lng], { icon: stationIcon, zIndexOffset: 500 })
+            .addTo(map)
+            .bindTooltip(`บริการในรัศมี ${((s.serviceRadiusM || 3000) / 1000).toFixed(1)} กม.`, {
+              direction: 'top', offset: [0, -12],
+            });
+        });
+      } catch (e) {
+        console.warn('loadStations skipped:', e.message);
+      }
+    }
+
+    // ============================================
+    // REVERSE GEOCODE (Nominatim — free, no key)
+    // ============================================
+    async function reverseGeocode(lat, lng) {
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=th`,
+          { headers: { 'Accept-Language': 'th' } }
+        );
+        const data = await res.json();
+        // Return short address: road + suburb or full display_name fallback
+        const a = data.address || {};
+        const parts = [a.road, a.suburb, a.city_district, a.city || a.town || a.village]
+          .filter(Boolean);
+        return parts.length ? parts.slice(0, 3).join(', ') : (data.display_name || '');
+      } catch (e) {
+        return '';
+      }
+    }
+
+    // ============================================
+    // RENDER RIDER MARKERS
+    // ============================================
+    function renderRiderMarkers() {
+      // Clear old markers
+      Object.values(riderMarkers).forEach(m => map && map.removeLayer(m));
+      riderMarkers = {};
+
+      riders.forEach(r => {
+        if (!r.lat || !r.lng) return;
+
+        const m = L.marker([r.lat, r.lng], {
+          icon: riderIcon(r.isOnline, r.type)
+        });
+
+        m.on('click', () => selectRider(r));
+
+        const distText = r._dist ? `${r._dist.toFixed(1)} กม.` : '';
+        const stars = '★'.repeat(Math.round(r.rating || 5)) + '☆'.repeat(5 - Math.round(r.rating || 5));
+
+        m.bindPopup(`
+      <div class="rider-popup">
+        <div class="name">🏍️ ${r.name || 'วินไรเดอร์'}</div>
+        <div class="stars">${stars}</div>
+        <div class="meta">
+          ${r.type === 'delivery' ? '📦 รับส่งสินค้า' : r.type === 'passenger' ? '🧑 รับผู้โดยสาร' : '⚡ บริการด่วน'}
+          ${distText ? ` • ${distText}` : ''}
+        </div>
+        <button class="call-btn" onclick="selectRiderById('${r.id}')">เรียกวินนี้</button>
+      </div>
+    `, { className: 'dark-popup', maxWidth: 250 });
+
+        m.addTo(map);
+        riderMarkers[r.id] = m;
+      });
+    }
+
+    // ============================================
+    // SELECT RIDER BY ID (for popup)
+    // ============================================
+    window.selectRiderById = function (id) {
+      const r = riders.find(x => x.id === id);
+      if (r) {
+        map.closePopup();
+        selectRider(r);
+      }
+    };
+
+    // ============================================
+    // RENDER RIDER LIST
+    // ============================================
+    function renderRiderList() {
+      const list = document.getElementById('riderList');
+      const subtitle = document.getElementById('sheetSubtitle');
+
+      if (!riders.length) {
+        list.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-motorcycle"></i>
+        <p>ยังไม่มีวินออนไลน์ในพื้นที่</p>
+        <div class="hint">ลองใหม่อีกครั้ง หรือเรียกวินผ่านหน้าสินค้า</div>
+      </div>`;
+        subtitle.textContent = 'ไม่พบวินออนไลน์';
+        return;
+      }
+
+      subtitle.textContent = `พบ ${riders.length} วิน ใกล้คุณ`;
+
+      list.innerHTML = riders.map(r => `
+    <div class="rider-card" id="rc-${r.id}" onclick="selectRider(riders.find(x=>x.id==='${r.id}'))" style="animation: fadeInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; animation-delay: ${riders.indexOf(r) * 50}ms;">
+      <div class="rider-avatar">
+        ${r.photoUrl ? `<img src="${r.photoUrl}" onerror="this.parentElement.innerHTML='🏍️'">` : '🏍️'}
+      </div>
+      <div class="rider-info">
+        <div class="rider-name">${r.name || 'วินไรเดอร์'}</div>
+        <div class="rider-meta">${r.area || 'บริการในพื้นที่'} • ฿${r.basePrice || 25}/ครั้ง</div>
+        <div class="rider-stats">
+          <span class="rider-stat"><i class="fas fa-star" style="color:#FFD700;"></i> ${r.rating || '5.0'}</span>
+          <span class="rider-stat"><i class="fas fa-flag-checkered"></i> ${r.totalTrips || 0}</span>
+          <span class="rider-stat"><i class="fas fa-${r.type === 'delivery' ? 'box' : r.type === 'passenger' ? 'user' : 'bolt'}"></i> ${r.type === 'delivery' ? 'ส่งของ' : r.type === 'passenger' ? 'โดยสาร' : 'ด่วน'}</span>
+        </div>
+      </div>
+      <div class="rider-dist">${r._dist ? r._dist.toFixed(1) + ' กม.' : ''}</div>
+    </div>
+  `).join('');
+    }
+
+    // ============================================
+    // SELECT RIDER
+    // ============================================
+    function selectRider(r) {
+      selectedRider = r;
+
+      // Draw dashed route line user → rider
+      if (routeLine) { map.removeLayer(routeLine); routeLine = null; }
+      if (r.lat && r.lng && map) {
+        routeLine = L.polyline([[userLat, userLng], [r.lat, r.lng]], {
+          color: '#00D2FF',
+          weight: 3,
+          opacity: 0.75,
+          dashArray: '10, 8',
+          lineCap: 'round',
+        }).addTo(map);
+
+        // Fit map to show both endpoints with padding for the bottom sheet
+        try {
+          map.fitBounds(routeLine.getBounds(), { paddingTopLeft: [20, 80], paddingBottomRight: [20, 200] });
+        } catch (_) {
+          map.setView([r.lat, r.lng], 15, { animate: true });
+        }
+      }
+
+      // Update booking form
+      document.getElementById('bookTitle').textContent = `เรียก: ${r.name || 'วินไรเดอร์'}`;
+      document.getElementById('riderSelectedCard').innerHTML = `
+    <div class="rider-card selected">
+      <div class="rider-avatar">
+        ${r.photoUrl ? `<img src="${r.photoUrl}" onerror="this.parentElement.innerHTML='🏍️'">` : '🏍️'}
+      </div>
+      <div class="rider-info">
+        <div class="rider-name">${r.name || 'วินไรเดอร์'}</div>
+        <div class="rider-meta"><i class="fas fa-star" style="color:#FFD700;"></i> ${r.rating || '5.0'} • ${r.totalTrips || 0} เที่ยว</div>
+      </div>
+      <div class="rider-dist" style="color:var(--primary); font-size:1.1rem;">฿${r.basePrice || 25}+</div>
+    </div>`;
+
+      showState('book');
+    }
+
+    // ============================================
+    // PREFILL FROM URL PARAMS
+    // ============================================
+    function prefillFromParams() {
+      const params = new URLSearchParams(location.search);
+      if (params.get('pickup')) document.getElementById('bookPickup').value = decodeURIComponent(params.get('pickup'));
+      if (params.get('delivery')) document.getElementById('bookDelivery').value = decodeURIComponent(params.get('delivery') || '');
+      if (params.get('phone')) document.getElementById('bookPhone').value = params.get('phone');
+    }
+
+    // ============================================
+    // CONFIRM BOOKING
+    // ============================================
+    async function confirmBooking() {
+      const session = getSession();
+      if (!session || !session.lineUserId) {
+        showToast('กรุณาเข้าสู่ระบบก่อนเรียกวิน', 'warning', 'เข้าสู่ระบบ');
+        return;
+      }
+
+      const pickup = document.getElementById('bookPickup').value.trim();
+      const delivery = document.getElementById('bookDelivery').value.trim();
+      const phone = document.getElementById('bookPhone').value.trim();
+      const note = document.getElementById('bookNote').value.trim();
+
+      if (!pickup || !delivery || !phone) {
+        showToast('กรุณากรอกข้อมูลให้ครบถ้วน', 'error', 'ข้อมูลไม่ครบ');
+        return;
+      }
+
+      const btn = document.getElementById('confirmBookBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังส่ง...';
+
+      try {
+        const params = new URLSearchParams(location.search);
+        const requestRef = await db.collection('win_rider_requests').add({
+          productId: params.get('productId') || '',
+          productName: params.get('productName') ? decodeURIComponent(params.get('productName')) : '',
+          riderId: selectedRider ? (selectedRider.lineUserId || selectedRider.id) : '',
+          riderName: selectedRider ? (selectedRider.name || '') : '',
+          requesterId: session.lineUserId,
+          requesterName: session.displayName || '',
+          requesterPhone: phone,
+          pickupAddress: pickup,
+          deliveryAddress: delivery,
+          note: note,
+          status: 'pending',
+          isUnread: true,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        activeRequestId = requestRef.id;
+
+        // Notify specific rider
+        if (selectedRider) {
+          const riderId = selectedRider.lineUserId || selectedRider.id;
+          await db.collection('notifications').add({
+            recipientId: riderId,
+            title: '⚡ มีงานใหม่สำหรับคุณ!',
+            message: `${session.displayName || 'ลูกค้า'} เรียกคุณโดยตรง`,
+            type: 'win_rider_request',
+            requestId: requestRef.id,
+            pickupAddress: pickup,
+            deliveryAddress: delivery,
+            requesterName: session.displayName || '',
+            requesterPhone: phone,
+            isRead: false,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }
+
+        // Show tracking
+        showState('track');
+        startTracking(requestRef.id);
+        document.getElementById('trackDetail').textContent = '📨 ส่งคำขอเรียบร้อย รอวินไรเดอร์รับงาน...';
+        setStep(1);
+
+        showToast('ส่งคำขอสำเร็จ!', 'success', 'เรียบร้อย');
+
+      } catch (e) {
+        console.error('Booking error:', e);
+        showToast('เกิดข้อผิดพลาด: ' + e.message, 'error', 'ผิดพลาด');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-motorcycle"></i> ยืนยันเรียกวิน';
+      }
+    }
+
+    // ============================================
+    // REAL-TIME TRACKING
+    // ============================================
+    function startTracking(requestId) {
+      if (requestListener) requestListener();
+
+      requestListener = db.collection('win_rider_requests').doc(requestId)
+        .onSnapshot(doc => {
+          if (!doc.exists) return;
+          const data = doc.data();
+          const status = data.status;
+
+          switch (status) {
+            case 'accepted':
+              setStep(2);
+              document.getElementById('trackDetail').textContent =
+                `🏍️ ${data.riderName || 'วินไรเดอร์'} รับงานแล้ว กำลังมารับ...`;
+              showToast('วินรับงานแล้ว!', 'success', 'อัปเดตสถานะ');
+              break;
+            case 'in_progress':
+            case 'picked_up':
+              setStep(3);
+              document.getElementById('trackDetail').textContent = '📦 กำลังส่งสินค้า...';
+              break;
+            case 'completed':
+              setStep(4);
+              document.getElementById('trackDetail').textContent = '✅ ส่งสำเร็จแล้ว! ขอบคุณที่ใช้บริการ WIN RIDER';
+              showToast('ส่งสำเร็จ!', 'success', 'เสร็จสิ้น');
+              if (requestListener) {
+                requestListener();
+                requestListener = null;
+              }
+              break;
+            default:
+              setStep(1);
+          }
+        }, error => {
+          console.error('Tracking error:', error);
+        });
+    }
+
+    // ============================================
+    // SET STEP
+    // ============================================
+    function setStep(step) {
+      for (let i = 1; i <= 4; i++) {
+        const el = document.getElementById('step' + i);
+        if (!el) continue;
+        el.classList.remove('active', 'done');
+        if (i < step) el.classList.add('done');
+        else if (i === step) el.classList.add('active');
+      }
+    }
+
+    // ============================================
+    // SWITCH TAB
+    // ============================================
+    function switchTab(tab) {
+      currentTab = tab;
+      document.getElementById('tabNear').classList.toggle('active', tab === 'near');
+      document.getElementById('tabMyReq').classList.toggle('active', tab === 'myreq');
+
+      if (tab === 'near') {
+        const inBook = document.getElementById('stateBook').style.display !== 'none';
+        const inTrack = document.getElementById('stateTrack').style.display !== 'none';
+        if (!inBook && !inTrack) showState('list');
+      } else {
+        showState('myreq');
+        loadMyRequests();
+      }
+    }
+
+    // ============================================
+    // LOAD MY REQUESTS
+    // ============================================
+    function loadMyRequests() {
+      const list = document.getElementById('myReqList');
+      if (!list) return;
+
+      const session = getSession();
+      if (!session || !session.lineUserId) {
+        list.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-user-slash"></i>
+        <p>กรุณาเข้าสู่ระบบก่อน</p>
+      </div>`;
+        return;
+      }
+
+      list.innerHTML = `<div class="spinner"><i class="fas fa-spinner fa-spin"></i>กำลังโหลด...</div>`;
+
+      // Cancel previous listener
+      if (myReqListener) {
+        myReqListener();
+        myReqListener = null;
+      }
+
+      // Real-time listener
+      myReqListener = db.collection('win_rider_requests')
+        .where('requesterId', '==', session.lineUserId)
+        .orderBy('createdAt', 'desc')
+        .limit(20)
+        .onSnapshot(snap => {
+          const badge = document.getElementById('myReqBadge');
+          const active = snap.docs.filter(d => !['completed', 'cancelled'].includes(d.data().status));
+
+          if (badge) {
+            badge.textContent = active.length;
+            badge.style.display = active.length ? 'inline' : 'none';
+          }
+
+          if (snap.empty) {
+            list.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-motorcycle"></i>
+            <p>ยังไม่มีคำขอ</p>
+            <div class="hint">กดเรียกวินจากหน้าสินค้าหรือแท็บ "วินใกล้คุณ"</div>
+          </div>`;
+            return;
+          }
+
+          const statusConfig = {
+            pending: { label: 'รอวินรับงาน', color: '#FF6B2B', icon: '⏳' },
+            accepted: { label: 'วินรับงานแล้ว', color: '#00D2FF', icon: '🏍️' },
+            in_progress: { label: 'กำลังส่ง', color: '#00E676', icon: '📦' },
+            picked_up: { label: 'รับของแล้ว', color: '#00E676', icon: '📦' },
+            completed: { label: 'ส่งสำเร็จ', color: '#607D8B', icon: '✅' },
+            cancelled: { label: 'ยกเลิก', color: '#FF3B3B', icon: '❌' }
+          };
+
+          list.innerHTML = snap.docs.map(doc => {
+            const r = doc.data();
+            const cfg = statusConfig[r.status] || statusConfig.pending;
+            const isActive = !['completed', 'cancelled'].includes(r.status);
+
+            const riderSection = (r.riderName || r.riderPhone || r.riderPlate) ? `
+          <div class="req-rider-info">
+            <div class="title">📋 ข้อมูลวิน</div>
+            ${r.riderName ? `<div><i class="fas fa-user"></i> ${r.riderName}</div>` : ''}
+            ${r.riderPhone ? `<div><i class="fas fa-phone"></i> <a href="tel:${r.riderPhone}">${r.riderPhone}</a></div>` : ''}
+            ${r.riderPlate ? `<div><i class="fas fa-motorcycle"></i> ${r.riderPlate}</div>` : ''}
+          </div>` : '';
+
+            return `
+          <div class="req-card">
+            <div class="req-card-header">
+              <div>
+                <div class="req-card-title">${r.productName || 'คำขอรับส่ง'}</div>
+                <div class="req-card-addr"><i class="fas fa-map-marker-alt"></i> ${r.pickupAddress || '-'}</div>
+                <div class="req-card-addr"><i class="fas fa-flag-checkered"></i> ${r.deliveryAddress || '-'}</div>
+              </div>
+              <div class="req-card-status">
+                <div class="icon" style="color:${cfg.color};">${cfg.icon}</div>
+                <div class="label" style="color:${cfg.color};">${cfg.label}</div>
+              </div>
+            </div>
+            ${riderSection}
+            ${isActive ? `
+              <div class="req-actions">
+                <button type="button" onclick="trackRequest('${doc.id}')" class="req-action-btn">
+                  <i class="fas fa-location-arrow"></i> ติดตาม
+                </button>
+                ${r.riderPhone ? `
+                  <a href="tel:${r.riderPhone}" class="req-action-btn req-action-call">
+                    <i class="fas fa-phone"></i> โทร
+                  </a>
+                ` : ''}
+              </div>
+            ` : ''}
+          </div>
+        `;
+          }).join('');
+
+        }, error => {
+          console.error('My requests error:', error);
+          list.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-exclamation-triangle"></i>
+          <p>ไม่สามารถโหลดข้อมูลได้</p>
+        </div>`;
+        });
+    }
+
+    // ============================================
+    // TRACK REQUEST
+    // ============================================
+    function trackRequest(requestId) {
+      activeRequestId = requestId;
+      showState('track');
+      setStep(1);
+      document.getElementById('trackDetail').textContent = 'กำลังตรวจสอบสถานะ...';
+      startTracking(requestId);
+      switchTab('near');
+    }
+
+    // ============================================
+    // UI HELPERS
+    // ============================================
+    function showState(state) {
+      document.getElementById('stateList').style.display = state === 'list' ? 'block' : 'none';
+      document.getElementById('stateBook').style.display = state === 'book' ? 'block' : 'none';
+      document.getElementById('stateTrack').style.display = state === 'track' ? 'block' : 'none';
+      document.getElementById('stateMyReq').style.display = state === 'myreq' ? 'block' : 'none';
+      expandSheet();
+    }
+
+    function backToList() {
+      showState('list');
+      selectedRider = null;
+      if (routeLine) { map.removeLayer(routeLine); routeLine = null; }
+      if (map) map.setView([userLat, userLng], 15, { animate: true });
+    }
+
+    function expandSheet() {
+      sheetEl.classList.remove('collapsed');
+      setTimeout(() => map && map.invalidateSize(), 320);
+    }
+
+    function toggleSheet() {
+      sheetEl.classList.toggle('collapsed');
+      setTimeout(() => map && map.invalidateSize(), 320);
+    }
+
+    function centerOnUser() {
+      if (userLat && userLng && map) {
+        map.setView([userLat, userLng], 16, { animate: true });
+        showToast('📍 กลับสู่ตำแหน่งของคุณ', 'info', 'ศูนย์กลางแผนที่', 1500);
+      }
+    }
+
+    // ============================================
+    // INIT BADGE
+    // ============================================
+    function initMyReqBadge() {
+      const session = getSession();
+      if (!session || !session.lineUserId || !db) return;
+
+      db.collection('win_rider_requests')
+        .where('requesterId', '==', session.lineUserId)
+        .where('status', 'in', ['pending', 'accepted', 'in_progress', 'picked_up'])
+        .get()
+        .then(snap => {
+          const badge = document.getElementById('myReqBadge');
+          if (badge && snap.size > 0) {
+            badge.textContent = snap.size;
+            badge.style.display = 'inline';
+          }
+        })
+        .catch(() => { });
+    }
+
+    // ============================================
+    // INITIALIZE
+    // ============================================
+    window.addEventListener('DOMContentLoaded', () => {
+      // Initialize AOS
+      if (typeof AOS !== 'undefined') {
+        AOS.init({
+          duration: 800,
+          once: true,
+          offset: 50
+        });
+      }
+
+      prefillFromParams();
+
+      // Check for ?tab=myreq in URL
+      if (new URLSearchParams(location.search).get('tab') === 'myreq') {
+        switchTab('myreq');
+      }
+
+      // Get user location
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          async (pos) => {
+            const { latitude: lat, longitude: lng } = pos.coords;
+            initMap(lat, lng);
+            loadRiders();
+            initMyReqBadge();
+            showToast('📍 พบตำแหน่งของคุณแล้ว', 'success', 'GPS เชื่อมต่อ', 2000);
+
+            // Auto-fill pickup from reverse geocode (non-blocking)
+            reverseGeocode(lat, lng).then(addr => {
+              const el = document.getElementById('bookPickup');
+              if (el && !el.value && addr) el.value = addr;
+            });
+          },
+          (error) => {
+            console.warn('Geolocation error:', error);
+            const defaultLat = 13.7563, defaultLng = 100.5018;
+            initMap(defaultLat, defaultLng);
+            loadRiders();
+            initMyReqBadge();
+            const msgs = {
+              1: 'ผู้ใช้ไม่อนุญาต GPS',
+              2: 'ไม่สามารถระบุตำแหน่ง',
+              3: 'GPS หมดเวลา',
+            };
+            showToast(`📍 ${msgs[error.code] || 'GPS ไม่พร้อม'} — ใช้ตำแหน่งกรุงเทพฯ`, 'info', 'GPS', 3000);
+          },
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
+        );
+      } else {
+        initMap(13.7563, 100.5018);
+        loadRiders();
+        initMyReqBadge();
+        showToast('เบราว์เซอร์ไม่รองรับ GPS', 'warning', 'Geolocation', 3000);
+      }
+    });
+
+    // trackRequest must be global for inline onclick
+    window.trackRequest = trackRequest;
+  </script>
+</body>
+
+</html>

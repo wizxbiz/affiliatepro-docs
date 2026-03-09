@@ -1,0 +1,234 @@
+/* ══════════════════════════════════════════
+   📱 MOBILE HEADER BAR V4 (Flutter-Inspired)
+   Structure: [Logo/Shortcuts] [Tabs] [Actions]
+   ══════════════════════════════════════════ */
+
+@media (max-width: 991px) {
+    #mobileHeader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 10001;
+        /* Above video feed, below modals */
+        height: calc(64px + env(safe-area-inset-top, 0px));
+        display: flex;
+        align-items: flex-end;
+        /* Align to bottom of bar for safe area */
+        padding: 0 12px 10px 12px;
+        gap: 8px;
+
+        /* Premium Gradient: Deep at top for status bar visibility */
+        background: linear-gradient(180deg,
+                rgba(0, 0, 0, 0.9) 0%,
+                rgba(0, 0, 0, 0.6) 50%,
+                rgba(0, 0, 0, 0.3) 80%,
+                transparent 100%);
+        pointer-events: none;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    #mobileHeader * {
+        pointer-events: auto;
+    }
+
+    /* ── Logo Section ── */
+    .mh-left {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .mh-logo {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    .mh-logo:active {
+        transform: scale(0.9);
+    }
+
+    .mh-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* ── Category Tabs (Flutter animated like) ── */
+    .mh-tabs {
+        display: flex;
+        gap: 6px;
+        flex: 1;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.08);
+        padding: 4px;
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+    }
+
+    .mh-tab {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.6);
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-family: 'Kanit', sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        white-space: nowrap;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .mh-tab span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .mh-tab i {
+        font-size: 11px;
+        transition: transform 0.3s;
+    }
+
+    /* Active Tab States - Matching Flutter tuktuk_feed_screen.dart */
+    .mh-tab.active {
+        background: rgba(255, 255, 255, 0.15);
+        color: #fff;
+        font-weight: 700;
+        transform: scale(1.02);
+    }
+
+    /* Tab: ดูเพลิน (For You) - Orange Accent */
+    .mh-tab[data-cat="all"].active {
+        box-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
+        border: 1px solid rgba(251, 191, 36, 0.4);
+    }
+
+    .mh-tab[data-cat="all"].active i {
+        color: #fbbf24;
+    }
+
+    /* Tab: ใกล้ฉัน (Near Me) - Cyan Accent */
+    .mh-tab[data-cat="near_me"].active {
+        box-shadow: 0 0 15px rgba(34, 211, 238, 0.3);
+        border: 1px solid rgba(34, 211, 238, 0.4);
+    }
+
+    .mh-tab[data-cat="near_me"].active i {
+        color: #22d3ee;
+    }
+
+    /* Tab: อาชีพ (Career/Community) - Pink Accent */
+    .mh-tab[data-cat="community"].active {
+        box-shadow: 0 0 15px rgba(244, 114, 182, 0.3);
+        border: 1px solid rgba(244, 114, 182, 0.4);
+    }
+
+    .mh-tab[data-cat="community"].active i {
+        color: #f472b6;
+    }
+
+    /* ── Action Icons ── */
+    .mh-actions {
+        display: flex;
+        gap: 6px;
+        flex-shrink: 0;
+    }
+
+    .mh-icon-btn {
+        position: relative;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    .mh-icon-btn:active {
+        transform: scale(0.9);
+    }
+
+    .mh-icon-btn.active {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.4);
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+    }
+
+    .mh-badge {
+        position: absolute;
+        top: -3px;
+        right: -3px;
+        min-width: 18px;
+        height: 18px;
+        background: #ef4444;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 800;
+        border-radius: 50%;
+        display: none;
+        /* Shown via JS */
+        align-items: center;
+        justify-content: center;
+        padding: 0 4px;
+        border: 2px solid #000;
+        line-height: 1;
+        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+    }
+
+    .mh-icon-btn.rider-btn {
+        background: rgba(245, 158, 11, 0.2);
+        /* Warning/Orange Tint */
+        border-color: rgba(245, 158, 11, 0.4);
+        color: #f59e0b;
+        margin-left: 4px;
+    }
+
+    .mh-icon-btn.rider-btn:active {
+        background: rgba(245, 158, 11, 0.4);
+    }
+
+    /* ── Mobile Layout Fixes ── */
+    .standard-feed-container {
+        padding-top: calc(72px + env(safe-area-inset-top, 0px)) !important;
+    }
+
+    /* Hide bottom nav when modal is open (re-enforcing for PWA) */
+    body.modal-open #mobileHeader {
+        transform: translateY(-100%);
+    }
+}
+
+/* Hide mobile header on PC */
+@media (min-width: 992px) {
+    #mobileHeader {
+        display: none !important;
+    }
+}

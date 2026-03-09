@@ -116,10 +116,110 @@ func (r *redisRepo) GetTrendingPosts(ctx context.Context, limit int) ([]models.P
 	return posts, nil
 }
 
+func (r *redisRepo) GetMarketplaceProducts(ctx context.Context, limit int) ([]models.MarketplaceProduct, error) {
+	key := fmt.Sprintf("marketplace_products:limit:%d", limit)
+	var products []models.MarketplaceProduct
+
+	if err := r.cache.Get(ctx, key, &products); err == nil {
+		return products, nil
+	}
+
+	products, err := r.base.GetMarketplaceProducts(ctx, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	_ = r.cache.Set(ctx, key, products, 5*time.Minute)
+	return products, nil
+}
+
+func (r *redisRepo) GetLeaderboard(ctx context.Context, limit int) ([]models.SellerLeaderboard, error) {
+	key := fmt.Sprintf("leaderboard:limit:%d", limit)
+	var sellers []models.SellerLeaderboard
+
+	if err := r.cache.Get(ctx, key, &sellers); err == nil {
+		return sellers, nil
+	}
+
+	sellers, err := r.base.GetLeaderboard(ctx, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	_ = r.cache.Set(ctx, key, sellers, 10*time.Minute)
+	return sellers, nil
+}
+
 func (r *redisRepo) TogglePostLike(ctx context.Context, postID string, userID string) (bool, error) {
+	// Invalidate post caches so ranking updates
+	_ = r.cache.Delete(ctx, "posts:limit:20")
+	_ = r.cache.Delete(ctx, "trending_posts:limit:10")
 	return r.base.TogglePostLike(ctx, postID, userID)
 }
 
 func (r *redisRepo) IncrementViewCount(ctx context.Context, postID string) error {
+	// Invalidate post caches
+	_ = r.cache.Delete(ctx, "posts:limit:20")
+	_ = r.cache.Delete(ctx, "trending_posts:limit:10")
 	return r.base.IncrementViewCount(ctx, postID)
+}
+
+func (r *redisRepo) GetLiveSessions(ctx context.Context, limit int) ([]models.LiveSession, error) {
+	key := fmt.Sprintf("live_sessions:limit:%d", limit)
+	var sessions []models.LiveSession
+
+	if err := r.cache.Get(ctx, key, &sessions); err == nil {
+		return sessions, nil
+	}
+
+	sessions, err := r.base.GetLiveSessions(ctx, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	_ = r.cache.Set(ctx, key, sessions, 1*time.Minute)
+	return sessions, nil
+}
+
+func (r *redisRepo) UpdateLiveHeadline(ctx context.Context, sessionID string, headlines []string) error {
+	_ = r.cache.Delete(ctx, "live_sessions:limit:10")
+	_ = r.cache.Delete(ctx, "live_sessions:limit:30")
+	return r.base.UpdateLiveHeadline(ctx, sessionID, headlines)
+}
+
+func (r *redisRepo) StartLiveSession(ctx context.Context, session models.LiveSession) (string, error) {
+	_ = r.cache.Delete(ctx, "live_sessions:limit:10")
+	_ = r.cache.Delete(ctx, "live_sessions:limit:30")
+	return r.base.StartLiveSession(ctx, session)
+}
+
+func (r *redisRepo) EndLiveSession(ctx context.Context, sessionID string) error {
+	_ = r.cache.Delete(ctx, "live_sessions:limit:10")
+	_ = r.cache.Delete(ctx, "live_sessions:limit:30")
+	return r.base.EndLiveSession(ctx, sessionID)
+}
+
+func (r *redisRepo) GetLiveSession(ctx context.Context, sessionID string) (*models.LiveSession, error) {
+	key := fmt.Sprintf("live_session:%s", sessionID)
+	var session models.LiveSession
+
+	if err := r.cache.Get(ctx, key, &session); err == nil {
+		return &session, nil
+	}
+
+	res, err := r.base.GetLiveSession(ctx, sessionID)
+	if err != nil {
+		return nil, err
+	}
+
+	_ = r.cache.Set(ctx, key, res, 10*time.Second) // Short cache for status
+	return res, nil
+}
+
+func (r *redisRepo) UpdateViewerCount(ctx context.Context, sessionID string, delta int) error {
+	// Invalidate cache for this session and the list
+	_ = r.cache.Delete(ctx, fmt.Sprintf("live_session:%s", sessionID))
+	_ = r.cache.Delete(ctx, "live_sessions:limit:10")
+	_ = r.cache.Delete(ctx, "live_sessions:limit:30")
+	return r.base.UpdateViewerCount(ctx, sessionID, delta)
 }

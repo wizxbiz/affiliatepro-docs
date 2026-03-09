@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="เกี่ยวกับ TukTuk Thailand - แพลตฟอร์มโซเชียลมีเดียและความบันเทิงสัญชาติไทย เพื่อคนไทย">
+    <meta name="keywords" content="TukTuk Thailand, แพลตฟอร์มไทย, วิดีโอสั้น, ตลาดออนไลน์, Thai Social Media">
+    <title>เกี่ยวกับเรา | TukTuk Thailand - แพลตฟอร์มสัญชาติไทยเพื่อคนไทย</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-pink: #FF0050;
+            --primary-cyan: #00f2ea;
+            --primary-color: #FF0050;
+            --secondary-color: #00f2ea;
+            --dark-color: #1a1a2e;
+            --light-color: #F8F9FA;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 2px 30px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--primary-pink), var(--primary-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-link {
+            color: var(--dark-color);
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary-pink);
+            background: rgba(255, 0, 80, 0.1);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-pink) 0%, var(--primary-cyan) 100%);
+            padding: 120px 0 80px;
+            color: white;
+            text-align: center;
+        }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        /* About Content */
+        .about-content {
+            padding: 80px 0;
+        }
+
+        .founder-card {
+            background: white;
+            border-radius: 30px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+
+        .founder-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-pink), var(--primary-cyan));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 5rem;
+            color: white;
+            overflow: hidden;
+        }
+
+        .founder-name {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 10px;
+        }
+
+        .founder-title {
+            font-size: 1.1rem;
+            color: var(--primary-pink);
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        .founder-bio {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #555;
+        }
+
+        /* Stats */
+        .stats-section {
+            background: linear-gradient(135deg, var(--primary-pink), var(--primary-cyan));
+            padding: 60px 0;
+            color: white;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* Mission Section */
+        .mission-section {
+            padding: 80px 0;
+            background: white;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        .mission-card {
+            background: var(--light-color);
+            border-radius: 20px;
+            padding: 40px;
+            height: 100%;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .mission-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-pink);
+            box-shadow: 0 20px 40px rgba(255, 0, 80, 0.15);
+        }
+
+        .mission-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--primary-pink), var(--primary-cyan));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .mission-card h4 {
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .mission-card p {
+            color: #666;
+            line-height: 1.7;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--primary-pink) 0%, var(--primary-cyan) 100%);
+            padding: 80px 0;
+            text-align: center;
+            color: white;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .btn-line {
+            background: white;
+            color: var(--primary-pink);
+            padding: 18px 50px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-line:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            color: var(--primary-pink);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark-color);
+            color: white;
+            padding: 50px 0 30px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            margin: 0 15px;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-pink);
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 15px;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            color: var(--primary-pink);
+            transform: translateY(-3px);
+        }
+
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+
+            .founder-card {
+                padding: 30px;
+            }
+        }
+    </style>
+    <script src="/js/analytics.js" defer></script>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+                <img src="/assets/images/logo.png" alt="TukTuk Logo" style="height: 35px;"
+                    onerror="this.onerror=null; this.src='/images/logo.png';">
+                <span>TukTuk Thailand</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">หน้าแรก</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="about">เกี่ยวกับเรา</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 data-aos="fade-up">ความภูมิใจของคนไทย</h1>
+            <p data-aos="fade-up" data-aos-delay="100" style="font-size: 1.3rem; opacity: 0.9;">
+                แพลตฟอร์มโซเชียลมีเดียและความบันเทิงสัญชาติไทย เพื่อสร้างพื้นที่ของคนไทยอย่างแท้จริง</p>
+        </div>
+    </section>
+
+    <!-- Founder Section -->
+    <section class="about-content">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="founder-card text-center" data-aos="fade-up">
+                        <div class="founder-image">
+                            <img src="assets/images/logo.png" alt="TukTuk Logo"
+                                style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                        </div>
+                        <h2 class="founder-name">TukTuk Thailand</h2>
+                        <p class="founder-title">Thai National Social Platform</p>
+                        <p class="founder-bio">
+                            ในยุคที่โลกออนไลน์ถูกขับเคลื่อนด้วยแพลตฟอร์มจากต่างชาติ
+                            เรามีความมุ่งมั่นตั้งใจที่จะเห็นประเทศไทยมี <strong>"แพลตฟอร์มสัญชาติไทย"</strong>
+                            เป็นของตัวเอง
+                            <br><br>
+                            <strong>TukTuk Thailand</strong> ถูกสร้างขึ้นมาเพื่อเป็นพื้นที่แห่งโอกาสและความบันเทิง
+                            ที่ตอบโจทย์ไลฟ์สไตล์ของคนไทยโดยเฉพาะ ผสมผสานระบบ Video Feed เข้ากับระบบ Marketplace
+                            เพื่อให้คนไทยสามารถสร้างตัวตน และสร้างรายได้บนแพลตฟอร์มที่เราเป็นเจ้าของร่วมกัน
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-6 col-md-3" data-aos="fade-up">
+                    <div class="stat-item">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">สัญชาติไทย</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="100">
+                    <div class="stat-item">
+                        <div class="stat-number">6M+</div>
+                        <div class="stat-label">การเข้าชม</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="200">
+                    <div class="stat-item">
+                        <div class="stat-number">1,000+</div>
+                        <div class="stat-label">พาร์ทเนอร์ร้านค้า</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="300">
+                    <div class="stat-item">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">พื้นที่แห่งโอกาส</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section class="mission-section">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">🎯 พันธกิจของเรา</h2>
+            <div class="row g-4">
+                <div class="col-md-4" data-aos="fade-up">
+                    <div class="mission-card">
+                        <div class="mission-icon"><i class="fas fa-flag"></i></div>
+                        <h4>เพื่อคนไทย</h4>
+                        <p>สร้างแพลตฟอร์มที่ภูมิใจว่าเป็นฝีมือคนไทย เพื่อคนไทย ให้มีพื้นที่ของตัวเองในโลกดิจิทัล
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="mission-card">
+                        <div class="mission-icon"><i class="fas fa-shopping-bag"></i></div>
+                        <h4>เศรษฐกิจยั่งยืน</h4>
+                        <p>สนับสนุนการค้าขายของคนไทย เชื่อมโยงผู้ซื้อและผู้ขายเข้าด้วยกันอย่างราบรื่นด้วยระบบ Video
+                            Commerce</p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="mission-card">
+                        <div class="mission-icon"><i class="fas fa-smile"></i></div>
+                        <h4>พื้นที่แห่งความสุข</h4>
+                        <p>เป็นแหล่งมอบความบันเทิงและความรู้ที่ปลอดภัยและสร้างสรรค์ สำหรับทุกคนในครอบครัว</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2 data-aos="fade-up">🚀 ร่วมเป็นส่วนหนึ่งของครอบครัวตุ๊กตุ๊ก?</h2>
+            <p data-aos="fade-up" data-aos-delay="100" style="font-size: 1.2rem; margin-bottom: 30px;">ติดตามเราผ่าน
+                LINE
+                เพื่อรับข่าวสารและโอกาสใหม่ๆ ก่อนใคร!</p>
+            <a href="https://lin.ee/ayl8y1H" target="_blank" class="btn-line" data-aos="fade-up" data-aos-delay="200">
+                <i class="fab fa-line"></i> เพิ่มเพื่อน LINE
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <div class="social-links mb-4">
+                <a href="https://lin.ee/ayl8y1H" target="_blank"><i class="fab fa-line"></i></a>
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+            <div class="footer-links mb-4">
+                <a href="/">หน้าแรก</a>
+                <a href="about">เกี่ยวกับเรา</a>
+                <a href="terms">ข้อกำหนด</a>
+                <a href="privacy">นโยบายความเป็นส่วนตัว</a>
+            </div>
+            <p style="opacity: 0.7;">© 2025-2026 TukTuk Thailand. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>AOS.init({ duration: 800, once: true });</script>
+</body>
+
+</html>

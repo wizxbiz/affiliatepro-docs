@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Wizmobiz - เข้าสู่ระบบด้วยรหัสจาก LINE">
+    <title>Wizmobiz - เข้าสู่ระบบ</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+
+    <style>
+        :root {
+            --primary: #00B900;
+            /* LINE Green */
+            --primary-dark: #009900;
+            --secondary: #ff9800;
+            --success: #00c853;
+            --danger: #ff5252;
+            --bg-dark: #0a0a0f;
+            --bg-card: #12121a;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 450px;
+            background: var(--bg-card);
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-header {
+            padding: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(0, 185, 0, 0.1), rgba(0, 185, 0, 0.05));
+        }
+
+        .auth-logo {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 20px;
+            color: white;
+            box-shadow: 0 15px 30px rgba(0, 185, 0, 0.3);
+        }
+
+        .auth-header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .auth-header p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .auth-form-panel {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .pin-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .pin-input {
+            width: 50px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: 'Kanit', sans-serif;
+            font-size: 1.8rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .pin-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(0, 185, 0, 0.1);
+            box-shadow: 0 0 0 3px rgba(0, 185, 0, 0.2);
+        }
+
+        .btn-auth {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Kanit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-auth:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 185, 0, 0.3);
+        }
+
+        .btn-auth:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            animation: fadeIn 0.3s;
+        }
+
+        .alert.show {
+            display: flex;
+        }
+
+        .alert-danger {
+            background: rgba(255, 82, 82, 0.1);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+        }
+
+        .alert-success {
+            background: rgba(0, 200, 83, 0.1);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .how-to-get-pin {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .how-to-get-pin p {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+
+        .btn-line {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 25px;
+            background-color: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        .btn-line:hover {
+            background-color: var(--primary-dark);
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="auth-container">
+        <div class="auth-header">
+            <div class="auth-logo" style="background: white; padding: 10px;">
+                <img src="/images/logo.png" alt="WiT Logo" style="width: 100%; height: 100%; object-fit: contain;"
+                    onerror="this.onerror=null; this.src='https://placehold.co/100x100?text=WiT';">
+            </div>
+            <h2>เข้าสู่ระบบด้วยรหัสผ่าน</h2>
+            <p>กรุณากรอกรหัส PIN 6 หลักที่คุณได้รับจาก LINE OA ของ Wizmobiz</p>
+        </div>
+
+        <div class="auth-form-panel">
+            <div id="alertBox" class="alert">
+                <span id="alertMessage"></span>
+            </div>
+
+            <form id="pinLoginForm" onsubmit="handlePinLogin(event)">
+                <div class="form-group">
+                    <label for="pin-1" class="form-label">รหัส PIN จาก LINE</label>
+                    <div class="pin-inputs" id="pinInputs">
+                        <input type="tel" id="pin-1" class="pin-input" maxlength="1" required>
+                        <input type="tel" id="pin-2" class="pin-input" maxlength="1" required>
+                        <input type="tel" id="pin-3" class="pin-input" maxlength="1" required>
+                        <input type="tel" id="pin-4" class="pin-input" maxlength="1" required>
+                        <input type="tel" id="pin-5" class="pin-input" maxlength="1" required>
+                        <input type="tel" id="pin-6" class="pin-input" maxlength="1" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-auth" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบ
+                </button>
+            </form>
+
+            <div class="how-to-get-pin">
+                <p>ยังไม่มีรหัสผ่าน?</p>
+                <a href="https://lin.ee/ayl8y1H" target="_blank" class="btn-line">
+                    <i class="fab fa-line"></i> ขอรหัสผ่านใน LINE
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Configuration (Please replace with your actual config)
+        const firebaseConfig = {
+            apiKey: "AIzaSyD92Lw0vd32ce6m4J2nBVBWZRYBy4aDB_s",
+            authDomain: "appinjproject.firebaseapp.com",
+            projectId: "appinjproject",
+            storageBucket: "appinjproject.firebasestorage.app",
+            messagingSenderId: "408718656984",
+            appId: "1:408718656984:web:76e9cc7a89e9b4c9d5a8ab"
+        };
+
+        // Initialize Firebase
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // --- PIN Input Logic ---
+        const pinInputsContainer = document.getElementById('pinInputs');
+        const pinInputs = [...pinInputsContainer.children];
+
+        pinInputsContainer.addEventListener('input', (e) => {
+            const target = e.target;
+            const nextInput = target.nextElementSibling;
+            if (nextInput && target.value) {
+                nextInput.focus();
+            }
+        });
+
+        pinInputsContainer.addEventListener('keydown', (e) => {
+            const target = e.target;
+            const prevInput = target.previousElementSibling;
+            if (e.key === "Backspace" && !target.value && prevInput) {
+                prevInput.focus();
+            }
+        });
+
+        pinInputsContainer.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const pasteData = e.clipboardData.getData('text');
+            pinInputs.forEach((input, i) => {
+                input.value = pasteData[i] || '';
+            });
+            if (pinInputs[5].value) {
+                document.getElementById('loginBtn').focus();
+            } else {
+                pinInputs[pasteData.length] ? pinInputs[pasteData.length].focus() : pinInputs[pinInputs.length - 1].focus();
+            }
+        });
+
+
+        // --- Alert Logic ---
+        function showAlert(message, isError = true) {
+            const alertBox = document.getElementById('alertBox');
+            const alertMessage = document.getElementById('alertMessage');
+            alertBox.className = 'alert show ' + (isError ? 'alert-danger' : 'alert-success');
+            alertMessage.innerHTML = message;
+        }
+
+        function hideAlert() {
+            document.getElementById('alertBox').classList.remove('show');
+        }
+
+        // --- Loading State Logic ---
+        function setLoading(loading) {
+            const btn = document.getElementById('loginBtn');
+            btn.disabled = loading;
+            btn.innerHTML = loading
+                ? '<div class="spinner"></div> กำลังตรวจสอบ...'
+                : '<i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบ';
+        }
+
+        // --- Login Handler ---
+        async function handlePinLogin(event) {
+            event.preventDefault();
+            hideAlert();
+
+            const pin = pinInputs.map(input => input.value).join('');
+
+            if (pin.length !== 6) {
+                showAlert('กรุณากรอกรหัส PIN 6 หลักให้ครบถ้วน');
+                return;
+            }
+
+            setLoading(true);
+
+            try {
+                // Call verifyWebPin as plain HTTP (onRequest), NOT httpsCallable
+                const response = await fetch(
+                    'https://us-central1-appinjproject.cloudfunctions.net/verifyWebPin',
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ pin })
+                    }
+                );
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.error || 'รหัส PIN ไม่ถูกต้องหรือหมดอายุ');
+                }
+
+                // Store session for auth.js (same format as login.html)
+                localStorage.setItem('wizmobiz_session', JSON.stringify({
+                    ...result.user,
+                    loginAt: new Date().toISOString(),
+                    sessionToken: result.sessionToken
+                }));
+
+                showAlert('เข้าสู่ระบบสำเร็จ! กำลังนำคุณไปยังหน้าที่ต้องการ...', false);
+
+                setTimeout(() => {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const redirectUrl = urlParams.get('redirectUrl');
+                    window.location.href = redirectUrl ? decodeURIComponent(redirectUrl) : '/';
+                }, 1500);
+
+            } catch (error) {
+                console.error("Login failed:", error);
+                showAlert(error.message || 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        // --- Check Auth State on Page Load ---
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // If user is already signed in, they don't need to enter a PIN.
+                showAlert('คุณเข้าสู่ระบบอยู่แล้ว กำลังเปลี่ยนเส้นทาง...', false);
+
+                // Hide the form to prevent interaction while redirecting
+                document.getElementById('pinLoginForm').style.display = 'none';
+                document.querySelector('.how-to-get-pin').style.display = 'none';
+
+                setTimeout(() => {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const redirectUrl = urlParams.get('redirectUrl');
+                    // Redirect to the intended page, or homepage as a fallback.
+                    window.location.href = redirectUrl || '/';
+                }, 1500);
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>เกิดข้อผิดพลาด - Wizmobiz</title>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;700&display=swap');
+        
+        :root {
+            --primary: #667eea;
+            --error: #ef4444;
+            --dark: #1a1a2e;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: linear-gradient(135deg, var(--dark) 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .error-container {
+            max-width: 500px;
+        }
+        
+        .error-icon {
+            font-size: 80px;
+            margin-bottom: 30px;
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .error-code {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--error);
+            margin-bottom: 10px;
+        }
+        
+        .error-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .error-message {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            font-family: inherit;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, #764ba2 100%);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        .btn-outline:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: white;
+        }
+        
+        .error-details {
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            text-align: left;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.5);
+        }
+        
+        .error-details summary {
+            cursor: pointer;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        
+        .error-details code {
+            display: block;
+            padding: 10px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            margin-top: 10px;
+            word-break: break-all;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-icon">⚠️</div>
+        <div class="error-code" id="errorCode">500</div>
+        <h1 class="error-title" id="errorTitle">เกิดข้อผิดพลาด</h1>
+        <p class="error-message" id="errorMessage">
+            ขออภัย เกิดข้อผิดพลาดบางอย่าง<br>
+            กรุณาลองใหม่อีกครั้งหรือติดต่อทีมสนับสนุน
+        </p>
+        
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="window.location.reload()">
+                🔄 ลองใหม่
+            </button>
+            <a href="/" class="btn btn-outline">
+                🏠 หน้าแรก
+            </a>
+        </div>
+        
+        <details class="error-details" id="errorDetails" style="display: none;">
+            <summary>รายละเอียดทางเทคนิค</summary>
+            <code id="errorStack"></code>
+        </details>
+    </div>
+    
+    <script>
+        // Parse error from URL params
+        const params = new URLSearchParams(window.location.search);
+        const errorCode = params.get('code') || '500';
+        const errorType = params.get('type') || 'server';
+        
+        const errorMessages = {
+            '400': {
+                title: 'คำขอไม่ถูกต้อง',
+                message: 'คำขอของคุณมีรูปแบบไม่ถูกต้อง กรุณาตรวจสอบและลองใหม่',
+                icon: '🚫'
+            },
+            '401': {
+                title: 'ไม่ได้รับอนุญาต',
+                message: 'คุณต้องเข้าสู่ระบบก่อนเข้าถึงหน้านี้',
+                icon: '🔒'
+            },
+            '403': {
+                title: 'ไม่มีสิทธิ์เข้าถึง',
+                message: 'คุณไม่มีสิทธิ์ในการเข้าถึงหน้านี้',
+                icon: '⛔'
+            },
+            '500': {
+                title: 'เซิร์ฟเวอร์ผิดพลาด',
+                message: 'เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์ กรุณาลองใหม่ภายหลัง',
+                icon: '💥'
+            },
+            '502': {
+                title: 'Bad Gateway',
+                message: 'เซิร์ฟเวอร์ได้รับการตอบกลับที่ไม่ถูกต้อง',
+                icon: '🔗'
+            },
+            '503': {
+                title: 'บริการไม่พร้อมใช้งาน',
+                message: 'เซิร์ฟเวอร์กำลังปรับปรุง กรุณาลองใหม่ภายหลัง',
+                icon: '🔧'
+            }
+        };
+        
+        const error = errorMessages[errorCode] || errorMessages['500'];
+        
+        document.getElementById('errorCode').textContent = errorCode;
+        document.getElementById('errorTitle').textContent = error.title;
+        document.getElementById('errorMessage').innerHTML = error.message;
+        document.querySelector('.error-icon').textContent = error.icon;
+        
+        // Show error details if available
+        const errorStack = params.get('stack');
+        if (errorStack) {
+            document.getElementById('errorDetails').style.display = 'block';
+            document.getElementById('errorStack').textContent = decodeURIComponent(errorStack);
+        }
+        
+        // Log error for analytics
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'error_page', {
+                'error_code': errorCode,
+                'error_type': errorType,
+                'page_referrer': document.referrer
+            });
+        }
+    </script>
+</body>
+</html>

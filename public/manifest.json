@@ -1,0 +1,128 @@
+{
+  "id": "/tuktuk-thailand?source=pwa",
+  "name": "TukTuk Thailand",
+  "short_name": "TukTuk",
+  "description": "แพลตฟอร์มวิดีโอสั้น Shoppable ซื้อขายสินค้า ฟีดชุมชน และเรียกวินมอเตอร์ไซค์ แห่งแรกของไทย",
+  "start_url": "/index.html?pwa=true",
+  "display": "standalone",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui"
+  ],
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "orientation": "portrait",
+  "scope": "/",
+  "lang": "th",
+  "dir": "ltr",
+  "share_target": {
+    "action": "/index.html?action=share",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "categories": [
+    "social",
+    "shopping",
+    "entertainment",
+    "lifestyle"
+  ],
+  "icons": [
+    {
+      "src": "assets/images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/images/icon-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/images/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "assets/images/tuktuk.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "TukTuk Feed — วิดีโอสั้น Shoppable"
+    },
+    {
+      "src": "assets/images/tuktuk.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "TukTuk Marketplace — ตลาดนัดออนไลน์"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "ฟีดดูเพลิน",
+      "short_name": "ดูเพลิน",
+      "description": "ดูวิดีโอสั้นมาแรง",
+      "url": "/index.html?tab=all",
+      "icons": [
+        {
+          "src": "assets/images/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "ตลาดนัด",
+      "short_name": "ตลาดนัด",
+      "description": "ช้อปปิ้งสินค้าออนไลน์",
+      "url": "/marketplace.html",
+      "icons": [
+        {
+          "src": "assets/images/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "เรียกวิน",
+      "short_name": "เรียกวิน",
+      "description": "เรียกวินมอเตอร์ไซค์ทันที",
+      "url": "/win-rider.html",
+      "icons": [
+        {
+          "src": "assets/images/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "คอมมูนิตี้",
+      "short_name": "คอมมูนิตี้",
+      "description": "ชุมชนอาชีพ หางาน ประกาศงาน",
+      "url": "/community.html",
+      "icons": [
+        {
+          "src": "assets/images/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

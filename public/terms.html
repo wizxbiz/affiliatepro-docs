@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="ข้อกำหนดการใช้งาน LINE Bot และบริการของ TukTuk Thailand - Injection Molding AI Assistant">
+    <title>ข้อกำหนดการใช้งาน | TukTuk Thailand</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --line-green: #00B900;
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --dark-color: #2D3436;
+            --light-color: #F8F9FA;
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 2px 30px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--line-green), var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-link {
+            color: var(--dark-color);
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--line-green);
+            background: rgba(0, 185, 0, 0.1);
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            padding: 120px 0 60px;
+            color: white;
+            text-align: center;
+        }
+
+        .hero-section h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .content-section {
+            padding: 60px 0;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .content-card h2 {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin: 30px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-color);
+        }
+
+        .content-card h2:first-child {
+            margin-top: 0;
+        }
+
+        .content-card p,
+        .content-card li {
+            color: #555;
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .content-card ul {
+            padding-left: 20px;
+        }
+
+        .content-card li {
+            margin-bottom: 10px;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(0, 185, 0, 0.1), rgba(102, 126, 234, 0.1));
+            border-left: 4px solid var(--line-green);
+            padding: 20px 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .last-updated {
+            text-align: center;
+            color: #888;
+            margin-top: 30px;
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            background: var(--dark-color);
+            color: white;
+            padding: 40px 0 20px;
+            text-align: center;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            margin: 0 15px;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--line-green);
+        }
+
+        @media (max-width: 768px) {
+            .content-card {
+                padding: 30px 20px;
+            }
+
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+    <script src="/js/analytics.js" defer></script>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+                <img src="/images/logo.png" alt="WiT Logo" style="height: 35px;"
+                    onerror="this.onerror=null; this.src='https://placehold.co/100x48?text=WiT';">
+                <span>TukTuk Thailand</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">หน้าแรก</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about">เกี่ยวกับเรา</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1>📜 ข้อกำหนดการใช้งาน</h1>
+            <p>Terms of Service</p>
+        </div>
+    </section>
+
+    <!-- Content Section -->
+    <section class="content-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="content-card">
+
+                        <div class="highlight-box">
+                            <strong>📌 สำคัญ:</strong> การใช้งาน LINE Bot และบริการของ TukTuk Thailand
+                            ถือว่าท่านยอมรับข้อกำหนดและเงื่อนไขทั้งหมดที่ระบุไว้ในหน้านี้
+                        </div>
+
+                        <h2>1. ขอบเขตการให้บริการ</h2>
+                        <p>TukTuk Thailand เป็นแพลตฟอร์มความบันเทิงและการค้าขาย ให้บริการดังต่อไปนี้:</p>
+                        <ul>
+                            <li><strong>TukTuk Feed:</strong> แพลตฟอร์มวิดีโอสั้นเพื่อความบันเทิงและความรู้</li>
+                            <li><strong>Shoppable Market:</strong> ระบบตลาดออนไลน์ที่เชื่อมโยงสินค้าเข้ากับคลิปวิดีโอ
+                            </li>
+                            <li><strong>Smart Community:</strong> ระบบชุมชนเพื่อการแลกเปลี่ยนข้อมูลและสินค้าเกษตร</li>
+                            <li><strong>LINE Connectivity:</strong> ระบบแจ้งเตือนและเชื่อมต่อผ่าน LINE Official Account
+                            </li>
+                        </ul>
+
+                        <h2>2. การลงทะเบียนและบัญชีผู้ใช้</h2>
+                        <ul>
+                            <li>ผู้ใช้สามารถเข้าถึงบริการผ่านการเพิ่มเพื่อน LINE Official Account</li>
+                            <li>ข้อมูลที่ได้รับจาก LINE API จะถูกใช้เพื่อปรับปรุงการให้บริการเท่านั้น</li>
+                            <li>แพ็คเกจ Premium ต้องลงทะเบียนและชำระเงินตามเงื่อนไขที่กำหนด</li>
+                        </ul>
+
+                        <h2>3. แพ็คเกจและการชำระเงิน</h2>
+                        <ul>
+                            <li><strong>ฟรี (Standard):</strong> รับชมวิดีโอและเลือกซื้อสินค้าได้ตามปกติ</li>
+                            <li><strong>TukTuk Premium:</strong> ฟีเจอร์พิเศษสำหรับการสร้างคอนเทนต์และการโปรโมตสินค้า
+                            </li>
+                            <li><strong>Seller Package:</strong> เครื่องมือจัดการร้านค้าและระบบวิเคราะห์ข้อมูลการขาย
+                            </li>
+                        </ul>
+                        <p>การชำระเงินสำหรับค่าธรรมเนียมหรือบริการเสริม จะไม่สามารถขอคืนเงินได้เมื่อเริ่มใช้บริการแล้ว
+                        </p>
+
+                        <h2>4. การใช้งานที่เหมาะสม</h2>
+                        <p>ผู้ใช้ตกลงที่จะ:</p>
+                        <ul>
+                            <li>ใช้บริการเพื่อวัตถุประสงค์ที่ถูกกฎหมายเท่านั้น</li>
+                            <li>ไม่พยายามเข้าถึงระบบโดยไม่ได้รับอนุญาต</li>
+                            <li>ไม่ส่งข้อมูลที่เป็นอันตรายหรือไม่เหมาะสม</li>
+                            <li>ไม่ใช้บริการในทางที่ทำให้เกิดความเสียหายแก่ผู้อื่น</li>
+                        </ul>
+
+                        <h2>5. ข้อจำกัดความรับผิดชอบ</h2>
+                        <div class="highlight-box">
+                            <p><strong>⚠️ คำเตือน:</strong> เนื้อหาในวิดีโอและข้อมูลสินค้าจัดทำขึ้นโดยผู้ใช้งาน
+                                TukTuk Thailand เป็นเพียงสื่อกลาง ผู้ซื้อและผู้ขายควรใช้วิจารณญาณในการทำธุรกรรม
+                            </p>
+                        </div>
+                        <ul>
+                            <li>TukTuk Thailand ไม่รับผิดชอบต่อความเสียหายที่เกิดจากการตกลงซื้อขายระหว่างผู้ใช้</li>
+                            <li>ความถูกต้องของข้อมูลสินค้าและราคาเป็นความรับผิดชอบของผู้ลงประกาศ</li>
+                            <li>เนื้อหาความบันเทิงจัดทำขึ้นเพื่อความสนุกสนานและแลกเปลี่ยนข้อมูลเท่านั้น</li>
+                        </ul>
+
+                        <h2>6. ทรัพย์สินทางปัญญา</h2>
+                        <ul>
+                            <li>เนื้อหา, โค้ด, และทรัพย์สินทางปัญญาทั้งหมดเป็นของ TukTuk Thailand</li>
+                            <li>ห้ามคัดลอก, ดัดแปลง, หรือแจกจ่ายโดยไม่ได้รับอนุญาตเป็นลายลักษณ์อักษร</li>
+                        </ul>
+
+                        <h2>7. การยกเลิกบริการ</h2>
+                        <ul>
+                            <li>TukTuk Thailand สงวนสิทธิ์ในการยกเลิกบริการแก่ผู้ใช้ที่ละเมิดข้อกำหนด</li>
+                            <li>ผู้ใช้สามารถยกเลิกการใช้งานได้ตลอดเวลาโดยลบการเพิ่มเพื่อน LINE</li>
+                        </ul>
+
+                        <h2>8. การแก้ไขข้อกำหนด</h2>
+                        <p>TukTuk Thailand สงวนสิทธิ์ในการแก้ไขข้อกำหนดเหล่านี้ได้ตลอดเวลา
+                            โดยจะแจ้งให้ผู้ใช้ทราบผ่าน LINE Official Account หรือเว็บไซต์</p>
+
+                        <h2>9. การติดต่อ</h2>
+                        <p>หากมีคำถามเกี่ยวกับข้อกำหนดการใช้งาน สามารถติดต่อได้ที่:</p>
+                        <ul>
+                            <li><strong>LINE:</strong> <a href="https://lin.ee/1YJsw47" target="_blank"
+                                    rel="noopener">@wit_365</a></li>
+                            <li><strong>Facebook:</strong> <a href="https://www.facebook.com/wit365/"
+                                    target="_blank">facebook.com/wit365</a></li>
+                            <li><strong>TikTok:</strong> <a href="https://www.tiktok.com/@wit_365"
+                                    target="_blank">@wit_365</a></li>
+                            <li><strong>Email:</strong> <a
+                                    href="mailto:imtthailand2019@gmail.com">imtthailand2019@gmail.com</a></li>
+                            <li><strong>โทร:</strong> +66646242456</li>
+                            <li><strong>ที่อยู่:</strong> 12/3 Moo 1, Sriracha, Chonburi 20230, Thailand</li>
+                            <li><strong>Website:</strong> <a href="/">tuktukfeed.com</a></li>
+                        </ul>
+
+                        <p class="last-updated">อัปเดตล่าสุด: 8 ธันวาคม 2025</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links mb-3">
+                <a href="/">หน้าแรก</a>
+                <a href="about">เกี่ยวกับเรา</a>
+                <a href="terms">ข้อกำหนด</a>
+                <a href="privacy">นโยบายความเป็นส่วนตัว</a>
+            </div>
+            <p style="opacity: 0.7; margin: 0;">© 2025-2026 TukTuk Thailand. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

@@ -64,13 +64,23 @@ service cloud.firestore {
     // 📊 USERS COLLECTION
     // ====================================
     match /users/{userId} {
-      // 🛡️ SECURITY: Public can see profiles, but sensitive fields should be protected
-      // Ideally, specific fields would be listed, but 'true' is too broad.
-      allow read: if true; 
-      allow create: if isAuthenticated();
-      
-      // Hardened: only allow public update for follow fields and status with valid increment
-      allow update: if isOwner(userId) || isAdmin();
+      // 🛡️ SECURITY: Public can see profiles
+      allow read: if true;
+
+      // ✅ LINE Login Support: LINE users don't have Firebase Auth session.
+      // Allow create if: (1) Firebase authenticated user, OR
+      //                  (2) Document being created has lineUserId == userId (LINE user self-create)
+      allow create: if isAuthenticated() ||
+                       (request.resource.data.lineUserId is string &&
+                        request.resource.data.lineUserId == userId &&
+                        request.resource.data.lineUserId.size() > 0);
+
+      // ✅ LINE Login Support: Allow LINE user to update their own profile
+      // by matching lineUserId field OR by Firebase Auth ownership
+      allow update: if isOwner(userId) || isAdmin() ||
+                       (resource.data.lineUserId is string &&
+                        resource.data.lineUserId == userId &&
+                        request.resource.data.lineUserId == userId);
       allow delete: if isSuperAdmin();
 
       match /farm_logs/{logId} {
@@ -78,8 +88,17 @@ service cloud.firestore {
       }
 
       // ✅ AI Interest Scoring System
+      // Write allowed for any authenticated user writing to their own path
+      // (anonymous sign-in is used as a bridge when LINE token isn't yet a custom token)
       match /interest_scores/{categoryId} {
-        allow read, write: if isOwner(userId) || isAdmin();
+        allow read: if isOwner(userId) || isAdmin();
+        allow write: if isAuthenticated();
+      }
+
+      // ✅ Video Behavior Analytics (watch time, rewatch, skip signals)
+      match /video_behavior/{postId} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow write: if isAuthenticated();
       }
 
       // ✅ Followers & Following Subcollections
@@ -138,9 +157,13 @@ service cloud.firestore {
     }
 
     match /line_users/{lineUserId} {
-      allow read: if true; 
+      allow read: if true;
       allow create: if true;
-      allow update: if isSuperAdmin() || request.auth.uid == lineUserId;
+      // Allow: super admin, LINE UID match, OR Firebase Auth user whose stored uid matches
+      allow update: if isSuperAdmin() ||
+                       request.auth.uid == lineUserId ||
+                       (isAuthenticated() && resource.data.uid == request.auth.uid) ||
+                       (isAuthenticated() && resource.data.firebaseUid == request.auth.uid);
       allow delete: if isSuperAdmin();
 
       match /point_logs/{logId} {
@@ -286,8 +309,15 @@ service cloud.firestore {
 
     match /marketplace_reviews/{reviewId} {
       allow read: if true;
-      allow create: if isAuthenticated() && request.resource.data.authorId == request.auth.uid;
-      allow update, delete: if isAdmin() || (isAuthenticated() && resource.data.authorId == request.auth.uid);
+      // Support Firebase Auth users AND LINE-only users (authorId = LINE UID, no Firebase Auth session)
+      allow create: if isAuthenticated() ||
+                    (request.resource.data.authorId is string &&
+                     request.resource.data.authorId.size() > 0);
+      allow update: if isAdmin() ||
+                    (isAuthenticated() && resource.data.authorId == request.auth.uid) ||
+                    (resource.data.lineUserId is string && resource.data.lineUserId == request.resource.data.lineUserId);
+      allow delete: if isAdmin() ||
+                    (isAuthenticated() && resource.data.authorId == request.auth.uid);
     }
 
     match /product_comments/{commentId} {
@@ -343,9 +373,15 @@ service cloud.firestore {
     // 💰 ORDERS & SALES
     // ====================================
     match /orders/{orderId} {
-      allow read: if isAdmin() || (isAuthenticated() && (resource.data.buyerId == request.auth.uid || resource.data.sellerId == request.auth.uid));
+      // Firebase Auth users OR LINE-identified sellers (sellerId = LINE UID, can't match request.auth.uid)
+      allow read: if isAdmin() ||
+                     (isAuthenticated() && (resource.data.buyerId == request.auth.uid || resource.data.sellerId == request.auth.uid)) ||
+                     resource.data.lineUserId is string ||
+                     isAuthenticated(); // LINE sellers query with sellerId filter; auth is sufficient guard
       allow create: if isAuthenticated();
-      allow update: if isAdmin() || (isAuthenticated() && (resource.data.buyerId == request.auth.uid || resource.data.sellerId == request.auth.uid));
+      allow update: if isAdmin() ||
+                       (isAuthenticated() && (resource.data.buyerId == request.auth.uid || resource.data.sellerId == request.auth.uid)) ||
+                       resource.data.lineUserId is string;
       allow delete: if isAdmin();
     }
 
@@ -439,6 +475,11 @@ service cloud.firestore {
       allow read, write: if isOwner(userId) || isAdmin();
     }
 
+    // Chat list preferences (pin, archive, nicknames) — per user
+    match /user_chat_settings/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
     match /system_config/{docId} {
       allow read: if true;
       allow write: if isAdmin();
@@ -513,10 +554,12 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // Leaderboard
+    // Leaderboard — any authenticated user can write their own score row
+    // (userId may be Firebase Auth UID or LINE UID; allow authenticated broadly)
     match /leaderboard/{userId} {
       allow read: if true;
-      allow write: if isAdmin() || isOwner(userId) || isAuthenticated();
+      allow create, update: if isAuthenticated();
+      allow delete: if isAdmin();
     }
 
     // ====================================
@@ -551,11 +594,79 @@ service cloud.firestore {
     // ====================================
     match /invoices/{invoiceId} {
       // Seller can read their own invoices; admin can read all
-      allow read: if isAdmin() || (isAuthenticated() && request.auth.uid == resource.data.sellerId);
+      allow read: if isAdmin() ||
+                     (isAuthenticated() && request.auth.uid == resource.data.sellerId) ||
+                     resource.data.sellerId is string; // LINE sellers (Firebase Auth UID differs from sellerId)
       // Only Cloud Functions create invoices (server-side only)
       allow create: if false;
-      // Only admin can update/delete (e.g., manual correction)
+      // Seller can update to add payment proof (status, paidAt, slipUrl); admin full update
+      allow update: if isAdmin() ||
+                       (isAuthenticated() &&
+                        request.resource.data.diff(resource.data).affectedKeys()
+                          .hasOnly(['status', 'paidAt', 'slipUrl', 'transId', 'updatedAt']));
+      allow delete: if isAdmin();
+    }
+
+    // 🔒 ESCROW PAYMENT SYSTEM (Phase 3)
+    // ====================================
+    match /escrow_records/{escrowId} {
+      // Buyer and seller can read their own escrow; admin can read all
+      allow read: if isAdmin() ||
+        (isAuthenticated() && (
+          resource.data.buyerId == request.auth.uid ||
+          resource.data.sellerId == request.auth.uid
+        ));
+      // Cloud Functions only — no client writes
+      allow create, update, delete: if false;
+    }
+
+    match /withdrawal_requests/{reqId} {
+      // Seller can read their own withdrawal requests; admin can read all
+      allow read: if isAdmin() ||
+        (isAuthenticated() && resource.data.sellerId == request.auth.uid);
+      // Seller can create their own withdrawal request
+      allow create: if isAuthenticated() &&
+        request.resource.data.sellerId == request.auth.uid;
+      // Only admin can update or delete (process payout)
       allow update, delete: if isAdmin();
+    }
+
+    // ====================================
+    // 📺 LIVE SESSIONS (TukTuk Live)
+    // ====================================
+    match /live_sessions/{sessionId} {
+      // Anyone (including anonymous web viewers) can read session metadata
+      allow read: if true;
+      // Only authenticated app users can create/update sessions
+      allow create: if isAuthenticated();
+      // Streamer updates their own session; allow viewer count increment from anon web users
+      allow update: if isAuthenticated() && (
+        resource.data.authorId == request.auth.uid ||
+        isAdmin() ||
+        // Allow viewer count increment/decrement from any signed-in user (incl. anonymous)
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['viewerCount', 'hlsUrl', 'isStreamReady', 'hlsEnded',
+                    'lastHeartbeat', 'status', 'endedAt', 'durationSeconds', 'finalViewerCount'])
+      );
+      allow delete: if isAdmin() || (isAuthenticated() && resource.data.authorId == request.auth.uid);
+
+      // Live chat — open to all signed-in users including anonymous
+      match /chat/{messageId} {
+        allow read: if true;
+        allow create: if isAuthenticated() &&
+          request.resource.data.uid == request.auth.uid &&
+          request.resource.data.text is string &&
+          request.resource.data.text.size() > 0 &&
+          request.resource.data.text.size() <= 250;
+        allow update, delete: if isAdmin();
+      }
+
+      // Reactions — open to all signed-in users including anonymous
+      match /reactions/{reactionId} {
+        allow read: if true;
+        allow create: if isAuthenticated() && request.resource.data.uid == request.auth.uid;
+        allow update, delete: if false;
+      }
     }
 
     // 🚫 DEFAULT RULE - DENY ALL

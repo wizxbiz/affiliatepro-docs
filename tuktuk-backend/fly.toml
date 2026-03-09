@@ -1,0 +1,29 @@
+# TukTuk Go Backend — Fly.io configuration
+# Deploy: flyctl deploy (from tuktuk-backend/ directory)
+# Docs:   https://fly.io/docs/reference/configuration/
+
+app = "tuktuk-engine"
+primary_region = "sin"   # Singapore — closest to Thailand users
+
+[build]
+  # Uses the Dockerfile in this directory
+
+[env]
+  PORT = "8080"
+  # R2 credentials: set via `flyctl secrets set` (do NOT put real values here)
+  # flyctl secrets set R2_ACCESS_KEY_ID=xxx R2_SECRET_ACCESS_KEY=yyy R2_PUBLIC_BASE_URL=https://...
+
+[http_service]
+  internal_port = 8080
+  force_https   = true
+  auto_stop_machines  = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [http_service.concurrency]
+    type       = "connections"
+    hard_limit = 250
+    soft_limit = 200
+
+[[vm]]
+  size = "shared-cpu-1x"   # free tier (256 MB RAM) — ปรับเป็น performance-1x เมื่อ traffic สูง

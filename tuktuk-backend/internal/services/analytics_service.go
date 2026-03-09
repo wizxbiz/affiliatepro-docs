@@ -1,50 +1,73 @@
 package services
 
 import (
+	"context"
 	"math/rand"
 	"time"
+
+	"tuktuk-backend/internal/repository"
 
 	"github.com/gin-gonic/gin"
 )
 
-// AnalyticsService handles Big Data queries for the Seller Dashboard
-type AnalyticsService struct{}
+const (
+// In a real system, we'd query BigQuery or PostgreSQL.
+)
 
-func NewAnalyticsService() *AnalyticsService {
-	return &AnalyticsService{}
+// AnalyticsService handles Big Data queries for the Seller Dashboard
+type AnalyticsService struct {
+	sqlRepo repository.SQLRepository
 }
 
-// GetSellerDashboardStats returns mocked big data analytics for a seller
-func (s *AnalyticsService) GetSellerDashboardStats(sellerID string) gin.H {
-	// In a real V.4 system, this would query Google BigQuery or a materialized view in PostgreSQL/Firestore
+func NewAnalyticsService(sqlRepo repository.SQLRepository) *AnalyticsService {
+	return &AnalyticsService{sqlRepo: sqlRepo}
+}
 
-	// Mocking advanced analytics data
-	salesToday := rand.Intn(10000) + 500
-	salesWeek := salesToday * (rand.Intn(5) + 3)
-
-	trendingProducts := []gin.H{
-		{"id": "p1", "name": "หมอนขวิดสาน OTOP", "views": rand.Intn(5000) + 1000, "conversionRate": 4.5},
-		{"id": "p2", "name": "น้ำพริกหนุ่มแม่อุ๊ย", "views": rand.Intn(4000) + 500, "conversionRate": 8.2},
-		{"id": "p3", "name": "เสื้อคอกระเช้าประยุกต์", "views": rand.Intn(3000) + 200, "conversionRate": 3.1},
+// GetSellerDashboardStats returns real analytics if DB connected, else mocks
+func (s *AnalyticsService) GetSellerDashboardStats(ctx context.Context, sellerID string) gin.H {
+	if s.sqlRepo != nil {
+		report, err := s.sqlRepo.GetSellerReport(ctx, sellerID)
+		if err == nil {
+			return gin.H{
+				"sellerId":  sellerID,
+				"timestamp": time.Now().Format(time.RFC3339),
+				"metrics": gin.H{
+					"revenue":        report.TotalRevenue,
+					"orders":         report.OrderCount,
+					"conversionRate": report.ConversionRate,
+					"date":           report.ReportDate,
+				},
+				"isRealData": true,
+			}
+		}
 	}
 
-	demandHeatmap := []gin.H{
-		{"time": "08:00", "demandLevel": "High", "area": "ตัวเมือง"},
-		{"time": "12:00", "demandLevel": "Peak", "area": "ย่านออฟฟิศ"},
-		{"time": "18:00", "demandLevel": "Peak", "area": "ตลาดโต้รุ่ง"},
-	}
-
+	// Mocking fallback
 	return gin.H{
 		"sellerId":  sellerID,
 		"timestamp": time.Now().Format(time.RFC3339),
 		"metrics": gin.H{
-			"salesToday":    salesToday,
-			"salesWeek":     salesWeek,
-			"growthPercent": rand.Intn(30) + 5,
+			"revenue":        rand.Float64()*1000 + 500,
+			"orders":         rand.Intn(50),
+			"conversionRate": 2.5 + rand.Float64()*5,
 		},
-		"trendingProducts": trendingProducts,
-		"demandHeatmap":    demandHeatmap,
+		"isRealData": false,
+		"note":       "Mock data: PostgreSQL not synced for this seller yet.",
 	}
+}
+
+func (s *AnalyticsService) GetCommunityInsights(ctx context.Context, province string) gin.H {
+	if s.sqlRepo != nil {
+		trends, err := s.sqlRepo.GetCommunityTrends(ctx, province)
+		if err == nil {
+			return gin.H{
+				"province": province,
+				"trends":   trends,
+				"status":   "success",
+			}
+		}
+	}
+	return gin.H{"status": "error", "message": "No SQL data available"}
 }
 
 // LogLiveCommerceEvent registers interactions during a live stream
