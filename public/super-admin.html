@@ -5596,7 +5596,7 @@
                             }
                         };
 
-                        await db.collection('community_posts').add(postData);
+                        await db.collection('posts').add(postData);
 
                         // 4. Success!
                         btn.innerHTML = '<i class="fas fa-check me-2"></i> โพสต์สำเร็จ!';
@@ -7144,9 +7144,10 @@
             measurementId: "G-7ZM9H01D6E"
         };
 
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = window.db; // ใช้ Cloudflare D1 Database Shim!
+        // ── Cloudflare-only mode: ไม่ใช้ Firebase เลย ──
+        // firebase.initializeApp(firebaseConfig); // ❌ ปิดการใช้งาน
+        const auth = window.auth; // ✅ ใช้ Cloudflare Auth Shim
+        const db = window.db;     // ✅ ใช้ Cloudflare D1 Database Shim
 
         // ===== Global Variables =====
         let lineUserId = null;
@@ -7238,63 +7239,62 @@
             return container;
         }
 
-        // ===== Auth Functions =====
-        function checkAuth() {
-            firebase.auth().onAuthStateChanged(async (user) => {
-                if (!user) {
-                    showLoginModal();
-                    return;
-                }
+        // ===== Auth Functions (Cloudflare) =====
+        async function checkAuth() {
+            // ✅ ใช้ Cloudflare Auth แทน Firebase
+            const session = window.WizmobizAuth?.getSession?.();
 
-                const uid = user.uid;
-                lineUserId = uid;
+            if (!session || !session.uid) {
+                showLoginModal();
+                return;
+            }
 
-                // Check authorization: hardcoded super-admin IDs first, then Firestore flags
-                let isAuthorized = SUPER_ADMIN_IDS.includes(uid);
-                if (!isAuthorized) {
-                    try {
-                        const lineUserDoc = await db.collection('line_users').doc(uid).get();
-                        if (lineUserDoc.exists && lineUserDoc.data().isAdmin) {
-                            isAuthorized = true;
-                        } else {
-                            if (user.email) {
-                                const emailQuery = await db.collection('line_users')
-                                    .where('email', '==', user.email).limit(1).get();
-                                if (!emailQuery.empty && emailQuery.docs[0].data().isAdmin) {
-                                    isAuthorized = true;
-                                }
-                            }
-                            if (!isAuthorized) {
-                                const userDoc = await db.collection('users').doc(uid).get();
-                                if (userDoc.exists && userDoc.data().isAdmin) isAuthorized = true;
-                            }
-                        }
-                    } catch (e) {
-                        console.error('Admin check error:', e);
-                    }
-                }
+            const uid = session.uid;
+            lineUserId = uid;
 
-                if (!isAuthorized) {
-                    showAlert('ACCESS DENIED: Insufficient Permissions.', 'error');
-                    showLoginModal();
-                    return;
-                }
+            // Check authorization: hardcoded super-admin IDs first, then D1 users table
+            let isAuthorized = SUPER_ADMIN_IDS.includes(uid);
 
-                hasAccess = true;
+            if (!isAuthorized) {
                 try {
-                    const lineDoc = await db.collection('line_users').doc(uid).get();
-                    currentUserData = lineDoc.exists ? lineDoc.data() : {};
-                    const name = currentUserData.displayName || user.displayName || 'Admin';
-                    const avatar = currentUserData.pictureUrl || user.photoURL || 'https://placehold.co/40/6366f1/white?text=A';
-                    if (document.getElementById('adminDisplayName'))
-                        document.getElementById('adminDisplayName').textContent = name;
-                    if (document.getElementById('adminAvatar'))
-                        document.getElementById('adminAvatar').src = avatar;
-                } catch (_) { }
+                    // ✅ เช็คจาก D1 users table (role = 'admin' or 'super_admin')
+                    const userDoc = await db.collection('users').doc(uid).get();
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        if (userData.role === 'admin' || userData.role === 'super_admin') {
+                            isAuthorized = true;
+                        }
+                    }
+                } catch (e) {
+                    console.error('Admin check error:', e);
+                }
+            }
 
-                document.getElementById('loadingOverlay').style.display = 'none';
-                initDashboard();
-            });
+            if (!isAuthorized) {
+                showAlert('🚫 ACCESS DENIED: Insufficient Permissions.', 'error');
+                showLoginModal();
+                return;
+            }
+
+            hasAccess = true;
+
+            // โหลดข้อมูล user จาก D1
+            try {
+                const userDoc = await db.collection('users').doc(uid).get();
+                currentUserData = userDoc.exists ? userDoc.data() : {};
+                const name = currentUserData.display_name || session.displayName || 'Admin';
+                const avatar = currentUserData.picture_url || session.pictureUrl || 'https://placehold.co/40/6366f1/white?text=A';
+
+                if (document.getElementById('adminDisplayName'))
+                    document.getElementById('adminDisplayName').textContent = name;
+                if (document.getElementById('adminAvatar'))
+                    document.getElementById('adminAvatar').src = avatar;
+            } catch (err) {
+                console.warn('User data load error:', err);
+            }
+
+            document.getElementById('loadingOverlay').style.display = 'none';
+            initDashboard();
         }
 
         function showLoginModal() {
@@ -7338,11 +7338,16 @@
         async function signInWithGoogle() {
             const errEl = document.getElementById('loginError');
             try {
-                const provider = new firebase.auth.GoogleAuthProvider();
-                await firebase.auth().signInWithPopup(provider);
-                // onAuthStateChanged in checkAuth() will handle the rest
+                // ✅ ใช้ Cloudflare Auth แทน Firebase
+                await window.auth.signInWithPopup();
+                // Session จะถูก set ใน localStorage โดย cloudflare-client.js
+                // Reload เพื่อให้ checkAuth() ทำงาน
+                window.location.reload();
             } catch (err) {
-                if (errEl) { errEl.textContent = err.message; errEl.style.display = 'block'; }
+                if (errEl) {
+                    errEl.textContent = err.message || 'Google Sign-in failed';
+                    errEl.style.display = 'block';
+                }
             }
         }
 
@@ -7447,45 +7452,24 @@
             }
 
             try {
-                const deviceId = await generateDeviceFingerprint();
-                const response = await fetch('https://us-central1-appinjproject.cloudfunctions.net/verifyWebPin', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ pin, deviceId })
-                });
+                // ✅ ใช้ Cloudflare Workers API แทน Cloud Function
+                const result = await window.cfApi.verifyPin(null, pin);
 
-                const result = await response.json();
+                if (result.success || result.token) {
+                    // ตรวจสอบสิทธิ์ Super Admin
+                    const userId = result.user?.id || result.user?.lineUserId || result.userId;
 
-                // Auto-login with custom token if provided
-                const token = result.sessionToken || result.customToken || result.token;
-                if (result.success && token) {
-                    try {
-                        console.log('🔑 Attempting Firebase Auth with token...');
-                        await firebase.auth().signInWithCustomToken(token);
-                        console.log('✅ Firebase Auth: Signed in as ' + result.userId);
-                    } catch (authErr) {
-                        console.error('❌ Firebase Auth Failed:', authErr);
-                        showAlert('Auth Failed: ' + authErr.message, 'error');
-                    }
-                }
-
-                if (result.success && result.user) {
-                    if (!SUPER_ADMIN_IDS.includes(result.user.lineUserId)) {
+                    if (!SUPER_ADMIN_IDS.includes(userId)) {
                         errorDiv.textContent = '❌ คุณไม่มีสิทธิ์ Super Admin';
                         errorDiv.style.display = 'block';
                         return;
                     }
 
-                    localStorage.setItem('lineUserId', result.user.lineUserId);
-                    localStorage.setItem('userDisplayName', result.user.displayName);
-                    lineUserId = result.user.lineUserId;
-                    currentUserData = result.user;
+                    // Token และ session ถูก set ใน cloudflare-client.js แล้ว
+                    console.log('✅ Cloudflare Auth: Signed in as', userId);
 
-                    document.getElementById('adminDisplayName').textContent = result.user.displayName;
-                    document.getElementById('adminAvatar').src = result.user.pictureUrl || 'https://placehold.co/40/6366f1/white?text=A';
-                    document.getElementById('loadingOverlay').style.display = 'none';
-
-                    initDashboard();
+                    // Reload เพื่อให้ checkAuth() ทำงาน
+                    window.location.reload();
                 } else {
                     errorDiv.textContent = result.error || 'รหัสไม่ถูกต้อง';
                     errorDiv.style.display = 'block';
@@ -7513,10 +7497,10 @@
             return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 24);
         }
 
-        function logout() {
-            firebase.auth().signOut().catch(() => { });
-            localStorage.removeItem('lineUserId');
-            localStorage.removeItem('userDisplayName');
+        async function logout() {
+            // ✅ ใช้ Cloudflare Auth
+            await window.cfApi.logout();
+            localStorage.clear(); // Clear ทั้งหมด
             window.location.reload();
         }
 
@@ -7660,7 +7644,7 @@
         async function loadDashboardStats() {
             try {
                 // LINE Users count
-                const lineUsersSnap = await db.collection('line_users').get();
+                const lineUsersSnap = await db.collection('users').get();
                 const lineUsersCount = lineUsersSnap.size;
                 document.getElementById('statLineUsers').textContent = lineUsersCount.toLocaleString();
                 document.getElementById('lineUsersCount').textContent = lineUsersCount;
@@ -7675,7 +7659,7 @@
                 document.getElementById('premiumCount').textContent = premiumCount;
 
                 // Products count
-                const productsSnap = await db.collection('marketplace_items').where('status', '==', 'active').get();
+                const productsSnap = await db.collection('products').where('status', '==', 'active').get();
                 document.getElementById('statProducts').textContent = productsSnap.size.toLocaleString();
                 document.getElementById('productsCount').textContent = productsSnap.size;
 
@@ -7690,7 +7674,7 @@
                 document.getElementById('statAIUsage').textContent = aiUsage.toLocaleString();
 
                 // Community Posts count
-                const feedSnap = await db.collection('community_posts').get();
+                const feedSnap = await db.collection('posts').get();
 
                 document.getElementById('feedCount').textContent = feedSnap.size;
                 document.getElementById('statProducts').textContent = productsSnap.size.toLocaleString();
@@ -7999,7 +7983,7 @@
         // ===== Load LINE Users =====
         async function loadLineUsers() {
             try {
-                const snapshot = await db.collection('line_users').orderBy('createdAt', 'desc').get();
+                const snapshot = await db.collection('users').orderBy('createdAt', 'desc').get();
                 allLineUsers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
                 document.getElementById('lineUsersTotal').textContent = allLineUsers.length + ' users';
@@ -8488,7 +8472,7 @@
 
             // Listen to various streams
             // 1. Community Posts
-            db.collection('community_posts').orderBy('createdAt', 'desc').limit(5).onSnapshot(snap => {
+            db.collection('posts').orderBy('createdAt', 'desc').limit(5).onSnapshot(snap => {
                 snap.docChanges().forEach(change => {
                     if (change.type === 'added') {
                         const data = change.doc.data();
@@ -8498,7 +8482,7 @@
             });
 
             // 2. Marketplace Items
-            db.collection('marketplace_items').orderBy('createdAt', 'desc').limit(5).onSnapshot(snap => {
+            db.collection('products').orderBy('createdAt', 'desc').limit(5).onSnapshot(snap => {
                 snap.docChanges().forEach(change => {
                     if (change.type === 'added') {
                         const data = change.doc.data();
@@ -8593,7 +8577,7 @@
 
         async function _initGodEyeMetrics() {
             // Real counters from Firestore
-            db.collection('line_users').get().then(snap => {
+            db.collection('users').get().then(snap => {
                 const el = document.getElementById('god-active-users');
                 if (el) el.textContent = snap.size.toLocaleString();
             }).catch(() => { });
@@ -8658,7 +8642,7 @@
             if (!days) return;
 
             try {
-                const userRef = db.collection('line_users').doc(userId);
+                const userRef = db.collection('users').doc(userId);
                 const doc = await userRef.get();
                 const data = doc.data();
 
@@ -8759,14 +8743,14 @@
         // ===== Load Products =====
         async function loadProducts() {
             try {
-                const marketplaceSnapshot = await db.collection('marketplace_items').orderBy('createdAt', 'desc').get();
+                const marketplaceSnapshot = await db.collection('products').orderBy('createdAt', 'desc').get();
                 const marketplaceItems = marketplaceSnapshot.docs.map(doc => ({
                     id: doc.id,
                     sourceCollection: 'marketplace_items',
                     ...doc.data()
                 }));
 
-                const communitySnapshot = await db.collection('community_products').orderBy('createdAt', 'desc').get();
+                const communitySnapshot = await db.collection('products').orderBy('createdAt', 'desc').get();
                 const communityItems = communitySnapshot.docs.map(doc => ({
                     id: doc.id,
                     sourceCollection: 'community_products',
@@ -8792,7 +8776,7 @@
         async function loadCommunityPosts() {
             try {
                 // Use community_posts for all feed content
-                const snapshot = await db.collection('community_posts').orderBy('createdAt', 'desc').get();
+                const snapshot = await db.collection('posts').orderBy('createdAt', 'desc').get();
                 allCommunityPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
                 document.getElementById('postsCount').textContent = allCommunityPosts.length;
@@ -8918,7 +8902,7 @@
 
         async function loadMarketplaceReviews() {
             try {
-                const snapshot = await db.collection('marketplace_reviews').orderBy('createdAt', 'desc').get();
+                const snapshot = await db.collection('reviews').orderBy('createdAt', 'desc').get();
                 allReviews = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
                 document.getElementById('reviewsCount').textContent = allReviews.length;
@@ -9023,7 +9007,7 @@
         async function deleteReview(reviewId) {
             if (!confirm('ยืนยันการลบรีวิวนี้?')) return;
             try {
-                await db.collection('marketplace_reviews').doc(reviewId).delete();
+                await db.collection('reviews').doc(reviewId).delete();
                 showAlert('ลบรีวิวเรียบร้อยแล้ว', 'success');
                 loadMarketplaceReviews();
             } catch (error) {
@@ -9036,7 +9020,7 @@
 
         async function loadAllConversations() {
             try {
-                const snapshot = await db.collection('conversations').orderBy('lastMessageTime', 'desc').limit(50).get();
+                const snapshot = await db.collection('messages').orderBy('lastMessageTime', 'desc').limit(50).get();
                 allConversations = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderChatsTable();
             } catch (error) {
@@ -9093,7 +9077,7 @@
             modal.show();
 
             try {
-                const snapshot = await db.collection('conversations').doc(convId)
+                const snapshot = await db.collection('messages').doc(convId)
                     .collection('messages')
                     .orderBy('createdAt', 'asc')
                     .get();
@@ -9127,7 +9111,7 @@
         async function deleteConversation(convId) {
             if (!confirm('ยืนยันการลบห้องสนทนานี้? ทั้งสองฝ่ายจะไม่เห็นข้อความอีก')) return;
             try {
-                await db.collection('conversations').doc(convId).delete();
+                await db.collection('messages').doc(convId).delete();
                 showAlert('ลบห้องสนทนาเรียบร้อยแล้ว', 'success');
                 loadAllConversations();
             } catch (error) {
@@ -9289,7 +9273,7 @@
 
         async function loadStandardPosts() {
             try {
-                const snapshot = await db.collection('community_posts').orderBy('createdAt', 'desc').get();
+                const snapshot = await db.collection('posts').orderBy('createdAt', 'desc').get();
                 allStandardPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
                 document.getElementById('feedCount').textContent = allStandardPosts.length;
@@ -9657,7 +9641,7 @@
                 try {
                     const batch = db.batch();
                     selectedProductIds.forEach(id => {
-                        batch.delete(db.collection('marketplace_items').doc(id));
+                        batch.delete(db.collection('products').doc(id));
                     });
                     await batch.commit();
 
@@ -9805,7 +9789,7 @@
                 });
 
                 // Get recent products
-                const recentProducts = await db.collection('marketplace_items').orderBy('createdAt', 'desc').limit(3).get();
+                const recentProducts = await db.collection('products').orderBy('createdAt', 'desc').limit(3).get();
                 recentProducts.docs.forEach(doc => {
                     const data = doc.data();
                     activities.push({
@@ -10010,11 +9994,15 @@
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>กำลังลบ...';
 
                 try {
-                    // ลบรูปภาพจาก Storage (ถ้ามี)
-                    if (product?.imageUrl && product.imageUrl.includes('firebase')) {
+                    // ✅ ลบรูปภาพจาก R2 (ถ้ามี)
+                    if (product?.imageUrl) {
                         try {
-                            const imageRef = firebase.storage().refFromURL(product.imageUrl);
-                            await imageRef.delete();
+                            // R2 URLs จะเป็น pub-xxx.r2.dev หรือ custom domain
+                            if (product.imageUrl.includes('r2.dev') || product.imageUrl.includes('tuktukfeed')) {
+                                console.log('🗑️ Deleting R2 image:', product.imageUrl);
+                                // TODO: เรียก Workers API เพื่อลบไฟล์จาก R2
+                                // await window.cfApi.deleteFile(product.imageUrl);
+                            }
                         } catch (imgError) {
                             console.log('Image delete skipped:', imgError);
                         }
@@ -10023,18 +10011,17 @@
                     // ลบรูปภาพเพิ่มเติม (ถ้ามี)
                     if (product?.images && Array.isArray(product.images)) {
                         for (const imgUrl of product.images) {
-                            if (imgUrl.includes('firebase')) {
+                            if (imgUrl.includes('r2.dev') || imgUrl.includes('tuktukfeed')) {
                                 try {
-                                    const imgRef = firebase.storage().refFromURL(imgUrl);
-                                    await imgRef.delete();
+                                    console.log('🗑️ Deleting R2 image:', imgUrl);
+                                    // await window.cfApi.deleteFile(imgUrl);
                                 } catch (e) { }
                             }
                         }
                     }
 
-                    // ลบ document จาก Firestore
-                    const collection = product.sourceCollection || 'marketplace_items';
-                    await db.collection(collection).doc(id).delete();
+                    // ✅ ลบ document จาก D1
+                    await db.collection('products').doc(id).delete();
 
                     modal.hide();
                     await loadProducts();
