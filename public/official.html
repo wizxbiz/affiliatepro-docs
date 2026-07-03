@@ -45,6 +45,42 @@
     <!-- TukTuk Thailand Auth -->
     <script src="js/auth.js"></script>
 
+    <!-- ═══════════════════════════════════════════════════════
+         SPA EMBEDDED DETECTION — Must run ASAP before render
+         Hides standalone nav/bottom-nav when loaded inside the
+         TukTuk SPA iframe (index.html) to prevent double nav.
+    ════════════════════════════════════════════════════════ -->
+    <script>
+        (function() {
+            var isEmbedded = (window.self !== window.top) ||
+                             window.location.search.includes('embedded=true');
+            if (isEmbedded) {
+                // Inject a <style> immediately so elements are hidden before paint
+                var s = document.createElement('style');
+                s.id = 'official-embedded-hide';
+                s.textContent = [
+                    /* hide the standalone Bootstrap navbar */
+                    'nav.navbar { display: none !important; }',
+                    /* hide the standalone floating bottom-nav */
+                    '.bottom-nav { display: none !important; }',
+                    /* hide ticker bar (shown by index.html\'s own ticker) */
+                    '.ticker-bar { display: none !important; }',
+                    /* hide the status-header bar */
+                    '.status-header { display: none !important; }',
+                    /* remove top padding/margin meant for the standalone nav */
+                    'body { padding-top: 0 !important; }',
+                    '.hero-section { padding-top: 30px !important; }',
+                ].join('\n');
+                // Append to <head> immediately
+                (document.head || document.documentElement).appendChild(s);
+                // Also flag the body for any JS that cares
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.body.classList.add('is-embedded');
+                });
+            }
+        })();
+    </script>
+
     <style>
         :root {
             --line-green: #00B900;

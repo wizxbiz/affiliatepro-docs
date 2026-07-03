@@ -20,7 +20,7 @@ import 'package:shimmer/shimmer.dart';
 import 'call_screen.dart';
 
 // ─────────────────────────────────────────────────────────────
-// 🛺 TukTuk Chat Screen — Premium LINE-Clone Edition™
+// TukTuk Chat Screen — Premium LINE-Clone Edition™
 // ─────────────────────────────────────────────────────────────
 class ChatScreen extends StatefulWidget {
   final String conversationId;

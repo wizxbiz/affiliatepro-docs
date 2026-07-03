@@ -16,17 +16,17 @@
 
   // ── Guard: already installed or standalone ───────────────────────────────
   const _isStandalone = window.matchMedia('(display-mode: standalone)').matches
-                     || window.navigator.standalone === true;
+    || window.navigator.standalone === true;
   if (_isStandalone) return;
 
   // ── Platform detection (mirror of _isLineApp / _isIOS etc.) ─────────────
-  const _ua       = navigator.userAgent;
-  const _isLine   = /Line\//i.test(_ua);
-  const _isIOS    = /iP(hone|ad|od)/i.test(_ua);
-  const _isAndroid= /Android/i.test(_ua);
+  const _ua = navigator.userAgent;
+  const _isLine = /Line\//i.test(_ua);
+  const _isIOS = /iP(hone|ad|od)/i.test(_ua);
+  const _isAndroid = /Android/i.test(_ua);
   const _isSafari = /^((?!chrome|android).)*safari/i.test(_ua);
   const _isChrome = /Chrome\//i.test(_ua) && !_isLine;
-  const _isPC     = !_isIOS && !_isAndroid;
+  const _isPC = !_isIOS && !_isAndroid;
 
   // ── PWAInstallConfig — mirrors MessageListConfig ─────────────────────────
   const _STORE_KEY = 'tuktuk_pwa_config';
@@ -36,18 +36,18 @@
 
     // Color schemes (from MessageListTheme.colorSchemes)
     themes: {
-      dark:   { bg:'#0F172A', surface:'#1E293B', primary:'#6366F1', secondary:'#A855F7', text:'#F1F5F9', sub:'#94A3B8', border:'rgba(255,255,255,0.08)' },
-      light:  { bg:'#F8FAFC', surface:'#FFFFFF', primary:'#2563EB', secondary:'#7C3AED', text:'#1E293B', sub:'#64748B', border:'rgba(0,0,0,0.08)' },
-      sunset: { bg:'#FFF3E0', surface:'#FFF7ED', primary:'#F97316', secondary:'#DB2777', text:'#1E293B', sub:'#78350F', border:'rgba(249,115,22,0.15)' },
-      ocean:  { bg:'#F0F9FF', surface:'#E0F2FE', primary:'#0891B2', secondary:'#0E7490', text:'#0C4A6E', sub:'#0369A1', border:'rgba(8,145,178,0.15)' },
-      forest: { bg:'#ECFDF5', surface:'#D1FAE5', primary:'#059669', secondary:'#047857', text:'#064E3B', sub:'#065F46', border:'rgba(5,150,105,0.15)' },
+      dark: { bg: '#0F172A', surface: '#1E293B', primary: '#6366F1', secondary: '#A855F7', text: '#F1F5F9', sub: '#94A3B8', border: 'rgba(255,255,255,0.08)' },
+      light: { bg: '#F8FAFC', surface: '#FFFFFF', primary: '#2563EB', secondary: '#7C3AED', text: '#1E293B', sub: '#64748B', border: 'rgba(0,0,0,0.08)' },
+      sunset: { bg: '#FFF3E0', surface: '#FFF7ED', primary: '#F97316', secondary: '#DB2777', text: '#1E293B', sub: '#78350F', border: 'rgba(249,115,22,0.15)' },
+      ocean: { bg: '#F0F9FF', surface: '#E0F2FE', primary: '#0891B2', secondary: '#0E7490', text: '#0C4A6E', sub: '#0369A1', border: 'rgba(8,145,178,0.15)' },
+      forest: { bg: '#ECFDF5', surface: '#D1FAE5', primary: '#059669', secondary: '#047857', text: '#064E3B', sub: '#065F46', border: 'rgba(5,150,105,0.15)' },
     },
 
     // Layout (from MessageListTheme.layouts)
     layouts: {
-      comfortable: { padding:24, gap:16, radius:24, iconSize:56 },
-      compact:     { padding:16, gap:10, radius:16, iconSize:44 },
-      cozy:        { padding:20, gap:13, radius:20, iconSize:50 },
+      comfortable: { padding: 24, gap: 16, radius: 24, iconSize: 56 },
+      compact: { padding: 16, gap: 10, radius: 16, iconSize: 44 },
+      cozy: { padding: 20, gap: 13, radius: 20, iconSize: 50 },
     },
 
     get(key, def) { return this._data[key] ?? def; },
@@ -57,44 +57,32 @@
     },
 
     // Properties (mirrors MessageListConfig getters)
-    get theme()      { return this.get('theme', window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); },
-    get layout()     { return this.get('layout', 'comfortable'); },
+    get theme() { return this.get('theme', window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); },
+    get layout() { return this.get('layout', 'comfortable'); },
     get animations() { return this.get('animations', true); },
-    get cs()         { return this.themes[this.theme] || this.themes.dark; },
-    get lc()         { return this.layouts[this.layout] || this.layouts.comfortable; },
+    get cs() { return this.themes[this.theme] || this.themes.dark; },
+    get lc() { return this.layouts[this.layout] || this.layouts.comfortable; },
 
     // State machine (mirrors _checkPromoVisibility + SharedPreferences)
-    get installState()   { return this.get('installState', 'fresh'); },  // fresh|deferred|silent|installed
-    get dismissCount()   { return this.get('dismissCount', 0); },
-    get lastDismissed()  { return this.get('lastDismissed', 0); },
-    get installed()      { return this.get('installed', false); },
+    get installState() { return this.get('installState', 'fresh'); },  // fresh|deferred|silent|installed
+    get dismissCount() { return this.get('dismissCount', 0); },
+    get lastDismissed() { return this.get('lastDismissed', 0); },
+    get installed() { return this.get('installed', false); },
   };
 
-  // ── State machine: should we show? ───────────────────────────────────────
-  // (mirrors _checkPromoVisibility / promo_carousel_closed_at logic)
+  // ── State machine: show once, never again after dismiss ──────────────────
   function _shouldShow() {
     if (PWAInstallConfig.installed) return false;
-    const state = PWAInstallConfig.installState;
-    const count = PWAInstallConfig.dismissCount;
-    const last  = PWAInstallConfig.lastDismissed;
-    const now   = Date.now();
-
-    if (state === 'silent') return false;
-    if (state === 'fresh')  return true;
-    if (state === 'deferred') {
-      const cooldown = count === 1 ? 3 * 86400000
-                     : count === 2 ? 7 * 86400000
-                     :              30 * 86400000;
-      return (now - last) > cooldown;
-    }
-    return false;
+    // After ANY dismiss: silent forever
+    if (PWAInstallConfig.installState !== 'fresh') return false;
+    return true;
   }
 
   function _onDismiss() {
-    const count = PWAInstallConfig.dismissCount + 1;
-    PWAInstallConfig.set('dismissCount', count);
+    // One dismiss = silent forever (not annoying)
+    PWAInstallConfig.set('dismissCount', 1);
     PWAInstallConfig.set('lastDismissed', Date.now());
-    PWAInstallConfig.set('installState', count >= 4 ? 'silent' : 'deferred');
+    PWAInstallConfig.set('installState', 'silent');
   }
 
   function _onInstalled() {
@@ -104,19 +92,42 @@
 
   // ── Feature slides (mirrors _kStaticAds + _buildPromoCard) ──────────────
   const _FEATURES = [
-    { icon:'⚡', title:'เร็วเหมือนแอปจริง', sub:'โหลดไว้ทำงาน offline ได้', color:'#6366F1' },
-    { icon:'🛺', title:'ฟีดวิดีโอสั้น', sub:'ดูเพลิน ใกล้ฉัน อาชีพ ไม่ต้องเปิด browser', color:'#F97316' },
-    { icon:'🛒', title:'ตลาดนัดออนไลน์', sub:'ซื้อขายสินค้า ไม่มีค่าคอม', color:'#10B981' },
-    { icon:'💬', title:'ระบบแชทสด', sub:'คุยกับร้านค้า แจ้งเตือน real-time', color:'#3B82F6' },
-    { icon:'🛵', title:'เรียกวินมอเตอร์ไซค์', sub:'ติดตามตำแหน่งแบบ live', color:'#EC4899' },
+    { icon: '⚡', title: 'เร็วเหมือนแอปจริง', sub: 'โหลดไว้ทำงาน offline ได้', color: '#6366F1' },
+    { icon: '📺', title: 'ฟีดวิดีโอสั้น', sub: 'ดูเพลิน ใกล้ฉัน อาชีพ ไม่ต้องเปิด browser', color: '#F97316' },
+    { icon: '🛒', title: 'ตลาดนัดออนไลน์', sub: 'ซื้อขายสินค้า ไม่มีค่าคอม', color: '#10B981' },
+    { icon: '💬', title: 'ระบบแชทสด', sub: 'คุยกับร้านค้า แจ้งเตือน real-time', color: '#3B82F6' },
+    { icon: '🛵', title: 'เรียกวินมอเตอร์ไซค์', sub: 'ติดตามตำแหน่งแบบ live', color: '#EC4899' },
   ];
 
-  // ── Steps by platform (mirrors LINE/iOS guide logic) ─────────────────────
+  // ── Steps by platform (Visual Enhancement) ─────────────────────
   function _getSteps() {
-    if (_isLine && _isIOS)   return ['① กด ⋯ มุมขวาบน','② เลือก "เปิดใน Safari"','③ กดแชร์ □↑ → "เพิ่มในหน้าจอโฮม"'];
-    if (_isLine && _isAndroid) return ['① กด ⋯ มุมขวาบน','② เลือก "เปิดใน Chrome"','③ กด ⋮ → "เพิ่มในหน้าจอหลัก"'];
-    if (_isIOS && _isSafari)   return ['① กดปุ่มแชร์ □↑ ด้านล่าง','② เลือก "เพิ่มในหน้าจอโฮม"','③ กด "เพิ่ม" มุมขวาบน'];
-    return null; // Chrome Android — uses prompt()
+    const isSafariMobile = _isIOS && _isSafari;
+    const isChromeMobile = _isAndroid && _isChrome;
+
+    if (_isLine) {
+      return [
+        '① กดปุ่ม <i class="fas fa-ellipsis-h"></i> หรือ <i class="fas fa-bars"></i> มุมขอบจอ',
+        _isIOS ? '② เลือก <b>"เปิดด้วย Safari"</b>' : '② เลือก <b>"เปิดด้วย Chrome"</b>',
+        '③ ทำตามขั้นตอนการเพิ่มลงหน้าจอหลัก'
+      ];
+    }
+
+    if (isSafariMobile) {
+      return [
+        '① กดปุ่มแชร์ <i class="fas fa-share-square"></i> ด้านล่าง',
+        '② เลื่อนลงมาแล้วเลือก <b>"เพิ่มลงหน้าจอโฮม"</b> <i class="far fa-plus-square"></i>',
+        '③ กดปุ่ม <b>"เพิ่ม"</b> <span style="color:#2563EB;font-weight:700">Add</span> มุมขวาบน'
+      ];
+    }
+
+    if (_isIOS && !_isSafari) {
+      return [
+        '① โปรดเปิดเว็บไซต์นี้ด้วย <b>Safari</b>',
+        '② กดปุ่ม <i class="fas fa-share-square"></i> เพื่อเริ่มการติดตั้ง'
+      ];
+    }
+
+    return null; // For Chrome/Edge Android which supports beforeinstallprompt
   }
 
   // ── DOM helpers ──────────────────────────────────────────────────────────
@@ -134,7 +145,7 @@
     s.id = 'pwa-install-css';
     s.textContent = `
       #pwaBackdrop {
-        position:fixed; inset:0; z-index:9999990;
+        position:fixed; inset:0; z-index:10999;
         background:rgba(0,0,0,0); transition:background .35s ease;
         display:none; align-items:flex-end; justify-content:center;
       }
@@ -142,12 +153,12 @@
 
       #pwaSheet {
         position:relative; width:100%; max-width:480px;
-        border-radius:28px 28px 0 0;
+        border-radius:20px 20px 0 0;
         transform:translateY(110%);
-        transition:transform .42s cubic-bezier(0.16,1,0.3,1);
+        transition:transform .38s cubic-bezier(0.16,1,0.3,1);
         overflow:hidden; user-select:none;
-        /* Particle canvas lives behind content */
         will-change:transform;
+        max-height:75vh; overflow-y:auto;
       }
       #pwaBackdrop.show #pwaSheet { transform:translateY(0); }
 
@@ -165,17 +176,17 @@
       }
 
       .pwa-header {
-        display:flex; align-items:center; gap:14px;
-        padding:16px 20px 10px;
+        display:flex; align-items:center; gap:12px;
+        padding:10px 16px 6px;
       }
       .pwa-app-icon {
-        width:56px; height:56px; border-radius:16px;
+        width:44px; height:44px; border-radius:12px;
         object-fit:cover; flex-shrink:0;
-        box-shadow:0 4px 16px rgba(0,0,0,.2);
+        box-shadow:0 2px 10px rgba(0,0,0,.15);
       }
       .pwa-app-info { flex:1; }
-      .pwa-app-name { font-size:18px; font-weight:700; margin:0 0 2px; }
-      .pwa-app-desc { font-size:12px; margin:0; opacity:.65; }
+      .pwa-app-name { font-size:15px; font-weight:700; margin:0 0 1px; }
+      .pwa-app-desc { font-size:11px; margin:0; opacity:.65; }
 
       .pwa-close-btn {
         background:none; border:none; cursor:pointer;
@@ -201,16 +212,16 @@
         display:flex; transition:transform .4s cubic-bezier(0.4,0,0.2,1);
       }
       .pwa-slide {
-        min-width:100%; padding:18px 20px 20px;
-        display:flex; align-items:center; gap:16px;
-        border-radius:18px; box-sizing:border-box;
+        min-width:100%; padding:12px 16px 14px;
+        display:flex; align-items:center; gap:12px;
+        border-radius:14px; box-sizing:border-box;
       }
       .pwa-slide-icon {
-        font-size:38px; line-height:1; flex-shrink:0;
-        filter:drop-shadow(0 2px 8px rgba(0,0,0,.2));
+        font-size:28px; line-height:1; flex-shrink:0;
+        filter:drop-shadow(0 2px 6px rgba(0,0,0,.15));
       }
-      .pwa-slide-title { font-size:16px; font-weight:700; margin:0 0 4px; }
-      .pwa-slide-sub   { font-size:12.5px; margin:0; opacity:.75; line-height:1.45; }
+      .pwa-slide-title { font-size:14px; font-weight:700; margin:0 0 2px; }
+      .pwa-slide-sub   { font-size:11.5px; margin:0; opacity:.75; line-height:1.4; }
 
       /* Dot indicator (mirrors AnimatedSmoothIndicator) */
       .pwa-dots {
@@ -260,25 +271,43 @@
       }
       .pwa-toggle.on::after { transform:translateX(18px); }
 
-      /* ── Steps list (mirrors LINE/iOS guide) ── */
+      /* ── Steps list (Visual Enhancement) ── */
       .pwa-steps { padding:12px 18px 4px; display:none; }
-      .pwa-steps.show { display:block; }
+      .pwa-steps.show { display:block; animation:pwaFadeIn .5s ease; }
       .pwa-step {
-        display:flex; align-items:center; gap:10px;
-        padding:8px 12px; border-radius:12px; margin-bottom:6px;
-        font-size:13px; font-weight:500;
+        display:flex; align-items:center; gap:12px;
+        padding:10px 14px; border-radius:16px; margin-bottom:8px;
+        font-size:13.5px; font-weight:500; line-height:1.4;
       }
+      .pwa-step i { font-size:14px; opacity:.85; }
       .pwa-step-num {
-        width:24px; height:24px; border-radius:50%;
+        width:26px; height:26px; border-radius:50%;
         display:flex; align-items:center; justify-content:center;
         font-size:11px; font-weight:800; flex-shrink:0;
       }
 
-      /* ── CTA area ── */
-      .pwa-cta { padding:14px 18px 20px; display:flex; gap:10px; align-items:center; }
-      .pwa-install-btn {
-        flex:1; padding:14px; border-radius:18px; border:none;
+      /* ── Success state (Premium) ── */
+      .pwa-success {
+        text-align:center; padding:40px 20px; display:none;
+      }
+      .pwa-success.show { display:block; animation:pwaZoomIn .5s cubic-bezier(0.34,1.56,0.64,1); }
+      .pwa-success-icon { font-size:64px; margin-bottom:16px; display:block; }
+      .pwa-success-title { font-size:22px; font-weight:800; margin:0 0 8px; }
+      .pwa-success-sub { font-size:14px; opacity:.7; margin:0 0 24px; }
+      .pwa-success-done {
+        padding:14px 40px; border-radius:20px; border:none;
         font-family:'Kanit',sans-serif; font-size:15px; font-weight:700;
+        cursor:pointer; transition:all .2s;
+      }
+
+      @keyframes pwaFadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+      @keyframes pwaZoomIn { from { opacity:0; transform:scale(0.8); } to { opacity:1; transform:scale(1); } }
+
+      /* ── CTA area ── */
+      .pwa-cta { padding:10px 14px 16px; display:flex; gap:8px; align-items:center; }
+      .pwa-install-btn {
+        flex:1; padding:11px; border-radius:14px; border:none;
+        font-family:'Kanit',sans-serif; font-size:14px; font-weight:700;
         cursor:pointer; transition:all .25s cubic-bezier(0.34,1.56,0.64,1);
         letter-spacing:.3px;
       }
@@ -329,18 +358,18 @@
 
   // ── Particle background (mirrors ParticleBackground / Particle class) ────
   function _initParticles(canvas, cs) {
-    const ctx  = canvas.getContext('2d');
-    const W    = canvas.width  = canvas.offsetWidth;
-    const H    = canvas.height = canvas.offsetHeight;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width = canvas.offsetWidth;
+    const H = canvas.height = canvas.offsetHeight;
 
     // Mirrors: for (int i = 0; i < 20; i++) _particles.add(Particle())
     const particles = Array.from({ length: 22 }, () => ({
-      x:   Math.random() * W,
-      y:   Math.random() * H,
-      r:   Math.random() * 28 + 8,
-      vx:  (Math.random() - .5) * .35,
-      vy:  (Math.random() - .5) * .35,
-      a:   Math.random() * .18 + .04,
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 28 + 8,
+      vx: (Math.random() - .5) * .35,
+      vy: (Math.random() - .5) * .35,
+      a: Math.random() * .18 + .04,
     }));
 
     let raf;
@@ -349,7 +378,7 @@
       particles.forEach(p => {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = cs.primary + Math.round(p.a * 255).toString(16).padStart(2,'0');
+        ctx.fillStyle = cs.primary + Math.round(p.a * 255).toString(16).padStart(2, '0');
         ctx.fill();
         p.x += p.vx; p.y += p.vy;
         if (p.x < -p.r) p.x = W + p.r;
@@ -369,7 +398,7 @@
     const lc = PWAInstallConfig.lc;
     const steps = _getSteps();
     const needsSteps = !!steps;
-    const canPrompt  = !_isLine && !(_isIOS && _isSafari) && !_isPC;
+    const canPrompt = !_isLine && !(_isIOS && _isSafari) && !_isPC;
 
     // Backdrop
     const backdrop = el('div', ''); backdrop.id = 'pwaBackdrop';
@@ -406,8 +435,8 @@
         <div class="pwa-app-name" style="color:${cs.text}">TukTuk Thailand</div>
         <div class="pwa-app-desc" style="color:${cs.sub}">
           ${_isPC ? '🖥️ เปิดบน Chrome/Edge เพื่อติดตั้ง'
-           : _isLine ? '📲 เปิดในเบราว์เซอร์เพื่อติดตั้ง'
-           : '📲 เพิ่มบนหน้าจอหลัก — ไม่ต้องเปิด browser'}
+        : _isLine ? '📲 เปิดในเบราว์เซอร์เพื่อติดตั้ง'
+          : '📲 เพิ่มบนหน้าจอหลัก — ไม่ต้องเปิด browser'}
         </div>
       </div>
       <button class="pwa-close-btn" id="pwaCloseBtn" style="color:${cs.text}">✕</button>
@@ -436,7 +465,7 @@
     const dots = el('div', 'pwa-dots'); dots.id = 'pwaDots';
     _FEATURES.forEach((_, i) => {
       const d = el('div', 'pwa-dot');
-      d.style.cssText = `width:${i===0?18:6}px; background:${i===0?cs.primary:cs.text+'30'};`;
+      d.style.cssText = `width:${i === 0 ? 18 : 6}px; background:${i === 0 ? cs.primary : cs.text + '30'};`;
       dots.appendChild(d);
     });
     inner.appendChild(dots);
@@ -448,26 +477,26 @@
       <div class="pwa-theme-row" id="pwaThemeRow">
         ${Object.keys(PWAInstallConfig.themes).map(t => `
           <div class="pwa-theme-chip" data-theme="${t}"
-               style="background:${t===PWAInstallConfig.theme?cs.primary:cs.surface};
-                      color:${t===PWAInstallConfig.theme?'#fff':cs.text};
-                      border-color:${t===PWAInstallConfig.theme?cs.primary:cs.border}">
-            ${{dark:'🌙 มืด',light:'☀️ สว่าง',sunset:'🌅 Sunset',ocean:'🌊 Ocean',forest:'🌿 Forest'}[t]}
+               style="background:${t === PWAInstallConfig.theme ? cs.primary : cs.surface};
+                      color:${t === PWAInstallConfig.theme ? '#fff' : cs.text};
+                      border-color:${t === PWAInstallConfig.theme ? cs.primary : cs.border}">
+            ${{ dark: '🌙 มืด', light: '☀️ สว่าง', sunset: '🌅 Sunset', ocean: '🌊 Ocean', forest: '🌿 Forest' }[t]}
           </div>`).join('')}
       </div>
       <div class="pwa-settings-title" style="color:${cs.sub}">📐 เลย์เอาต์</div>
       <div class="pwa-layout-row" id="pwaLayoutRow">
-        ${['comfortable','compact','cozy'].map(l => `
+        ${['comfortable', 'compact', 'cozy'].map(l => `
           <div class="pwa-layout-chip" data-layout="${l}"
-               style="background:${l===PWAInstallConfig.layout?cs.primary:cs.surface};
-                      color:${l===PWAInstallConfig.layout?'#fff':cs.text};
-                      border-color:${l===PWAInstallConfig.layout?cs.primary:cs.border}">
-            ${{comfortable:'สะดวก',compact:'กระชับ',cozy:'พอดี'}[l]}
+               style="background:${l === PWAInstallConfig.layout ? cs.primary : cs.surface};
+                      color:${l === PWAInstallConfig.layout ? '#fff' : cs.text};
+                      border-color:${l === PWAInstallConfig.layout ? cs.primary : cs.border}">
+            ${{ comfortable: 'สะดวก', compact: 'กระชับ', cozy: 'พอดี' }[l]}
           </div>`).join('')}
       </div>
       <div class="pwa-switch-row">
         <span class="pwa-switch-label" style="color:${cs.text}">✨ แอนิเมชั่น</span>
-        <button class="pwa-toggle ${PWAInstallConfig.animations?'on':''}" id="pwaAnimToggle"
-                style="background:${PWAInstallConfig.animations?cs.primary:'#334155'}"></button>
+        <button class="pwa-toggle ${PWAInstallConfig.animations ? 'on' : ''}" id="pwaAnimToggle"
+                style="background:${PWAInstallConfig.animations ? cs.primary : '#334155'}"></button>
       </div>
     `;
     inner.appendChild(settingsPanel);
@@ -479,7 +508,7 @@
         const step = el('div', 'pwa-step');
         step.style.cssText = `background:${cs.surface}; border:1px solid ${cs.border};`;
         step.innerHTML = `
-          <div class="pwa-step-num" style="background:${cs.primary}; color:#fff">${i+1}</div>
+          <div class="pwa-step-num" style="background:${cs.primary}; color:#fff">${i + 1}</div>
           <span style="color:${cs.text}">${s}</span>`;
         stepsEl.appendChild(step);
       });
@@ -488,18 +517,18 @@
 
     // CTA (mirrors FAB + install button)
     const cta = el('div', 'pwa-cta');
-    const installBtnLabel = _isLine   ? '🔗 คัดลอกลิงค์'
-                          : needsSteps? '📖 ดูขั้นตอน'
-                          :             '📲 ติดตั้งเดี๋ยวนี้';
+    const installBtnLabel = _isLine ? '🔗 คัดลอกลิงค์'
+      : needsSteps ? '📖 ดูขั้นตอน'
+        : '📲 ติดตั้งเดี๋ยวนี้';
 
     cta.innerHTML = `
       <button class="pwa-install-btn" id="pwaInstallBtn"
               style="background:linear-gradient(135deg,${cs.primary},${cs.secondary}); color:#fff;
-                     box-shadow:0 6px 24px ${cs.primary}55">
+                     box-shadow:0 4px 16px ${cs.primary}44">
         ${installBtnLabel}
       </button>
       <button class="pwa-settings-btn" id="pwaSettingsToggle"
-              style="background:${cs.surface}; color:${cs.text}; border:1px solid ${cs.border}">
+              style="background:${cs.surface}; color:${cs.text}; border:1px solid ${cs.border}; display:none">
         ⚙️
       </button>`;
     inner.appendChild(cta);
@@ -530,7 +559,7 @@
       current = (idx + total) % total;
       track.style.transform = `translateX(-${current * 100}%)`;
       dots.querySelectorAll('.pwa-dot').forEach((d, i) => {
-        d.style.width  = i === current ? '18px' : '6px';
+        d.style.width = i === current ? '18px' : '6px';
         d.style.background = i === current ? cs.primary : cs.text + '30';
       });
     }
@@ -540,8 +569,8 @@
 
     // Touch swipe
     let startX = 0;
-    track.parentElement.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive:true });
-    track.parentElement.addEventListener('touchend',   e => {
+    track.parentElement.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+    track.parentElement.addEventListener('touchend', e => {
       const dx = e.changedTouches[0].clientX - startX;
       if (Math.abs(dx) > 40) go(current + (dx < 0 ? 1 : -1));
     });
@@ -554,7 +583,7 @@
     let startY = 0, dy = 0, dragging = false;
 
     const onDown = e => {
-      startY   = (e.touches || [e])[0].clientY;
+      startY = (e.touches || [e])[0].clientY;
       dragging = true;
       sheet.style.transition = 'none';
     };
@@ -573,19 +602,19 @@
     };
 
     const handle = sheet.querySelector('.pwa-handle');
-    handle.addEventListener('touchstart', onDown, { passive:true });
-    document.addEventListener('touchmove',  onMove, { passive:true });
-    document.addEventListener('touchend',   onUp);
+    handle.addEventListener('touchstart', onDown, { passive: true });
+    document.addEventListener('touchmove', onMove, { passive: true });
+    document.addEventListener('touchend', onUp);
     handle.addEventListener('mousedown', onDown);
     document.addEventListener('mousemove', onMove);
-    document.addEventListener('mouseup',   onUp);
+    document.addEventListener('mouseup', onUp);
   }
 
   // ── Re-render sheet with updated config ─────────────────────────────────
   // (mirrors ListenableBuilder → rebuild on config change)
   function _applyTheme(sheet, cs, lc, stopParticles) {
     sheet.style.background = cs.bg;
-    sheet.style.color      = cs.text;
+    sheet.style.color = cs.text;
     if (stopParticles) stopParticles();
     const canvas = document.getElementById('pwaParticleCanvas');
     if (canvas && PWAInstallConfig.animations) {
@@ -594,15 +623,15 @@
     // Update chip states
     sheet.querySelectorAll('.pwa-theme-chip').forEach(c => {
       const active = c.dataset.theme === PWAInstallConfig.theme;
-      c.style.background   = active ? cs.primary : cs.surface;
-      c.style.color        = active ? '#fff' : cs.text;
-      c.style.borderColor  = active ? cs.primary : cs.border;
+      c.style.background = active ? cs.primary : cs.surface;
+      c.style.color = active ? '#fff' : cs.text;
+      c.style.borderColor = active ? cs.primary : cs.border;
     });
     sheet.querySelectorAll('.pwa-layout-chip').forEach(c => {
       const active = c.dataset.layout === PWAInstallConfig.layout;
-      c.style.background   = active ? cs.primary : cs.surface;
-      c.style.color        = active ? '#fff' : cs.text;
-      c.style.borderColor  = active ? cs.primary : cs.border;
+      c.style.background = active ? cs.primary : cs.surface;
+      c.style.color = active ? '#fff' : cs.text;
+      c.style.borderColor = active ? cs.primary : cs.border;
     });
     const toggle = sheet.querySelector('#pwaAnimToggle');
     if (toggle) {
@@ -612,8 +641,8 @@
     // Update install button gradient
     const btn = sheet.querySelector('#pwaInstallBtn');
     if (btn) {
-      btn.style.background  = `linear-gradient(135deg,${cs.primary},${cs.secondary})`;
-      btn.style.boxShadow   = `0 6px 24px ${cs.primary}55`;
+      btn.style.background = `linear-gradient(135deg,${cs.primary},${cs.secondary})`;
+      btn.style.boxShadow = `0 6px 24px ${cs.primary}55`;
     }
   }
 
@@ -625,15 +654,15 @@
       banner.classList.toggle('show', !navigator.onLine);
     };
     update();
-    window.addEventListener('online',  update);
+    window.addEventListener('online', update);
     window.addEventListener('offline', update);
   }
 
   // ── Main show function ────────────────────────────────────────────────────
   let _deferredPrompt = null;
-  let _stopParticles  = null;
-  let _stopCarousel   = null;
-  let _sheetRefs      = null;
+  let _stopParticles = null;
+  let _stopCarousel = null;
+  let _sheetRefs = null;
 
   function show() {
     if (_sheetRefs) return; // already mounted
@@ -644,14 +673,8 @@
     const { backdrop, sheet, canvas, track, dots } = refs;
     const cs = PWAInstallConfig.cs;
 
-    // Particle background (mirrors ParticleBackground)
-    requestAnimationFrame(() => {
-      canvas.width  = sheet.offsetWidth;
-      canvas.height = sheet.offsetHeight;
-      if (PWAInstallConfig.animations) {
-        _stopParticles = _initParticles(canvas, cs);
-      }
-    });
+    // Particle canvas hidden in compact mode (save battery)
+    canvas.style.display = 'none';
 
     // Carousel
     _stopCarousel = _runCarousel(track, dots, cs);
@@ -686,7 +709,7 @@
         const stepsEl = document.getElementById('pwaSteps');
         if (stepsEl) {
           stepsEl.classList.add('show');
-          stepsEl.scrollIntoView({ behavior:'smooth', block:'nearest' });
+          stepsEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
         return;
       }
@@ -740,22 +763,35 @@
   }
 
   function _showSuccess(msg) {
-    const s  = document.getElementById('pwaSuccess');
-    const cs = PWAInstallConfig.cs;
+    const s = document.getElementById('pwaSuccess');
     if (!s) return;
+
     if (msg) {
       s.querySelector('.pwa-success-title').textContent = msg;
-      s.querySelector('.pwa-success-icon').textContent = '📋';
+      s.querySelector('.pwa-success-icon').textContent = '✨';
+      s.querySelector('.pwa-success-sub').style.display = 'none';
     }
-    // Hide main content
-    ['pwaCarouselTrack','pwaDots','pwaSteps','pwaNetBanner','pwaSettingsPanel'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.style.display = 'none';
+
+    // Hide main content with a fade
+    const inner = document.getElementById('pwaSheetInner');
+    const hideList = ['pwaCarouselTrack', 'pwaDots', 'pwaSteps', 'pwaNetBanner', 'pwaSettingsPanel', 'pwa-cta'];
+    hideList.forEach(id => {
+      const el = document.getElementById(id) || document.querySelector('.' + id);
+      if (el) {
+        el.style.opacity = '0';
+        setTimeout(() => el.style.display = 'none', 300);
+      }
     });
-    document.querySelector('.pwa-cta').style.display = 'none';
+
     s.classList.add('show');
     _onInstalled();
-    setTimeout(_close, 4000);
+
+    // confetti or extra particles (optional: we just speed up existing ones)
+    if (_stopParticles) {
+      // We don't have a direct "speed up" but we can re-init with more
+    }
+
+    setTimeout(_close, 5000);
   }
 
   function _dismiss() {
@@ -768,7 +804,7 @@
     const { backdrop } = _sheetRefs;
     backdrop.classList.remove('show');
     if (_stopParticles) { _stopParticles(); _stopParticles = null; }
-    if (_stopCarousel)  { _stopCarousel();  _stopCarousel  = null; }
+    if (_stopCarousel) { _stopCarousel(); _stopCarousel = null; }
     setTimeout(() => { backdrop.remove(); _sheetRefs = null; }, 450);
   }
 
@@ -810,7 +846,7 @@
   document.addEventListener('DOMContentLoaded', () => {
     if (!_shouldShow()) return;
 
-    const delay = _isLine ? 3500 : _isIOS ? 5000 : 4500;
+    const delay = _isLine ? 8000 : _isIOS ? 10000 : 9000;
 
     setTimeout(() => {
       if (!_shouldShow()) return; // Re-check after delay

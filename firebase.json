@@ -74,6 +74,10 @@
       ],
       "rewrites": [
         {
+          "source": "/login",
+          "destination": "/login.html"
+        },
+        {
           "source": "/tuktuk",
           "destination": "/tuktuk/index.html"
         },
@@ -260,6 +264,18 @@
         {
           "source": "/api/marketplaceAIGeneratePost",
           "function": "marketplaceAIGeneratePost"
+        },
+        {
+          "source": "/lineLoginCallback",
+          "function": "lineLoginCallback"
+        },
+        {
+          "source": "/verifyWebPin",
+          "function": "verifyWebPin"
+        },
+        {
+          "source": "/checkFreeUsage",
+          "function": "checkFreeUsage"
         }
       ]
     },

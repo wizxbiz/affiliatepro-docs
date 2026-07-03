@@ -1,0 +1,277 @@
+{
+  "type": "flex",
+  "altText": "✅ ยืนยันความรู้: 120/150 (80%)",
+  "contents": {
+    "type": "bubble",
+    "size": "mega",
+    "header": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "✅",
+              "size": "3xl",
+              "flex": 0
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "Knowledge Verification",
+                  "weight": "bold",
+                  "size": "lg",
+                  "color": "#ffffff"
+                },
+                {
+                  "type": "text",
+                  "text": "ระบบยืนยันความรู้",
+                  "size": "sm",
+                  "color": "#ffffffcc",
+                  "margin": "xs"
+                }
+              ],
+              "margin": "lg"
+            }
+          ]
+        }
+      ],
+      "paddingAll": "20px",
+      "backgroundColor": "#10b981"
+    },
+    "body": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "สถานะการยืนยัน",
+                  "size": "sm",
+                  "color": "#6b7280",
+                  "flex": 0
+                },
+                {
+                  "type": "text",
+                  "text": "80%",
+                  "size": "sm",
+                  "weight": "bold",
+                  "color": "#10b981",
+                  "align": "end"
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                    {
+                      "type": "filler"
+                    }
+                  ],
+                  "backgroundColor": "#10b981",
+                  "height": "6px",
+                  "cornerRadius": "3px",
+                  "width": "80%"
+                }
+              ],
+              "backgroundColor": "#e5e7eb",
+              "height": "6px",
+              "cornerRadius": "3px",
+              "margin": "sm"
+            }
+          ]
+        },
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "120",
+                  "size": "xxl",
+                  "weight": "bold",
+                  "color": "#10b981",
+                  "align": "center"
+                },
+                {
+                  "type": "text",
+                  "text": "ยืนยันแล้ว",
+                  "size": "xs",
+                  "color": "#6b7280",
+                  "align": "center",
+                  "margin": "xs"
+                }
+              ],
+              "flex": 1
+            },
+            {
+              "type": "separator"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "30",
+                  "size": "xxl",
+                  "weight": "bold",
+                  "color": "#f59e0b",
+                  "align": "center"
+                },
+                {
+                  "type": "text",
+                  "text": "รอตรวจสอบ",
+                  "size": "xs",
+                  "color": "#6b7280",
+                  "align": "center",
+                  "margin": "xs"
+                }
+              ],
+              "flex": 1
+            },
+            {
+              "type": "separator"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "150",
+                  "size": "xxl",
+                  "weight": "bold",
+                  "color": "#3b82f6",
+                  "align": "center"
+                },
+                {
+                  "type": "text",
+                  "text": "ทั้งหมด",
+                  "size": "xs",
+                  "color": "#6b7280",
+                  "align": "center",
+                  "margin": "xs"
+                }
+              ],
+              "flex": 1
+            }
+          ],
+          "margin": "lg",
+          "paddingAll": "12px",
+          "backgroundColor": "#f9fafb",
+          "cornerRadius": "8px"
+        },
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "🎯",
+              "size": "lg",
+              "flex": 0
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "Confidence Score",
+                  "size": "sm",
+                  "color": "#6b7280"
+                },
+                {
+                  "type": "text",
+                  "text": "85%",
+                  "size": "lg",
+                  "weight": "bold",
+                  "color": "#10b981",
+                  "margin": "xs"
+                }
+              ],
+              "margin": "md"
+            }
+          ],
+          "paddingAll": "12px",
+          "backgroundColor": "#f9fafb",
+          "cornerRadius": "8px",
+          "margin": "md"
+        },
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "⏱️",
+              "size": "sm",
+              "flex": 0
+            },
+            {
+              "type": "text",
+              "text": "ยืนยันล่าสุด: 13/12/2568 14:30",
+              "size": "xs",
+              "color": "#6b7280",
+              "margin": "sm"
+            }
+          ],
+          "margin": "md"
+        }
+      ],
+      "paddingAll": "20px"
+    },
+    "footer": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "button",
+          "action": {
+            "type": "message",
+            "label": "🔄 ยืนยันอีกครั้ง",
+            "text": "verify ความรู้"
+          },
+          "style": "primary",
+          "color": "#10b981",
+          "height": "sm"
+        },
+        {
+          "type": "button",
+          "action": {
+            "type": "message",
+            "label": "📚 ดูรายการ",
+            "text": "ดูความรู้ทั้งหมด"
+          },
+          "style": "secondary",
+          "height": "sm",
+          "margin": "sm"
+        }
+      ],
+      "paddingAll": "12px"
+    }
+  }
+}

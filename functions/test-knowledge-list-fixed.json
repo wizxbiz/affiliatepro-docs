@@ -1,0 +1,257 @@
+{
+  "type": "flex",
+  "altText": "📚 ความรู้ทั้งหมด 5 รายการ",
+  "contents": {
+    "type": "bubble",
+    "size": "mega",
+    "header": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "📚",
+              "size": "3xl",
+              "flex": 0
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "Knowledge Base",
+                  "weight": "bold",
+                  "size": "xl",
+                  "color": "#ffffff"
+                },
+                {
+                  "type": "text",
+                  "text": "5 รายการ | 5 ยืนยัน",
+                  "size": "sm",
+                  "color": "#ffffffcc",
+                  "margin": "xs"
+                }
+              ],
+              "margin": "lg"
+            }
+          ]
+        }
+      ],
+      "paddingAll": "20px",
+      "backgroundColor": "#3b82f6"
+    },
+    "body": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "text",
+          "text": "📂 หมวดหมู่ความรู้",
+          "weight": "bold",
+          "size": "md",
+          "color": "#374151"
+        },
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "🔧",
+              "size": "lg",
+              "flex": 0
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "วิธีแก้จริง",
+                  "weight": "bold",
+                  "size": "sm",
+                  "color": "#1f2937"
+                },
+                {
+                  "type": "text",
+                  "text": "3 รายการ",
+                  "size": "xs",
+                  "color": "#6b7280",
+                  "margin": "xs"
+                }
+              ],
+              "margin": "md"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "✅",
+                  "size": "lg",
+                  "align": "end"
+                }
+              ],
+              "flex": 0
+            }
+          ],
+          "backgroundColor": "#ffffff",
+          "paddingAll": "12px",
+          "cornerRadius": "8px",
+          "margin": "none",
+          "action": {
+            "type": "message",
+            "label": "วิธีแก้จริง",
+            "text": "ดูหมวด วิธีแก้จริง"
+          }
+        },
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "📊",
+              "size": "lg",
+              "flex": 0
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "พารามิเตอร์",
+                  "weight": "bold",
+                  "size": "sm",
+                  "color": "#1f2937"
+                },
+                {
+                  "type": "text",
+                  "text": "1 รายการ",
+                  "size": "xs",
+                  "color": "#6b7280",
+                  "margin": "xs"
+                }
+              ],
+              "margin": "md"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "✅",
+                  "size": "lg",
+                  "align": "end"
+                }
+              ],
+              "flex": 0
+            }
+          ],
+          "backgroundColor": "#f9fafb",
+          "paddingAll": "12px",
+          "cornerRadius": "8px",
+          "margin": "sm",
+          "action": {
+            "type": "message",
+            "label": "พารามิเตอร์",
+            "text": "ดูหมวด พารามิเตอร์"
+          }
+        },
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "💡",
+              "size": "lg",
+              "flex": 0
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "เคล็ดลับ",
+                  "weight": "bold",
+                  "size": "sm",
+                  "color": "#1f2937"
+                },
+                {
+                  "type": "text",
+                  "text": "1 รายการ",
+                  "size": "xs",
+                  "color": "#6b7280",
+                  "margin": "xs"
+                }
+              ],
+              "margin": "md"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "✅",
+                  "size": "lg",
+                  "align": "end"
+                }
+              ],
+              "flex": 0
+            }
+          ],
+          "backgroundColor": "#ffffff",
+          "paddingAll": "12px",
+          "cornerRadius": "8px",
+          "margin": "sm",
+          "action": {
+            "type": "message",
+            "label": "เคล็ดลับ",
+            "text": "ดูหมวด เคล็ดลับ"
+          }
+        }
+      ],
+      "paddingAll": "20px"
+    },
+    "footer": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "button",
+          "action": {
+            "type": "message",
+            "label": "🔄 รีเฟรช",
+            "text": "ดูความรู้ทั้งหมด"
+          },
+          "style": "primary",
+          "color": "#3b82f6",
+          "height": "sm"
+        },
+        {
+          "type": "button",
+          "action": {
+            "type": "message",
+            "label": "🔙 กลับเมนู",
+            "text": "/km"
+          },
+          "style": "link",
+          "height": "sm",
+          "margin": "sm"
+        }
+      ],
+      "paddingAll": "12px"
+    }
+  }
+}

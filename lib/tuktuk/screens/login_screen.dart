@@ -5,6 +5,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:caculateapp/tuktuk/screens/register_screen.dart';
 import 'package:caculateapp/tuktuk/services/tuktuk_bridge.dart';
+import 'package:caculateapp/tuktuk/services/tuktuk_tokenomics.dart';
 import 'package:caculateapp/tuktuk/tuktuk_feed_screen.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
@@ -247,11 +248,10 @@ class _LoginScreenState extends State<LoginScreen>
       _showSuccessSnackBar('ยินดีต้อนรับเข้าสู่ระบบจัดการครับ! 🛡️');
     }
 
-    // 💰 Award Login Bonus Coins (as promised in the UI)
-    TukTukBridge().awardPoints(
-      'login',
-      customPoints: 50,
-      description: 'โบนัสเข้าสู่ระบบประจำวัน (Extra Bonus)',
+    // 💰 Award Login Bonus Coins — validated server-side
+    TukTukTokenomics().awardPoints(
+      MissionType.dailyLogin,
+      description: 'โบนัสเข้าสู่ระบบประจำวัน',
     );
 
     if (widget.onLoginSuccess != null) {
@@ -2107,10 +2107,11 @@ class _LoginScreenState extends State<LoginScreen>
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
 
-      // 2. Award Points (50 coins as promised in UI)
-      final success = await TukTukBridge().awardPoints(
-        'add_friend',
-        customPoints: 50,
+      // 2. Award Points — validated server-side (referral: 1 award per event)
+      final success = await TukTukTokenomics().awardPoints(
+        MissionType.referral,
+        refId: 'line_add_friend',
+        description: 'เพิ่มเพื่อน LINE Official',
       );
 
       if (success && mounted) {

@@ -2,6 +2,9 @@ package repository
 
 import (
 	"context"
+	"log"
+	"sort"
+	"sync"
 	"time"
 	"tuktuk-backend/internal/models"
 
@@ -9,12 +12,12 @@ import (
 )
 
 type Repository interface {
-	GetPosts(ctx context.Context, limit int) ([]models.Post, error)
+	GetPosts(ctx context.Context, limit int, afterID string, provinceCode string) ([]models.Post, error)
 	GetUnreadNotifications(ctx context.Context, userID string) ([]models.Notification, error)
 	GetTrendingTags(ctx context.Context) ([]string, error)
 	GetVerifiedNews(ctx context.Context, limit int) ([]models.News, error)
 	GetTrendingPosts(ctx context.Context, limit int) ([]models.Post, error)
-	GetMarketplaceProducts(ctx context.Context, limit int) ([]models.MarketplaceProduct, error)
+	GetMarketplaceProducts(ctx context.Context, limit int, afterID string, provinceCode string) ([]models.MarketplaceProduct, error)
 	GetLeaderboard(ctx context.Context, limit int) ([]models.SellerLeaderboard, error)
 	TogglePostLike(ctx context.Context, postID string, userID string) (bool, error)
 	IncrementViewCount(ctx context.Context, postID string) error
@@ -24,17 +27,72 @@ type Repository interface {
 	EndLiveSession(ctx context.Context, sessionID string) error
 	GetLiveSession(ctx context.Context, sessionID string) (*models.LiveSession, error)
 	UpdateViewerCount(ctx context.Context, sessionID string, delta int) error
+
+	// ── Core Content APIs ──
+	GetPost(ctx context.Context, postID string) (*models.Post, error)
+	CreatePost(ctx context.Context, post *models.Post) error
+	GetComments(ctx context.Context, postID string, limit int, afterID string) ([]models.Comment, error)
+	CreateComment(ctx context.Context, comment *models.Comment) error
+	GetUserPosts(ctx context.Context, userID string, limit int) ([]models.Post, error)
+	SearchPosts(ctx context.Context, query string, limit int) ([]models.Post, error)
+	GetUserAffinity(ctx context.Context, userID string) (string, string, error)
 }
 
 type firestoreRepo struct {
-	client *firestore.Client
+	client     *firestore.Client
+	viewBuffer map[string]int
+	viewMutex  sync.Mutex
 }
 
 func NewFirestoreRepository(client *firestore.Client) Repository {
-	return &firestoreRepo{client: client}
+	repo := &firestoreRepo{
+		client:     client,
+		viewBuffer: make(map[string]int),
+	}
+
+	if client != nil {
+		go repo.flushViewCountsLoop()
+	}
+
+	return repo
 }
 
-func (r *firestoreRepo) GetPosts(ctx context.Context, limit int) ([]models.Post, error) {
+func (r *firestoreRepo) flushViewCountsLoop() {
+	ticker := time.NewTicker(20 * time.Second) // Flush every 20 seconds
+	defer ticker.Stop()
+	for range ticker.C {
+		r.viewMutex.Lock()
+		if len(r.viewBuffer) == 0 {
+			r.viewMutex.Unlock()
+			continue
+		}
+		// Copy buffer and reset
+		countsToFlush := r.viewBuffer
+		r.viewBuffer = make(map[string]int)
+		r.viewMutex.Unlock()
+
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
+		var wg sync.WaitGroup
+		for postID, count := range countsToFlush {
+			wg.Add(1)
+			go func(pID string, c int) {
+				defer wg.Done()
+				_, err := r.client.Collection("community_posts").Doc(pID).Update(ctx, []firestore.Update{
+					{Path: "viewCount", Value: firestore.Increment(c)},
+				})
+				if err != nil {
+					log.Printf("Failed to flush view count for post %s: %v", pID, err)
+				}
+			}(postID, count)
+		}
+
+		wg.Wait()
+		cancel()
+	}
+}
+
+func (r *firestoreRepo) GetPosts(ctx context.Context, limit int, afterID string, provinceCode string) ([]models.Post, error) {
 	if r.client == nil {
 		return []models.Post{
 			{ID: "1", Content: "TukTuk Go: Power of Goroutines! 🛺🔥", AuthorName: "System", Category: "Tech", CreatedAt: time.Now()},
@@ -42,10 +100,21 @@ func (r *firestoreRepo) GetPosts(ctx context.Context, limit int) ([]models.Post,
 		}, nil
 	}
 
-	docs, err := r.client.Collection("community_posts").
-		OrderBy("createdAt", firestore.Desc).
-		Limit(limit).
-		Documents(ctx).GetAll()
+	q := r.client.Collection("community_posts").OrderBy("createdAt", firestore.Desc)
+	if provinceCode != "" {
+		q = r.client.Collection("community_posts").
+			Where("provinceCode", "==", provinceCode).
+			OrderBy("createdAt", firestore.Desc)
+	}
+
+	if afterID != "" {
+		docRef, err := r.client.Collection("community_posts").Doc(afterID).Get(ctx)
+		if err == nil {
+			q = q.StartAfter(docRef)
+		}
+	}
+
+	docs, err := q.Limit(limit).Documents(ctx).GetAll()
 
 	if err != nil {
 		return nil, err
@@ -92,12 +161,29 @@ func (r *firestoreRepo) GetUnreadNotifications(ctx context.Context, userID strin
 }
 
 func (r *firestoreRepo) GetTrendingTags(ctx context.Context) ([]string, error) {
+	defaultTags := []string{"#Thailand", "#Travel", "#Food", "#MuayThai", "#SoftPower", "#OTOP", "#TukTuk"}
 	if r.client == nil {
-		return []string{"#TukTuk", "#GoLang", "#Flutter"}, nil
+		return defaultTags, nil
 	}
-	// For now, return static popular tags or fetch from a 'stats' collection
-	// In a real app, you'd aggregate these or store them in a dedicated doc
-	return []string{"#Thailand", "#Travel", "#Food", "#MuayThai", "#SoftPower"}, nil
+	// Try fetching from dedicated trending_tags collection (populated by Cloud Functions)
+	doc, err := r.client.Collection("trending_tags").Doc("current").Get(ctx)
+	if err == nil {
+		if data := doc.Data(); data != nil {
+			if raw, ok := data["tags"].([]interface{}); ok {
+				tags := make([]string, 0, len(raw))
+				for _, t := range raw {
+					if s, ok := t.(string); ok {
+						tags = append(tags, s)
+					}
+				}
+				if len(tags) > 0 {
+					return tags, nil
+				}
+			}
+		}
+	}
+	// Fallback to curated defaults
+	return defaultTags, nil
 }
 
 func (r *firestoreRepo) GetVerifiedNews(ctx context.Context, limit int) ([]models.News, error) {
@@ -139,19 +225,28 @@ func (r *firestoreRepo) GetVerifiedNews(ctx context.Context, limit int) ([]model
 
 func (r *firestoreRepo) GetTrendingPosts(ctx context.Context, limit int) ([]models.Post, error) {
 	if r.client == nil {
-		return r.GetPosts(ctx, limit)
+		return r.GetPosts(ctx, limit, "", "")
 	}
-	// Simple trending logic: Most viewed in last 24h (mocking time filter for now)
-	var posts []models.Post
+	// ✅ FIX: Real 24h trending — filter by createdAt then sort by viewCount client-side
+	yesterday := time.Now().Add(-24 * time.Hour)
 	docs, err := r.client.Collection("community_posts").
-		OrderBy("viewCount", firestore.Desc).
-		Limit(limit).
+		Where("createdAt", ">=", yesterday).
+		OrderBy("createdAt", firestore.Desc).
+		Limit(int(limit) * 3). // fetch more, sort client-side
 		Documents(ctx).GetAll()
 
 	if err != nil {
-		return nil, err
+		// Fallback: global top view count (no time filter)
+		docs, err = r.client.Collection("community_posts").
+			OrderBy("viewCount", firestore.Desc).
+			Limit(limit).
+			Documents(ctx).GetAll()
+		if err != nil {
+			return nil, err
+		}
 	}
 
+	var posts []models.Post
 	for _, doc := range docs {
 		var p models.Post
 		if err := doc.DataTo(&p); err == nil {
@@ -159,10 +254,18 @@ func (r *firestoreRepo) GetTrendingPosts(ctx context.Context, limit int) ([]mode
 			posts = append(posts, p)
 		}
 	}
+
+	// Sort by viewCount descending, then cap to limit
+	sort.Slice(posts, func(i, j int) bool {
+		return posts[i].ViewCount > posts[j].ViewCount
+	})
+	if len(posts) > limit {
+		posts = posts[:limit]
+	}
 	return posts, nil
 }
 
-func (r *firestoreRepo) GetMarketplaceProducts(ctx context.Context, limit int) ([]models.MarketplaceProduct, error) {
+func (r *firestoreRepo) GetMarketplaceProducts(ctx context.Context, limit int, afterID string, provinceCode string) ([]models.MarketplaceProduct, error) {
 	if r.client == nil {
 		return []models.MarketplaceProduct{
 			{ID: "demo1", ProductName: "สินค้าตัวอย่าง 1", Price: 299, Province: "เชียงใหม่", Category: "food", Status: "active"},
@@ -170,11 +273,22 @@ func (r *firestoreRepo) GetMarketplaceProducts(ctx context.Context, limit int) (
 		}, nil
 	}
 
-	docs, err := r.client.Collection("marketplace_items").
+	q := r.client.Collection("marketplace_items").
 		Where("status", "==", "active").
-		OrderBy("createdAt", firestore.Desc).
-		Limit(limit).
-		Documents(ctx).GetAll()
+		OrderBy("createdAt", firestore.Desc)
+
+	if provinceCode != "" {
+		q = q.Where("provinceCode", "==", provinceCode)
+	}
+
+	if afterID != "" {
+		docRef, err := r.client.Collection("marketplace_items").Doc(afterID).Get(ctx)
+		if err == nil {
+			q = q.StartAfter(docRef)
+		}
+	}
+
+	docs, err := q.Limit(limit).Documents(ctx).GetAll()
 
 	if err != nil {
 		return nil, err
@@ -235,48 +349,35 @@ func (r *firestoreRepo) TogglePostLike(ctx context.Context, postID string, userI
 	}
 
 	postRef := r.client.Collection("community_posts").Doc(postID)
-	userLikeRef := r.client.Collection("user_likes").Doc(userID)
+	// ✅ FIX: Use subcollection instead of growing array (avoids 1MB Firestore doc limit)
+	userLikeRef := r.client.Collection("user_likes").Doc(userID).Collection("posts").Doc(postID)
 
 	var liked bool
 	err := r.client.RunTransaction(ctx, func(ctx context.Context, tx *firestore.Transaction) error {
-		// Read user's liked posts to check status
-		doc, err := tx.Get(userLikeRef)
-		var likedIds []interface{}
-		// If doc doesn't exist, likedIds remains empty
-		if err == nil {
-			if data := doc.Data(); data != nil {
-				if ids, ok := data["likedPosts"].([]interface{}); ok {
-					likedIds = ids
-				}
-			}
-		}
-
-		isLiked := false
-		for _, id := range likedIds {
-			if strID, ok := id.(string); ok && strID == postID {
-				isLiked = true
-				break
-			}
-		}
+		likeDoc, err := tx.Get(userLikeRef)
+		isLiked := err == nil && likeDoc.Exists()
 
 		if isLiked {
-			// Unlike: Remove from array, decrement counter
-			// Note: using Update here assumes doc exists, which it should if isLiked is true
-			if err := tx.Update(postRef, []firestore.Update{{Path: "likes", Value: firestore.Increment(-1)}}); err != nil {
+			// Unlike: delete subcollection doc + decrement counter
+			if err := tx.Update(postRef, []firestore.Update{
+				{Path: "likes", Value: firestore.Increment(-1)},
+			}); err != nil {
 				return err
 			}
-			if err := tx.Update(userLikeRef, []firestore.Update{{Path: "likedPosts", Value: firestore.ArrayRemove(postID)}}); err != nil {
+			if err := tx.Delete(userLikeRef); err != nil {
 				return err
 			}
 			liked = false
 		} else {
-			// Like: Add to array, increment counter
-			if err := tx.Update(postRef, []firestore.Update{{Path: "likes", Value: firestore.Increment(1)}}); err != nil {
+			// Like: create subcollection doc + increment counter
+			if err := tx.Update(postRef, []firestore.Update{
+				{Path: "likes", Value: firestore.Increment(1)},
+			}); err != nil {
 				return err
 			}
-			// Use Set with MergeAll to create user_likes doc if it doesn't exist
 			if err := tx.Set(userLikeRef, map[string]interface{}{
-				"likedPosts": firestore.ArrayUnion(postID),
+				"postId":  postID,
+				"likedAt": firestore.ServerTimestamp,
 			}, firestore.MergeAll); err != nil {
 				return err
 			}
@@ -292,10 +393,12 @@ func (r *firestoreRepo) IncrementViewCount(ctx context.Context, postID string) e
 	if r.client == nil {
 		return nil
 	}
-	_, err := r.client.Collection("community_posts").Doc(postID).Update(ctx, []firestore.Update{
-		{Path: "viewCount", Value: firestore.Increment(1)},
-	})
-	return err
+
+	r.viewMutex.Lock()
+	r.viewBuffer[postID]++
+	r.viewMutex.Unlock()
+
+	return nil
 }
 
 func (r *firestoreRepo) GetLiveSessions(ctx context.Context, limit int) ([]models.LiveSession, error) {
@@ -327,6 +430,7 @@ func (r *firestoreRepo) GetLiveSessions(ctx context.Context, limit int) ([]model
 		Documents(ctx).GetAll()
 
 	if err != nil {
+		log.Printf("🔥 Firestore Error [GetLiveSessions]: %v", err)
 		return nil, err
 	}
 
@@ -401,3 +505,154 @@ func (r *firestoreRepo) UpdateViewerCount(ctx context.Context, sessionID string,
 	})
 	return err
 }
+
+// ── Core Content APIs ───────────────────────────────────────────────────────
+
+func (r *firestoreRepo) GetPost(ctx context.Context, postID string) (*models.Post, error) {
+	if r.client == nil {
+		return &models.Post{ID: postID, Content: "Demo Post", AuthorName: "System", CreatedAt: time.Now()}, nil
+	}
+	doc, err := r.client.Collection("community_posts").Doc(postID).Get(ctx)
+	if err != nil {
+		return nil, err
+	}
+	var p models.Post
+	if err := doc.DataTo(&p); err != nil {
+		return nil, err
+	}
+	p.ID = doc.Ref.ID
+	return &p, nil
+}
+
+func (r *firestoreRepo) CreatePost(ctx context.Context, post *models.Post) error {
+	if r.client == nil {
+		return nil
+	}
+	post.CreatedAt = time.Now()
+	_, _, err := r.client.Collection("community_posts").Add(ctx, post)
+	return err
+}
+
+func (r *firestoreRepo) GetComments(ctx context.Context, postID string, limit int, afterID string) ([]models.Comment, error) {
+	if r.client == nil {
+		return []models.Comment{{ID: "c1", PostID: postID, Content: "Great post!", AuthorName: "Demo User", CreatedAt: time.Now()}}, nil
+	}
+
+	q := r.client.Collection("post_comments").
+		Where("postId", "==", postID).
+		OrderBy("createdAt", firestore.Desc)
+
+	if afterID != "" {
+		docRef, err := r.client.Collection("post_comments").Doc(afterID).Get(ctx)
+		if err == nil {
+			q = q.StartAfter(docRef)
+		}
+	}
+
+	docs, err := q.Limit(limit).Documents(ctx).GetAll()
+	if err != nil {
+		return nil, err
+	}
+	var comments []models.Comment
+	for _, doc := range docs {
+		var c models.Comment
+		if err := doc.DataTo(&c); err == nil {
+			c.ID = doc.Ref.ID
+			comments = append(comments, c)
+		}
+	}
+	return comments, nil
+}
+
+func (r *firestoreRepo) CreateComment(ctx context.Context, comment *models.Comment) error {
+	if r.client == nil {
+		return nil
+	}
+	comment.CreatedAt = time.Now()
+
+	return r.client.RunTransaction(ctx, func(ctx context.Context, tx *firestore.Transaction) error {
+		// 1. Add comment
+		docRef := r.client.Collection("post_comments").NewDoc()
+		if err := tx.Set(docRef, comment); err != nil {
+			return err
+		}
+		// 2. Increment comment count on post
+		postRef := r.client.Collection("community_posts").Doc(comment.PostID)
+		if err := tx.Update(postRef, []firestore.Update{{Path: "commentsCount", Value: firestore.Increment(1)}}); err != nil {
+			return err
+		}
+		return nil
+	})
+}
+
+func (r *firestoreRepo) GetUserPosts(ctx context.Context, userID string, limit int) ([]models.Post, error) {
+	if r.client == nil {
+		return r.GetPosts(ctx, limit, "", "")
+	}
+	docs, err := r.client.Collection("community_posts").
+		Where("authorId", "==", userID).
+		OrderBy("createdAt", firestore.Desc).
+		Limit(limit).
+		Documents(ctx).GetAll()
+	if err != nil {
+		return nil, err
+	}
+	var posts []models.Post
+	for _, doc := range docs {
+		var p models.Post
+		if err := doc.DataTo(&p); err == nil {
+			p.ID = doc.Ref.ID
+			posts = append(posts, p)
+		}
+	}
+	return posts, nil
+}
+
+func (r *firestoreRepo) SearchPosts(ctx context.Context, query string, limit int) ([]models.Post, error) {
+	if r.client == nil {
+		return []models.Post{}, nil
+	}
+	// Note: Firestore doesn't support full-text search natively well.
+	// For basic exact match on categories / titles or prefix search
+	// We'll use a basic category filter or return global recent if query is empty for now.
+	docs, err := r.client.Collection("community_posts").
+		Where("category", "==", query).
+		Limit(limit).
+		Documents(ctx).GetAll()
+
+	if err != nil {
+		log.Printf("🔥 Firestore Error [SearchPosts]: %v", err)
+		return nil, err
+	}
+
+	var posts []models.Post
+	for _, doc := range docs {
+		var p models.Post
+		if err := doc.DataTo(&p); err == nil {
+			p.ID = doc.Ref.ID
+			posts = append(posts, p)
+		}
+	}
+	return posts, nil
+}
+
+func (r *firestoreRepo) GetUserAffinity(ctx context.Context, userID string) (string, string, error) {
+	if r.client == nil {
+		return "", "", nil
+	}
+	doc, err := r.client.Collection("line_users").Doc(userID).Get(ctx)
+	if err != nil {
+		return "", "", err
+	}
+	data := doc.Data()
+	province, _ := data["provinceCode"].(string)
+	if province == "" {
+		province, _ = data["lastProvinceCode"].(string)
+	}
+	category, _ := data["preferredCategory"].(string)
+	if category == "" {
+		category, _ = data["topCategory"].(string)
+	}
+	return province, category, nil
+}
+

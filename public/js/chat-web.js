@@ -330,6 +330,42 @@ window.TukTukChat = (function () {
     return () => { u1(); u2(); u3(); };
   }
 
+  // ── User Settings: Pinned/Archived ────────────────────────────────────────
+  function listenChatSettings(uid, callback) {
+    if (!uid) return () => {};
+    return db.collection('user_chat_settings').doc(uid)
+      .onSnapshot(snap => {
+        callback(snap.data() || { pinned: [], archived: [] });
+      }, err => console.warn('[chat] listenChatSettings:', err));
+  }
+
+  function togglePin(uid, convId, isPinned) {
+    if (!uid || !convId) return Promise.reject('Missing parameters');
+    const ref = db.collection('user_chat_settings').doc(uid);
+    return ref.set({
+      pinned: isPinned 
+        ? firebase.firestore.FieldValue.arrayUnion(convId)
+        : firebase.firestore.FieldValue.arrayRemove(convId)
+    }, { merge: true });
+  }
+
+  function toggleArchive(uid, convId, isArchived) {
+    if (!uid || !convId) return Promise.reject('Missing parameters');
+    const ref = db.collection('user_chat_settings').doc(uid);
+    return ref.set({
+      archived: isArchived
+        ? firebase.firestore.FieldValue.arrayUnion(convId)
+        : firebase.firestore.FieldValue.arrayRemove(convId)
+    }, { merge: true });
+  }
+
+  function deleteConversation(uid, convId, collection) {
+    // Note: In a real app, delete might be complex (permissions).
+    // Here we just remove it from user_chat_settings if relevant, 
+    // or you could soft-delete in the main collection.
+    return db.collection(collection).doc(convId).delete();
+  }
+
   return {
     setOnline,
     setOffline,
@@ -348,6 +384,10 @@ window.TukTukChat = (function () {
     getUserProfile,
     listenOnlineStatus,
     listenTotalUnread,
+    listenChatSettings,
+    togglePin,
+    toggleArchive,
+    deleteConversation,
     CONV: CONV_COLLECTION,
     PROD: PROD_COLLECTION,
   };

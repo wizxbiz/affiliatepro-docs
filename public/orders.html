@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>ประวัติการสั่งซื้อ — TukTuk Thailand</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/persistent-ui.css">
+  <style>
+    :root {
+      --bg:       #0a0f1e;
+      --surface:  #111827;
+      --surface2: #1e293b;
+      --border:   rgba(255,255,255,0.07);
+      --text:     #f1f5f9;
+      --dim:      #94a3b8;
+      --green:    #22c55e;
+      --yellow:   #eab308;
+      --blue:     #3b82f6;
+      --red:      #ef4444;
+      --purple:   #a855f7;
+      --safe-t: env(safe-area-inset-top, 0px);
+      --safe-b: env(safe-area-inset-bottom, 0px);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { min-height: 100%; background: var(--bg); color: var(--text); font-family: 'Kanit', sans-serif; }
+    body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: -1;
+      background: radial-gradient(circle at 70% -10%, rgba(34,197,94,0.08) 0%, transparent 50%),
+                  radial-gradient(circle at 10% 90%, rgba(59,130,246,0.07) 0%, transparent 40%);
+    }
+
+    /* ── Topbar ─────────────────────────────────── */
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,15,30,0.95);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: calc(var(--safe-t) + 12px) 16px 12px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .back-btn {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--surface2); border: none; cursor: pointer;
+      color: var(--text); font-size: 1rem; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: background .15s;
+    }
+    .back-btn:hover { background: rgba(34,197,94,0.2); color: var(--green); }
+    .topbar-title { font-size: 1.05rem; font-weight: 700; flex: 1; }
+
+    /* ── Status Tabs ─────────────────────────────── */
+    .tab-row {
+      display: flex; overflow-x: auto; gap: 8px; padding: 12px 16px;
+      border-bottom: 1px solid var(--border); scrollbar-width: none;
+    }
+    .tab-row::-webkit-scrollbar { display: none; }
+    .tab-chip {
+      flex-shrink: 0; padding: 6px 14px; border-radius: 20px;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--dim); font-family: 'Kanit', sans-serif; font-size: 0.82rem; cursor: pointer;
+      transition: background .15s, color .15s, border-color .15s;
+    }
+    .tab-chip.active { background: rgba(34,197,94,0.15); border-color: var(--green); color: var(--green); font-weight: 600; }
+
+    /* ── Content ─────────────────────────────────── */
+    .page-content { padding: 16px; max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; padding-bottom: calc(var(--safe-b) + 80px); }
+
+    /* ── Order Card ──────────────────────────────── */
+    .order-card {
+      background: var(--surface); border-radius: 16px; border: 1px solid var(--border);
+      overflow: hidden; transition: border-color .15s;
+    }
+    .order-card:hover { border-color: rgba(34,197,94,0.3); }
+
+    .order-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px; border-bottom: 1px solid var(--border);
+    }
+    .order-id { font-size: 0.75rem; color: var(--dim); font-family: monospace; }
+    .order-date { font-size: 0.75rem; color: var(--dim); }
+
+    .status-badge {
+      font-size: 0.72rem; font-weight: 600; padding: 3px 10px; border-radius: 20px;
+    }
+    .status-pending       { background: rgba(234,179,8,0.15);  color: var(--yellow); }
+    .status-paid_escrow   { background: rgba(59,130,246,0.15); color: var(--blue); }
+    .status-completed     { background: rgba(34,197,94,0.15);  color: var(--green); }
+    .status-cancelled     { background: rgba(239,68,68,0.15);  color: var(--red); }
+    .status-refunded      { background: rgba(168,85,247,0.15); color: var(--purple); }
+
+    .order-body { display: flex; gap: 12px; padding: 12px 16px; }
+    .order-img {
+      width: 68px; height: 68px; border-radius: 10px; object-fit: cover;
+      background: var(--surface2); flex-shrink: 0; border: 1px solid var(--border);
+    }
+    .order-info { flex: 1; overflow: hidden; }
+    .order-name { font-size: 0.9rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .order-shop { font-size: 0.78rem; color: var(--dim); margin-top: 2px; }
+    .order-price { font-size: 1rem; font-weight: 700; color: var(--green); margin-top: 6px; }
+    .order-qty { font-size: 0.75rem; color: var(--dim); }
+
+    .order-footer { padding: 10px 16px; border-top: 1px solid var(--border); display: flex; gap: 8px; justify-content: flex-end; }
+    .order-action-btn {
+      padding: 7px 16px; border-radius: 20px; font-family: 'Kanit', sans-serif; font-size: 0.8rem;
+      font-weight: 600; cursor: pointer; border: none; transition: opacity .15s;
+    }
+    .order-action-btn:hover { opacity: 0.85; }
+    .btn-confirm { background: linear-gradient(135deg,#22c55e,#16a34a); color: #fff; }
+    .btn-secondary { background: var(--surface2); color: var(--dim); }
+    .btn-track { background: rgba(59,130,246,0.15); color: var(--blue); }
+
+    /* ── Summary bar ─────────────────────────────── */
+    .summary-bar {
+      background: var(--surface2); border-radius: 12px; padding: 14px 16px;
+      display: flex; justify-content: space-around; text-align: center;
+    }
+    .summary-item-val { font-size: 1.2rem; font-weight: 700; color: var(--text); }
+    .summary-item-lbl { font-size: 0.72rem; color: var(--dim); margin-top: 2px; }
+
+    /* ── Skeleton / Empty ────────────────────────── */
+    .skeleton { background: linear-gradient(90deg,var(--surface2) 25%,rgba(255,255,255,0.05) 50%,var(--surface2) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 8px; }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    .sk-card { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+    .sk-header { height: 40px; margin: 0; border-radius: 0; }
+    .sk-body { display: flex; gap: 12px; padding: 12px 16px; }
+    .sk-img-sq { width: 68px; height: 68px; border-radius: 10px; flex-shrink: 0; }
+    .sk-lines { flex: 1; display: flex; flex-direction: column; gap: 8px; padding-top: 4px; }
+    .sk-l { height: 12px; border-radius: 6px; }
+
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--dim); }
+    .empty-state i { font-size: 3rem; margin-bottom: 16px; opacity: .3; display: block; }
+    .empty-state p { font-size: 0.9rem; margin-bottom: 20px; }
+    .btn-go { display: inline-flex; align-items: center; gap: 8px; padding: 10px 22px; border-radius: 24px; background: linear-gradient(135deg,#22c55e,#16a34a); color: #fff; font-family: 'Kanit',sans-serif; font-size: 0.88rem; font-weight: 600; border: none; cursor: pointer; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <button class="back-btn" onclick="history.back()"><i class="fas fa-arrow-left"></i></button>
+    <div class="topbar-title"><i class="fas fa-shopping-bag" style="color:var(--green);margin-right:8px;"></i>ประวัติการสั่งซื้อ</div>
+  </div>
+
+  <!-- Status Tabs -->
+  <div class="tab-row" id="tabRow">
+    <button class="tab-chip active" data-status="all" onclick="filterOrders('all',this)">ทั้งหมด</button>
+    <button class="tab-chip" data-status="pending" onclick="filterOrders('pending',this)">รอชำระ</button>
+    <button class="tab-chip" data-status="paid_escrow" onclick="filterOrders('paid_escrow',this)">ระหว่างดำเนินการ</button>
+    <button class="tab-chip" data-status="completed" onclick="filterOrders('completed',this)">เสร็จสิ้น</button>
+    <button class="tab-chip" data-status="cancelled" onclick="filterOrders('cancelled',this)">ยกเลิก</button>
+  </div>
+
+  <!-- Page Content -->
+  <div class="page-content" id="pageContent">
+    <!-- Skeleton -->
+    ${[1,2,3].map(() => `
+      <div class="sk-card">
+        <div class="skeleton sk-header"></div>
+        <div class="sk-body">
+          <div class="skeleton sk-img-sq"></div>
+          <div class="sk-lines">
+            <div class="skeleton sk-l" style="width:70%"></div>
+            <div class="skeleton sk-l" style="width:45%"></div>
+            <div class="skeleton sk-l" style="width:30%"></div>
+          </div>
+        </div>
+      </div>`).join('')}
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="js/firebase-init.js"></script>
+  <script src="js/persistent-ui.js"></script>
+
+  <script>
+    let _allOrders = [];
+    let _uid = null;
+    let _currentFilter = 'all';
+
+    const STATUS_LABEL = {
+      pending:     { text: 'รอชำระเงิน',       cls: 'status-pending' },
+      paid_escrow: { text: 'ระหว่างดำเนินการ', cls: 'status-paid_escrow' },
+      completed:   { text: 'เสร็จสิ้น',         cls: 'status-completed' },
+      cancelled:   { text: 'ยกเลิกแล้ว',        cls: 'status-cancelled' },
+      refunded:    { text: 'คืนเงินแล้ว',       cls: 'status-refunded' },
+    };
+
+    function esc(s) {
+      const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML;
+    }
+    function relTime(ts) {
+      if (!ts) return '';
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
+      const diff = Math.floor((Date.now() - d) / 1000);
+      if (diff < 60) return 'เพิ่งสั่ง';
+      if (diff < 3600) return Math.floor(diff / 60) + ' นาทีที่แล้ว';
+      if (diff < 86400) return Math.floor(diff / 3600) + ' ชั่วโมงที่แล้ว';
+      return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
+    }
+    function getImg(data) {
+      const imgs = data.productImages || data.images || (data.imageUrl ? [data.imageUrl] : []);
+      if (!imgs.length) return null;
+      const i = imgs[0]; return typeof i === 'object' ? i.url : i;
+    }
+
+    // ── Render order card ───────────────────────────────────
+    function renderCard(order) {
+      const st = STATUS_LABEL[order.status] || { text: order.status, cls: 'status-pending' };
+      const img = getImg(order);
+      const price = order.totalAmount || order.amount || order.price || 0;
+      const qty = order.quantity || 1;
+      const orderId = order.orderId || order.id || '';
+      const shortId = orderId.length > 12 ? orderId.substring(0, 12) + '...' : orderId;
+
+      const actionBtns = order.status === 'paid_escrow'
+        ? `<button class="order-action-btn btn-track" onclick="window.open('https://line.me/ti/g2/${esc(order.chatGroupId||'')}','_blank')"><i class="fas fa-truck"></i> ติดตามสินค้า</button>
+           <button class="order-action-btn btn-confirm" onclick="confirmReceipt('${esc(orderId)}',this)"><i class="fas fa-check"></i> ยืนยันรับสินค้า</button>`
+        : order.status === 'pending'
+        ? `<button class="order-action-btn btn-secondary" onclick="cancelOrder('${esc(orderId)}',this)"><i class="fas fa-times"></i> ยกเลิก</button>
+           <button class="order-action-btn btn-confirm" onclick="window.location.href='marketplace.html?orderId=${esc(orderId)}'"><i class="fas fa-credit-card"></i> ชำระเงิน</button>`
+        : order.status === 'completed'
+        ? `<button class="order-action-btn btn-secondary" onclick="window.location.href='marketplace.html?product=${esc(order.productId||'')}'"><i class="fas fa-redo"></i> สั่งซื้ออีกครั้ง</button>`
+        : '';
+
+      return `<div class="order-card" id="order-${esc(orderId)}">
+        <div class="order-header">
+          <div>
+            <div class="order-id">📦 #${esc(shortId)}</div>
+            <div class="order-date"><i class="fas fa-clock"></i> ${relTime(order.createdAt)}</div>
+          </div>
+          <span class="status-badge ${st.cls}">${st.text}</span>
+        </div>
+        <div class="order-body">
+          ${img
+            ? `<img class="order-img" src="${esc(img)}" onerror="this.src='assets/images/logo.png'" loading="lazy">`
+            : `<div class="order-img" style="display:flex;align-items:center;justify-content:center;color:var(--dim);"><i class="fas fa-box-open" style="font-size:1.8rem;opacity:.4;"></i></div>`}
+          <div class="order-info">
+            <div class="order-name">${esc(order.productName || order.name || 'สินค้า')}</div>
+            <div class="order-shop"><i class="fas fa-store" style="margin-right:4px;opacity:.6;"></i>${esc(order.shopName || order.sellerName || 'ร้านค้า')}</div>
+            <div class="order-price">฿${Number(price).toLocaleString('th-TH', { minimumFractionDigits: 2 })}</div>
+            <div class="order-qty">จำนวน: ${qty} ชิ้น</div>
+          </div>
+        </div>
+        ${actionBtns ? `<div class="order-footer">${actionBtns}</div>` : ''}
+      </div>`;
+    }
+
+    // ── Filter ──────────────────────────────────────────────
+    function filterOrders(status, chipEl) {
+      _currentFilter = status;
+      document.querySelectorAll('.tab-chip').forEach(c => c.classList.remove('active'));
+      if (chipEl) chipEl.classList.add('active');
+
+      const filtered = status === 'all' ? _allOrders : _allOrders.filter(o => o.status === status);
+      renderList(filtered);
+    }
+
+    function renderList(orders) {
+      const container = document.getElementById('pageContent');
+      if (!orders.length) {
+        const label = _currentFilter === 'all' ? 'ยังไม่มีคำสั่งซื้อ' : 'ไม่มีคำสั่งซื้อในหมวดนี้';
+        container.innerHTML = `<div class="empty-state">
+          <i class="fas fa-shopping-bag"></i><p>${label}</p>
+          <a href="marketplace.html" class="btn-go"><i class="fas fa-store"></i> ไปที่ตลาดนัด</a>
+        </div>`;
+        return;
+      }
+      container.innerHTML = renderSummary(orders) + orders.map(renderCard).join('');
+    }
+
+    function renderSummary(orders) {
+      const total = orders.reduce((s, o) => s + (o.totalAmount || o.amount || o.price || 0), 0);
+      const completed = orders.filter(o => o.status === 'completed').length;
+      const pending = orders.filter(o => ['pending','paid_escrow'].includes(o.status)).length;
+      return `<div class="summary-bar">
+        <div><div class="summary-item-val">${orders.length}</div><div class="summary-item-lbl">รายการทั้งหมด</div></div>
+        <div><div class="summary-item-val" style="color:var(--green)">${completed}</div><div class="summary-item-lbl">เสร็จสิ้น</div></div>
+        <div><div class="summary-item-val" style="color:var(--yellow)">${pending}</div><div class="summary-item-lbl">กำลังดำเนินการ</div></div>
+        <div><div class="summary-item-val" style="color:var(--blue)">฿${Number(total).toLocaleString()}</div><div class="summary-item-lbl">ยอดรวม</div></div>
+      </div>`;
+    }
+
+    // ── Actions ─────────────────────────────────────────────
+    async function confirmReceipt(orderId, btn) {
+      if (!confirm('ยืนยันว่าได้รับสินค้าแล้วใช่ไหม?\nเงินจะถูกโอนให้ร้านค้าทันที')) return;
+      btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+      try {
+        await window.db.collection('product_orders').doc(orderId).update({
+          status: 'completed',
+          completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          buyerConfirmed: true
+        });
+        // Update local cache
+        const idx = _allOrders.findIndex(o => (o.orderId || o.id) === orderId);
+        if (idx >= 0) { _allOrders[idx].status = 'completed'; filterOrders(_currentFilter); }
+      } catch (e) {
+        btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> ยืนยันรับสินค้า';
+        alert('เกิดข้อผิดพลาด: ' + e.message);
+      }
+    }
+
+    async function cancelOrder(orderId, btn) {
+      if (!confirm('ยืนยันการยกเลิกคำสั่งซื้อนี้?')) return;
+      btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+      try {
+        await window.db.collection('product_orders').doc(orderId).update({
+          status: 'cancelled',
+          cancelledAt: firebase.firestore.FieldValue.serverTimestamp(),
+          cancelledBy: 'buyer'
+        });
+        const idx = _allOrders.findIndex(o => (o.orderId || o.id) === orderId);
+        if (idx >= 0) { _allOrders[idx].status = 'cancelled'; filterOrders(_currentFilter); }
+      } catch (e) {
+        btn.disabled = false; btn.innerHTML = '<i class="fas fa-times"></i> ยกเลิก';
+        alert('เกิดข้อผิดพลาด: ' + e.message);
+      }
+    }
+
+    // ── Load orders ─────────────────────────────────────────
+    async function loadOrders(uid) {
+      const db = window.db;
+      if (!db) { document.getElementById('pageContent').innerHTML = '<div class="empty-state"><i class="fas fa-wifi-slash"></i><p>ไม่สามารถเชื่อมต่อได้</p></div>'; return; }
+
+      try {
+        const snap = await db.collection('product_orders')
+          .where('buyerId', '==', uid)
+          .orderBy('createdAt', 'desc')
+          .limit(50)
+          .get();
+
+        _allOrders = snap.docs.map(d => ({ id: d.id, orderId: d.id, ...d.data() }));
+        filterOrders(_currentFilter);
+
+      } catch (e) {
+        console.error('loadOrders:', e);
+        // Fallback: try without orderBy (missing index)
+        try {
+          const snap2 = await db.collection('product_orders').where('buyerId', '==', uid).limit(50).get();
+          _allOrders = snap2.docs.map(d => ({ id: d.id, orderId: d.id, ...d.data() }));
+          _allOrders.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+          filterOrders(_currentFilter);
+        } catch (e2) {
+          document.getElementById('pageContent').innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>โหลดคำสั่งซื้อไม่สำเร็จ<br><small style="color:var(--dim)">${e2.message}</small></p></div>`;
+        }
+      }
+    }
+
+    // ── Bootstrap ───────────────────────────────────────────
+    function waitAndInit(tries) {
+      if (tries <= 0) return;
+      if (!window.firebase || !window.db) { setTimeout(() => waitAndInit(tries - 1), 300); return; }
+
+      firebase.auth().onAuthStateChanged(async user => {
+        if (!user) {
+          try {
+            const raw = localStorage.getItem('tuktuk_line_session') || localStorage.getItem('user_data');
+            const sess = raw ? JSON.parse(raw) : null;
+            if (sess?.uid) { _uid = sess.uid; await loadOrders(_uid); return; }
+          } catch (_) {}
+          document.getElementById('pageContent').innerHTML = `<div class="empty-state">
+            <i class="fas fa-lock"></i><p>กรุณาเข้าสู่ระบบเพื่อดูประวัติการสั่งซื้อ</p>
+            <a href="login.html" class="btn-go"><i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบ</a>
+          </div>`;
+        } else {
+          _uid = user.uid;
+          await loadOrders(_uid);
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => waitAndInit(20));
+  </script>
+</body>
+</html>

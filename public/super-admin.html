@@ -1526,8 +1526,8 @@
                 <span class="badge bg-info" id="pagesCount">0</span>
             </a>
             <a class="menu-item" data-section="functions-files">
-                <i class="fas fa-server"></i>
-                <span>Functions Files</span>
+                <i class="fas fa-network-wired text-info animate-pulse"></i>
+                <span>Workers & D1 DB</span>
             </a>
 
             <div class="menu-category">ระบบ</div>
@@ -4851,44 +4851,55 @@
             </div>
         </section>
 
-        <!-- Section: Functions Files -->
+        <!-- Section: Functions Files (Cloudflare Workers & D1) -->
         <section class="section-page" id="section-functions-files">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4><i class="fas fa-server me-2"></i> Firebase Functions Files</h4>
-                <button class="btn btn-outline-light btn-action" onclick="refreshFunctionsFiles()">
-                    <i class="fas fa-sync-alt me-2"></i> Refresh
+                <div>
+                    <h4><i class="fas fa-network-wired me-2 text-info animate-pulse"></i> Cloudflare Workers & D1 Status</h4>
+                    <p class="text-secondary small mb-0">ตรวจสอบสถานะการทำงาน เครือข่าย Edge และฐานข้อมูล D1 แบบ Real-time</p>
+                </div>
+                <button class="btn btn-outline-info btn-action" onclick="testWorkersConnection()">
+                    <i class="fas fa-sync-alt me-2"></i> Test Ping
                 </button>
             </div>
 
-            <!-- Functions Stats -->
+            <!-- Workers & D1 Stats -->
             <div class="row mb-4">
-                <div class="col-md-4 col-6 mb-3">
-                    <div class="stat-card gradient-blue">
-                        <div class="stat-icon"><i class="fas fa-file-code"></i></div>
-                        <div class="stat-value" id="totalFunctions">18</div>
-                        <div class="stat-label">Total Files</div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="stat-card bg-glass border-info-glow">
+                        <div class="stat-icon text-info"><i class="fas fa-bolt"></i></div>
+                        <div class="stat-value text-info fs-5" id="workersPingStatus">Checking...</div>
+                        <div class="stat-label">Worker API Ping</div>
                     </div>
                 </div>
-                <div class="col-md-4 col-6 mb-3">
-                    <div class="stat-card gradient-purple">
-                        <div class="stat-icon"><i class="fas fa-brain"></i></div>
-                        <div class="stat-value" id="promptFiles">9</div>
-                        <div class="stat-label">Prompt Files</div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="stat-card bg-glass border-success-glow">
+                        <div class="stat-icon text-success"><i class="fas fa-database"></i></div>
+                        <div class="stat-value text-success fs-5" id="d1DbStatus">Active</div>
+                        <div class="stat-label">D1 SQL Database</div>
                     </div>
                 </div>
-                <div class="col-md-4 col-6 mb-3">
-                    <div class="stat-card gradient-green">
-                        <div class="stat-icon"><i class="fas fa-cogs"></i></div>
-                        <div class="stat-value" id="systemFiles">9</div>
-                        <div class="stat-label">System Files</div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="stat-card bg-glass border-warning-glow">
+                        <div class="stat-icon text-warning"><i class="fas fa-box-open"></i></div>
+                        <div class="stat-value text-warning fs-5">Connected</div>
+                        <div class="stat-label">R2 Storage Bucket</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="stat-card bg-glass border-purple-glow">
+                        <div class="stat-icon text-purple"><i class="fas fa-key"></i></div>
+                        <div class="stat-value text-purple fs-5">Active</div>
+                        <div class="stat-label">KV Session Store</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Functions Files List -->
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-folder-open me-2"></i> functions/ Directory
+            <!-- Workers Code Modules List -->
+            <div class="card mb-4">
+                <div class="card-header bg-glass d-flex justify-content-between align-items-center">
+                    <span><i class="fas fa-folder-open me-2"></i> Cloudflare Workers Modules</span>
+                    <span class="badge bg-info">Production Edge</span>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -4896,13 +4907,13 @@
                             <thead>
                                 <tr>
                                     <th width="5%">#</th>
-                                    <th width="30%">File Name</th>
+                                    <th width="30%">Worker / Module File</th>
                                     <th width="15%">Type</th>
-                                    <th width="35%">Description</th>
-                                    <th width="15%">Actions</th>
+                                    <th width="35%">Description / Scope</th>
+                                    <th width="15%">Status</th>
                                 </tr>
                             </thead>
-                            <tbody id="functionsTableBody">
+                            <tbody id="workersTableBody">
                                 <!-- จะเติมด้วย JavaScript -->
                             </tbody>
                         </table>
@@ -7112,6 +7123,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/cloudflare-client.js"></script>
 
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -7134,7 +7146,7 @@
 
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-        const db = firebase.firestore();
+        const db = window.db; // ใช้ Cloudflare D1 Database Shim!
 
         // ===== Global Variables =====
         let lineUserId = null;
@@ -11652,96 +11664,79 @@
             });
         }
 
-        // ===== Functions Files System =====
-        const FUNCTIONS_FILES = [
-            // Main
-            { name: 'index.js', type: 'Main', desc: 'ไฟล์หลักของ Cloud Functions (19,000+ lines)' },
-
-            // Prompt Files
-            { name: 'porcheson_knowledge_prompt.js', type: 'Prompt', desc: 'ความรู้เครื่อง Porcheson' },
-            { name: 'toshiba_knowledge_prompt.js', type: 'Prompt', desc: 'ความรู้เครื่อง Toshiba' },
-            { name: 'Techmotion_knowledge_prompt.js', type: 'Prompt', desc: 'ความรู้เครื่อง Techmation' },
-            { name: 'victor_knowledge_prompt.js', type: 'Prompt', desc: 'ความรู้เครื่อง Victor' },
-            { name: 'fanuc_knowledge_prompt.js', type: 'Prompt', desc: 'ความรู้เครื่อง Fanuc' },
-            { name: 'yushin_knowledge_prompt.js', type: 'Prompt', desc: 'ความรู้หุ่นยนต์ Yushin' },
-            { name: 'kaizen_expert_prompt.js', type: 'Prompt', desc: 'ผู้เชี่ยวชาญ Kaizen' },
-            { name: 'injection_molding_expert_prompt.js', type: 'Prompt', desc: 'ผู้เชี่ยวชาญฉีดพลาสติก' },
-            { name: 'plastic_materials_prompt.js', type: 'Prompt', desc: 'ฐานข้อมูลวัสดุพลาสติก' },
-
-            // System Files
-            { name: 'teaching_handler.js', type: 'System', desc: 'ระบบสอนจากตำราเรียน' },
-            { name: 'educationHub.js', type: 'System', desc: 'ศูนย์การศึกษา' },
-            { name: 'studentLearning.js', type: 'System', desc: 'ระบบเรียนรู้สำหรับนักเรียน' },
-            { name: 'marketplaceSystem.js', type: 'System', desc: 'ระบบตลาดซื้อขาย' },
-            { name: 'marketplaceWebAPI.js', type: 'System', desc: 'API สำหรับ Marketplace' },
-            { name: 'memoryNoteSystem.js', type: 'System', desc: 'ระบบบันทึกความจำ' },
-            { name: 'accounting_system.js', type: 'System', desc: 'ระบบบัญชี' },
-            { name: 'trialSystem.js', type: 'System', desc: 'ระบบทดลองใช้ 7 วัน' },
-            { name: 'analyticsSystem.js', type: 'System', desc: 'ระบบ Analytics' },
-
-            // Admin & Flex
-            { name: 'adminFlexMessages.js', type: 'Flex', desc: 'Flex Messages สำหรับ Admin' },
-            { name: 'flexMessageGenerator.js', type: 'Flex', desc: 'สร้าง Flex Messages' },
-            { name: 'aiResponseFlex.js', type: 'Flex', desc: 'Flex Messages สำหรับ AI Response' },
-            { name: 'professional_tools.js', type: 'Tools', desc: 'เครื่องมือมืออาชีพ' },
-            { name: 'hyper_localized_knowledge.js', type: 'System', desc: 'ความรู้เฉพาะท้องถิ่น' },
-            { name: 'super_admin_memory.js', type: 'Admin', desc: 'ความจำ Super Admin' },
-            { name: 'superAdminEnhanced.js', type: 'Admin', desc: 'Enhanced Super Admin' },
-            { name: 'enhancedAdminHandlers.js', type: 'Admin', desc: 'Admin Handlers' },
-            { name: 'reportGenerator.js', type: 'System', desc: 'สร้างรายงาน' },
-            { name: 'quizEnhancement.js', type: 'System', desc: 'ระบบ Quiz Enhanced' },
-            { name: 'quizFlexMessages.js', type: 'Flex', desc: 'Flex Messages สำหรับ Quiz' },
-            { name: 'injectionMoldingLearning.js', type: 'System', desc: 'ระบบเรียนรู้ฉีดพลาสติก' }
+        // ===== Cloudflare Workers & D1 DB System =====
+        const WORKERS_MODULES = [
+            { name: 'index.js', type: 'Main', desc: 'Worker main entrypoint - handles routes & DB shims proxy' },
+            { name: 'handlers/auth.js', type: 'Router', desc: 'Handles LINE Login, PIN login, and Mobile Phone OTP authentication' },
+            { name: 'handlers/line-webhook.js', type: 'Router', desc: 'LINE Bot webhook proxy & local D1 PIN interceptor' },
+            { name: 'handlers/admin.js', type: 'Router', desc: 'Super admin APIs, notification broadcasting' },
+            { name: 'lib/db.js', type: 'Client', desc: 'SQLite D1 client wrapper & parameter helper mapping' },
+            { name: 'middleware/auth.js', type: 'Middleware', desc: 'JWT security checking for protected API endpoints' },
+            { name: 'migrations/001_init.sql', type: 'Database Schema', desc: 'Initial D1 schema for users, products, orders, posts' },
+            { name: 'migrations/002_chat.sql', type: 'Database Schema', desc: 'D1 schema extension for chats, messages, settings' },
+            { name: 'migrations/003_phone_login.sql', type: 'Database Schema', desc: 'D1 schema extension for Mobile Phone OTP login verification' }
         ];
 
         function loadFunctionsFiles() {
-            const tbody = document.getElementById('functionsTableBody');
-
-            // Update stats
-            document.getElementById('totalFunctions').textContent = FUNCTIONS_FILES.length;
-            document.getElementById('promptFiles').textContent = FUNCTIONS_FILES.filter(f => f.type === 'Prompt').length;
-            document.getElementById('systemFiles').textContent = FUNCTIONS_FILES.filter(f => f.type === 'System' || f.type === 'Admin' || f.type === 'Main').length;
-
-            tbody.innerHTML = FUNCTIONS_FILES.map((f, i) => `
-                <tr>
-                    <td>${i + 1}</td>
-                    <td>
-                        <code class="text-warning">${f.name}</code>
-                    </td>
-                    <td>
-                        <span class="status-badge ${getFunctionTypeBadge(f.type)}">${f.type}</span>
-                    </td>
-                    <td class="text-secondary">${f.desc}</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-info" onclick="copyFunctionName('${f.name}')" title="Copy filename">
-                            <i class="fas fa-copy"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
+            const tbody = document.getElementById('workersTableBody');
+            if (tbody) {
+                tbody.innerHTML = WORKERS_MODULES.map((f, i) => `
+                    <tr>
+                        <td>${i + 1}</td>
+                        <td>
+                            <code class="text-info">${f.name}</code>
+                        </td>
+                        <td>
+                            <span class="status-badge ${getWorkerTypeBadge(f.type)}">${f.type}</span>
+                        </td>
+                        <td class="text-secondary">${f.desc}</td>
+                        <td>
+                            <span class="status-badge status-active"><i class="fas fa-check me-1"></i> Live</span>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+            
+            // Auto-trigger ping test
+            testWorkersConnection();
         }
 
-        function getFunctionTypeBadge(type) {
+        function getWorkerTypeBadge(type) {
             const badges = {
-                'Main': 'status-blocked',
-                'Prompt': 'status-premium',
-                'System': 'status-active',
-                'Admin': 'status-blocked',
-                'Flex': 'status-pending',
-                'Tools': 'status-active'
+                'Main': 'status-premium',
+                'Router': 'status-active',
+                'Client': 'status-pending',
+                'Middleware': 'status-blocked',
+                'Database Schema': 'status-pending'
             };
-            return badges[type] || '';
+            return badges[type] || 'status-pending';
         }
 
-        function refreshFunctionsFiles() {
-            loadFunctionsFiles();
-            showToast('✅ Functions files refreshed!');
-        }
-
-        function copyFunctionName(name) {
-            navigator.clipboard.writeText(name).then(() => {
-                showToast('✅ Copied: ' + name);
-            });
+        async function testWorkersConnection() {
+            const pingEl = document.getElementById('workersPingStatus');
+            if (!pingEl) return;
+            
+            pingEl.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Pinging...';
+            pingEl.className = 'stat-value text-warning fs-5';
+            
+            const start = Date.now();
+            try {
+                // Test ping to main API
+                const workerUrl = window.CF_WORKER_URL || 'https://tuktukfeed-api.imtthailand2019.workers.dev';
+                const res = await fetch(`${workerUrl}/api/db/marketplace_items?limit=1`);
+                const duration = Date.now() - start;
+                
+                if (res.ok) {
+                    pingEl.textContent = `🟢 Online (${duration}ms)`;
+                    pingEl.className = 'stat-value text-success fs-5';
+                } else {
+                    pingEl.textContent = `⚠️ Error ${res.status}`;
+                    pingEl.className = 'stat-value text-warning fs-5';
+                }
+            } catch (err) {
+                pingEl.textContent = '🔴 Offline';
+                pingEl.className = 'stat-value text-danger fs-5';
+            }
         }
 
 

@@ -596,7 +596,7 @@ class TukTukBridge {
         final deviceId = await _getDeviceId();
         final functionUrl = dotenv.get('FIREBASE_FUNCTION_URL',
             fallback:
-                'https://us-central1-appinjproject.cloudfunctions.net/verifyWebPin');
+                'https://tuktukfeed-api.imtthailand2019.workers.dev/api/auth/verify-pin');
         final response = await http
             .post(
               Uri.parse(functionUrl),
@@ -1552,73 +1552,36 @@ class TukTukBridge {
 
   // ============================================================
   // REWARD SYSTEM
+  // Delegates to Cloud Function — no client-side Firestore writes.
+  // customPoints is ignored; point values are server-authoritative.
   // ============================================================
   Future<bool> awardPoints(
     String type, {
-    int? customPoints,
+    int? customPoints, // kept for API compatibility — ignored server-side
     String? description,
+    String? refId,
   }) async {
     try {
-      final user = await getCurrentUser();
-      if (user == null) return false;
-
-      final userId = user['uid'] ?? user['lineUserId'];
-      if (userId == null) return false;
-
-      final int points = customPoints ?? _getPointsForType(type);
-      if (points <= 0) return false;
-
-      final userRef = _firestore.collection('users').doc(userId.toString());
-
-      await _firestore.runTransaction((transaction) async {
-        final doc = await transaction.get(userRef);
-        final int currentPoints =
-            int.tryParse(doc.data()?['rewardPoints']?.toString() ?? '0') ?? 0;
-
-        transaction.set(
-          userRef,
-          {
-            'rewardPoints': currentPoints + points,
-            'lastRewardAt': FieldValue.serverTimestamp(),
-            'updatedAt': FieldValue.serverTimestamp(),
-          },
-          SetOptions(merge: true),
-        );
-
-        transaction.set(userRef.collection('reward_history').doc(), {
-          'type': type,
-          'points': points,
-          'message': description ?? _getPointsMessage(type),
-          'createdAt': FieldValue.serverTimestamp(),
-        });
+      final callable = _functions.httpsCallable('awardPoints');
+      final result = await callable.call<Map<String, dynamic>>({
+        'missionType': type,
+        'refId':       refId,
+        'description': description ?? _getPointsMessage(type),
       });
-
-      debugPrint('🎁 Awarded $points points to user $userId for $type');
-      return true;
+      final data = result.data;
+      debugPrint('🎁 awardPoints [$type]: +${data['coinsAwarded']} coins');
+      return data['success'] == true;
+    } on FirebaseFunctionsException catch (e) {
+      if (e.code == 'invalid-argument') {
+        // Legacy type string not in CF enum — silently skip
+        debugPrint('⚠️ awardPoints: unknown type "$type" — skipped');
+        return false;
+      }
+      debugPrint('⚠️ awardPoints CF error [${e.code}]: ${e.message}');
+      return false;
     } catch (e) {
       debugPrint('⚠️ Error awarding points: $e');
       return false;
-    }
-  }
-
-  int _getPointsForType(String type) {
-    switch (type) {
-      case 'upload_optimized':
-        return 10;
-      case 'verified_creator':
-        return 100;
-      case 'product_review':
-        return 20;
-      case 'post_created':
-        return 5;
-      case 'daily_login':
-        return 1;
-      case 'share':
-        return 2;
-      case 'comment':
-        return 1;
-      default:
-        return 0;
     }
   }
 

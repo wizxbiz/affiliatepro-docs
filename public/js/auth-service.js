@@ -15,6 +15,8 @@
  * @author WiT 365 Team
  */
 
+if (typeof window.AuthService === 'undefined') {
+
 class AuthService {
     constructor() {
         this.auth = null;
@@ -38,25 +40,54 @@ class AuthService {
         // Check local sessions FIRST (Academy/Marketplace sync)
         this.checkLocalSessions();
 
-        if (typeof firebase !== 'undefined') {
-            this.auth = firebase.auth();
-            this.db = firebase.firestore();
+        const doInit = () => {
+            if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+                this.auth = firebase.auth();
+                this.db = firebase.firestore();
 
-            // Setup auth state observer
-            this.auth.onAuthStateChanged(async (user) => {
-                this.currentUser = user;
-                if (user) {
-                    await this.loadUserData(user.uid);
-                } else if (!this.localSession) {
-                    this.userData = null;
+                // Setup auth state observer
+                this.auth.onAuthStateChanged(async (user) => {
+                    this.currentUser = user;
+                    if (user) {
+                        await this.loadUserData(user.uid);
+                    } else if (!this.localSession) {
+                        this.userData = null;
+                    }
+                    this.notifyListeners(user);
+                });
+
+                this.initialized = true;
+                console.log('✅ AuthService [V1.2.0] initialized');
+            } else {
+                // If firebase is loaded but not initialized yet, wait a bit
+                if (typeof firebase !== 'undefined') {
+                    console.log('⏳ AuthService: Waiting for Firebase initialization...');
+                    setTimeout(doInit, 100);
+                } else {
+                    console.error('❌ Firebase not loaded');
                 }
-                this.notifyListeners(user);
-            });
+            }
+        };
 
-            this.initialized = true;
-            console.log('✅ AuthService [V1.1.0] initialized');
-        } else {
-            console.error('❌ Firebase not loaded');
+        doInit();
+    }
+
+    async loadUserData(uid) {
+        try {
+            const userDoc = await this.db.collection('users').doc(uid).get();
+            if (userDoc.exists) {
+                const data = userDoc.data();
+                this.userData = {
+                    uid: uid,
+                    displayName: data.displayName || data.name || 'User',
+                    avatar: data.pictureUrl || data.photoURL || data.avatar,
+                    role: data.role || 'user',
+                    isPremium: data.isPremium || (data.subscriptionType === 'premium') || false,
+                    sellerStatus: data.sellerStatus || 'none'
+                };
+            }
+        } catch (e) {
+            console.error('Failed to load user data from Firestore:', e);
         }
     }
 
@@ -76,10 +107,12 @@ class AuthService {
                         console.log('🔍 Raw Session Data:', session); // DEBUG: Inspection
                         this.localSession = session;
                         this.userData = {
+                            uid: session.uid || session.lineUserId,
                             displayName: session.displayName || session.name || session.user?.displayName || session.user?.name,
                             avatar: session.pictureUrl || session.picture || session.avatar || session.user?.pictureUrl || session.user?.picture || session.user?.avatar,
                             role: 'user',
-                            isPremium: session.isPremium
+                            isPremium: session.isPremium,
+                            sellerStatus: session.sellerStatus || 'none'
                         };
                         console.log('✅ Found active wizmobiz_session');
                     }
@@ -221,3 +254,5 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 console.log('🔐 AuthService [V1.2.0] Loaded - IAM & Backend Support');
+
+} // End of AuthService guard

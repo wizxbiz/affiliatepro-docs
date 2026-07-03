@@ -3,7 +3,7 @@
   "name": "TukTuk Thailand",
   "short_name": "TukTuk",
   "description": "แพลตฟอร์มวิดีโอสั้น Shoppable ซื้อขายสินค้า ฟีดชุมชน และเรียกวินมอเตอร์ไซค์ แห่งแรกของไทย",
-  "start_url": "/index.html?pwa=true",
+  "start_url": "/",
   "display": "standalone",
   "display_override": [
     "window-controls-overlay",
@@ -19,6 +19,7 @@
   "share_target": {
     "action": "/index.html?action=share",
     "method": "GET",
+    "enctype": "application/x-www-form-urlencoded",
     "params": {
       "title": "title",
       "text": "text",

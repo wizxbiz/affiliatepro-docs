@@ -18,9 +18,9 @@ class TukTukGoService {
     if (fromEnv.isNotEmpty) {
       return fromEnv.endsWith('/api/v1') ? fromEnv : '$fromEnv/api/v1';
     }
-    // Production Fly.io backend (Singapore) — used when GO_API_BASE not set
+    // Production Cloudflare Worker API Gateway — used when GO_API_BASE not set
     // Local override: flutter run --dart-define=GO_API_BASE=http://localhost:8080
-    return 'https://tuktuk-engine.fly.dev/api/v1';
+    return 'https://tuktukfeed-api.imtthailand2019.workers.dev/api/v1';
   }
 
   /// ✅ Smart Circuit Breaker

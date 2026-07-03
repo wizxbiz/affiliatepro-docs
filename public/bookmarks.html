@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>เก็บความทรงจำ — TukTuk Thailand</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/persistent-ui.css">
+  <style>
+    :root {
+      --bg:       #0a0f1e;
+      --surface:  #111827;
+      --surface2: #1e293b;
+      --border:   rgba(255,255,255,0.07);
+      --text:     #f1f5f9;
+      --dim:      #94a3b8;
+      --purple:   #a855f7;
+      --cyan:     #22d3ee;
+      --green:    #22c55e;
+      --safe-t: env(safe-area-inset-top, 0px);
+      --safe-b: env(safe-area-inset-bottom, 0px);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { min-height: 100%; background: var(--bg); color: var(--text); font-family: 'Kanit', sans-serif; }
+    body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: -1;
+      background: radial-gradient(circle at 30% -10%, rgba(168,85,247,0.12) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 90%, rgba(34,211,238,0.07) 0%, transparent 40%);
+    }
+
+    /* ── Topbar ─────────────────────────────────── */
+    .topbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,15,30,0.95);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: calc(var(--safe-t) + 12px) 16px 12px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .back-btn {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--surface2); border: none; cursor: pointer;
+      color: var(--text); font-size: 1rem; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: background .15s;
+    }
+    .back-btn:hover { background: rgba(168,85,247,0.2); color: var(--purple); }
+    .topbar-title { font-size: 1.05rem; font-weight: 700; flex: 1; }
+    .topbar-count { font-size: 0.8rem; color: var(--dim); background: var(--surface2); padding: 4px 10px; border-radius: 20px; }
+
+    /* ── Tabs ────────────────────────────────────── */
+    .tab-row {
+      display: flex; gap: 0; padding: 10px 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .tab-btn {
+      flex: 1; padding: 10px 6px; background: none; border: none; border-bottom: 2px solid transparent;
+      color: var(--dim); font-family: 'Kanit', sans-serif; font-size: 0.88rem; cursor: pointer;
+      transition: color .15s, border-color .15s;
+    }
+    .tab-btn.active { color: var(--purple); border-bottom-color: var(--purple); font-weight: 600; }
+    .tab-btn i { margin-right: 4px; }
+
+    /* ── Content ─────────────────────────────────── */
+    .page-content { padding: 16px; max-width: 700px; margin: 0 auto; padding-bottom: calc(var(--safe-b) + 80px); }
+
+    /* ── Cards Grid ──────────────────────────────── */
+    .cards-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    }
+    @media (min-width: 600px) { .cards-grid { grid-template-columns: repeat(3, 1fr); } }
+
+    .post-card {
+      background: var(--surface); border-radius: 14px; overflow: hidden;
+      border: 1px solid var(--border); cursor: pointer;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .post-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(168,85,247,0.15); }
+    .post-card-img {
+      width: 100%; aspect-ratio: 1; object-fit: cover; background: var(--surface2);
+      display: flex; align-items: center; justify-content: center; color: var(--dim); font-size: 2rem;
+    }
+    .post-card-img img { width: 100%; height: 100%; object-fit: cover; }
+    .post-card-body { padding: 10px 12px; }
+    .post-card-title { font-size: 0.82rem; color: var(--text); line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .post-card-meta { display: flex; gap: 10px; margin-top: 6px; font-size: 0.72rem; color: var(--dim); }
+    .post-card-meta span { display: flex; align-items: center; gap: 3px; }
+    .remove-btn {
+      width: 26px; height: 26px; border-radius: 50%; background: rgba(239,68,68,0.15); border: none;
+      color: #ef4444; font-size: 0.72rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      margin-left: auto; transition: background .15s;
+    }
+    .remove-btn:hover { background: rgba(239,68,68,0.3); }
+
+    /* ── Empty ───────────────────────────────────── */
+    .empty-state {
+      text-align: center; padding: 60px 20px; color: var(--dim);
+    }
+    .empty-state i { font-size: 3rem; margin-bottom: 16px; opacity: .35; display: block; }
+    .empty-state p { font-size: 0.9rem; margin-bottom: 20px; }
+    .btn-go { display: inline-flex; align-items: center; gap: 8px; padding: 10px 22px; border-radius: 24px; background: linear-gradient(135deg,#a855f7,#6d28d9); color: #fff; font-family: 'Kanit',sans-serif; font-size: 0.88rem; font-weight: 600; border: none; cursor: pointer; text-decoration: none; }
+
+    /* ── Skeleton ────────────────────────────────── */
+    .skeleton { background: linear-gradient(90deg,var(--surface2) 25%,rgba(255,255,255,0.05) 50%,var(--surface2) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 8px; }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    .sk-card { background: var(--surface); border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
+    .sk-img { width: 100%; aspect-ratio: 1; }
+    .sk-line { height: 12px; margin: 10px 12px 6px; border-radius: 6px; }
+    .sk-line-short { height: 10px; width: 60%; margin: 0 12px 12px; border-radius: 6px; }
+
+    /* ── Login prompt ────────────────────────────── */
+    #loginPrompt { display: none; }
+
+    /* ── Liked posts tab ─────────────────────────── */
+    .liked-card {
+      background: var(--surface); border-radius: 14px; overflow: hidden;
+      border: 1px solid var(--border); cursor: pointer; display: flex; gap: 0;
+      transition: border-color .15s;
+    }
+    .liked-card:hover { border-color: rgba(168,85,247,0.4); }
+    .liked-card-img { width: 80px; min-width: 80px; height: 80px; object-fit: cover; background: var(--surface2); display: flex; align-items: center; justify-content: center; color: var(--dim); }
+    .liked-card-img img { width: 100%; height: 100%; object-fit: cover; }
+    .liked-card-body { padding: 10px 12px; flex: 1; overflow: hidden; }
+    .liked-card-title { font-size: 0.85rem; color: var(--text); line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .liked-card-meta { font-size: 0.73rem; color: var(--dim); margin-top: 4px; }
+  </style>
+</head>
+<body>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <button class="back-btn" onclick="history.back()"><i class="fas fa-arrow-left"></i></button>
+    <div class="topbar-title"><i class="fas fa-bookmark" style="color:var(--purple);margin-right:8px;"></i>เก็บความทรงจำ</div>
+    <div class="topbar-count" id="totalCount">–</div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-row">
+    <button class="tab-btn active" id="tabSaved" onclick="switchTab('saved')">
+      <i class="fas fa-bookmark"></i> บันทึกไว้
+    </button>
+    <button class="tab-btn" id="tabLiked" onclick="switchTab('liked')">
+      <i class="fas fa-heart"></i> ถูกใจ
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div class="page-content">
+
+    <!-- Login prompt -->
+    <div id="loginPrompt" class="empty-state">
+      <i class="fas fa-lock"></i>
+      <p>กรุณาเข้าสู่ระบบเพื่อดูรายการที่บันทึก</p>
+      <a href="login.html" class="btn-go"><i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบ</a>
+    </div>
+
+    <!-- Saved posts tab -->
+    <div id="panelSaved">
+      <div class="cards-grid" id="savedGrid">
+        <!-- skeleton -->
+        ${[1,2,3,4,5,6].map(() => `
+          <div class="sk-card">
+            <div class="skeleton sk-img"></div>
+            <div class="skeleton sk-line"></div>
+            <div class="skeleton sk-line-short"></div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Liked posts tab -->
+    <div id="panelLiked" style="display:none;">
+      <div style="display:flex;flex-direction:column;gap:10px;" id="likedList">
+        <div class="skeleton" style="height:80px;border-radius:14px;"></div>
+        <div class="skeleton" style="height:80px;border-radius:14px;"></div>
+        <div class="skeleton" style="height:80px;border-radius:14px;"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="js/firebase-init.js"></script>
+  <script src="js/persistent-ui.js"></script>
+
+  <script>
+    let _currentTab = 'saved';
+    let _uid = null;
+
+    // ── Tab switch ──────────────────────────────────────────
+    function switchTab(tab) {
+      _currentTab = tab;
+      document.getElementById('panelSaved').style.display = tab === 'saved' ? '' : 'none';
+      document.getElementById('panelLiked').style.display = tab === 'liked' ? '' : 'none';
+      document.getElementById('tabSaved').className = 'tab-btn' + (tab === 'saved' ? ' active' : '');
+      document.getElementById('tabLiked').className  = 'tab-btn' + (tab === 'liked'  ? ' active' : '');
+    }
+
+    // ── Helpers ─────────────────────────────────────────────
+    function esc(s) {
+      const d = document.createElement('div');
+      d.textContent = s || '';
+      return d.innerHTML;
+    }
+    function relTime(ts) {
+      if (!ts) return '';
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
+      const diff = Math.floor((Date.now() - d) / 1000);
+      if (diff < 60) return 'เพิ่งโพสต์';
+      if (diff < 3600) return Math.floor(diff / 60) + ' นาทีที่แล้ว';
+      if (diff < 86400) return Math.floor(diff / 3600) + ' ชั่วโมงที่แล้ว';
+      return Math.floor(diff / 86400) + ' วันที่แล้ว';
+    }
+    function getImg(data) {
+      const imgs = data.images || (data.imageUrl ? [data.imageUrl] : []);
+      if (!imgs.length) return null;
+      const i = imgs[0];
+      return typeof i === 'object' ? i.url : i;
+    }
+
+    // ── Load saved posts (user_bookmarks) ───────────────────
+    async function loadSaved(uid) {
+      const grid = document.getElementById('savedGrid');
+      const db = window.db;
+      if (!db) { grid.innerHTML = '<div class="empty-state"><i class="fas fa-wifi-slash"></i><p>ไม่สามารถเชื่อมต่อได้</p></div>'; return; }
+
+      try {
+        const bmSnap = await db.collection('user_bookmarks').doc(uid).get();
+        const postIds = bmSnap.exists ? (bmSnap.data().postIds || []) : [];
+
+        if (!postIds.length) {
+          grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+            <i class="fas fa-bookmark"></i>
+            <p>ยังไม่มีโพสต์ที่บันทึกไว้</p>
+            <a href="index.html" class="btn-go"><i class="fas fa-compass"></i> ค้นพบโพสต์</a>
+          </div>`;
+          document.getElementById('totalCount').textContent = '0 รายการ';
+          return;
+        }
+
+        // Firestore 'in' supports max 10 at a time
+        const chunks = [];
+        for (let i = 0; i < postIds.length; i += 10) chunks.push(postIds.slice(i, i + 10));
+
+        const posts = [];
+        for (const chunk of chunks) {
+          const snap = await db.collection('community_posts').where(firebase.firestore.FieldPath.documentId(), 'in', chunk).get();
+          snap.forEach(d => posts.push({ id: d.id, ...d.data() }));
+        }
+
+        document.getElementById('totalCount').textContent = posts.length + ' รายการ';
+
+        if (!posts.length) {
+          grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-bookmark"></i><p>โพสต์ที่บันทึกไว้ถูกลบแล้ว</p></div>`;
+          return;
+        }
+
+        grid.innerHTML = posts.map(p => {
+          const img = getImg(p);
+          return `<div class="post-card" onclick="window.location.href='channel.html?postId=${p.id}'">
+            <div class="post-card-img">
+              ${img ? `<img src="${esc(img)}" onerror="this.parentElement.innerHTML='<i class=\\"fas fa-image\\"></i>'" loading="lazy">` : '<i class="fas fa-file-alt"></i>'}
+            </div>
+            <div class="post-card-body">
+              <div class="post-card-title">${esc(p.title || p.description || 'ไม่มีหัวข้อ')}</div>
+              <div class="post-card-meta">
+                <span><i class="fas fa-heart" style="color:#ef4444"></i> ${(p.likes||0).toLocaleString()}</span>
+                <span><i class="fas fa-eye" style="color:#3b82f6"></i> ${(p.views||p.viewCount||0).toLocaleString()}</span>
+                <button class="remove-btn" title="ลบออก" onclick="event.stopPropagation();removeBookmark('${p.id}',this)"><i class="fas fa-times"></i></button>
+              </div>
+            </div>
+          </div>`;
+        }).join('');
+
+      } catch (e) {
+        console.error(e);
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-exclamation-circle"></i><p>โหลดไม่สำเร็จ กรุณาลองใหม่</p></div>`;
+      }
+    }
+
+    // ── Remove bookmark ─────────────────────────────────────
+    async function removeBookmark(postId, btn) {
+      if (!_uid || !window.db) return;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+      try {
+        await window.db.collection('user_bookmarks').doc(_uid).update({
+          postIds: firebase.firestore.FieldValue.arrayRemove(postId)
+        });
+        btn.closest('.post-card').style.opacity = '0';
+        btn.closest('.post-card').style.transform = 'scale(0.9)';
+        setTimeout(() => { btn.closest('.post-card').remove(); }, 300);
+      } catch (e) { btn.innerHTML = '<i class="fas fa-times"></i>'; }
+    }
+
+    // ── Load liked posts (localStorage) ────────────────────
+    async function loadLiked(uid) {
+      const list = document.getElementById('likedList');
+      const db = window.db;
+
+      // Merge localStorage + Firestore
+      let likedIds = [];
+      try { likedIds = JSON.parse(localStorage.getItem('tuktuk_liked_posts') || '[]'); } catch(_) {}
+
+      if (!likedIds.length) {
+        list.innerHTML = `<div class="empty-state"><i class="fas fa-heart"></i><p>ยังไม่มีโพสต์ที่กดถูกใจ</p><a href="index.html" class="btn-go"><i class="fas fa-compass"></i> ดูฟีด</a></div>`;
+        return;
+      }
+
+      try {
+        const chunks = [];
+        for (let i = 0; i < likedIds.length; i += 10) chunks.push(likedIds.slice(i, i + 10));
+        const posts = [];
+        for (const chunk of chunks) {
+          const snap = await db.collection('community_posts').where(firebase.firestore.FieldPath.documentId(), 'in', chunk).get();
+          snap.forEach(d => posts.push({ id: d.id, ...d.data() }));
+        }
+
+        if (!posts.length) {
+          list.innerHTML = `<div class="empty-state"><i class="fas fa-heart"></i><p>โพสต์ที่กดถูกใจถูกลบแล้ว</p></div>`;
+          return;
+        }
+
+        list.innerHTML = posts.map(p => {
+          const img = getImg(p);
+          return `<div class="liked-card" onclick="window.location.href='channel.html?postId=${p.id}'">
+            <div class="liked-card-img">
+              ${img ? `<img src="${esc(img)}" onerror="this.parentElement.innerHTML='<i class=\\"fas fa-image\\"></i>'" loading="lazy">` : '<i class="fas fa-file-alt"></i>'}
+            </div>
+            <div class="liked-card-body">
+              <div class="liked-card-title">${esc(p.title || p.description || 'ไม่มีหัวข้อ')}</div>
+              <div class="liked-card-meta">
+                <i class="fas fa-user" style="margin-right:4px;"></i>${esc(p.authorName || 'ผู้ใช้')}
+                <span style="margin:0 6px;">·</span>
+                <i class="fas fa-clock" style="margin-right:4px;"></i>${relTime(p.createdAt)}
+              </div>
+            </div>
+          </div>`;
+        }).join('');
+
+      } catch (e) {
+        list.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>โหลดไม่สำเร็จ</p></div>`;
+      }
+    }
+
+    // ── Bootstrap ───────────────────────────────────────────
+    function waitAndInit(tries) {
+      if (tries <= 0) return;
+      if (!window.firebase || !window.db) { setTimeout(() => waitAndInit(tries - 1), 300); return; }
+
+      firebase.auth().onAuthStateChanged(async user => {
+        if (!user) {
+          // Try LINE session from localStorage
+          try {
+            const raw = localStorage.getItem('tuktuk_line_session') || localStorage.getItem('user_data');
+            const sess = raw ? JSON.parse(raw) : null;
+            if (sess && sess.uid) { _uid = sess.uid; }
+            else {
+              document.getElementById('loginPrompt').style.display = 'block';
+              document.getElementById('panelSaved').style.display = 'none';
+              document.getElementById('panelLiked').style.display = 'none';
+              return;
+            }
+          } catch (_) {
+            document.getElementById('loginPrompt').style.display = 'block';
+            return;
+          }
+        } else {
+          _uid = user.uid;
+        }
+
+        await loadSaved(_uid);
+        // Preload liked data silently
+        loadLiked(_uid);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => waitAndInit(20));
+  </script>
+</body>
+</html>

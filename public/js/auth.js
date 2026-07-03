@@ -1,9 +1,13 @@
-/* 🛡️ WizmobizAuth V1.0.6 - Unified Marketplace Authentication */
-console.log('🛡️ WizmobizAuth [V1.0.6] loaded.');
+/* 🛡️ WizmobizAuth V1.1.0 - Unified Marketplace Authentication (30-day persistent session) */
+console.log('🛡️ WizmobizAuth [V1.1.0] loaded.');
 
 var WizmobizAuth = {
     // Session storage key
     SESSION_KEY: 'wizmobiz_session',
+
+    // Session TTL constants
+    SESSION_TTL_DAYS: 30,            // primary session duration
+    SESSION_REFRESH_DAYS: 25,        // silently extend when this many days have passed
 
     // Check if user is logged in
     isLoggedIn() {
@@ -13,19 +17,46 @@ var WizmobizAuth = {
         const loginAt = new Date(session.loginAt);
         const daysSinceLogin = (new Date() - loginAt) / (1000 * 60 * 60 * 24);
 
-        if (daysSinceLogin >= 7) {
+        // Hard expiry: 30 days
+        if (daysSinceLogin >= this.SESSION_TTL_DAYS) {
+            // Last chance: check tuktuk_line_session with expiresAt
             const lineRaw = localStorage.getItem('tuktuk_line_session');
             if (lineRaw) {
-                const lineSession = JSON.parse(lineRaw);
-                if (lineSession.expiresAt && Date.now() < lineSession.expiresAt) {
-                    return true;
-                }
+                try {
+                    const lineSession = JSON.parse(lineRaw);
+                    if (lineSession.expiresAt && Date.now() < lineSession.expiresAt) {
+                        // Restore primary session from line session
+                        lineSession.loginAt = new Date().toISOString();
+                        localStorage.setItem(this.SESSION_KEY, JSON.stringify(lineSession));
+                        return true;
+                    }
+                } catch (_) {}
             }
             this.logout();
             return false;
         }
 
+        // Soft refresh: extend loginAt when session is 25+ days (silent, no UX)
+        if (daysSinceLogin >= this.SESSION_REFRESH_DAYS) {
+            this._silentRefreshSession(session);
+        }
+
         return true;
+    },
+
+    // Silently extend session when approaching expiry
+    _silentRefreshSession(session) {
+        try {
+            const extended = { ...session, loginAt: new Date().toISOString() };
+            localStorage.setItem(this.SESSION_KEY, JSON.stringify(extended));
+            const lineRaw = localStorage.getItem('tuktuk_line_session');
+            if (lineRaw) {
+                const ls = JSON.parse(lineRaw);
+                ls.loginAt = extended.loginAt;
+                ls.expiresAt = Date.now() + this.SESSION_TTL_DAYS * 86400000;
+                localStorage.setItem('tuktuk_line_session', JSON.stringify(ls));
+            }
+        } catch (_) {}
     },
 
     // Check if user is Premium
@@ -110,9 +141,17 @@ var WizmobizAuth = {
         return session?.lineUserId || null;
     },
 
-    // Logout
+    // Logout — clears all session keys + sets a flag to block LIFF auto-re-login
     logout() {
         localStorage.removeItem(this.SESSION_KEY);
+        localStorage.removeItem('tuktuk_line_session');
+        localStorage.setItem('tuktuk_session_ended', '1');
+        sessionStorage.removeItem('_liff_login_triggered');
+        // Redirect to login instead of letting caller reload (avoids LIFF auto-reauth)
+        const p = window.location.pathname;
+        if (!p.includes('/login')) {
+            window.location.replace('/login.html');
+        }
     },
 
     // Update session data dynamically
@@ -139,7 +178,8 @@ var WizmobizAuth = {
     // Redirect to login page
     redirectToLogin(returnUrl = null) {
         // Already on login page — don't redirect (prevents Safari redirect loop)
-        if (window.location.pathname.includes('/login.html')) return;
+        const p = window.location.pathname;
+        if (p.includes('/login.html') || p.includes('/login')) return;
 
         let url = returnUrl || window.location.href;
         // Strip ?source=pwa and nested redirectUrl params to keep the chain short
@@ -154,6 +194,7 @@ var WizmobizAuth = {
         if (sessionStorage.getItem('_auth_redirect_in_progress')) return;
         sessionStorage.setItem('_auth_redirect_in_progress', '1');
 
+        // Use clean URL for best compatibility with registered LINE callback URIs
         window.location.replace(`/login.html?redirectUrl=${encodeURIComponent(url)}`);
     },
 
@@ -375,7 +416,7 @@ var WizmobizAuth = {
                         </div>
                         
                         <div class="auth-modal-buttons">
-                            <a href="/login.html" class="auth-btn auth-btn-primary">
+                            <a href="/login" class="auth-btn auth-btn-primary">
                                 🔑 เข้าสู่ระบบ
                             </a>
                             <a href="https://lin.ee/1YJsw47" target="_blank" class="auth-btn auth-btn-line">
@@ -732,7 +773,7 @@ var WizmobizAuth = {
                 </div>
                 <div class="badge-actions" style="display: flex; gap: 8px; margin-left: 10px; align-items: center;">
                     <a href="javascript:void(0)" onclick="WizmobizAuth.handleShopAccess()" class="badge-shop" title="ร้านของฉัน" style="text-decoration: none; font-size: 1.1rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">🏪</a>
-                    <button onclick="WizmobizAuth.logout(); location.reload();" class="badge-logout" title="ออกจากระบบ" style="filter: grayscale(1); opacity: 0.5; background: none; border: none; cursor: pointer;">🚪</button>
+                    <button onclick="WizmobizAuth.logout();" class="badge-logout" title="ออกจากระบบ" style="filter: grayscale(1); opacity: 0.5; background: none; border: none; cursor: pointer;">🚪</button>
                 </div>
             </div>
         `;
@@ -767,8 +808,7 @@ var WizmobizAuth = {
     async handleShopAccess(destination = null) {
         let user = this.getUser();
         if (!user) {
-            this._notify('กรุณาเข้าสู่ระบบก่อนใช้งาน', 'info');
-            this.showLoginModal('เข้าสู่ระบบเพื่อจัดการร้านค้า');
+            this.showShopAccessModal();
             return;
         }
 
@@ -886,11 +926,55 @@ var WizmobizAuth = {
 
             const target = destination || defaultTarget;
             console.log('🚀 Redirecting to:', target);
-            window.location.href = target;
+            // SPA-aware navigation: if inside iframe, tell parent to navigate
+            if (window.self !== window.top) {
+                window.top.postMessage({ type: 'NAVIGATE', href: target }, window.location.origin);
+            } else if (typeof window.navigateToSPA === 'function') {
+                window.navigateToSPA(target);
+            } else {
+                window.location.href = target;
+            }
         } else {
             console.log('🔓 Showing verification modal');
             this.showVerificationModal();
         }
+    },
+
+    // Shop Access Modal — for non-logged-in users
+    showShopAccessModal() {
+        const existing = document.getElementById('shopAccessModal');
+        if (existing) existing.remove();
+
+        const modal = document.createElement('div');
+        modal.id = 'shopAccessModal';
+        modal.innerHTML = `
+            <div id="shopAccessOverlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);" onclick="document.getElementById('shopAccessModal').remove()">
+                <div style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);border:1px solid rgba(249,115,22,0.3);border-radius:24px;max-width:440px;width:100%;padding:36px;text-align:center;position:relative;box-shadow:0 25px 60px rgba(0,0,0,0.6);" onclick="event.stopPropagation()">
+                    <button onclick="document.getElementById('shopAccessModal').remove()" style="position:absolute;top:16px;right:20px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:1.4rem;cursor:pointer;line-height:1;">&times;</button>
+                    <div style="font-size:3.5rem;margin-bottom:16px;">🏪</div>
+                    <h2 style="color:#fff;font-size:1.6rem;font-weight:800;margin:0 0 8px;">ร้านค้าของฉัน</h2>
+                    <p style="color:rgba(255,255,255,0.65);font-size:0.95rem;margin:0 0 28px;line-height:1.5;">เข้าสู่ระบบเพื่อจัดการร้านค้า หรือเปิดร้านใหม่ฟรี ไม่มีค่าคอมมิชชั่น</p>
+
+                    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;">
+                        <button onclick="document.getElementById('shopAccessModal').remove();if(typeof showPinLoginModal==='function'){showPinLoginModal()}else{window.location.href='/login'}" style="background:linear-gradient(135deg,#f97316,#ef4444);color:#fff;border:none;padding:16px 24px;border-radius:14px;font-size:1.05rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;">
+                            <i class="fas fa-key"></i> เข้าสู่ระบบด้วย PIN
+                        </button>
+                        <button onclick="document.getElementById('shopAccessModal').remove();window.open('https://lin.ee/1YJsw47','_blank')" style="background:#00B900;color:#fff;border:none;padding:16px 24px;border-radius:14px;font-size:1.05rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;">
+                            <i class="fab fa-line"></i> เพิ่มเพื่อน LINE OA เพื่อรับ PIN
+                        </button>
+                    </div>
+
+                    <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:20px;">
+                        <p style="color:rgba(255,255,255,0.5);font-size:0.85rem;margin:0 0 14px;">ยังไม่มีร้านค้า?</p>
+                        <button onclick="document.getElementById('shopAccessModal').remove();if(window.self!==window.top){window.top.postMessage({type:'NAVIGATE',href:'seller-dashboard.html'},window.location.origin)}else if(typeof window.navigateToSPA==='function'){window.navigateToSPA('seller-dashboard.html')}else{window.location.href='seller-dashboard.html'}" style="background:rgba(249,115,22,0.15);color:#f97316;border:1px solid rgba(249,115,22,0.4);padding:14px 24px;border-radius:14px;font-size:1rem;font-weight:700;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:10px;">
+                            <i class="fas fa-store-alt"></i> เปิดร้านค้าฟรีกับเรา
+                        </button>
+                        <p style="color:rgba(255,255,255,0.35);font-size:0.78rem;margin:12px 0 0;">ทดลองฟรี 30 วัน · ไม่มีค่าคอมมิชชั่น · AI ช่วยลงสินค้า</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
     },
 
     showVerificationModal() {

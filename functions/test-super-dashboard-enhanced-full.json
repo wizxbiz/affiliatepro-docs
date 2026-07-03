@@ -1,0 +1,1779 @@
+{
+  "type": "flex",
+  "altText": "👑 Super Admin Dashboard v3.5 - Enhanced Control Center",
+  "contents": {
+    "type": "carousel",
+    "contents": [
+      {
+        "type": "bubble",
+        "size": "mega",
+        "hero": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "👑",
+                      "size": "3xl",
+                      "flex": 0
+                    },
+                    {
+                      "type": "box",
+                      "layout": "vertical",
+                      "contents": [
+                        {
+                          "type": "text",
+                          "text": "SUPER ADMIN",
+                          "color": "#ffffff",
+                          "weight": "bold",
+                          "size": "xl"
+                        },
+                        {
+                          "type": "text",
+                          "text": "Control Center v3.5",
+                          "color": "#ffffff99",
+                          "size": "sm",
+                          "margin": "xs"
+                        }
+                      ],
+                      "margin": "md"
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                    {
+                      "type": "box",
+                      "layout": "baseline",
+                      "contents": [
+                        {
+                          "type": "text",
+                          "text": "🟢",
+                          "size": "xs",
+                          "flex": 0
+                        },
+                        {
+                          "type": "text",
+                          "text": "12 Online",
+                          "color": "#ffffff",
+                          "size": "xxs",
+                          "margin": "xs"
+                        }
+                      ],
+                      "flex": 1
+                    },
+                    {
+                      "type": "box",
+                      "layout": "baseline",
+                      "contents": [
+                        {
+                          "type": "text",
+                          "text": "📊",
+                          "size": "xs",
+                          "flex": 0
+                        },
+                        {
+                          "type": "text",
+                          "text": "45 Today",
+                          "color": "#ffffff",
+                          "size": "xxs",
+                          "margin": "xs"
+                        }
+                      ],
+                      "flex": 1
+                    },
+                    {
+                      "type": "box",
+                      "layout": "baseline",
+                      "contents": [
+                        {
+                          "type": "text",
+                          "text": "⚠️",
+                          "size": "xs",
+                          "flex": 0
+                        },
+                        {
+                          "type": "text",
+                          "text": "8 Pending",
+                          "color": "#fbbf24",
+                          "size": "xxs",
+                          "margin": "xs",
+                          "weight": "bold"
+                        }
+                      ],
+                      "flex": 1
+                    }
+                  ],
+                  "margin": "lg",
+                  "spacing": "sm"
+                }
+              ],
+              "paddingAll": "20px"
+            }
+          ],
+          "backgroundColor": "#6366f1",
+          "paddingAll": "0px"
+        },
+        "body": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "250",
+                      "size": "xl",
+                      "weight": "bold",
+                      "color": "#1f2937",
+                      "align": "center"
+                    },
+                    {
+                      "type": "text",
+                      "text": "Total Users",
+                      "size": "xxs",
+                      "color": "#6b7280",
+                      "align": "center",
+                      "margin": "xs"
+                    },
+                    {
+                      "type": "box",
+                      "layout": "baseline",
+                      "contents": [
+                        {
+                          "type": "text",
+                          "text": "💎",
+                          "size": "xs",
+                          "flex": 0
+                        },
+                        {
+                          "type": "text",
+                          "text": "35 Premium",
+                          "size": "xxs",
+                          "color": "#8b5cf6",
+                          "margin": "xs"
+                        }
+                      ],
+                      "justifyContent": "center",
+                      "margin": "xs"
+                    }
+                  ],
+                  "backgroundColor": "#eff6ff",
+                  "cornerRadius": "10px",
+                  "paddingAll": "12px",
+                  "flex": 1,
+                  "action": {
+                    "type": "message",
+                    "label": "View Users",
+                    "text": "/recent"
+                  }
+                },
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "150",
+                      "size": "xl",
+                      "weight": "bold",
+                      "color": "#1f2937",
+                      "align": "center"
+                    },
+                    {
+                      "type": "text",
+                      "text": "Knowledge",
+                      "size": "xxs",
+                      "color": "#6b7280",
+                      "align": "center",
+                      "margin": "xs"
+                    },
+                    {
+                      "type": "box",
+                      "layout": "baseline",
+                      "contents": [
+                        {
+                          "type": "text",
+                          "text": "✅",
+                          "size": "xs",
+                          "flex": 0
+                        },
+                        {
+                          "type": "text",
+                          "text": "15 Need Review",
+                          "size": "xxs",
+                          "color": "#ef4444",
+                          "margin": "xs"
+                        }
+                      ],
+                      "justifyContent": "center",
+                      "margin": "xs"
+                    }
+                  ],
+                  "backgroundColor": "#f0fdf4",
+                  "cornerRadius": "10px",
+                  "paddingAll": "12px",
+                  "margin": "md",
+                  "flex": 1,
+                  "action": {
+                    "type": "message",
+                    "label": "Knowledge",
+                    "text": "/km"
+                  }
+                }
+              ],
+              "margin": "md"
+            },
+            {
+              "type": "separator",
+              "margin": "lg"
+            },
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "🎯 Quick Access",
+                  "weight": "bold",
+                  "size": "sm",
+                  "color": "#374151",
+                  "flex": 1
+                },
+                {
+                  "type": "text",
+                  "text": "🟢 Excellent",
+                  "size": "xxs",
+                  "color": "#10b981",
+                  "align": "end"
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "📊",
+                      "size": "xxl",
+                      "align": "center"
+                    },
+                    {
+                      "type": "text",
+                      "text": "Stats",
+                      "size": "xxs",
+                      "color": "#6b7280",
+                      "align": "center",
+                      "margin": "xs",
+                      "weight": "bold"
+                    }
+                  ],
+                  "flex": 1,
+                  "backgroundColor": "#f0f9ff",
+                  "cornerRadius": "10px",
+                  "paddingAll": "10px",
+                  "action": {
+                    "type": "message",
+                    "label": "Stats",
+                    "text": "/stats"
+                  }
+                },
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "👥",
+                      "size": "xxl",
+                      "align": "center"
+                    },
+                    {
+                      "type": "text",
+                      "text": "Users",
+                      "size": "xxs",
+                      "color": "#6b7280",
+                      "align": "center",
+                      "margin": "xs",
+                      "weight": "bold"
+                    }
+                  ],
+                  "flex": 1,
+                  "backgroundColor": "#fef3c7",
+                  "cornerRadius": "10px",
+                  "paddingAll": "10px",
+                  "margin": "sm",
+                  "action": {
+                    "type": "message",
+                    "label": "Users",
+                    "text": "/recent"
+                  }
+                }
+              ],
+              "margin": "sm"
+            },
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "🧠",
+                      "size": "xxl",
+                      "align": "center"
+                    },
+                    {
+                      "type": "text",
+                      "text": "Knowledge",
+                      "size": "xxs",
+                      "color": "#6b7280",
+                      "align": "center",
+                      "margin": "xs",
+                      "weight": "bold"
+                    }
+                  ],
+                  "flex": 1,
+                  "backgroundColor": "#f0fdf4",
+                  "cornerRadius": "10px",
+                  "paddingAll": "10px",
+                  "action": {
+                    "type": "message",
+                    "label": "Knowledge",
+                    "text": "/km"
+                  }
+                },
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "🧪",
+                      "size": "xxl",
+                      "align": "center"
+                    },
+                    {
+                      "type": "text",
+                      "text": "Test",
+                      "size": "xxs",
+                      "color": "#6b7280",
+                      "align": "center",
+                      "margin": "xs",
+                      "weight": "bold"
+                    }
+                  ],
+                  "flex": 1,
+                  "backgroundColor": "#fef2f2",
+                  "cornerRadius": "10px",
+                  "paddingAll": "10px",
+                  "margin": "sm",
+                  "action": {
+                    "type": "message",
+                    "label": "Test",
+                    "text": "/qt"
+                  }
+                }
+              ],
+              "margin": "sm"
+            },
+            {
+              "type": "separator",
+              "margin": "lg"
+            },
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "⏰ Trial Users Active",
+                  "weight": "bold",
+                  "size": "sm",
+                  "color": "#374151",
+                  "flex": 1
+                },
+                {
+                  "type": "text",
+                  "text": "15",
+                  "size": "sm",
+                  "color": "#8b5cf6",
+                  "weight": "bold",
+                  "align": "end"
+                }
+              ],
+              "margin": "md"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "1. U123...",
+                      "size": "xxs",
+                      "color": "#6b7280",
+                      "flex": 2
+                    },
+                    {
+                      "type": "text",
+                      "text": "เหลือ 2 วัน",
+                      "size": "xxs",
+                      "color": "#ef4444",
+                      "weight": "bold",
+                      "align": "end",
+                      "flex": 1
+                    }
+                  ],
+                  "margin": "sm"
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "2. U456...",
+                      "size": "xxs",
+                      "color": "#6b7280",
+                      "flex": 2
+                    },
+                    {
+                      "type": "text",
+                      "text": "เหลือ 5 วัน",
+                      "size": "xxs",
+                      "color": "#10b981",
+                      "weight": "bold",
+                      "align": "end",
+                      "flex": 1
+                    }
+                  ],
+                  "margin": "xs"
+                }
+              ],
+              "backgroundColor": "#faf5ff",
+              "cornerRadius": "8px",
+              "paddingAll": "10px",
+              "margin": "sm"
+            },
+            {
+              "type": "separator",
+              "margin": "lg"
+            },
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "⚠️",
+                  "size": "lg",
+                  "flex": 0
+                },
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "Pending Actions Required!",
+                      "weight": "bold",
+                      "size": "sm",
+                      "color": "#dc2626"
+                    },
+                    {
+                      "type": "text",
+                      "text": "8 users • 15 knowledge",
+                      "size": "xxs",
+                      "color": "#6b7280",
+                      "margin": "xs"
+                    }
+                  ],
+                  "margin": "md",
+                  "flex": 1
+                },
+                {
+                  "type": "text",
+                  "text": "→",
+                  "size": "xl",
+                  "color": "#dc2626",
+                  "flex": 0
+                }
+              ],
+              "backgroundColor": "#fef2f2",
+              "cornerRadius": "8px",
+              "paddingAll": "12px",
+              "margin": "md",
+              "action": {
+                "type": "message",
+                "label": "View Pending",
+                "text": "/pending"
+              }
+            },
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "📣",
+                  "size": "lg",
+                  "flex": 0
+                },
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "Broadcast Message",
+                      "weight": "bold",
+                      "size": "sm",
+                      "color": "#1f2937"
+                    },
+                    {
+                      "type": "text",
+                      "text": "ส่งข้อความถึงผู้ใช้ทั้งหมด",
+                      "size": "xxs",
+                      "color": "#6b7280",
+                      "margin": "xs"
+                    }
+                  ],
+                  "margin": "md",
+                  "flex": 1
+                },
+                {
+                  "type": "text",
+                  "text": "→",
+                  "size": "xl",
+                  "color": "#6366f1",
+                  "flex": 0
+                }
+              ],
+              "backgroundColor": "#fef3c7",
+              "cornerRadius": "8px",
+              "paddingAll": "12px",
+              "margin": "sm",
+              "action": {
+                "type": "message",
+                "label": "Broadcast",
+                "text": "/broadcast"
+              }
+            }
+          ],
+          "paddingAll": "16px"
+        },
+        "footer": {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "box",
+              "layout": "baseline",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "👉",
+                  "size": "sm",
+                  "flex": 0
+                },
+                {
+                  "type": "text",
+                  "text": "เลื่อนดูเมนูเพิ่มเติม →",
+                  "size": "xxs",
+                  "color": "#6b7280",
+                  "margin": "sm"
+                }
+              ],
+              "flex": 1
+            },
+            {
+              "type": "text",
+              "text": "1/3",
+              "size": "xxs",
+              "color": "#9ca3af",
+              "align": "end"
+            }
+          ],
+          "paddingAll": "10px"
+        }
+      },
+      {
+        "type": "bubble",
+        "size": "mega",
+        "header": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "🧠",
+                  "size": "xxl",
+                  "flex": 0
+                },
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "Knowledge & Testing",
+                      "weight": "bold",
+                      "size": "lg",
+                      "color": "#ffffff"
+                    },
+                    {
+                      "type": "text",
+                      "text": "จัดการความรู้และทดสอบระบบ",
+                      "size": "xs",
+                      "color": "#ffffff99",
+                      "margin": "xs"
+                    }
+                  ],
+                  "margin": "md"
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "baseline",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "📚",
+                      "size": "xs",
+                      "flex": 0
+                    },
+                    {
+                      "type": "text",
+                      "text": "150 Items",
+                      "color": "#ffffff",
+                      "size": "xxs",
+                      "margin": "xs"
+                    }
+                  ],
+                  "flex": 1
+                },
+                {
+                  "type": "box",
+                  "layout": "baseline",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "✅",
+                      "size": "xs",
+                      "flex": 0
+                    },
+                    {
+                      "type": "text",
+                      "text": "Verified",
+                      "color": "#ffffff",
+                      "size": "xxs",
+                      "margin": "xs"
+                    }
+                  ],
+                  "flex": 1
+                },
+                {
+                  "type": "box",
+                  "layout": "baseline",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "⚠️",
+                      "size": "xs",
+                      "flex": 0
+                    },
+                    {
+                      "type": "text",
+                      "text": "15 Pending",
+                      "color": "#fbbf24",
+                      "size": "xxs",
+                      "margin": "xs",
+                      "weight": "bold"
+                    }
+                  ],
+                  "flex": 1
+                }
+              ],
+              "margin": "md",
+              "spacing": "sm"
+            }
+          ],
+          "backgroundColor": "#8b5cf6",
+          "paddingAll": "16px"
+        },
+        "body": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "📚 Knowledge Management",
+                  "weight": "bold",
+                  "size": "sm",
+                  "color": "#374151",
+                  "flex": 1
+                },
+                {
+                  "type": "text",
+                  "text": "150",
+                  "size": "xs",
+                  "color": "#8b5cf6",
+                  "weight": "bold",
+                  "align": "end"
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                    {
+                      "type": "box",
+                      "layout": "vertical",
+                      "contents": [
+                        {
+                          "type": "text",
+                          "text": "📖",
+                          "size": "xxl",
+                          "align": "center"
+                        },
+                        {
+                          "type": "text",
+                          "text": "ดูทั้งหมด",
+                          "size": "xxs",
+                          "color": "#6b7280",
+                          "align": "center",
+                          "margin": "xs"
+                        }
+                      ],
+                      "flex": 1,
+                      "action": {
+                        "type": "message",
+                        "label": "View All",
+                        "text": "ดูความรู้ทั้งหมด"
+                      }
+                    },
+                    {
+                      "type": "box",
+                      "layout": "vertical",
+                      "contents": [
+                        {
+                          "type": "text",
+                          "text": "➕",
+                          "size": "xxl",
+                          "align": "center"
+                        },
+                        {
+                          "type": "text",
+                          "text": "Add New",
+                          "size": "xxs",
+                          "color": "#10b981",
+                          "align": "center",
+                          "margin": "xs",
+                          "weight": "bold"
+                        }
+                      ],
+                      "flex": 1,
+                      "margin": "sm",
+                      "backgroundColor": "#ecfdf5",
+                      "cornerRadius": "8px",
+                      "paddingAll": "8px",
+                      "action": {
+                        "type": "message",
+                        "label": "Add Knowledge",
+                        "text": "เพิ่มความรู้"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                    {
+                      "type": "box",
+                      "layout": "vertical",
+                      "contents": [
+                        {
+                          "type": "text",
+                          "text": "📝",
+                          "size": "xxl",
+                          "align": "center"
+                        },
+                        {
+                          "type": "text",
+                          "text": "Examples",
+                          "size": "xxs",
+                          "color": "#3b82f6",
+                          "align": "center",
+                          "margin": "xs",
+                          "weight": "bold"
+                        }
+                      ],
+                      "flex": 1,
+                      "backgroundColor": "#eff6ff",
+                      "cornerRadius": "8px",
+                      "paddingAll": "8px",
+                      "action": {
+                        "type": "message",
+                        "label": "Examples",
+                        "text": "ดูตัวอย่างการเพิ่มความรู้"
+                      }
+                    },
+                    {
+                      "type": "box",
+                      "layout": "vertical",
+                      "contents": [
+                        {
+                          "type": "text",
+                          "text": "✅",
+                          "size": "xxl",
+                          "align": "center"
+                        },
+                        {
+                          "type": "text",
+                          "text": "Verify",
+                          "size": "xxs",
+                          "color": "#6b7280",
+                          "align": "center",
+                          "margin": "xs"
+                        }
+                      ],
+                      "flex": 1,
+                      "margin": "sm",
+                      "action": {
+                        "type": "message",
+                        "label": "Verify",
+                        "text": "verify ความรู้"
+                      }
+                    }
+                  ],
+                  "margin": "sm"
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                    {
+                      "type": "box",
+                      "layout": "vertical",
+                      "contents": [
+                        {
+                          "type": "text",
+                          "text": "🧪",
+                          "size": "xxl",
+                          "align": "center"
+                        },
+                        {
+                          "type": "text",
+                          "text": "Hybrid Test",
+                          "size": "xxs",
+                          "color": "#6b7280",
+                          "align": "center",
+                          "margin": "xs"
+                        }
+                      ],
+                      "flex": 1,
+                      "action": {
+                        "type": "message",
+                        "label": "Test",
+                        "text": "ทดสอบ hybrid ABS"
+                      }
+                    },
+                    {
+                      "type": "box",
+                      "layout": "vertical",
+                      "contents": [
+                        {
+                          "type": "text",
+                          "text": "🔧",
+                          "size": "xxl",
+                          "align": "center"
+                        },
+                        {
+                          "type": "text",
+                          "text": "Optimize",
+                          "size": "xxs",
+                          "color": "#6b7280",
+                          "align": "center",
+                          "margin": "xs"
+                        }
+                      ],
+                      "flex": 1,
+                      "margin": "sm",
+                      "action": {
+                        "type": "message",
+                        "label": "Optimize",
+                        "text": "ปรับปรุงคลัง"
+                      }
+                    }
+                  ],
+                  "margin": "sm"
+                }
+              ],
+              "backgroundColor": "#faf5ff",
+              "cornerRadius": "10px",
+              "paddingAll": "12px",
+              "margin": "md"
+            },
+            {
+              "type": "separator",
+              "margin": "lg"
+            },
+            {
+              "type": "text",
+              "text": "🧪 Quick Tests (Popular Materials)",
+              "weight": "bold",
+              "size": "sm",
+              "color": "#374151"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                    {
+                      "type": "button",
+                      "action": {
+                        "type": "message",
+                        "label": "ABS",
+                        "text": "/wt ABS รอยยุบ"
+                      },
+                      "style": "primary",
+                      "color": "#3b82f6",
+                      "height": "sm",
+                      "flex": 1
+                    },
+                    {
+                      "type": "button",
+                      "action": {
+                        "type": "message",
+                        "label": "PP",
+                        "text": "/wt PP รอยแตก"
+                      },
+                      "style": "primary",
+                      "color": "#10b981",
+                      "height": "sm",
+                      "flex": 1,
+                      "margin": "sm"
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                    {
+                      "type": "button",
+                      "action": {
+                        "type": "message",
+                        "label": "PC",
+                        "text": "/wt PC ขุ่น"
+                      },
+                      "style": "primary",
+                      "color": "#8b5cf6",
+                      "height": "sm",
+                      "flex": 1
+                    },
+                    {
+                      "type": "button",
+                      "action": {
+                        "type": "message",
+                        "label": "More →",
+                        "text": "/qt"
+                      },
+                      "style": "secondary",
+                      "height": "sm",
+                      "flex": 1,
+                      "margin": "sm"
+                    }
+                  ],
+                  "margin": "sm"
+                }
+              ],
+              "margin": "sm"
+            },
+            {
+              "type": "separator",
+              "margin": "lg"
+            },
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "📋",
+                  "size": "lg",
+                  "flex": 0
+                },
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "Knowledge Menu",
+                      "weight": "bold",
+                      "size": "sm",
+                      "color": "#1f2937"
+                    },
+                    {
+                      "type": "text",
+                      "text": "เข้าสู่เมนูความรู้ทั้งหมด",
+                      "size": "xxs",
+                      "color": "#6b7280",
+                      "margin": "xs"
+                    }
+                  ],
+                  "margin": "md",
+                  "flex": 1
+                },
+                {
+                  "type": "text",
+                  "text": "→",
+                  "size": "xl",
+                  "color": "#8b5cf6",
+                  "flex": 0
+                }
+              ],
+              "backgroundColor": "#faf5ff",
+              "cornerRadius": "8px",
+              "paddingAll": "12px",
+              "margin": "md",
+              "action": {
+                "type": "message",
+                "label": "Knowledge Menu",
+                "text": "/km"
+              }
+            }
+          ],
+          "paddingAll": "16px"
+        },
+        "footer": {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "button",
+              "action": {
+                "type": "message",
+                "label": "← Back",
+                "text": "/super"
+              },
+              "style": "link",
+              "height": "sm",
+              "flex": 1
+            },
+            {
+              "type": "text",
+              "text": "2/3",
+              "size": "xxs",
+              "color": "#9ca3af",
+              "align": "center",
+              "flex": 0,
+              "margin": "md"
+            }
+          ],
+          "paddingAll": "10px"
+        }
+      },
+      {
+        "type": "bubble",
+        "size": "mega",
+        "header": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "⚙️",
+                  "size": "xxl",
+                  "flex": 0
+                },
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "System Tools",
+                      "weight": "bold",
+                      "size": "lg",
+                      "color": "#ffffff"
+                    },
+                    {
+                      "type": "text",
+                      "text": "เครื่องมือระบบและรายงาน",
+                      "size": "xs",
+                      "color": "#ffffff99",
+                      "margin": "xs"
+                    }
+                  ],
+                  "margin": "md"
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "baseline",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "🟢",
+                      "size": "xs",
+                      "flex": 0
+                    },
+                    {
+                      "type": "text",
+                      "text": "🟢 Excellent",
+                      "color": "#ffffff",
+                      "size": "xxs",
+                      "margin": "xs"
+                    }
+                  ],
+                  "flex": 1
+                },
+                {
+                  "type": "box",
+                  "layout": "baseline",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "👥",
+                      "size": "xs",
+                      "flex": 0
+                    },
+                    {
+                      "type": "text",
+                      "text": "250 Users",
+                      "color": "#ffffff",
+                      "size": "xxs",
+                      "margin": "xs"
+                    }
+                  ],
+                  "flex": 1
+                }
+              ],
+              "margin": "md",
+              "spacing": "sm"
+            }
+          ],
+          "backgroundColor": "#ef4444",
+          "paddingAll": "16px"
+        },
+        "body": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "text",
+              "text": "📊 Reports & Analytics",
+              "weight": "bold",
+              "size": "sm",
+              "color": "#374151"
+            },
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "📅",
+                      "size": "xxl",
+                      "align": "center"
+                    },
+                    {
+                      "type": "text",
+                      "text": "Daily",
+                      "size": "xxs",
+                      "color": "#6b7280",
+                      "align": "center",
+                      "margin": "xs",
+                      "weight": "bold"
+                    },
+                    {
+                      "type": "text",
+                      "text": "สรุปวันนี้",
+                      "size": "xxs",
+                      "color": "#9ca3af",
+                      "align": "center"
+                    }
+                  ],
+                  "flex": 1,
+                  "backgroundColor": "#fff7ed",
+                  "cornerRadius": "10px",
+                  "paddingAll": "10px",
+                  "action": {
+                    "type": "message",
+                    "label": "Daily",
+                    "text": "/daily"
+                  }
+                },
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "🏆",
+                      "size": "xxl",
+                      "align": "center"
+                    },
+                    {
+                      "type": "text",
+                      "text": "Top 10",
+                      "size": "xxs",
+                      "color": "#6b7280",
+                      "align": "center",
+                      "margin": "xs",
+                      "weight": "bold"
+                    },
+                    {
+                      "type": "text",
+                      "text": "ผู้ใช้ Top",
+                      "size": "xxs",
+                      "color": "#9ca3af",
+                      "align": "center"
+                    }
+                  ],
+                  "flex": 1,
+                  "backgroundColor": "#fef3c7",
+                  "cornerRadius": "10px",
+                  "paddingAll": "10px",
+                  "margin": "sm",
+                  "action": {
+                    "type": "message",
+                    "label": "Top",
+                    "text": "/top"
+                  }
+                }
+              ],
+              "margin": "md"
+            },
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "💎",
+                      "size": "xxl",
+                      "align": "center"
+                    },
+                    {
+                      "type": "text",
+                      "text": "Premium",
+                      "size": "xxs",
+                      "color": "#6b7280",
+                      "align": "center",
+                      "margin": "xs",
+                      "weight": "bold"
+                    },
+                    {
+                      "type": "text",
+                      "text": "35 Users",
+                      "size": "xxs",
+                      "color": "#8b5cf6",
+                      "align": "center"
+                    }
+                  ],
+                  "flex": 1,
+                  "backgroundColor": "#faf5ff",
+                  "cornerRadius": "10px",
+                  "paddingAll": "10px",
+                  "action": {
+                    "type": "message",
+                    "label": "Premium",
+                    "text": "/premium"
+                  }
+                },
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "🕐",
+                      "size": "xxl",
+                      "align": "center"
+                    },
+                    {
+                      "type": "text",
+                      "text": "Recent",
+                      "size": "xxs",
+                      "color": "#6b7280",
+                      "align": "center",
+                      "margin": "xs",
+                      "weight": "bold"
+                    },
+                    {
+                      "type": "text",
+                      "text": "ล่าสุด",
+                      "size": "xxs",
+                      "color": "#9ca3af",
+                      "align": "center"
+                    }
+                  ],
+                  "flex": 1,
+                  "backgroundColor": "#eff6ff",
+                  "cornerRadius": "10px",
+                  "paddingAll": "10px",
+                  "margin": "sm",
+                  "action": {
+                    "type": "message",
+                    "label": "Recent",
+                    "text": "/recent"
+                  }
+                }
+              ],
+              "margin": "sm"
+            },
+            {
+              "type": "separator",
+              "margin": "lg"
+            },
+            {
+              "type": "text",
+              "text": "🎯 Feature Usage Analytics",
+              "weight": "bold",
+              "size": "sm",
+              "color": "#374151",
+              "margin": "md"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "Total Usage:",
+                      "size": "xs",
+                      "color": "#6b7280",
+                      "flex": 2
+                    },
+                    {
+                      "type": "text",
+                      "text": "1250 times",
+                      "size": "xs",
+                      "color": "#3b82f6",
+                      "weight": "bold",
+                      "flex": 2,
+                      "align": "end"
+                    }
+                  ]
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "Most Used:",
+                      "size": "xs",
+                      "color": "#6b7280",
+                      "flex": 2
+                    },
+                    {
+                      "type": "text",
+                      "text": "ไม่มีข้อมูล",
+                      "size": "xs",
+                      "color": "#10b981",
+                      "weight": "bold",
+                      "flex": 2,
+                      "align": "end"
+                    }
+                  ],
+                  "margin": "sm"
+                },
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "box",
+                      "layout": "horizontal",
+                      "contents": [
+                        {
+                          "type": "text",
+                          "text": "🔍 Vision:",
+                          "size": "xxs",
+                          "color": "#7f8c8d",
+                          "flex": 3
+                        },
+                        {
+                          "type": "text",
+                          "text": "450",
+                          "size": "xxs",
+                          "color": "#2c3e50",
+                          "flex": 1,
+                          "align": "end"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "box",
+                      "layout": "horizontal",
+                      "contents": [
+                        {
+                          "type": "text",
+                          "text": "🧮 Calculator:",
+                          "size": "xxs",
+                          "color": "#7f8c8d",
+                          "flex": 3
+                        },
+                        {
+                          "type": "text",
+                          "text": "380",
+                          "size": "xxs",
+                          "color": "#2c3e50",
+                          "flex": 1,
+                          "align": "end"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "box",
+                      "layout": "horizontal",
+                      "contents": [
+                        {
+                          "type": "text",
+                          "text": "🌾 Agriculture:",
+                          "size": "xxs",
+                          "color": "#7f8c8d",
+                          "flex": 3
+                        },
+                        {
+                          "type": "text",
+                          "text": "150",
+                          "size": "xxs",
+                          "color": "#2c3e50",
+                          "flex": 1,
+                          "align": "end"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "box",
+                      "layout": "horizontal",
+                      "contents": [
+                        {
+                          "type": "text",
+                          "text": "💰 Accounting:",
+                          "size": "xxs",
+                          "color": "#7f8c8d",
+                          "flex": 3
+                        },
+                        {
+                          "type": "text",
+                          "text": "170",
+                          "size": "xxs",
+                          "color": "#2c3e50",
+                          "flex": 1,
+                          "align": "end"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "box",
+                      "layout": "horizontal",
+                      "contents": [
+                        {
+                          "type": "text",
+                          "text": "📚 Education:",
+                          "size": "xxs",
+                          "color": "#7f8c8d",
+                          "flex": 3
+                        },
+                        {
+                          "type": "text",
+                          "text": "100",
+                          "size": "xxs",
+                          "color": "#2c3e50",
+                          "flex": 1,
+                          "align": "end"
+                        }
+                      ]
+                    }
+                  ],
+                  "margin": "sm",
+                  "spacing": "xs"
+                }
+              ],
+              "backgroundColor": "#f0f9ff",
+              "cornerRadius": "8px",
+              "paddingAll": "12px",
+              "margin": "sm"
+            },
+            {
+              "type": "separator",
+              "margin": "lg"
+            },
+            {
+              "type": "text",
+              "text": "🔧 Admin Management Tools",
+              "weight": "bold",
+              "size": "sm",
+              "color": "#374151",
+              "margin": "md"
+            },
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "👥",
+                      "size": "xxl",
+                      "align": "center"
+                    },
+                    {
+                      "type": "text",
+                      "text": "User List",
+                      "size": "xxs",
+                      "color": "#6b7280",
+                      "align": "center",
+                      "margin": "xs",
+                      "weight": "bold"
+                    },
+                    {
+                      "type": "text",
+                      "text": "รายชื่อผู้ใช้",
+                      "size": "xxs",
+                      "color": "#9ca3af",
+                      "align": "center"
+                    }
+                  ],
+                  "flex": 1,
+                  "backgroundColor": "#f0fdf4",
+                  "cornerRadius": "10px",
+                  "paddingAll": "10px",
+                  "action": {
+                    "type": "message",
+                    "label": "User List",
+                    "text": "/userlist 1"
+                  }
+                },
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "🔍",
+                      "size": "xxl",
+                      "align": "center"
+                    },
+                    {
+                      "type": "text",
+                      "text": "Search",
+                      "size": "xxs",
+                      "color": "#6b7280",
+                      "align": "center",
+                      "margin": "xs",
+                      "weight": "bold"
+                    },
+                    {
+                      "type": "text",
+                      "text": "ค้นหา User",
+                      "size": "xxs",
+                      "color": "#9ca3af",
+                      "align": "center"
+                    }
+                  ],
+                  "flex": 1,
+                  "backgroundColor": "#ecfeff",
+                  "cornerRadius": "10px",
+                  "paddingAll": "10px",
+                  "margin": "sm",
+                  "action": {
+                    "type": "message",
+                    "label": "Search",
+                    "text": "/user "
+                  }
+                }
+              ],
+              "margin": "sm"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "button",
+                  "action": {
+                    "type": "message",
+                    "label": "📢 Broadcast Message",
+                    "text": "/broadcast "
+                  },
+                  "style": "primary",
+                  "color": "#10b981",
+                  "height": "sm",
+                  "margin": "sm"
+                },
+                {
+                  "type": "button",
+                  "action": {
+                    "type": "message",
+                    "label": "📝 Knowledge Management",
+                    "text": "/kb"
+                  },
+                  "style": "secondary",
+                  "height": "sm"
+                },
+                {
+                  "type": "button",
+                  "action": {
+                    "type": "message",
+                    "label": "🏢 Organization List",
+                    "text": "/orglist"
+                  },
+                  "style": "secondary",
+                  "height": "sm",
+                  "margin": "sm"
+                },
+                {
+                  "type": "button",
+                  "action": {
+                    "type": "message",
+                    "label": "🚫 Ban List",
+                    "text": "/banlist"
+                  },
+                  "style": "secondary",
+                  "height": "sm",
+                  "margin": "sm"
+                },
+                {
+                  "type": "button",
+                  "action": {
+                    "type": "message",
+                    "label": "📝 System Logs",
+                    "text": "/logs"
+                  },
+                  "style": "secondary",
+                  "height": "sm",
+                  "margin": "sm"
+                }
+              ],
+              "margin": "sm"
+            }
+          ],
+          "paddingAll": "16px"
+        },
+        "footer": {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "button",
+              "action": {
+                "type": "message",
+                "label": "🏠 Home",
+                "text": "/super"
+              },
+              "style": "link",
+              "height": "sm",
+              "flex": 1
+            },
+            {
+              "type": "button",
+              "action": {
+                "type": "message",
+                "label": "ℹ️ Help",
+                "text": "/help"
+              },
+              "style": "primary",
+              "color": "#6366f1",
+              "height": "sm",
+              "flex": 1,
+              "margin": "sm"
+            },
+            {
+              "type": "text",
+              "text": "3/3",
+              "size": "xxs",
+              "color": "#9ca3af",
+              "align": "center",
+              "flex": 0,
+              "margin": "md"
+            }
+          ],
+          "paddingAll": "10px"
+        }
+      }
+    ]
+  }
+}

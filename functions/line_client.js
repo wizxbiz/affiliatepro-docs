@@ -1,20 +1,20 @@
 const line = require("@line/bot-sdk");
-const { defineSecret } = require("firebase-functions/params");
 
 // ==========================================
-// DEFINE SECRETS (Don't call .value() here!)
+// ENV-BASED CREDENTIALS (ไม่ใช้ Secret Manager)
+// อ่านจาก functions/.env ไฟล์โดยตรง
 // ==========================================
 
 // Injection Molding Bot (Bot 1)
-const injectionChannelSecret = defineSecret("INJECTION_CHANNEL_SECRET");
-const injectionChannelAccessToken = defineSecret("INJECTION_CHANNEL_ACCESS_TOKEN");
+const injectionChannelSecret = { value: () => process.env.INJECTION_CHANNEL_SECRET || process.env.LINE_CHANNEL_SECRET || "" };
+const injectionChannelAccessToken = { value: () => process.env.INJECTION_CHANNEL_ACCESS_TOKEN || process.env.LINE_CHANNEL_ACCESS_TOKEN || "" };
 
 // TukTuk Thailand Bot (Bot 2)
-const tuktukChannelSecret = defineSecret("TUKTUK_CHANNEL_SECRET");
-const tuktukChannelAccessToken = defineSecret("TUKTUK_CHANNEL_ACCESS_TOKEN");
+const tuktukChannelSecret = { value: () => process.env.TUKTUK_CHANNEL_SECRET || "" };
+const tuktukChannelAccessToken = { value: () => process.env.TUKTUK_CHANNEL_ACCESS_TOKEN || "" };
 
 // ==========================================
-// HELPER FUNCTIONS (Call .value() at runtime)
+// HELPER FUNCTIONS (อ่าน process.env โดยตรง)
 // ==========================================
 
 /**

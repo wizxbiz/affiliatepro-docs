@@ -977,7 +977,7 @@
 
       try {
         const deviceId = await getDeviceId();
-        const response = await fetch('https://us-central1-appinjproject.cloudfunctions.net/verifyWebPin', {
+        const response = await fetch('/api/auth/verify-pin', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ pin, deviceId })

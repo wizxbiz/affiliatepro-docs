@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' show sqrt, pow;
 import 'dart:ui'; // ✅ For BackdropFilter
 
@@ -93,6 +94,14 @@ class _WinRiderServiceScreenState extends State<WinRiderServiceScreen>
   int _onlineRidersCount = 0;
   bool _hasNewJob = false;
   int _selectedNavIndex = 0;
+
+  // ── Real-time subscriptions ───────────────────────────────────────────────
+  StreamSubscription<QuerySnapshot>? _jobsSub;
+  StreamSubscription<DocumentSnapshot>? _myRequestSub;
+
+  // ── Customer active booking tracking ─────────────────────────────────────
+  String? _activeRequestId;
+  Map<String, dynamic>? _activeRequest;
   bool _isPanelExpanded = false;
   final double _panelMinHeight = 110;
   final double _panelMaxHeight = 420;
@@ -186,6 +195,8 @@ class _WinRiderServiceScreenState extends State<WinRiderServiceScreen>
 
   @override
   void dispose() {
+    _jobsSub?.cancel();
+    _myRequestSub?.cancel();
     _pageController.dispose();
     _pulseAnimationController.dispose();
     _slideAnimationController.dispose();
@@ -264,7 +275,11 @@ class _WinRiderServiceScreenState extends State<WinRiderServiceScreen>
         });
         _initMap(); // Initialize map once user is detected
       }
-      await _loadItems();
+      if (_isRider) {
+        _subscribeToRiderJobs(); // real-time stream — no await
+      } else {
+        await _loadItems();
+      }
       await _loadCounts();
     } catch (e) {
       debugPrint('WinRiderService init error: $e');
@@ -427,6 +442,94 @@ class _WinRiderServiceScreenState extends State<WinRiderServiceScreen>
     } catch (e) {
       debugPrint('loadCounts error: $e');
     }
+  }
+
+  // ── Real-time: rider job feed via Firestore snapshots ─────────────────────
+  void _subscribeToRiderJobs() {
+    _jobsSub?.cancel();
+    _jobsSub = FirebaseFirestore.instance
+        .collection('win_rider_requests')
+        .where('status', isEqualTo: 'pending')
+        .orderBy('createdAt', descending: true)
+        .limit(20)
+        .snapshots()
+        .listen((snap) async {
+      if (!mounted) return;
+
+      // Compute distance for each job if we have location
+      Position? myPos;
+      try {
+        myPos = await Geolocator.getLastKnownPosition();
+        myPos ??= TukTukLocationService().getCachedPosition();
+      } catch (_) {}
+
+      final newJobs = snap.docs.map((doc) {
+        final data = Map<String, dynamic>.from(doc.data());
+        if (myPos != null && data['pickupLat'] != null && data['pickupLng'] != null) {
+          final dlat = (data['pickupLat'] as num).toDouble() - myPos.latitude;
+          final dlng = (data['pickupLng'] as num).toDouble() - myPos.longitude;
+          final distKm = sqrt(pow(dlat * 111.0, 2) + pow(dlng * 111.0 * 0.985, 2));
+          data['distance'] = double.parse(distKm.toStringAsFixed(1));
+        }
+        return TukTukItem.fromRiderJob(doc);
+      }).toList();
+
+      final prevCount = _items.where((i) => i.type == TukTukItemType.riderJob).length;
+      final hasNew = newJobs.length > prevCount;
+
+      setState(() {
+        _items = newJobs;
+        _filteredItems = newJobs;
+        _pendingJobsCount = newJobs.length;
+        if (hasNew) _hasNewJob = true;
+      });
+
+      if (hasNew) {
+        Future.delayed(const Duration(seconds: 3), () {
+          if (mounted) setState(() => _hasNewJob = false);
+        });
+      }
+    }, onError: (e) => debugPrint('_subscribeToRiderJobs error: $e'));
+  }
+
+  // ── Real-time: customer tracks their active booking ───────────────────────
+  void _listenToMyRequest(String requestId) {
+    _myRequestSub?.cancel();
+    setState(() {
+      _activeRequestId = requestId;
+      _activeRequest = {'status': 'pending'};
+    });
+
+    _myRequestSub = FirebaseFirestore.instance
+        .collection('win_rider_requests')
+        .doc(requestId)
+        .snapshots()
+        .listen((snap) {
+      if (!snap.exists || !mounted) return;
+      final data = snap.data()!;
+      setState(() => _activeRequest = data);
+
+      // Auto-clear when terminal state reached
+      if (data['status'] == 'completed' || data['status'] == 'cancelled') {
+        Future.delayed(const Duration(seconds: 5), () {
+          if (mounted) {
+            setState(() {
+              _activeRequestId = null;
+              _activeRequest = null;
+            });
+          }
+          _myRequestSub?.cancel();
+        });
+      }
+    }, onError: (e) => debugPrint('_listenToMyRequest error: $e'),);
+  }
+
+  // ── Fare estimate (Thai WIN pricing) ─────────────────────────────────────
+  /// Base 25 THB covers first 1 km; 7 THB per km after that.
+  int _fareEstimate(double distanceKm) {
+    const int base = 25;
+    if (distanceKm <= 1.0) return base;
+    return base + ((distanceKm - 1.0) * 7).round();
   }
 
   // ── Load feed items based on role ─────────────────────────────────────────
@@ -1230,7 +1333,7 @@ class _WinRiderServiceScreenState extends State<WinRiderServiceScreen>
     final pos = await TukTukLocationService()
         .getCurrentLocationAndSync(forceRefresh: true);
     if (pos != null) {
-      _mapController?.runJavaScript("""
+      await _mapController?.runJavaScript("""
         if (typeof map !== 'undefined' && map) map.setView([${pos.latitude}, ${pos.longitude}], 16);
         if (typeof youMarker !== 'undefined' && youMarker) youMarker.setLatLng([${pos.latitude}, ${pos.longitude}]);
       """);
@@ -1406,6 +1509,10 @@ class _WinRiderServiceScreenState extends State<WinRiderServiceScreen>
                   Expanded(
                     child: _buildFeed(),
                   ),
+
+                  // Customer active booking status panel
+                  if (!_isRider && _activeRequest != null)
+                    _buildActiveBookingPanel(),
 
                   // Bottom Navigation (Integrated in panel)
                   _buildCompactNav(),
@@ -1845,10 +1952,162 @@ class _WinRiderServiceScreenState extends State<WinRiderServiceScreen>
                       ),
                     );
                   },
+            onRequestCreated: _listenToMyRequest,
           );
         }
         return const SizedBox.shrink();
       },
+    );
+  }
+
+  Widget _buildActiveBookingPanel() {
+    final status = _activeRequest?['status'] as String? ?? 'pending';
+    final riderName = _activeRequest?['riderName'] as String? ?? '';
+    final riderPhone = _activeRequest?['riderPhone'] as String? ?? '';
+    final plate = _activeRequest?['riderPlate'] as String? ?? '';
+    final fare = _activeRequest?['estimatedPrice'] as num? ?? 0;
+
+    // Status values match what web rider writes: pending→accepted→in_progress→completed
+    const steps = ['pending', 'accepted', 'in_progress', 'completed'];
+    final stepLabels = ['รอวิน', 'รับงานแล้ว', 'กำลังเดินทาง', 'เสร็จสิ้น'];
+    final stepIcons = [
+      Icons.hourglass_top_rounded,
+      Icons.check_circle_rounded,
+      Icons.electric_moped_rounded,
+      Icons.star_rounded,
+    ];
+    final currentStep = steps.indexOf(status).clamp(0, steps.length - 1);
+    final isTerminal = status == 'completed' || status == 'cancelled';
+    final color = isTerminal
+        ? (status == 'completed' ? Colors.green : Colors.red)
+        : const Color(0xFF00C4CC);
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      margin: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0D1B3E),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withValues(alpha: 0.5)),
+        boxShadow: [BoxShadow(color: color.withValues(alpha: 0.2), blurRadius: 12)],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Header row
+          InkWell(
+            onTap: () => setState(() => _isPanelExpanded = !_isPanelExpanded),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: Row(
+                children: [
+                  Icon(stepIcons[currentStep], color: color, size: 22),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      status == 'cancelled'
+                          ? 'ยกเลิกการเรียกวิน'
+                          : 'สถานะ: ${stepLabels[currentStep]}',
+                      style: GoogleFonts.kanit(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    '฿${fare.toStringAsFixed(0)}',
+                    style: GoogleFonts.kanit(color: color, fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(width: 8),
+                  Icon(
+                    _isPanelExpanded ? Icons.expand_more : Icons.expand_less,
+                    color: Colors.white54,
+                    size: 20,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // Progress steps
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: List.generate(steps.length, (i) {
+                final done = i <= currentStep;
+                return Expanded(
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 22,
+                        height: 22,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: done ? color : Colors.white12,
+                        ),
+                        child: Icon(stepIcons[i], size: 12,
+                            color: done ? Colors.white : Colors.white38,),
+                      ),
+                      if (i < steps.length - 1)
+                        Expanded(
+                          child: Container(
+                            height: 2,
+                            color: i < currentStep ? color : Colors.white12,
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              }),
+            ),
+          ),
+          const SizedBox(height: 8),
+          // Expanded detail
+          if (_isPanelExpanded && riderName.isNotEmpty) ...[
+            const Divider(color: Colors.white12, height: 1),
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                children: [
+                  _infoRow(Icons.person_rounded, 'วิน', riderName),
+                  if (riderPhone.isNotEmpty)
+                    _infoRow(Icons.phone_rounded, 'โทรศัพท์', riderPhone),
+                  if (plate.isNotEmpty)
+                    _infoRow(Icons.confirmation_number_rounded, 'ทะเบียน', plate),
+                ],
+              ),
+            ),
+          ],
+          if (isTerminal)
+            TextButton(
+              onPressed: () => setState(() {
+                _activeRequest = null;
+                _activeRequestId = null;
+              }),
+              child: Text('ปิด', style: GoogleFonts.kanit(color: Colors.white54)),
+            ),
+          const SizedBox(height: 4),
+        ],
+      ),
+    );
+  }
+
+  Widget _infoRow(IconData icon, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.white38, size: 16),
+          const SizedBox(width: 8),
+          Text('$label: ', style: GoogleFonts.kanit(color: Colors.white38, fontSize: 13)),
+          Expanded(
+            child: Text(value,
+                style: GoogleFonts.kanit(color: Colors.white, fontSize: 13),
+                overflow: TextOverflow.ellipsis,),
+          ),
+        ],
+      ),
     );
   }
 
@@ -2207,12 +2466,14 @@ class WinRiderAvailableCard extends StatelessWidget {
   final Map<String, dynamic> riderData;
   final String? currentUserId;
   final VoidCallback? onChat;
+  final void Function(String requestId)? onRequestCreated;
 
   const WinRiderAvailableCard({
     super.key,
     required this.riderData,
     this.currentUserId,
     this.onChat,
+    this.onRequestCreated,
   });
 
   static const _vehicleMap = {
@@ -2261,7 +2522,7 @@ class WinRiderAvailableCard extends StatelessWidget {
           ? await resolveNearestStation(pos.latitude, pos.longitude)
           : null;
 
-      await FirebaseFirestore.instance.collection('win_rider_requests').add({
+      final docRef = await FirebaseFirestore.instance.collection('win_rider_requests').add({
         'requesterId': currentUserId,
         'targetRiderId': riderId,   // pre-selected rider
         'riderId': null,            // filled by rider on accept
@@ -2284,6 +2545,7 @@ class WinRiderAvailableCard extends StatelessWidget {
         'type': 'direct_call',
         'source': 'flutter_app',
       });
+      onRequestCreated?.call(docRef.id); // real-time status tracking for customer
 
       await FirebaseFirestore.instance.collection('notifications').add({
         'recipientId': riderId,

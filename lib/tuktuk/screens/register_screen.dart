@@ -340,8 +340,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       try {
         final tokenomics = TukTukTokenomics();
         await tokenomics.awardPoints(
-          MissionType.postCreation, // Fallback mission type
-          pointsOverride: 50,
+          MissionType.postCreation,
           description: 'โบนัสลงทะเบียนสมาร์ทสมาชิกครบถ้วน',
         );
       } catch (e) {
@@ -376,9 +375,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     try {
       const apiBase =
-          'https://us-central1-appinjproject.cloudfunctions.net';
+          'https://tuktukfeed-api.imtthailand2019.workers.dev';
       final resp = await http.post(
-        Uri.parse('$apiBase/verifyWebPin'),
+        Uri.parse('$apiBase/api/auth/verify-pin'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'pin': pin}),
       );

@@ -7,7 +7,7 @@
     <meta name="description"
         content="TukTuk Marketplace - ตลาดซื้อขายออนไลน์ C2C เชื่อมต่อผู้ซื้อผู้ขายผ่าน LINE ลงขายฟรี AI ช่วยสร้างโพสต์">
     <meta name="keywords" content="TukTuk, Marketplace, ซื้อขาย, C2C, LINE, ตลาดออนไลน์, มือสอง, ฟรี">
-    <title>TukTuk Marketplace - ตลาดซื้อขายออนไลน์ มือถือ อิเล็กทรอนิกส์ มือสองคุณภาพ</title>
+    <title>TukTuk Marketplace - ตลาดนัดซื้อขายออนไลน์ มือถือ อิเล็กทรอนิกส์ มือสองคุณภาพ</title>
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -38,6 +38,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-functions-compat.js"></script>
+    <script src="/js/firebase-init.js"></script>
 
     <!-- Analytics SDK -->
     <script src="/js/analytics.js"></script>
@@ -49,13 +50,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- AOS CSS -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <!-- Persistence UI & Standard Logic -->
+    <!-- PC Layout & Core Design -->
+    <link rel="stylesheet" href="css/pc-layout.css">
+    <link rel="stylesheet" href="css/index-vars.css">
+    <link rel="stylesheet" href="css/mobile-header.css">
     <link rel="stylesheet" href="css/persistent-ui.css">
-    <script src="js/persistent-ui.js"></script>
-    <!-- Google Fonts -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap"
-        rel="stylesheet">
+    <!-- 🌟 Glass Ultra — Premium Glassmorphism -->
+    <link rel="stylesheet" href="css/glass-ultra.css?v=20260424">
+    <style>
+        /* ─── PC Top Nav (Desktop ≥992px) ─── */
+        @media (min-width: 992px) {
+            header.header { display: none !important; }
+            .marquee-container { display: none !important; }
+            /* เว้นที่ให้ pcTopNav fixed 64px */
+            .search-section { margin-top: 64px; }
+        }
+    </style>
 
     <style>
         :root {
@@ -95,7 +105,7 @@
                 radial-gradient(circle at 80% 80%, rgba(255, 0, 80, 0.05) 0%, transparent 40%);
             background-attachment: fixed;
             /* Prevent fixed bottom-nav from covering last content row on ALL screen sizes */
-            padding-bottom: calc(140px + env(safe-area-inset-bottom, 0px));
+            padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
         }
 
         /* Smooth Scrollbar */
@@ -116,86 +126,7 @@
             background: var(--primary);
         }
 
-        /* 🚀 TUKTUK BRAND IDENTITY - BUILT-IN LUXURY */
-        .tuktuk-brand-icon {
-            height: 1.2em;
-            width: auto;
-            vertical-align: middle;
-            border-radius: 50%;
-            filter: drop-shadow(0 0 8px rgba(0, 242, 234, 0.3));
-            transition: var(--transition);
-            object-fit: cover;
-        }
 
-        .center-btn .tuktuk-brand-icon {
-            height: 54px !important;
-            width: 54px !important;
-            animation: breathe-premium 4s ease-in-out infinite;
-        }
-
-        @keyframes breathe-premium {
-
-            0%,
-            100% {
-                transform: scale(1);
-                filter: drop-shadow(0 0 5px rgba(0, 242, 234, 0.5));
-            }
-
-            50% {
-                transform: scale(1.1);
-                filter: drop-shadow(0 0 20px rgba(0, 242, 234, 0.8));
-            }
-        }
-
-        .center-btn {
-            position: absolute !important;
-            left: 50% !important;
-            transform: translateX(-50%) !important;
-            top: -38px !important;
-            z-index: 10000005 !important;
-            /* Higher than overlay (10000000) */
-            background: linear-gradient(135deg, var(--secondary), var(--primary)) !important;
-            border: 3px solid var(--dark-deep) !important;
-            padding: 0 !important;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(0, 242, 234, 0.25) !important;
-            pointer-events: auto !important;
-            flex-shrink: 0 !important;
-            width: 66px !important;
-            height: 66px !important;
-            overflow: visible !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            border-radius: 50%;
-        }
-
-        .center-btn::before {
-            content: '';
-            position: absolute;
-            inset: -8px;
-            background: linear-gradient(135deg, var(--secondary), var(--primary), var(--secondary));
-            background-size: 200% 200%;
-            border-radius: 50%;
-            z-index: -1;
-            animation: rotate-gradient-slow 6s linear infinite;
-            opacity: 0.4;
-            filter: blur(8px);
-        }
-
-        @keyframes rotate-gradient-slow {
-            0% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-
-            100% {
-                background-position: 0% 50%;
-            }
-        }
 
         /* ========================================
            MARQUEE SCROLLING TEXT - FUTURISTIC
@@ -247,344 +178,6 @@
             }
         }
 
-        /* ========================================
-           BOTTOM NAVIGATION - FUTURISTIC DOCK
-           ======================================== */
-        .bottom-nav {
-            position: fixed;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 95%;
-            max-width: 600px;
-            height: 72px;
-            /* background / blur moved to ::before so overflow:visible works on all browsers */
-            background: transparent;
-            border-radius: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: stretch;
-            padding: 0 10px;
-            gap: 0;
-            overflow: visible !important;
-            z-index: 10000000;
-            /* Ultra-high z-index to stay on top of all other overlays */
-            transition: all 0.3s ease;
-        }
-
-        /* Glass background layer — separate from flex children so center-btn overflows freely */
-        .bottom-nav::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 36px;
-            background: rgba(8, 14, 28, 0.85);
-            backdrop-filter: blur(40px) saturate(220%);
-            -webkit-backdrop-filter: blur(40px) saturate(220%);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(0, 242, 234, 0.05), 0 1px 0 rgba(255, 255, 255, 0.04) inset;
-            z-index: -1;
-            pointer-events: none;
-            transition: var(--transition);
-        }
-
-        /* 🚀 NEW: Hide bottom nav when any modal is open to prevent overlap/blocking */
-        /* Removed body.modal-open .bottom-nav { display: none !important; } to keep it accessible */
-        /* Prevents accidental clicks on siblings when the Hub is active */
-        .bottom-nav.overlay-active .bottom-nav-item {
-            pointer-events: none !important;
-            opacity: 0.2 !important;
-            filter: blur(2px) !important;
-            transform: scale(0.9) !important;
-            transition: all 0.3s ease !important;
-        }
-
-        .bottom-nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-dim);
-            text-decoration: none;
-            font-size: 0.72rem;
-            font-weight: 600;
-            letter-spacing: 0.1px;
-            line-height: 1.1;
-            transition: color 0.2s ease, transform 0.15s ease;
-            position: relative;
-            flex: 1 1 0;
-            /* equal share of remaining space */
-            min-width: 0;
-            /* allow shrinking below content */
-            min-height: 52px;
-            padding: 6px 2px;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-            overflow: hidden;
-        }
-
-        .bottom-nav-item span {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 100%;
-            display: block;
-            text-align: center;
-        }
-
-        .bottom-nav-item i {
-            font-size: 1.45rem;
-            margin-bottom: 3px;
-            transition: transform 0.2s ease;
-            flex-shrink: 0;
-        }
-
-        .bottom-nav-item:hover {
-            color: rgba(255, 255, 255, 0.75);
-        }
-
-        .bottom-nav-item:active {
-            transform: scale(0.92);
-        }
-
-        .bottom-nav-item:active i {
-            transform: scale(0.88);
-        }
-
-        .bottom-nav-item.active {
-            color: var(--primary);
-        }
-
-        .bottom-nav-item.active i {
-            filter: drop-shadow(0 0 6px rgba(0, 242, 234, 0.6));
-        }
-
-        .bottom-nav-item.active::after {
-            content: '';
-            position: absolute;
-            bottom: 6px;
-            width: 5px;
-            height: 5px;
-            background: var(--primary);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--primary), 0 0 20px var(--primary);
-            transition: all 0.3s ease;
-        }
-
-        /* Spacer keeps left/right nav items balanced while center-btn is absolute */
-        .center-nav-gap {
-            flex: 0 0 70px;
-            pointer-events: none;
-        }
-
-        .center-btn {
-            position: absolute !important;
-            left: 50% !important;
-            transform: translateX(-50%) !important;
-            top: -32px !important;
-            z-index: 100000005 !important;
-            background: linear-gradient(135deg, #0f172a, #1e293b) !important;
-            border: 2px solid rgba(0, 242, 234, 0.3) !important;
-            padding: 0 !important;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 242, 234, 0.15) !important;
-            pointer-events: auto !important;
-            flex-shrink: 0 !important;
-            width: 60px !important;
-            height: 60px !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-        }
-
-        .center-btn.active {
-            transform: translateX(-50%) scale(0.9) !important;
-            border-color: var(--primary) !important;
-            box-shadow: 0 0 30px rgba(0, 242, 234, 0.4) !important;
-        }
-
-        .center-btn-inner {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .tuktuk-brand-icon {
-            height: 54px !important;
-            width: 54px !important;
-            border-radius: 50%;
-            object-fit: cover;
-            animation: breathe-premium 4s ease-in-out infinite;
-        }
-
-        @keyframes breathe-premium {
-
-            0%,
-            100% {
-                transform: scale(1);
-                filter: drop-shadow(0 0 5px rgba(0, 191, 255, 0.5));
-            }
-
-            50% {
-                transform: scale(1.1);
-                filter: drop-shadow(0 0 20px rgba(0, 191, 255, 0.8));
-            }
-        }
-
-        /* Profile Image Wrapper */
-        .nav-profile-wrapper {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            padding: 1px;
-            background: linear-gradient(135deg, #6366f1, #a855f7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 4px;
-            transition: all 0.3s;
-        }
-
-        .bottom-nav-item.active .nav-profile-wrapper {
-            transform: translateY(-5px) scale(1.1);
-            box-shadow: 0 0 15px rgba(168, 85, 247, 0.6);
-        }
-
-        .nav-profile-wrapper img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #0f172a;
-        }
-
-        @media (max-width: 991.98px) {
-            body {
-                padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px)) !important;
-            }
-
-            .bottom-nav {
-                width: calc(100% - 24px);
-                bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-                height: 64px;
-            }
-
-            .center-btn {
-                width: 62px !important;
-                height: 62px !important;
-                top: -32px !important;
-            }
-
-            .tuktuk-brand-icon {
-                height: 50px !important;
-                width: 50px !important;
-            }
-
-            .center-nav-gap {
-                flex: 0 0 66px;
-            }
-        }
-
-
-        .bottom-nav-item.active {
-            color: var(--primary);
-        }
-
-        .bottom-nav-item.active i {
-            filter: drop-shadow(0 0 6px rgba(0, 242, 234, 0.6));
-        }
-
-        .bottom-nav-item.active::after {
-            content: '';
-            position: absolute;
-            bottom: 4px;
-            width: 22px;
-            height: 3px;
-            background: var(--primary);
-            border-radius: 2px;
-            box-shadow: 0 0 8px var(--primary);
-        }
-
-        /* Spacer keeps left/right nav items balanced while center-btn is absolute */
-        .center-nav-gap {
-            flex: 0 0 70px;
-            pointer-events: none;
-        }
-
-        @media (min-width: 992px) {
-            .bottom-nav {
-                max-width: 520px;
-                height: 70px;
-            }
-
-            .bottom-nav-item i {
-                font-size: 1.35rem;
-            }
-
-            .bottom-nav-item {
-                font-size: 0.65rem;
-            }
-
-            .center-btn {
-                width: 68px !important;
-                height: 68px !important;
-                top: -36px !important;
-            }
-
-            .center-btn .tuktuk-brand-icon {
-                height: 56px !important;
-                width: 56px !important;
-            }
-
-            .center-nav-gap {
-                flex: 0 0 72px;
-            }
-        }
-
-        /* ========================================
-           RESPONSIVE ADJUSTMENTS & UI POLISH
-           ======================================== */
-        @media (max-width: 991.98px) {
-            body {
-                padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px)) !important;
-            }
-
-            .header {
-                display: none !important;
-            }
-
-            .bottom-nav {
-                width: calc(100% - 24px);
-                bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-                height: 64px;
-                padding: 0 8px;
-            }
-
-            .center-btn {
-                width: 62px !important;
-                height: 62px !important;
-                top: -32px !important;
-                /* Slightly more lift for better mobile UX */
-            }
-
-            .center-btn .tuktuk-brand-icon {
-                height: 50px !important;
-                width: 50px !important;
-            }
-
-            .center-nav-gap {
-                flex: 0 0 66px;
-            }
-
-            .bottom-nav-item {
-                font-size: 0.58rem;
-            }
-
-            .bottom-nav-item i {
-                font-size: 1.15rem;
-            }
-        }
 
         .search-overlay {
             position: fixed;
@@ -1376,39 +969,43 @@
         /* Product Grid */
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 15px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
         }
 
         /* Responsive Grid Breakpoints */
         @media (max-width: 1400px) {
             .product-grid {
-                grid-template-columns: repeat(5, 1fr);
+                grid-template-columns: repeat(4, 1fr);
+                gap: 18px;
             }
         }
 
         @media (max-width: 1200px) {
             .product-grid {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
             }
         }
 
         @media (max-width: 992px) {
             .product-grid {
                 grid-template-columns: repeat(3, 1fr);
+                gap: 14px;
             }
         }
 
         @media (max-width: 768px) {
             .product-grid {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
             }
         }
 
         @media (max-width: 576px) {
             .product-grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
+                gap: 10px;
             }
         }
 
@@ -1449,27 +1046,31 @@
            PRODUCT CARD - FUTURISTIC PREMIUM
            ======================================== */
         .product-card {
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(25px) saturate(180%);
-            -webkit-backdrop-filter: blur(25px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(10, 15, 30, 0.6);
+            backdrop-filter: blur(24px) saturate(200%);
+            -webkit-backdrop-filter: blur(24px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 20px;
             overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             height: 100%;
             display: flex;
             width: 100%;
             flex-direction: column;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.05);
             cursor: pointer;
+            min-height: 320px;
+            will-change: transform, box-shadow, border-color;
         }
 
         .product-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            background: rgba(30, 41, 59, 0.6);
-            border-color: var(--primary);
-            box-shadow: 0 30px 60px rgba(0, 210, 255, 0.15), 0 0 20px rgba(0, 210, 255, 0.1);
+            transform: translateY(-6px) scale(1.02);
+            background: rgba(16, 24, 48, 0.75);
+            border-color: rgba(0, 242, 234, 0.4);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45), 
+                        0 0 25px rgba(0, 242, 234, 0.15), 
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
             z-index: 10;
         }
 
@@ -1480,36 +1081,40 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--primary), transparent);
-            transform: translateX(-100%);
-            transition: transform 0.6s ease;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            opacity: 0.2;
+            transition: opacity 0.3s, height 0.3s, box-shadow 0.3s;
+            z-index: 2;
         }
 
         .product-card:hover::before {
-            transform: translateX(100%);
+            opacity: 1;
+            height: 4px;
+            box-shadow: 0 1px 10px rgba(0, 242, 234, 0.8);
         }
 
         .product-image {
             position: relative;
             width: 100%;
-            aspect-ratio: 1;
+            aspect-ratio: 4 / 3;
             overflow: hidden;
-            background: #0f172a;
+            background: linear-gradient(135deg, #0c1628, #1a2744);
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
 
         .product-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .product-card:hover .product-image img {
-            transform: scale(1.1);
+            transform: scale(1.06);
         }
 
         /* Glossy Overlay effect on hover */
@@ -1563,110 +1168,187 @@
             position: absolute;
             bottom: 12px;
             left: 12px;
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #e2e8f0;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #f1f5f9;
             padding: 4px 10px;
-            border-radius: 10px;
+            border-radius: 20px;
             font-size: 0.65rem;
+            font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             z-index: 5;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
         .product-card:hover .product-location-badge {
-            background: var(--primary);
-            color: white;
+            background: rgba(0, 242, 234, 0.85);
+            border-color: rgba(0, 242, 234, 1);
+            color: #0f172a;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 242, 234, 0.3);
         }
 
         .product-info {
-            padding: 16px;
+            padding: 14px 16px 16px;
             flex: 1;
             display: flex;
             flex-direction: column;
-            background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.2));
+            gap: 6px;
         }
 
         .product-name {
             font-weight: 600;
-            font-size: 0.95rem;
-            color: #f8fafc;
-            margin-bottom: 10px;
-            line-height: 1.4;
+            font-size: 0.92rem;
+            color: #e8edf5;
+            line-height: 1.45;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            height: 2.8em;
-            transition: color 0.3s;
+            min-height: 2.6em;
+            transition: color 0.25s;
         }
 
         .product-card:hover .product-name {
-            color: var(--primary);
+            color: #70e1ff;
         }
 
         .product-price {
-            font-size: 1.4rem;
+            font-size: 1.35rem;
             font-weight: 800;
             color: #00d2ff;
-            margin-bottom: 15px;
             display: flex;
             align-items: baseline;
-            gap: 2px;
-            text-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+            gap: 1px;
+            text-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
+            letter-spacing: -0.3px;
+            margin-top: 2px;
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+
+        .product-card:hover .product-price {
+            color: #00f2ea;
+            text-shadow: 0 0 25px rgba(0, 242, 234, 0.6);
         }
 
         .price-currency {
-            font-size: 0.8rem;
-            font-weight: 600;
-            opacity: 0.8;
+            font-size: 0.82rem;
+            font-weight: 700;
+            opacity: 0.85;
+            margin-right: 1px;
+        }
+
+        .product-views {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.72rem;
+            color: #64748b;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 2px 8px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            white-space: nowrap;
+        }
+
+        .product-card:hover .product-views {
+            color: #70e1ff;
+            background: rgba(0, 242, 234, 0.08);
+            border-color: rgba(0, 242, 234, 0.15);
         }
 
         .product-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.07);
+            padding-top: 10px;
             margin-top: auto;
         }
 
         .product-seller {
             display: flex;
             align-items: center;
-            gap: 8px;
-            max-width: 65%;
+            gap: 7px;
+            max-width: 70%;
+            min-width: 0;
         }
 
         .seller-avatar-mini {
-            width: 26px;
-            height: 26px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(0, 210, 255, 0.25);
             background: #1e293b;
+            flex-shrink: 0;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover .seller-avatar-mini {
+            transform: scale(1.08);
+        }
+
+        .seller-avatar-fallback {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: #ffffff;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            flex-shrink: 0;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover .seller-avatar-fallback {
+            transform: scale(1.08);
+        }
+
+        @media (max-width: 768px) {
+            .seller-avatar-fallback {
+                width: 24px;
+                height: 24px;
+                font-size: 0.65rem;
+            }
         }
 
         .seller-name-text {
             font-size: 0.75rem;
             font-weight: 500;
-            color: #cbd5e1;
+            color: #94a3b8;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            transition: color 0.3s;
         }
 
-        .product-stats {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.7rem;
-            color: #94a3b8;
+        .product-card:hover .seller-name-text {
+            color: #f1f5f9;
+        }
+
+        .product-time {
+            font-size: 0.68rem;
+            color: #64748b !important;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: color 0.3s;
+        }
+
+        .product-card:hover .product-time {
+            color: #94a3b8 !important;
         }
 
         /* ========================================
@@ -1694,23 +1376,26 @@
             width: 38px;
             height: 38px;
             border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             font-size: 0.95rem;
-            backdrop-filter: blur(10px);
-            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            background: rgba(15, 23, 42, 0.7);
             color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
         .action-btn:hover {
-            transform: scale(1.1);
+            transform: scale(1.1) translateY(-2px);
             background: var(--primary);
             border-color: var(--primary);
-            box-shadow: 0 0 15px var(--primary);
+            color: #0f172a;
+            box-shadow: 0 0 15px rgba(0, 242, 234, 0.5);
         }
 
         /* Quick View Button on Image */
@@ -1720,18 +1405,20 @@
             left: 0;
             width: 100%;
             padding: 12px;
-            background: linear-gradient(to top, rgba(0, 210, 255, 0.85), transparent);
-            color: white;
+            background: linear-gradient(to top, rgba(0, 242, 234, 0.9), rgba(0, 242, 234, 0.7));
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: #0f172a;
             text-align: center;
-            font-weight: 700;
+            font-weight: 800;
             font-size: 0.8rem;
             transform: translateY(100%);
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             cursor: pointer;
             z-index: 6;
-            backdrop-filter: blur(4px);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .product-card:hover .product-quick-view {
@@ -1739,27 +1426,88 @@
         }
 
         .product-quick-view:hover {
-            background: var(--primary);
+            background: #00d2ff;
+            color: #0f172a;
+        }
+
+        .product-wishlist {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 8;
+        }
+
+        .product-wishlist:hover {
+            transform: scale(1.15);
+            background: rgba(255, 255, 255, 0.15);
+            color: #ff4757;
+            border-color: rgba(255, 71, 87, 0.4);
+            box-shadow: 0 0 15px rgba(255, 71, 87, 0.4);
+        }
+
+        .product-wishlist.active {
+            color: #ff4757;
+            background: rgba(255, 71, 87, 0.2);
+            border-color: rgba(255, 71, 87, 0.5);
+            box-shadow: 0 0 15px rgba(255, 71, 87, 0.3);
+            animation: heartPulse 0.4s ease-out;
+        }
+
+        @keyframes heartPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
         }
 
         /* Responsive Fixes for Product Card */
         @media (max-width: 768px) {
             .product-card {
-                border-radius: 16px;
+                border-radius: 14px;
+                min-height: unset;
+            }
+
+            .product-image {
+                aspect-ratio: 1 / 1;
             }
 
             .product-info {
-                padding: 12px;
+                padding: 10px 12px 12px;
+                gap: 4px;
             }
 
             .product-name {
-                font-size: 0.85rem;
-                height: 2.4em;
+                font-size: 0.82rem;
+                min-height: 2.4em;
             }
 
             .product-price {
-                font-size: 1.25rem;
-                margin-bottom: 10px;
+                font-size: 1.1rem;
+            }
+
+            .product-meta {
+                padding-top: 8px;
+            }
+
+            .seller-avatar-mini {
+                width: 24px;
+                height: 24px;
+            }
+
+            .seller-name-text {
+                font-size: 0.7rem;
             }
 
             .product-actions {
@@ -1782,9 +1530,27 @@
             }
         }
 
-        /* ========================================
-           SELLER DASHBOARD MODAL STYLES
-           ======================================== */
+        @media (min-width: 992px) {
+            /* ซ่อน elements ที่ไม่จำเป็นบน desktop */
+            body.pc-mode .header,
+            body.pc-mode .marquee-container,
+            body.pc-mode .hero-section { display: none !important; }
+
+            /* คง dark theme — ไม่เปลี่ยนเป็น light */
+            body.pc-mode {
+                background-color: var(--dark-deep) !important;
+                color: var(--text-main) !important;
+                padding-bottom: 0 !important;
+            }
+
+            /* hero-banner (ต่างจาก hero-section) แสดงได้ปกติ */
+            body.pc-mode .hero-banner { display: block !important; }
+
+            /* ซ่อน mobile-only floating elements */
+            body.pc-mode .bottom-nav,
+            body.pc-mode .win-rider-promo-fab { display: none !important; }
+        }
+
         .seller-dashboard-modal {
             position: fixed;
             top: 0;
@@ -2737,8 +2503,21 @@
         .category-cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-            gap: 12px;
-            padding: 0 10px;
+            gap: 15px;
+            padding: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .category-cards-grid {
+                display: flex;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                gap: 12px;
+                padding-bottom: 15px;
+                scrollbar-width: none;
+            }
+            .category-cards-grid::-webkit-scrollbar { display: none; }
+            .category-card { flex: 0 0 auto; width: 100px; }
         }
 
         /* ========================================
@@ -2763,6 +2542,7 @@
             background: var(--glass-strong);
             transform: translateY(-5px);
             border-color: var(--primary);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
         }
 
         .category-card.active {
@@ -3125,37 +2905,41 @@
                 padding: 10px;
             }
 
-            /* Buyer Experience: 2 columns on mobile */
+            /* Buyer Experience: 2 columns on small mobile */
             .product-grid {
                 grid-template-columns: repeat(2, 1fr) !important;
-                gap: 10px !important;
+                gap: 8px !important;
             }
 
             .product-card {
                 border-radius: 12px;
             }
 
+            .product-image {
+                aspect-ratio: 1 / 1;
+            }
+
             .product-info {
-                padding: 8px;
+                padding: 9px 10px 10px;
+                gap: 3px;
             }
 
             .product-name {
-                font-size: 0.75rem;
-                height: 2.2em;
-                margin-bottom: 5px;
+                font-size: 0.78rem;
+                min-height: 2.2em;
             }
 
             .product-price {
-                font-size: 0.9rem;
+                font-size: 1rem;
             }
 
             .product-location-badge {
-                font-size: 0.6rem;
+                font-size: 0.58rem;
                 padding: 2px 6px;
             }
 
             .seller-name-text {
-                font-size: 0.7rem;
+                font-size: 0.68rem;
             }
         }
 
@@ -5944,7 +5728,7 @@
 
             .product-grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 15px;
+                gap: 12px;
             }
 
             .product-price {
@@ -5952,18 +5736,18 @@
             }
 
             .product-name {
-                font-size: 0.9rem;
+                font-size: 0.88rem;
             }
         }
 
         @media (max-width: 480px) {
             .product-grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
+                gap: 8px;
             }
 
             .product-info {
-                padding: 10px;
+                padding: 9px 10px 10px;
             }
         }
 
@@ -6203,19 +5987,127 @@
     <script src="/js/cookie-consent.js?v=2.0"></script>
     <script src="/js/search.js"></script>
     <script>
-        if (window.self !== window.top || new URLSearchParams(window.location.search).get('embedded') === 'true') {
-            const style = document.createElement('style');
-            style.textContent = '.bottom-nav { display: none !important; }';
-            document.head.appendChild(style);
-        }
+        (function() {
+            var _isEmbed = window.self !== window.top || new URLSearchParams(window.location.search).get('embedded') === 'true';
+            if (_isEmbed) {
+                var style = document.createElement('style');
+                style.textContent = '.bottom-nav{display:none!important}#pcTopNav,.pc-top-nav{display:none!important}.sidebar{top:0!important}';
+                document.head.appendChild(style);
+                // Mark html element (body not available in <head>)
+                document.documentElement.setAttribute('data-embedded', 'true');
+            }
+        })();
     </script>
     <script src="/js/liff-config.js"></script>
     <script src="/js/r2-upload.js"></script>
 </head>
 
 <body>
+    <!-- PC Top Navigation (Desktop ≥992px, hidden on mobile) -->
+    <div class="pc-top-nav" id="pcTopNav" style="display:none">
+        <div class="pc-nav-container">
+            <div class="pc-top-left">
+                <a href="index.html" class="pc-logo" title="TukTuk Thailand">
+                    <img src="assets/images/logo.png" style="width:32px;height:32px;border-radius:8px;"
+                        onerror="this.src='https://placehold.co/32x32?text=Tu'">
+                    <span>TukTuk</span>
+                </a>
+                <div class="pc-search-container" id="pcSearchContainer">
+                    <i class="fas fa-search pc-search-icon"></i>
+                    <input type="text" class="pc-search-input" id="pcNavSearchInput" placeholder="ค้นหาสินค้า..."
+                        onfocus="this.parentElement.classList.add('focused')"
+                        onblur="this.parentElement.classList.remove('focused')"
+                        oninput="var s=document.getElementById('searchInput');if(s){s.value=this.value;if(typeof searchProducts==='function')searchProducts();}"
+                        onkeydown="if(event.key==='Enter'){var s=document.getElementById('searchInput');if(s){s.value=this.value;if(typeof searchProducts==='function')searchProducts();}}">
+                    <span class="pc-search-shortcut">/</span>
+                    <div class="pc-search-suggestions" id="pcNavSearchSuggestions"></div>
+                </div>
+            </div>
+            <div class="pc-top-center">
+                <div class="pc-nav-icons">
+                    <div class="pc-nav-icon" title="หน้าหลัก" onclick="_tnav('index.html')" style="cursor:pointer">
+                        <i class="fas fa-home"></i>
+                        <span class="pc-nav-label">หน้าหลัก</span>
+                    </div>
+                    <div class="pc-nav-icon" title="ดูเพลิน" onclick="_tnav('index.html')" style="cursor:pointer">
+                        <i class="fas fa-play-circle"></i>
+                        <span class="pc-nav-label">ดูเพลิน</span>
+                    </div>
+                    <div class="pc-nav-icon active" title="ตลาดนัด">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span class="pc-nav-label">ตลาดนัด</span>
+                    </div>
+                </div>
+            </div>
+            <div class="pc-top-right">
+                <div class="pc-actions">
+                    <div class="pc-icon-btn" onclick="_tnav('index.html')" title="แจ้งเตือน">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="pc-icon-btn" onclick="_tnav('messages.html')" title="ข้อความ">
+                        <i class="fas fa-comment-dots"></i>
+                    </div>
+                    <div class="pc-icon-btn" onclick="typeof WizmobizAuth !== 'undefined' ? WizmobizAuth.handleShopAccess() : _tnav('seller-dashboard.html')" title="ร้านค้าของฉัน">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <div class="pc-user-menu" onclick="_tnav('channel.html')" title="โปรไฟล์" style="cursor:pointer">
+                        <img src="assets/images/logo.png" id="pcTopProfileImg" class="pc-user-avatar"
+                            onerror="this.src='https://placehold.co/32x32?text=Me'">
+                        <span class="pc-user-name" id="pcTopNavigatorName">โปรไฟล์ของคุณ</span>
+                        <i class="fas fa-chevron-down" style="font-size:10px;color:var(--color-text-tertiary,#64748b)"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // ── Smart Navigation: postMessage ถ้าอยู่ใน SPA iframe, location.href ถ้า standalone ──
+        function _tnav(href) {
+            if (window.self !== window.top) {
+                window.top.postMessage({ type: 'NAVIGATE', href: href }, window.location.origin);
+            } else {
+                window.location.href = href;
+            }
+        }
+        // ── Load profile from localStorage ──
+        (function () {
+            function loadNavProfile() {
+                var keys = ['user_data', 'tuktuk_line_session', 'wizmobiz_session'];
+                var user = null;
+                for (var i = 0; i < keys.length; i++) {
+                    try { var v = localStorage.getItem(keys[i]); if (v) { user = JSON.parse(v); break; } } catch (e) { }
+                }
+                if (!user) return;
+                var nameEl = document.getElementById('pcTopNavigatorName');
+                var imgEl = document.getElementById('pcTopProfileImg');
+                if (nameEl) nameEl.textContent = user.displayName || user.name || 'โปรไฟล์ของคุณ';
+                var pic = user.photoURL || user.pictureUrl || user.avatar || user.profilePicture;
+                if (imgEl && pic) imgEl.src = pic;
+            }
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadNavProfile);
+            else loadNavProfile();
+        })();
+    </script>
+
+    <script>
+        // PC Mode Toggle Logic (matches index.html)
+        function checkPcMode() {
+            var isEmbed = document.documentElement.getAttribute('data-embedded') === 'true'
+                || window.self !== window.top
+                || new URLSearchParams(window.location.search).get('embedded') === 'true';
+            if (isEmbed) return;
+            if (window.innerWidth >= 992) {
+                document.body.classList.add('pc-mode');
+            } else {
+                document.body.classList.remove('pc-mode');
+            }
+        }
+        window.addEventListener('resize', checkPcMode);
+        checkPcMode();
+    </script>
+
     <!-- Confirm Modal -->
-    <div class="confirm-modal" id="confirmModal">
+    <div class="confirm-modal" id="confirmModal" style="display: none;">
         <div class="confirm-modal-content">
             <div class="confirm-modal-icon warning" id="confirmIcon">
                 <i class="fas fa-exclamation-triangle" id="confirmIconI"></i>
@@ -6231,7 +6123,6 @@
 
     <!-- Seller Dashboard Modal moved to line 5340+ with enhanced dark theme -->
 
-    <!-- Header -->
     <header class="header">
         <div class="header-top">
             <div class="container">
@@ -6361,8 +6252,9 @@
         </div>
     </section>
 
+    <!-- Custom PC Styles Boost -->
     <style>
-        /* ── Search Filter Pills ── */
+        #pcTopNav { z-index: 9999 !important; }
         .search-filters-row {
             display: flex;
             align-items: center;
@@ -6370,24 +6262,24 @@
             margin-top: 12px;
             flex-wrap: wrap;
         }
-
         .filter-pill {
+            flex-shrink: 0;
+            white-space: nowrap;
             display: flex;
             align-items: center;
             gap: 5px;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 10px;
-            padding: 6px 10px 6px 10px;
-            transition: border-color 0.2s, background 0.2s;
+            padding: 6px 12px;
+            transition: all 0.2s;
             cursor: pointer;
         }
-
-        .filter-pill:hover,
-        .filter-pill:focus-within {
-            border-color: rgba(0, 242, 234, 0.45);
-            background: rgba(0, 242, 234, 0.06);
+        .filter-pill:hover {
+            border-color: var(--primary);
+            background: rgba(var(--primary-rgb), 0.1);
         }
+
 
         .filter-pill-icon {
             color: rgba(0, 242, 234, 0.7);
@@ -9236,28 +9128,18 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
     <script>
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyD92Lw0vd32ce6m4J2nBVBWZRYBy4aDB_s",
-            authDomain: "appinjproject.firebaseapp.com",
-            projectId: "appinjproject",
-            storageBucket: "appinjproject.firebasestorage.app",
-            messagingSenderId: "408718656984",
-            appId: "1:408718656984:web:76e9cc7a89e9b4c9d5a8ab"
-        };
-
-        // Initialize Firebase
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
+        // Use global Firebase instance from firebase-init.js
         const db = firebase.firestore();
 
         // Optimize connection settings - Fix for "Could not reach Cloud Firestore backend"
         try {
+            // Optimized: Disable force long polling to allow faster WebSocket connections
+            /* 
             db.settings({
                 experimentalForceLongPolling: true
             });
-            console.log('✅ Firestore settings updated: Force Long Polling enabled');
+            */
+            console.log('⚡ Firestore connection optimized: WebSockets preferred (Long Polling disabled)');
         } catch (e) {
             console.warn('⚠️ Could not set Firestore settings:', e);
         }
@@ -9607,6 +9489,26 @@
 
             actionsHtml += '</div>';
 
+            // Generate beautiful deterministic gradient fallback avatar if picture is missing
+            let avatarHtml = '';
+            if (product.sellerPictureUrl) {
+                avatarHtml = `<img src="${product.sellerPictureUrl}" class="seller-avatar-mini" alt="Seller">`;
+            } else {
+                const sellerName = product.sellerName || 'ผู้ขาย';
+                const initial = sellerName.charAt(0).toUpperCase();
+                const charCode = initial.charCodeAt(0) || 0;
+                const gradients = [
+                    'linear-gradient(135deg, #a78bfa, #7c3aed)', // Purple
+                    'linear-gradient(135deg, #fda4af, #f43f5e)', // Pink/Red
+                    'linear-gradient(135deg, #86efac, #10b981)', // Green
+                    'linear-gradient(135deg, #93c5fd, #3b82f6)', // Blue
+                    'linear-gradient(135deg, #fde047, #eab308)', // Yellow/Amber
+                    'linear-gradient(135deg, #f59e0b, #d97706)', // Orange
+                ];
+                const gradient = gradients[charCode % gradients.length];
+                avatarHtml = `<div class="seller-avatar-fallback" style="background: ${gradient};">${initial}</div>`;
+            }
+
             return `
                 <div class="product-card" data-product-id="${product.id}" data-seller-id="${product.lineUserId || ''}">
                     <div class="product-image" onclick="viewProduct('${product.id}')" style="cursor: pointer;">
@@ -9640,12 +9542,10 @@
                             <div class="product-seller" style="cursor:pointer; position:relative; z-index:10;" 
                                  onclick="event.stopPropagation(); event.preventDefault(); filterBySeller('${product.lineUserId}', '${(product.sellerName || 'ผู้ขาย').replace(/'/g, "\\'")}');" 
                                  title="เข้าชมร้านค้า">
-                                ${product.sellerPictureUrl
-                    ? `<img src="${product.sellerPictureUrl}" class="seller-avatar-mini" alt="Seller">`
-                    : `<i class="fas fa-user-circle"></i>`}
+                                ${avatarHtml}
                                 <span class="seller-name-text">${product.sellerName || 'ผู้ขาย'}</span>
                             </div>
-                            <div class="product-time text-muted" style="font-size: 0.65rem;">
+                            <div class="product-time text-muted">
                                 ${getTimeAgo(product.createdAt)}
                             </div>
                         </div>
@@ -10977,8 +10877,11 @@
 
                 if (!isLoadMore) {
                     if (loading) loading.style.display = 'flex';
-                    if (container) container.innerHTML = renderSkeletons(8); // Show skeletons while loading
-                    allProducts = [];
+                    // 🪄 Optimized: Only show skeletons if container is empty (prevents flash if loading from cache)
+                    if (container && (container.innerHTML.trim() === '' || container.querySelector('.empty-state') || container.querySelector('.skeleton-card'))) {
+                        container.innerHTML = renderSkeletons(8);
+                    }
+                    allProducts = isLoadMore ? allProducts : []; // Preserving allProducts if we have cache
                     lastProductDoc = null;
                 } else {
                     if (loadMoreBtn) loadMoreBtn.style.display = 'none';
@@ -11021,6 +10924,14 @@
 
                     allProducts = isLoadMore ? [...allProducts, ...newProducts] : newProducts;
                     console.log('✅ Updated allProducts:', allProducts.length);
+
+                    // 💾 Cache first batch for instant reload next time
+                    if (!isLoadMore && allProducts.length > 0) {
+                        localStorage.setItem('cached_marketplace_products', JSON.stringify({
+                            data: allProducts,
+                            timestamp: Date.now()
+                        }));
+                    }
 
                     // Show/Hide load more button
                     if (loadMoreContainer) loadMoreContainer.style.display = snapshot.docs.length < PAGE_LIMIT ? 'none' : 'block';
@@ -11545,12 +11456,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            loadProducts();
-            initAIGenerator();
-            checkShowMyShopButton();
-        });
 
         // ========================================
         // AI POST GENERATOR
@@ -12412,29 +12317,81 @@
         document.addEventListener('DOMContentLoaded', async function () {
             console.log('🚀 Marketplace Initializing...');
 
-            // ✅ Run in sequence to avoid race condition
-            await checkLineAIPostData();
-            await checkAndShowUserBadge();
-            await loadUserSavedItems();
+            // 1. Try to load from cache for INSTANT UI (Optimistic Rendering)
+            try {
+                const cache = JSON.parse(localStorage.getItem('cached_marketplace_products'));
+                if (cache && cache.data && (Date.now() - cache.timestamp < 15 * 60 * 1000)) { // 15 min cache
+                    console.log('💎 Loading products from cache (Instant Load)');
+                    allProducts = cache.data;
+                    renderProducts(allProducts);
+                    updateStats();
+                    updateHeroProducts();
+                }
+            } catch (e) { console.warn('Cache error:', e); }
 
-            // Load Core Data
-            loadProducts(); // Load Secondhand
-            loadCommunityProducts(); // Load Community
-            checkSuperAdmin(); // Check Admin Rights
+            // 2. Start loading fresh data IMMEDIATELY (Non-blocking)
+            loadProducts(); 
+            
+            // 2. Load promotions and other enhancements
+            loadPromotions();
+            if (typeof initAIGenerator === 'function') initAIGenerator();
+            if (typeof checkShowMyShopButton === 'function') checkShowMyShopButton();
 
-            // Handle Deep Links
-            const urlParams = new URLSearchParams(window.location.search);
-            const productId = urlParams.get('product') || urlParams.get('productId');
-            if (productId) {
-                console.log('🔗 Deep link found:', productId);
-                setTimeout(() => viewProduct(productId), 1000);
+            // 3. Handle auth/session in parallel (Don't block data load)
+            checkLineAIPostData().then(() => {
+                checkAndShowUserBadge();
+                loadUserSavedItems();
+                checkSuperAdmin();
+            });
+
+            // 4. Lazy load community products after a short delay
+            setTimeout(() => {
+                if (typeof allCommunityProducts !== 'undefined' && allCommunityProducts.length === 0) {
+                    loadCommunityProducts();
+                }
+                if (typeof loadCommunityVideos === 'function') loadCommunityVideos();
+            }, 1000);
+
+            // 5. Initialize UI Utilities
+            if (typeof initFooterState === 'function') {
+                initFooterState('footer-main');
+                initFooterState('footer-secondary');
             }
 
-            // Initialize footers
-            initFooterState('mainFooter');
-            initFooterState('communityFooter');
+            // 6. Set up image preview listener for ads (Moved from redundant listener)
+            const imageInput = document.getElementById('adImageUrl');
+            if (imageInput) {
+                imageInput.addEventListener('blur', function () {
+                    const url = this.value.trim();
+                    const preview = document.getElementById('adImagePreview');
+                    const container = document.getElementById('adImagePreviewContainer');
 
-            console.log('🔐 Init complete. lineUserId:', lineUserId);
+                    if (url) {
+                        if (preview) preview.src = url;
+                        if (container) container.style.display = 'block';
+                        if (preview) preview.onerror = () => {
+                            if (container) container.style.display = 'none';
+                        };
+                    } else {
+                        if (container) container.style.display = 'none';
+                    }
+                });
+            }
+            // 7. Handle Deep Links
+            const urlParams = new URLSearchParams(window.location.search);
+            const productIdLink = urlParams.get('product') || urlParams.get('productId');
+            if (productIdLink) {
+                console.log('🔗 Deep link found:', productIdLink);
+                setTimeout(() => viewProduct(productIdLink), 1000);
+            }
+
+            // 8. Initialize footers
+            if (typeof initFooterState === 'function') {
+                initFooterState('mainFooter');
+                initFooterState('communityFooter');
+            }
+
+            console.log('🔐 Init complete. lineUserId:', lineUserId || 'guest');
         });
 
         // Unified User Badge Management using WizmobizAuth
@@ -12545,6 +12502,9 @@
                     userId = session.lineUserId;
                 }
             }
+
+            // Update global lineUserId for other functions to use
+            if (userId) lineUserId = userId;
 
             if (!userId) {
                 console.log('🔐 User not logged in, Admin FAB hidden');
@@ -12659,7 +12619,12 @@
 
             if (!isEditing) {
                 adData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-                adData.createdBy = lineUserId || 'admin';
+                
+                // Use current authed user ID if global lineUserId is missing
+                const currentUser = typeof WizmobizAuth !== 'undefined' ? WizmobizAuth.getUser() : null;
+                const activeUid = lineUserId || (currentUser ? (currentUser.lineUserId || currentUser.uid) : 'admin');
+                
+                adData.createdBy = activeUid;
                 adData.clicks = 0;
                 adData.views = 0;
             }
@@ -13053,38 +13018,7 @@
             goToPromoSlide((currentPromoSlide - 1 + slides.length) % slides.length);
         }
 
-        // Preview image when URL changes
-        document.addEventListener('DOMContentLoaded', function () {
-            const imageInput = document.getElementById('adImageUrl');
-            if (imageInput) {
-                imageInput.addEventListener('blur', function () {
-                    const url = this.value.trim();
-                    const preview = document.getElementById('adImagePreview');
-                    const container = document.getElementById('adImagePreviewContainer');
-
-                    if (url) {
-                        preview.src = url;
-                        container.style.display = 'block';
-                        preview.onerror = () => {
-                            container.style.display = 'none';
-                        };
-                    } else {
-                        container.style.display = 'none';
-                    }
-                });
-            }
-        });
-
-        // Initialize promotions and check admin on page load
-        document.addEventListener('DOMContentLoaded', async function () {
-            // Load promotions immediately
-            await loadPromotions();
-
-            // Check if user is super admin (after a short delay for session to load)
-            setTimeout(async () => {
-                await checkSuperAdmin();
-            }, 1000);
-        });
+        // Promotions and Admin initialization handled in main DOMContentLoaded
 
         // ========================================
         // COMMUNITY SHORTS LOGIC
@@ -14721,6 +14655,29 @@
     </div>
 
     <script>
+        // PC Mode Content Orchestration
+        window.addEventListener('load', () => {
+            function orchestrateMarketPC() {
+                if (document.body.classList.contains('pc-mode')) {
+                    const pcFeed = document.getElementById('pcMarketFeed');
+                    const pcCategories = document.getElementById('pcMarketCategories');
+                    
+                    // Identify original mobile content
+                    const mobileFeed = document.querySelector('.products-section');
+                    const mobileCategories = document.querySelector('.quick-cat-slider');
+                    
+                    if (pcFeed && mobileFeed && !pcFeed.children.length) {
+                        pcFeed.appendChild(mobileFeed);
+                    }
+                    if (pcCategories && mobileCategories && !pcCategories.children.length) {
+                        pcCategories.appendChild(mobileCategories);
+                    }
+                }
+            }
+            orchestrateMarketPC();
+            window.addEventListener('resize', orchestrateMarketPC);
+        });
+
         // ========================================
         // QUICK VIEW FUNCTIONS
         // ========================================
@@ -15249,6 +15206,14 @@
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>window._marketHubClick = window.handleTukTukButtonClick;</script>
+    <script src="js/persistent-ui.js"></script>
+    <script>
+    // persistent-ui.js logic
+    if (window.PersistentUI && typeof window._marketHubClick === 'function') {
+        window.PersistentUI.handleTukTukButtonClick = window._marketHubClick;
+    }
+    </script>
     <!-- Persistence UI handles iframe/embedded mode automatic hiding -->
     <!-- WIN RIDER Promotional Floating Button -->
 
@@ -15258,8 +15223,6 @@
         <i class="fas fa-motorcycle"></i>
         <span>สมัครวินฟรี 1 เดือน!</span>
     </a>
-    <!-- Persistent UI Container (Injected via JS) -->
-    <div id="persistent-ui-root"></div>
 </body>
 
 </html>

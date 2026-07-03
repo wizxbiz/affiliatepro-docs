@@ -1,0 +1,27 @@
+# =============================================================
+# Cloudflare Pages _redirects
+# Optimized to prevent ERR_TOO_MANY_REDIRECTS loops
+# =============================================================
+
+# ── 1. Firebase redirects (301 Permanent) ──────────────────────
+/training/hotrunner            /training/hot-runner            301
+/training/hotrunner/*          /training/hot-runner/:splat     301
+
+# ── 2. SPA Wildcard Routing (200 Rewrite) ──────────────────────
+# Note: Clean URLs like /marketplace, /login, /seller-dashboard
+# are handled NATIVELY by Cloudflare Pages.
+# We only map wildcards here to support client-side sub-routing.
+/marketplace/*                 /marketplace.html               200
+/seller-dashboard/*            /seller-dashboard.html          200
+/win-service/*                 /win-service.html               200
+/tuktuk/*                      /tuktuk/index.html              200
+/training/hot-runner/*         /training/hot-runner/index.html 200
+
+# ── 3. API endpoints → Cloudflare Workers ─────────────────────
+# Proxied through Pages to bypass CORS
+/share                         https://tuktukfeed-api.imtthailand2019.workers.dev/share          200
+/community-share               https://tuktukfeed-api.imtthailand2019.workers.dev/community-share 200
+/lineLoginCallback             https://tuktukfeed-api.imtthailand2019.workers.dev/lineLoginCallback 200
+/verifyWebPin                  https://tuktukfeed-api.imtthailand2019.workers.dev/verifyWebPin   200
+/checkFreeUsage                https://tuktukfeed-api.imtthailand2019.workers.dev/checkFreeUsage 200
+/api/*                         https://tuktukfeed-api.imtthailand2019.workers.dev/api/:splat     200

@@ -116,18 +116,29 @@ exports.verifyWebPin = onRequest({
         });
 
         // ดึงข้อมูลโปรไฟล์ผู้ใช้เพื่อส่งกลับไปยัง App
-        // Check both users and line_users for backwards compatibility
         let userData = {};
         const userRef = db.collection("users").doc(userId);
         const userSnap = await userRef.get();
         if (userSnap.exists) {
             userData = userSnap.data();
-        } else {
-            console.log(`ℹ️ User not found in 'users' collection, checking 'line_users' for ${userId}`);
-            const lineUserRef = db.collection("line_users").doc(userId);
-            const lineUserSnap = await lineUserRef.get();
-            if (lineUserSnap.exists) {
-                userData = lineUserSnap.data();
+        }
+
+        // เสมอ: ถ้า displayName หรือ pictureUrl ยังขาดอยู่ ให้ดึงจาก line_users
+        // (users doc มีแค่ stats, ชื่อ/รูปจริงอยู่ใน line_users)
+        if (!userData.displayName || !userData.pictureUrl) {
+            try {
+                const lineUserSnap = await db.collection("line_users").doc(userId).get();
+                if (lineUserSnap.exists) {
+                    const lineData = lineUserSnap.data();
+                    userData.displayName = userData.displayName
+                        || lineData.displayName || lineData.name || lineData.userName;
+                    userData.pictureUrl = userData.pictureUrl
+                        || lineData.pictureUrl || lineData.picture
+                        || lineData.photoURL || lineData.avatar;
+                    console.log(`ℹ️ Merged LINE profile: ${userData.displayName}`);
+                }
+            } catch (e) {
+                console.warn("Could not fetch line_users for profile merge:", e.message);
             }
         }
 
@@ -571,3 +582,58 @@ exports.lineLoginCallback = onRequest({
         res.status(500).json({ success: false, error: "LINE Authentication failed" });
     }
 });
+
+/**
+ * 🔄 refreshWebSession
+ * Issues a fresh Firebase Custom Token for an existing user session.
+ * Called by app-init.js on page load when Firebase Auth is missing but
+ * localStorage session exists (e.g. user logged in before this fix).
+ *
+ * Body: { userId: string }
+ * Response: { success: true, sessionToken: string }
+ */
+exports.refreshWebSession = onRequest({
+    region: "us-central1",
+    cors: true,
+}, async (req, res) => {
+    res.set("Access-Control-Allow-Origin", "*");
+    if (req.method === "OPTIONS") return res.status(204).send("");
+    if (req.method !== "POST") return res.status(405).json({ success: false, error: "Method not allowed" });
+
+    try {
+        const { userId } = req.body;
+        if (!userId || typeof userId !== "string" || userId.length < 5) {
+            return res.status(400).json({ success: false, error: "Invalid userId" });
+        }
+
+        const db = getFirestore();
+
+        // Verify user exists in Firestore (users or line_users)
+        const [userSnap, lineSnap] = await Promise.all([
+            db.collection("users").doc(userId).get(),
+            db.collection("line_users").doc(userId).get(),
+        ]);
+
+        if (!userSnap.exists && !lineSnap.exists) {
+            return res.status(404).json({ success: false, error: "User not found" });
+        }
+
+        const userData = userSnap.exists ? userSnap.data() : lineSnap.data();
+
+        // Issue fresh custom token
+        const auth = getAuth();
+        const customToken = await auth.createCustomToken(userId, {
+            provider: "refresh",
+            isPremium: userData?.isPremium || false,
+            isAdmin: userData?.isAdmin || false,
+        });
+
+        console.log(`🔄 refreshWebSession: issued token for ${userId}`);
+        res.json({ success: true, sessionToken: customToken });
+
+    } catch (error) {
+        console.error("refreshWebSession error:", error.message);
+        res.status(500).json({ success: false, error: "Token refresh failed" });
+    }
+});
+

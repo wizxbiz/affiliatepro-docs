@@ -15,12 +15,12 @@
  * @updated 2025-12-21
  */
 
-const {GoogleGenerativeAI} = require("@google/generative-ai");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 // 🔗 Import Teaching System
-const { 
-  TEXTBOOK_TEACHING_PROMPT, 
-  QUIZ_DATABASE 
+const {
+  TEXTBOOK_TEACHING_PROMPT,
+  QUIZ_DATABASE
 } = require('./textbook_teaching_prompt');
 const lessonsData = require('./lessons_database.json');
 
@@ -114,11 +114,11 @@ const BADGES = {
  * ระบบระดับผู้เรียน
  */
 const LEARNER_LEVELS = {
-  1: {name: "🌱 ผู้เริ่มต้น", minScore: 0, maxScore: 50},
-  2: {name: "🌿 ผู้เรียนรู้", minScore: 51, maxScore: 150},
-  3: {name: "🌳 ผู้ชำนาญ", minScore: 151, maxScore: 300},
-  4: {name: "⭐ ผู้เชี่ยวชาญ", minScore: 301, maxScore: 500},
-  5: {name: "👑 ปรมาจารย์", minScore: 501, maxScore: Infinity},
+  1: { name: "🌱 ผู้เริ่มต้น", minScore: 0, maxScore: 50 },
+  2: { name: "🌿 ผู้เรียนรู้", minScore: 51, maxScore: 150 },
+  3: { name: "🌳 ผู้ชำนาญ", minScore: 151, maxScore: 300 },
+  4: { name: "⭐ ผู้เชี่ยวชาญ", minScore: 301, maxScore: 500 },
+  5: { name: "👑 ปรมาจารย์", minScore: 501, maxScore: Infinity },
 };
 
 // =====================================================
@@ -694,9 +694,9 @@ const ADVANCED_EXAM_QUESTIONS = {
       id: "adv_3_1",
       question: "ขั้นตอนการฉีดมีกี่ระยะ และข้อใดเรียงถูกต้อง?",
       options: [
-        "A. 3 ระยะ: ฉีด → เย็น → ดีด", 
-        "B. 4 ระยะ: ฉีดเร็ว → ฉีดช้า → อัด → เย็น", 
-        "C. 5 ระยะ: ปิดแม่พิมพ์ → ฉีด → อัด → เย็น → เปิด", 
+        "A. 3 ระยะ: ฉีด → เย็น → ดีด",
+        "B. 4 ระยะ: ฉีดเร็ว → ฉีดช้า → อัด → เย็น",
+        "C. 5 ระยะ: ปิดแม่พิมพ์ → ฉีด → อัด → เย็น → เปิด",
         "D. 6 ระยะ: เตรียม → ปิด → ฉีด → อัด → เย็น → ดีด"
       ],
       answer: "B",
@@ -708,9 +708,9 @@ const ADVANCED_EXAM_QUESTIONS = {
       id: "adv_3_2",
       question: "V-P Switchover คืออะไร?",
       options: [
-        "A. จุดเปลี่ยนจากโหมด Manual เป็น Auto", 
-        "B. จุดเปลี่ยนจากการควบคุมความเร็ว เป็นควบคุมความดัน", 
-        "C. จุดเปลี่ยนอุณหภูมิ", 
+        "A. จุดเปลี่ยนจากโหมด Manual เป็น Auto",
+        "B. จุดเปลี่ยนจากการควบคุมความเร็ว เป็นควบคุมความดัน",
+        "C. จุดเปลี่ยนอุณหภูมิ",
         "D. จุดเปลี่ยนทิศทางสกรู"
       ],
       answer: "B",
@@ -722,9 +722,9 @@ const ADVANCED_EXAM_QUESTIONS = {
       id: "adv_3_3",
       question: "Cushion คืออะไรและควรมีค่าเท่าไร?",
       options: [
-        "A. ระยะพลาสติกเหลือหน้าสกรู ควร 3-10mm", 
-        "B. ระยะหยุดแม่พิมพ์ ควร 0mm", 
-        "C. แรงดันสูงสุด ควร 100%", 
+        "A. ระยะพลาสติกเหลือหน้าสกรู ควร 3-10mm",
+        "B. ระยะหยุดแม่พิมพ์ ควร 0mm",
+        "C. แรงดันสูงสุด ควร 100%",
         "D. เวลาพักเครื่อง ควร 5 วินาที"
       ],
       answer: "A",
@@ -736,9 +736,9 @@ const ADVANCED_EXAM_QUESTIONS = {
       id: "adv_3_4",
       question: "Back Pressure มีหน้าที่อะไร?",
       options: [
-        "A. ดันพลาสติกเข้าแม่พิมพ์", 
-        "B. ช่วยผสมพลาสติกและไล่อากาศขณะ Plasticizing", 
-        "C. ปิดแม่พิมพ์", 
+        "A. ดันพลาสติกเข้าแม่พิมพ์",
+        "B. ช่วยผสมพลาสติกและไล่อากาศขณะ Plasticizing",
+        "C. ปิดแม่พิมพ์",
         "D. ดีดชิ้นงาน"
       ],
       answer: "B",
@@ -754,9 +754,9 @@ const ADVANCED_EXAM_QUESTIONS = {
       id: "adv_4_1",
       question: "ปัญหา Silver Streak เกิดจากสาเหตุใดเป็นหลัก?",
       options: [
-        "A. อุณหภูมิต่ำเกินไป", 
-        "B. ความชื้นในเม็ดพลาสติก", 
-        "C. ความเร็วฉีดช้า", 
+        "A. อุณหภูมิต่ำเกินไป",
+        "B. ความชื้นในเม็ดพลาสติก",
+        "C. ความเร็วฉีดช้า",
         "D. แรงปิดแม่พิมพ์มากเกิน"
       ],
       answer: "B",
@@ -768,9 +768,9 @@ const ADVANCED_EXAM_QUESTIONS = {
       id: "adv_4_2",
       question: "ปัญหา Jetting เกิดจากสาเหตุใดและแก้อย่างไร?",
       options: [
-        "A. ความเร็วฉีดช้า → เพิ่มความเร็ว", 
-        "B. ความเร็วฉีดเร็วเกิน → ลดความเร็วช่วงแรก", 
-        "C. อุณหภูมิสูง → ลดอุณหภูมิ", 
+        "A. ความเร็วฉีดช้า → เพิ่มความเร็ว",
+        "B. ความเร็วฉีดเร็วเกิน → ลดความเร็วช่วงแรก",
+        "C. อุณหภูมิสูง → ลดอุณหภูมิ",
         "D. แรงดันต่ำ → เพิ่มแรงดัน"
       ],
       answer: "B",
@@ -782,9 +782,9 @@ const ADVANCED_EXAM_QUESTIONS = {
       id: "adv_4_3",
       question: "ปัญหา Void (โพรงอากาศ) ต่างจาก Bubble อย่างไร?",
       options: [
-        "A. Void เกิดจากความชื้น, Bubble เกิดจากการหดตัว", 
-        "B. Void เกิดจากการหดตัวภายใน, Bubble เกิดจากก๊าซ/ความชื้น", 
-        "C. เหมือนกันทุกประการ", 
+        "A. Void เกิดจากความชื้น, Bubble เกิดจากการหดตัว",
+        "B. Void เกิดจากการหดตัวภายใน, Bubble เกิดจากก๊าซ/ความชื้น",
+        "C. เหมือนกันทุกประการ",
         "D. Void เกิดที่ผิว, Bubble เกิดภายใน"
       ],
       answer: "B",
@@ -796,9 +796,9 @@ const ADVANCED_EXAM_QUESTIONS = {
       id: "adv_4_4",
       question: "การวิเคราะห์ปัญหาด้วยหลัก 6M เริ่มจากข้อใดก่อน?",
       options: [
-        "A. Machine - ตรวจเครื่องจักร", 
-        "B. Material - ตรวจวัตถุดิบ", 
-        "C. Man - ตรวจผู้ปฏิบัติงาน", 
+        "A. Machine - ตรวจเครื่องจักร",
+        "B. Material - ตรวจวัตถุดิบ",
+        "C. Man - ตรวจผู้ปฏิบัติงาน",
         "D. ไม่มีลำดับ ตรวจพร้อมกันทุกข้อ"
       ],
       answer: "B",
@@ -814,9 +814,9 @@ const ADVANCED_EXAM_QUESTIONS = {
       id: "adv_5_1",
       question: "Scientific Molding คืออะไร?",
       options: [
-        "A. การฉีดแบบดั้งเดิม", 
-        "B. การฉีดโดยใช้หลักวิทยาศาสตร์และข้อมูลเชิงตัวเลข", 
-        "C. การฉีดโดยใช้ AI", 
+        "A. การฉีดแบบดั้งเดิม",
+        "B. การฉีดโดยใช้หลักวิทยาศาสตร์และข้อมูลเชิงตัวเลข",
+        "C. การฉีดโดยใช้ AI",
         "D. การฉีดในห้องปฏิบัติการ"
       ],
       answer: "B",
@@ -828,9 +828,9 @@ const ADVANCED_EXAM_QUESTIONS = {
       id: "adv_5_2",
       question: "Decoupled Molding II (D-II) มีหลักการอย่างไร?",
       options: [
-        "A. ควบคุมทุกอย่างด้วยความดัน", 
-        "B. แยกการควบคุม Filling (V) และ Packing (P) อย่างชัดเจน", 
-        "C. ไม่ต้องใช้ Holding", 
+        "A. ควบคุมทุกอย่างด้วยความดัน",
+        "B. แยกการควบคุม Filling (V) และ Packing (P) อย่างชัดเจน",
+        "C. ไม่ต้องใช้ Holding",
         "D. ฉีดด้วยความเร็วคงที่ตลอด"
       ],
       answer: "B",
@@ -842,9 +842,9 @@ const ADVANCED_EXAM_QUESTIONS = {
       id: "adv_5_3",
       question: "Cavity Pressure Sensor ใช้ทำอะไร?",
       options: [
-        "A. วัดความดันน้ำมันไฮดรอลิก", 
-        "B. วัดความดันในโพรงแม่พิมพ์ขณะฉีด", 
-        "C. วัดแรงปิดแม่พิมพ์", 
+        "A. วัดความดันน้ำมันไฮดรอลิก",
+        "B. วัดความดันในโพรงแม่พิมพ์ขณะฉีด",
+        "C. วัดแรงปิดแม่พิมพ์",
         "D. วัดอุณหภูมิแม่พิมพ์"
       ],
       answer: "B",
@@ -856,9 +856,9 @@ const ADVANCED_EXAM_QUESTIONS = {
       id: "adv_5_4",
       question: "ข้อใดเป็นประโยชน์ของ Hot Runner System?",
       options: [
-        "A. ราคาถูกกว่า Cold Runner", 
-        "B. ไม่มี Runner Waste และ Cycle Time สั้นลง", 
-        "C. ใช้กับพลาสติกได้ทุกชนิด", 
+        "A. ราคาถูกกว่า Cold Runner",
+        "B. ไม่มี Runner Waste และ Cycle Time สั้นลง",
+        "C. ใช้กับพลาสติกได้ทุกชนิด",
         "D. ไม่ต้องบำรุงรักษา"
       ],
       answer: "B",
@@ -1032,7 +1032,7 @@ const FAQ = [
 function createStudentMenuFlex() {
   return {
     type: "flex",
-    altText: "🎓 เมนูการเรียนรู้สำหรับนักศึกษา",
+    altText: "🎓 Wit365 Learning Center - ศูนย์การเรียนรู้วิศวกรรมพลาสติก",
     contents: {
       type: "bubble",
       size: "mega",
@@ -1044,13 +1044,13 @@ function createStudentMenuFlex() {
             type: "box",
             layout: "horizontal",
             contents: [
-              {type: "text", text: "🎓", size: "xxl", flex: 0},
+              { type: "text", text: "🎓", size: "xxl", flex: 0 },
               {
                 type: "box",
                 layout: "vertical",
                 contents: [
-                  {type: "text", text: "ศูนย์การเรียนรู้", weight: "bold", size: "xl", color: "#FFFFFF"},
-                  {type: "text", text: "Injection Molding Learning Center", size: "xs", color: "#93C5FD"},
+                  { type: "text", text: "Wit365", weight: "bold", size: "xl", color: "#FFFFFF" },
+                  { type: "text", text: "วิศวกรรมพลาสติก โดย อาจารย์ วิทยา", size: "xs", color: "#93C5FD" },
                 ],
                 paddingStart: "15px",
               },
@@ -1065,8 +1065,8 @@ function createStudentMenuFlex() {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: "เลือกหัวข้อที่สนใจ:", weight: "bold", size: "sm", color: "#1E40AF"},
-          {type: "separator", margin: "md"},
+          { type: "text", text: "เลือกหัวข้อที่สนใจ:", weight: "bold", size: "sm", color: "#1E40AF" },
+          { type: "separator", margin: "md" },
           // Lesson buttons
           {
             type: "box",
@@ -1088,7 +1088,7 @@ function createStudentMenuFlex() {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: "💡 พิมพ์ \"พี่วิทย์\" ตามด้วยคำถาม เพื่อถามได้ทุกเรื่อง!", size: "xs", color: "#666666", wrap: true, align: "center"},
+          { type: "text", text: "💡 Wit365 โดย อาจารย์ วิทยา", size: "xs", color: "#666666", wrap: true, align: "center" },
         ],
         paddingAll: "15px",
         backgroundColor: "#F3F4F6",
@@ -1106,8 +1106,8 @@ function createMenuButton(title, subtitle, action) {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: title, weight: "bold", size: "sm", color: "#333333"},
-          {type: "text", text: subtitle, size: "xs", color: "#666666"},
+          { type: "text", text: title, weight: "bold", size: "sm", color: "#333333" },
+          { type: "text", text: subtitle, size: "xs", color: "#666666" },
         ],
         flex: 4,
       },
@@ -1115,7 +1115,7 @@ function createMenuButton(title, subtitle, action) {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: "▶", size: "lg", color: "#1E40AF", align: "center"},
+          { type: "text", text: "▶", size: "lg", color: "#1E40AF", align: "center" },
         ],
         flex: 1,
         justifyContent: "center",
@@ -1124,7 +1124,7 @@ function createMenuButton(title, subtitle, action) {
     paddingAll: "12px",
     backgroundColor: "#F8FAFC",
     cornerRadius: "md",
-    action: {type: "message", text: action},
+    action: { type: "message", text: action },
   };
 }
 
@@ -1139,8 +1139,8 @@ function createLessonListFlex() {
       type: "box",
       layout: "vertical",
       contents: [
-        {type: "text", text: lesson.title, weight: "bold", size: "md", color: "#FFFFFF", wrap: true},
-        {type: "text", text: lesson.subtitle, size: "xs", color: "#93C5FD"},
+        { type: "text", text: lesson.title, weight: "bold", size: "md", color: "#FFFFFF", wrap: true },
+        { type: "text", text: lesson.subtitle, size: "xs", color: "#93C5FD" },
       ],
       backgroundColor: "#1E40AF",
       paddingAll: "15px",
@@ -1153,8 +1153,8 @@ function createLessonListFlex() {
           type: "box",
           layout: "horizontal",
           contents: [
-            {type: "text", text: `⏱️ ${lesson.duration}`, size: "xs", color: "#666666"},
-            {type: "text", text: `📊 ${lesson.level}`, size: "xs", color: "#666666", align: "end"},
+            { type: "text", text: `⏱️ ${lesson.duration}`, size: "xs", color: "#666666" },
+            { type: "text", text: `📊 ${lesson.level}`, size: "xs", color: "#666666", align: "end" },
           ],
         },
       ],
@@ -1166,7 +1166,7 @@ function createLessonListFlex() {
       contents: [
         {
           type: "button",
-          action: {type: "message", label: "เริ่มเรียน", text: `/lesson ${lesson.id}`},
+          action: { type: "message", label: "เริ่มเรียน", text: `/lesson ${lesson.id}` },
           style: "primary",
           color: "#1E40AF",
           height: "sm",
@@ -1213,7 +1213,7 @@ function createLessonContentFlex(lessonId) {
       break;
     default:
       contentBody = [
-        {type: "text", text: "📖 เนื้อหาบทเรียนถูกส่งแล้ว", size: "sm", color: "#666666"},
+        { type: "text", text: "📖 เนื้อหาบทเรียนถูกส่งแล้ว", size: "sm", color: "#666666" },
       ];
   }
 
@@ -1227,8 +1227,8 @@ function createLessonContentFlex(lessonId) {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: lesson.title, weight: "bold", size: "lg", color: "#FFFFFF"},
-          {type: "text", text: lesson.subtitle, size: "xs", color: "#93C5FD"},
+          { type: "text", text: lesson.title, weight: "bold", size: "lg", color: "#FFFFFF" },
+          { type: "text", text: lesson.subtitle, size: "xs", color: "#93C5FD" },
         ],
         backgroundColor: "#1E40AF",
         paddingAll: "20px",
@@ -1238,8 +1238,8 @@ function createLessonContentFlex(lessonId) {
         layout: "vertical",
         contents: [
           ...contentBody,
-          {type: "separator", margin: "lg"},
-          {type: "text", text: "💡 กดปุ่มด้านล่างเพื่อทำแบบทดสอบ", size: "xs", color: "#999999", margin: "lg", align: "center"},
+          { type: "separator", margin: "lg" },
+          { type: "text", text: "💡 กดปุ่มด้านล่างเพื่อทำแบบทดสอบ", size: "xs", color: "#999999", margin: "lg", align: "center" },
         ],
         paddingAll: "20px",
       },
@@ -1249,14 +1249,14 @@ function createLessonContentFlex(lessonId) {
         contents: [
           {
             type: "button",
-            action: {type: "message", label: "📝 ทำแบบทดสอบบทนี้", text: `/quiz ${lessonId}`},
+            action: { type: "message", label: "📝 ทำแบบทดสอบบทนี้", text: `/quiz ${lessonId}` },
             style: "primary",
             color: "#16A34A",
             height: "sm",
           },
           {
             type: "button",
-            action: {type: "message", label: "📚 กลับไปรายการบทเรียน", text: "/lesson"},
+            action: { type: "message", label: "📚 กลับไปรายการบทเรียน", text: "/lesson" },
             style: "secondary",
             height: "sm",
             margin: "sm",
@@ -1281,7 +1281,7 @@ function createStepBox(number, title, description, icon = "🔹") {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: `${number}`, weight: "bold", size: "sm", color: "#FFFFFF", align: "center"},
+          { type: "text", text: `${number}`, weight: "bold", size: "sm", color: "#FFFFFF", align: "center" },
         ],
         width: "24px",
         height: "24px",
@@ -1294,8 +1294,8 @@ function createStepBox(number, title, description, icon = "🔹") {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: title, weight: "bold", size: "sm", color: "#333333"},
-          {type: "text", text: description, size: "xs", color: "#666666", wrap: true, margin: "xs"},
+          { type: "text", text: title, weight: "bold", size: "sm", color: "#333333" },
+          { type: "text", text: description, size: "xs", color: "#666666", wrap: true, margin: "xs" },
         ],
         paddingStart: "10px",
       },
@@ -1309,7 +1309,7 @@ function createInfoBox(title, items, color = "#F3F4F6") {
     type: "box",
     layout: "vertical",
     contents: [
-      {type: "text", text: title, weight: "bold", size: "sm", color: "#1E40AF"},
+      { type: "text", text: title, weight: "bold", size: "sm", color: "#1E40AF" },
       ...items.map((item) => ({
         type: "text", text: `• ${item}`, size: "xs", color: "#333333", margin: "sm", wrap: true,
       })),
@@ -1323,23 +1323,23 @@ function createInfoBox(title, items, color = "#F3F4F6") {
 
 function createLesson1Body() {
   return [
-    {type: "text", text: "กระบวนการฉีดพลาสติก (Injection Molding)", weight: "bold", size: "md", color: "#1E40AF"},
-    {type: "text", text: "การขึ้นรูปพลาสติกโดยการหลอมและฉีดเข้าแม่พิมพ์", size: "xs", color: "#666666", margin: "sm"},
-    {type: "separator", margin: "md"},
+    { type: "text", text: "กระบวนการฉีดพลาสติก (Injection Molding)", weight: "bold", size: "md", color: "#1E40AF" },
+    { type: "text", text: "การขึ้นรูปพลาสติกโดยการหลอมและฉีดเข้าแม่พิมพ์", size: "xs", color: "#666666", margin: "sm" },
+    { type: "separator", margin: "md" },
     createStepBox(1, "Hopper & Barrel", "เม็ดพลาสติกถูกป้อนเข้าถังและหลอมในกระบอกฉีด"),
     createStepBox(2, "Injection", "สกรูดันพลาสติกเหลวเข้าแม่พิมพ์ด้วยความดันสูง"),
     createStepBox(3, "Cooling", "พลาสติกเย็นตัวและแข็งตัวเป็นรูปร่างตามแม่พิมพ์"),
     createStepBox(4, "Ejection", "แม่พิมพ์เปิดออกและดีดชิ้นงานออกมา"),
-    {type: "separator", margin: "lg"},
+    { type: "separator", margin: "lg" },
     createInfoBox("ส่วนประกอบสำคัญ", ["Hopper (ถังพัก)", "Screw (สกรู)", "Heater (ฮีตเตอร์)", "Mold (แม่พิมพ์)"]),
   ];
 }
 
 function createLesson2Body() {
   return [
-    {type: "text", text: "ชนิดของพลาสติก (Plastic Types)", weight: "bold", size: "md", color: "#1E40AF"},
-    {type: "text", text: "แบ่งเป็น 2 ประเภทหลักตามการคืนรูป", size: "xs", color: "#666666", margin: "sm"},
-    {type: "separator", margin: "md"},
+    { type: "text", text: "ชนิดของพลาสติก (Plastic Types)", weight: "bold", size: "md", color: "#1E40AF" },
+    { type: "text", text: "แบ่งเป็น 2 ประเภทหลักตามการคืนรูป", size: "xs", color: "#666666", margin: "sm" },
+    { type: "separator", margin: "md" },
     createStepBox("A", "Thermoplastic", "หลอมใหม่ได้ ♻️ (นิยมใช้มากที่สุด)", "♻️"),
     createInfoBox("ตัวอย่าง Thermoplastic", ["PP (ถัง, กะละมัง)", "ABS (หมวกกันน็อค, ชิ้นส่วนรถ)", "PET (ขวดน้ำ)", "PC (ไฟหน้ารถ)"], "#ECFDF5"),
     createStepBox("B", "Thermoset", "หลอมใหม่ไม่ได้ ❌ (แข็งแรง ทนร้อน)", "🔥"),
@@ -1349,23 +1349,23 @@ function createLesson2Body() {
 
 function createLesson3Body() {
   return [
-    {type: "text", text: "พารามิเตอร์การฉีด (Parameters)", weight: "bold", size: "md", color: "#1E40AF"},
-    {type: "text", text: "4 ปัจจัยหลักที่ควบคุมคุณภาพชิ้นงาน", size: "xs", color: "#666666", margin: "sm"},
-    {type: "separator", margin: "md"},
+    { type: "text", text: "พารามิเตอร์การฉีด (Parameters)", weight: "bold", size: "md", color: "#1E40AF" },
+    { type: "text", text: "4 ปัจจัยหลักที่ควบคุมคุณภาพชิ้นงาน", size: "xs", color: "#666666", margin: "sm" },
+    { type: "separator", margin: "md" },
     createStepBox("1", "Temperature (อุณหภูมิ)", "อุณหภูมิหลอม (Barrel) และแม่พิมพ์ (Mold)"),
     createStepBox("2", "Pressure (ความดัน)", "แรงดันฉีด (Injection) และแรงดันย้ำ (Holding)"),
     createStepBox("3", "Speed (ความเร็ว)", "ความเร็วในการฉีดพลาสติกเข้าแม่พิมพ์"),
     createStepBox("4", "Time (เวลา)", "เวลาฉีด, เวลาเย็นตัว (Cooling), เวลาวัฏจักร (Cycle)"),
-    {type: "separator", margin: "lg"},
-    {type: "text", text: "💡 เคล็ดลับ: การตั้งค่าต้องสมดุลกัน หากอุณหภูมิสูง อาจต้องลดความดัน", size: "xs", color: "#D97706", wrap: true, margin: "md"},
+    { type: "separator", margin: "lg" },
+    { type: "text", text: "💡 เคล็ดลับ: การตั้งค่าต้องสมดุลกัน หากอุณหภูมิสูง อาจต้องลดความดัน", size: "xs", color: "#D97706", wrap: true, margin: "md" },
   ];
 }
 
 function createLesson4Body() {
   return [
-    {type: "text", text: "ปัญหาและการแก้ไข (Defects)", weight: "bold", size: "md", color: "#DC2626"},
-    {type: "text", text: "ปัญหาที่พบบ่อยในงานฉีดพลาสติก", size: "xs", color: "#666666", margin: "sm"},
-    {type: "separator", margin: "md"},
+    { type: "text", text: "ปัญหาและการแก้ไข (Defects)", weight: "bold", size: "md", color: "#DC2626" },
+    { type: "text", text: "ปัญหาที่พบบ่อยในงานฉีดพลาสติก", size: "xs", color: "#666666", margin: "sm" },
+    { type: "separator", margin: "md" },
     createStepBox("1", "Short Shot (ฉีดไม่เต็ม)", "พลาสติกไหลไม่เต็มแม่พิมพ์\n👉 แก้: เพิ่ม Temp, Pressure, Speed"),
     createStepBox("2", "Flash (ครีบ)", "พลาสติกเกินออกมาตามรอยต่อ\n👉 แก้: ลด Pressure, เพิ่ม Clamping Force"),
     createStepBox("3", "Sink Mark (รอยยุบ)", "ผิวชิ้นงานยุบตัวลง\n👉 แก้: เพิ่ม Holding Pressure/Time"),
@@ -1376,18 +1376,18 @@ function createLesson4Body() {
 
 function createLesson5Body() {
   return [
-    {type: "text", text: "การคำนวณพื้นฐาน (Calculations)", weight: "bold", size: "md", color: "#1E40AF"},
-    {type: "text", text: "สูตรสำคัญสำหรับช่างฉีดพลาสติก", size: "xs", color: "#666666", margin: "sm"},
-    {type: "separator", margin: "md"},
+    { type: "text", text: "การคำนวณพื้นฐาน (Calculations)", weight: "bold", size: "md", color: "#1E40AF" },
+    { type: "text", text: "สูตรสำคัญสำหรับช่างฉีดพลาสติก", size: "xs", color: "#666666", margin: "sm" },
+    { type: "separator", margin: "md" },
     createStepBox("1", "Clamping Force (แรงปิด)", "F = P × A\n(แรงปิด = ความดันในแม่พิมพ์ × พื้นที่หน้าตัด)"),
     createStepBox("2", "Shot Weight (น้ำหนักฉีด)", "W = Volume × Density\n(น้ำหนัก = ปริมาตร × ความหนาแน่น)"),
     createStepBox("3", "Cooling Time (เวลาเย็น)", "t ∝ s²\n(เวลาเย็นตัวแปรผันตรงกับความหนายกกำลังสอง)"),
-    {type: "separator", margin: "lg"},
+    { type: "separator", margin: "lg" },
     {
       type: "box",
       layout: "vertical",
       contents: [
-        {type: "text", text: "🧮 ลองใช้เครื่องคิดเลขในเมนูหลักเพื่อช่วยคำนวณได้เลย!", size: "xs", color: "#FFFFFF", align: "center"},
+        { type: "text", text: "🧮 ลองใช้เครื่องคิดเลขในเมนูหลักเพื่อช่วยคำนวณได้เลย!", size: "xs", color: "#FFFFFF", align: "center" },
       ],
       paddingAll: "10px",
       backgroundColor: "#1E40AF",
@@ -1419,7 +1419,7 @@ function createQuizQuestionFlex(questionId, questionNumber = 1, totalQuestions =
           type: "box",
           layout: "vertical",
           contents: [
-            {type: "text", text: choiceChar, weight: "bold", size: "sm", color: "#FFFFFF", align: "center"},
+            { type: "text", text: choiceChar, weight: "bold", size: "sm", color: "#FFFFFF", align: "center" },
           ],
           width: "24px",
           height: "24px",
@@ -1471,15 +1471,15 @@ function createQuizQuestionFlex(questionId, questionNumber = 1, totalQuestions =
             type: "box",
             layout: "horizontal",
             contents: [
-              {type: "text", text: "📝 แบบทดสอบ", weight: "bold", size: "sm", color: "#C4B5FD"},
-              {type: "text", text: `${questionNumber}/${totalQuestions}`, weight: "bold", size: "sm", color: "#FFFFFF", align: "end"},
+              { type: "text", text: "📝 แบบทดสอบ", weight: "bold", size: "sm", color: "#C4B5FD" },
+              { type: "text", text: `${questionNumber}/${totalQuestions}`, weight: "bold", size: "sm", color: "#FFFFFF", align: "end" },
             ],
           },
           {
             type: "box",
             layout: "horizontal",
             contents: [
-              {type: "text", text: LESSONS[question.lesson]?.title || "แบบทดสอบ", weight: "bold", size: "lg", color: "#FFFFFF", flex: 1},
+              { type: "text", text: LESSONS[question.lesson]?.title || "แบบทดสอบ", weight: "bold", size: "lg", color: "#FFFFFF", flex: 1 },
               ...(streak > 1 ? [{
                 type: "text",
                 text: `${streakIcon} ${streak}`,
@@ -1497,7 +1497,7 @@ function createQuizQuestionFlex(questionId, questionNumber = 1, totalQuestions =
             type: "box",
             layout: "horizontal",
             contents: [
-              {type: "text", text: `⭐ ${currentScore}`, size: "xs", color: "#FFD700", flex: 0},
+              { type: "text", text: `⭐ ${currentScore}`, size: "xs", color: "#FFD700", flex: 0 },
               {
                 type: "box",
                 layout: "vertical",
@@ -1529,9 +1529,9 @@ function createQuizQuestionFlex(questionId, questionNumber = 1, totalQuestions =
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: question.question, weight: "bold", size: "md", wrap: true, color: "#333333"},
-          {type: "separator", margin: "lg"},
-          {type: "text", text: "เลือกคำตอบที่ถูกต้อง:", size: "xs", color: "#666666", margin: "lg"},
+          { type: "text", text: question.question, weight: "bold", size: "md", wrap: true, color: "#333333" },
+          { type: "separator", margin: "lg" },
+          { type: "text", text: "เลือกคำตอบที่ถูกต้อง:", size: "xs", color: "#666666", margin: "lg" },
           ...optionBoxes,
         ],
         paddingAll: "20px",
@@ -1560,7 +1560,7 @@ function createAnswerResultFlex(questionId, userAnswer, isCorrect, earnedPoints 
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: headerText, weight: "bold", size: "xl", color: "#FFFFFF", align: "center"},
+          { type: "text", text: headerText, weight: "bold", size: "xl", color: "#FFFFFF", align: "center" },
           (isCorrect ? {
             type: "text",
             text: `+${earnedPoints} คะแนน ${streak > 1 ? `(Combo x${streak})` : ""}`,
@@ -1568,7 +1568,7 @@ function createAnswerResultFlex(questionId, userAnswer, isCorrect, earnedPoints 
             color: "#BBF7D0",
             align: "center",
             margin: "sm",
-          } : {type: "spacer", size: "xs"}),
+          } : { type: "spacer", size: "xs" }),
         ],
         backgroundColor: headerColor,
         paddingAll: "20px",
@@ -1577,15 +1577,15 @@ function createAnswerResultFlex(questionId, userAnswer, isCorrect, earnedPoints 
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: question.question, size: "xs", color: "#666666", wrap: true, maxLines: 2},
-          {type: "separator", margin: "md"},
+          { type: "text", text: question.question, size: "xs", color: "#666666", wrap: true, maxLines: 2 },
+          { type: "separator", margin: "md" },
 
           {
             type: "box",
             layout: "horizontal",
             contents: [
-              {type: "text", text: "คำตอบของคุณ:", size: "xs", color: "#666666", flex: 1},
-              {type: "text", text: userAnswer, weight: "bold", size: "sm", color: isCorrect ? "#16A34A" : "#DC2626", flex: 2, align: "end"},
+              { type: "text", text: "คำตอบของคุณ:", size: "xs", color: "#666666", flex: 1 },
+              { type: "text", text: userAnswer, weight: "bold", size: "sm", color: isCorrect ? "#16A34A" : "#DC2626", flex: 2, align: "end" },
             ],
             margin: "md",
           },
@@ -1593,16 +1593,16 @@ function createAnswerResultFlex(questionId, userAnswer, isCorrect, earnedPoints 
             type: "box",
             layout: "horizontal",
             contents: [
-              {type: "text", text: "เฉลย:", size: "xs", color: "#666666", flex: 1},
-              {type: "text", text: question.answer, weight: "bold", size: "sm", color: "#16A34A", flex: 2, align: "end"},
+              { type: "text", text: "เฉลย:", size: "xs", color: "#666666", flex: 1 },
+              { type: "text", text: question.answer, weight: "bold", size: "sm", color: "#16A34A", flex: 2, align: "end" },
             ],
             margin: "sm",
-          } : {type: "spacer", size: "xs"}),
+          } : { type: "spacer", size: "xs" }),
 
-          {type: "box", layout: "vertical", contents: [], margin: "lg", height: "1px", backgroundColor: "#E5E7EB"},
+          { type: "box", layout: "vertical", contents: [], margin: "lg", height: "1px", backgroundColor: "#E5E7EB" },
 
-          {type: "text", text: "💡 คำอธิบาย:", weight: "bold", size: "sm", color: "#333333", margin: "md"},
-          {type: "text", text: question.explanation, size: "sm", color: "#666666", wrap: true, margin: "sm"},
+          { type: "text", text: "💡 คำอธิบาย:", weight: "bold", size: "sm", color: "#333333", margin: "md" },
+          { type: "text", text: question.explanation, size: "sm", color: "#666666", wrap: true, margin: "sm" },
 
           // AI Explanation Button
           {
@@ -1631,8 +1631,8 @@ function createExamPrepFlex() {
     type: "box",
     layout: "vertical",
     contents: [
-      {type: "text", text: topic.title, weight: "bold", size: "sm", color: "#1E40AF"},
-      ...topic.topics.map((t) => ({type: "text", text: t, size: "xs", color: "#666666", margin: "sm"})),
+      { type: "text", text: topic.title, weight: "bold", size: "sm", color: "#1E40AF" },
+      ...topic.topics.map((t) => ({ type: "text", text: t, size: "xs", color: "#666666", margin: "sm" })),
     ],
     paddingAll: "12px",
     backgroundColor: "#F8FAFC",
@@ -1650,8 +1650,8 @@ function createExamPrepFlex() {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: "🎯 คู่มือเตรียมสอบ", weight: "bold", size: "lg", color: "#FFFFFF"},
-          {type: "text", text: "Exam Preparation Guide", size: "xs", color: "#FCD34D"},
+          { type: "text", text: "🎯 คู่มือเตรียมสอบ", weight: "bold", size: "lg", color: "#FFFFFF" },
+          { type: "text", text: "Exam Preparation Guide", size: "xs", color: "#FCD34D" },
         ],
         backgroundColor: "#B45309",
         paddingAll: "20px",
@@ -1668,7 +1668,7 @@ function createExamPrepFlex() {
         contents: [
           {
             type: "button",
-            action: {type: "message", label: "📝 ทำแบบทดสอบรวม", text: "/quiz all"},
+            action: { type: "message", label: "📝 ทำแบบทดสอบรวม", text: "/quiz all" },
             style: "primary",
             color: "#B45309",
             height: "sm",
@@ -1688,8 +1688,8 @@ function createFAQFlex() {
     type: "box",
     layout: "vertical",
     contents: [
-      {type: "text", text: `❓ ${item.q}`, weight: "bold", size: "sm", color: "#1E40AF", wrap: true},
-      {type: "text", text: `💡 ${item.a}`, size: "xs", color: "#333333", wrap: true, margin: "sm"},
+      { type: "text", text: `❓ ${item.q}`, weight: "bold", size: "sm", color: "#1E40AF", wrap: true },
+      { type: "text", text: `💡 ${item.a}`, size: "xs", color: "#333333", wrap: true, margin: "sm" },
     ],
     paddingAll: "12px",
     backgroundColor: idx % 2 === 0 ? "#F8FAFC" : "#FFFFFF",
@@ -1706,8 +1706,8 @@ function createFAQFlex() {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: "❓ คำถามที่พบบ่อย", weight: "bold", size: "lg", color: "#FFFFFF"},
-          {type: "text", text: "Frequently Asked Questions", size: "xs", color: "#93C5FD"},
+          { type: "text", text: "❓ คำถามที่พบบ่อย", weight: "bold", size: "lg", color: "#FFFFFF" },
+          { type: "text", text: "Frequently Asked Questions", size: "xs", color: "#93C5FD" },
         ],
         backgroundColor: "#0891B2",
         paddingAll: "20px",
@@ -1761,8 +1761,8 @@ function createQuizResultFlex(correct, total, lessonId = null, totalScore = 0) {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: "📊 ผลการทดสอบ", weight: "bold", size: "lg", color: "#FFFFFF", align: "center"},
-          {type: "text", text: "Quiz Result", size: "xs", color: "#E0E0E0", align: "center"},
+          { type: "text", text: "📊 ผลการทดสอบ", weight: "bold", size: "lg", color: "#FFFFFF", align: "center" },
+          { type: "text", text: "Quiz Result", size: "xs", color: "#E0E0E0", align: "center" },
         ],
         backgroundColor: gradeColor,
         paddingAll: "20px",
@@ -1771,12 +1771,12 @@ function createQuizResultFlex(correct, total, lessonId = null, totalScore = 0) {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: icon, size: "5xl", align: "center"},
-          {type: "text", text: `${correct}/${total}`, weight: "bold", size: "3xl", color: "#333333", align: "center", margin: "md"},
-          {type: "text", text: `คะแนนรวม: ${totalScore} แต้ม`, weight: "bold", size: "md", color: "#F59E0B", align: "center", margin: "sm"},
-          {type: "text", text: message, size: "sm", color: "#666666", align: "center", wrap: true, margin: "lg"},
+          { type: "text", text: icon, size: "5xl", align: "center" },
+          { type: "text", text: `${correct}/${total}`, weight: "bold", size: "3xl", color: "#333333", align: "center", margin: "md" },
+          { type: "text", text: `คะแนนรวม: ${totalScore} แต้ม`, weight: "bold", size: "md", color: "#F59E0B", align: "center", margin: "sm" },
+          { type: "text", text: message, size: "sm", color: "#666666", align: "center", wrap: true, margin: "lg" },
 
-          {type: "separator", margin: "xl"},
+          { type: "separator", margin: "xl" },
 
           {
             type: "box",
@@ -1784,14 +1784,14 @@ function createQuizResultFlex(correct, total, lessonId = null, totalScore = 0) {
             contents: [
               {
                 type: "button",
-                action: {type: "message", label: "🔄 ทำแบบทดสอบอีกครั้ง", text: lessonId ? `/quiz ${lessonId}` : "/quiz all"},
+                action: { type: "message", label: "🔄 ทำแบบทดสอบอีกครั้ง", text: lessonId ? `/quiz ${lessonId}` : "/quiz all" },
                 style: "primary",
                 color: gradeColor,
                 height: "sm",
               },
               {
                 type: "button",
-                action: {type: "message", label: "🏠 กลับเมนูหลัก", text: "/student"},
+                action: { type: "message", label: "🏠 กลับเมนูหลัก", text: "/student" },
                 style: "secondary",
                 height: "sm",
                 margin: "sm",
@@ -1863,7 +1863,7 @@ function getInjectionMoldingPrompt(userLevel = "beginner") {
  */
 async function askInjectionMoldingAI(question, userLevel = "beginner", context = "") {
   try {
-    const model = genAI.getGenerativeModel({model: "gemini-2.0-flash"});
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     const systemPrompt = getInjectionMoldingPrompt(userLevel);
     const contextInfo = context ? `\n\n📋 บริบทเพิ่มเติม: ${context}` : "";
@@ -1912,22 +1912,22 @@ function isInjectionMoldingQuestion(text) {
  */
 const FLASHCARDS = {
   terms: [
-    {front: "Injection Molding", back: "กระบวนการฉีดพลาสติกเข้าแม่พิมพ์เพื่อขึ้นรูป", category: "basic"},
-    {front: "Cycle Time", back: "เวลารวมในการผลิต 1 ชิ้นงาน (ปิด→ฉีด→อัด→เย็น→เปิด→ดีด)", category: "basic"},
-    {front: "Barrel Temperature", back: "อุณหภูมิกระบอกฉีด ใช้หลอมพลาสติก", category: "parameter"},
-    {front: "Mold Temperature", back: "อุณหภูมิแม่พิมพ์ ควบคุมการเย็นตัว", category: "parameter"},
-    {front: "Injection Pressure", back: "ความดันที่ใช้ดันพลาสติกเข้าแม่พิมพ์", category: "parameter"},
-    {front: "Holding Pressure", back: "ความดันอัดหลังฉีด ป้องกัน Sink mark (60-80% ของ Inj.)", category: "parameter"},
-    {front: "Cooling Time", back: "เวลาทำให้ชิ้นงานเย็นตัว (60-80% ของ Cycle)", category: "parameter"},
-    {front: "Short Shot", back: "ปัญหาฉีดไม่เต็ม สาเหตุ: ความดัน/อุณหภูมิต่ำ", category: "defect"},
-    {front: "Flash", back: "ปัญหาครีบ/เกิน สาเหตุ: ความดันสูง แรงปิดไม่พอ", category: "defect"},
-    {front: "Sink Mark", back: "ปัญหายุบ สาเหตุ: Holding ไม่พอ ผนังหนา", category: "defect"},
-    {front: "Warpage", back: "ปัญหาบิดงอ สาเหตุ: เย็นไม่สม่ำเสมอ เครียดภายใน", category: "defect"},
-    {front: "Burn Mark", back: "ปัญหาไหม้ สาเหตุ: อากาศค้าง ความเร็ว/อุณหภูมิสูง", category: "defect"},
-    {front: "PP (Polypropylene)", back: "พลาสติกราคาถูก ทนเคมี หลอม 200-280°C", category: "material"},
-    {front: "ABS", back: "พลาสติกแข็งแรง ชุบโลหะได้ หลอม 220-260°C", category: "material"},
-    {front: "PC (Polycarbonate)", back: "พลาสติกใส ทนแรงกระแทก หลอม 280-320°C", category: "material"},
-    {front: "Clamping Force", back: "แรงปิดแม่พิมพ์ = พื้นที่ × ความดัน × Safety Factor", category: "calculation"},
+    { front: "Injection Molding", back: "กระบวนการฉีดพลาสติกเข้าแม่พิมพ์เพื่อขึ้นรูป", category: "basic" },
+    { front: "Cycle Time", back: "เวลารวมในการผลิต 1 ชิ้นงาน (ปิด→ฉีด→อัด→เย็น→เปิด→ดีด)", category: "basic" },
+    { front: "Barrel Temperature", back: "อุณหภูมิกระบอกฉีด ใช้หลอมพลาสติก", category: "parameter" },
+    { front: "Mold Temperature", back: "อุณหภูมิแม่พิมพ์ ควบคุมการเย็นตัว", category: "parameter" },
+    { front: "Injection Pressure", back: "ความดันที่ใช้ดันพลาสติกเข้าแม่พิมพ์", category: "parameter" },
+    { front: "Holding Pressure", back: "ความดันอัดหลังฉีด ป้องกัน Sink mark (60-80% ของ Inj.)", category: "parameter" },
+    { front: "Cooling Time", back: "เวลาทำให้ชิ้นงานเย็นตัว (60-80% ของ Cycle)", category: "parameter" },
+    { front: "Short Shot", back: "ปัญหาฉีดไม่เต็ม สาเหตุ: ความดัน/อุณหภูมิต่ำ", category: "defect" },
+    { front: "Flash", back: "ปัญหาครีบ/เกิน สาเหตุ: ความดันสูง แรงปิดไม่พอ", category: "defect" },
+    { front: "Sink Mark", back: "ปัญหายุบ สาเหตุ: Holding ไม่พอ ผนังหนา", category: "defect" },
+    { front: "Warpage", back: "ปัญหาบิดงอ สาเหตุ: เย็นไม่สม่ำเสมอ เครียดภายใน", category: "defect" },
+    { front: "Burn Mark", back: "ปัญหาไหม้ สาเหตุ: อากาศค้าง ความเร็ว/อุณหภูมิสูง", category: "defect" },
+    { front: "PP (Polypropylene)", back: "พลาสติกราคาถูก ทนเคมี หลอม 200-280°C", category: "material" },
+    { front: "ABS", back: "พลาสติกแข็งแรง ชุบโลหะได้ หลอม 220-260°C", category: "material" },
+    { front: "PC (Polycarbonate)", back: "พลาสติกใส ทนแรงกระแทก หลอม 280-320°C", category: "material" },
+    { front: "Clamping Force", back: "แรงปิดแม่พิมพ์ = พื้นที่ × ความดัน × Safety Factor", category: "calculation" },
   ],
 };
 
@@ -1964,13 +1964,13 @@ function createFlashcardFlex(cardIndex = 0, showAnswer = false) {
         type: "box",
         layout: "horizontal",
         contents: [
-          {type: "text", text: "🃏", size: "xl", flex: 0},
+          { type: "text", text: "🃏", size: "xl", flex: 0 },
           {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: "Flashcard", weight: "bold", size: "md", color: "#FFFFFF"},
-              {type: "text", text: `${cardIndex + 1}/${FLASHCARDS.terms.length} - ${categoryNames[card.category]}`, size: "xs", color: "#93C5FD"},
+              { type: "text", text: "Flashcard", weight: "bold", size: "md", color: "#FFFFFF" },
+              { type: "text", text: `${cardIndex + 1}/${FLASHCARDS.terms.length} - ${categoryNames[card.category]}`, size: "xs", color: "#93C5FD" },
             ],
             paddingStart: "10px",
           },
@@ -1983,12 +1983,12 @@ function createFlashcardFlex(cardIndex = 0, showAnswer = false) {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: "❓ คำถาม:", weight: "bold", size: "xs", color: "#666666"},
-          {type: "text", text: card.front, weight: "bold", size: "lg", color: "#333333", wrap: true, margin: "sm"},
+          { type: "text", text: "❓ คำถาม:", weight: "bold", size: "xs", color: "#666666" },
+          { type: "text", text: card.front, weight: "bold", size: "lg", color: "#333333", wrap: true, margin: "sm" },
           ...(showAnswer ? [
-            {type: "separator", margin: "lg"},
-            {type: "text", text: "✅ คำตอบ:", weight: "bold", size: "xs", color: "#16A34A", margin: "lg"},
-            {type: "text", text: card.back, size: "sm", color: "#333333", wrap: true, margin: "sm"},
+            { type: "separator", margin: "lg" },
+            { type: "text", text: "✅ คำตอบ:", weight: "bold", size: "xs", color: "#16A34A", margin: "lg" },
+            { type: "text", text: card.back, size: "sm", color: "#333333", wrap: true, margin: "sm" },
           ] : []),
         ],
         paddingAll: "20px",
@@ -1999,7 +1999,7 @@ function createFlashcardFlex(cardIndex = 0, showAnswer = false) {
         contents: [
           ...(showAnswer ? [] : [{
             type: "button",
-            action: {type: "message", label: "👁️ ดูคำตอบ", text: `/flashcard ${cardIndex} show`},
+            action: { type: "message", label: "👁️ ดูคำตอบ", text: `/flashcard ${cardIndex} show` },
             style: "primary",
             color: "#16A34A",
             height: "sm",
@@ -2007,7 +2007,7 @@ function createFlashcardFlex(cardIndex = 0, showAnswer = false) {
           }]),
           {
             type: "button",
-            action: {type: "message", label: "⏭️ การ์ดถัดไป", text: `/flashcard ${(cardIndex + 1) % FLASHCARDS.terms.length}`},
+            action: { type: "message", label: "⏭️ การ์ดถัดไป", text: `/flashcard ${(cardIndex + 1) % FLASHCARDS.terms.length}` },
             style: "secondary",
             height: "sm",
             flex: 1,
@@ -2091,7 +2091,7 @@ function createVirtualLabMenuFlex() {
       type: "box",
       layout: "vertical",
       contents: [
-        {type: "text", text: scenario.title, weight: "bold", size: "md", color: "#FFFFFF", wrap: true},
+        { type: "text", text: scenario.title, weight: "bold", size: "md", color: "#FFFFFF", wrap: true },
       ],
       backgroundColor: "#7C3AED",
       paddingAll: "15px",
@@ -2100,11 +2100,11 @@ function createVirtualLabMenuFlex() {
       type: "box",
       layout: "vertical",
       contents: [
-        {type: "text", text: scenario.description, size: "xs", color: "#666666", wrap: true},
-        {type: "separator", margin: "md"},
-        {type: "text", text: `📦 วัสดุ: ${scenario.material}`, size: "xs", color: "#333333", margin: "md"},
-        {type: "text", text: `📐 ความหนา: ${scenario.wallThickness}`, size: "xs", color: "#333333"},
-        {type: "text", text: `⏱️ เป้า Cycle: ${scenario.targetCycleTime}`, size: "xs", color: "#333333"},
+        { type: "text", text: scenario.description, size: "xs", color: "#666666", wrap: true },
+        { type: "separator", margin: "md" },
+        { type: "text", text: `📦 วัสดุ: ${scenario.material}`, size: "xs", color: "#333333", margin: "md" },
+        { type: "text", text: `📐 ความหนา: ${scenario.wallThickness}`, size: "xs", color: "#333333" },
+        { type: "text", text: `⏱️ เป้า Cycle: ${scenario.targetCycleTime}`, size: "xs", color: "#333333" },
       ],
       paddingAll: "15px",
     },
@@ -2114,7 +2114,7 @@ function createVirtualLabMenuFlex() {
       contents: [
         {
           type: "button",
-          action: {type: "message", label: "🔬 เริ่มฝึก", text: `/virtuallab ${scenario.id}`},
+          action: { type: "message", label: "🔬 เริ่มฝึก", text: `/virtuallab ${scenario.id}` },
           style: "primary",
           color: "#7C3AED",
           height: "sm",
@@ -2154,8 +2154,8 @@ function createVirtualLabScenarioFlex(scenarioId) {
       type: "box",
       layout: "horizontal",
       contents: [
-        {type: "text", text: labels[key] || key, size: "xs", color: "#666666", flex: 5},
-        {type: "text", text: value, size: "xs", color: "#1E40AF", weight: "bold", flex: 4, align: "end"},
+        { type: "text", text: labels[key] || key, size: "xs", color: "#666666", flex: 5 },
+        { type: "text", text: value, size: "xs", color: "#1E40AF", weight: "bold", flex: 4, align: "end" },
       ],
       margin: "sm",
     };
@@ -2171,8 +2171,8 @@ function createVirtualLabScenarioFlex(scenarioId) {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: "🔬 Virtual Lab", weight: "bold", size: "sm", color: "#C4B5FD"},
-          {type: "text", text: scenario.title, weight: "bold", size: "lg", color: "#FFFFFF"},
+          { type: "text", text: "🔬 Virtual Lab", weight: "bold", size: "sm", color: "#C4B5FD" },
+          { type: "text", text: scenario.title, weight: "bold", size: "lg", color: "#FFFFFF" },
         ],
         backgroundColor: "#7C3AED",
         paddingAll: "20px",
@@ -2181,14 +2181,14 @@ function createVirtualLabScenarioFlex(scenarioId) {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: "📋 ข้อมูลงาน:", weight: "bold", size: "sm", color: "#333333"},
-          {type: "text", text: `ผลิตภัณฑ์: ${scenario.product}`, size: "xs", color: "#666666", margin: "sm"},
-          {type: "text", text: `วัสดุ: ${scenario.material} | หนา: ${scenario.wallThickness}`, size: "xs", color: "#666666"},
-          {type: "separator", margin: "lg"},
-          {type: "text", text: "⚙️ พารามิเตอร์แนะนำ:", weight: "bold", size: "sm", color: "#333333", margin: "lg"},
+          { type: "text", text: "📋 ข้อมูลงาน:", weight: "bold", size: "sm", color: "#333333" },
+          { type: "text", text: `ผลิตภัณฑ์: ${scenario.product}`, size: "xs", color: "#666666", margin: "sm" },
+          { type: "text", text: `วัสดุ: ${scenario.material} | หนา: ${scenario.wallThickness}`, size: "xs", color: "#666666" },
+          { type: "separator", margin: "lg" },
+          { type: "text", text: "⚙️ พารามิเตอร์แนะนำ:", weight: "bold", size: "sm", color: "#333333", margin: "lg" },
           ...settingsItems,
-          {type: "separator", margin: "lg"},
-          {type: "text", text: "⚠️ ปัญหาที่อาจพบ:", weight: "bold", size: "sm", color: "#DC2626", margin: "lg"},
+          { type: "separator", margin: "lg" },
+          { type: "text", text: "⚠️ ปัญหาที่อาจพบ:", weight: "bold", size: "sm", color: "#DC2626", margin: "lg" },
           ...scenario.commonProblems.map((p) => ({
             type: "text", text: `• ${p}`, size: "xs", color: "#666666", margin: "sm", wrap: true,
           })),
@@ -2201,14 +2201,14 @@ function createVirtualLabScenarioFlex(scenarioId) {
         contents: [
           {
             type: "button",
-            action: {type: "message", label: "🧮 คำนวณ Cycle Time", text: `/calculate cycle ${scenario.material} ${scenario.wallThickness}`},
+            action: { type: "message", label: "🧮 คำนวณ Cycle Time", text: `/calculate cycle ${scenario.material} ${scenario.wallThickness}` },
             style: "primary",
             color: "#059669",
             height: "sm",
           },
           {
             type: "button",
-            action: {type: "message", label: "❓ ถาม AI เพิ่มเติม", text: `พี่วิทย์ ช่วยอธิบายการตั้งค่าฉีด ${scenario.material} สำหรับ ${scenario.product} หน่อย`},
+            action: { type: "message", label: "❓ ถาม AI เพิ่มเติม", text: `พี่วิทย์ ช่วยอธิบายการตั้งค่าฉีด ${scenario.material} สำหรับ ${scenario.product} หน่อย` },
             style: "secondary",
             height: "sm",
             margin: "sm",
@@ -2230,13 +2230,13 @@ const STUDY_PLANS = {
     duration: "7 วัน",
     targetLevel: "เข้าใจพื้นฐานการฉีดพลาสติก",
     schedule: [
-      {day: 1, topic: "บทที่ 1: พื้นฐานการฉีดพลาสติก", activities: ["อ่านบทเรียน", "ทำ Quiz", "ดู Flashcard"]},
-      {day: 2, topic: "บทที่ 2: ชนิดของพลาสติก", activities: ["อ่านบทเรียน", "จำ Flashcard วัสดุ", "ทำ Quiz"]},
-      {day: 3, topic: "ทบทวนบท 1-2", activities: ["ทำ Quiz รวม", "ถาม AI สิ่งที่ไม่เข้าใจ"]},
-      {day: 4, topic: "บทที่ 3: พารามิเตอร์การฉีด", activities: ["อ่านบทเรียน", "ลอง Virtual Lab"]},
-      {day: 5, topic: "บทที่ 4: ปัญหาและการแก้ไข", activities: ["อ่านบทเรียน", "จำ Flashcard ปัญหา"]},
-      {day: 6, topic: "บทที่ 5: การคำนวณพื้นฐาน", activities: ["อ่านบทเรียน", "ใช้เครื่องคิดเลข"]},
-      {day: 7, topic: "สอบรวม", activities: ["ทบทวนทุกบท", "ทำแบบทดสอบรวม", "รับ Certificate"]},
+      { day: 1, topic: "บทที่ 1: พื้นฐานการฉีดพลาสติก", activities: ["อ่านบทเรียน", "ทำ Quiz", "ดู Flashcard"] },
+      { day: 2, topic: "บทที่ 2: ชนิดของพลาสติก", activities: ["อ่านบทเรียน", "จำ Flashcard วัสดุ", "ทำ Quiz"] },
+      { day: 3, topic: "ทบทวนบท 1-2", activities: ["ทำ Quiz รวม", "ถาม AI สิ่งที่ไม่เข้าใจ"] },
+      { day: 4, topic: "บทที่ 3: พารามิเตอร์การฉีด", activities: ["อ่านบทเรียน", "ลอง Virtual Lab"] },
+      { day: 5, topic: "บทที่ 4: ปัญหาและการแก้ไข", activities: ["อ่านบทเรียน", "จำ Flashcard ปัญหา"] },
+      { day: 6, topic: "บทที่ 5: การคำนวณพื้นฐาน", activities: ["อ่านบทเรียน", "ใช้เครื่องคิดเลข"] },
+      { day: 7, topic: "สอบรวม", activities: ["ทบทวนทุกบท", "ทำแบบทดสอบรวม", "รับ Certificate"] },
     ],
   },
   intensive3days: {
@@ -2245,9 +2245,9 @@ const STUDY_PLANS = {
     duration: "3 วัน",
     targetLevel: "ปูพื้นฐานเร็ว",
     schedule: [
-      {day: 1, topic: "บท 1-2: พื้นฐาน + วัสดุ", activities: ["อ่านบทเรียน 2 บท", "ทำ Quiz 2 ชุด", "Flashcard 30 นาที"]},
-      {day: 2, topic: "บท 3-4: พารามิเตอร์ + ปัญหา", activities: ["อ่านบทเรียน 2 บท", "Virtual Lab", "ถาม AI"]},
-      {day: 3, topic: "บท 5 + สอบรวม", activities: ["อ่านบทคำนวณ", "ใช้เครื่องคิดเลข", "สอบรวม"]},
+      { day: 1, topic: "บท 1-2: พื้นฐาน + วัสดุ", activities: ["อ่านบทเรียน 2 บท", "ทำ Quiz 2 ชุด", "Flashcard 30 นาที"] },
+      { day: 2, topic: "บท 3-4: พารามิเตอร์ + ปัญหา", activities: ["อ่านบทเรียน 2 บท", "Virtual Lab", "ถาม AI"] },
+      { day: 3, topic: "บท 5 + สอบรวม", activities: ["อ่านบทคำนวณ", "ใช้เครื่องคิดเลข", "สอบรวม"] },
     ],
   },
 };
@@ -2263,8 +2263,8 @@ function createStudyPlannerMenuFlex() {
       type: "box",
       layout: "vertical",
       contents: [
-        {type: "text", text: plan.name, weight: "bold", size: "md", color: "#FFFFFF", wrap: true},
-        {type: "text", text: `⏱️ ${plan.duration}`, size: "xs", color: "#FCD34D"},
+        { type: "text", text: plan.name, weight: "bold", size: "md", color: "#FFFFFF", wrap: true },
+        { type: "text", text: `⏱️ ${plan.duration}`, size: "xs", color: "#FCD34D" },
       ],
       backgroundColor: "#D97706",
       paddingAll: "15px",
@@ -2273,10 +2273,10 @@ function createStudyPlannerMenuFlex() {
       type: "box",
       layout: "vertical",
       contents: [
-        {type: "text", text: "🎯 เป้าหมาย:", weight: "bold", size: "xs", color: "#666666"},
-        {type: "text", text: plan.targetLevel, size: "xs", color: "#333333", wrap: true, margin: "sm"},
-        {type: "separator", margin: "md"},
-        {type: "text", text: `📅 ${plan.schedule.length} วัน | ${plan.schedule.reduce((sum, d) => sum + d.activities.length, 0)} กิจกรรม`, size: "xs", color: "#666666", margin: "md"},
+        { type: "text", text: "🎯 เป้าหมาย:", weight: "bold", size: "xs", color: "#666666" },
+        { type: "text", text: plan.targetLevel, size: "xs", color: "#333333", wrap: true, margin: "sm" },
+        { type: "separator", margin: "md" },
+        { type: "text", text: `📅 ${plan.schedule.length} วัน | ${plan.schedule.reduce((sum, d) => sum + d.activities.length, 0)} กิจกรรม`, size: "xs", color: "#666666", margin: "md" },
       ],
       paddingAll: "15px",
     },
@@ -2286,7 +2286,7 @@ function createStudyPlannerMenuFlex() {
       contents: [
         {
           type: "button",
-          action: {type: "message", label: "📋 ดูแผนเรียน", text: `/studyplan ${plan.id}`},
+          action: { type: "message", label: "📋 ดูแผนเรียน", text: `/studyplan ${plan.id}` },
           style: "primary",
           color: "#D97706",
           height: "sm",
@@ -2317,7 +2317,7 @@ function createStudyPlanDetailFlex(planId) {
     type: "box",
     layout: "vertical",
     contents: [
-      {type: "text", text: `📅 วันที่ ${day.day}: ${day.topic}`, weight: "bold", size: "xs", color: "#1E40AF", wrap: true},
+      { type: "text", text: `📅 วันที่ ${day.day}: ${day.topic}`, weight: "bold", size: "xs", color: "#1E40AF", wrap: true },
       ...day.activities.map((act) => ({
         type: "text", text: `  • ${act}`, size: "xs", color: "#666666",
       })),
@@ -2338,8 +2338,8 @@ function createStudyPlanDetailFlex(planId) {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: "📅 Study Planner", weight: "bold", size: "sm", color: "#FCD34D"},
-          {type: "text", text: plan.name, weight: "bold", size: "lg", color: "#FFFFFF", wrap: true},
+          { type: "text", text: "📅 Study Planner", weight: "bold", size: "sm", color: "#FCD34D" },
+          { type: "text", text: plan.name, weight: "bold", size: "lg", color: "#FFFFFF", wrap: true },
         ],
         backgroundColor: "#D97706",
         paddingAll: "20px",
@@ -2348,8 +2348,8 @@ function createStudyPlanDetailFlex(planId) {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: `🎯 เป้าหมาย: ${plan.targetLevel}`, size: "sm", color: "#333333", wrap: true},
-          {type: "separator", margin: "md"},
+          { type: "text", text: `🎯 เป้าหมาย: ${plan.targetLevel}`, size: "sm", color: "#333333", wrap: true },
+          { type: "separator", margin: "md" },
           ...dayItems,
         ],
         paddingAll: "15px",
@@ -2360,7 +2360,7 @@ function createStudyPlanDetailFlex(planId) {
         contents: [
           {
             type: "button",
-            action: {type: "message", label: "🚀 เริ่มเรียนวันที่ 1", text: `/lesson lesson1`},
+            action: { type: "message", label: "🚀 เริ่มเรียนวันที่ 1", text: `/lesson lesson1` },
             style: "primary",
             color: "#16A34A",
             height: "sm",
@@ -2387,7 +2387,7 @@ function createProgressDashboardFlex(userProgress) {
 
   // หาระดับผู้เรียน
   const currentLevel = Object.entries(LEARNER_LEVELS).find(
-      ([_, level]) => progress.totalScore >= level.minScore && progress.totalScore <= level.maxScore,
+    ([_, level]) => progress.totalScore >= level.minScore && progress.totalScore <= level.maxScore,
   );
   const levelInfo = currentLevel ? currentLevel[1] : LEARNER_LEVELS[1];
 
@@ -2407,13 +2407,13 @@ function createProgressDashboardFlex(userProgress) {
         type: "box",
         layout: "horizontal",
         contents: [
-          {type: "text", text: "📊", size: "xxl", flex: 0},
+          { type: "text", text: "📊", size: "xxl", flex: 0 },
           {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: "ความก้าวหน้าของคุณ", weight: "bold", size: "lg", color: "#FFFFFF"},
-              {type: "text", text: levelInfo.name, size: "sm", color: "#93C5FD"},
+              { type: "text", text: "ความก้าวหน้าของคุณ", weight: "bold", size: "lg", color: "#FFFFFF" },
+              { type: "text", text: levelInfo.name, size: "sm", color: "#93C5FD" },
             ],
             paddingStart: "15px",
           },
@@ -2431,7 +2431,7 @@ function createProgressDashboardFlex(userProgress) {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: `📚 บทเรียน: ${completedLessons}/${totalLessons}`, size: "sm", color: "#333333"},
+              { type: "text", text: `📚 บทเรียน: ${completedLessons}/${totalLessons}`, size: "sm", color: "#333333" },
               {
                 type: "box",
                 layout: "vertical",
@@ -2452,7 +2452,7 @@ function createProgressDashboardFlex(userProgress) {
               },
             ],
           },
-          {type: "separator", margin: "lg"},
+          { type: "separator", margin: "lg" },
           // Stats
           {
             type: "box",
@@ -2462,9 +2462,9 @@ function createProgressDashboardFlex(userProgress) {
                 type: "box",
                 layout: "vertical",
                 contents: [
-                  {type: "text", text: "🏆", size: "xl", align: "center"},
-                  {type: "text", text: `${progress.totalScore || 0}`, weight: "bold", size: "lg", align: "center", color: "#D97706"},
-                  {type: "text", text: "คะแนน", size: "xs", align: "center", color: "#666666"},
+                  { type: "text", text: "🏆", size: "xl", align: "center" },
+                  { type: "text", text: `${progress.totalScore || 0}`, weight: "bold", size: "lg", align: "center", color: "#D97706" },
+                  { type: "text", text: "คะแนน", size: "xs", align: "center", color: "#666666" },
                 ],
                 flex: 1,
               },
@@ -2472,9 +2472,9 @@ function createProgressDashboardFlex(userProgress) {
                 type: "box",
                 layout: "vertical",
                 contents: [
-                  {type: "text", text: "📝", size: "xl", align: "center"},
-                  {type: "text", text: `${progress.quizzesPassed?.length || 0}`, weight: "bold", size: "lg", align: "center", color: "#7C3AED"},
-                  {type: "text", text: "Quiz ผ่าน", size: "xs", align: "center", color: "#666666"},
+                  { type: "text", text: "📝", size: "xl", align: "center" },
+                  { type: "text", text: `${progress.quizzesPassed?.length || 0}`, weight: "bold", size: "lg", align: "center", color: "#7C3AED" },
+                  { type: "text", text: "Quiz ผ่าน", size: "xs", align: "center", color: "#666666" },
                 ],
                 flex: 1,
               },
@@ -2482,23 +2482,23 @@ function createProgressDashboardFlex(userProgress) {
                 type: "box",
                 layout: "vertical",
                 contents: [
-                  {type: "text", text: "🔥", size: "xl", align: "center"},
-                  {type: "text", text: `${progress.streak || 0}`, weight: "bold", size: "lg", align: "center", color: "#DC2626"},
-                  {type: "text", text: "วันต่อเนื่อง", size: "xs", align: "center", color: "#666666"},
+                  { type: "text", text: "🔥", size: "xl", align: "center" },
+                  { type: "text", text: `${progress.streak || 0}`, weight: "bold", size: "lg", align: "center", color: "#DC2626" },
+                  { type: "text", text: "วันต่อเนื่อง", size: "xs", align: "center", color: "#666666" },
                 ],
                 flex: 1,
               },
             ],
             margin: "lg",
           },
-          {type: "separator", margin: "lg"},
+          { type: "separator", margin: "lg" },
           // Badges
           {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: "🏅 เหรียญที่ได้รับ:", weight: "bold", size: "sm", color: "#333333"},
-              {type: "text", text: badgeText, size: "lg", margin: "sm", align: "center"},
+              { type: "text", text: "🏅 เหรียญที่ได้รับ:", weight: "bold", size: "sm", color: "#333333" },
+              { type: "text", text: badgeText, size: "lg", margin: "sm", align: "center" },
             ],
             margin: "lg",
           },
@@ -2511,14 +2511,14 @@ function createProgressDashboardFlex(userProgress) {
         contents: [
           {
             type: "button",
-            action: {type: "message", label: "📚 เรียนต่อ", text: "/lesson"},
+            action: { type: "message", label: "📚 เรียนต่อ", text: "/lesson" },
             style: "primary",
             color: "#16A34A",
             height: "sm",
           },
           {
             type: "button",
-            action: {type: "message", label: "🏅 ดูเหรียญทั้งหมด", text: "/badges"},
+            action: { type: "message", label: "🏅 ดูเหรียญทั้งหมด", text: "/badges" },
             style: "secondary",
             height: "sm",
             margin: "sm",
@@ -2540,9 +2540,9 @@ function createBadgesGalleryFlex(earnedBadges = []) {
       type: "box",
       layout: "vertical",
       contents: [
-        {type: "text", text: isEarned ? badge.icon : "🔒", size: "xxl", align: "center"},
-        {type: "text", text: badge.name, weight: "bold", size: "xs", align: "center", color: isEarned ? "#333333" : "#999999", wrap: true},
-        {type: "text", text: badge.description, size: "xxs", align: "center", color: "#666666", wrap: true, margin: "sm"},
+        { type: "text", text: isEarned ? badge.icon : "🔒", size: "xxl", align: "center" },
+        { type: "text", text: badge.name, weight: "bold", size: "xs", align: "center", color: isEarned ? "#333333" : "#999999", wrap: true },
+        { type: "text", text: badge.description, size: "xxs", align: "center", color: "#666666", wrap: true, margin: "sm" },
       ],
       width: "100px",
       paddingAll: "10px",
@@ -2566,8 +2566,8 @@ function createBadgesGalleryFlex(earnedBadges = []) {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: "🏅 รางวัลและเหรียญ", weight: "bold", size: "lg", color: "#FFFFFF"},
-          {type: "text", text: `ได้รับแล้ว ${earnedBadges.length}/${Object.keys(BADGES).length} เหรียญ`, size: "xs", color: "#FCD34D"},
+          { type: "text", text: "🏅 รางวัลและเหรียญ", weight: "bold", size: "lg", color: "#FFFFFF" },
+          { type: "text", text: `ได้รับแล้ว ${earnedBadges.length}/${Object.keys(BADGES).length} เหรียญ`, size: "xs", color: "#FCD34D" },
         ],
         backgroundColor: "#D97706",
         paddingAll: "20px",
@@ -2618,7 +2618,7 @@ function createToolsMenuFlex() {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: "🤖 ถาม AI พี่วิทย์", weight: "bold", size: "md", color: "#FFFFFF"},
+              { type: "text", text: "🤖 ถาม AI พี่วิทย์", weight: "bold", size: "md", color: "#FFFFFF" },
             ],
             backgroundColor: "#7C3AED",
             paddingAll: "15px",
@@ -2627,12 +2627,12 @@ function createToolsMenuFlex() {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: "ถามได้ทุกเรื่องเกี่ยวกับการฉีดพลาสติก", size: "xs", color: "#666666", wrap: true},
-              {type: "separator", margin: "md"},
-              {type: "text", text: "💡 ตัวอย่างคำถาม:", weight: "bold", size: "xs", color: "#7C3AED", margin: "md"},
-              {type: "text", text: "• ชิ้นงานมี Flash ทำไงดี?", size: "xs", color: "#333333"},
-              {type: "text", text: "• PP กับ ABS ต่างกันยังไง?", size: "xs", color: "#333333"},
-              {type: "text", text: "• Cooling time คำนวณยังไง?", size: "xs", color: "#333333"},
+              { type: "text", text: "ถามได้ทุกเรื่องเกี่ยวกับการฉีดพลาสติก", size: "xs", color: "#666666", wrap: true },
+              { type: "separator", margin: "md" },
+              { type: "text", text: "💡 ตัวอย่างคำถาม:", weight: "bold", size: "xs", color: "#7C3AED", margin: "md" },
+              { type: "text", text: "• ชิ้นงานมี Flash ทำไงดี?", size: "xs", color: "#333333" },
+              { type: "text", text: "• PP กับ ABS ต่างกันยังไง?", size: "xs", color: "#333333" },
+              { type: "text", text: "• Cooling time คำนวณยังไง?", size: "xs", color: "#333333" },
             ],
             paddingAll: "15px",
           },
@@ -2642,7 +2642,7 @@ function createToolsMenuFlex() {
             contents: [
               {
                 type: "button",
-                action: {type: "message", label: "💬 ถาม AI", text: "พี่วิทย์ ช่วยอธิบายพื้นฐานการฉีดพลาสติกหน่อย"},
+                action: { type: "message", label: "💬 ถาม AI", text: "พี่วิทย์ ช่วยอธิบายพื้นฐานการฉีดพลาสติกหน่อย" },
                 style: "primary",
                 color: "#7C3AED",
                 height: "sm",
@@ -2659,7 +2659,7 @@ function createToolsMenuFlex() {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: "🃏 Flashcards", weight: "bold", size: "md", color: "#FFFFFF"},
+              { type: "text", text: "🃏 Flashcards", weight: "bold", size: "md", color: "#FFFFFF" },
             ],
             backgroundColor: "#059669",
             paddingAll: "15px",
@@ -2668,13 +2668,13 @@ function createToolsMenuFlex() {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: "ท่องจำคำศัพท์และหลักการสำคัญ", size: "xs", color: "#666666", wrap: true},
-              {type: "separator", margin: "md"},
-              {type: "text", text: "📚 หมวดหมู่:", weight: "bold", size: "xs", color: "#059669", margin: "md"},
-              {type: "text", text: "• พื้นฐาน (Basic)", size: "xs", color: "#333333"},
-              {type: "text", text: "• พารามิเตอร์ (Parameters)", size: "xs", color: "#333333"},
-              {type: "text", text: "• ปัญหา (Defects)", size: "xs", color: "#333333"},
-              {type: "text", text: "• วัสดุ (Materials)", size: "xs", color: "#333333"},
+              { type: "text", text: "ท่องจำคำศัพท์และหลักการสำคัญ", size: "xs", color: "#666666", wrap: true },
+              { type: "separator", margin: "md" },
+              { type: "text", text: "📚 หมวดหมู่:", weight: "bold", size: "xs", color: "#059669", margin: "md" },
+              { type: "text", text: "• พื้นฐาน (Basic)", size: "xs", color: "#333333" },
+              { type: "text", text: "• พารามิเตอร์ (Parameters)", size: "xs", color: "#333333" },
+              { type: "text", text: "• ปัญหา (Defects)", size: "xs", color: "#333333" },
+              { type: "text", text: "• วัสดุ (Materials)", size: "xs", color: "#333333" },
             ],
             paddingAll: "15px",
           },
@@ -2684,7 +2684,7 @@ function createToolsMenuFlex() {
             contents: [
               {
                 type: "button",
-                action: {type: "message", label: "🃏 เริ่มท่องจำ", text: "/flashcard 0"},
+                action: { type: "message", label: "🃏 เริ่มท่องจำ", text: "/flashcard 0" },
                 style: "primary",
                 color: "#059669",
                 height: "sm",
@@ -2701,7 +2701,7 @@ function createToolsMenuFlex() {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: "🔬 Virtual Lab", weight: "bold", size: "md", color: "#FFFFFF"},
+              { type: "text", text: "🔬 Virtual Lab", weight: "bold", size: "md", color: "#FFFFFF" },
             ],
             backgroundColor: "#DC2626",
             paddingAll: "15px",
@@ -2710,12 +2710,12 @@ function createToolsMenuFlex() {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: "จำลองการตั้งค่าพารามิเตอร์", size: "xs", color: "#666666", wrap: true},
-              {type: "separator", margin: "md"},
-              {type: "text", text: "🏭 สถานการณ์ฝึก:", weight: "bold", size: "xs", color: "#DC2626", margin: "md"},
-              {type: "text", text: "• ผลิตแก้วพลาสติก PP", size: "xs", color: "#333333"},
-              {type: "text", text: "• ผลิตเคสมือถือ ABS", size: "xs", color: "#333333"},
-              {type: "text", text: "• ผลิตเกียร์ POM", size: "xs", color: "#333333"},
+              { type: "text", text: "จำลองการตั้งค่าพารามิเตอร์", size: "xs", color: "#666666", wrap: true },
+              { type: "separator", margin: "md" },
+              { type: "text", text: "🏭 สถานการณ์ฝึก:", weight: "bold", size: "xs", color: "#DC2626", margin: "md" },
+              { type: "text", text: "• ผลิตแก้วพลาสติก PP", size: "xs", color: "#333333" },
+              { type: "text", text: "• ผลิตเคสมือถือ ABS", size: "xs", color: "#333333" },
+              { type: "text", text: "• ผลิตเกียร์ POM", size: "xs", color: "#333333" },
             ],
             paddingAll: "15px",
           },
@@ -2725,7 +2725,7 @@ function createToolsMenuFlex() {
             contents: [
               {
                 type: "button",
-                action: {type: "message", label: "🔬 เข้า Lab", text: "/virtuallab"},
+                action: { type: "message", label: "🔬 เข้า Lab", text: "/virtuallab" },
                 style: "primary",
                 color: "#DC2626",
                 height: "sm",
@@ -2742,7 +2742,7 @@ function createToolsMenuFlex() {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: "📅 Study Planner", weight: "bold", size: "md", color: "#FFFFFF"},
+              { type: "text", text: "📅 Study Planner", weight: "bold", size: "md", color: "#FFFFFF" },
             ],
             backgroundColor: "#D97706",
             paddingAll: "15px",
@@ -2751,11 +2751,11 @@ function createToolsMenuFlex() {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: "แผนการเรียนที่ออกแบบมาให้", size: "xs", color: "#666666", wrap: true},
-              {type: "separator", margin: "md"},
-              {type: "text", text: "📋 แผนที่มี:", weight: "bold", size: "xs", color: "#D97706", margin: "md"},
-              {type: "text", text: "• แผน 7 วัน ผู้เริ่มต้น", size: "xs", color: "#333333"},
-              {type: "text", text: "• แผน 3 วัน เข้มข้น", size: "xs", color: "#333333"},
+              { type: "text", text: "แผนการเรียนที่ออกแบบมาให้", size: "xs", color: "#666666", wrap: true },
+              { type: "separator", margin: "md" },
+              { type: "text", text: "📋 แผนที่มี:", weight: "bold", size: "xs", color: "#D97706", margin: "md" },
+              { type: "text", text: "• แผน 7 วัน ผู้เริ่มต้น", size: "xs", color: "#333333" },
+              { type: "text", text: "• แผน 3 วัน เข้มข้น", size: "xs", color: "#333333" },
             ],
             paddingAll: "15px",
           },
@@ -2765,7 +2765,7 @@ function createToolsMenuFlex() {
             contents: [
               {
                 type: "button",
-                action: {type: "message", label: "📅 ดูแผนเรียน", text: "/studyplan"},
+                action: { type: "message", label: "📅 ดูแผนเรียน", text: "/studyplan" },
                 style: "primary",
                 color: "#D97706",
                 height: "sm",
@@ -2782,7 +2782,7 @@ function createToolsMenuFlex() {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: "🧮 เครื่องคิดเลข", weight: "bold", size: "md", color: "#FFFFFF"},
+              { type: "text", text: "🧮 เครื่องคิดเลข", weight: "bold", size: "md", color: "#FFFFFF" },
             ],
             backgroundColor: "#1E40AF",
             paddingAll: "15px",
@@ -2791,13 +2791,13 @@ function createToolsMenuFlex() {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: "คำนวณพารามิเตอร์การฉีด", size: "xs", color: "#666666", wrap: true},
-              {type: "separator", margin: "md"},
-              {type: "text", text: "📐 สูตรที่มี:", weight: "bold", size: "xs", color: "#1E40AF", margin: "md"},
-              {type: "text", text: "• Clamping Force", size: "xs", color: "#333333"},
-              {type: "text", text: "• Cooling Time", size: "xs", color: "#333333"},
-              {type: "text", text: "• Cycle Time", size: "xs", color: "#333333"},
-              {type: "text", text: "• Shot Size", size: "xs", color: "#333333"},
+              { type: "text", text: "คำนวณพารามิเตอร์การฉีด", size: "xs", color: "#666666", wrap: true },
+              { type: "separator", margin: "md" },
+              { type: "text", text: "📐 สูตรที่มี:", weight: "bold", size: "xs", color: "#1E40AF", margin: "md" },
+              { type: "text", text: "• Clamping Force", size: "xs", color: "#333333" },
+              { type: "text", text: "• Cooling Time", size: "xs", color: "#333333" },
+              { type: "text", text: "• Cycle Time", size: "xs", color: "#333333" },
+              { type: "text", text: "• Shot Size", size: "xs", color: "#333333" },
             ],
             paddingAll: "15px",
           },
@@ -2807,7 +2807,7 @@ function createToolsMenuFlex() {
             contents: [
               {
                 type: "button",
-                action: {type: "message", label: "🧮 คำนวณ", text: "/calculator"},
+                action: { type: "message", label: "🧮 คำนวณ", text: "/calculator" },
                 style: "primary",
                 color: "#1E40AF",
                 height: "sm",
@@ -2824,7 +2824,7 @@ function createToolsMenuFlex() {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: "📊 ความก้าวหน้า", weight: "bold", size: "md", color: "#FFFFFF"},
+              { type: "text", text: "📊 ความก้าวหน้า", weight: "bold", size: "md", color: "#FFFFFF" },
             ],
             backgroundColor: "#16A34A",
             paddingAll: "15px",
@@ -2833,13 +2833,13 @@ function createToolsMenuFlex() {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: "ติดตามการเรียนของคุณ", size: "xs", color: "#666666", wrap: true},
-              {type: "separator", margin: "md"},
-              {type: "text", text: "📈 ข้อมูลที่แสดง:", weight: "bold", size: "xs", color: "#16A34A", margin: "md"},
-              {type: "text", text: "• บทเรียนที่เรียนจบ", size: "xs", color: "#333333"},
-              {type: "text", text: "• คะแนนสะสม", size: "xs", color: "#333333"},
-              {type: "text", text: "• เหรียญรางวัล", size: "xs", color: "#333333"},
-              {type: "text", text: "• ระดับผู้เรียน", size: "xs", color: "#333333"},
+              { type: "text", text: "ติดตามการเรียนของคุณ", size: "xs", color: "#666666", wrap: true },
+              { type: "separator", margin: "md" },
+              { type: "text", text: "📈 ข้อมูลที่แสดง:", weight: "bold", size: "xs", color: "#16A34A", margin: "md" },
+              { type: "text", text: "• บทเรียนที่เรียนจบ", size: "xs", color: "#333333" },
+              { type: "text", text: "• คะแนนสะสม", size: "xs", color: "#333333" },
+              { type: "text", text: "• เหรียญรางวัล", size: "xs", color: "#333333" },
+              { type: "text", text: "• ระดับผู้เรียน", size: "xs", color: "#333333" },
             ],
             paddingAll: "15px",
           },
@@ -2849,7 +2849,7 @@ function createToolsMenuFlex() {
             contents: [
               {
                 type: "button",
-                action: {type: "message", label: "📊 ดูความก้าวหน้า", text: "/progress"},
+                action: { type: "message", label: "📊 ดูความก้าวหน้า", text: "/progress" },
                 style: "primary",
                 color: "#16A34A",
                 height: "sm",
@@ -2876,7 +2876,7 @@ function createToolsMenuFlex() {
  */
 function generateRandomExam(level, count = 5) {
   let allQuestions = [];
-  
+
   // ถ้าระบุ level ให้ดึงจากระดับนั้น
   if (level !== undefined && level !== null && level >= 0 && level <= 5) {
     const levelKey = `level${level}`;
@@ -2889,7 +2889,7 @@ function generateRandomExam(level, count = 5) {
       allQuestions = [...allQuestions, ...questions];
     });
   }
-  
+
   // สุ่มข้อสอบ
   const shuffled = allQuestions.sort(() => 0.5 - Math.random());
   return shuffled.slice(0, Math.min(count, shuffled.length));
@@ -2902,7 +2902,7 @@ function generateRandomExam(level, count = 5) {
  */
 function generateMixedExam(count = 10) {
   let allQuestions = [];
-  
+
   // เพิ่มจาก QUIZ_QUESTIONS (พื้นฐาน)
   Object.values(QUIZ_QUESTIONS).forEach(q => {
     allQuestions.push({
@@ -2911,7 +2911,7 @@ function generateMixedExam(count = 10) {
       level: 1 // พื้นฐาน
     });
   });
-  
+
   // เพิ่มจาก ADVANCED_EXAM_QUESTIONS (ขั้นสูง)
   Object.entries(ADVANCED_EXAM_QUESTIONS).forEach(([levelKey, questions]) => {
     questions.forEach(q => {
@@ -2921,7 +2921,7 @@ function generateMixedExam(count = 10) {
       });
     });
   });
-  
+
   // สุ่มและคืนค่า
   const shuffled = allQuestions.sort(() => 0.5 - Math.random());
   return shuffled.slice(0, Math.min(count, shuffled.length));
@@ -2941,17 +2941,17 @@ function generateExamByTopic(topicKey, count = 5) {
     calculation: [3],
     advanced: [5]
   };
-  
+
   const levels = topicMapping[topicKey] || [0, 1, 2, 3, 4, 5];
   let allQuestions = [];
-  
+
   levels.forEach(level => {
     const levelKey = `level${level}`;
     if (ADVANCED_EXAM_QUESTIONS[levelKey]) {
       allQuestions = [...allQuestions, ...ADVANCED_EXAM_QUESTIONS[levelKey]];
     }
   });
-  
+
   const shuffled = allQuestions.sort(() => 0.5 - Math.random());
   return shuffled.slice(0, Math.min(count, shuffled.length));
 }
@@ -2970,8 +2970,8 @@ function createAdvancedExamMenuFlex() {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: "🎯 ข้อสอบขั้นสูง", weight: "bold", size: "xl", color: "#FFFFFF"},
-          {type: "text", text: "เชื่อมโยงกับหลักสูตร IMT Thailand", size: "xs", color: "#E0E0E0"}
+          { type: "text", text: "🎯 ข้อสอบขั้นสูง", weight: "bold", size: "xl", color: "#FFFFFF" },
+          { type: "text", text: "เชื่อมโยงกับหลักสูตร IMT Thailand", size: "xs", color: "#E0E0E0" }
         ],
         backgroundColor: "#7C3AED",
         paddingAll: "20px"
@@ -2980,8 +2980,8 @@ function createAdvancedExamMenuFlex() {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: "📊 เลือกประเภทข้อสอบ:", weight: "bold", size: "md", margin: "md"},
-          {type: "separator", margin: "md"},
+          { type: "text", text: "📊 เลือกประเภทข้อสอบ:", weight: "bold", size: "md", margin: "md" },
+          { type: "separator", margin: "md" },
           // Level-based
           {
             type: "box",
@@ -2989,21 +2989,21 @@ function createAdvancedExamMenuFlex() {
             contents: [
               {
                 type: "button",
-                action: {type: "message", label: "Level 0", text: "/exam level 0"},
+                action: { type: "message", label: "Level 0", text: "/exam level 0" },
                 style: "secondary",
                 height: "sm",
                 flex: 1
               },
               {
                 type: "button",
-                action: {type: "message", label: "Level 1", text: "/exam level 1"},
+                action: { type: "message", label: "Level 1", text: "/exam level 1" },
                 style: "secondary",
                 height: "sm",
                 flex: 1
               },
               {
                 type: "button",
-                action: {type: "message", label: "Level 2", text: "/exam level 2"},
+                action: { type: "message", label: "Level 2", text: "/exam level 2" },
                 style: "secondary",
                 height: "sm",
                 flex: 1
@@ -3018,21 +3018,21 @@ function createAdvancedExamMenuFlex() {
             contents: [
               {
                 type: "button",
-                action: {type: "message", label: "Level 3", text: "/exam level 3"},
+                action: { type: "message", label: "Level 3", text: "/exam level 3" },
                 style: "secondary",
                 height: "sm",
                 flex: 1
               },
               {
                 type: "button",
-                action: {type: "message", label: "Level 4", text: "/exam level 4"},
+                action: { type: "message", label: "Level 4", text: "/exam level 4" },
                 style: "secondary",
                 height: "sm",
                 flex: 1
               },
               {
                 type: "button",
-                action: {type: "message", label: "Level 5", text: "/exam level 5"},
+                action: { type: "message", label: "Level 5", text: "/exam level 5" },
                 style: "secondary",
                 height: "sm",
                 flex: 1
@@ -3041,27 +3041,27 @@ function createAdvancedExamMenuFlex() {
             margin: "sm",
             spacing: "sm"
           },
-          {type: "separator", margin: "lg"},
-          {type: "text", text: "📝 ตามหัวข้อ:", weight: "bold", size: "sm", margin: "md"},
+          { type: "separator", margin: "lg" },
+          { type: "text", text: "📝 ตามหัวข้อ:", weight: "bold", size: "sm", margin: "md" },
           {
             type: "box",
             layout: "vertical",
             contents: [
               {
                 type: "button",
-                action: {type: "message", label: "📚 พื้นฐาน (Basic)", text: "/exam topic basic"},
+                action: { type: "message", label: "📚 พื้นฐาน (Basic)", text: "/exam topic basic" },
                 style: "secondary",
                 height: "sm"
               },
               {
                 type: "button",
-                action: {type: "message", label: "⚙️ พารามิเตอร์ (Parameters)", text: "/exam topic parameters"},
+                action: { type: "message", label: "⚙️ พารามิเตอร์ (Parameters)", text: "/exam topic parameters" },
                 style: "secondary",
                 height: "sm"
               },
               {
                 type: "button",
-                action: {type: "message", label: "🔧 ปัญหา/แก้ไข (Defects)", text: "/exam topic defects"},
+                action: { type: "message", label: "🔧 ปัญหา/แก้ไข (Defects)", text: "/exam topic defects" },
                 style: "secondary",
                 height: "sm"
               }
@@ -3069,22 +3069,22 @@ function createAdvancedExamMenuFlex() {
             margin: "sm",
             spacing: "xs"
           },
-          {type: "separator", margin: "lg"},
-          {type: "text", text: "🏆 ข้อสอบพิเศษ:", weight: "bold", size: "sm", margin: "md"},
+          { type: "separator", margin: "lg" },
+          { type: "text", text: "🏆 ข้อสอบพิเศษ:", weight: "bold", size: "sm", margin: "md" },
           {
             type: "box",
             layout: "vertical",
             contents: [
               {
                 type: "button",
-                action: {type: "message", label: "🔄 ข้อสอบผสม 10 ข้อ", text: "/exam mixed 10"},
+                action: { type: "message", label: "🔄 ข้อสอบผสม 10 ข้อ", text: "/exam mixed 10" },
                 style: "primary",
                 color: "#7C3AED",
                 height: "sm"
               },
               {
                 type: "button",
-                action: {type: "message", label: "🏭 กรณีศึกษา (Case Study)", text: "/exam case"},
+                action: { type: "message", label: "🏭 กรณีศึกษา (Case Study)", text: "/exam case" },
                 style: "primary",
                 color: "#DC2626",
                 height: "sm"
@@ -3115,7 +3115,7 @@ function createAdvancedQuizFlex(question, currentIndex, totalCount) {
     4: "#EF4444", // แดง - แก้ปัญหา
     5: "#1F2937"  // เทาดำ - ขั้นสูง
   };
-  
+
   const levelNames = {
     0: "Mindset พื้นฐาน",
     1: "เครื่องจักร",
@@ -3124,14 +3124,14 @@ function createAdvancedQuizFlex(question, currentIndex, totalCount) {
     4: "แก้ปัญหา",
     5: "เทคนิคขั้นสูง"
   };
-  
+
   const color = levelColors[question.level] || "#7C3AED";
   const levelName = levelNames[question.level] || "ทั่วไป";
-  
+
   const optionButtons = question.options.map((opt, idx) => ({
     type: "button",
     action: {
-      type: "message", 
+      type: "message",
       label: opt.substring(0, 40), // จำกัดความยาว
       text: `/answer ${question.id} ${String.fromCharCode(65 + idx)}`
     },
@@ -3139,7 +3139,7 @@ function createAdvancedQuizFlex(question, currentIndex, totalCount) {
     height: "sm",
     margin: "sm"
   }));
-  
+
   return {
     type: "flex",
     altText: `📝 ข้อสอบ ${currentIndex}/${totalCount}: ${question.question.substring(0, 30)}...`,
@@ -3154,12 +3154,12 @@ function createAdvancedQuizFlex(question, currentIndex, totalCount) {
             type: "box",
             layout: "horizontal",
             contents: [
-              {type: "text", text: `📝 ข้อที่ ${currentIndex}/${totalCount}`, weight: "bold", size: "md", color: "#FFFFFF", flex: 0},
-              {type: "filler"},
-              {type: "text", text: `Level ${question.level}`, size: "xs", color: "#E0E0E0", align: "end", flex: 0}
+              { type: "text", text: `📝 ข้อที่ ${currentIndex}/${totalCount}`, weight: "bold", size: "md", color: "#FFFFFF", flex: 0 },
+              { type: "filler" },
+              { type: "text", text: `Level ${question.level}`, size: "xs", color: "#E0E0E0", align: "end", flex: 0 }
             ]
           },
-          {type: "text", text: levelName, size: "xs", color: "#E0E0E0"}
+          { type: "text", text: levelName, size: "xs", color: "#E0E0E0" }
         ],
         backgroundColor: color,
         paddingAll: "15px"
@@ -3168,9 +3168,9 @@ function createAdvancedQuizFlex(question, currentIndex, totalCount) {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: question.question, weight: "bold", size: "md", wrap: true, color: "#333333"},
-          {type: "text", text: `📌 หัวข้อ: ${question.topic || "ทั่วไป"}`, size: "xs", color: "#666666", margin: "md"},
-          {type: "separator", margin: "lg"},
+          { type: "text", text: question.question, weight: "bold", size: "md", wrap: true, color: "#333333" },
+          { type: "text", text: `📌 หัวข้อ: ${question.topic || "ทั่วไป"}`, size: "xs", color: "#666666", margin: "md" },
+          { type: "separator", margin: "lg" },
           ...optionButtons
         ],
         paddingAll: "15px"
@@ -3181,14 +3181,14 @@ function createAdvancedQuizFlex(question, currentIndex, totalCount) {
         contents: [
           {
             type: "button",
-            action: {type: "message", label: "⏭️ ข้าม", text: `/skip ${question.id}`},
+            action: { type: "message", label: "⏭️ ข้าม", text: `/skip ${question.id}` },
             style: "secondary",
             height: "sm",
             flex: 1
           },
           {
             type: "button",
-            action: {type: "message", label: "🏠 กลับเมนู", text: "/examMenu"},
+            action: { type: "message", label: "🏠 กลับเมนู", text: "/examMenu" },
             style: "secondary",
             height: "sm",
             flex: 1
@@ -3211,7 +3211,7 @@ function createAdvancedAnswerResultFlex(question, userAnswer, isCorrect) {
   const color = isCorrect ? "#10B981" : "#EF4444";
   const icon = isCorrect ? "✅" : "❌";
   const title = isCorrect ? "ถูกต้อง! 🎉" : "ไม่ถูกต้อง 😅";
-  
+
   return {
     type: "flex",
     altText: `${icon} ${title}`,
@@ -3222,7 +3222,7 @@ function createAdvancedAnswerResultFlex(question, userAnswer, isCorrect) {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: `${icon} ${title}`, weight: "bold", size: "xl", color: "#FFFFFF", align: "center"}
+          { type: "text", text: `${icon} ${title}`, weight: "bold", size: "xl", color: "#FFFFFF", align: "center" }
         ],
         backgroundColor: color,
         paddingAll: "20px"
@@ -3231,14 +3231,14 @@ function createAdvancedAnswerResultFlex(question, userAnswer, isCorrect) {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: `📝 ${question.question}`, weight: "bold", size: "sm", wrap: true, color: "#333333"},
-          {type: "separator", margin: "md"},
+          { type: "text", text: `📝 ${question.question}`, weight: "bold", size: "sm", wrap: true, color: "#333333" },
+          { type: "separator", margin: "md" },
           {
             type: "box",
             layout: "horizontal",
             contents: [
-              {type: "text", text: "คำตอบของคุณ:", size: "xs", color: "#666666", flex: 0},
-              {type: "text", text: userAnswer, weight: "bold", size: "sm", color: isCorrect ? "#10B981" : "#EF4444", align: "end"}
+              { type: "text", text: "คำตอบของคุณ:", size: "xs", color: "#666666", flex: 0 },
+              { type: "text", text: userAnswer, weight: "bold", size: "sm", color: isCorrect ? "#10B981" : "#EF4444", align: "end" }
             ],
             margin: "md"
           },
@@ -3246,15 +3246,15 @@ function createAdvancedAnswerResultFlex(question, userAnswer, isCorrect) {
             type: "box",
             layout: "horizontal",
             contents: [
-              {type: "text", text: "เฉลย:", size: "xs", color: "#666666", flex: 0},
-              {type: "text", text: question.answer, weight: "bold", size: "sm", color: "#10B981", align: "end"}
+              { type: "text", text: "เฉลย:", size: "xs", color: "#666666", flex: 0 },
+              { type: "text", text: question.answer, weight: "bold", size: "sm", color: "#10B981", align: "end" }
             ],
             margin: "sm"
           },
-          {type: "separator", margin: "md"},
-          {type: "text", text: "💡 อธิบาย:", weight: "bold", size: "sm", color: "#7C3AED", margin: "md"},
-          {type: "text", text: question.explanation, size: "xs", wrap: true, color: "#333333", margin: "sm"},
-          {type: "text", text: `📌 หัวข้อ: ${question.topic || "ทั่วไป"}`, size: "xs", color: "#666666", margin: "md"}
+          { type: "separator", margin: "md" },
+          { type: "text", text: "💡 อธิบาย:", weight: "bold", size: "sm", color: "#7C3AED", margin: "md" },
+          { type: "text", text: question.explanation, size: "xs", wrap: true, color: "#333333", margin: "sm" },
+          { type: "text", text: `📌 หัวข้อ: ${question.topic || "ทั่วไป"}`, size: "xs", color: "#666666", margin: "md" }
         ],
         paddingAll: "15px"
       },
@@ -3264,7 +3264,7 @@ function createAdvancedAnswerResultFlex(question, userAnswer, isCorrect) {
         contents: [
           {
             type: "button",
-            action: {type: "message", label: "➡️ ข้อถัดไป", text: "/nextQuestion"},
+            action: { type: "message", label: "➡️ ข้อถัดไป", text: "/nextQuestion" },
             style: "primary",
             color: "#7C3AED",
             height: "sm",
@@ -3272,7 +3272,7 @@ function createAdvancedAnswerResultFlex(question, userAnswer, isCorrect) {
           },
           {
             type: "button",
-            action: {type: "message", label: "🏠 เมนู", text: "/examMenu"},
+            action: { type: "message", label: "🏠 เมนู", text: "/examMenu" },
             style: "secondary",
             height: "sm",
             flex: 1
@@ -3300,7 +3300,7 @@ function createCaseStudyFlex(caseStudy) {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: caseStudy.title, weight: "bold", size: "lg", color: "#FFFFFF", wrap: true}
+          { type: "text", text: caseStudy.title, weight: "bold", size: "lg", color: "#FFFFFF", wrap: true }
         ],
         backgroundColor: "#DC2626",
         paddingAll: "20px"
@@ -3309,10 +3309,10 @@ function createCaseStudyFlex(caseStudy) {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: "📋 สถานการณ์:", weight: "bold", size: "md", color: "#DC2626"},
-          {type: "text", text: caseStudy.scenario, size: "sm", wrap: true, color: "#333333", margin: "sm"},
-          {type: "separator", margin: "lg"},
-          {type: "text", text: `❓ ${caseStudy.questions[0].q}`, weight: "bold", size: "sm", wrap: true, color: "#333333", margin: "md"},
+          { type: "text", text: "📋 สถานการณ์:", weight: "bold", size: "md", color: "#DC2626" },
+          { type: "text", text: caseStudy.scenario, size: "sm", wrap: true, color: "#333333", margin: "sm" },
+          { type: "separator", margin: "lg" },
+          { type: "text", text: `❓ ${caseStudy.questions[0].q}`, weight: "bold", size: "sm", wrap: true, color: "#333333", margin: "md" },
           ...caseStudy.questions[0].options.map((opt, idx) => ({
             type: "button",
             action: {
@@ -3342,7 +3342,7 @@ function createCaseStudyMenuFlex() {
       type: "box",
       layout: "vertical",
       contents: [
-        {type: "text", text: caseStudy.title, weight: "bold", size: "sm", color: "#FFFFFF", wrap: true}
+        { type: "text", text: caseStudy.title, weight: "bold", size: "sm", color: "#FFFFFF", wrap: true }
       ],
       backgroundColor: "#DC2626",
       paddingAll: "15px"
@@ -3351,7 +3351,7 @@ function createCaseStudyMenuFlex() {
       type: "box",
       layout: "vertical",
       contents: [
-        {type: "text", text: caseStudy.scenario.substring(0, 80) + "...", size: "xs", wrap: true, color: "#666666"}
+        { type: "text", text: caseStudy.scenario.substring(0, 80) + "...", size: "xs", wrap: true, color: "#666666" }
       ],
       paddingAll: "10px"
     },
@@ -3361,7 +3361,7 @@ function createCaseStudyMenuFlex() {
       contents: [
         {
           type: "button",
-          action: {type: "message", label: "▶️ เริ่มทำ", text: `/case ${caseStudy.id}`},
+          action: { type: "message", label: "▶️ เริ่มทำ", text: `/case ${caseStudy.id}` },
           style: "primary",
           color: "#DC2626",
           height: "sm"
@@ -3370,7 +3370,7 @@ function createCaseStudyMenuFlex() {
       paddingAll: "10px"
     }
   }));
-  
+
   return {
     type: "flex",
     altText: "🏭 กรณีศึกษา (Case Study)",
@@ -3387,7 +3387,7 @@ function createCaseStudyMenuFlex() {
  */
 function createExamSummaryFlex(examResult) {
   const { correct, total, percentage, level, timeTaken } = examResult;
-  
+
   let grade, gradeColor, message;
   if (percentage >= 90) {
     grade = "A"; gradeColor = "#10B981"; message = "🏆 ยอดเยี่ยม! คุณเชี่ยวชาญมาก!";
@@ -3400,7 +3400,7 @@ function createExamSummaryFlex(examResult) {
   } else {
     grade = "F"; gradeColor = "#DC2626"; message = "💪 อย่าท้อ! กลับไปเรียนใหม่";
   }
-  
+
   return {
     type: "flex",
     altText: `📊 สรุปผลข้อสอบ: ${correct}/${total} (${percentage}%)`,
@@ -3411,8 +3411,8 @@ function createExamSummaryFlex(examResult) {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: "📊 สรุปผลข้อสอบ", weight: "bold", size: "xl", color: "#FFFFFF", align: "center"},
-          {type: "text", text: level ? `Level ${level}` : "ข้อสอบผสม", size: "sm", color: "#E0E0E0", align: "center"}
+          { type: "text", text: "📊 สรุปผลข้อสอบ", weight: "bold", size: "xl", color: "#FFFFFF", align: "center" },
+          { type: "text", text: level ? `Level ${level}` : "ข้อสอบผสม", size: "sm", color: "#E0E0E0", align: "center" }
         ],
         backgroundColor: "#7C3AED",
         paddingAll: "20px"
@@ -3429,27 +3429,27 @@ function createExamSummaryFlex(examResult) {
                 type: "box",
                 layout: "vertical",
                 contents: [
-                  {type: "text", text: grade, weight: "bold", size: "4xl", color: gradeColor, align: "center"},
-                  {type: "text", text: "เกรด", size: "xs", color: "#666666", align: "center"}
+                  { type: "text", text: grade, weight: "bold", size: "4xl", color: gradeColor, align: "center" },
+                  { type: "text", text: "เกรด", size: "xs", color: "#666666", align: "center" }
                 ],
                 flex: 1
               },
-              {type: "separator"},
+              { type: "separator" },
               {
                 type: "box",
                 layout: "vertical",
                 contents: [
-                  {type: "text", text: `${percentage}%`, weight: "bold", size: "3xl", color: "#333333", align: "center"},
-                  {type: "text", text: `${correct}/${total} ข้อ`, size: "sm", color: "#666666", align: "center"}
+                  { type: "text", text: `${percentage}%`, weight: "bold", size: "3xl", color: "#333333", align: "center" },
+                  { type: "text", text: `${correct}/${total} ข้อ`, size: "sm", color: "#666666", align: "center" }
                 ],
                 flex: 1
               }
             ],
             paddingAll: "15px"
           },
-          {type: "separator", margin: "md"},
-          {type: "text", text: message, weight: "bold", size: "md", wrap: true, color: gradeColor, margin: "lg", align: "center"},
-          timeTaken ? {type: "text", text: `⏱️ ใช้เวลา: ${timeTaken} นาที`, size: "xs", color: "#666666", margin: "md", align: "center"} : {type: "filler"}
+          { type: "separator", margin: "md" },
+          { type: "text", text: message, weight: "bold", size: "md", wrap: true, color: gradeColor, margin: "lg", align: "center" },
+          timeTaken ? { type: "text", text: `⏱️ ใช้เวลา: ${timeTaken} นาที`, size: "xs", color: "#666666", margin: "md", align: "center" } : { type: "filler" }
         ],
         paddingAll: "15px"
       },
@@ -3459,14 +3459,14 @@ function createExamSummaryFlex(examResult) {
         contents: [
           {
             type: "button",
-            action: {type: "message", label: "🔄 ทำข้อสอบใหม่", text: "/examMenu"},
+            action: { type: "message", label: "🔄 ทำข้อสอบใหม่", text: "/examMenu" },
             style: "primary",
             color: "#7C3AED",
             height: "sm"
           },
           {
             type: "button",
-            action: {type: "message", label: "📖 กลับไปเรียน", text: "/learn"},
+            action: { type: "message", label: "📖 กลับไปเรียน", text: "/learn" },
             style: "secondary",
             height: "sm",
             margin: "sm"
@@ -3495,7 +3495,7 @@ function getQuestionById(questionId) {
   if (QUIZ_QUESTIONS[questionId]) {
     return { ...QUIZ_QUESTIONS[questionId], id: questionId, source: 'basic' };
   }
-  
+
   // ค้นหาจาก ADVANCED_EXAM_QUESTIONS
   for (const [levelKey, questions] of Object.entries(ADVANCED_EXAM_QUESTIONS)) {
     const found = questions.find(q => q.id === questionId);
@@ -3503,7 +3503,7 @@ function getQuestionById(questionId) {
       return { ...found, source: 'advanced' };
     }
   }
-  
+
   return null;
 }
 
@@ -3517,9 +3517,9 @@ function checkAnswer(questionId, userAnswer) {
   if (!question) {
     return { success: false, error: "ไม่พบข้อสอบ" };
   }
-  
+
   const isCorrect = userAnswer.toUpperCase() === question.answer.toUpperCase();
-  
+
   return {
     success: true,
     question,
@@ -3545,7 +3545,7 @@ module.exports = {
   FLASHCARDS,
   VIRTUAL_LAB_SCENARIOS,
   STUDY_PLANS,
-  
+
   // 🆕 Enhanced Exam Data
   ADVANCED_EXAM_QUESTIONS,
   CASE_STUDY_EXAMS,
@@ -3578,7 +3578,7 @@ module.exports = {
 
   // Tools Menu
   createToolsMenuFlex,
-  
+
   // 🆕 Enhanced Exam Functions
   generateRandomExam,
   generateMixedExam,

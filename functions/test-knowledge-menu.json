@@ -1,0 +1,398 @@
+{
+  "type": "flex",
+  "altText": "🧠 เมนูจัดการความรู้",
+  "contents": {
+    "type": "bubble",
+    "size": "mega",
+    "header": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "🧠",
+              "size": "3xl",
+              "flex": 0
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "Knowledge Management",
+                  "weight": "bold",
+                  "size": "xl",
+                  "color": "#ffffff"
+                },
+                {
+                  "type": "text",
+                  "text": "ระบบจัดการความรู้",
+                  "size": "sm",
+                  "color": "#ffffffcc",
+                  "margin": "xs"
+                }
+              ],
+              "margin": "lg"
+            }
+          ]
+        }
+      ],
+      "paddingAll": "20px",
+      "backgroundColor": "#8b5cf6"
+    },
+    "body": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "text",
+              "text": "📊 สถิติรวม",
+              "weight": "bold",
+              "size": "md",
+              "color": "#374151"
+            },
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "📚",
+                      "size": "xl",
+                      "align": "center"
+                    },
+                    {
+                      "type": "text",
+                      "text": "ความรู้ทั้งหมด",
+                      "size": "xs",
+                      "color": "#6b7280",
+                      "align": "center",
+                      "margin": "sm"
+                    },
+                    {
+                      "type": "text",
+                      "text": "-",
+                      "size": "lg",
+                      "weight": "bold",
+                      "color": "#8b5cf6",
+                      "align": "center",
+                      "margin": "xs"
+                    }
+                  ],
+                  "flex": 1,
+                  "backgroundColor": "#f9fafb",
+                  "paddingAll": "12px",
+                  "cornerRadius": "8px"
+                },
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "✅",
+                      "size": "xl",
+                      "align": "center"
+                    },
+                    {
+                      "type": "text",
+                      "text": "ยืนยันแล้ว",
+                      "size": "xs",
+                      "color": "#6b7280",
+                      "align": "center",
+                      "margin": "sm"
+                    },
+                    {
+                      "type": "text",
+                      "text": "-",
+                      "size": "lg",
+                      "weight": "bold",
+                      "color": "#10b981",
+                      "align": "center",
+                      "margin": "xs"
+                    }
+                  ],
+                  "flex": 1,
+                  "backgroundColor": "#f0fdf4",
+                  "paddingAll": "12px",
+                  "cornerRadius": "8px",
+                  "margin": "sm"
+                }
+              ],
+              "margin": "md"
+            }
+          ]
+        },
+        {
+          "type": "separator",
+          "margin": "lg"
+        },
+        {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "text",
+              "text": "🎯 เมนูการจัดการ",
+              "weight": "bold",
+              "size": "md",
+              "color": "#374151"
+            },
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "📚",
+                  "size": "xl",
+                  "flex": 0
+                },
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "ดูความรู้ทั้งหมด",
+                      "weight": "bold",
+                      "size": "sm",
+                      "color": "#1f2937"
+                    },
+                    {
+                      "type": "text",
+                      "text": "แสดงรายการความรู้แบ่งตามหมวดหมู่",
+                      "size": "xs",
+                      "color": "#6b7280",
+                      "wrap": true,
+                      "margin": "xs"
+                    }
+                  ],
+                  "margin": "md"
+                }
+              ],
+              "backgroundColor": "#f9fafb",
+              "paddingAll": "12px",
+              "cornerRadius": "8px",
+              "margin": "md",
+              "action": {
+                "type": "message",
+                "label": "ดูความรู้",
+                "text": "ดูความรู้ทั้งหมด"
+              }
+            },
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "✅",
+                  "size": "xl",
+                  "flex": 0
+                },
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "ยืนยันความรู้",
+                      "weight": "bold",
+                      "size": "sm",
+                      "color": "#1f2937"
+                    },
+                    {
+                      "type": "text",
+                      "text": "ตรวจสอบและยืนยันความถูกต้อง",
+                      "size": "xs",
+                      "color": "#6b7280",
+                      "wrap": true,
+                      "margin": "xs"
+                    }
+                  ],
+                  "margin": "md"
+                }
+              ],
+              "backgroundColor": "#f0fdf4",
+              "paddingAll": "12px",
+              "cornerRadius": "8px",
+              "margin": "sm",
+              "action": {
+                "type": "message",
+                "label": "ยืนยัน",
+                "text": "verify ความรู้"
+              }
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "🧪",
+                      "size": "xl",
+                      "flex": 0
+                    },
+                    {
+                      "type": "box",
+                      "layout": "vertical",
+                      "contents": [
+                        {
+                          "type": "text",
+                          "text": "ทดสอบ Hybrid System",
+                          "weight": "bold",
+                          "size": "sm",
+                          "color": "#1f2937"
+                        },
+                        {
+                          "type": "text",
+                          "text": "ทดสอบด่วนแบบเลือกวัสดุ",
+                          "size": "xs",
+                          "color": "#6b7280",
+                          "wrap": true,
+                          "margin": "xs"
+                        }
+                      ],
+                      "margin": "md"
+                    }
+                  ],
+                  "paddingAll": "12px"
+                },
+                {
+                  "type": "box",
+                  "layout": "horizontal",
+                  "contents": [
+                    {
+                      "type": "button",
+                      "action": {
+                        "type": "message",
+                        "label": "ABS",
+                        "text": "ทดสอบ hybrid ABS รอยยุบ"
+                      },
+                      "style": "primary",
+                      "color": "#8b5cf6",
+                      "height": "sm",
+                      "flex": 1
+                    },
+                    {
+                      "type": "button",
+                      "action": {
+                        "type": "message",
+                        "label": "PP",
+                        "text": "ทดสอบ hybrid PP บิดงอ"
+                      },
+                      "style": "primary",
+                      "color": "#06b6d4",
+                      "height": "sm",
+                      "flex": 1,
+                      "margin": "xs"
+                    },
+                    {
+                      "type": "button",
+                      "action": {
+                        "type": "message",
+                        "label": "PC",
+                        "text": "ทดสอบ hybrid PC ขุ่น"
+                      },
+                      "style": "primary",
+                      "color": "#10b981",
+                      "height": "sm",
+                      "flex": 1,
+                      "margin": "xs"
+                    }
+                  ],
+                  "paddingStart": "12px",
+                  "paddingEnd": "12px",
+                  "paddingBottom": "12px"
+                }
+              ],
+              "backgroundColor": "#fef3c7",
+              "cornerRadius": "8px",
+              "margin": "sm"
+            },
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "🔧",
+                  "size": "xl",
+                  "flex": 0
+                },
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "ปรับปรุงคลังความรู้",
+                      "weight": "bold",
+                      "size": "sm",
+                      "color": "#1f2937"
+                    },
+                    {
+                      "type": "text",
+                      "text": "Optimize และจัดระเบียบ",
+                      "size": "xs",
+                      "color": "#6b7280",
+                      "wrap": true,
+                      "margin": "xs"
+                    }
+                  ],
+                  "margin": "md"
+                }
+              ],
+              "backgroundColor": "#dbeafe",
+              "paddingAll": "12px",
+              "cornerRadius": "8px",
+              "margin": "sm",
+              "action": {
+                "type": "message",
+                "label": "ปรับปรุง",
+                "text": "ปรับปรุงคลัง"
+              }
+            }
+          ],
+          "margin": "md"
+        }
+      ],
+      "paddingAll": "20px"
+    },
+    "footer": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "button",
+          "action": {
+            "type": "message",
+            "label": "🔙 กลับเมนูหลัก",
+            "text": "/admin"
+          },
+          "style": "link",
+          "height": "sm"
+        }
+      ],
+      "paddingAll": "12px"
+    }
+  }
+}

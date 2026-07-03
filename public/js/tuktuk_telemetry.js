@@ -11,7 +11,8 @@ class TukTukTelemetry {
             events: [],
             videoWatchStats: {}
         };
-        this.telemetryEndpoint = 'http://localhost:8080/api/v1/telemetry'; // Or production URL
+        const apiBase = (window.TUKTUK_LIFF && window.TUKTUK_LIFF.apiBase) || '';
+        this.telemetryEndpoint = apiBase ? apiBase + '/api/v1/telemetry' : '';
         this.batchSize = 10;
         this.initListeners();
 
@@ -90,7 +91,7 @@ class TukTukTelemetry {
     }
 
     async flushData(isUnloading = false) {
-        if (this.sessionData.events.length === 0) return;
+        if (!this.telemetryEndpoint || this.sessionData.events.length === 0) return;
 
         const payload = {
             sessionId: this.sessionData.sessionId,

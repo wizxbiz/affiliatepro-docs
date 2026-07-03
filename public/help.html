@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="description" content="ศูนย์ช่วยเหลือ TukTuk Thailand - คำถามที่พบบ่อย วิธีการใช้งาน และการติดต่อสนับสนุน">
+    <meta name="theme-color" content="#0e0a07" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f97316" media="(prefers-color-scheme: light)">
+
+    <title>ศูนย์ช่วยเหลือ | TukTuk Social Thailand</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    
+    <!-- External CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- TukTuk Core Vars (Reusing existing variables where possible) -->
+    <link rel="stylesheet" href="css/index-vars.css">
+    
+    <style>
+        :root {
+            --primary-orange: #f97316;
+            --primary-orange-hover: #ea580c;
+            --primary-teal: #14b8a6;
+            --primary-green: #22c55e;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Kanit', 'Sarabun', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Support for Dark Mode Class if project uses it */
+        body.dark-mode {
+            background-color: #0e0a07;
+            color: #f1f5f9;
+        }
+
+        .dark-mode .help-card {
+            background-color: #1a1a2e;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dark-mode .accordion-item {
+            background-color: #1a1a2e;
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #f1f5f9;
+        }
+
+        .dark-mode .accordion-button {
+            background-color: #1a1a2e;
+            color: #f1f5f9;
+        }
+
+        .dark-mode .accordion-button:not(.collapsed) {
+            background-color: rgba(249, 115, 22, 0.15);
+            color: var(--primary-orange);
+        }
+
+        /* Navbar */
+        .help-navbar {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .dark-mode .help-navbar {
+            background: rgba(14, 10, 7, 0.9);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .navbar-brand img {
+            height: 32px;
+            margin-right: 10px;
+        }
+
+        /* Hero Section */
+        .help-hero {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #0e0a07 0%, #1e1b4b 100%);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .help-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -10%;
+            width: 120%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(249, 115, 22, 0.1) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, #ffffff, #f97316);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .search-box-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1.25rem 1.5rem 1.25rem 3.5rem;
+            border-radius: 50px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            font-size: 1.1rem;
+            outline: none;
+            transition: var(--transition-base);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        /* Categories Section */
+        .help-section {
+            padding: 60px 0;
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+
+        .help-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition-base);
+            border: 1px solid rgba(0,0,0,0.03);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .help-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--card-shadow);
+            border-color: var(--primary-orange);
+        }
+
+        .card-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition-base);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* FAQ Accordion */
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .accordion-item {
+            border: none;
+            margin-bottom: 15px;
+            border-radius: 15px !important;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .accordion-button {
+            padding: 1.25rem 1.5rem;
+            font-weight: 600;
+            box-shadow: none !important;
+        }
+
+        .accordion-button:not(.collapsed) {
+            background-color: var(--bg-light);
+            color: var(--primary-orange);
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background-color: #f1f5f9;
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .dark-mode .contact-section {
+            background-color: #1a1a2e;
+        }
+
+        .contact-btn {
+            background: linear-gradient(135deg, #00B900 0%, #06C755 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            transition: var(--transition-base);
+            box-shadow: 0 8px 20px rgba(0, 185, 0, 0.2);
+            border: none;
+        }
+
+        .contact-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 25px rgba(0, 185, 0, 0.3);
+            color: white;
+        }
+
+        /* Footer */
+        .help-footer {
+            padding: 40px 0;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* Animations */
+        [data-aos] {
+            pointer-events: none;
+        }
+        .aos-animate {
+            pointer-events: auto;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.25rem;
+            }
+            .help-hero {
+                padding: 60px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="help-navbar">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a href="index.html" class="navbar-brand d-flex align-items-center text-decoration-none">
+                <img src="assets/images/tuktuk.png" alt="TukTuk" onerror="this.src='assets/images/logo.png'">
+                <span style="font-weight: 800; color: var(--primary-orange); font-size: 1.5rem;">TukTuk Support</span>
+            </a>
+            <div class="d-none d-md-block">
+                <a href="index.html" class="btn btn-outline-secondary rounded-pill px-4">กลับไปยังแอป</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="help-hero">
+        <div class="container hero-content">
+            <h1 class="hero-title" data-aos="fade-down">เราช่วยอะไรคุณได้บ้าง?</h1>
+            <p class="mb-5" data-aos="fade-up" data-aos-delay="100">ค้นหาคำตอบสำหรับคำถามที่คุณสงสัย หรือติดต่อทีมงานของเรา</p>
+            
+            <div class="search-box-wrapper" data-aos="fade-up" data-aos-delay="200">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" id="helpSearchInput" placeholder="ค้นหาเรื่องที่คุณต้องการความช่วยเหลือ...">
+                <button id="clearSearch" class="btn" style="position:absolute; right:15px; top:50%; transform:translateY(-50%); display:none; color:var(--text-muted);">
+                    <i class="fas fa-times-circle"></i>
+                </button>
+            </div>
+            
+            <div id="searchSuggestions" class="mt-3 text-start mx-auto" style="max-width: 600px; display:none;">
+                <div class="p-3 bg-white rounded-4 shadow-lg text-dark">
+                    <small class="text-muted d-block mb-2">คำค้นหายอดนิยม:</small>
+                    <div class="d-flex flex-wrap gap-2">
+                        <span class="badge bg-light text-dark rounded-pill p-2 px-3 border cursor-pointer" onclick="fillSearch('ขายสินค้า')">ขายสินค้า</span>
+                        <span class="badge bg-light text-dark rounded-pill p-2 px-3 border cursor-pointer" onclick="fillSearch('จ่ายเงิน')">การชำระเงิน</span>
+                        <span class="badge bg-light text-dark rounded-pill p-2 px-3 border cursor-pointer" onclick="fillSearch('คืนเงิน')">คืนเงิน</span>
+                        <span class="badge bg-light text-dark rounded-pill p-2 px-3 border cursor-pointer" onclick="fillSearch('เรียกวิน')">เรียกวินมอเตอร์ไซค์</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="help-section">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-end mb-4" data-aos="fade-up">
+                <h2 class="section-title m-0 text-start">หัวข้อช่วยเหลือ</h2>
+                <button class="btn btn-sm btn-link text-decoration-none" id="resetFilters" style="display:none;" onclick="filterCategory('all')">ดูทั้งหมด</button>
+            </div>
+            <div class="row g-4">
+                <!-- Getting Started -->
+                <div class="col-md-3 col-sm-6" data-aos="zoom-in" data-aos-delay="0">
+                    <div class="help-card category-card" data-category="getting-started" onclick="filterCategory('getting-started')">
+                        <div class="card-icon" style="color: #6366f1; background: rgba(99, 102, 241, 0.1);">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <div class="card-title">เริ่มต้นใช้งาน</div>
+                        <div class="card-desc">สมัครสมาชิกและพื้นฐาน</div>
+                    </div>
+                </div>
+                <!-- Shopping -->
+                <div class="col-md-3 col-sm-6" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="help-card category-card" data-category="shopping" onclick="filterCategory('shopping')">
+                        <div class="card-icon" style="color: #f97316; background: rgba(249, 115, 22, 0.1);">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="card-title">การซื้อสินค้า</div>
+                        <div class="card-desc">วิธีสั่งซื้อและติดตาม</div>
+                    </div>
+                </div>
+                <!-- Selling -->
+                <div class="col-md-3 col-sm-6" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="help-card category-card" data-category="selling" onclick="filterCategory('selling')">
+                        <div class="card-icon" style="color: #10b981; background: rgba(16, 185, 129, 0.1);">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <div class="card-title">การขายสินค้า</div>
+                        <div class="card-desc">จัดการร้านและสินค้า</div>
+                    </div>
+                </div>
+                <!-- Security -->
+                <div class="col-md-3 col-sm-6" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="help-card category-card" data-category="privacy" onclick="filterCategory('privacy')">
+                        <div class="card-icon" style="color: #ef4444; background: rgba(239, 68, 68, 0.1);">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="card-title">ความปลอดภัย</div>
+                        <div class="card-desc">บัญชีและความเป็นส่วนตัว</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="help-section bg-white" id="faqSection">
+        <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <h2 class="section-title mb-2">คำถามที่พบบ่อย</h2>
+                <p class="text-muted" id="faqSubtitle">คำถามยอดนิยมสำหรับคุณ</p>
+            </div>
+            
+            <div class="faq-container">
+                <div id="noResults" class="text-center py-5" style="display:none;">
+                    <div class="mb-4">
+                        <i class="fas fa-search-minus text-muted" style="font-size: 4rem; opacity: 0.2;"></i>
+                    </div>
+                    <h3>ไม่พบสิ่งที่คุณกำลังตามหา</h3>
+                    <p class="text-muted">ลองใช้คำสำคัญอื่น หรือติดต่อฝ่ายบริการลูกค้าของเรา</p>
+                    <button class="btn btn-primary rounded-pill px-4 mt-3" onclick="fillSearch('')">ล้างการค้นหา</button>
+                </div>
+
+                <div class="accordion" id="faqAccordion">
+                    <!-- FAQs will be injected here by JS -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Support Section -->
+    <section class="contact-section">
+        <div class="container">
+            <h2 class="mb-4" data-aos="fade-up">ยังต้องการความช่วยเหลืออีกไหม?</h2>
+            <p class="mb-5 text-secondary" data-aos="fade-up" data-aos-delay="100">ทีมงาน Support ของเราพร้อมดูแลคุณตลอด 24 ชั่วโมง</p>
+            
+            <div class="row justify-content-center g-4">
+                <div class="col-md-4" data-aos="fade-right" data-aos-delay="200">
+                    <div class="help-card pt-5 h-100">
+                        <div class="card-icon mx-auto" style="color: #00B900; background: rgba(0, 185, 0, 0.1);">
+                            <i class="fab fa-line"></i>
+                        </div>
+                        <h5>LINE Support</h5>
+                        <p class="text-muted small mb-4 px-3">ติดต่อสอบถาม พูดคุยกับทีมงานโดยตรงผ่าน LINE OA</p>
+                        <a href="https://lin.ee/ayl8y1H" target="_blank" class="contact-btn">
+                            <i class="fab fa-line"></i> ทักแชท LINE
+                        </a>
+                    </div>
+                </div>
+                <!-- PC Only: Facebook Support -->
+                <div class="col-md-4 d-none d-md-block" data-aos="fade-up" data-aos-delay="250">
+                    <div class="help-card pt-5 h-100">
+                        <div class="card-icon mx-auto" style="color: #1877f2; background: rgba(24, 119, 242, 0.1);">
+                            <i class="fab fa-facebook"></i>
+                        </div>
+                        <h5>Facebook Page</h5>
+                        <p class="text-muted small mb-4 px-3">ติดตามข่าวสารและอัปเดตใหม่ๆ ผ่านแฟนเพจ</p>
+                        <a href="#" class="btn btn-outline-primary rounded-pill px-4">ดูเพจของเรา</a>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-left" data-aos-delay="300">
+                    <div class="help-card pt-5 h-100">
+                        <div class="card-icon mx-auto" style="color: #3b82f6; background: rgba(59, 130, 246, 0.1);">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <h5>Email Support</h5>
+                        <p class="text-muted small mb-4 px-3">สำหรับแจ้งปัญหาเชิงเทคนิค หรือส่งเอกสารสำคัญ</p>
+                        <a href="mailto:support@tuktuk.social" class="btn btn-outline-primary rounded-pill px-4">ส่งอีเมลหาเรา</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="help-footer">
+        <div class="container">
+            <div class="mb-4">
+                <img src="assets/images/tuktuk.png" alt="TukTuk" style="height: 30px; opacity: 0.5;" onerror="this.src='assets/images/logo.png'">
+            </div>
+            <div class="mb-3">
+                <a href="privacy.html" class="text-decoration-none mx-2">นโยบายความเป็นส่วนตัว</a>
+                <a href="terms.html" class="text-decoration-none mx-2">เงื่อนไขการใช้งาน</a>
+                <a href="about.html" class="text-decoration-none mx-2">เกี่ยวกับเรา</a>
+            </div>
+            <p>© 2025-2026 TukTuk Thailand. Crafted with ❤️ for Thailand.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // FAQ Data Object
+        const faqData = [
+            {
+                id: 'q1',
+                category: 'selling',
+                question: 'ฉันจะเริ่มต้นขายสินค้าบน TukTuk ได้อย่างไร?',
+                answer: 'คุณสามารถเริ่มต้นขายได้ง่ายๆ โดยไปที่เมนู "จัดการร้านค้า" หรือ "Seller Dashboard" ในโปรไฟล์ของคุณ จากนั้นกรอกข้อมูลร้านค้าและเริ่มลงสินค้าด้วยวิดีโอสั้นได้ทันที! โดยระบบจะรองรับการอัปโหลดวิดีโอจากอุปกรณ์ของคุณโดยตรง'
+            },
+            {
+                id: 'q2',
+                category: 'shopping',
+                question: 'วิธีการจ่ายเงินที่รองรับมีอะไรบ้าง?',
+                answer: 'เรารองรับการชำระเงินผ่าน QR PromptPay (สแกนผ่านแอปธนาคารทุกแห่ง), บัตรเครดิต/เดบิต, และระบบ TukTuk Wallet เพื่อความสะดวกและปลอดภัยสูงสุดของผู้ใช้งาน โดยระบบจะมีการแจ้งเตือนสถานะการชำระเงินให้ทราบทันที'
+            },
+            {
+                id: 'q3',
+                category: 'shopping',
+                question: 'หากสินค้ามีปัญหาสามารถขอคืนเงินได้ไหม?',
+                answer: 'ได้แน่นอน! หากสินค้าไม่ตรงปก ชำรุด หรือสูญหาย คุณสามารถกดปุ่ม "ขอคืนเงิน/คืนสินค้า" ในหน้ารายละเอียดคำสั่งซื้อภายใน 7 วันหลังจากได้รับสินค้า โดยทีมงานจะตรวจสอบและดำเนินการให้ภายใน 1-3 วันทำการ'
+            },
+            {
+                id: 'q4',
+                category: 'getting-started',
+                question: 'การเชิญเพื่อนมาใช้งานจะได้รับรางวัลอย่างไร?',
+                answer: 'คุณสามารถรับ TukTuk Points หรือส่วนลดพิเศษเมื่อเพื่อนที่คุณเชิญสมัครสมาชิกและซื้อสินค้าครั้งแรกผ่านลิงก์แนะนำของคุณ โดยสามารถตรวจสอบคะแนนสะสมได้ที่เมนู "รางวัลของฉัน"'
+            },
+            {
+                id: 'q5',
+                category: 'getting-started',
+                question: 'TukTuk Wallet คืออะไร?',
+                answer: 'TukTuk Wallet คือกระเป๋าเงินดิจิทัลในแอปที่คุณสามารถใช้เติมเงินเพื่อชำระค่าสินค้า หรือรับเงินจากการขายสินค้าได้โดยตรง คุณสามารถถอนเงินออกจาก Wallet เข้าบัญชีธนาคารของคุณได้ตลอดเวลา'
+            },
+            {
+                id: 'q6',
+                category: 'privacy',
+                question: 'ฉันจะเปลี่ยนรหัสผ่านหรือข้อมูลส่วนตัวได้อย่างไร?',
+                answer: 'ไปที่หน้าโปรไฟล์ของคุณ แล้วกดที่ไอคอน "ตั้งค่า" (รูปฟันเฟือง) จะมีเมนูสำหรับแก้ไขข้อมูลส่วนตัว เปลี่ยนรหัสผ่าน และการตั้งค่าความเป็นส่วนตัวต่างๆ'
+            },
+            {
+                id: 'q7',
+                category: 'getting-started',
+                question: 'เรียกวินมอเตอร์ไซค์ผ่านแอปได้อย่างไร?',
+                answer: 'ในหน้าหลักหรือเมนูทางลัด จะมีเมนู "เรียกวินมอเตอร์ไซค์" ให้คุณระบุจุดรับและจุดส่ง ระบบจะแสดงค่าบริการและค้นหาวินที่ใกล้ที่สุดให้คุณทันที พร้อมความปลอดภัยด้วยการระบุรหัสประจำตัววิน'
+            },
+            {
+                id: 'q8',
+                category: 'getting-started',
+                question: 'ฉันจะแชร์วิดีโอหรือโพสต์ให้เพื่อนได้อย่างไร?',
+                answer: 'คุณสามารถแชร์เนื้อหาที่น่าสนใจได้โดยกดไอคอน "แชร์" ที่อยู่ด้านข้างวิดีโอหรือใต้โพสต์ ระบบจะสร้างลิงก์พิเศษที่คุณสามารถส่งต่อผ่าน LINE, Facebook หรือคัดลอกลิงก์ได้ทันที เมื่อเพื่อนกดลิงก์ ระบบจะเปิดแอปและแสดงเนื้อหานั้นให้โดยอัตโนมัติ'
+            }
+        ];
+
+        let activeCategory = 'all';
+
+        // Initialize Animations
+        AOS.init({
+            duration: 800,
+            once: true,
+            easing: 'ease-out-quad'
+        });
+
+        // Theme Sync
+        function checkTheme() {
+            if (localStorage.getItem('tuktuk_theme') === 'dark' || 
+                (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches && !localStorage.getItem('tuktuk_theme'))) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        }
+
+        // Render FAQs
+        function renderFAQs(filterTerm = '', category = 'all') {
+            const container = document.getElementById('faqAccordion');
+            const noResults = document.getElementById('noResults');
+            const subtitle = document.getElementById('faqSubtitle');
+            
+            container.innerHTML = '';
+            
+            const filtered = faqData.filter(item => {
+                const matchesSearch = filterTerm === '' || 
+                    item.question.toLowerCase().includes(filterTerm.toLowerCase()) || 
+                    item.answer.toLowerCase().includes(filterTerm.toLowerCase());
+                
+                const matchesCategory = category === 'all' || item.category === category;
+                
+                return matchesSearch && matchesCategory;
+            });
+
+            if (filtered.length === 0) {
+                noResults.style.display = 'block';
+                container.style.display = 'none';
+            } else {
+                noResults.style.display = 'none';
+                container.style.display = 'block';
+                
+                filtered.forEach((item, index) => {
+                    const accordionItem = document.createElement('div');
+                    accordionItem.className = 'accordion-item';
+                    accordionItem.setAttribute('data-aos', 'fade-up');
+                    accordionItem.setAttribute('data-aos-delay', index * 50);
+                    
+                    accordionItem.innerHTML = `
+                        <h2 class="accordion-header">
+                            <button class="accordion-button ${index !== 0 ? 'collapsed' : ''}" type="button" data-bs-toggle="collapse" data-bs-target="#${item.id}">
+                                ${item.question}
+                            </button>
+                        </h2>
+                        <div id="${item.id}" class="accordion-collapse collapse ${index === 0 ? 'show' : ''}" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                ${item.answer}
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(accordionItem);
+                });
+                
+                // Refresh AOS for new items
+                AOS.refresh();
+            }
+
+            // Update subtitle
+            if (category !== 'all') {
+                const catNames = {
+                    'getting-started': 'เริ่มต้นใช้งาน',
+                    'shopping': 'การซื้อสินค้า',
+                    'selling': 'การขายสินค้า',
+                    'privacy': 'ความปลอดภัย'
+                };
+                subtitle.textContent = `แสดงคำถามเกี่ยวกับ: ${catNames[category]}`;
+                document.getElementById('resetFilters').style.display = 'inline-block';
+            } else {
+                subtitle.textContent = filterTerm ? `ผลการค้นหาสำหรับ: "${filterTerm}"` : 'คำถามยอดนิยมสำหรับคุณ';
+                document.getElementById('resetFilters').style.display = filterTerm ? 'inline-block' : 'none';
+            }
+        }
+
+        // Search Interface Handling
+        const searchInput = document.getElementById('helpSearchInput');
+        const clearBtn = document.getElementById('clearSearch');
+        const suggestions = document.getElementById('searchSuggestions');
+
+        searchInput.addEventListener('input', (e) => {
+            const val = e.target.value;
+            clearBtn.style.display = val ? 'block' : 'none';
+            suggestions.style.display = (val && val.length < 3) ? 'block' : 'none';
+            
+            activeCategory = 'all'; // Reset category on search
+            updateCategoryUI('all');
+            renderFAQs(val);
+        });
+
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            clearBtn.style.display = 'none';
+            suggestions.style.display = 'none';
+            renderFAQs('');
+        });
+
+        function fillSearch(term) {
+            searchInput.value = term;
+            clearBtn.style.display = term ? 'block' : 'none';
+            suggestions.style.display = 'none';
+            activeCategory = 'all';
+            updateCategoryUI('all');
+            renderFAQs(term);
+            
+            // Scroll to FAQ if searching from suggestions or reset
+            if (term === '' || term.length > 0) {
+                document.getElementById('faqSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // Category Selection
+        function filterCategory(cat) {
+            activeCategory = cat;
+            searchInput.value = ''; // Clear search when filtering by category
+            clearBtn.style.display = 'none';
+            suggestions.style.display = 'none';
+            
+            updateCategoryUI(cat);
+            renderFAQs('', cat);
+            
+            // Scroll to FAQ section
+            document.getElementById('faqSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function updateCategoryUI(cat) {
+            const cards = document.querySelectorAll('.category-card');
+            cards.forEach(card => {
+                if (card.getAttribute('data-category') === cat) {
+                    card.style.borderColor = 'var(--primary-orange)';
+                    card.style.transform = 'translateY(-10px)';
+                    card.style.boxShadow = 'var(--card-shadow)';
+                } else {
+                    card.style.borderColor = 'rgba(0,0,0,0.03)';
+                    card.style.transform = 'none';
+                    card.style.boxShadow = 'none';
+                }
+            });
+        }
+
+        // Init
+        window.addEventListener('DOMContentLoaded', () => {
+            checkTheme();
+            renderFAQs();
+        });
+
+        // Listen for theme changes from main app if in same domain
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'tuktuk_theme') checkTheme();
+        });
+    </script>
+</body>
+
+</html>

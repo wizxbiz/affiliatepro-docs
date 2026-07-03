@@ -1,0 +1,63 @@
+# =============================================================
+# Wrangler Config — TukTuk Workers API
+# Account: 3936ddcbff711649ab56a10375e82b67 (imtthailand2019@gmail.com)
+# =============================================================
+
+name            = "tuktukfeed-api"
+main            = "index.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+account_id      = "3936ddcbff711649ab56a10375e82b67"
+
+# ── Environment Variables (non-secret) ───────────────────────
+[vars]
+ENVIRONMENT        = "production"
+R2_PUBLIC_BASE     = "https://pub-7e55074f08794361aaf305c1967f6ffa.r2.dev"
+R2_BUCKET_NAME     = "tuktuk-videos"
+R2_ACCOUNT_ID      = "3936ddcbff711649ab56a10375e82b67"
+R2_ENDPOINT        = "https://3936ddcbff711649ab56a10375e82b67.r2.cloudflarestorage.com"
+WORKERS_AI_MODEL   = "@cf/openai/gpt-oss-20b"
+MAXPLUS_MODEL      = "gpt-5.4-mini"
+FORGE_GATEWAY_URL = "https://api.forgework.app"
+FORGE_GATEWAY_MODEL = "gpt-5.4-mini"
+
+# ── R2 Bucket Binding ─────────────────────────────────────────
+# ใช้ bucket เดิม "tuktuk-videos" ที่มีอยู่แล้ว
+# Cloudflare Workers AI binding. Used before MaxPlus fallback.
+[ai]
+binding = "AI"
+[[r2_buckets]]
+binding     = "STORAGE"
+bucket_name = "tuktuk-videos"
+
+# ── D1 Database ───────────────────────────────────────────────
+# สร้างก่อนด้วย: npx wrangler@3 d1 create tuktukfeed-db
+# แล้วใส่ database_id ที่ได้
+[[d1_databases]]
+binding       = "DB"
+database_name = "tuktukfeed-db"
+database_id   = "e83c7d00-3472-4de1-962f-0b88b7e7893a"
+
+# ── KV Namespace (Sessions) ───────────────────────────────────
+# สร้างก่อนด้วย: npx wrangler@3 kv:namespace create SESSIONS
+[[kv_namespaces]]
+binding = "SESSIONS"
+id      = "08e8c9ced44843f9a4754e39aab0de4f"
+
+# ── Secrets (ตั้งด้วย: npx wrangler@3 secret put JWT_SECRET) ───
+# JWT_SECRET          — ใช้ออก JWT tokens (สุ่มสตริง 64+ ตัวอักษร)
+# R2_ACCESS_KEY_ID    — R2 access key: c25a407afc0cdf23b985b2410cd75614
+# R2_SECRET_ACCESS_KEY — R2 secret key
+# GEMINI_API_KEY      — Google Gemini API key
+# LINE_CHANNEL_SECRET — LINE Channel Secret
+
+# ── Scheduled Tasks (แทน Firebase scheduledTasks) ─────────────
+[triggers]
+crons = [
+  "0 * * * *"     # Run hourly, handle routing (Daily, Premium, Weekly) in code
+]
+
+# ── Routes (custom domain + workers.dev) ─────────────────────
+# routes = [
+#   { pattern = "tuktukfeed.com/api/*", zone_name = "tuktukfeed.com" }
+# ]

@@ -6961,7 +6961,7 @@
         // ============================================================
         //  STATUS TRACKER
         // ============================================================
-        const STEP_MAP = { pending: 0, accepted: 1, on_the_way: 2, completed: 3, cancelled: -1 };
+        const STEP_MAP = { pending: 0, accepted: 1, in_progress: 2, completed: 3, cancelled: -1, on_the_way: 2 };
         const STEP_LABELS = ['รอวินรับงาน...', 'วินรับงานแล้ว! กำลังเตรียมตัว', 'วินกำลังเดินทางมาหาคุณ', 'เสร็จสิ้น — ขอบคุณที่ใช้บริการ!'];
 
         function setStep(idx) {
@@ -7077,8 +7077,8 @@
                     container.innerHTML = '<div class="wr-empty"><i class="fas fa-inbox"></i><p>ยังไม่มีคำขอ</p></div>';
                     return;
                 }
-                const statusLabel = { pending: 'รอรับงาน', accepted: 'รับงานแล้ว', on_the_way: 'กำลังมา', completed: 'เสร็จสิ้น', cancelled: 'ยกเลิก' };
-                const statusClass = { pending: 'pending', accepted: 'accepted', on_the_way: 'accepted', completed: 'completed', cancelled: 'cancelled' };
+                const statusLabel = { pending: 'รอรับงาน', accepted: 'รับงานแล้ว', in_progress: 'กำลังเดินทาง', on_the_way: 'กำลังมา', completed: 'เสร็จสิ้น', cancelled: 'ยกเลิก' };
+                const statusClass = { pending: 'pending', accepted: 'accepted', in_progress: 'accepted', on_the_way: 'accepted', completed: 'completed', cancelled: 'cancelled' };
                 container.innerHTML = snap.docs.map(doc => {
                     const d = doc.data();
                     const st = d.status || 'pending';
@@ -7132,11 +7132,11 @@
             const lineId = session.lineUserId;
             if (!uid && !lineId) return;
 
-            let q = db.collection('win_rider_requests').where('status', 'in', ['pending', 'accepted', 'on_the_way']);
+            let q = db.collection('win_rider_requests').where('status', 'in', ['pending', 'accepted', 'in_progress']);
             if (uid) q = db.collection('win_rider_requests')
-                .where('requesterUid', '==', uid).where('status', 'in', ['pending', 'accepted', 'on_the_way']);
+                .where('requesterUid', '==', uid).where('status', 'in', ['pending', 'accepted', 'in_progress']);
             else if (lineId) q = db.collection('win_rider_requests')
-                .where('requesterLineId', '==', lineId).where('status', 'in', ['pending', 'accepted', 'on_the_way']);
+                .where('requesterLineId', '==', lineId).where('status', 'in', ['pending', 'accepted', 'in_progress']);
 
             q.onSnapshot(snap => {
                 const badge = document.getElementById('myReqBadge');

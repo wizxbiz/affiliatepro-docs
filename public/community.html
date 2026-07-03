@@ -14,6 +14,9 @@
         rel="stylesheet">
     <!-- Quill Rich Text Editor -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/persistent-ui.css">
+    <!-- 🌟 Glass Ultra — Premium Glassmorphism -->
+    <link rel="stylesheet" href="css/glass-ultra.css?v=20260424">
     <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
     <script src="js/auth.js" defer></script>
@@ -2227,73 +2230,7 @@
                 display: none !important;
             }
 
-            /* Smart Bottom Nav Styles */
-            .bottom-nav {
-                display: flex !important;
-                position: fixed;
-                bottom: env(safe-area-inset-bottom, 20px);
-                left: 50%;
-                transform: translateX(-50%);
-                width: calc(100% - 30px);
-                max-width: 450px;
-                height: 70px;
-                background: rgba(15, 23, 42, 0.95);
-                backdrop-filter: blur(25px);
-                -webkit-backdrop-filter: blur(25px);
-                border-radius: 40px;
-                justify-content: space-around;
-                align-items: center;
-                z-index: 1000000 !important;
-                /* Level 1,000,000 to be absolutely sure */
-                box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8), 0 0 20px rgba(124, 58, 237, 0.2);
-                border: 1px solid rgba(255, 255, 255, 0.15);
-                padding: 0 15px;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            }
 
-            .bottom-nav-item {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                color: #94a3b8;
-                text-decoration: none;
-                font-size: 0.7rem;
-                gap: 2px;
-                transition: all 0.3s ease;
-                flex: 1;
-            }
-
-            .bottom-nav-item i {
-                font-size: 1.3rem;
-            }
-
-            .bottom-nav-item.active {
-                color: #fff;
-            }
-
-            .bottom-nav-item.center-btn {
-                position: relative;
-                top: -25px;
-                width: 70px;
-                height: 70px;
-                background: linear-gradient(135deg, #a855f7, #7c3aed);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: white !important;
-                box-shadow: 0 10px 30px rgba(124, 58, 237, 0.6);
-                border: 6px solid #1a1a2e;
-                flex: none;
-            }
-
-            .bottom-nav-item.center-btn i {
-                font-size: 1.8rem;
-            }
-
-            .bottom-nav-item.center-btn span {
-                display: none;
-            }
         }
 
         /* ========================================
@@ -3276,12 +3213,12 @@
 
         // Firebase Config
         const firebaseConfig = {
-            apiKey: "AIzaSyCjT-02SUgItq2ogDm_gJt7L0EdBrNl63M",
+            apiKey: "AIzaSyBKL6HBLEndDX4LYo7APFNQ0IVICLJtaIE",
             authDomain: "appinjproject.firebaseapp.com",
             projectId: "appinjproject",
             storageBucket: "appinjproject.firebasestorage.app",
-            messagingSenderId: "1065805249498",
-            appId: "1:1065805249498:web:845d06b73d6d21ae7c1c8a"
+            messagingSenderId: "408718656984",
+            appId: "1:408718656984:web:08bd8f084769d428251ead"
         };
 
         firebase.initializeApp(firebaseConfig);
@@ -5402,6 +5339,7 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     </script>
+    <script src="js/persistent-ui.js"></script>
 </body>
 
 </html>

@@ -14,8 +14,14 @@
  */
 
 window.TUKTUK_LIFF = {
+    /**
+     * Main App — Silent auto-login on index.html (ใส่เพื่อให้จดจำ login อัตโนมัติใน LINE)
+     * ขั้นตอน: LINE Console → LIFF → Add → Endpoint: https://tuktukfeed.com/ → Size: Full
+     */
+    main:      "2009159046-pKUjnFKQ",
+
     /** liff-seller.html — Seller & Rider Dashboard */
-    seller:    "2009159046-wkIGSDHg",
+    seller:    "2009159046-wklGSDHg",
 
     /** liff-customer.html — Customer Service Center */
     customer:  "2009159046-baMRqwMy",

@@ -22,8 +22,12 @@ func NewRedisRepository(base Repository, cache cache.CacheService) Repository {
 	}
 }
 
-func (r *redisRepo) GetPosts(ctx context.Context, limit int) ([]models.Post, error) {
-	key := fmt.Sprintf("posts:limit:%d", limit)
+func (r *redisRepo) GetPosts(ctx context.Context, limit int, afterID string, provinceCode string) ([]models.Post, error) {
+	if afterID != "" {
+		return r.base.GetPosts(ctx, limit, afterID, provinceCode)
+	}
+
+	key := fmt.Sprintf("posts:limit:%d:prov:%s", limit, provinceCode)
 	var posts []models.Post
 
 	// Try cache first
@@ -33,7 +37,7 @@ func (r *redisRepo) GetPosts(ctx context.Context, limit int) ([]models.Post, err
 	}
 
 	// Cache miss, fetch from base
-	posts, err = r.base.GetPosts(ctx, limit)
+	posts, err = r.base.GetPosts(ctx, limit, afterID, provinceCode)
 	if err != nil {
 		return nil, err
 	}
@@ -116,15 +120,19 @@ func (r *redisRepo) GetTrendingPosts(ctx context.Context, limit int) ([]models.P
 	return posts, nil
 }
 
-func (r *redisRepo) GetMarketplaceProducts(ctx context.Context, limit int) ([]models.MarketplaceProduct, error) {
-	key := fmt.Sprintf("marketplace_products:limit:%d", limit)
+func (r *redisRepo) GetMarketplaceProducts(ctx context.Context, limit int, afterID string, provinceCode string) ([]models.MarketplaceProduct, error) {
+	if afterID != "" {
+		return r.base.GetMarketplaceProducts(ctx, limit, afterID, provinceCode)
+	}
+
+	key := fmt.Sprintf("marketplace_products:limit:%d:prov:%s", limit, provinceCode)
 	var products []models.MarketplaceProduct
 
 	if err := r.cache.Get(ctx, key, &products); err == nil {
 		return products, nil
 	}
 
-	products, err := r.base.GetMarketplaceProducts(ctx, limit)
+	products, err := r.base.GetMarketplaceProducts(ctx, limit, afterID, provinceCode)
 	if err != nil {
 		return nil, err
 	}
@@ -222,4 +230,84 @@ func (r *redisRepo) UpdateViewerCount(ctx context.Context, sessionID string, del
 	_ = r.cache.Delete(ctx, "live_sessions:limit:10")
 	_ = r.cache.Delete(ctx, "live_sessions:limit:30")
 	return r.base.UpdateViewerCount(ctx, sessionID, delta)
+}
+
+// ── Core Content APIs ───────────────────────────────────────────────────────
+
+func (r *redisRepo) GetPost(ctx context.Context, postID string) (*models.Post, error) {
+	key := fmt.Sprintf("post:%s", postID)
+	var post models.Post
+
+	if err := r.cache.Get(ctx, key, &post); err == nil {
+		return &post, nil
+	}
+
+	res, err := r.base.GetPost(ctx, postID)
+	if err != nil {
+		return nil, err
+	}
+
+	_ = r.cache.Set(ctx, key, res, 2*time.Minute)
+	return res, nil
+}
+
+func (r *redisRepo) CreatePost(ctx context.Context, post *models.Post) error {
+	// Invalidate relevant caches
+	_ = r.cache.Delete(ctx, "posts:limit:20")
+	_ = r.cache.Delete(ctx, fmt.Sprintf("user_posts:%s", post.AuthorID))
+	return r.base.CreatePost(ctx, post)
+}
+
+func (r *redisRepo) GetComments(ctx context.Context, postID string, limit int, afterID string) ([]models.Comment, error) {
+	if afterID != "" {
+		return r.base.GetComments(ctx, postID, limit, afterID)
+	}
+
+	key := fmt.Sprintf("comments:%s:%d", postID, limit)
+	var comments []models.Comment
+
+	if err := r.cache.Get(ctx, key, &comments); err == nil {
+		return comments, nil
+	}
+
+	comments, err := r.base.GetComments(ctx, postID, limit, afterID)
+	if err != nil {
+		return nil, err
+	}
+
+	_ = r.cache.Set(ctx, key, comments, 1*time.Minute)
+	return comments, nil
+}
+
+func (r *redisRepo) CreateComment(ctx context.Context, comment *models.Comment) error {
+	_ = r.cache.Delete(ctx, fmt.Sprintf("post:%s", comment.PostID))
+	_ = r.cache.Delete(ctx, fmt.Sprintf("comments:%s:10", comment.PostID))
+	_ = r.cache.Delete(ctx, fmt.Sprintf("comments:%s:20", comment.PostID))
+	return r.base.CreateComment(ctx, comment)
+}
+
+func (r *redisRepo) GetUserPosts(ctx context.Context, userID string, limit int) ([]models.Post, error) {
+	key := fmt.Sprintf("user_posts:%s:%d", userID, limit)
+	var posts []models.Post
+
+	if err := r.cache.Get(ctx, key, &posts); err == nil {
+		return posts, nil
+	}
+
+	posts, err := r.base.GetUserPosts(ctx, userID, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	_ = r.cache.Set(ctx, key, posts, 5*time.Minute)
+	return posts, nil
+}
+
+func (r *redisRepo) SearchPosts(ctx context.Context, query string, limit int) ([]models.Post, error) {
+	// Don't cache search queries aggressively unless they are very common
+	return r.base.SearchPosts(ctx, query, limit)
+}
+
+func (r *redisRepo) GetUserAffinity(ctx context.Context, userID string) (string, string, error) {
+	return r.base.GetUserAffinity(ctx, userID)
 }

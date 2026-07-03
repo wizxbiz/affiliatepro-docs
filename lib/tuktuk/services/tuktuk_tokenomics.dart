@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/foundation.dart';
 
-import 'system_config_manager.dart';
-import 'tuktuk_bridge.dart';
 
 enum MissionType {
   videoWatch, // ดูคลิปครบ X นาที
@@ -74,207 +73,113 @@ class TukTukTokenomics {
   factory TukTukTokenomics() => _instance;
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  late final TukTukBridge _bridge =
-      TukTukBridge(); // lazy — avoids circular init
-  final SystemConfigManager _configManager = SystemConfigManager();
+  final FirebaseFunctions _functions = FirebaseFunctions.instance;
+  // _bridge removed: user identity is resolved server-side via request.auth.uid
 
   TukTukTokenomics._internal();
 
-  /// 🎯 รับแต้มจากการทำภารกิจ (Enhanced Version)
+  // ── Mission type → string key used by the Cloud Function ──────────────────
+  static String _missionKey(MissionType type) {
+    switch (type) {
+      case MissionType.videoWatch:   return 'videoWatch';
+      case MissionType.postCreation: return 'postCreation';
+      case MissionType.locationPin:  return 'locationPin';
+      case MissionType.share:        return 'share';
+      case MissionType.purchase:     return 'purchase';
+      case MissionType.referral:     return 'referral';
+      case MissionType.dailyLogin:   return 'dailyLogin';
+      case MissionType.like:         return 'like';
+      case MissionType.comment:      return 'comment';
+      case MissionType.follow:       return 'follow';
+    }
+  }
+
+  // ── Reward type → string key used by the Cloud Function ───────────────────
+  static String _rewardKey(RewardType type) {
+    switch (type) {
+      case RewardType.discount20:    return 'discount20';
+      case RewardType.boostPost:     return 'boostPost';
+      case RewardType.lineSticker:   return 'lineSticker';
+      case RewardType.premiumMonth:  return 'premiumMonth';
+      case RewardType.freeShipping:  return 'freeShipping';
+    }
+  }
+
+  /// 🎯 รับแต้มจากการทำภารกิจ
+  ///
+  /// [refId]  — required for: like, follow, purchase, referral, videoWatch,
+  ///            share, comment. Used as the idempotency key on the server.
+  ///            Omit for: dailyLogin, postCreation, locationPin.
+  ///
+  /// NOTE: [pointsOverride] parameter removed — point values are now
+  ///       determined server-side only to prevent manipulation.
   Future<bool> awardPoints(
     MissionType type, {
     String? refId,
-    int pointsOverride = 0,
     String? description,
   }) async {
-    final user = await _bridge.getCurrentUser();
-    if (user == null || user['uid'] == null) return false;
-    final uid = user['uid'];
-
-    int points =
-        pointsOverride > 0 ? pointsOverride : await _getDefaultPoints(type);
-
     try {
-      // Get streak bonus config
-      final streakConfig = await _configManager.getStreakBonusConfig();
-      final streakBonusDays = streakConfig['days'] ?? 7;
-      final streakBonusCoins = streakConfig['coins'] ?? 50;
-
-      // 1. Transaction เพื่อความชัวร์ของ Data Consistency
-      await _firestore.runTransaction((transaction) async {
-        DocumentReference userRef = _firestore.collection('users').doc(uid);
-        DocumentSnapshot userDoc = await transaction.get(userRef);
-
-        // Fallback for LINE-only users who might be in 'line_users' collection
-        if (!userDoc.exists) {
-          userRef = _firestore.collection('line_users').doc(uid);
-          userDoc = await transaction.get(userRef);
-        }
-
-        if (!userDoc.exists) return; // User not found in either collection
-
-        // เช็คก่อนว่าภารกิจนี้ทำไปหรือยัง (สำหรับภารกิจแบบทำครั้งเดียว)
-        if (type == MissionType.dailyLogin) {
-          final today = DateTime.now().toIso8601String().substring(0, 10);
-          final logRef = userRef.collection('point_logs').doc('login_$today');
-
-          final logDoc = await transaction.get(logRef);
-          if (logDoc.exists) return; // ทำไปแล้ว
-
-          // ✅ Update Daily Streak
-          final userData = userDoc.data() as Map<String, dynamic>?;
-          final lastLoginDate = userData?['lastLoginDate']?.toString();
-          final currentStreak = userData?['dailyStreak'] ?? 0;
-
-          int newStreak = 1;
-          if (lastLoginDate != null) {
-            final yesterday = DateTime.now()
-                .subtract(const Duration(days: 1))
-                .toIso8601String()
-                .substring(0, 10);
-            if (lastLoginDate == yesterday) {
-              newStreak = currentStreak + 1;
-            }
-          }
-
-          // Bonus for streak milestones (use config)
-          if (newStreak % streakBonusDays == 0) {
-            points += streakBonusCoins;
-          }
-
-          transaction.set(logRef, {
-            'type': type.toString(),
-            'points': points,
-            'streak': newStreak,
-            'createdAt': FieldValue.serverTimestamp(),
-          });
-
-          transaction.update(userRef, {
-            'dailyStreak': newStreak,
-            'lastLoginDate': today,
-          });
-        }
-
-        // อัปเดต User Balance
-        transaction.update(userRef, {
-          'coins': FieldValue.increment(points),
-          'lifetimePoints': FieldValue.increment(points),
-          'lastActivityAt': FieldValue.serverTimestamp(),
-        });
-
-        // บันทึก Log ทั่วไป (ถ้าไม่ใช่ Daily login ที่บันทึกไปแล้วข้างบน)
-        if (type != MissionType.dailyLogin) {
-          final newLogRef = _firestore
-              .collection('users')
-              .doc(uid)
-              .collection('point_logs')
-              .doc();
-
-          transaction.set(newLogRef, {
-            'type': type.toString(),
-            'points': points,
-            'description': description ?? _getMissionDescription(type),
-            'refId': refId,
-            'createdAt': FieldValue.serverTimestamp(),
-          });
-        }
-
-        // ✅ Update Global Leaderboard
-        final leaderboardRef = _firestore.collection('leaderboard').doc(uid);
-        transaction.set(
-          leaderboardRef,
-          {
-            'uid': uid,
-            'displayName': user['displayName'] ?? 'User',
-            'pictureUrl': user['pictureUrl'],
-            'totalCoins': FieldValue.increment(points),
-            'updatedAt': FieldValue.serverTimestamp(),
-          },
-          SetOptions(merge: true),
-        );
+      final callable = _functions.httpsCallable('awardPoints');
+      final result = await callable.call<Map<String, dynamic>>({
+        'missionType': _missionKey(type),
+        'refId':       refId,
+        'description': description,
       });
 
-      debugPrint('💰 Awarded $points coins to $uid for $type');
-      return true;
+      final data = result.data;
+      final coinsAwarded = data['coinsAwarded'] as int? ?? 0;
+      debugPrint('💰 awardPoints: +$coinsAwarded coins for ${_missionKey(type)}');
+      return data['success'] == true;
+    } on FirebaseFunctionsException catch (e) {
+      // 'already-awarded' is not an error — it means idempotency key exists
+      if (e.code == 'already-exists') return true;
+      debugPrint('🛑 awardPoints CF error [${e.code}]: ${e.message}');
+      return false;
     } catch (e) {
-      debugPrint('🛑 Error awarding points: $e');
+      debugPrint('🛑 awardPoints error: $e');
       return false;
     }
   }
 
-  /// 💰 แลกแต้มเป็นเงิน/ส่วนลด (Enhanced Version)
+  /// 💰 แลกแต้มเป็นรางวัล
+  ///
+  /// Balance check is now INSIDE the server transaction (atomic).
+  /// No TOCTOU race possible.
   Future<bool> redeemPoints(
-    int amount,
-    String rewardType, {
+    RewardType rewardType, {
     String? description,
   }) async {
-    final user = await _bridge.getCurrentUser();
-    if (user == null) return false;
-    final uid = user['uid'];
-
     try {
-      // เช็คแต้มพอไหม
-      final userDoc = await _firestore.collection('users').doc(uid).get();
-      final currentCoins = userDoc.data()?['coins'] ?? 0;
+      final callable = _functions.httpsCallable('redeemPoints');
+      final result = await callable.call<Map<String, dynamic>>({
+        'rewardType':  _rewardKey(rewardType),
+        'description': description,
+      });
 
-      if (currentCoins < amount) {
-        debugPrint('❌ Not enough coins');
+      final data = result.data;
+      debugPrint('🎁 redeemPoints: ${_rewardKey(rewardType)}, newBalance: ${data['newBalance']}');
+      return data['success'] == true;
+    } on FirebaseFunctionsException catch (e) {
+      if (e.code == 'failed-precondition') {
+        // Insufficient coins — not a system error
+        debugPrint('❌ redeemPoints: ${e.message}');
         return false;
       }
-
-      await _firestore.runTransaction((transaction) async {
-        final userRef = _firestore.collection('users').doc(uid);
-
-        transaction.update(userRef, {
-          'coins': FieldValue.increment(-amount),
-          'totalSpent': FieldValue.increment(amount),
-        });
-
-        // Log การแลกของ (ใน point_logs เพื่อให้อยู่ที่เดียวกัน)
-        final logRef = _firestore
-            .collection('users')
-            .doc(uid)
-            .collection('point_logs')
-            .doc();
-
-        transaction.set(logRef, {
-          'type': 'spend',
-          'amount': -amount,
-          'points': -amount,
-          'description': description ?? rewardType,
-          'rewardType': rewardType,
-          'createdAt': FieldValue.serverTimestamp(),
-        });
-
-        // สร้าง Reward Voucher
-        final voucherRef = _firestore
-            .collection('users')
-            .doc(uid)
-            .collection('vouchers')
-            .doc();
-
-        transaction.set(voucherRef, {
-          'rewardType': rewardType,
-          'cost': amount,
-          'status': 'active',
-          'expiresAt':
-              Timestamp.fromDate(DateTime.now().add(const Duration(days: 30))),
-          'createdAt': FieldValue.serverTimestamp(),
-        });
-      });
-
-      return true;
+      debugPrint('🛑 redeemPoints CF error [${e.code}]: ${e.message}');
+      return false;
     } catch (e) {
-      debugPrint('Error redeeming: $e');
+      debugPrint('🛑 redeemPoints error: $e');
       return false;
     }
   }
 
-  /// 📊 เช็คแต้มปัจจุบัน
+  // ── Read-only helpers (still read Firestore directly — no write risk) ──────
+
+  /// 📊 เช็คแต้มปัจจุบัน (real-time stream)
   Stream<int> getUserCoins(String uid) {
-    return _firestore.collection('users').doc(uid).snapshots().map((snapshot) {
-      return (snapshot.data()?['coins'] ?? 0) as int;
-    });
+    return _firestore.collection('users').doc(uid).snapshots().map(
+      (snapshot) => (snapshot.data()?['coins'] ?? 0) as int,
+    );
   }
 
   /// 📜 ดึงประวัติธุรกรรม
@@ -289,9 +194,8 @@ class TukTukTokenomics {
         .orderBy('createdAt', descending: true)
         .limit(limit)
         .snapshots()
-        .map((snapshot) {
-      return snapshot.docs.map(CoinTransaction.fromFirestore).toList();
-    });
+        .map((snapshot) =>
+            snapshot.docs.map(CoinTransaction.fromFirestore).toList());
   }
 
   /// 🏆 ดึง Leaderboard
@@ -332,7 +236,7 @@ class TukTukTokenomics {
           .collection('users')
           .doc(uid)
           .collection('point_logs')
-          .doc('${type.toString()}_$today')
+          .doc('${_missionKey(type)}_$today')
           .get();
       return doc.exists;
     } catch (e) {
@@ -360,12 +264,12 @@ class TukTukTokenomics {
           .get();
 
       return {
-        'currentCoins': userData['coins'] ?? 0,
-        'lifetimePoints': userData['lifetimePoints'] ?? 0,
-        'totalSpent': userData['totalSpent'] ?? 0,
-        'dailyStreak': userData['dailyStreak'] ?? 0,
+        'currentCoins':      userData['coins']         ?? 0,
+        'lifetimePoints':    userData['lifetimePoints'] ?? 0,
+        'totalSpent':        userData['totalSpent']     ?? 0,
+        'dailyStreak':       userData['dailyStreak']    ?? 0,
         'totalTransactions': logsSnapshot.docs.length,
-        'activeVouchers': vouchersSnapshot.docs.length,
+        'activeVouchers':    vouchersSnapshot.docs.length,
       };
     } catch (e) {
       debugPrint('Error fetching user stats: $e');
@@ -373,97 +277,14 @@ class TukTukTokenomics {
     }
   }
 
-  Future<int> _getDefaultPoints(MissionType type) async {
-    try {
-      final config = await _configManager.getTokenomicsConfig();
-
-      switch (type) {
-        case MissionType.videoWatch:
-          return config['videoWatch'] ?? 5;
-        case MissionType.postCreation:
-          return config['postCreation'] ?? 20;
-        case MissionType.locationPin:
-          return config['locationPin'] ?? 50;
-        case MissionType.share:
-          return config['share'] ?? 10;
-        case MissionType.purchase:
-          return config['purchase'] ?? 100;
-        case MissionType.referral:
-          return config['referral'] ?? 200;
-        case MissionType.dailyLogin:
-          return config['dailyLogin'] ?? 10;
-        case MissionType.like:
-          return config['like'] ?? 1;
-        case MissionType.comment:
-          return config['comment'] ?? 3;
-        case MissionType.follow:
-          return config['follow'] ?? 5;
-      }
-    } catch (e) {
-      debugPrint('Error fetching coin config: $e');
-      // Fallback to defaults
-      switch (type) {
-        case MissionType.videoWatch:
-          return 5;
-        case MissionType.postCreation:
-          return 20;
-        case MissionType.locationPin:
-          return 50;
-        case MissionType.share:
-          return 10;
-        case MissionType.purchase:
-          return 100;
-        case MissionType.referral:
-          return 200;
-        case MissionType.dailyLogin:
-          return 10;
-        case MissionType.like:
-          return 1;
-        case MissionType.comment:
-          return 3;
-        case MissionType.follow:
-          return 5;
-      }
-    }
-  }
-
-  String _getMissionDescription(MissionType type) {
-    switch (type) {
-      case MissionType.videoWatch:
-        return 'ดูวิดีโอครบ';
-      case MissionType.postCreation:
-        return 'สร้างโพสต์';
-      case MissionType.locationPin:
-        return 'ปักหมุดสถานที่';
-      case MissionType.share:
-        return 'แชร์คอนเทนต์';
-      case MissionType.purchase:
-        return 'ซื้อสินค้า';
-      case MissionType.referral:
-        return 'ชวนเพื่อน';
-      case MissionType.dailyLogin:
-        return 'เข้าสู่ระบบรายวัน';
-      case MissionType.like:
-        return 'กดไลค์';
-      case MissionType.comment:
-        return 'แสดงความคิดเห็น';
-      case MissionType.follow:
-        return 'ติดตามผู้ใช้';
-    }
-  }
-
+  /// Reward cost lookup (for UI display only — server is authoritative for actual cost)
   int getRewardCost(RewardType type) {
     switch (type) {
-      case RewardType.discount20:
-        return 200;
-      case RewardType.boostPost:
-        return 500;
-      case RewardType.lineSticker:
-        return 300;
-      case RewardType.premiumMonth:
-        return 1000;
-      case RewardType.freeShipping:
-        return 150;
+      case RewardType.discount20:   return 200;
+      case RewardType.boostPost:    return 500;
+      case RewardType.lineSticker:  return 300;
+      case RewardType.premiumMonth: return 1000;
+      case RewardType.freeShipping: return 150;
     }
   }
 }

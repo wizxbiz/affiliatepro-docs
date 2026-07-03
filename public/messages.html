@@ -6,9 +6,10 @@
   <meta name="theme-color" content="#0f172a">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>ข้อความ — TukTuk Thailand</title>
+  <title>ห้องคุยแชท — TukTuk Thailand</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/persistent-ui.css">
   <style>
     :root {
       --bg:        #0a0f1e;
@@ -28,7 +29,18 @@
       --safe-b: env(safe-area-inset-bottom, 0px);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: 'Kanit', sans-serif; }
+    html, body { 
+      height: 100%; overflow: hidden; 
+      background: var(--bg); color: var(--text); 
+      font-family: 'Kanit', 'Outfit', sans-serif;
+      position: relative;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background: radial-gradient(circle at 50% -20%, rgba(59,130,246,0.1) 0%, transparent 50%),
+                  radial-gradient(circle at 0% 100%, rgba(168,85,247,0.08) 0%, transparent 40%);
+      pointer-events: none; z-index: -1;
+    }
 
     /* ══ App shell ══════════════════════════════════════════════════ */
     #app { display: flex; flex-direction: column; height: 100%; }
@@ -124,11 +136,11 @@
     /* ── Sidebar header ── */
     .sb-head { padding: 16px 16px 0; }
     .sb-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-    .tab-row { display: flex; gap: 6px; margin-bottom: 12px; }
+    .tab-row { display: flex; gap: 0; margin-bottom: 12px; background: rgba(255,255,255,0.04); border-radius: 12px; padding: 4px; }
     .tab-btn {
-      flex: 1; padding: 8px 6px;
-      border: 1.5px solid var(--border);
-      border-radius: 12px;
+      flex: 1; padding: 8px 10px;
+      border: none;
+      border-radius: 8px;
       background: transparent;
       color: var(--text-dim);
       font-family: 'Kanit', sans-serif;
@@ -137,10 +149,10 @@
       position: relative;
     }
     .tab-btn.active {
-      background: linear-gradient(135deg, #1e40af, #1d4ed8);
-      border-color: #3b82f6;
-      color: #fff; font-weight: 600;
-      box-shadow: 0 4px 12px rgba(59,130,246,0.3);
+      background: var(--surface2);
+      color: var(--text);
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
     .tab-badge {
       position: absolute; top: -6px; right: -6px;
@@ -162,10 +174,15 @@
       transition: border-color 0.2s;
     }
     .search-wrap input:focus { outline: none; border-color: var(--blue); background: rgba(59,130,246,0.05); }
-    .search-wrap .si { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 13px; }
+    .search-wrap .si { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); }
+
+    .pin-icon { color: var(--text-dim); font-size: 10px; margin-left: 4px; }
 
     /* ── Conv list ── */
-    .conv-list { flex: 1; overflow-y: auto; padding: 6px 0; }
+    .conv-list { 
+      flex: 1; overflow-y: auto; padding: 6px 0; 
+      padding-bottom: 80px; /* Space for bottom nav */
+    }
     .conv-list::-webkit-scrollbar { width: 3px; }
     .conv-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
 
@@ -399,7 +416,7 @@
       backdrop-filter: blur(20px);
       border-top: 1px solid var(--border);
       padding: 10px 12px;
-      padding-bottom: calc(10px + var(--safe-b));
+      padding-bottom: calc(80px + var(--safe-b)); /* Extra space for Global Nav */
       display: flex; align-items: flex-end; gap: 8px;
       flex-shrink: 0;
     }
@@ -497,167 +514,336 @@
       background: rgba(0,0,0,0); z-index: 30;
       touch-action: none;
     }
+
+    /* ══ Pin / Archive indicators ════════════════════════════════════ */
+    .conv-item.pinned { background: rgba(59,130,246,0.04); }
+    .conv-item.pinned::before { background: rgba(59,130,246,0.4); }
+    .pinned-sep {
+      padding: 6px 16px 2px;
+      font-size: 0.7rem; color: var(--text-dim);
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+
+    /* ══ Context menu (bottom sheet) ════════════════════════════════ */
+    .sheet-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+    .sheet-overlay.open { display: block; }
+    .sheet-panel {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--surface);
+      border-radius: 20px 20px 0 0;
+      border-top: 1px solid var(--border);
+      padding: 0 0 calc(16px + var(--safe-b));
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+      z-index: 1001; max-height: 80vh; overflow-y: auto;
+    }
+    .sheet-overlay.open .sheet-panel { transform: translateY(0); }
+    .sheet-handle {
+      width: 36px; height: 4px; border-radius: 2px;
+      background: rgba(255,255,255,0.12);
+      margin: 10px auto 14px;
+    }
+    .sheet-header {
+      padding: 0 16px 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sheet-av {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg, #1e40af, #7c3aed);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 1.1rem; color: #fff; overflow: hidden;
+    }
+    .sheet-av img { width: 100%; height: 100%; object-fit: cover; }
+    .sheet-name { font-weight: 700; font-size: 0.95rem; }
+    .sheet-sub  { font-size: 0.78rem; color: var(--text-dim); margin-top: 2px; }
+    .sheet-action {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 20px; cursor: pointer; transition: background 0.15s;
+    }
+    .sheet-action:active { background: rgba(255,255,255,0.04); }
+    .sheet-action i {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; flex-shrink: 0;
+    }
+    .sheet-action span { font-size: 0.92rem; }
+    .sheet-action.danger span { color: var(--red); }
+    .sheet-action.danger i  { background: rgba(239,68,68,0.12); color: var(--red); }
+
+    /* Settings Modal (Flutter style) */
+    .settings-overlay-wrap {
+      display: none; position: fixed; inset: 0; z-index: 2000;
+    }
+    .settings-overlay-wrap.open { display: block; }
+    .settings-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); }
+    .settings-modal {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: var(--surface);
+      border-radius: 30px 30px 0 0;
+      padding: 24px 20px calc(24px + var(--safe-b));
+      transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+    }
+    .settings-overlay-wrap.open .settings-modal { transform: translateY(0); }
+    .settings-head { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    .settings-head span { font-size: 1.2rem; font-weight: 700; flex: 1; }
+    .settings-close { background: rgba(255,255,255,0.06); border: none; color: var(--text-sub); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .settings-label { font-size: 0.9rem; font-weight: 600; color: var(--text-dim); margin-bottom: 12px; }
+    .theme-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 24px; }
+    .theme-dot {
+      height: 48px; border-radius: 12px; border: 2px solid var(--border);
+      cursor: pointer; transition: all 0.2s; position: relative;
+    }
+    .theme-dot.active { border-color: var(--blue); background: rgba(59,130,246,0.1); }
+    .theme-dot::after {
+      content: ''; position: absolute; inset: 6px; border-radius: 8px;
+    }
+    .mode-dark::after   { background: #0f172a; }
+    .mode-light::after  { background: #ffffff; }
+    .mode-sunset::after { background: #f97316; }
+    .mode-ocean::after  { background: #0891B2; }
+    .mode-forest::after { background: #059669; }
+
+    .settings-divider { height: 1px; background: var(--border); margin: 16px 0; }
+    .settings-option {
+      display: flex; align-items: center; gap: 16px; padding: 14px 0;
+      cursor: pointer; transition: opacity 0.2s;
+    }
+    .settings-option:active { opacity: 0.6; }
+    .settings-option i { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.04); display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--blue); }
+    .settings-option.danger i { background: rgba(239,68,68,0.1); color: var(--red); }
+    .settings-option span { font-weight: 500; font-size: 1rem; }
+
+    /* Promo Slider */
+    .promo-carousel { padding: 8px 16px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--border); }
+    .promo-carousel::-webkit-scrollbar { display: none; }
+    .promo-inner { display: flex; gap: 12px; }
+    .promo-card {
+      min-width: 260px; height: 100px;
+      border-radius: 20px; padding: 16px;
+      background: var(--surface2); border: 1px solid var(--border);
+      display: flex; flex-direction: column; justify-content: center;
+      cursor: pointer; position: relative; overflow: hidden;
+      transition: transform 0.2s;
+    }
+    .promo-card:active { transform: scale(0.97); }
+    .promo-card.special { background: linear-gradient(135deg, var(--blue), var(--purple)); border: none; color: #fff; }
+    .promo-name { font-weight: 800; font-size: 0.95rem; margin-bottom: 2px; }
+    .promo-shop { font-size: 0.72rem; opacity: 0.7; }
+    .promo-footer { margin-top: auto; display: flex; justify-content: space-between; align-items: center; }
+    .promo-action, .promo-price { font-size: 0.75rem; font-weight: 800; letter-spacing: 0.05em; }
+
+    .online-status {
+      display: inline-flex; align-items: center; gap: 4px;
+      color: var(--green); font-size: 0.72rem; font-weight: 600;
+      margin-top: 4px;
+    }
+    .online-status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+
+    .topbar-actions { display: flex; gap: 8px; }
+
+    /* ══ Theme variants ══════════════════════════════════════════════ */
+    body.theme-light {
+      --bg: #f1f5f9; --surface: #ffffff; --surface2: #e2e8f0;
+      --border: rgba(0,0,0,0.09); --text: #0f172a;
+      --text-dim: #64748b; --text-sub: #475569;
+    }
+    body.theme-sunset {
+      --bg: #1c0a00; --surface: #2c1007; --surface2: #3d1a0a;
+      --border: rgba(255,150,50,0.1); --text: #fef3c7;
+      --text-dim: #92400e; --text-sub: #d97706;
+    }
+    body.theme-ocean {
+      --bg: #020f1c; --surface: #041728; --surface2: #082232;
+      --border: rgba(14,165,233,0.1); --text: #e0f2fe;
+      --text-dim: #0369a1; --text-sub: #0ea5e9;
+    }
+    body.theme-forest {
+      --bg: #071a0e; --surface: #0d2417; --surface2: #14352a;
+      --border: rgba(34,197,94,0.1); --text: #dcfce7;
+      --text-dim: #15803d; --text-sub: #4ade80;
+    }
   </style>
 </head>
 <body>
 <div id="app">
 
   <!-- Login prompt -->
-  <div id="loginWrap">
+  <div id="loginWrap" style="display:none;">
     <div class="lp-icon"><i class="fas fa-comment-dots"></i></div>
     <div class="lp-title">ข้อความ</div>
     <div class="lp-sub">กรุณาเข้าสู่ระบบเพื่อดูและส่งข้อความ</div>
-    <button class="lp-btn" onclick="location.href='/login.html?redirectUrl=%2Fmessages.html'">เข้าสู่ระบบ</button>
+    <button class="lp-btn" onclick="location.href='/login?redirectUrl=%2Fmessages'">เข้าสู่ระบบ</button>
     <button class="home-btn" onclick="_goHome()"><i class="fas fa-home"></i> กลับหน้าหลัก</button>
   </div>
 
-  <!-- Main app -->
-  <div id="mainWrap">
-
-    <!-- Top bar -->
-    <div class="topbar">
-      <button class="topbar-btn" onclick="_goHome()" title="หน้าหลัก">
-        <i class="fas fa-arrow-left"></i>
-      </button>
-      <span class="topbar-title"><i class="fas fa-comment-dots" style="font-size:0.85em;margin-right:6px;opacity:0.7;"></i>ข้อความ</span>
-      <span id="totalBadge" class="unread-pill" style="display:none;"></span>
-      <button class="new-chat-btn" onclick="_newChatSheet()" title="ข้อความใหม่">
-        <i class="fas fa-edit"></i>
-      </button>
-    </div>
-
-    <!-- Layout -->
-    <div class="layout" id="layout">
-
-      <!-- Sidebar -->
-      <div class="sidebar" id="sidebar">
-        <div class="sb-head">
-          <div class="sb-title">
-            <span>บทสนทนา</span>
-          </div>
-          <div class="tab-row">
-            <button class="tab-btn active" id="tabDM" onclick="switchTab('dm')">
-              <i class="fas fa-user" style="margin-right:4px;font-size:0.8em;"></i>ส่วนตัว
-              <span class="tab-badge" id="dmBadge" style="display:none;"></span>
-            </button>
-            <button class="tab-btn" id="tabProd" onclick="switchTab('product')">
-              <i class="fas fa-box" style="margin-right:4px;font-size:0.8em;"></i>สินค้า
-              <span class="tab-badge" id="prodBadge" style="display:none;"></span>
-            </button>
-          </div>
-          <div class="search-wrap">
-            <i class="fas fa-search si"></i>
-            <input type="text" id="searchInput" placeholder="ค้นหาบทสนทนา..." oninput="filterConvs(this.value)">
-          </div>
+    <!-- Main Wrap -->
+    <div class="main-wrap" id="mainWrap" style="display:none;">
+      <header class="topbar">
+        <div class="topbar-title">ข้อความ</div>
+        <div id="totalBadge" class="unread-pill" style="display:none;">0</div>
+        <div class="topbar-actions">
+          <button class="topbar-btn" onclick="_newChatSheet()" title="ค้นหาเพื่อน">
+            <i class="fas fa-person-add"></i>
+          </button>
+          <button class="topbar-btn" onclick="_openSettings()" title="ตั้งค่า">
+            <i class="fas fa-tune"></i>
+          </button>
         </div>
-        <div class="conv-list" id="convList">
-          <div class="empty-state">
-            <div style="font-size:1.5rem;margin-bottom:8px;opacity:0.3;">💬</div>
-            <p>กำลังโหลด...</p>
-          </div>
-        </div>
-      </div>
+      </header>
 
-      <!-- Chat panel -->
-      <div class="chat-panel slide-out" id="chatPanel">
-
-        <!-- Welcome state -->
-        <div class="chat-welcome" id="chatWelcome" style="flex:1;display:flex;">
-          <div class="wlc-icon">💬</div>
-          <h5>เลือกบทสนทนา</h5>
-          <p>เลือกจากรายการด้านซ้ายเพื่อเริ่มแชท</p>
-        </div>
-
-        <!-- Active chat -->
-        <div id="activeChat" style="display:none;flex-direction:column;height:100%;">
-
-          <!-- Chat header -->
-          <div class="chat-head">
-            <button class="back-btn" onclick="showSidebar()">
-              <i class="fas fa-arrow-left"></i>
-            </button>
-            <div class="ch-av" id="chAv"><span id="chLetter">?</span></div>
-            <div class="ch-info">
-              <div class="ch-name" id="chName">—</div>
-              <div class="ch-status" id="chStatus">—</div>
+      <div class="layout">
+        <aside class="sidebar" id="sidebar">
+          <div class="sb-head">
+            <div class="search-wrap">
+              <button class="topbar-btn" onclick="_goHome(true)" style="margin-right:8px;background:transparent;border:none;color:var(--text);"><i class="fas fa-home"></i></button>
+              <i class="fas fa-search si" style="color:var(--blue);"></i>
+              <input type="text" id="searchInput" placeholder="ค้นหาการสนทนาหรือสินค้า..." oninput="_onSearch()">
             </div>
-            <div class="ch-actions">
-              <button class="ch-btn" onclick="_shareChat()" title="แชร์"><i class="fas fa-share-alt"></i></button>
-              <button class="ch-btn" onclick="_chatMenu()" title="เพิ่มเติม"><i class="fas fa-ellipsis-v"></i></button>
+            
+            <div class="tab-row">
+              <button class="tab-btn active" id="tabDM" onclick="switchTab('dm')">
+                การสนทนา
+                <span class="tab-badge" id="dmBadge" style="display:none;"></span>
+              </button>
+              <button class="tab-btn" id="tabProd" onclick="switchTab('product')">
+                สินค้า
+                <span class="tab-badge" id="prodBadge" style="display:none;"></span>
+              </button>
             </div>
           </div>
 
-          <!-- Accept banner -->
-          <div class="accept-banner" id="acceptBanner" style="display:none;">
-            <i class="fas fa-user-plus"></i>
-            <span style="flex:1;">ต้องการส่งข้อความหาคุณ</span>
-            <button class="accept-btn" onclick="doAccept()">ยอมรับ</button>
+          <div class="conv-list" id="convList">
+            <div style="text-align:center;padding:40px;color:var(--text-dim);"><i class="fas fa-spinner fa-spin"></i> กำลังโหลด...</div>
+          </div>
+        </aside>
+
+        <!-- Chat Panel -->
+        <main class="chat-panel slide-out" id="chatPanel">
+          <div class="chat-welcome" id="chatWelcome">
+            <div class="wlc-icon"><i class="fas fa-comment-dots"></i></div>
+            <h5>เลือกการสนทนา</h5>
+            <p>เพื่อเริ่มส่งข้อความ</p>
           </div>
 
-          <!-- Product strip -->
-          <div class="prod-strip" id="prodStrip" style="display:none;" onclick="_openProduct()">
-            <img id="prodImg" src="" alt="product" onerror="this.style.display='none'">
-            <div style="flex:1;min-width:0;">
-              <div class="prod-strip-name" id="prodName">สินค้า</div>
-              <div class="prod-strip-price" id="prodPrice"></div>
-            </div>
-            <i class="fas fa-chevron-right" style="color:var(--text-dim);font-size:0.8rem;"></i>
-          </div>
-
-          <!-- Messages -->
-          <div class="msgs-area" id="msgsArea"></div>
-
-          <!-- Typing -->
-          <div class="typing-wrap">
-            <div id="typingRow" class="typing-row" style="display:none;">
-              <div class="typing-av" id="typingAv">?</div>
-              <div class="typing-bubble">
-                <div class="t-dot"></div>
-                <div class="t-dot"></div>
-                <div class="t-dot"></div>
+          <div class="active-chat" id="activeChat" style="display:none;flex-direction:column;height:100%;">
+            <header class="chat-head">
+              <div class="back-btn" onclick="_goHome()"><i class="fas fa-arrow-left"></i></div>
+              <div class="ch-av" id="chAv"></div>
+              <div class="ch-info">
+                <div class="ch-name" id="chName"></div>
+                <div class="ch-status" id="chStatus">ออฟไลน์</div>
               </div>
-            </div>
-          </div>
+              <div class="ch-actions">
+                <div class="ch-btn" onclick="_shareChat()"><i class="fas fa-share-alt"></i></div>
+                <div class="ch-btn" onclick="_chatMenu()"><i class="fas fa-ellipsis-v"></i></div>
+              </div>
+            </header>
 
-          <!-- Quick replies -->
-          <div class="quick-replies" id="quickReplies" style="display:none;">
-            <div class="qr-chip" onclick="_useQR('สนใจสินค้าครับ')">สนใจสินค้าครับ</div>
-            <div class="qr-chip" onclick="_useQR('ราคาเท่าไหร่ครับ?')">ราคาเท่าไหร่?</div>
-            <div class="qr-chip" onclick="_useQR('ส่งได้เมื่อไหร่ครับ?')">ส่งได้เมื่อไหร่?</div>
-            <div class="qr-chip" onclick="_useQR('ขอบคุณครับ 🙏')">ขอบคุณครับ 🙏</div>
-            <div class="qr-chip" onclick="_useQR('โอนแล้วนะครับ')">โอนแล้วนะครับ</div>
-          </div>
-
-          <!-- Input bar -->
-          <div class="input-bar">
-            <div class="input-wrap">
-              <button class="attach-btn" onclick="_attachFile()"><i class="fas fa-image"></i></button>
-              <textarea id="msgInput" placeholder="พิมพ์ข้อความ..." rows="1"
-                oninput="autoResize(this);onTyping();" onkeydown="handleKey(event)"></textarea>
+            <div class="accept-banner" id="acceptBanner" style="display:none;">
+              <span style="flex:1;color:#fff;">ระบุตัวตน: ส่งคำขอเป็นเพื่อนเพื่อเริ่มแชท...</span>
+              <button class="accept-btn" id="doAcceptBtn" onclick="doAccept()">รับเป็นเพื่อน</button>
             </div>
-            <button class="send-btn" id="sendBtn" onclick="sendMsg()">
-              <i class="fas fa-paper-plane"></i>
-            </button>
+
+            <div class="prod-strip" id="prodStrip" style="display:none;" onclick="_openProduct()">
+              <img id="prodImg" src="">
+              <div style="flex:1;min-width:0;">
+                <div class="prod-strip-name" id="prodName"></div>
+                <div class="prod-strip-price" id="prodPrice"></div>
+              </div>
+              <i class="fas fa-chevron-right" style="color:var(--text-dim);font-size:12px;"></i>
+            </div>
+
+            <div class="msgs-area" id="msgsArea"></div>
+
+            <div class="typing-wrap" id="typingWrap"></div>
+
+            <div class="quick-replies" id="quickReplies" style="display:none;">
+              <div class="qr-chip" onclick="_useQR('ยังมีสินค้าอยู่ไหมครับ?')">ยังมีสินค้าอยู่ไหม?</div>
+              <div class="qr-chip" onclick="_useQR('ลดได้อีกไหมครับ?')">ลดได้อีกไหม?</div>
+              <div class="qr-chip" onclick="_useQR('ขอดูรูปเพิ่มเติมหน่อยครับ')">ขอดูรูปเพิ่ม</div>
+              <div class="qr-chip" onclick="_useQR('ขอโลเคชั่นหน่อยครับ')">ขอโลเคชั่น</div>
+            </div>
+
+            <footer class="input-bar">
+              <div class="input-wrap">
+                <button class="attach-btn" onclick="_attachFile()"><i class="fas fa-image"></i></button>
+                <textarea id="msgInput" placeholder="พิมพ์ข้อความ..." oninput="autoResize(this); onTyping()" rows="1"></textarea>
+              </div>
+              <button class="send-btn" id="sendBtn" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
+            </footer>
+          </div>
+          <div class="scroll-fab" id="scrollFab" onclick="_scrollBottom()"><i class="fas fa-chevron-down"></i></div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Context Menu Sheet -->
+    <div class="sheet-overlay" id="sheetOverlay" onclick="_closeSheet(event)">
+      <div class="sheet-panel">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+          <div class="sheet-av" id="sheetAv"></div>
+          <div class="sheet-info">
+            <div class="sheet-name" id="sheetName"></div>
+            <div class="sheet-sub" id="sheetSub">ตัวเลือก</div>
           </div>
         </div>
-
-        <!-- Scroll FAB -->
-        <div id="scrollFab" onclick="_scrollBottom()"><i class="fas fa-chevron-down"></i></div>
+        <div id="sheetActions"></div>
       </div>
-
-      <!-- Swipe overlay (mobile) -->
-      <div id="swipeOverlay"></div>
     </div>
-  </div>
-</div>
+
+    <!-- Settings Overlay -->
+    <div class="settings-overlay-wrap" id="settingsPanel">
+      <div class="settings-backdrop" onclick="_closeSettings()"></div>
+      <div class="settings-modal">
+        <div class="settings-head">
+          <i class="fas fa-palette" style="color:var(--blue);"></i>
+          <span>ปรับแต่งหน้าตา</span>
+          <button class="settings-close" onclick="_closeSettings()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="settings-body">
+          <p class="settings-label">โหมดสี</p>
+          <div class="theme-grid">
+            <div class="theme-dot mode-dark" data-t="dark" onclick="_applyTheme('dark')" title="มืด"></div>
+            <div class="theme-dot mode-light" data-t="light" onclick="_applyTheme('light')" title="สว่าง"></div>
+            <div class="theme-dot mode-sunset" data-t="sunset" onclick="_applyTheme('sunset')" title="พระอาทิตย์"></div>
+            <div class="theme-dot mode-ocean" data-t="ocean" onclick="_applyTheme('ocean')" title="มหาสมุทร"></div>
+            <div class="theme-dot mode-forest" data-t="forest" onclick="_applyTheme('forest')" title="ป่าไม้"></div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-option" onclick="_viewArchived()">
+            <i class="fas fa-archive"></i>
+            <span>บทสนทนาที่ถูกเก็บถาวร</span>
+          </div>
+          <div class="settings-option" onclick="_clearCache()">
+            <i class="fas fa-broom"></i>
+            <span>ล้างแคชโปรไฟล์</span>
+          </div>
+          <div class="settings-option danger" onclick="_logoutChat()">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>ออกจากระบบ</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="/js/firebase-config.js"></script>
-<script src="/js/liff-config.js"></script>
-<script src="/js/chat-web.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<script src="js/firebase-init.js"></script>
+<script src="js/liff-config.js"></script>
+<script src="js/persistent-ui.js"></script>
+<script src="js/spa-router.js"></script>
+<script src="js/chat-web.js"></script>
 
 <script>
 // ── State ────────────────────────────────────────────────────────────────────
@@ -666,15 +852,40 @@ let _allDM = [], _allProd = [];
 let _activeId = null, _activeCol = null, _activeOther = null;
 let _unsubMsgs = null, _unsubOnline = null, _unsubTyping = null;
 let _profileCache = {};
+let _chatSettings = { pinned: [], archived: [] };
 let _currentProd = null;
 let _isMobile = () => window.innerWidth < 768;
 
 // ── Navigation ───────────────────────────────────────────────────────────────
-function _goHome() {
-  if (history.length > 1) {
+function _goHome(force = false) {
+  // If we are mobile and looking at a chat, show sidebar first (unless forced)
+  if (_isMobile() && _activeId && !force) {
+    showSidebar();
+    return;
+  }
+
+  // If inside SPA iframe, let parent handle it or try to go back in parent context
+  if (window.self !== window.top || window.location.search.includes('embedded=true')) {
+    // If forced, or history is very short, tell parent to navigate home
+    if (force || history.length <= 1) {
+      try {
+        window.top.postMessage({ type: 'NAVIGATE', href: 'index.html' }, '*');
+      } catch (e) {
+        location.href = '/';
+      }
+      return;
+    }
+    
+    // Regular back within the iframe history (for mobile swipe-back compatibility)
     history.back();
-  } else {
+    return;
+  }
+
+  // Regular standalone navigation
+  if (force || history.length <= 1) {
     location.href = '/';
+  } else {
+    history.back();
   }
 }
 
@@ -687,31 +898,82 @@ window.addEventListener('popstate', e => {
 });
 
 // ── Auth init ────────────────────────────────────────────────────────────────
-firebase.auth().onAuthStateChanged(async (user) => {
-  const raw = localStorage.getItem('tuktuk_line_session') ||
+const _syncAuthCheck = () => {
+  // Check all possible session keys to maximize persistence across different app parts
+  const raw = localStorage.getItem('wizmobiz_session') || 
+              localStorage.getItem('tuktuk_line_session') ||
               localStorage.getItem('tuktuk_session') ||
-              localStorage.getItem('wizmobiz_session');
-  let saved = null;
-  try { saved = raw ? JSON.parse(raw) : null; } catch(_) {}
+              localStorage.getItem('user_data');
+  if (!raw) return null;
+  try {
+    const s = JSON.parse(raw);
+    const uid = s.uid || s.lineUserId || s.firebaseUid;
+    if (uid) return {
+      uid,
+      displayName: s.displayName || s.name || 'ผู้ใช้',
+      photoURL: s.photoURL || s.pictureUrl || ''
+    };
+  } catch(_) {}
+  return null;
+};
 
-  const uid = user?.uid || saved?.uid || saved?.lineUserId;
-  if (!uid) {
-    document.getElementById('loginWrap').style.display = 'flex';
-    return;
-  }
-
-  _sess = {
-    uid,
-    displayName: user?.displayName || saved?.displayName || saved?.name || 'ผู้ใช้',
-    photoURL:    user?.photoURL    || saved?.photoURL    || saved?.pictureUrl || '',
-  };
-
+// Start with cached session if available
+_sess = _syncAuthCheck();
+if (_sess) {
   document.getElementById('loginWrap').style.display = 'none';
-  document.getElementById('mainWrap').style.display  = 'flex';
-
-  TukTukChat.setOnline(uid);
+  document.getElementById('mainWrap').style.display = 'flex';
+  TukTukChat.setOnline(_sess.uid);
   _startListeners();
   _handleDeepLink();
+  _initTheme();
+} else {
+  // Fallback: if no cache, wait for Firebase but show loader or keep both hidden
+  // We don't show loginWrap yet, wait for onAuthStateChanged to confirm "null" user
+}
+
+firebase.auth().onAuthStateChanged(async (user) => {
+  if (user) {
+    const newUser = {
+      uid: user.uid,
+      displayName: user.displayName || 'ผู้ใช้',
+      photoURL: user.photoURL || ''
+    };
+    
+    // Update if different or first time
+    if (!_sess || _sess.uid !== newUser.uid) {
+      _sess = newUser;
+      document.getElementById('loginWrap').style.display = 'none';
+      document.getElementById('mainWrap').style.display = 'flex';
+      TukTukChat.setOnline(_sess.uid);
+      _startListeners();
+      _handleDeepLink();
+      _initTheme();
+    }
+  } else {
+    // No Firebase user
+    if (!_sess) {
+      document.getElementById('loginWrap').style.display = 'flex';
+      document.getElementById('mainWrap').style.display = 'none';
+    }
+  }
+});
+
+// ── SPA re-auth: parent sends AUTH_REFRESH when switching back to this iframe ─
+window.addEventListener('message', (e) => {
+  if (e.data && e.data.type === 'AUTH_REFRESH') {
+    if (!_sess) {
+      const refreshed = _syncAuthCheck();
+      if (refreshed) {
+        _sess = refreshed;
+        document.getElementById('loginWrap').style.display = 'none';
+        document.getElementById('mainWrap').style.display = 'flex';
+        TukTukChat.setOnline(_sess.uid);
+        _startListeners();
+        _handleDeepLink();
+        _initTheme();
+      }
+    }
+  }
 });
 
 // ── Listeners ────────────────────────────────────────────────────────────────
@@ -737,13 +999,18 @@ function _startListeners() {
     // Sync App Badge
     if (window.TukTukNotify) window.TukTukNotify.setBadge(n);
   });
+
+  TukTukChat.listenChatSettings(uid, settings => {
+    _chatSettings = settings;
+    renderList();
+  });
 }
 
 // ── Deep link ─────────────────────────────────────────────────────────────────
 function _handleDeepLink() {
   const p = new URLSearchParams(location.search);
   const convId = p.get('id') || p.get('convId');
-  const uid2   = p.get('uid');
+  const uid2   = p.get('uid') || p.get('userId');
   const col    = p.get('type') === 'product' ? TukTukChat.PROD : TukTukChat.CONV;
   if (convId) {
     openChat(convId, col);
@@ -759,7 +1026,12 @@ function switchTab(tab) {
   document.getElementById('tabProd').classList.toggle('active', tab !== 'dm');
   renderList();
 }
+function _setTab(t) { switchTab(t); }
 
+function _onSearch() { 
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  renderList(q); 
+}
 function filterConvs(q) { renderList(q.toLowerCase()); }
 
 // ── Badge ─────────────────────────────────────────────────────────────────────
@@ -778,15 +1050,16 @@ function _updateBadge(type) {
 
 // ── Render list ───────────────────────────────────────────────────────────────
 async function renderList(q = '') {
+  if (!_sess) return;
   const uid  = _sess.uid;
   const list = _tab === 'dm' ? _allDM : _allProd;
   const box  = document.getElementById('convList');
 
   if (!list.length) {
     box.innerHTML = `<div class="empty-state">
-      <i class="fas fa-comment-slash"></i>
-      <p style="margin-top:8px;">ยังไม่มีบทสนทนา</p>
-      <p style="font-size:0.78rem;margin-top:4px;opacity:0.6;">เริ่มแชทจากหน้าสินค้าหรือโพสต์</p>
+      <div style="font-size:2rem;opacity:0.2;margin-bottom:12px;"><i class="fas fa-comment-slash"></i></div>
+      <p style="font-weight:600;">ยังไม่มีบทสนทนา</p>
+      <p style="font-size:0.8rem;opacity:0.6;margin-top:4px;">เริ่มแชทจากหน้าโพรไฟล์หรือสินค้า</p>
     </div>`;
     return;
   }
@@ -796,16 +1069,19 @@ async function renderList(q = '') {
     if (_tab === 'dm') {
       otherUid = (conv.participants || []).find(p => p !== uid) || '';
       const pr = await _profile(otherUid);
-      name   = pr?.displayName || pr?.name || otherUid.slice(0,8) + '...';
+      name   = pr?.displayName || pr?.name || otherUid.slice(0,8);
       avatar = pr?.photoURL || pr?.pictureUrl || '';
     } else {
-      otherUid = conv.buyerId === uid ? (conv.sellerId || conv.lineUserId) : conv.buyerId;
+      const isBuyer = conv.buyerId === uid;
+      otherUid = isBuyer ? (conv.sellerId || conv.lineUserId) : conv.buyerId;
       const pr = await _profile(otherUid);
-      name   = pr?.displayName || pr?.name || otherUid.slice(0,8) + '...';
+      name   = pr?.displayName || pr?.name || otherUid.slice(0,8);
       avatar = pr?.photoURL || pr?.pictureUrl || '';
       prod   = conv.productName ? { name: conv.productName, img: conv.productImageUrl } : null;
     }
+    
     if (q && !name.toLowerCase().includes(q) && !(conv.lastMessage||'').toLowerCase().includes(q)) return null;
+    
     const unread = _tab === 'dm'
       ? (conv[`unreadCount_${uid}`] || 0)
       : (conv.buyerId === uid ? conv.unreadCountBuyer : conv.unreadCountSeller) || 0;
@@ -815,29 +1091,53 @@ async function renderList(q = '') {
   }));
 
   const rows = items.filter(Boolean);
-  if (!rows.length) {
-    box.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i><p style="margin-top:8px;">ไม่พบบทสนทนา</p></div>`;
+  if (!rows.length && q) {
+    box.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i><p style="margin-top:8px;">ไม่พบบทสนทนาที่ค้นหา</p></div>`;
     return;
   }
+
+  // Sort: Pinned first, then by time
+  rows.sort((a, b) => {
+    const aPinned = (_chatSettings.pinned || []).includes(a.conv.id);
+    const bPinned = (_chatSettings.pinned || []).includes(b.conv.id);
+    if (aPinned && !bPinned) return -1;
+    if (!aPinned && bPinned) return 1;
+    const at = a.lastAt?.getTime() || 0;
+    const bt = b.lastAt?.getTime() || 0;
+    return bt - at;
+  });
 
   box.innerHTML = rows.map(({ conv, otherUid, name, avatar, prod, unread, lastAt, col }) => {
     const letter  = (name||'?')[0].toUpperCase();
     const isActive = _activeId === conv.id;
     const timeStr  = lastAt ? _fmtTime(lastAt) : '';
-    const preview  = escHtml((conv.lastMessage||'').slice(0,60));
+    const preview  = (conv.lastMessage||'').slice(0,60);
     const mine     = conv.lastSenderId === _sess.uid;
-    return `<div class="conv-item ${isActive?'active':''}" onclick="openChat('${conv.id}','${col}')">
+    const isPinned = (_chatSettings.pinned || []).includes(conv.id);
+    const isArchived = (_chatSettings.archived || []).includes(conv.id);
+
+    if (isArchived && !_viewingArchived) return ''; 
+
+    return `<div class="conv-item ${isActive?'active':''} ${isPinned?'pinned':''}" 
+                 onclick="openChat('${conv.id}','${col}')" 
+                 oncontextmenu="event.preventDefault(); _showConvMenu('${conv.id}', '${col}')"
+                 onmousedown="_startLongPress(event, '${conv.id}', '${col}')"
+                 ontouchstart="_startLongPress(event, '${conv.id}', '${col}')"
+                 onmouseup="_cancelLongPress()" onmouseleave="_cancelLongPress()"
+                 ontouchend="_cancelLongPress()">
       <div class="av-wrap">
         <div class="av" id="av_${conv.id}">
-          ${avatar ? `<img src="${escHtml(avatar)}" onerror="this.style.display='none'">` : ''}
-          ${letter}
+          ${avatar ? `<img src="${escHtml(avatar)}" onerror="this.parentNode.innerHTML='${letter}'">` : letter}
         </div>
         <div class="online-dot" id="dot_${conv.id}" style="display:none;"></div>
       </div>
       <div class="conv-info">
-        <div class="conv-name">${escHtml(name)}</div>
-        ${prod ? `<div class="prod-chip">📦 ${escHtml(prod.name)}</div>` : ''}
-        <div class="conv-sub">${mine?'คุณ: ':''}${preview||'เริ่มบทสนทนา'}</div>
+        <div class="conv-name">
+          ${escHtml(name)}
+          ${isPinned ? '<i class="fas fa-thumbtack pin-icon" style="color:var(--blue);font-size:0.75rem;"></i>' : ''}
+        </div>
+        ${prod ? `<div class="prod-chip"><i class="fas fa-shopping-bag"></i> ${escHtml(prod.name)}</div>` : ''}
+        <div class="conv-sub">${mine?'<i class="fas fa-check" style="color:var(--cyan);font-size:0.7rem;margin-right:2px;"></i>':''}${escHtml(preview)||'เริ่มแชทเลย...'}</div>
       </div>
       <div class="conv-meta">
         <div class="conv-time">${timeStr}</div>
@@ -846,13 +1146,32 @@ async function renderList(q = '') {
     </div>`;
   }).join('');
 
-  // Online dots
+  // Online Listeners
   rows.forEach(({ conv, otherUid }) => {
     TukTukChat.listenOnlineStatus(otherUid, online => {
       const d = document.getElementById(`dot_${conv.id}`);
       if (d) d.style.display = online ? 'block' : 'none';
     });
   });
+}
+
+// ── Long Press Logic ──────────────────────────────────────────────────────────
+let _lpTimer = null;
+function _startLongPress(e, cid, col) {
+  _cancelLongPress();
+  _lpTimer = setTimeout(() => {
+    if (window.navigator.vibrate) window.navigator.vibrate(40);
+    _showConvMenu(cid, col);
+  }, 700);
+}
+function _cancelLongPress() { clearTimeout(_lpTimer); }
+
+let _viewingArchived = false;
+function _viewArchived() {
+  _viewingArchived = true;
+  _closeSettings();
+  alert('กำลังดูข้อความที่เก็บถาวร');
+  renderList();
 }
 
 // ── Open chat ─────────────────────────────────────────────────────────────────
@@ -889,8 +1208,22 @@ async function openChat(convId, col) {
     const pr = await _profile(otherUid);
     name   = pr?.displayName || pr?.name || 'ผู้ใช้';
     avatar = pr?.photoURL || pr?.pictureUrl || '';
-    document.getElementById('acceptBanner').style.display =
-      (conv.status === 'pending' && conv.requestBy !== uid) ? 'flex' : 'none';
+    const banner = document.getElementById('acceptBanner');
+    const bannerText = banner.querySelector('span');
+    const bannerBtn = document.getElementById('doAcceptBtn');
+
+    if (col === TukTukChat.CONV && conv.status === 'pending') {
+      banner.style.display = 'flex';
+      if (conv.requestBy !== uid) {
+        bannerText.textContent = 'คำขอเป็นเพื่อน: ส่งคำขอเริ่มสนทนากับคุณ';
+        bannerBtn.style.display = 'block';
+      } else {
+        bannerText.textContent = 'รอ ' + name + ' ตอบรับคำขอเป็นเพื่อนของคุณ...';
+        bannerBtn.style.display = 'none';
+      }
+    } else {
+      banner.style.display = 'none';
+    }
     document.getElementById('prodStrip').style.display = 'none';
     _currentProd = null;
   } else {
@@ -915,33 +1248,39 @@ async function openChat(convId, col) {
 
   _activeOther = otherUid;
 
-  // Header
+  // Header UI mapping
   document.getElementById('chName').textContent = name;
   const letter = (name||'?')[0].toUpperCase();
   const chAv = document.getElementById('chAv');
   if (avatar) {
-    chAv.innerHTML = `<img src="${escHtml(avatar)}" onerror="this.innerHTML='${letter}';this.style.fontSize='0.95rem';">`;
+    chAv.innerHTML = `<img src="${escHtml(avatar)}" onerror="this.innerHTML='${letter}'">`;
   } else {
     chAv.innerHTML = letter;
   }
-  document.getElementById('chLetter').textContent = letter;
 
-  // Typing indicator avatar
-  document.getElementById('typingAv').textContent = letter;
-
-  // Online
+  // Online status
   _unsubOnline = TukTukChat.listenOnlineStatus(otherUid, online => {
     const s = document.getElementById('chStatus');
+    if (!s) return;
     s.textContent = online ? 'ออนไลน์' : 'ออฟไลน์';
-    s.className   = `ch-status ${online ? 'online' : ''}`;
-    document.getElementById(`dot_${convId}`)?.style && null;
+    s.classList.toggle('online', online);
   });
 
-  // Typing
+  // Typing indicator
   _unsubTyping = db.collection(col).doc(convId).onSnapshot(snap => {
     const typing = snap.data()?.typing || {};
-    const tr = document.getElementById('typingRow');
-    tr.style.display = typing[otherUid] ? 'flex' : 'none';
+    const wrap = document.getElementById('typingWrap');
+    if (typing[otherUid]) {
+      wrap.innerHTML = `
+        <div class="typing-row">
+          <div class="typing-av">${avatar ? `<img src="${escHtml(avatar)}" onerror="this.parentNode.innerHTML='${letter}'">` : letter}</div>
+          <div class="typing-bubble">
+            <div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div>
+          </div>
+        </div>`;
+    } else {
+      wrap.innerHTML = '';
+    }
   });
 
   // Messages
@@ -984,12 +1323,16 @@ function renderMsgs(msgs) {
     }
 
     const showAv = !mine && !sameSndr;
+    const isImg  = !!msg.imageUrl;
     html += `<div class="msg-row ${mine?'mine':''}" ${sameSndr&&!mine?'style="margin-top:1px;"':''}>
       ${!mine ? `<div class="msg-avatar" style="visibility:${showAv?'visible':'hidden'};">
         ${msg.senderAvatar ? `<img src="${escHtml(msg.senderAvatar)}" onerror="this.style.display='none';">${letter}` : letter}
       </div>` : ''}
       <div class="msg-col">
-        <div class="msg-bubble">${_linkify(escHtml(msg.text||''))}</div>
+        <div class="msg-bubble">
+          ${isImg ? `<img src="${msg.imageUrl}" onclick="window.open('${msg.imageUrl}')" style="cursor:zoom-in;margin-bottom:4px;">` : ''}
+          ${_linkify(escHtml(msg.text||''))}
+        </div>
         <div class="msg-meta">
           <span>${time}</span>
           ${mine ? `<span class="${isRead?'msg-read':''}">${isRead?'✓✓':'✓'}</span>` : ''}
@@ -999,13 +1342,13 @@ function renderMsgs(msgs) {
     prevSender = msg.senderId;
   });
 
-  const atBottom = area.scrollHeight - area.scrollTop - area.clientHeight < 80;
+  const isNearBottom = area.scrollHeight - area.scrollTop - area.clientHeight < 150;
   area.innerHTML = html;
-  if (atBottom) {
-    area.scrollTop = area.scrollHeight;
-    fab.style.display = 'none';
+  
+  if (isNearBottom) {
+     setTimeout(() => { area.scrollTop = area.scrollHeight; fab.style.display = 'none'; }, 50);
   } else {
-    fab.style.display = 'flex';
+     fab.style.display = 'flex';
   }
 }
 
@@ -1048,6 +1391,75 @@ async function sendMsg() {
   }
 }
 
+// ── Accept Logic (Friend Request) ──────────────────────────────────────────────
+async function doAccept() {
+  if (!_activeId) return;
+  const btn = document.getElementById('doAcceptBtn');
+  const banner = document.getElementById('acceptBanner');
+  
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  
+  try {
+    await TukTukChat.acceptConversation(_activeId);
+    banner.style.display = 'none';
+    const name = document.getElementById('chName').textContent || 'เพื่อน';
+    alert('ยินดีด้วย! คุณและ ' + name + ' เป็นเพื่อนกันแล้ว');
+    renderList();
+  } catch (e) {
+    alert('เกิดข้อผิดพลาด: ' + e.message);
+    btn.disabled = false;
+    btn.innerHTML = 'รับเป็นเพื่อน';
+  }
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+async function _profile(uid) {
+  if (!uid) return null;
+  if (_profileCache[uid]) return _profileCache[uid];
+  try {
+    const p = await TukTukChat.getUserProfile(uid);
+    if (p) _profileCache[uid] = p;
+    return p;
+  } catch (e) { return null; }
+}
+
+function _linkify(text) {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  return text.replace(urlRegex, url => `<a href="${url}" target="_blank" style="color:var(--cyan);text-decoration:underline;">${url}</a>`);
+}
+
+function _fmtTime(date) {
+  if (!date) return '';
+  const now = new Date();
+  const diff = now - date;
+  if (diff < 60000) return 'เมื่อครู่';
+  if (diff < 3600000) return Math.floor(diff / 60000) + ' นาทีที่แล้ว';
+  if (now.toDateString() === date.toDateString()) {
+    return date.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+  }
+  return date.toLocaleDateString('th-TH', { day: 'numeric', month: 'short' });
+}
+
+function escHtml(s) {
+  if (!s) return '';
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function showSidebar() {
+  document.getElementById('sidebar').classList.remove('slide-out');
+  document.getElementById('chatPanel').classList.add('slide-out');
+  _activeId = null;
+  renderList();
+}
+
+function hideSidebar() {
+  document.getElementById('sidebar').classList.add('slide-out');
+  document.getElementById('chatPanel').classList.remove('slide-out');
+}
+
 function handleKey(e) {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
 }
@@ -1063,112 +1475,172 @@ function autoResize(el) {
   el.style.height = Math.min(el.scrollHeight, 120) + 'px';
 }
 
-// ── Accept ────────────────────────────────────────────────────────────────────
-async function doAccept() {
-  if (!_activeId) return;
-  await TukTukChat.acceptConversation(_activeId);
-  document.getElementById('acceptBanner').style.display = 'none';
+// ── Settings & Themes ────────────────────────────────────────────────────────
+function _openSettings() { 
+  document.getElementById('settingsPanel').classList.add('open');
+}
+function _closeSettings() { 
+  document.getElementById('settingsPanel').classList.remove('open');
 }
 
-// ── Mobile sidebar / back ─────────────────────────────────────────────────────
-function showSidebar() {
-  document.getElementById('sidebar').classList.remove('slide-out');
-  document.getElementById('chatPanel').classList.add('slide-out');
-  _activeId = null; _activeCol = null;
-  if (history.state?.chat) history.back();
+function _applyTheme(t) {
+  const b = document.body;
+  const themes = ['light', 'sunset', 'ocean', 'forest'];
+  themes.forEach(th => b.classList.remove(`theme-${th}`));
+  if (t !== 'dark') b.classList.add(`theme-${t}`);
+  localStorage.setItem('tuktuk_chat_theme', t);
+  
+  // Highlight dot
+  document.querySelectorAll('.theme-dot').forEach(d => {
+    d.classList.toggle('active', d.getAttribute('data-t') === t);
+  });
 }
 
-// Swipe right to go back (mobile)
-(function() {
-  let startX = 0, startY = 0;
-  const panel = document.getElementById('chatPanel');
-  panel.addEventListener('touchstart', e => {
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-  }, { passive: true });
-  panel.addEventListener('touchend', e => {
-    const dx = e.changedTouches[0].clientX - startX;
-    const dy = Math.abs(e.changedTouches[0].clientY - startY);
-    if (dx > 60 && dy < 40 && startX < 30 && _isMobile() && _activeId) {
-      showSidebar();
+function _initTheme() {
+  const t = localStorage.getItem('tuktuk_chat_theme') || 'dark';
+  _applyTheme(t);
+}
+
+// ── Context Menu (Bottom Sheet) ─────────────────────────────────────────────
+async function _showConvMenu(cid, col) {
+  const conv = (_tab === 'dm' ? _allDM : _allProd).find(c => c.id === cid);
+  if (!conv) return;
+
+  const uid = _sess.uid;
+  const overlay = document.getElementById('sheetOverlay');
+  const act = document.getElementById('sheetActions');
+  const isPinned = (_chatSettings.pinned || []).includes(cid);
+  const isArchived = (_chatSettings.archived || []).includes(cid);
+
+  const pr = await _profile(col === TukTukChat.CONV ? (conv.participants||[]).find(p=>p!==uid) : (conv.buyerId===uid?conv.sellerId:conv.buyerId));
+  const name = pr?.displayName || 'การสนทนา';
+  const av = pr?.photoURL || '';
+
+  document.getElementById('sheetName').textContent = name;
+  document.getElementById('sheetSub').textContent = col === TukTukChat.PROD ? 'รายการสินค้า' : 'ข้อความส่วนตัว';
+  document.getElementById('sheetAv').innerHTML = av ? `<img src="${escHtml(av)}">` : name[0];
+
+  act.innerHTML = `
+    <div class="sheet-action" onclick="_togglePin('${cid}')">
+      <i class="fas fa-thumbtack"></i>
+      <span>${isPinned ? 'เลิกปักหมุด' : 'ปักหมุดไว้บนสุด'}</span>
+    </div>
+    <div class="sheet-action" onclick="_toggleArchive('${cid}')">
+      <i class="fas fa-archive"></i>
+      <span>${isArchived ? 'ยกเลิกการเก็บถาวร' : 'เก็บถาวร'}</span>
+    </div>
+    <div class="sheet-action danger" onclick="_deleteConv('${cid}','${col}')">
+      <i class="fas fa-trash-alt"></i>
+      <span>ลบการสนทนา</span>
+    </div>
+  `;
+  overlay.classList.add('open');
+}
+
+function _closeSheet(e) {
+  if (e && e.target.id !== 'sheetOverlay') return;
+  document.getElementById('sheetOverlay').classList.remove('open');
+}
+
+async function _togglePin(cid) {
+  const pinned = _chatSettings.pinned || [];
+  const idx = pinned.indexOf(cid);
+  if (idx > -1) pinned.splice(idx, 1); else pinned.push(cid);
+  await TukTukChat.updateChatSettings(_sess.uid, { pinned });
+  document.getElementById('sheetOverlay').classList.remove('open');
+}
+
+async function _toggleArchive(cid) {
+  const archived = _chatSettings.archived || [];
+  const idx = archived.indexOf(cid);
+  if (idx > -1) archived.splice(idx, 1); else archived.push(cid);
+  await TukTukChat.updateChatSettings(_sess.uid, { archived });
+  document.getElementById('sheetOverlay').classList.remove('open');
+}
+
+async function _deleteConv(cid, col) {
+  if (!confirm('ยืนยันการลบการสนทนานี้? ข้อมูลทั้งหมดจะหายไป')) return;
+  await TukTukChat.deleteConversation(cid, col);
+  document.getElementById('sheetOverlay').classList.remove('open');
+  if (_activeId === cid) showSidebar();
+}
+
+// ── Sending & File Upload ──────────────────────────────────────────────────
+async function _attachFile() {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = async () => {
+    const file = inp.files[0];
+    if (!file) return;
+    
+    const btn = document.querySelector('.attach-btn');
+    const oldIcon = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    btn.disabled = true;
+
+    try {
+      const res = await TukTukChat.uploadFile(file);
+      if (res && res.url) {
+        await TukTukChat.sendMessage(_activeId, _activeCol, '', _sess, res);
+      }
+    } catch (e) {
+      alert('อัปโหลดล้มเหลว: ' + e.message);
+    } finally {
+      btn.innerHTML = oldIcon;
+      btn.disabled = false;
     }
-  }, { passive: true });
-})();
-
-// ── Scroll FAB ────────────────────────────────────────────────────────────────
-document.getElementById('msgsArea').addEventListener('scroll', function() {
-  const fab = document.getElementById('scrollFab');
-  const fromBottom = this.scrollHeight - this.scrollTop - this.clientHeight;
-  fab.style.display = fromBottom > 100 ? 'flex' : 'none';
-});
-function _scrollBottom() {
-  const a = document.getElementById('msgsArea');
-  a.scrollTo({ top: a.scrollHeight, behavior: 'smooth' });
+  };
+  inp.click();
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-async function _profile(uid) {
-  if (!uid) return null;
-  if (_profileCache[uid]) return _profileCache[uid];
-  const p = await TukTukChat.getUserProfile(uid);
-  if (p) _profileCache[uid] = p;
-  return p;
-}
-
-function _fmtTime(d) {
-  const now = new Date(), diff = now - d;
-  if (diff < 86400000) return d.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
-  if (diff < 604800000) return d.toLocaleDateString('th-TH',{weekday:'short'});
-  return d.toLocaleDateString('th-TH',{day:'numeric',month:'short'});
-}
-
-function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function _linkify(s) {
-  return s.replace(/(https?:\/\/[^\s<>"]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:#38bdf8;text-underline-offset:2px;">$1</a>');
-}
-
-function _useQR(text) {
-  const inp = document.getElementById('msgInput');
-  inp.value = text; autoResize(inp); inp.focus();
-}
-
+// ── Misc & Helpers ─────────────────────────────────────────────────────────
 function _newChatSheet() {
-  alert('ฟีเจอร์ค้นหาผู้ใช้เพื่อส่งข้อความ — กำลังพัฒนา');
+  alert('ฟีเจอร์เริ่มแชทใหม่กำลังจะมาเร็วๆ นี้');
 }
 
 function _openProduct() {
-  if (_currentProd) location.href = `/product.html?id=${_currentProd}`;
+  if (_currentProd) window.location.href = `/product.html?id=${_currentProd}`;
 }
 
 function _shareChat() {
-  if (window.TukTukNotify) {
-    window.TukTukNotify.share({
-      title: 'ติดต่อผ่าน TukTuk Thailand',
-      text:  `แชทกับ ${document.getElementById('chName').textContent}`,
-      url:   location.href,
-    });
+  const url = window.location.origin + window.location.pathname + '?id=' + _activeId + '&type=' + (_activeCol === TukTukChat.PROD ? 'product' : 'direct');
+  if (navigator.share) {
+    navigator.share({ title: 'TukTuk Chat', url });
+  } else {
+    prompt('คัดลอกลิงก์แชท:', url);
   }
 }
 
 function _chatMenu() {
-  // TODO: bottom sheet with options (block, report, clear)
+  if (_activeId) _showConvMenu(_activeId, _activeCol);
 }
 
-function _attachFile() {
-  const inp = document.createElement('input');
-  inp.type = 'file'; inp.accept = 'image/*';
-  inp.onchange = () => { if (inp.files[0]) alert('อัปโหลดรูปภาพ — กำลังพัฒนา'); };
-  inp.click();
+function _clearCache() {
+  _profileCache = {};
+  localStorage.removeItem('tuktuk_profiles');
+  _closeSettings();
+  alert('ล้างแคชเรียบร้อย');
+  renderList();
+}
+
+function _logoutChat() {
+  if (confirm('ยืนยันการออกจากระบบ?')) {
+    firebase.auth().signOut().then(() => location.reload());
+  }
+}
+
+function _useQR(text) {
+  const inp = document.getElementById('msgInput');
+  inp.value = text;
+  autoResize(inp);
+  inp.focus();
 }
 
 // ── Keyboard height handling (Visual Viewport API) ────────────────────────────
 if (window.visualViewport) {
   window.visualViewport.addEventListener('resize', () => {
-    const bar = document.getElementById('mainWrap');
-    if (bar) bar.style.height = window.visualViewport.height + 'px';
+    const wrap = document.getElementById('mainWrap');
+    if (wrap) wrap.style.height = window.visualViewport.height + 'px';
   });
 }
 </script>

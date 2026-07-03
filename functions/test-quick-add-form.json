@@ -1,0 +1,204 @@
+{
+  "type": "flex",
+  "altText": "📝 เพิ่มความรู้ใหม่ (Quick Form)",
+  "contents": {
+    "type": "bubble",
+    "size": "mega",
+    "header": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "text",
+          "text": "📝 เพิ่มความรู้ใหม่",
+          "weight": "bold",
+          "size": "xl",
+          "color": "#ffffff"
+        },
+        {
+          "type": "text",
+          "text": "Quick Add Form - เพิ่มเร็ว",
+          "size": "sm",
+          "color": "#ffffff99"
+        }
+      ],
+      "backgroundColor": "#3b82f6",
+      "paddingAll": "20px"
+    },
+    "body": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "text",
+          "text": "📋 วิธีใช้งาน:",
+          "weight": "bold",
+          "size": "md",
+          "color": "#1f2937",
+          "margin": "none"
+        },
+        {
+          "type": "text",
+          "text": "ส่งข้อความในรูปแบบ:",
+          "size": "sm",
+          "color": "#6b7280",
+          "wrap": true,
+          "margin": "md"
+        },
+        {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "text",
+              "text": "เพิ่มความรู้",
+              "size": "sm",
+              "color": "#059669",
+              "weight": "bold"
+            },
+            {
+              "type": "text",
+              "text": "ปัญหา: [คำอธิบายปัญหา]",
+              "size": "xs",
+              "color": "#6b7280",
+              "margin": "sm"
+            },
+            {
+              "type": "text",
+              "text": "วิธีแก้: [วิธีแก้ไขปัญหา]",
+              "size": "xs",
+              "color": "#6b7280"
+            },
+            {
+              "type": "text",
+              "text": "หมวด: [หมวดหมู่]",
+              "size": "xs",
+              "color": "#9ca3af",
+              "margin": "sm"
+            },
+            {
+              "type": "text",
+              "text": "วัสดุ: [วัสดุ] (ถ้ามี)",
+              "size": "xs",
+              "color": "#9ca3af"
+            },
+            {
+              "type": "text",
+              "text": "แท็ก: [tag1, tag2] (ถ้ามี)",
+              "size": "xs",
+              "color": "#9ca3af"
+            }
+          ],
+          "backgroundColor": "#f3f4f6",
+          "cornerRadius": "8px",
+          "paddingAll": "12px",
+          "margin": "md"
+        },
+        {
+          "type": "separator",
+          "margin": "xl"
+        },
+        {
+          "type": "text",
+          "text": "📚 หมวดหมู่ที่ใช้ได้:",
+          "weight": "bold",
+          "size": "sm",
+          "color": "#1f2937",
+          "margin": "xl"
+        },
+        {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "text",
+              "text": "🔧 วิธีแก้จริง",
+              "size": "xs",
+              "color": "#3b82f6"
+            },
+            {
+              "type": "text",
+              "text": "📊 พารามิเตอร์",
+              "size": "xs",
+              "color": "#10b981"
+            },
+            {
+              "type": "text",
+              "text": "🏭 เฉพาะเครื่อง",
+              "size": "xs",
+              "color": "#f59e0b"
+            },
+            {
+              "type": "text",
+              "text": "💡 เคล็ดลับ",
+              "size": "xs",
+              "color": "#8b5cf6"
+            },
+            {
+              "type": "text",
+              "text": "📖 คำศัพท์",
+              "size": "xs",
+              "color": "#ef4444"
+            },
+            {
+              "type": "text",
+              "text": "📚 กรณีศึกษา",
+              "size": "xs",
+              "color": "#06b6d4"
+            },
+            {
+              "type": "text",
+              "text": "🧪 วัสดุท้องถิ่น",
+              "size": "xs",
+              "color": "#f97316"
+            },
+            {
+              "type": "text",
+              "text": "🏪 ซัพพลายเออร์",
+              "size": "xs",
+              "color": "#84cc16"
+            }
+          ],
+          "spacing": "sm",
+          "margin": "md"
+        }
+      ],
+      "paddingAll": "20px"
+    },
+    "footer": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "button",
+          "action": {
+            "type": "message",
+            "label": "📋 ดูตัวอย่าง",
+            "text": "ดูตัวอย่างการเพิ่มความรู้"
+          },
+          "style": "primary",
+          "color": "#10b981"
+        },
+        {
+          "type": "button",
+          "action": {
+            "type": "message",
+            "label": "📝 ฟอร์มแบบละเอียด",
+            "text": "/addknowledge advanced"
+          },
+          "style": "link",
+          "margin": "sm"
+        },
+        {
+          "type": "text",
+          "text": "💡 ระบบจะตรวจสอบและจัดหมวดอัตโนมัติ",
+          "size": "xxs",
+          "color": "#9ca3af",
+          "align": "center",
+          "margin": "md"
+        }
+      ],
+      "paddingAll": "20px"
+    }
+  }
+}

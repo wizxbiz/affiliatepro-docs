@@ -1,7 +1,7 @@
 
 // 🌟 Community Feed Integration - Powerful Google-Inspired Version
 // Use var for db to avoid re-declaration conflicts
-if (typeof db === 'undefined') {
+if (typeof db === 'undefined' && typeof firebase !== 'undefined' && firebase.firestore) {
     var db = firebase.firestore();
 }
 
@@ -9,6 +9,40 @@ window.currentCommentPostId = null;
 window.commentsUnsubscribe = null;
 window.commentModal = null;
 window.quickPostModal = null;
+
+window.TukTukCommunityFeed = window.TukTukCommunityFeed || {};
+window.TukTukCommunityFeed.diagnostics = Array.isArray(window.TukTukCommunityFeed.diagnostics)
+    ? window.TukTukCommunityFeed.diagnostics
+    : [];
+
+function recordCommunityDiagnostic(event, detail = {}) {
+    const entry = {
+        at: new Date().toISOString(),
+        event,
+        ...detail,
+    };
+    window.TukTukCommunityFeed.diagnostics.push(entry);
+    while (window.TukTukCommunityFeed.diagnostics.length > 80) {
+        window.TukTukCommunityFeed.diagnostics.shift();
+    }
+    if (/error|failed|timeout|unavailable|not_ready/i.test(event)) {
+        console.warn('[TukTukCommunityFeed]', event, detail);
+    }
+    return entry;
+}
+
+function getCommunityDb() {
+    if (typeof window !== 'undefined' && window.db) return window.db;
+    if (typeof db !== 'undefined' && db) return db;
+    if (typeof firebase !== 'undefined' && firebase.firestore) {
+        const firestoreDb = firebase.firestore();
+        try {
+            window.db = window.db || firestoreDb;
+        } catch (_) {}
+        return firestoreDb;
+    }
+    return null;
+}
 
 // Frame Configurations (Synced with Video Studio)
 const frameConfigs = {
@@ -125,7 +159,7 @@ function initCommunityFeed(container) {
 
                 <!-- Card 3: Community -->
                 <div class="col-6">
-                    <div class="career-card" style="background: linear-gradient(135deg, #10B981, #059669); border-radius: 22px; padding: 16px; height: 180px; position: relative; overflow: hidden; cursor: pointer; box-shadow: 0 8px 18px rgba(16, 185, 129, 0.38); transition: transform 0.2s;" onclick="this.style.transform='scale(0.95)'; setTimeout(()=> { this.style.transform='scale(1)'; renderActualCommunityFeed(document.getElementById('tuktukFeed')); }, 150);">
+                    <div class="career-card" style="background: linear-gradient(135deg, #10B981, #059669); border-radius: 22px; padding: 16px; height: 180px; position: relative; overflow: hidden; cursor: pointer; box-shadow: 0 8px 18px rgba(16, 185, 129, 0.38); transition: transform 0.2s;" onclick="this.style.transform='scale(0.95)'; const c = this.closest('.tuktuk-feed-container'); setTimeout(()=> { this.style.transform='scale(1)'; renderActualCommunityFeed(c); }, 150);">
                         <div class="position-absolute" style="right: -10px; bottom: -14px; font-size: 72px; opacity: 0.09; pointer-events: none;">🏘️</div>
                         <div class="d-flex flex-column h-100 position-relative z-1">
                             <div style="height: 20px; margin-bottom: 8px;"></div> <!-- Spacer matching tags -->
@@ -142,7 +176,7 @@ function initCommunityFeed(container) {
 
                 <!-- Card 4: Pro Service -->
                 <div class="col-6">
-                    <div class="career-card" style="background: linear-gradient(135deg, #F59E0B, #D97706); border-radius: 22px; padding: 16px; height: 180px; position: relative; overflow: hidden; cursor: pointer; box-shadow: 0 8px 18px rgba(245, 158, 11, 0.38); transition: transform 0.2s;" onclick="this.style.transform='scale(0.95)'; setTimeout(()=> { this.style.transform='scale(1)'; renderActualCommunityFeed(document.getElementById('tuktukFeed'), 'eco_pros'); }, 150);">
+                    <div class="career-card" style="background: linear-gradient(135deg, #F59E0B, #D97706); border-radius: 22px; padding: 16px; height: 180px; position: relative; overflow: hidden; cursor: pointer; box-shadow: 0 8px 18px rgba(245, 158, 11, 0.38); transition: transform 0.2s;" onclick="this.style.transform='scale(0.95)'; const c = this.closest('.tuktuk-feed-container'); setTimeout(()=> { this.style.transform='scale(1)'; renderActualCommunityFeed(c, 'eco_pros'); }, 150);">
                         <div class="position-absolute" style="right: -10px; bottom: -14px; font-size: 72px; opacity: 0.09; pointer-events: none;">🔧</div>
                         <div class="d-flex flex-column h-100 position-relative z-1">
                             <div style="height: 20px; margin-bottom: 8px;"></div> <!-- Spacer -->
@@ -161,18 +195,19 @@ function initCommunityFeed(container) {
     `;
 
     // Fetch live stats safely
-    if (typeof db !== 'undefined' && db) {
-        db.collection('win_riders').where('isOnline', '==', true).get().then(snap => {
+    const statsDb = getCommunityDb();
+    if (statsDb) {
+        statsDb.collection('win_riders').where('isOnline', '==', true).get().then(snap => {
             const el = document.getElementById('live-stat-win');
             if (el) el.textContent = `${snap.size || 0} วินออนไลน์`;
         }).catch(() => null);
 
-        db.collection('tuktuk_posts').get().then(snap => {
+        statsDb.collection('tuktuk_posts').get().then(snap => {
             const el = document.getElementById('live-stat-creator');
             if (el) el.textContent = `${snap.size || 0} คอนเทนต์`;
         }).catch(() => null);
 
-        db.collection('community_posts').get().then(snap => {
+        statsDb.collection('community_posts').get().then(snap => {
             const el = document.getElementById('live-stat-comm');
             if (el) el.textContent = `${snap.size || 0} โพสต์`;
 
@@ -195,7 +230,7 @@ function renderActualCommunityFeed(container, defaultFilter = 'all') {
         <div class="community-header animate__animated animate__fadeInDown px-3" style="padding-top: 80px;">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div class="d-flex align-items-center">
-                    <button class="btn btn-dark text-white rounded-circle me-3" style="width: 40px; height: 40px; background: rgba(255,255,255,0.1);" onclick="initCommunityFeed(document.getElementById('tuktukFeed'))">
+                    <button class="btn btn-dark text-white rounded-circle me-3" style="width: 40px; height: 40px; background: rgba(255,255,255,0.1);" onclick="initCommunityFeed(this.closest('.tuktuk-feed-container'))">
                         <i class="fas fa-chevron-left"></i>
                     </button>
                     <div>
@@ -260,15 +295,65 @@ function renderActualCommunityFeed(container, defaultFilter = 'all') {
 
 window.communityUnsubscribe = null;
 
+function renderCommunityLoadError(container, filter = 'all', message = 'Community feed is unavailable') {
+    if (!container) return;
+    const safeFilter = String(filter || 'all').replace(/[^a-z_]/gi, '') || 'all';
+    container.style.opacity = '1';
+    container.innerHTML = `
+        <div class="empty-community-state animate__animated animate__fadeIn" style="min-height: 320px;">
+            <div class="empty-icon-circle">
+                <i class="fas fa-wifi"></i>
+            </div>
+            <h5 class="text-white mb-2 fw-bold">Community feed is unavailable</h5>
+            <p class="text-white-50 mb-4 px-4">${escapeHtml(message)}</p>
+            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                <button class="btn btn-primary rounded-pill px-4 py-2 fw-bold" onclick="loadCommunityPosts('${safeFilter}')">
+                    <i class="fas fa-sync-alt me-2"></i> Retry
+                </button>
+                <button class="btn btn-outline-light rounded-pill px-4 py-2 fw-bold" onclick="initCommunityFeed(this.closest('.tuktuk-feed-container'))">
+                    <i class="fas fa-chevron-left me-2"></i> Back
+                </button>
+            </div>
+        </div>
+    `;
+}
+
 function loadCommunityPosts(filter = 'all') {
     const contentContainer = document.getElementById('community-feed-content');
-    if (!contentContainer || !db) return;
+    if (!contentContainer) return;
 
-    if (window.communityUnsubscribe) {
-        window.communityUnsubscribe();
+    const communityDb = getCommunityDb();
+    if (!communityDb) {
+        recordCommunityDiagnostic('db_not_ready', { filter });
+        renderCommunityLoadError(contentContainer, filter, 'Community database is not ready. Please retry.');
+        setTimeout(() => {
+            if (getCommunityDb()) loadCommunityPosts(filter);
+        }, 900);
+        return;
     }
 
-    let query = db.collection('community_posts');
+    if (window.communityUnsubscribe) {
+        try {
+            window.communityUnsubscribe();
+        } catch (err) {
+            recordCommunityDiagnostic('unsubscribe_failed', {
+                filter,
+                message: err.message || String(err),
+            });
+        }
+        window.communityUnsubscribe = null;
+    }
+
+    recordCommunityDiagnostic('load_start', { filter });
+    contentContainer.style.opacity = '1';
+    contentContainer.innerHTML = `
+        <div id="community-posts-loader" class="text-center py-5">
+            <div class="spinner-grow text-primary" role="status"></div>
+            <div class="mt-3 text-white-50 fw-light">Loading community feed...</div>
+        </div>
+    `;
+
+    let query = communityDb.collection('community_posts');
 
     if (filter === 'groups') {
         query = query.where('category', '==', 'groups');
@@ -289,6 +374,11 @@ function loadCommunityPosts(filter = 'all') {
             }
 
             contentContainer.innerHTML = '';
+            contentContainer.style.opacity = '1';
+            recordCommunityDiagnostic('load_success', {
+                filter,
+                count: snapshot.size || 0,
+            });
 
             if (snapshot.empty) {
                 renderEmptyState(contentContainer, filter);
@@ -301,7 +391,12 @@ function loadCommunityPosts(filter = 'all') {
             });
         }, err => {
             console.error("Load Error:", err);
-            contentContainer.innerHTML = `<div class="text-center text-danger p-5">โหลดข้อมูลไม่สำเร็จ หรือคุณอาจไม่มีสิทธิ์เข้าถึงเนื้อหานี้</div>`;
+            recordCommunityDiagnostic('load_error', {
+                filter,
+                message: err.message || String(err),
+                code: err.code || null,
+            });
+            renderCommunityLoadError(contentContainer, filter, err.message || 'Unable to load community feed.');
         });
 }
 
@@ -316,8 +411,17 @@ function filterCommunity(filter) {
     if (content) content.style.opacity = '0.5';
 
     setTimeout(() => {
-        loadCommunityPosts(filter);
-        if (content) content.style.opacity = '1';
+        try {
+            loadCommunityPosts(filter);
+        } catch (err) {
+            recordCommunityDiagnostic('filter_load_error', {
+                filter,
+                message: err.message || String(err),
+            });
+            renderCommunityLoadError(content, filter, err.message || 'Unable to load community feed.');
+        } finally {
+            if (content) content.style.opacity = '1';
+        }
     }, 200);
 }
 
@@ -392,18 +496,18 @@ function renderCommunityPostCard(post) {
                     <span>${post.likes || 0}</span>
                 </div>
                 <div class="comments-shares">
-                    <span>${post.commentsCount || 0} ความคิดเห็น</span> • <span>${Math.floor(Math.random() * 20)} แชร์</span>
+                    <span>${post.commentsCount || 0} ความคิดเห็น</span> • <span>${post.shareCount || 0} แชร์</span>
                 </div>
             </div>
 
             <div class="pc-post-interaction-btns">
-                <div class="pc-post-btn ${isPostLiked(post.id) ? 'active' : ''}" onclick="likeCommunityPost(this, '${post.id}')">
+                <div class="pc-post-btn ${isPostLiked(post.id) ? 'active' : ''}" onclick="event.stopPropagation(); likeCommunityPost(this, '${post.id}')">
                     <i class="${isPostLiked(post.id) ? 'fas' : 'far'} fa-thumbs-up"></i> <span>ถูกใจ</span>
                 </div>
-                <div class="pc-post-btn" onclick="openComments('${post.id}')">
+                <div class="pc-post-btn" onclick="event.stopPropagation(); openComments('${post.id}')">
                     <i class="far fa-comment"></i> <span>แสดงความเห็น</span>
                 </div>
-                <div class="pc-post-btn" onclick="TukTukNotify.sharePost({id: '${post.id}', text: '${escapeHtml(post.content || '')}'})">
+                <div class="pc-post-btn" onclick="event.stopPropagation(); shareCommunityPost('${post.id}', '${escapeHtml(post.content || '')}')">
                     <i class="fas fa-share"></i> <span>แชร์</span>
                 </div>
             </div>
@@ -601,20 +705,20 @@ function renderCommunityPostCard(post) {
             <div class="d-flex gap-2">
                 <span>${post.commentsCount || 0} ความคิดเห็น</span>
                 <span>•</span>
-                <span>${Math.floor(Math.random() * 50) + 1} แชร์</span>
+                <span>${post.shareCount || 0} แชร์</span>
             </div>
         </div>
 
         <div class="post-actions d-flex px-1 py-1">
-            <button class="action-btn-row flex-grow-1 ${isPostLiked(post.id) ? 'liked' : ''}" onclick="likeCommunityPost(this, '${post.id}')">
+            <button class="action-btn-row flex-grow-1 ${isPostLiked(post.id) ? 'liked' : ''}" onclick="event.stopPropagation(); likeCommunityPost(this, '${post.id}')">
                 <i class="${isPostLiked(post.id) ? 'fas' : 'far'} fa-thumbs-up"></i>
                 <span>ถูกใจ</span>
             </button>
-            <button class="action-btn-row flex-grow-1" onclick="openComments('${post.id}')">
+            <button class="action-btn-row flex-grow-1" onclick="event.stopPropagation(); openComments('${post.id}')">
                 <i class="far fa-comment-alt"></i>
                 <span>ความเห็น</span>
             </button>
-            <button class="action-btn-row flex-grow-1" onclick="TukTukNotify.sharePost({id: '${post.id}', text: '${escapeHtml(post.content || '')}'})">
+            <button class="action-btn-row flex-grow-1" onclick="event.stopPropagation(); shareCommunityPost('${post.id}', '${escapeHtml(post.content || '')}')">
                 <i class="fas fa-share-alt"></i>
                 <span>แชร์</span>
             </button>
@@ -661,12 +765,12 @@ function injectCommunityModals() {
                     <div class="modal-header border-0 pb-0 px-4 pt-4">
                         <div class="w-100 text-center position-relative">
                             <div style="width: 40px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; margin: 0 auto 15px;"></div>
-                            <h5 class="modal-title fw-bold"><i class="fas fa-comments me-2 text-primary"></i>ความคิดเห็น <span id="commentCountBadge" class="badge bg-primary rounded-pill ms-2" style="font-size: 0.6em;">0</span></h5>
+                            <h5 class="modal-title fw-bold"><i class="fas fa-comments me-2 text-primary"></i>ความคิดเห็น <span id="commentCountTitle" class="badge bg-primary rounded-pill ms-2" style="font-size: 0.6em;">0</span></h5>
                             <button type="button" class="btn-close btn-close-white position-absolute end-0 top-0" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                     </div>
                     <div class="modal-body p-0">
-                        <div id="commentsList" class="p-4" style="min-height: 250px;"></div>
+                        <div id="commentList" class="p-4" style="min-height: 250px;"></div>
                     </div>
                     <div class="modal-footer border-top border-secondary border-opacity-25 p-3" style="background: #0f172a;">
                         <div class="d-flex w-100 align-items-center gap-3">
@@ -683,7 +787,12 @@ function injectCommunityModals() {
             </div>
         </div>`;
         document.body.insertAdjacentHTML('beforeend', commentModalHtml);
-        window.commentModal = new bootstrap.Modal(document.getElementById('commentModal'));
+    }
+    
+    // Ensure window.commentModal is instantiated if not already
+    const modalEl = document.getElementById('commentModal');
+    if (modalEl && !window.commentModal) {
+        window.commentModal = new bootstrap.Modal(modalEl);
     }
 
     if (!document.getElementById('quickPostModal')) {
@@ -758,7 +867,7 @@ function getUserDisplayName() {
 }
 
 function isPostLiked(postId) {
-    const likes = JSON.parse(localStorage.getItem('community_likes') || '[]');
+    const likes = JSON.parse(localStorage.getItem('tuktuk_liked_posts') || '[]');
     return likes.includes(postId);
 }
 
@@ -819,12 +928,15 @@ async function submitQuickPost() {
     const btn = document.querySelector('#quickPostModal .btn-primary');
     btn.disabled = true;
     // Content Moderation System
-    if (typeof containsProfanity === 'function' && (containsProfanity(content) || (title && containsProfanity(title)))) {
-        showToast('⚠️ เนื้อหาขัดต่อกฏการใช้งาน (ห้ามคำหยาบ/สิ่งผิดกฏหมาย/สถาบัน)', 'error');
-        alert('🚫 ไม่สามารถเผยแพร่ได้: เนื้อหามีคำที่ไม่เหมาะสม หรือขัดต่อกฏการใช้งานชุมชน (ห้ามคำหยาบคาย ห้ามเกี่ยวข้องกับสถาบัน และห้ามสิ่งผิดกฏหมาย)');
-        btn.disabled = false;
-        btn.textContent = 'เผยแพร่';
-        return;
+    if (typeof containsProfanity === 'function') {
+        const hasBadWords = containsProfanity(content) || (title && containsProfanity(title));
+        if (hasBadWords) {
+            showToast('⚠️ เนื้อหาขัดต่อกฏการใช้งาน (ห้ามคำหยาบ/สิ่งผิดกฏหมาย/สถาบัน)', 'error');
+            alert('🚫 ไม่สามารถเผยแพร่ได้: เนื้อหามีคำที่ไม่เหมาะสม หรือขัดต่อกฏการใช้งานชุมชน\n- ห้ามใช้คำหยาบคาย\n- ห้ามเกี่ยวข้องกับสถาบันฯ\n- ห้ามสิ่งผิดกฎหมายและการพนัน');
+            btn.disabled = false;
+            btn.textContent = 'เผยแพร่';
+            return;
+        }
     }
 
     try {
@@ -883,25 +995,44 @@ async function submitQuickPost() {
 }
 
 function likeCommunityPost(btn, postId) {
-    const likes = JSON.parse(localStorage.getItem('community_likes') || '[]');
+    const likes = JSON.parse(localStorage.getItem('tuktuk_liked_posts') || '[]');
     const isLiked = likes.includes(postId);
     const countEl = btn.querySelector('span');
     let currentCount = parseInt(countEl.textContent || 0);
 
     if (isLiked) {
-        localStorage.setItem('community_likes', JSON.stringify(likes.filter(id => id !== postId)));
+        localStorage.setItem('tuktuk_liked_posts', JSON.stringify(likes.filter(id => id !== postId)));
         btn.classList.remove('liked', 'animate__pulse');
-        btn.querySelector('i').className = 'far fa-heart';
+        btn.querySelector('i').className = 'far fa-thumbs-up';
         currentCount = Math.max(0, currentCount - 1);
         db.collection('community_posts').doc(postId).update({ likes: firebase.firestore.FieldValue.increment(-1) });
     } else {
-        localStorage.setItem('community_likes', JSON.stringify([...likes, postId]));
+        localStorage.setItem('tuktuk_liked_posts', JSON.stringify([...likes, postId]));
         btn.classList.add('liked', 'animate__pulse');
-        btn.querySelector('i').className = 'fas fa-heart';
+        btn.querySelector('i').className = 'fas fa-thumbs-up';
         currentCount++;
         db.collection('community_posts').doc(postId).update({ likes: firebase.firestore.FieldValue.increment(1) });
     }
     countEl.textContent = currentCount;
+}
+
+function shareCommunityPost(postId, text) {
+    const url = `${location.origin}/?post=${postId}`;
+    // Track share count (fire & forget)
+    if (window.db) {
+        window.db.collection('community_posts').doc(postId).update({
+            shareCount: firebase.firestore.FieldValue.increment(1)
+        }).catch(() => {});
+    }
+    if (window.TukTukNotify && window.TukTukNotify.sharePost) {
+        window.TukTukNotify.sharePost({ id: postId, text: text });
+    } else if (navigator.share) {
+        navigator.share({ title: 'TukTuk Thailand', text: text, url: url }).catch(() => {});
+    } else {
+        navigator.clipboard.writeText(url).then(() => {
+            if (typeof showToast === 'function') showToast('📋 คัดลอกลิงก์แล้ว!', 'success');
+        }).catch(() => {});
+    }
 }
 
 // --- Voice & AI Placeholders ---
@@ -964,28 +1095,31 @@ async function tryAiAssist() {
     }
 }
 
-function openComments(postId) {
-    // Safety check: Ensure modal elements exist
-    if (!document.getElementById('commentsList')) {
-        console.warn('Comments modal missing or corrupted, re-injecting...');
-        const brokenModal = document.getElementById('commentModal');
-        if (brokenModal) {
-            brokenModal.remove();
+window.openComments = function(postId) {
+    // Safety check: Ensure modal elements exist (Use standard ID 'commentList')
+    let commentsListElement = document.getElementById('commentList');
+    
+    if (!commentsListElement) {
+        console.warn('Comments modal div missing, re-checking modal...');
+        const modalEl = document.getElementById('commentModal');
+        if (!modalEl) {
+            console.warn('Comment modal completely missing, re-injecting...');
+            injectCommunityModals();
+            commentsListElement = document.getElementById('commentList');
         }
-        injectCommunityModals();
     }
 
-    const commentsListElement = document.getElementById('commentsList');
     if (!commentsListElement) {
         console.error('Failed to initialize comments modal.');
-        alert('เกิดข้อผิดพลาดในการเปิดความคิดเห็น กรุณาลองใหม่');
+        // Fallback alert for user
+        if (typeof showToast === 'function') showToast('ระบบความเห็นขัดข้อง', 'error');
         return;
     }
 
     window.currentCommentPostId = postId;
     commentsListElement.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary"></div></div>';
 
-    // Ensure Bootstrap modal instance exists
+    // Ensure Bootstrap modal instance exists and is assigned to window
     if (!window.commentModal) {
         const modalEl = document.getElementById('commentModal');
         if (modalEl) window.commentModal = new bootstrap.Modal(modalEl);
@@ -997,9 +1131,13 @@ function openComments(postId) {
     window.commentsUnsubscribe = db.collection('community_posts').doc(postId).collection('comments')
         .orderBy('createdAt', 'desc')
         .onSnapshot(snap => {
-            const list = document.getElementById('commentsList');
-            const badge = document.getElementById('commentCountBadge');
-            badge.textContent = snap.size;
+            const list = document.getElementById('commentList');
+            const badge = document.getElementById('commentCountTitle');
+            if (badge) {
+                // Handle different label formats
+                if (badge.tagName === 'SPAN') badge.textContent = snap.size;
+                else badge.textContent = `ความคิดเห็น (${snap.size})`;
+            }
 
             if (snap.empty) {
                 list.innerHTML = `<div class="text-center text-white-50 py-5"><i class="far fa-comment-dots fa-3x mb-3"></i><p>ยังไม่มีความคิดเห็น มาฉลองกันเลย!</p></div>`;
@@ -1033,6 +1171,12 @@ async function submitComment() {
     const text = input.value.trim();
     if (!text || !window.currentCommentPostId) return;
 
+    // 🛡️ Content Moderation
+    if (typeof containsProfanity === 'function' && containsProfanity(text)) {
+        showToast('⚠️ ความเห็นของคุณมีคำที่ไม่เหมาะสม', 'error');
+        return;
+    }
+
     const user = getUser();
     if (!user) return WizmobizAuth.showLoginModal();
 
@@ -1046,3 +1190,11 @@ async function submitComment() {
     });
     db.collection('community_posts').doc(window.currentCommentPostId).update({ commentsCount: firebase.firestore.FieldValue.increment(1) });
 }
+
+// Ensure functions are globally accessible and override older versions
+window.openComments = openComments;
+window.submitComment = submitComment;
+window.likeCommunityPost = likeCommunityPost;
+window.shareCommunityPost = shareCommunityPost;
+window.openQuickPostModal = openQuickPostModal;
+window.injectCommunityModals = injectCommunityModals;

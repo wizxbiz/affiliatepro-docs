@@ -439,6 +439,7 @@ class _CommunityPostScreenState extends State<CommunityPostScreen>
             : FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
         'status': _scheduledTime != null ? 'scheduled' : 'active',
+        'published': _scheduledTime == null,
         'privacy': _privacy,
         'isGroup': isCreatingGroup,
         'type': isCreatingGroup

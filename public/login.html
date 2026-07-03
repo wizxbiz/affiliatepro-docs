@@ -14,6 +14,10 @@
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="/js/firebase-init.js"></script>
+
+    <!-- LIFF config (provides window.TUKTUK_LIFF.main for in-app login) -->
+    <script src="/js/liff-config.js"></script>
 
     <style>
         :root {
@@ -398,6 +402,16 @@
         <div id="loaderText" style="font-weight:600; color:var(--primary);">กำลังเข้าสู่ระบบ...</div>
     </div>
 
+    <!-- Inline error banner (replaces alert() which is blocked in LINE IAB / iOS) -->
+    <div id="loginErrorBanner" style="
+        display:none; position:fixed; top:20px; left:50%; transform:translateX(-50%);
+        background:rgba(239,68,68,0.95); color:#fff; padding:14px 24px; border-radius:16px;
+        font-family:var(--font-primary); font-size:0.9rem; font-weight:600;
+        z-index:3000; max-width:90vw; text-align:center;
+        box-shadow:0 8px 30px rgba(239,68,68,0.4);
+        animation: sectionIn 0.4s ease both;">
+    </div>
+
     <div class="login-container">
         <div class="login-card">
             <div class="close-btn" onclick="dismissLogin()" title="ข้ามการเข้าสู่ระบบ">
@@ -416,7 +430,7 @@
 
             <!-- Path A: Mobile (LINE Login) -->
             <div id="pathMobile" class="content-section">
-                <button class="btn-line" onclick="triggerLineLogin()">
+                <button class="btn-line" onclick="triggerLiffLogin(true)">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" class="line-logo"
                         alt="LINE">
                     เข้าสู่ระบบด้วย LINE
@@ -449,8 +463,8 @@
                     </div>
                 </div>
 
-                <button class="btn-switch" style="margin-top:20px" onclick="switchPath('mobile')">
-                    สลับไปใช้ LINE OAuth Login
+                <button class="btn-switch" style="margin-top:20px" onclick="triggerLiffLogin()">
+                    <i class="fab fa-line"></i> เข้าสู่ระบบด้วยแอป LINE
                 </button>
             </div>
 
@@ -462,14 +476,66 @@
     </div>
 
     <script>
-        // --- Config ---
-        const API_BASE = 'https://us-central1-appinjproject.cloudfunctions.net';
+        // Same-origin: /api/* ถูก proxy ไป Worker ผ่าน _worker.js บน Pages
+        // ยกเว้นตอนเปิดไฟล์ตรงๆ (file://) หรือ localhost ที่ไม่มี proxy ให้ยิงตรง Worker
+        const API_BASE = (location.protocol === 'file:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+            ? 'https://tuktukfeed-api.imtthailand2019.workers.dev'
+            : '';
         const LINE_CID = '2009159046';
-        const REDIRECT_URI = window.location.origin + '/login.html';
+
+        // Safe Storage Helper to prevent DOMException/SecurityError in Private Browsing / Sandboxed WebView
+        const SafeStorage = {
+            getItem(key) {
+                try { return localStorage.getItem(key); } catch (_) { return window['__fallback_' + key] || null; }
+            },
+            setItem(key, val) {
+                try { localStorage.setItem(key, val); } catch (_) { window['__fallback_' + key] = val; }
+            },
+            removeItem(key) {
+                try { localStorage.removeItem(key); } catch (_) { delete window['__fallback_' + key]; }
+            }
+        };
+        const SafeSessionStorage = {
+            getItem(key) {
+                try { return sessionStorage.getItem(key); } catch (_) { return window['__fallback_sess_' + key] || null; }
+            },
+            setItem(key, val) {
+                try { sessionStorage.setItem(key, val); } catch (_) { window['__fallback_sess_' + key] = val; }
+            },
+            removeItem(key) {
+                try { sessionStorage.removeItem(key); } catch (_) { delete window['__fallback_sess_' + key]; }
+            }
+        };
+
+        // Auto-detect REDIRECT_URI to avoid mismatch on different domains
+        // Standardize: strip .html to match common registered URIs for Clean URLs
+        const cleanPath = window.location.pathname.replace(/\.html$/, '') || '/';
+        const REDIRECT_URI = window.location.origin + cleanPath;
+        
+        console.log('[Login] REDIRECT_URI detected:', REDIRECT_URI);
 
         const params = new URLSearchParams(window.location.search);
-        let target = params.get('redirectUrl') || '/';
-        if (target.includes('login.html')) target = '/';
+        // Sanitize redirect target — only allow same-origin relative paths (prevent open redirect)
+        function sanitizeTarget(raw) {
+            if (!raw) return '/';
+            try {
+                const url = new URL(raw, window.location.origin);
+                // Reject external origins
+                if (url.origin !== window.location.origin) return '/';
+                const path = url.pathname + (url.search && url.search !== '?' ? url.search : '');
+                // Reject login loops
+                if (path.includes('/login')) return '/';
+                return path || '/';
+            } catch (_) {
+                // Relative path with no host — keep if it starts with /
+                if (typeof raw === 'string' && raw.startsWith('/') && !raw.includes('/login')) return raw;
+                return '/';
+            }
+        }
+        let target = sanitizeTarget(params.get('redirectUrl'));
+
+        // --- LINE In-App Browser detection ---
+        const isLineIAB = /Line\//i.test(navigator.userAgent);
 
         // --- State & Init ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -477,6 +543,13 @@
             switchPath(isMobile ? 'mobile' : 'pc');
             setupPinInputs();
             checkCallbacks();
+
+            if (isLineIAB && !params.get('code')) {
+                // LINE IAB → auto-trigger login flow only if not currently processing a callback
+                SafeSessionStorage.removeItem('_liff_login_triggered');
+                triggerLiffLogin(true);
+            }
+            // External browser → show UI normally, user taps button to login
         });
 
         function switchPath(type) {
@@ -490,49 +563,114 @@
             }
         }
 
-        function dismissLogin() { window.location.href = target; }
+        function dismissLogin() { 
+            const loc = (window.self !== window.top) ? window.top.location : window.location;
+            loc.href = target; 
+        }
 
-        // --- LINE Login ---
+        // --- LIFF Full-Flow Login ---
+        // In LINE IAB: auto-redirects to LINE consent screen
+        // In external browser: only processes LIFF callback (?code=); never auto-redirects
+        let _liffInitInProgress = false;
+        async function triggerLiffLogin(forceLogin = false) {
+            if (_liffInitInProgress) return;
+            _liffInitInProgress = true;  // Set guard immediately to prevent double-calls
+
+            const liffId = (window.TUKTUK_LIFF && window.TUKTUK_LIFF.main) || '';
+
+            if (!liffId) {
+                _liffInitInProgress = false;
+                hideLoader();
+                switchPath('pc');
+                return;
+            }
+
+            // Must break out of SPA iframe
+            if (window.self !== window.top && (isLineIAB || forceLogin)) {
+                window.top.location.replace('/login?redirectUrl=' + encodeURIComponent(target));
+                return;
+            }
+
+            if (!forceLogin) {
+                _liffInitInProgress = false;
+                return; // Only trigger if user clicks
+            }
+
+            showLoader('🚀 กำลังเชื่อมต่อ LINE...');
+
+            // Use manual OAuth flow for reliability (avoids LIFF SDK hangs in some IAB versions)
+            triggerLineLogin();
+        }
+
+        // --- LINE Login (external browser OAuth redirect) ---
         function triggerLineLogin() {
-            if (!document.getElementById('mainConsent').checked) return alert('กรุณายอมรับเงื่อนไขก่อน');
+            const consent = document.getElementById('mainConsent');
+            if (consent && !consent.checked) {
+                _liffInitInProgress = false;
+                hideLoader();
+                showError('กรุณายอมรับเงื่อนไขการใช้งานก่อนเข้าสู่ระบบ');
+                return;
+            }
 
             const state = 'tl_' + Math.random().toString(36).slice(2, 12);
-            localStorage.setItem('tuktuk_line_state', state);
+            SafeStorage.setItem('tuktuk_line_state', state);
+            // Preserve destination so finishLogin() can redirect there after callback
+            if (target && target !== '/') {
+                SafeStorage.setItem('tuktuk_liff_post_redirect', target);
+            }
+
+            // redirect_uri = /login so LINE sends ?code= back to login.html where checkCallbacks() runs
+            const oauthRedirectUri = window.location.origin + '/login';
 
             const p = new URLSearchParams({
                 response_type: 'code',
                 client_id: LINE_CID,
-                redirect_uri: REDIRECT_URI,
+                redirect_uri: oauthRedirectUri,
                 state: state,
                 scope: 'profile openid',
             });
 
-            showLoader('🚀 กำลังพาคุณไปที่ LINE...');
-            window.location.href = 'https://access.line.me/oauth2/v2.1/authorize?' + p.toString();
+            const lineUrl = 'https://access.line.me/oauth2/v2.1/authorize?' + p.toString();
+            console.log('[Login] Redirecting via Manual OAuth:', lineUrl);
+            
+            showLoader('🚀 กำลังพาคุณไปที่ LINE (Manual)...');
+            
+            setTimeout(() => {
+                window.location.href = lineUrl;
+            }, 100);
         }
 
         async function checkCallbacks() {
             const code = params.get('code');
             const state = params.get('state');
-            const saved = localStorage.getItem('tuktuk_line_state');
+            const saved = SafeStorage.getItem('tuktuk_line_state');
 
             if (code && state && state === saved) {
-                localStorage.removeItem('tuktuk_line_state');
-                window.history.replaceState({}, '', '/login.html');
+                SafeStorage.removeItem('tuktuk_line_state');
+                // Restore post-login destination saved before the OAuth redirect
+                const savedDest = SafeStorage.getItem('tuktuk_liff_post_redirect');
+                if (savedDest) { SafeStorage.removeItem('tuktuk_liff_post_redirect'); target = savedDest; }
+                try {
+                    window.history.replaceState({}, '', '/login');
+                } catch (_) {
+                    console.warn('[login] history.replaceState failed');
+                }
                 showLoader('🔐 กำลังตรวจสอบความถูกต้อง...');
 
                 try {
-                    const r = await fetch(`${API_BASE}/lineLoginCallback`, {
+                    // redirectUri must match exactly what was sent to LINE
+                    const callbackUri = window.location.origin + '/login';
+                    const r = await fetch(`${API_BASE}/api/auth/line-callback`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ code, redirectUri: REDIRECT_URI }),
+                        body: JSON.stringify({ code, redirectUri: callbackUri }),
                     });
                     const d = await r.json();
                     if (!d.success) throw new Error(d.error);
                     finishLogin(d.user);
                 } catch (err) {
                     hideLoader();
-                    alert('เกิดข้อผิดพลาด: ' + err.message);
+                    showError('เกิดข้อผิดพลาด: ' + err.message);
                 }
             }
         }
@@ -562,33 +700,59 @@
         }
 
         async function handlePinSubmit() {
-            if (!document.getElementById('mainConsent').checked) return alert('กรุณายอมรับเงื่อนไขก่อน');
+            if (!document.getElementById('mainConsent').checked) return showError('กรุณายอมรับเงื่อนไขการใช้งานก่อน');
 
             const pin = Array.from(document.querySelectorAll('.pin-input')).map(n => n.value).join('');
             showLoader('🔑 กำลังรับรองรหัสผ่าน...');
 
             try {
-                const r = await fetch(`${API_BASE}/verifyWebPin`, {
+                const r = await fetch(`${API_BASE}/api/auth/verify-pin`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ pin }),
                 });
                 const d = await r.json();
-                if (d.success && d.user) finishLogin(d.user);
-                else throw new Error(d.error || 'รหัสไม่ถูกต้อง');
+                if (d.success && d.user) {
+                    // Sign into Firebase so Firestore rules (request.auth) work
+                    if (d.sessionToken) {
+                        try {
+                            await firebase.auth().signInWithCustomToken(d.sessionToken);
+                        } catch (fbErr) {
+                            console.warn('[login] Firebase signIn skipped:', fbErr.message);
+                        }
+                    }
+                    finishLogin(d.user);
+                } else throw new Error(d.error || 'รหัสไม่ถูกต้อง');
             } catch (err) {
                 hideLoader();
-                alert('ล้มเหลว: ' + err.message);
+                showError('รหัสไม่ถูกต้องหรือหมดอายุแล้ว — ' + err.message);
             }
         }
 
         // --- Finishing ---
         function finishLogin(user) {
-            localStorage.setItem('wizmobiz_session', JSON.stringify({
-                ...user, loginAt: new Date().toISOString()
-            }));
+            const TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+            const now = new Date().toISOString();
+            const session = { ...user, loginAt: now, expiresAt: Date.now() + TTL_MS, provider: 'line' };
+            // Store in both keys so WizmobizAuth and LIFF logic read the same data
+            SafeStorage.setItem('wizmobiz_session', JSON.stringify(session));
+            SafeStorage.setItem('tuktuk_line_session', JSON.stringify(session));
+            // Clear guards
+            SafeSessionStorage.removeItem('_auth_redirect_in_progress');
+            SafeSessionStorage.removeItem('_liff_login_triggered');
+            SafeStorage.removeItem('tuktuk_session_ended');
             showLoader('✨ เข้าระบบสำเร็จ! ยินดีต้อนรับ...');
-            setTimeout(() => window.location.replace(target), 800);
+            setTimeout(() => {
+                if (window.self !== window.top) {
+                    // Inside SPA iframe: post NAVIGATE to parent so the SPA opens
+                    // the target page without destroying the entire SPA context.
+                    // The SPA's AUTH_REFRESH postMessage will re-trigger auth check
+                    // on the cached target iframe.
+                    window.top.postMessage({ type: 'NAVIGATE', href: target }, window.location.origin);
+                } else {
+                    window.location.replace(target);
+                }
+            }, 800);
         }
 
         function showLoader(txt) {
@@ -598,6 +762,12 @@
         }
         function hideLoader() {
             document.getElementById('globalLoader').classList.remove('active');
+        }
+        function showError(msg) {
+            const el = document.getElementById('loginErrorBanner');
+            el.textContent = '⚠️ ' + msg;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 5000);
         }
     </script>
 </body>

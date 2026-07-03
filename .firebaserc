@@ -1,0 +1,18 @@
+{
+  "projects": {
+    "default": "appinjproject"
+  },
+  "targets": {
+    "appinjproject": {
+      "hosting": {
+        "training": [
+          "appinjproject-training"
+        ],
+        "tuktukfeed": [
+          "appinjproject"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

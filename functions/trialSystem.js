@@ -10,7 +10,7 @@
  * - Post-Trial Teaser Mode
  */
 
-const {getFirestore, FieldValue} = require("firebase-admin/firestore");
+const { getFirestore, FieldValue } = require("firebase-admin/firestore");
 
 // =====================================================
 // 📊 CONSTANTS
@@ -198,7 +198,7 @@ async function recordFirstInteraction(userId, displayName = "") {
     totalUsageCount: 0,
     lastUsageDate: FieldValue.serverTimestamp(),
     createdAt: FieldValue.serverTimestamp(),
-  }, {merge: true});
+  }, { merge: true });
 
   console.log(`📝 First FREE interaction recorded for ${userId} (not counted as trial usage)`);
 }
@@ -243,7 +243,7 @@ async function recordTrialUsage(userId) {
   const userRef = db.collection("line_users").doc(userId);
   const userDoc = await userRef.get();
 
-  if (!userDoc.exists) return {success: false, error: "User not found"};
+  if (!userDoc.exists) return { success: false, error: "User not found" };
 
   const userData = userDoc.data();
   const today = new Date().toDateString();
@@ -390,7 +390,7 @@ async function recordTeaserUsage(userId) {
 function createWelcomeTrialFlex() {
   return {
     type: "flex",
-    altText: "🎉 ถาม WiT ผู้ช่วยส่วนตัวที่เก่งรอบด้านที่สุดในไทย! ทดลองฟรี 7 วัน",
+    altText: "🎉 Wit365 - ผู้ช่วยส่วนตัวที่เก่งรอบด้านที่สุดในไทย! ทดลองฟรี 7 วัน",
     contents: {
       type: "bubble",
       size: "giga",
@@ -404,7 +404,7 @@ function createWelcomeTrialFlex() {
             contents: [
               {
                 type: "text",
-                text: "ถาม WiT (วิทย์)",
+                text: "Wit365",
                 weight: "bold",
                 size: "3xl",
                 color: "#FFD700",
@@ -441,7 +441,7 @@ function createWelcomeTrialFlex() {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: "ยินดีต้อนรับสู่ประสบการณ์", weight: "bold", size: "lg", color: "#27ae60", align: "center"},
+              { type: "text", text: "ยินดีต้อนรับสู่ประสบการณ์", weight: "bold", size: "lg", color: "#27ae60", align: "center" },
               {
                 type: "text",
                 text: "ทดลองใช้เต็มรูปแบบฟรี",
@@ -458,14 +458,14 @@ function createWelcomeTrialFlex() {
             margin: "none"
           },
 
-          {type: "separator", margin: "lg"},
+          { type: "separator", margin: "lg" },
 
           // All-in-One Features Section
           {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: "🎯 ช่วยให้คำตอบคุณได้ทุกเรื่อง (All-in-One)", weight: "bold", size: "md", color: "#333333", align: "center"},
+              { type: "text", text: "🎯 ช่วยให้คำตอบคุณได้ทุกเรื่อง (All-in-One)", weight: "bold", size: "md", color: "#333333", align: "center" },
 
               // Feature 1: Factory
               {
@@ -476,7 +476,7 @@ function createWelcomeTrialFlex() {
                     type: "box",
                     layout: "vertical",
                     contents: [
-                      {type: "text", text: "🏭", size: "xl", align: "center"}
+                      { type: "text", text: "🏭", size: "xl", align: "center" }
                     ],
                     backgroundColor: "#fff3e0",
                     cornerRadius: "xl",
@@ -489,8 +489,8 @@ function createWelcomeTrialFlex() {
                     type: "box",
                     layout: "vertical",
                     contents: [
-                      {type: "text", text: "โรงงาน", weight: "bold", size: "sm", color: "#333333"},
-                      {type: "text", text: "ถ่ายรูปชิ้นงาน → วิเคราะห์ Defect แก้ปัญหาฉีดพลาสติกทันที", size: "xs", color: "#666666", wrap: true, margin: "xs"}
+                      { type: "text", text: "โรงงาน", weight: "bold", size: "sm", color: "#333333" },
+                      { type: "text", text: "ถ่ายรูปชิ้นงาน → วิเคราะห์ Defect แก้ปัญหาฉีดพลาสติกทันที", size: "xs", color: "#666666", wrap: true, margin: "xs" }
                     ],
                     margin: "md",
                     justifyContent: "center"
@@ -509,7 +509,7 @@ function createWelcomeTrialFlex() {
                     type: "box",
                     layout: "vertical",
                     contents: [
-                      {type: "text", text: "🌾", size: "xl", align: "center"}
+                      { type: "text", text: "🌾", size: "xl", align: "center" }
                     ],
                     backgroundColor: "#e8f5e9",
                     cornerRadius: "xl",
@@ -522,8 +522,8 @@ function createWelcomeTrialFlex() {
                     type: "box",
                     layout: "vertical",
                     contents: [
-                      {type: "text", text: "เกษตร", weight: "bold", size: "sm", color: "#333333"},
-                      {type: "text", text: "ถ่ายรูปใบไม้ → บอกโรคพืช พร้อมสูตรปุ๋ยแม่นยำ", size: "xs", color: "#666666", wrap: true, margin: "xs"}
+                      { type: "text", text: "เกษตร", weight: "bold", size: "sm", color: "#333333" },
+                      { type: "text", text: "ถ่ายรูปใบไม้ → บอกโรคพืช พร้อมสูตรปุ๋ยแม่นยำ", size: "xs", color: "#666666", wrap: true, margin: "xs" }
                     ],
                     margin: "md",
                     justifyContent: "center"
@@ -542,7 +542,7 @@ function createWelcomeTrialFlex() {
                     type: "box",
                     layout: "vertical",
                     contents: [
-                      {type: "text", text: "💰", size: "xl", align: "center"}
+                      { type: "text", text: "💰", size: "xl", align: "center" }
                     ],
                     backgroundColor: "#e3f2fd",
                     cornerRadius: "xl",
@@ -555,8 +555,8 @@ function createWelcomeTrialFlex() {
                     type: "box",
                     layout: "vertical",
                     contents: [
-                      {type: "text", text: "บัญชี", weight: "bold", size: "sm", color: "#333333"},
-                      {type: "text", text: "พิมพ์ไทยธรรมดา → ลงบัญชีทันที (รู้กำไร-ขาดทุนเรียลไทม์)", size: "xs", color: "#666666", wrap: true, margin: "xs"}
+                      { type: "text", text: "บัญชี", weight: "bold", size: "sm", color: "#333333" },
+                      { type: "text", text: "พิมพ์ไทยธรรมดา → ลงบัญชีทันที (รู้กำไร-ขาดทุนเรียลไทม์)", size: "xs", color: "#666666", wrap: true, margin: "xs" }
                     ],
                     margin: "md",
                     justifyContent: "center"
@@ -575,7 +575,7 @@ function createWelcomeTrialFlex() {
                     type: "box",
                     layout: "vertical",
                     contents: [
-                      {type: "text", text: "📚", size: "xl", align: "center"}
+                      { type: "text", text: "📚", size: "xl", align: "center" }
                     ],
                     backgroundColor: "#f3e5f5",
                     cornerRadius: "xl",
@@ -588,8 +588,8 @@ function createWelcomeTrialFlex() {
                     type: "box",
                     layout: "vertical",
                     contents: [
-                      {type: "text", text: "การเรียน", weight: "bold", size: "sm", color: "#333333"},
-                      {type: "text", text: "ติวเตอร์ส่วนตัว อธิบายการบ้าน สร้างข้อสอบ", size: "xs", color: "#666666", wrap: true, margin: "xs"}
+                      { type: "text", text: "การเรียน", weight: "bold", size: "sm", color: "#333333" },
+                      { type: "text", text: "ติวเตอร์ส่วนตัว อธิบายการบ้าน สร้างข้อสอบ", size: "xs", color: "#666666", wrap: true, margin: "xs" }
                     ],
                     margin: "md",
                     justifyContent: "center"
@@ -602,16 +602,16 @@ function createWelcomeTrialFlex() {
             margin: "md"
           },
 
-          {type: "separator", margin: "lg"},
+          { type: "separator", margin: "lg" },
 
           // CTA Message
           {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: "💬 ใช้งานง่ายมาก!", weight: "bold", size: "md", color: "#667eea", align: "center"},
-              {type: "text", text: "แค่พิมพ์ถาม หรือส่งรูปมา", size: "sm", color: "#555555", align: "center", margin: "sm"},
-              {type: "text", text: "ถาม WiT ช่วยคุณเอง", size: "sm", color: "#555555", align: "center", margin: "xs"}
+              { type: "text", text: "💬 ใช้งานง่ายมาก!", weight: "bold", size: "md", color: "#667eea", align: "center" },
+              { type: "text", text: "แค่พิมพ์ถาม หรือส่งรูปมา", size: "sm", color: "#555555", align: "center", margin: "sm" },
+              { type: "text", text: "Wit365 ช่วยคุณเอง", size: "sm", color: "#555555", align: "center", margin: "xs" }
             ],
             backgroundColor: "#f0f3ff",
             cornerRadius: "lg",
@@ -628,8 +628,8 @@ function createWelcomeTrialFlex() {
                 type: "box",
                 layout: "vertical",
                 contents: [
-                  {type: "text", text: "7", size: "3xl", weight: "bold", color: "#667eea", align: "center"},
-                  {type: "text", text: "วัน", size: "sm", weight: "bold", color: "#667eea", align: "center"}
+                  { type: "text", text: "7", size: "3xl", weight: "bold", color: "#667eea", align: "center" },
+                  { type: "text", text: "วัน", size: "sm", weight: "bold", color: "#667eea", align: "center" }
                 ],
                 backgroundColor: "#f0f3ff",
                 cornerRadius: "lg",
@@ -641,10 +641,10 @@ function createWelcomeTrialFlex() {
                 type: "box",
                 layout: "vertical",
                 contents: [
-                  {type: "text", text: "ทดลองใช้ฟรี!", weight: "bold", size: "lg", color: "#333333"},
-                  {type: "text", text: "✓ ถามได้ 7 ครั้ง/วัน", size: "xs", color: "#555555", margin: "xs"},
-                  {type: "text", text: "✓ ใช้ได้ทุกฟีเจอร์", size: "xs", color: "#555555", margin: "xs"},
-                  {type: "text", text: "✓ ไม่ต้องผูกบัตร", size: "xs", color: "#555555", margin: "xs"}
+                  { type: "text", text: "ทดลองใช้ฟรี!", weight: "bold", size: "lg", color: "#333333" },
+                  { type: "text", text: "✓ ถามได้ 7 ครั้ง/วัน", size: "xs", color: "#555555", margin: "xs" },
+                  { type: "text", text: "✓ ใช้ได้ทุกฟีเจอร์", size: "xs", color: "#555555", margin: "xs" },
+                  { type: "text", text: "✓ ไม่ต้องผูกบัตร", size: "xs", color: "#555555", margin: "xs" }
                 ],
                 margin: "md",
                 justifyContent: "center"
@@ -654,7 +654,7 @@ function createWelcomeTrialFlex() {
             margin: "lg"
           },
 
-          {type: "separator", margin: "lg"},
+          { type: "separator", margin: "lg" },
 
           // Terms Section
           {
@@ -665,14 +665,14 @@ function createWelcomeTrialFlex() {
                 type: "box",
                 layout: "horizontal",
                 contents: [
-                  {type: "text", text: "📋", size: "md", flex: 0},
-                  {type: "text", text: "เงื่อนไขการใช้งาน", weight: "bold", size: "sm", color: "#e74c3c", margin: "sm"}
+                  { type: "text", text: "📋", size: "md", flex: 0 },
+                  { type: "text", text: "เงื่อนไขการใช้งาน", weight: "bold", size: "sm", color: "#e74c3c", margin: "sm" }
                 ],
                 alignItems: "center"
               },
-              {type: "text", text: "• ใช้เพื่อการศึกษาและการทำงานอย่างสร้างสรรค์", size: "xs", color: "#666666", wrap: true, margin: "sm"},
-              {type: "text", text: "• AI อาจมีข้อผิดพลาด ควรตรวจสอบข้อมูลสำคัญ", size: "xs", color: "#666666", wrap: true, margin: "xs"},
-              {type: "text", text: "• ไม่นำไปใช้ในทางที่ผิดกฎหมายหรือทำร้ายผู้อื่น", size: "xs", color: "#666666", wrap: true, margin: "xs"}
+              { type: "text", text: "• ใช้เพื่อการศึกษาและการทำงานอย่างสร้างสรรค์", size: "xs", color: "#666666", wrap: true, margin: "sm" },
+              { type: "text", text: "• AI อาจมีข้อผิดพลาด ควรตรวจสอบข้อมูลสำคัญ", size: "xs", color: "#666666", wrap: true, margin: "xs" },
+              { type: "text", text: "• ไม่นำไปใช้ในทางที่ผิดกฎหมายหรือทำร้ายผู้อื่น", size: "xs", color: "#666666", wrap: true, margin: "xs" }
             ],
             backgroundColor: "#fff5f5",
             cornerRadius: "lg",
@@ -709,7 +709,7 @@ function createWelcomeTrialFlex() {
               type: "postback",
               label: "✨ ดูฟีเจอร์ทั้งหมด",
               data: "action=show_features_menu",
-              displayText: "ดูฟีเจอร์ทั้งหมดของถาม WiT"
+              displayText: "ดูฟีเจอร์ทั้งหมดของ Wit365"
             },
             style: "secondary",
             height: "sm",
@@ -720,7 +720,7 @@ function createWelcomeTrialFlex() {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: "🔐 ปลอดภัย 100% | ⚡ เริ่มใช้ได้ทันที | 💯 ไม่มีค่าใช้จ่าย", size: "xxs", color: "#999999", align: "center"}
+              { type: "text", text: "🔐 Wit365 | ⚡ โดย อาจารย์ วิทยา", size: "xxs", color: "#999999", align: "center" }
             ],
             margin: "md"
           }
@@ -741,7 +741,7 @@ function createTrialStartedFlex(displayName, trialInfo = {}) {
   const trialEndDate = trialInfo.trialEndDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   const trialDays = trialInfo.trialDays || 7;
   const dailyLimit = trialInfo.dailyLimit || 7;
-  
+
   const endDateStr = trialEndDate.toLocaleDateString("th-TH", {
     day: "numeric",
     month: "long",
@@ -778,12 +778,12 @@ function createTrialStartedFlex(displayName, trialInfo = {}) {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: "🎉", size: "3xl", align: "center"},
-              {type: "text", text: `ยินดีด้วย ${displayName}!`, weight: "bold", size: "xl", align: "center", margin: "md"},
-              {type: "text", text: "คุณได้รับสิทธิ์ทดลองใช้ WiT AI", size: "sm", align: "center", color: "#555555", margin: "sm"},
+              { type: "text", text: "🎉", size: "3xl", align: "center" },
+              { type: "text", text: `ยินดีด้วย ${displayName}!`, weight: "bold", size: "xl", align: "center", margin: "md" },
+              { type: "text", text: "คุณได้รับสิทธิ์ทดลองใช้ Wit365", size: "sm", align: "center", color: "#555555", margin: "sm" },
             ],
           },
-          {type: "separator", margin: "xl"},
+          { type: "separator", margin: "xl" },
           {
             type: "box",
             layout: "vertical",
@@ -792,16 +792,16 @@ function createTrialStartedFlex(displayName, trialInfo = {}) {
                 type: "box",
                 layout: "horizontal",
                 contents: [
-                  {type: "text", text: "📅 ระยะเวลา", size: "sm", color: "#888888", flex: 1},
-                  {type: "text", text: `${trialDays} วัน`, size: "sm", weight: "bold", color: "#333333", align: "end", flex: 1},
+                  { type: "text", text: "📅 ระยะเวลา", size: "sm", color: "#888888", flex: 1 },
+                  { type: "text", text: `${trialDays} วัน`, size: "sm", weight: "bold", color: "#333333", align: "end", flex: 1 },
                 ],
               },
               {
                 type: "box",
                 layout: "horizontal",
                 contents: [
-                  {type: "text", text: "📊 ถามได้วันละ", size: "sm", color: "#888888", flex: 1},
-                  {type: "text", text: `${dailyLimit} ครั้ง`, size: "sm", weight: "bold", color: "#333333", align: "end", flex: 1},
+                  { type: "text", text: "📊 ถามได้วันละ", size: "sm", color: "#888888", flex: 1 },
+                  { type: "text", text: `${dailyLimit} ครั้ง`, size: "sm", weight: "bold", color: "#333333", align: "end", flex: 1 },
                 ],
                 margin: "md",
               },
@@ -809,8 +809,8 @@ function createTrialStartedFlex(displayName, trialInfo = {}) {
                 type: "box",
                 layout: "horizontal",
                 contents: [
-                  {type: "text", text: "⏰ หมดอายุ", size: "sm", color: "#888888", flex: 1},
-                  {type: "text", text: endDateStr, size: "sm", weight: "bold", color: "#e74c3c", align: "end", flex: 1},
+                  { type: "text", text: "⏰ หมดอายุ", size: "sm", color: "#888888", flex: 1 },
+                  { type: "text", text: endDateStr, size: "sm", weight: "bold", color: "#e74c3c", align: "end", flex: 1 },
                 ],
                 margin: "md",
               },
@@ -858,7 +858,7 @@ function createDailyStatusFlex(displayName, trialInfo = null) {
     trialInfo = displayName;
     displayName = "คุณ";
   }
-  
+
   const usagePercent = Math.round((trialInfo.dailyUsage / trialInfo.dailyLimit) * 100);
   const progressBars = Math.round((trialInfo.dailyUsage / trialInfo.dailyLimit) * 10);
   const progressStr = "█".repeat(Math.min(progressBars, 10)) + "░".repeat(Math.max(10 - progressBars, 0));
@@ -880,7 +880,7 @@ function createDailyStatusFlex(displayName, trialInfo = null) {
             size: "sm",
             color: "#333333",
           },
-          {type: "separator", margin: "md"},
+          { type: "separator", margin: "md" },
           {
             type: "box",
             layout: "vertical",
@@ -970,8 +970,8 @@ function createDailyLimitFlex(trialInfo) {
             type: "box",
             layout: "horizontal",
             contents: [
-              {type: "text", text: "ใช้ไปแล้ว", size: "sm", color: "#888888", flex: 1},
-              {type: "text", text: `${trialInfo.dailyUsage}/${trialInfo.dailyLimit} ครั้ง`, size: "sm", weight: "bold", color: "#e74c3c", align: "end", flex: 1},
+              { type: "text", text: "ใช้ไปแล้ว", size: "sm", color: "#888888", flex: 1 },
+              { type: "text", text: `${trialInfo.dailyUsage}/${trialInfo.dailyLimit} ครั้ง`, size: "sm", weight: "bold", color: "#e74c3c", align: "end", flex: 1 },
             ],
             margin: "md",
           },
@@ -979,12 +979,12 @@ function createDailyLimitFlex(trialInfo) {
             type: "box",
             layout: "horizontal",
             contents: [
-              {type: "text", text: "Trial เหลือ", size: "sm", color: "#888888", flex: 1},
-              {type: "text", text: `${trialInfo.trialDaysRemaining} วัน`, size: "sm", weight: "bold", color: "#333333", align: "end", flex: 1},
+              { type: "text", text: "Trial เหลือ", size: "sm", color: "#888888", flex: 1 },
+              { type: "text", text: `${trialInfo.trialDaysRemaining} วัน`, size: "sm", weight: "bold", color: "#333333", align: "end", flex: 1 },
             ],
             margin: "sm",
           },
-          {type: "separator", margin: "lg"},
+          { type: "separator", margin: "lg" },
           {
             type: "text",
             text: "💡 กลับมาใช้ใหม่พรุ่งนี้ หรือ",
@@ -1034,10 +1034,10 @@ function createDailyLimitFlex(trialInfo) {
     },
     quickReply: {
       items: [
-        {type: "action", action: {type: "message", label: "💎 สมัคร Premium", text: "สนใจสมัคร Premium"}},
-        {type: "action", action: {type: "message", label: "📋 ดูแพ็คเกจ", text: "ดูแพ็คเกจ"}},
-        {type: "action", action: {type: "message", label: "📞 ติดต่อแอดมิน", text: "แจ้งปลดล็อคโควต้า"}},
-        {type: "action", action: {type: "message", label: "❓ วิธีใช้", text: "/help"}},
+        { type: "action", action: { type: "message", label: "💎 สมัคร Premium", text: "สนใจสมัคร Premium" } },
+        { type: "action", action: { type: "message", label: "📋 ดูแพ็คเกจ", text: "ดูแพ็คเกจ" } },
+        { type: "action", action: { type: "message", label: "📞 ติดต่อแอดมิน", text: "แจ้งปลดล็อคโควต้า" } },
+        { type: "action", action: { type: "message", label: "❓ วิธีใช้", text: "/help" } },
       ],
     },
   };
@@ -1065,13 +1065,13 @@ function createTrialEndingSoonFlex(trialInfo, daysLeft) {
             type: "box",
             layout: "horizontal",
             contents: [
-              {type: "text", text: "⏰", size: "xxl", flex: 0},
+              { type: "text", text: "⏰", size: "xxl", flex: 0 },
               {
                 type: "box",
                 layout: "vertical",
                 contents: [
-                  {type: "text", text: `Trial เหลืออีก ${daysLeft} วัน!`, weight: "bold", size: "lg", color: "#ffffff"},
-                  {type: "text", text: "อย่าพลาดสิทธิพิเศษ", size: "sm", color: "#ffffffcc"},
+                  { type: "text", text: `Trial เหลืออีก ${daysLeft} วัน!`, weight: "bold", size: "lg", color: "#ffffff" },
+                  { type: "text", text: "อย่าพลาดสิทธิพิเศษ", size: "sm", color: "#ffffffcc" },
                 ],
                 margin: "lg",
               },
@@ -1100,33 +1100,33 @@ function createTrialEndingSoonFlex(trialInfo, daysLeft) {
                 type: "box",
                 layout: "horizontal",
                 contents: [
-                  {type: "text", text: "✅ ถามไปแล้ว", size: "sm", color: "#888888", flex: 1},
-                  {type: "text", text: `${trialInfo.totalUsage} คำถาม`, size: "sm", weight: "bold", color: "#27ae60", align: "end", flex: 1},
+                  { type: "text", text: "✅ ถามไปแล้ว", size: "sm", color: "#888888", flex: 1 },
+                  { type: "text", text: `${trialInfo.totalUsage} คำถาม`, size: "sm", weight: "bold", color: "#27ae60", align: "end", flex: 1 },
                 ],
               },
               {
                 type: "box",
                 layout: "horizontal",
                 contents: [
-                  {type: "text", text: "📅 ใช้งานมา", size: "sm", color: "#888888", flex: 1},
-                  {type: "text", text: `${TRIAL_CONFIG.TRIAL_DAYS - daysLeft} วัน`, size: "sm", weight: "bold", color: "#333333", align: "end", flex: 1},
+                  { type: "text", text: "📅 ใช้งานมา", size: "sm", color: "#888888", flex: 1 },
+                  { type: "text", text: `${TRIAL_CONFIG.TRIAL_DAYS - daysLeft} วัน`, size: "sm", weight: "bold", color: "#333333", align: "end", flex: 1 },
                 ],
                 margin: "sm",
               },
             ],
             margin: "lg",
           },
-          {type: "separator", margin: "xl"},
+          { type: "separator", margin: "xl" },
           {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: "🎁 โปรพิเศษเฉพาะคุณ!", weight: "bold", size: "md", color: "#e74c3c", align: "center"},
+              { type: "text", text: "🎁 โปรพิเศษเฉพาะคุณ!", weight: "bold", size: "md", color: "#e74c3c", align: "center" },
               {
                 type: "box",
                 layout: "horizontal",
                 contents: [
-                  {type: "text", text: `ลด ${discount}%`, size: "lg", weight: "bold", color: "#e74c3c", align: "center"},
+                  { type: "text", text: `ลด ${discount}%`, size: "lg", weight: "bold", color: "#e74c3c", align: "center" },
                 ],
                 margin: "md",
               },
@@ -1134,9 +1134,9 @@ function createTrialEndingSoonFlex(trialInfo, daysLeft) {
                 type: "box",
                 layout: "horizontal",
                 contents: [
-                  {type: "text", text: `${originalPrice}฿`, size: "sm", color: "#888888", decoration: "line-through", align: "center", flex: 1},
-                  {type: "text", text: "→", size: "sm", color: "#888888", align: "center", flex: 0},
-                  {type: "text", text: `${discountedPrice}฿/เดือน`, size: "md", weight: "bold", color: "#27ae60", align: "center", flex: 1},
+                  { type: "text", text: `${originalPrice}฿`, size: "sm", color: "#888888", decoration: "line-through", align: "center", flex: 1 },
+                  { type: "text", text: "→", size: "sm", color: "#888888", align: "center", flex: 0 },
+                  { type: "text", text: `${discountedPrice}฿/เดือน`, size: "md", weight: "bold", color: "#27ae60", align: "center", flex: 1 },
                 ],
                 margin: "sm",
               },
@@ -1225,30 +1225,30 @@ function createTrialExpiredFlex(trialInfo) {
                 type: "box",
                 layout: "horizontal",
                 contents: [
-                  {type: "text", text: "✅", size: "md", flex: 0},
-                  {type: "text", text: `${trialInfo.totalUsage || 0} คำถาม`, size: "md", weight: "bold", color: "#27ae60", margin: "sm", flex: 1},
+                  { type: "text", text: "✅", size: "md", flex: 0 },
+                  { type: "text", text: `${trialInfo.totalUsage || 0} คำถาม`, size: "md", weight: "bold", color: "#27ae60", margin: "sm", flex: 1 },
                 ],
               },
             ],
             margin: "lg",
           },
-          {type: "separator", margin: "xl"},
+          { type: "separator", margin: "xl" },
           {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: "💎 Premium เริ่มต้นเพียง", size: "sm", color: "#555555", align: "center"},
+              { type: "text", text: "💎 Premium เริ่มต้นเพียง", size: "sm", color: "#555555", align: "center" },
               {
                 type: "box",
                 layout: "horizontal",
                 contents: [
-                  {type: "text", text: "99", size: "3xl", weight: "bold", color: "#667eea", align: "end", flex: 1},
+                  { type: "text", text: "99", size: "3xl", weight: "bold", color: "#667eea", align: "end", flex: 1 },
                   {
                     type: "box",
                     layout: "vertical",
                     contents: [
-                      {type: "text", text: "บาท", size: "sm", color: "#667eea"},
-                      {type: "text", text: "/เดือน", size: "xs", color: "#888888"},
+                      { type: "text", text: "บาท", size: "sm", color: "#667eea" },
+                      { type: "text", text: "/เดือน", size: "xs", color: "#888888" },
                     ],
                     margin: "sm",
                     flex: 0,
@@ -1257,7 +1257,7 @@ function createTrialExpiredFlex(trialInfo) {
                 justifyContent: "center",
                 margin: "md",
               },
-              {type: "text", text: "= วันละ 3.30 บาท ☕", size: "xs", color: "#888888", align: "center", margin: "sm"},
+              { type: "text", text: "= วันละ 3.30 บาท ☕", size: "xs", color: "#888888", align: "center", margin: "sm" },
             ],
             margin: "lg",
             backgroundColor: "#f8f9fa",
@@ -1297,10 +1297,10 @@ function createTrialExpiredFlex(trialInfo) {
     },
     quickReply: {
       items: [
-        {type: "action", action: {type: "message", label: "💎 สมัคร Premium", text: "สนใจสมัคร Premium"}},
-        {type: "action", action: {type: "message", label: "📋 ดูแพ็คเกจ", text: "ดูแพ็คเกจ"}},
-        {type: "action", action: {type: "message", label: "📞 ติดต่อแอดมิน", text: "แจ้งปลดล็อคโควต้า"}},
-        {type: "action", action: {type: "message", label: "❓ วิธีใช้", text: "/help"}},
+        { type: "action", action: { type: "message", label: "💎 สมัคร Premium", text: "สนใจสมัคร Premium" } },
+        { type: "action", action: { type: "message", label: "📋 ดูแพ็คเกจ", text: "ดูแพ็คเกจ" } },
+        { type: "action", action: { type: "message", label: "📞 ติดต่อแอดมิน", text: "แจ้งปลดล็อคโควต้า" } },
+        { type: "action", action: { type: "message", label: "❓ วิธีใช้", text: "/help" } },
       ],
     },
   };
@@ -1320,8 +1320,8 @@ function createFeaturesMenuFlex() {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: "✨ ฟีเจอร์ทั้งหมดของ WiT AI", weight: "bold", size: "lg", color: "#ffffff", align: "center"},
-          {type: "text", text: "เลือกฟีเจอร์ที่ต้องการใช้งาน", size: "sm", color: "#ffffffcc", align: "center", margin: "sm"}
+          { type: "text", text: "✨ ฟีเจอร์ทั้งหมดของ WiT AI", weight: "bold", size: "lg", color: "#ffffff", align: "center" },
+          { type: "text", text: "เลือกฟีเจอร์ที่ต้องการใช้งาน", size: "sm", color: "#ffffffcc", align: "center", margin: "sm" }
         ],
         backgroundColor: "#667eea",
         paddingAll: "20px"
@@ -1339,31 +1339,31 @@ function createFeaturesMenuFlex() {
                 type: "box",
                 layout: "vertical",
                 contents: [
-                  {type: "text", text: "🤖", size: "xxl", align: "center"},
-                  {type: "text", text: "ถาม AI", weight: "bold", size: "sm", align: "center", margin: "sm"},
-                  {type: "text", text: "ถามได้ทุกเรื่อง", size: "xxs", color: "#888888", align: "center", wrap: true}
+                  { type: "text", text: "🤖", size: "xxl", align: "center" },
+                  { type: "text", text: "ถาม AI", weight: "bold", size: "sm", align: "center", margin: "sm" },
+                  { type: "text", text: "ถามได้ทุกเรื่อง", size: "xxs", color: "#888888", align: "center", wrap: true }
                 ],
                 backgroundColor: "#f0f3ff",
                 cornerRadius: "lg",
                 paddingAll: "12px",
                 flex: 1,
-                action: {type: "message", text: "วิธีถาม AI"}
+                action: { type: "message", text: "วิธีถาม AI" }
               },
-              {type: "filler", flex: 0},
+              { type: "filler", flex: 0 },
               {
                 type: "box",
                 layout: "vertical",
                 contents: [
-                  {type: "text", text: "📸", size: "xxl", align: "center"},
-                  {type: "text", text: "Vision AI", weight: "bold", size: "sm", align: "center", margin: "sm"},
-                  {type: "text", text: "วิเคราะห์รูปภาพ", size: "xxs", color: "#888888", align: "center", wrap: true}
+                  { type: "text", text: "📸", size: "xxl", align: "center" },
+                  { type: "text", text: "Vision AI", weight: "bold", size: "sm", align: "center", margin: "sm" },
+                  { type: "text", text: "วิเคราะห์รูปภาพ", size: "xxs", color: "#888888", align: "center", wrap: true }
                 ],
                 backgroundColor: "#e8f5e9",
                 cornerRadius: "lg",
                 paddingAll: "12px",
                 flex: 1,
                 margin: "md",
-                action: {type: "message", text: "วิธีใช้ Vision AI"}
+                action: { type: "message", text: "วิธีใช้ Vision AI" }
               }
             ],
             spacing: "md"
@@ -1378,31 +1378,31 @@ function createFeaturesMenuFlex() {
                 type: "box",
                 layout: "vertical",
                 contents: [
-                  {type: "text", text: "📄", size: "xxl", align: "center"},
-                  {type: "text", text: "อ่านเอกสาร", weight: "bold", size: "sm", align: "center", margin: "sm"},
-                  {type: "text", text: "PDF, รูปภาพ", size: "xxs", color: "#888888", align: "center", wrap: true}
+                  { type: "text", text: "📄", size: "xxl", align: "center" },
+                  { type: "text", text: "อ่านเอกสาร", weight: "bold", size: "sm", align: "center", margin: "sm" },
+                  { type: "text", text: "PDF, รูปภาพ", size: "xxs", color: "#888888", align: "center", wrap: true }
                 ],
                 backgroundColor: "#fff3e0",
                 cornerRadius: "lg",
                 paddingAll: "12px",
                 flex: 1,
-                action: {type: "message", text: "วิธีอ่านเอกสาร"}
+                action: { type: "message", text: "วิธีอ่านเอกสาร" }
               },
-              {type: "filler", flex: 0},
+              { type: "filler", flex: 0 },
               {
                 type: "box",
                 layout: "vertical",
                 contents: [
-                  {type: "text", text: "🌐", size: "xxl", align: "center"},
-                  {type: "text", text: "แปลภาษา", weight: "bold", size: "sm", align: "center", margin: "sm"},
-                  {type: "text", text: "หลายภาษา", size: "xxs", color: "#888888", align: "center", wrap: true}
+                  { type: "text", text: "🌐", size: "xxl", align: "center" },
+                  { type: "text", text: "แปลภาษา", weight: "bold", size: "sm", align: "center", margin: "sm" },
+                  { type: "text", text: "หลายภาษา", size: "xxs", color: "#888888", align: "center", wrap: true }
                 ],
                 backgroundColor: "#e3f2fd",
                 cornerRadius: "lg",
                 paddingAll: "12px",
                 flex: 1,
                 margin: "md",
-                action: {type: "message", text: "วิธีแปลภาษา"}
+                action: { type: "message", text: "วิธีแปลภาษา" }
               }
             ],
             spacing: "md",
@@ -1418,31 +1418,31 @@ function createFeaturesMenuFlex() {
                 type: "box",
                 layout: "vertical",
                 contents: [
-                  {type: "text", text: "🏭", size: "xxl", align: "center"},
-                  {type: "text", text: "ผู้เชี่ยวชาญ", weight: "bold", size: "sm", align: "center", margin: "sm"},
-                  {type: "text", text: "โรงงาน เกษตร", size: "xxs", color: "#888888", align: "center", wrap: true}
+                  { type: "text", text: "🏭", size: "xxl", align: "center" },
+                  { type: "text", text: "ผู้เชี่ยวชาญ", weight: "bold", size: "sm", align: "center", margin: "sm" },
+                  { type: "text", text: "โรงงาน เกษตร", size: "xxs", color: "#888888", align: "center", wrap: true }
                 ],
                 backgroundColor: "#fce4ec",
                 cornerRadius: "lg",
                 paddingAll: "12px",
                 flex: 1,
-                action: {type: "message", text: "ผู้เชี่ยวชาญมีอะไรบ้าง"}
+                action: { type: "message", text: "ผู้เชี่ยวชาญมีอะไรบ้าง" }
               },
-              {type: "filler", flex: 0},
+              { type: "filler", flex: 0 },
               {
                 type: "box",
                 layout: "vertical",
                 contents: [
-                  {type: "text", text: "🧮", size: "xxl", align: "center"},
-                  {type: "text", text: "คำนวณ", weight: "bold", size: "sm", align: "center", margin: "sm"},
-                  {type: "text", text: "พลาสติก ฉีด", size: "xxs", color: "#888888", align: "center", wrap: true}
+                  { type: "text", text: "🧮", size: "xxl", align: "center" },
+                  { type: "text", text: "คำนวณ", weight: "bold", size: "sm", align: "center", margin: "sm" },
+                  { type: "text", text: "พลาสติก ฉีด", size: "xxs", color: "#888888", align: "center", wrap: true }
                 ],
                 backgroundColor: "#f3e5f5",
                 cornerRadius: "lg",
                 paddingAll: "12px",
                 flex: 1,
                 margin: "md",
-                action: {type: "message", text: "เครื่องคำนวณ"}
+                action: { type: "message", text: "เครื่องคำนวณ" }
               }
             ],
             spacing: "md",
@@ -1458,31 +1458,31 @@ function createFeaturesMenuFlex() {
                 type: "box",
                 layout: "vertical",
                 contents: [
-                  {type: "text", text: "📚", size: "xxl", align: "center"},
-                  {type: "text", text: "แบบทดสอบ", weight: "bold", size: "sm", align: "center", margin: "sm"},
-                  {type: "text", text: "เรียนรู้+Quiz", size: "xxs", color: "#888888", align: "center", wrap: true}
+                  { type: "text", text: "📚", size: "xxl", align: "center" },
+                  { type: "text", text: "แบบทดสอบ", weight: "bold", size: "sm", align: "center", margin: "sm" },
+                  { type: "text", text: "เรียนรู้+Quiz", size: "xxs", color: "#888888", align: "center", wrap: true }
                 ],
                 backgroundColor: "#e0f7fa",
                 cornerRadius: "lg",
                 paddingAll: "12px",
                 flex: 1,
-                action: {type: "message", text: "/quiz"}
+                action: { type: "message", text: "/quiz" }
               },
-              {type: "filler", flex: 0},
+              { type: "filler", flex: 0 },
               {
                 type: "box",
                 layout: "vertical",
                 contents: [
-                  {type: "text", text: "❓", size: "xxl", align: "center"},
-                  {type: "text", text: "วิธีใช้", weight: "bold", size: "sm", align: "center", margin: "sm"},
-                  {type: "text", text: "คู่มือทั้งหมด", size: "xxs", color: "#888888", align: "center", wrap: true}
+                  { type: "text", text: "❓", size: "xxl", align: "center" },
+                  { type: "text", text: "วิธีใช้", weight: "bold", size: "sm", align: "center", margin: "sm" },
+                  { type: "text", text: "คู่มือทั้งหมด", size: "xxs", color: "#888888", align: "center", wrap: true }
                 ],
                 backgroundColor: "#fffde7",
                 cornerRadius: "lg",
                 paddingAll: "12px",
                 flex: 1,
                 margin: "md",
-                action: {type: "message", text: "วิธีใช้"}
+                action: { type: "message", text: "วิธีใช้" }
               }
             ],
             spacing: "md",
@@ -1506,7 +1506,7 @@ function createFeaturesMenuFlex() {
             style: "primary",
             color: "#667eea"
           },
-          {type: "text", text: "กดที่ไอคอนเพื่อดูรายละเอียดแต่ละฟีเจอร์", size: "xxs", color: "#999999", align: "center", margin: "md"}
+          { type: "text", text: "กดที่ไอคอนเพื่อดูรายละเอียดแต่ละฟีเจอร์", size: "xxs", color: "#999999", align: "center", margin: "md" }
         ],
         paddingAll: "15px"
       }
@@ -1527,9 +1527,9 @@ function shouldShowNotification(trialInfo) {
   const daysLeft = trialInfo.trialDaysRemaining;
 
   // แจ้งเตือนวันที่ 3, 5, 6, 7 (เหลือ 4, 2, 1, 0 วัน)
-  if (daysLeft === 4) return {type: "reminder", daysLeft};
-  if (daysLeft === 2) return {type: "urgent", daysLeft};
-  if (daysLeft === 1) return {type: "lastDay", daysLeft};
+  if (daysLeft === 4) return { type: "reminder", daysLeft };
+  if (daysLeft === 2) return { type: "urgent", daysLeft };
+  if (daysLeft === 1) return { type: "lastDay", daysLeft };
 
   return null;
 }

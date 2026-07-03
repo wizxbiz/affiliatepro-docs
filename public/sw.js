@@ -3,8 +3,8 @@
  * Strategy: Cache-first for static assets, Network-first for HTML/API
  */
 
-const CACHE_VERSION = 'v15';
-const CACHE_NAME = 'tuktuk-app-' + CACHE_VERSION;
+const CACHE_VERSION = 'v35';
+const CACHE_NAME = 'tuktuk-cache-' + CACHE_VERSION;
 const STATIC_CACHE = 'tuktuk-static-' + CACHE_VERSION;
 const OFFLINE_URL = '/offline.html';
 
@@ -46,20 +46,20 @@ const PRECACHE_URLS = [
 
 // ── Install: pre-cache static assets ──────────────────────────────────────
 self.addEventListener('install', event => {
-    console.log('[SW v15] Installing...');
+    console.log('[SW v34] Installing...');
     event.waitUntil(
         Promise.all([
             caches.open(STATIC_CACHE).then(cache => {
                 return Promise.allSettled(
                     STATIC_URLS.map(url => cache.add(url).catch(e => {
-                        console.warn('[SW v15] Static pre-cache skip:', url, e.message);
+                        console.warn('[SW v34] Static pre-cache skip:', url, e.message);
                     }))
                 );
             }),
             caches.open(CACHE_NAME).then(cache => {
                 return Promise.allSettled(
                     PRECACHE_URLS.map(url => cache.add(url).catch(e => {
-                        console.warn('[SW v15] Page pre-cache skip:', url, e.message);
+                        console.warn('[SW v34] Page pre-cache skip:', url, e.message);
                     }))
                 );
             })
@@ -69,19 +69,19 @@ self.addEventListener('install', event => {
 
 // ── Activate: clear old caches ─────────────────────────────────────────────
 self.addEventListener('activate', event => {
-    console.log('[SW v15] Activating...');
+    console.log('[SW v34] Activating...');
     event.waitUntil(
         caches.keys().then(cacheNames => {
             return Promise.all(
                 cacheNames
                     .filter(name => name !== CACHE_NAME && name !== STATIC_CACHE)
                     .map(name => {
-                        console.log('[SW v15] Deleting old cache:', name);
+                        console.log('[SW v34] Deleting old cache:', name);
                         return caches.delete(name);
                     })
             );
         }).then(() => {
-            console.log('[SW v15] Claiming clients');
+            console.log('[SW v34] Claiming clients');
             return self.clients.claim();
         })
     );
@@ -89,12 +89,34 @@ self.addEventListener('activate', event => {
 
 // ── Fetch handler ──────────────────────────────────────────────────────────
 self.addEventListener('fetch', event => {
-    // Skip non-GET and Range requests (video streaming)
+    // ── MEDIA BYPASS — must be first, before any other logic ──────────────
+    // ERR_CACHE_OPERATION_NOT_SUPPORTED: Chrome cannot serve byte-range
+    // (seek) requests from Cache API responses. Any video/audio that enters
+    // the cache causes this error. Return early unconditionally for all media.
+
+    // 1. Skip non-GET and any Range request (video seek)
     if (event.request.method !== 'GET' || event.request.headers.get('Range')) return;
 
     const url = new URL(event.request.url);
 
-    // Skip: Firebase, APIs, Cloudflare, CDNs, cross-origin non-assets
+    // 2. Skip by request destination (most reliable when set by browser)
+    const dest = event.request.destination;
+    if (dest === 'video' || dest === 'audio' || dest === 'track') return;
+
+    // 3. Skip any URL that smells like a media file (path or query)
+    const rawPath = url.pathname.toLowerCase();
+    const ext = rawPath.split('?')[0].split('.').pop();
+    if (['mp4', 'mov', 'webm', 'm3u8', 'avi', 'mkv', 'ts', 'mp3', 'ogg', 'aac', 'flac', 'wav'].includes(ext)) return;
+
+    // 4. Skip Firebase Storage unconditionally (covers all firebase video CDN variants)
+    if (
+        url.hostname.includes('firebasestorage') ||
+        url.hostname.includes('storage.googleapis.com') ||
+        url.search.includes('alt=media') ||
+        rawPath.includes('/o/')   // Firebase Storage object path pattern
+    ) return;
+
+    // ── HOST BYPASS ────────────────────────────────────────────────────────
     const skipHosts = [
         'firestore.googleapis.com',
         'firebase.googleapis.com',
@@ -104,16 +126,19 @@ self.addEventListener('fetch', event => {
         'r2.dev',
         'cloudfunctions.net',
         'line.me',
-        'lineapp.com'
+        'lineapp.com',
+        'gstatic.com',
+        'jsdelivr.net',
+        'unpkg.com',
+        'cdnjs.cloudflare.com',
+        'quilljs.com',
+        'youtube.com',
+        'liff.line.me'
     ];
     if (skipHosts.some(h => url.hostname.includes(h))) return;
     if (url.pathname.includes('/api/')) return;
     // Never intercept auth pages — Safari redirect-chain fix
     if (url.pathname === '/login.html' || url.pathname === '/auth.html') return;
-
-    // Skip video files — streaming bypass
-    const ext = url.pathname.toLowerCase().split('?')[0].split('.').pop();
-    if (['mp4', 'mov', 'webm', 'm3u8', 'avi', 'mkv', 'ts'].includes(ext)) return;
 
     // ── Strategy 1: Cache-first for static assets (CSS/JS/images/fonts) ──
     const isStatic = [
@@ -127,17 +152,18 @@ self.addEventListener('fetch', event => {
                 cache.match(event.request).then(cached => {
                     if (cached) return cached;
                     return fetch(event.request).then(resp => {
-                        // Never cache 206 Partial Content — causes ERR_CACHE_OPERATION_NOT_SUPPORTED
+                        // Never cache 206 Partial Content or Opaque responses
                         if (resp.status === 200 && resp.type !== 'opaque') {
                             cache.put(event.request, resp.clone());
                         }
                         return resp;
-                    }).catch(() => null);
+                    }).catch(() => new Response('', { status: 503, statusText: 'Offline' }));
                 })
             )
         );
         return;
     }
+
 
     // ── Strategy 2: Network-first for HTML pages ──
     event.respondWith(
@@ -155,7 +181,7 @@ self.addEventListener('fetch', event => {
                     if (event.request.headers.get('accept')?.includes('text/html')) {
                         return caches.match(OFFLINE_URL);
                     }
-                    return null;
+                    return new Response('', { status: 503, statusText: 'Offline' });
                 })
             )
     );

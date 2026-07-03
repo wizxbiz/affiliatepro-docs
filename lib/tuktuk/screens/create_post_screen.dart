@@ -605,6 +605,7 @@ class _CreatePostScreenState extends State<CreatePostScreen>
         'isPublic': _isPublic,
         'isPinned': _isPinned,
         'published': _isPublic,
+        'status': 'active',
         'hashtags': hashtags,
         'visibility': _isPublic ? 'public' : 'private',
         'privacy': _isPublic ? 'public' : 'private',

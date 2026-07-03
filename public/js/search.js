@@ -94,3 +94,6 @@ function filterAndScoreProducts(products, { query = '', category = 'all', provin
 
     return results;
 }
+
+// ── Namespace Export (backward-compat for marketplace.html) ──────────────────
+window.TukTukSearch = { SearchHistory, Debouncer, fuzzyScore, filterAndScoreProducts };

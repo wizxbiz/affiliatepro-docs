@@ -252,67 +252,6 @@ function createPremiumError(message) {
     };
 }
 
-// ============================================================
-// 🤖 TUKTUK AI — Gemini ผู้ช่วย Super App ท้องถิ่น
-// ============================================================
-const TUKTUK_AI_SYSTEM_PROMPT = `คุณคือ "ตุ๊กตุ๊ก" (TukTuk AI) ผู้ช่วยอัจฉริยะของแพลตฟอร์ม TukTuk Thailand 🛺
-
-🌍 **TukTuk Thailand คืออะไร?**
-Super App ท้องถิ่นสำหรับคนไทย ที่รวม:
-• 🛒 ตลาดออนไลน์ SME และ OTOP — ขายของง่าย ต้นทุนต่ำ
-• 🛺 วิน (WIN Rider) — บริการวินมอเตอร์ไซค์ดิจิทัล นัดรับ-ส่งผ่านแอป
-• 🏘️ ชุมชน — โพสต์ข่าวสาร แชร์ประสบการณ์ในท้องถิ่น
-• 💼 เครื่องมือธุรกิจ — ช่วย SME จัดการร้าน สต็อก ออเดอร์ ผ่าน LINE
-
-**บทบาทของคุณ:**
-1. ช่วยผู้ซื้อค้นหาสินค้า แนะนำ OTOP และของดีในท้องถิ่น
-2. ช่วยผู้ขาย SME จัดการร้านค้า แนะนำวิธีเพิ่มยอดขาย
-3. อธิบายบริการ WIN Rider และช่วยนัดหมายวิน
-4. ตอบคำถามทั่วไปเกี่ยวกับ TukTuk Thailand
-5. แนะนำฟีเจอร์และวิธีใช้งานแพลตฟอร์ม
-
-**สไตล์การตอบ:**
-- ภาษาไทย กันเอง อบอุ่น เป็นธรรมชาติ
-- ใช้อิโมจิพอเหมาะ ไม่มากเกินไป
-- ตอบสั้น กระชับ ตรงประเด็น (ไม่เกิน 200 คำ)
-- ไม่ต้องเกริ่นนำ เข้าเรื่องทันที
-- ลงท้ายด้วยการชวนให้ใช้งานต่อหรือถามเพิ่ม
-
-**คำสั่งที่มีอยู่ในระบบ:**
-• "ตลาด" — เปิดหน้าตลาดสินค้า
-• "รหัส" — ขอ PIN เข้าสู่ระบบเว็บ
-• "สถิติ" — ดูสถิติร้านค้า (สำหรับผู้ขาย)
-• "ออเดอร์" — ดูออเดอร์ล่าสุด
-• "วิน" — บริการวินมอเตอร์ไซค์
-• "สมัครขาย" — เปิดร้านค้าใหม่
-
-**ห้ามตอบ:** ไม่พูดถึงฉีดพลาสติก เครื่องจักรอุตสาหกรรม หรือเนื้อหาที่ไม่เกี่ยวกับ TukTuk Thailand`;
-
-/**
- * เรียก Gemini AI สำหรับ TukTuk context
- */
-async function askTuktukAI(userMessage, userName) {
-    try {
-        const { GoogleGenerativeAI } = require("@google/generative-ai");
-        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({
-            model: "gemini-2.0-flash",
-            systemInstruction: TUKTUK_AI_SYSTEM_PROMPT,
-            generationConfig: {
-                temperature: 0.7,
-                maxOutputTokens: 512,
-            },
-        });
-
-        const prompt = `ผู้ใช้: ${userName || "ลูกค้า"}\nข้อความ: ${userMessage}`;
-        const result = await model.generateContent(prompt);
-        const text = result.response.text();
-        return text.substring(0, 800);
-    } catch (error) {
-        console.error("❌ TukTuk AI error:", error.message);
-        return null;
-    }
-}
 
 // ============================================================
 // 🛺 CLOUD FUNCTION ENTRY POINT
@@ -774,10 +713,12 @@ async function handleTuktukMessage(event, tuktukClient) {
         }
 
         // ──────────────────────────────────────────────────────
-        // 🤖 AI ASSISTANT
+        // 📋 DEFAULT FALLBACK — Show Menu instead of AI
         // ──────────────────────────────────────────────────────
-        const profile = await tuktukClient.getProfile(userId).catch(() => ({ displayName: "คุณ" }));
-        await handlePremiumAIResponse(text, profile.displayName, userId, replyToken, tuktukClient, db);
+        await tuktukClient.replyMessage({
+            replyToken,
+            messages: [createPremiumMainMenu()],
+        });
 
     } catch (error) {
         console.error("❌ TukTuk message error:", error);
@@ -788,160 +729,6 @@ async function handleTuktukMessage(event, tuktukClient) {
     }
 }
 
-// ============================================================
-// 🤖 PREMIUM AI RESPONSE HANDLER (Best in Thailand Edition)
-// ============================================================
-async function handlePremiumAIResponse(text, userName, userId, replyToken, tuktukClient, db) {
-    console.log(`🤖 Calling TukTuk AI for: "${text}"`);
-
-    // บันทึก message เพื่อ tracking
-    try {
-        await db.collection("tuktuk_ai_logs").add({
-            userId,
-            message: text,
-            timestamp: FieldValue.serverTimestamp(),
-        });
-    } catch (_) { }
-
-    const aiText = await askTuktukAI(text, userName);
-
-    if (aiText) {
-        // The most premium, comprehensive Flex Message in Thailand for TukTuk Super App
-        const bestInThailandFlex = {
-            type: "flex",
-            altText: "🌟 ข้อมูลและบริการ TukTuk Thailand (Super App ที่ดีที่สุดของคนไทย)",
-            contents: {
-                type: "bubble",
-                size: "mega",
-                header: createPremiumHeader("🌟", "TukTuk Thailand", "Super App อันดับ 1 เพื่อคนไทย", ["#FFD700", "#FF8C00"]),
-                hero: {
-                    type: "image",
-                    url: "https://sv1.picz.in.th/images/2023/11/04/dpZpG8t.png", // Or any valid beautiful logo/hero image
-                    size: "full",
-                    aspectRatio: "20:13",
-                    aspectMode: "cover",
-                },
-                body: {
-                    type: "box",
-                    layout: "vertical",
-                    spacing: "md",
-                    paddingAll: "20px",
-                    backgroundColor: COLORS.bg,
-                    contents: [
-                        {
-                            type: "text",
-                            text: "บริการและข้อมูลทั้งหมดของคุณ",
-                            weight: "bold",
-                            size: "md",
-                            color: COLORS.text,
-                        },
-                        {
-                            type: "text",
-                            text: "เลือกเป้าหมายการใช้งานที่ตรงใจคุณที่สุดด้านล่างได้เลยครับ 👇",
-                            size: "xs",
-                            color: COLORS.textMuted,
-                            wrap: true,
-                        },
-                        { type: "separator", margin: "md", color: "#FFFFFF1A" },
-
-                        // 🛒 Section 1: ตลาดและร้านค้า
-                        {
-                            type: "box",
-                            layout: "horizontal",
-                            spacing: "md",
-                            margin: "md",
-                            contents: [
-                                {
-                                    type: "box", layout: "vertical", flex: 0,
-                                    contents: [{ type: "text", text: "🛒", size: "3xl" }]
-                                },
-                                {
-                                    type: "box", layout: "vertical", flex: 1, spacing: "sm",
-                                    contents: [
-                                        { type: "text", text: "ตลาด OTOP & SME", weight: "bold", size: "sm", color: COLORS.text },
-                                        { type: "text", text: "ซื้อขายของดีประจำจังหวัด สนับสนุนคนไทย", size: "xs", color: COLORS.textSecondary, wrap: true },
-                                    ]
-                                },
-                            ]
-                        },
-
-                        // 🛺 Section 2: WIN Rider
-                        {
-                            type: "box",
-                            layout: "horizontal",
-                            spacing: "md",
-                            margin: "md",
-                            contents: [
-                                {
-                                    type: "box", layout: "vertical", flex: 0,
-                                    contents: [{ type: "text", text: "🛺", size: "3xl" }]
-                                },
-                                {
-                                    type: "box", layout: "vertical", flex: 1, spacing: "sm",
-                                    contents: [
-                                        { type: "text", text: "บริการ WIN Rider", weight: "bold", size: "sm", color: COLORS.text },
-                                        { type: "text", text: "วินมอเตอร์ไซค์ดิจิทัล เรียกง่าย ปลอดภัย", size: "xs", color: COLORS.textSecondary, wrap: true },
-                                    ]
-                                },
-                            ]
-                        },
-
-                        // 📱 Section 3: ระบบจัดการร้าน
-                        {
-                            type: "box",
-                            layout: "horizontal",
-                            spacing: "md",
-                            margin: "md",
-                            contents: [
-                                {
-                                    type: "box", layout: "vertical", flex: 0,
-                                    contents: [{ type: "text", text: "📊", size: "3xl" }]
-                                },
-                                {
-                                    type: "box", layout: "vertical", flex: 1, spacing: "sm",
-                                    contents: [
-                                        { type: "text", text: "ระบบจัดการร้านค้า", weight: "bold", size: "sm", color: COLORS.text },
-                                        { type: "text", text: "จัดการออเดอร์ สต็อกสินค้า ครบจบในแอป", size: "xs", color: COLORS.textSecondary, wrap: true },
-                                    ]
-                                },
-                            ]
-                        },
-                        { type: "separator", margin: "md", color: "#FFFFFF1A" },
-                    ],
-                },
-                footer: {
-                    type: "box",
-                    layout: "vertical",
-                    spacing: "sm",
-                    paddingAll: "20px",
-                    backgroundColor: COLORS.bg,
-                    contents: [
-                        createPremiumButton("🌐 เข้าสู่แอปพลิเคชัน", { type: "uri", label: "เข้าสู่แอปพลิเคชัน", uri: TUKTUK_BASE_URL }, "primary", COLORS.primary),
-                        createPremiumButton("🛍️ เปิดหน้าตลาด", { type: "message", label: "ตลาด", text: "ตลาด" }, "secondary"),
-                        createPremiumButton("🔑 ขอรหัสเข้าเว็บ", { type: "message", label: "รหัส", text: "รหัส" }, "secondary")
-                    ],
-                },
-            },
-        };
-
-        await tuktukClient.replyMessage({
-            replyToken,
-            messages: [
-                {
-                    type: "text",
-                    text: aiText,
-                },
-                bestInThailandFlex
-            ],
-        });
-    } else {
-        // AI fallback
-        await tuktukClient.replyMessage({
-            replyToken,
-            messages: [createPremiumMainMenu()],
-        });
-    }
-}
 
 // ============================================================
 // 🛡️ PREMIUM ADMIN COMMANDS
@@ -1491,8 +1278,8 @@ async function handleAdminCommand(lower, text, userId, replyToken, tuktukClient,
                                 borderColor: "#00D2FF4D",
                                 contents: [{
                                     type: "text",
-                                    text: p.pin || "------",
-                                    size: "4xl",
+                                    text: p.pin ? p.pin.slice(0, 3) + "  " + p.pin.slice(3) : "--- ---",
+                                    size: "3xl",
                                     weight: "bold",
                                     color: COLORS.primary,
                                     align: "center",
@@ -2701,8 +2488,8 @@ async function handlePremiumPinRequest(userId, replyToken, tuktukClient, db, isS
                             borderColor: "#8B5CF64D",
                             contents: [{
                                 type: "text",
-                                text: pin,
-                                size: "5xl",
+                                text: pin.slice(0, 3) + "  " + pin.slice(3),
+                                size: "3xl",
                                 weight: "bold",
                                 color: COLORS.purple,
                                 align: "center",
@@ -2754,93 +2541,18 @@ async function handlePremiumPinRequest(userId, replyToken, tuktukClient, db, isS
 async function handleImageMessage(event, tuktukClient) {
     const userId = event.source.userId;
     const replyToken = event.replyToken;
-    console.log(`📷 Image received from ${userId}`);
+    console.log(`📷 Image received from ${userId} (Gemini disabled for TukTuk)`);
 
     try {
-        const stream = await tuktukClient.getMessageContent(event.message.id);
-        const chunks = [];
-        for await (const chunk of stream) chunks.push(chunk);
-        const buffer = Buffer.concat(chunks);
-
-        const { GoogleGenerativeAI } = require("@google/generative-ai");
-        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-
-        const result = await model.generateContent([
-            "วิเคราะห์ภาพนี้: ถ้าเป็นสลิปโอนเงิน ขึ้นต้นด้วย SLIP_DETECTED แล้วระบุยอดและธนาคาร ถ้าเป็นสินค้า อธิบายสินค้า ถ้าเป็นอื่น อธิบายสั้นๆ ตอบภาษาไทย",
-            { inlineData: { data: buffer.toString("base64"), mimeType: "image/jpeg" } },
-        ]);
-        const text = result.response.text();
-
-        if (text.includes("SLIP_DETECTED") || (text.includes("โอนเงิน") && text.includes("บาท"))) {
-            await getFirestore().collection("line_users").doc(userId).set({
-                lastSlipUploadAt: FieldValue.serverTimestamp(),
-                slipImageId: event.message.id,
-                subscriptionStatus: "slip_uploaded",
-            }, { merge: true });
-
-            await tuktukClient.replyMessage({
-                replyToken,
-                messages: [{
-                    type: "flex",
-                    altText: "✅ สลิปโอนเงิน",
-                    contents: {
-                        type: "bubble",
-                        size: "nano",
-                        body: {
-                            type: "box",
-                            layout: "horizontal",
-                            paddingAll: "16px",
-                            backgroundColor: "#00E6761A",
-                            cornerRadius: "12px",
-                            borderWidth: "1px",
-                            borderColor: "#00E6764D",
-                            contents: [
-                                { type: "text", text: "✅", size: "xl", flex: 0 },
-                                { type: "text", text: text.replace("SLIP_DETECTED", "").trim(), size: "xs", color: COLORS.success, margin: "sm", flex: 1, wrap: true },
-                            ],
-                        },
-                    },
-                }],
-            });
-        } else {
-            await tuktukClient.replyMessage({
-                replyToken,
-                messages: [{
-                    type: "flex",
-                    altText: "👁️ วิเคราะห์ภาพ",
-                    contents: {
-                        type: "bubble",
-                        size: "mega",
-                        header: createPremiumHeader("👁️", "วิเคราะห์ภาพ", "Gemini Vision", COLORS.purpleGradient),
-                        body: {
-                            type: "box",
-                            layout: "vertical",
-                            paddingAll: "20px",
-                            backgroundColor: COLORS.bg,
-                            contents: [
-                                {
-                                    type: "box",
-                                    layout: "vertical",
-                                    paddingAll: "16px",
-                                    backgroundColor: "#FFFFFF08",
-                                    cornerRadius: "12px",
-                                    contents: [
-                                        { type: "text", text: text, size: "sm", color: COLORS.text, wrap: true },
-                                    ],
-                                },
-                            ],
-                        },
-                    },
-                }],
-            });
-        }
-    } catch (error) {
-        console.error("❌ Image handling error:", error);
         await tuktukClient.replyMessage({
             replyToken,
-            messages: [createPremiumError("ไม่สามารถวิเคราะห์ภาพได้ในขณะนี้")],
-        }).catch(() => { });
+            messages: [{
+                type: "text",
+                text: "📷 ได้รับรูปภาพเรียบร้อยแล้วครับ\n\nหากเป็นสลิปโอนเงิน แอดมินจะตรวจสอบและยืนยันให้เร็วที่สุดครับ 🙏"
+            }],
+        });
+    } catch (error) {
+        console.error("❌ Image handling error:", error);
     }
 }
 

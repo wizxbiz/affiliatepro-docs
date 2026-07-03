@@ -12,6 +12,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="/js/cloudflare-client.js"></script>
     <script src="/js/auth.js"></script>
     <!-- CryptoJS removed: R2 signing now done server-side via r2PresignedUrl Cloud Function -->
 
@@ -60,9 +61,7 @@
             return PROFANITY_LIST.some(word => lowerText.includes(word));
         }
 
-        // ========== Cloudflare R2 Upload Service (Server-Side SigV4) ==========
-        // Credentials are NOT stored here — signing is done by the Cloud Function.
-        const R2_PRESIGN_URL = 'https://us-central1-appinjproject.cloudfunctions.net/r2PresignedUrl';
+        const R2_PRESIGN_URL = '/api/r2PresignedUrl';
 
         async function uploadToR2(file, folder = 'posts', onProgress = null) {
             const contentType = file.type || 'image/jpeg';
@@ -86,7 +85,7 @@
             // Step 1: Get pre-signed URL from Cloud Function
             const cfRes = await fetch(R2_PRESIGN_URL, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', ...authHeaders },
+                headers: { 'Content-Type': 'application/json', ...(window.getCloudflareAuthHeaders ? window.getCloudflareAuthHeaders() : {}), ...authHeaders },
                 body: JSON.stringify({ folder, filename: safeFilename, contentType, lineUserId })
             });
             if (!cfRes.ok) {
@@ -407,7 +406,7 @@
             }
 
             var analyzeBtn = document.getElementById('aiAnalyzeBtn');
-            var API_URL = 'https://us-central1-appinjproject.cloudfunctions.net/marketplaceAIGeneratePost';
+            var API_URL = '/api/marketplaceAIGeneratePost';
 
             try {
                 // Show loading
@@ -425,7 +424,7 @@
                 console.log('🤖 Calling API...');
                 var response = await fetch(API_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', ...(window.getCloudflareAuthHeaders ? window.getCloudflareAuthHeaders() : {}) },
                     body: JSON.stringify({
                         imageBase64: base64Data,
                         additionalInfo: '',
@@ -1707,13 +1706,13 @@
     <header class="header">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center">
-                <a href="marketplace" class="logo">
+                <a href="marketplace" class="logo" onclick="goToMarketplace(event)">
                     <img src="/images/logo.png" alt="WiT Marketplace" style="height: 40px;"
                         onerror="this.onerror=null; this.src='https://placehold.co/100x48?text=WiT';">
                     <span>WiT Marketplace</span>
                 </a>
                 <nav class="d-flex align-items-center">
-                    <a href="marketplace" class="nav-link-header">
+                    <a href="marketplace" class="nav-link-header" onclick="goToMarketplace(event)">
                         <i class="fas fa-shopping-bag"></i> ตลาด
                     </a>
                     <a href="marketplace-howto" class="nav-link-header">
@@ -1730,7 +1729,7 @@
                             <i class="fas fa-chevron-down" style="color: rgba(255,255,255,0.7); font-size: 0.7rem;"></i>
                         </div>
                         <div class="user-dropdown-menu-post">
-                            <a href="marketplace">
+                            <a href="marketplace" onclick="goToMarketplace(event)">
                                 <i class="fas fa-shopping-bag"></i> ตลาดสินค้า
                             </a>
                             <a href="/">
@@ -2398,7 +2397,18 @@
         const storage = firebase.storage();
         const auth = firebase.auth();
 
-        const API_BASE_URL = 'https://us-central1-appinjproject.cloudfunctions.net';
+        const API_BASE_URL = '';
+        function getCloudflareAuthHeaders() {
+            try {
+                const witSession = JSON.parse(localStorage.getItem('wit_line_session') || '{}');
+                const wizSession = JSON.parse(localStorage.getItem('wizmobiz_session') || '{}');
+                const token = localStorage.getItem('tuktuk_jwt') || wizSession.token || witSession.token || witSession.sessionToken || null;
+                return token ? { 'Authorization': `Bearer ${token}` } : {};
+            } catch (_) {
+                return {};
+            }
+        }
+        window.getCloudflareAuthHeaders = getCloudflareAuthHeaders;
         const LIFF_ID = '2006737061-QJWoVjwA';
         const isFromLineOA = new URLSearchParams(window.location.search).has('lineUserId') ||
             new URLSearchParams(window.location.search).has('aidata');
@@ -2647,10 +2657,21 @@
                 isPremium: user.isPremium || false,
                 phoneNumber: user.phoneNumber || user.phone || '',
                 lineId: user.lineId || user.sellerLineId || '',
+                token: user.token || user.sessionToken || localStorage.getItem('tuktuk_jwt') || '',
                 savedAt: Date.now(),
                 expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 days expiry
             };
             localStorage.setItem('wit_line_session', JSON.stringify(sessionData));
+            localStorage.setItem('wizmobiz_session', JSON.stringify({
+                uid: sessionData.lineUserId,
+                lineUserId: sessionData.lineUserId,
+                displayName: sessionData.displayName,
+                pictureUrl: sessionData.pictureUrl,
+                isPremium: sessionData.isPremium,
+                token: sessionData.token,
+                loginAt: new Date().toISOString()
+            }));
+            if (sessionData.token) localStorage.setItem('tuktuk_jwt', sessionData.token);
             console.log("💾 Session saved for", user.displayName);
         }
 
@@ -2676,11 +2697,12 @@
             try {
                 const response = await fetch(`${API_BASE_URL}/marketplaceLineAuth`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', ...getCloudflareAuthHeaders() },
                     body: JSON.stringify({ lineUserId: userId })
                 });
                 const result = await response.json();
                 if (result.success && result.user) {
+                    if (result.token || result.sessionToken) localStorage.setItem('tuktuk_jwt', result.token || result.sessionToken);
                     currentUser = result.user;
                     lineUserId = result.user.lineUserId;
                     await updateUIAfterLogin(currentUser);
@@ -2960,7 +2982,7 @@
 
                 const response = await fetch(`${API_BASE_URL}/verifyWebPin`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', ...getCloudflareAuthHeaders() },
                     body: JSON.stringify({
                         pin,
                         deviceId,
@@ -2972,10 +2994,12 @@
 
                 if (result.success && result.user) {
                     // Save session with device binding
+                    if (result.token || result.sessionToken) localStorage.setItem('tuktuk_jwt', result.token || result.sessionToken);
                     saveUserSession({
                         ...result.user,
                         deviceId,
-                        sessionToken: result.sessionToken
+                        token: result.token || result.sessionToken,
+                        sessionToken: result.sessionToken || result.token
                     });
                     currentUser = result.user;
                     lineUserId = result.user.lineUserId;
@@ -3300,10 +3324,11 @@
                 const base64Image = await fileToBase64(mainImage);
 
                 // Call AI API
-                const response = await fetch(`${API_BASE_URL}/marketplaceAIGeneratePost`, {
+                const response = await fetch(`${API_BASE_URL}/api/marketplaceAIGeneratePost`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        ...getCloudflareAuthHeaders()
                     },
                     body: JSON.stringify({
                         imageBase64: base64Image,
@@ -4152,48 +4177,42 @@
                         // Regular Marketplace (Secondhand)
                         console.log('📦 Posting to Regular Marketplace...');
 
-                        const imageUrls = [];
+                        // 1. Upload images to Cloudflare R2 first
+                        const uploadedImageUrls = [];
                         for (let i = 0; i < allImages.length; i++) {
-                            const imageBase64 = await new Promise((resolve, reject) => {
-                                const reader = new FileReader();
-                                reader.onload = () => resolve(reader.result.split(',')[1]);
-                                reader.onerror = reject;
-                                reader.readAsDataURL(allImages[i]);
-                            });
-                            imageUrls.push({ index: i, base64: imageBase64 });
+                            const downloadUrl = await uploadToR2(allImages[i], 'products');
+                            uploadedImageUrls.push(downloadUrl);
                         }
 
-                        // Post via API (ส่งหลายรูป)
-                        const response = await fetch(`${API_BASE_URL}/marketplacePostProduct`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                lineUserId: lineUserId,
-                                productData: {
-                                    productName,
-                                    price,
-                                    description,
-                                    category: selectedCategory,
-                                    tags,
-                                    sellerName,
-                                    sellerPhone,
-                                    sellerLineId,
-                                    sellerFacebook,
-                                    sellerLocation,
-                                    sellerPictureUrl: (currentUser && currentUser.pictureUrl) || '',
-                                    videoUrl
-                                },
-                                imageBase64: imageUrls[0]?.base64, // Main image
-                                additionalImages: imageUrls.slice(1).map(img => img.base64) // Additional images
-                            })
-                        });
+                        // 2. Save directly to Firestore collection 'marketplace_items'
+                        const productData = {
+                            productName,
+                            price: Number(price),
+                            description,
+                            category: selectedCategory,
+                            tags,
+                            sellerName,
+                            sellerPhone,
+                            sellerLineId,
+                            sellerFacebook,
+                            sellerLocation,
+                            sellerPictureUrl: (currentUser && currentUser.pictureUrl) || '',
+                            imageUrl: uploadedImageUrls[0] || '',
+                            additionalImages: uploadedImageUrls.slice(1),
+                            images: uploadedImageUrls,
+                            videoUrl,
+                            sellerId: lineUserId,
+                            lineUserId: lineUserId,
+                            status: 'active',
+                            viewCount: 0,
+                            contactCount: 0,
+                            source: 'web',
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        };
 
-                        const result = await response.json();
-                        if (!result.success) {
-                            throw new Error(result.error || 'Failed to post product');
-                        }
+                        await db.collection('marketplace_items').add(productData);
+                        console.log('✅ Regular product added successfully');
                     }
 
                     // Hide loading, show success
@@ -4286,6 +4305,45 @@
     </script>
 
     <!-- The rest of your script tags and logic should be placed after this main block -->
+
+    <script>
+    // Navigate to marketplace — works both standalone and embedded in SPA iframe
+    function goToMarketplace(e) {
+        if (e) e.preventDefault();
+        const isEmbedded = window.self !== window.top ||
+            window.location.search.includes('embedded=true');
+        if (isEmbedded) {
+            if (typeof window.parent.navigateToSPA === 'function') {
+                window.parent.navigateToSPA('marketplace.html');
+            } else {
+                window.parent.location.href = 'marketplace.html';
+            }
+        } else {
+            window.location.href = 'marketplace.html';
+        }
+    }
+
+    // Inject a floating back button when page is embedded
+    (function injectBackButton() {
+        const isEmbedded = window.self !== window.top ||
+            window.location.search.includes('embedded=true');
+        if (!isEmbedded) return;
+
+        const btn = document.createElement('button');
+        btn.innerHTML = '<i class="fas fa-arrow-left"></i> ตลาด';
+        btn.style.cssText = [
+            'position:fixed', 'top:12px', 'left:12px', 'z-index:9999',
+            'background:rgba(0,0,0,0.55)', 'color:#fff',
+            'border:none', 'border-radius:30px',
+            'padding:8px 16px', 'font-size:0.85rem', 'font-weight:600',
+            'cursor:pointer', 'display:flex', 'align-items:center', 'gap:6px',
+            'backdrop-filter:blur(6px)', '-webkit-backdrop-filter:blur(6px)',
+            'box-shadow:0 2px 8px rgba(0,0,0,0.3)'
+        ].join(';');
+        btn.onclick = () => goToMarketplace(null);
+        document.body.appendChild(btn);
+    })();
+    </script>
 
 </body>
 

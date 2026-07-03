@@ -1,0 +1,231 @@
+{
+  "type": "flex",
+  "altText": "🧪 Hybrid Test: \"รอยยุบ ABS\"",
+  "contents": {
+    "type": "bubble",
+    "size": "mega",
+    "header": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "🧪",
+              "size": "3xl",
+              "flex": 0
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "Hybrid Intelligence Test",
+                  "size": "xl",
+                  "weight": "bold",
+                  "color": "#ffffff"
+                },
+                {
+                  "type": "text",
+                  "text": "Testing System Performance",
+                  "size": "xs",
+                  "color": "#e0e7ff",
+                  "margin": "xs"
+                }
+              ],
+              "margin": "md"
+            }
+          ]
+        }
+      ],
+      "backgroundColor": "#8b5cf6",
+      "paddingAll": "20px"
+    },
+    "body": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "⚖️",
+              "size": "xl",
+              "flex": 0
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "Balanced Hybrid",
+                  "size": "md",
+                  "weight": "bold",
+                  "color": "#1f2937"
+                },
+                {
+                  "type": "text",
+                  "text": "ผสมผสาน Local + AI",
+                  "size": "xs",
+                  "color": "#6b7280"
+                }
+              ],
+              "margin": "sm"
+            }
+          ],
+          "backgroundColor": "#8b5cf620",
+          "cornerRadius": "10px",
+          "paddingAll": "12px"
+        },
+        {
+          "type": "separator",
+          "margin": "lg"
+        },
+        {
+          "type": "text",
+          "text": "📋 Test Query",
+          "size": "sm",
+          "weight": "bold",
+          "color": "#1f2937",
+          "margin": "lg"
+        },
+        {
+          "type": "text",
+          "text": "รอยยุบ ABS",
+          "size": "xs",
+          "color": "#4b5563",
+          "wrap": true,
+          "margin": "xs"
+        },
+        {
+          "type": "separator",
+          "margin": "lg"
+        },
+        {
+          "type": "text",
+          "text": "📊 Performance",
+          "size": "sm",
+          "weight": "bold",
+          "color": "#1f2937",
+          "margin": "lg"
+        },
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "9200%",
+                  "size": "xxl",
+                  "weight": "bold",
+                  "color": "#8b5cf6",
+                  "align": "center"
+                },
+                {
+                  "type": "text",
+                  "text": "Confidence",
+                  "size": "xs",
+                  "color": "#6b7280",
+                  "align": "center"
+                }
+              ],
+              "backgroundColor": "#f9fafb",
+              "cornerRadius": "8px",
+              "paddingAll": "10px",
+              "flex": 1
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "0ms",
+                  "size": "lg",
+                  "weight": "bold",
+                  "color": "#3b82f6",
+                  "align": "center"
+                },
+                {
+                  "type": "text",
+                  "text": "Response",
+                  "size": "xs",
+                  "color": "#6b7280",
+                  "align": "center"
+                }
+              ],
+              "backgroundColor": "#f9fafb",
+              "cornerRadius": "8px",
+              "paddingAll": "10px",
+              "flex": 1,
+              "margin": "sm"
+            }
+          ],
+          "margin": "sm"
+        },
+        {
+          "type": "separator",
+          "margin": "lg"
+        },
+        {
+          "type": "text",
+          "text": "🤖 AI Analysis",
+          "size": "sm",
+          "weight": "bold",
+          "color": "#1f2937",
+          "margin": "lg"
+        },
+        {
+          "type": "text",
+          "text": "No AI response",
+          "size": "xs",
+          "color": "#4b5563",
+          "wrap": true,
+          "margin": "xs"
+        }
+      ],
+      "paddingAll": "20px"
+    },
+    "footer": {
+      "type": "box",
+      "layout": "horizontal",
+      "contents": [
+        {
+          "type": "button",
+          "action": {
+            "type": "message",
+            "label": "View Stats",
+            "text": "/hybridstats"
+          },
+          "style": "primary",
+          "color": "#8b5cf6",
+          "height": "sm",
+          "flex": 1
+        },
+        {
+          "type": "button",
+          "action": {
+            "type": "message",
+            "label": "Knowledge Menu",
+            "text": "/km"
+          },
+          "style": "link",
+          "height": "sm",
+          "flex": 1
+        }
+      ],
+      "paddingAll": "10px"
+    }
+  }
+}

@@ -531,7 +531,7 @@ class _PostProductScreenState extends State<PostProductScreen> {
       // Call AI API
       final response = await http.post(
         Uri.parse(
-            'https://us-central1-appinjproject.cloudfunctions.net/marketplaceAIGeneratePost',),
+            'https://tuktukfeed-api.imtthailand2019.workers.dev/marketplaceAIGeneratePost',),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'imageBase64': base64Image,

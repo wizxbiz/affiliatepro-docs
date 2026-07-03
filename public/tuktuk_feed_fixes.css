@@ -1,0 +1,77 @@
+/* =========================================
+   🚨 TUKTUK FEED - CRITICAL UI FIXES
+   ========================================= */
+
+/* 1. แก้ปัญหา Tab Bar ไม่ Center และจัดระยะห่าง */
+.bottom-nav-container, #bottom-nav {
+    display: flex !important;
+    justify-content: space-around !important; /* กระจายปุ่มให้ห่างเท่ากัน */
+    align-items: center !important;
+    width: 100% !important;
+    max-width: 100vw !important; /* ป้องกันการล้นจอ */
+    height: 60px; /* Fix ความสูงให้แน่นอน */
+    position: fixed !important;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999; /* ให้แน่ใจว่าอยู่บนสุดเสมอ */
+    
+    /* Glassmorphism Base */
+    background: rgba(20, 20, 20, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    
+    /* Safe Area สำหรับ iPhone จอไร้ปุ่มโฮม */
+    padding-bottom: env(safe-area-inset-bottom);
+    box-sizing: content-box; /* เพื่อไม่ให้ padding ไปกินความสูง */
+}
+
+/* 2. แก้ระยะการกด (Touch Target) ให้แม่นยำ */
+.nav-item, .tab-btn {
+    flex: 1; /* ให้ทุกปุ่มกินพื้นที่เท่ากัน */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    position: relative;
+    cursor: pointer;
+    
+    /* 🔴 สำคัญ: ขยายพื้นที่กดให้ได้มาตรฐาน Mobile (44px+) */
+    min-width: 44px;
+    min-height: 44px;
+    
+  /* ป้องกันการกดผิดเพี้ยนจากการ Zoom หรือ Layer ทับ */
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+/* 3. จัดการปุ่ม "หน้าหลัก" หรือปุ่มตรงกลาง (ถ้ามี) ให้เด่นและ Center จริงๆ */
+.nav-item.center-btn, .nav-item.main-tab {
+    flex: 0 0 60px; /* Fix ความกว้างปุ่มกลาง */
+    height: 60px;
+    margin-bottom: 25px; /* ยกปุ่มลอยขึ้น */
+    background: linear-gradient(45deg, #FFD700, #FFAA00); /* สีธีม TukTuk */
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+    z-index: 10000; /* อยู่เหนือ Nav bar ปกติ */
+    
+    /* จัด Icon ตรงกลางเป๊ะๆ */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 4. ป้องกัน Layer ตกแต่ง (Glass/Gradient) บังการกด */
+.glass-overlay, .bg-gradient-overlay {
+    pointer-events: none !important; /* ให้คลิกทะลุได้ */
+}
+
+/* 5. แก้ Icon/Text ภายในปุ่มไม่ให้ขวาง Event */
+.nav-item i, .nav-item svg, .nav-item span {
+    pointer-events: none;
+}

@@ -4,18 +4,28 @@ import (
 	"context"
 	"fmt"
 	"math"
+	"sort"
 	"sync"
 	"time"
 	"tuktuk-backend/internal/models"
 	"tuktuk-backend/internal/repository"
+
+	"cloud.google.com/go/firestore"
 )
 
 type FeedService struct {
-	repo repository.Repository
+	repo     repository.Repository
+	fsClient *firestore.Client // for affinity lookups
 }
 
 func NewFeedService(repo repository.Repository) *FeedService {
 	return &FeedService{repo: repo}
+}
+
+// SetFirestoreClient injects the Firestore client for affinity lookups.
+// Call this after NewFeedService when a real Firestore client is available.
+func (s *FeedService) SetFirestoreClient(client *firestore.Client) {
+	s.fsClient = client
 }
 
 // UserAffinity represents the user's interaction memory and preferences
@@ -24,19 +34,28 @@ type UserAffinity struct {
 	Category     string
 }
 
-// Mock function to fetch user preferences (In prod: get from Redis/Firestore)
-func (s *FeedService) getUserAffinity(userId string) UserAffinity {
-	// Simulated personalization profile
+// getUserAffinity fetches personalization profile from either D1 or Firestore repo.
+// Falls back to neutral defaults if user doc is missing.
+func (s *FeedService) getUserAffinity(ctx context.Context, userId string) UserAffinity {
+	if userId == "guest" || userId == "" {
+		return UserAffinity{ProvinceCode: "", Category: ""}
+	}
+
+	province, category, err := s.repo.GetUserAffinity(ctx, userId)
+	if err != nil {
+		return UserAffinity{ProvinceCode: "", Category: ""}
+	}
+
 	return UserAffinity{
-		ProvinceCode: "10", // e.g. Bangkok
-		Category:     "Food",
+		ProvinceCode: province,
+		Category:     category,
 	}
 }
 
-// Rank/Score Algorithm v2: Anti-Gaming & Personalization
-func (s *FeedService) rankPosts(userId string, posts []models.Post) []models.Post {
+// rankPosts: Anti-Gaming & Personalization — O(n log n) with sort.Slice
+func (s *FeedService) rankPosts(ctx context.Context, userId string, posts []models.Post) []models.Post {
 	now := time.Now()
-	affinity := s.getUserAffinity(userId)
+	affinity := s.getUserAffinity(ctx, userId)
 
 	type scoredPost struct {
 		post  models.Post
@@ -55,41 +74,32 @@ func (s *FeedService) rankPosts(userId string, posts []models.Post) []models.Pos
 			effectiveLikes -= 1.0
 		}
 
-		// 1.2 Detect spam-like bursts & Unique viewer weighting
-		// Instead of linear view counts, use Logarithmic scale (math.Log1p)
-		// This dilutes the impact of bots spamming views.
+		// 1.2 Log scale for views (dilutes bot-spam)
 		interactionScore := (effectiveLikes * 12.0) + (math.Log1p(float64(p.ViewCount)) * 5.0)
 
 		// --- 🤖 2. Personalization Layer ---
 		personalizationMultiplier := 1.0
 
-		// 2.1 Province affinity (+50% boost if post matches user's location/interest)
-		if p.ProvinceCode != "" && p.ProvinceCode == affinity.ProvinceCode {
+		// 2.1 Province affinity (+50%)
+		if affinity.ProvinceCode != "" && p.ProvinceCode == affinity.ProvinceCode {
 			personalizationMultiplier += 0.5
 		}
 
-		// 2.2 Category affinity (+30% boost if user frequently interacts with this category)
-		if p.Category != "" && p.Category == affinity.Category {
+		// 2.2 Category affinity (+30%)
+		if affinity.Category != "" && p.Category == affinity.Category {
 			personalizationMultiplier += 0.3
 		}
 
-		// Time decay factor (Power law) -> (Age+2)^1.5 prevents old posts from staying forever
+		// Time decay factor (Power law)
 		decay := 1.0 / math.Pow(age+2.0, 1.5)
 
-		// Final Score calculation
-		finalScore := interactionScore * decay * personalizationMultiplier
-
-		scored[i] = scoredPost{post: p, score: finalScore}
+		scored[i] = scoredPost{post: p, score: interactionScore * decay * personalizationMultiplier}
 	}
 
-	// Sort by score descending
-	for i := 0; i < len(scored); i++ {
-		for j := i + 1; j < len(scored); j++ {
-			if scored[j].score > scored[i].score {
-				scored[i], scored[j] = scored[j], scored[i]
-			}
-		}
-	}
+	// ✅ FIX: sort.Slice O(n log n) instead of Bubble Sort O(n²)
+	sort.Slice(scored, func(i, j int) bool {
+		return scored[i].score > scored[j].score
+	})
 
 	final := make([]models.Post, len(scored))
 	for i, sp := range scored {
@@ -98,9 +108,9 @@ func (s *FeedService) rankPosts(userId string, posts []models.Post) []models.Pos
 	return final
 }
 
-func (s *FeedService) GetPowerfulFeed(userId string) (models.FeedResponse, error) {
+func (s *FeedService) GetPowerfulFeed(ctx context.Context, userId string, provinceCode string) (models.FeedResponse, error) {
 	start := time.Now()
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	fetchCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
 	var wg sync.WaitGroup
@@ -112,39 +122,19 @@ func (s *FeedService) GetPowerfulFeed(userId string) (models.FeedResponse, error
 	// POWER OF GOROUTINES: 4 independent tasks running in parallel
 	wg.Add(4)
 
-	// Task 1: Fetch Content
-	go func() {
-		defer wg.Done()
-		posts, _ = s.repo.GetPosts(ctx, 20)
-	}()
+	go func() { defer wg.Done(); posts, _ = s.repo.GetPosts(fetchCtx, 20, "", provinceCode) }()
+	go func() { defer wg.Done(); news, _ = s.repo.GetVerifiedNews(fetchCtx, 10) }()
+	go func() { defer wg.Done(); notifications, _ = s.repo.GetUnreadNotifications(fetchCtx, userId) }()
+	go func() { defer wg.Done(); tags, _ = s.repo.GetTrendingTags(fetchCtx) }()
 
-	// Task 2: Fetch Accurate News
-	go func() {
-		defer wg.Done()
-		news, _ = s.repo.GetVerifiedNews(ctx, 10)
-	}()
-
-	// Task 3: Fetch Personal Notifications
-	go func() {
-		defer wg.Done()
-		notifications, _ = s.repo.GetUnreadNotifications(ctx, userId)
-	}()
-
-	// Task 4: Fetch Trending Meta
-	go func() {
-		defer wg.Done()
-		tags, _ = s.repo.GetTrendingTags(ctx)
-	}()
-
-	// Wait for all "Mini Threads" to complete
 	wg.Wait()
 
-	// Ranking v2 Logic: Anti-Gaming & Personalization
-	rankedPosts := s.rankPosts(userId, posts)
+	// Ranking v2: Anti-Gaming & Real Personalization
+	rankedPosts := s.rankPosts(ctx, userId, posts)
 
-	// ASYNC TASK (Fire & Forget): Log this feed view without making the user wait
+	// Fire & forget: async feed view logging
 	go func() {
-		fmt.Printf("Logging feed access for user %s at %v\n", userId, time.Now())
+		fmt.Printf("[Feed] user=%s posts=%d time=%v\n", userId, len(rankedPosts), time.Now())
 	}()
 
 	return models.FeedResponse{
@@ -187,12 +177,12 @@ func (s *FeedService) GetTrendingFeed() (models.FeedResponse, error) {
 }
 
 // GetProducts returns active marketplace listings, served from cache.
-func (s *FeedService) GetProducts(limit int) (models.ProductsResponse, error) {
+func (s *FeedService) GetProducts(limit int, afterID string, provinceCode string) (models.ProductsResponse, error) {
 	start := time.Now()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	products, err := s.repo.GetMarketplaceProducts(ctx, limit)
+	products, err := s.repo.GetMarketplaceProducts(ctx, limit, afterID, provinceCode)
 	if err != nil {
 		return models.ProductsResponse{}, err
 	}
@@ -223,7 +213,7 @@ func (s *FeedService) GetLeaderboard(limit int) (models.LeaderboardResponse, err
 	}, nil
 }
 
-// GetLiveSessions returns active live streaming sessions, primarily official news.
+// GetLiveSessions returns active live streaming sessions.
 func (s *FeedService) GetLiveSessions(limit int) (models.LiveResponse, error) {
 	start := time.Now()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -241,21 +231,39 @@ func (s *FeedService) GetLiveSessions(limit int) (models.LiveResponse, error) {
 	}, nil
 }
 
-// WarmAll pre-fetches all hot collections into the cache layer in parallel.
-// Call once at startup then on a ticker to keep data fresh.
+// WarmAll pre-fetches all hot collections into cache in parallel.
+// Bounded concurrency (semaphore=3) to avoid Firestore quota throttling.
 func (s *FeedService) WarmAll() {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
+	type warmTask func()
+	tasks := []warmTask{
+		func() { s.repo.GetPosts(ctx, 20, "", "") },
+		func() { s.repo.GetVerifiedNews(ctx, 10) },
+		func() { s.repo.GetTrendingPosts(ctx, 10) },
+		func() { s.repo.GetTrendingTags(ctx) },
+		func() { s.repo.GetMarketplaceProducts(ctx, 40, "", "") },
+		func() { s.repo.GetLeaderboard(ctx, 20) },
+		func() { s.repo.GetLiveSessions(ctx, 10) },
+	}
+
+	// ✅ FIX: Semaphore (max 3 parallel) prevents Firestore quota throttling
+	sem := make(chan struct{}, 3)
 	var wg sync.WaitGroup
-	wg.Add(7)
-	go func() { defer wg.Done(); s.repo.GetPosts(ctx, 20) }()
-	go func() { defer wg.Done(); s.repo.GetVerifiedNews(ctx, 10) }()
-	go func() { defer wg.Done(); s.repo.GetTrendingPosts(ctx, 10) }()
-	go func() { defer wg.Done(); s.repo.GetTrendingTags(ctx) }()
-	go func() { defer wg.Done(); s.repo.GetMarketplaceProducts(ctx, 40) }()
-	go func() { defer wg.Done(); s.repo.GetLeaderboard(ctx, 20) }()
-	go func() { defer wg.Done(); s.repo.GetLiveSessions(ctx, 10) }()
+	wg.Add(len(tasks))
+
+	for _, task := range tasks {
+		t := task
+		go func() {
+			sem <- struct{}{}
+			defer func() {
+				<-sem
+				wg.Done()
+			}()
+			t()
+		}()
+	}
 	wg.Wait()
 }
 
@@ -285,4 +293,65 @@ func (s *FeedService) LiveHeartbeat(sessionID string, isJoining bool) error {
 		delta = 1
 	}
 	return s.repo.UpdateViewerCount(ctx, sessionID, delta)
+}
+
+// ── Core Content Methods ────────────────────────────────────────────────────
+
+func (s *FeedService) GetPost(postID string) (*models.Post, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	return s.repo.GetPost(ctx, postID)
+}
+
+func (s *FeedService) CreatePost(post *models.Post) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	return s.repo.CreatePost(ctx, post)
+}
+
+func (s *FeedService) GetComments(postID string, limit int, afterID string) ([]models.Comment, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	return s.repo.GetComments(ctx, postID, limit, afterID)
+}
+
+func (s *FeedService) CreateComment(comment *models.Comment) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	return s.repo.CreateComment(ctx, comment)
+}
+
+func (s *FeedService) GetUserProfileParams(ctx context.Context, userID string) (models.UserProfile, []models.Post, error) {
+	fetchCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	var wg sync.WaitGroup
+	var posts []models.Post
+
+	wg.Add(1)
+	go func() { defer wg.Done(); posts, _ = s.repo.GetUserPosts(fetchCtx, userID, 20) }()
+	wg.Wait()
+
+	// Create basic mocked profile - ideally fetch from firebase auth or line_users
+	profile := models.UserProfile{
+		UID:         userID,
+		DisplayName: "User " + userID[:min(len(userID), 5)],
+		Bio:         "Welcome to my TukTuk Profile! 🛺",
+		Followers:   42,
+	}
+
+	return profile, posts, nil
+}
+
+func (s *FeedService) SearchPosts(query string, limit int) ([]models.Post, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	return s.repo.SearchPosts(ctx, query, limit)
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }

@@ -1,0 +1,56 @@
+{
+  "type": "flex",
+  "altText": "ไม่พบข้อมูลความรู้",
+  "contents": {
+    "type": "bubble",
+    "size": "kilo",
+    "body": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "text",
+          "text": "📚",
+          "size": "3xl",
+          "align": "center"
+        },
+        {
+          "type": "text",
+          "text": "ไม่พบข้อมูล",
+          "weight": "bold",
+          "size": "lg",
+          "align": "center",
+          "color": "#374151",
+          "margin": "md"
+        },
+        {
+          "type": "text",
+          "text": "ยังไม่มีความรู้ในระบบ",
+          "size": "sm",
+          "color": "#6b7280",
+          "align": "center",
+          "wrap": true,
+          "margin": "sm"
+        }
+      ],
+      "paddingAll": "20px"
+    },
+    "footer": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "button",
+          "action": {
+            "type": "message",
+            "label": "🔙 กลับเมนู",
+            "text": "/km"
+          },
+          "style": "link",
+          "height": "sm"
+        }
+      ],
+      "paddingAll": "12px"
+    }
+  }
+}

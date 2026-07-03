@@ -69,6 +69,16 @@ type Post struct {
 	CreatedAt     time.Time `json:"createdAt" firestore:"createdAt"`
 }
 
+type Comment struct {
+	ID           string    `json:"id" firestore:"-"`
+	PostID       string    `json:"postId" firestore:"postId"`
+	AuthorID     string    `json:"authorId" firestore:"authorId"`
+	AuthorName   string    `json:"authorName" firestore:"authorName"`
+	AuthorAvatar string    `json:"authorAvatar" firestore:"authorAvatar"`
+	Content      string    `json:"content" firestore:"content"`
+	CreatedAt    time.Time `json:"createdAt" firestore:"createdAt"`
+}
+
 type Notification struct {
 	ID           string    `json:"id" firestore:"-"`
 	RecipientID  string    `json:"recipientId" firestore:"recipientId"`

@@ -142,7 +142,7 @@ class _WinRiderPromoCardState extends State<WinRiderPromoCard>
                           ],
                         ),
                         child: const Center(
-                          child: Text('🛺', style: TextStyle(fontSize: 52)),
+                          child: Text('🏍️', style: TextStyle(fontSize: 52)),
                         ),
                       ),
                     ),

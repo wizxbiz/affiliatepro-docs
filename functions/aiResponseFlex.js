@@ -183,7 +183,7 @@ const createAIResponseFlex = (responseText, question = "", metadata = {}) => {
     general: {
       icon: "https://cdn-icons-png.flaticon.com/512/4712/4712035.png",
       emoji: "💡",
-      title: "คำตอบจาก TukTuk",
+      title: "คำตอบจาก WiT",
       gradient: designSystem.gradients.default,
       headerColor: "#06C755"
     },
@@ -356,14 +356,14 @@ const createAIResponseFlex = (responseText, question = "", metadata = {}) => {
                 contents: [
                   {
                     type: "text",
-                    text: config.title,
+                    text: "Wit365",
                     weight: "bold",
                     size: "xl",
                     color: "#FFFFFF"
                   },
                   {
                     type: "text",
-                    text: "TukTuk AI Assistant",
+                    text: config.title,
                     size: "xs",
                     color: "#E5E7EB"
                   }
@@ -524,7 +524,7 @@ const createAIResponseFlex = (responseText, question = "", metadata = {}) => {
               },
               {
                 type: "text",
-                text: "✨ TukTuk Thailand",
+                text: "✨ วิศวกรรมพลาสติก โดย อาจารย์ วิทยา",
                 size: "xxs",
                 color: "#9CA3AF",
                 align: "end",
@@ -568,7 +568,7 @@ const createAIResponseFlex = (responseText, question = "", metadata = {}) => {
 const createSimpleAIResponseFlex = (responseText, userName = "คุณ") => {
   return {
     type: "flex",
-    altText: "💬 TukTuk Reply",
+    altText: "💬 WiT Reply",
     contents: {
       type: "bubble",
       size: "kilo",
@@ -585,8 +585,8 @@ const createSimpleAIResponseFlex = (responseText, userName = "คุณ") => {
                 type: "box",
                 layout: "vertical",
                 contents: [
-                  { type: "text", text: "TukTuk Assistant", weight: "bold", size: "md", color: "#111827" },
-                  { type: "text", text: "ตอบกลับทันใจ", size: "xs", color: "#6B7280" }
+                  { type: "text", text: "Wit365", weight: "bold", size: "md", color: "#111827" },
+                  { type: "text", text: "โดย อาจารย์ วิทยา", size: "xs", color: "#6B7280" }
                 ],
                 margin: "md",
                 justifyContent: "center"
@@ -627,7 +627,7 @@ const createSimpleAIResponseFlex = (responseText, userName = "คุณ") => {
  * @returns {Object} Message object (Flex หรือ Text)
  */
 const getOptimalAIResponse = (responseText, question = "", metadata = {}) => {
-  const creditLine = "\n\n✨ ขับเคลื่อนสู่ความสำเร็จโดย TukTuk Thailand";
+  const creditLine = "\n\n✨ Wit365 - วิศวกรรมพลาสติก โดย อาจารย์ วิทยา";
 
   console.log(`🎨 getOptimalAIResponse: responseText length = ${responseText.length} chars`);
 
@@ -721,7 +721,7 @@ const createLoadingFlex = (question = "", userName = "คุณ") => {
                 contents: [
                   {
                     type: "text",
-                    text: "TukTuk กำลังหาข้อมูล...",
+                    text: "Wit365 กำลังหาข้อมูล...",
                     weight: "bold",
                     size: "lg",
                     color: "#1F2937"
@@ -1033,7 +1033,7 @@ const createMaterialCardFlex = (materialData) => {
         layout: "horizontal",
         contents: [
           { type: "text", text: "📊 ข้อมูลจากฐานข้อมูล WiT", size: "xxs", color: "#9CA3AF" },
-          { type: "text", text: "✨ อาจารย์วิทยา", size: "xxs", color: "#9CA3AF", align: "end" }
+          { type: "text", text: "✨ โดย อาจารย์ วิทยา", size: "xxs", color: "#9CA3AF", align: "end" }
         ],
         paddingAll: "12px",
         backgroundColor: "#F9FAFB"
@@ -1278,7 +1278,7 @@ const createTroubleshootingCardFlex = (problemData) => {
         layout: "horizontal",
         contents: [
           { type: "text", text: "🔧 คู่มือแก้ปัญหา WiT", size: "xxs", color: "#9CA3AF" },
-          { type: "text", text: "✨ อาจารย์วิทยา", size: "xxs", color: "#9CA3AF", align: "end" }
+          { type: "text", text: "✨ โดย อาจารย์ วิทยา", size: "xxs", color: "#9CA3AF", align: "end" }
         ],
         paddingAll: "12px",
         backgroundColor: "#F9FAFB"
@@ -1809,7 +1809,7 @@ const createDataTableFlex = (tableData) => {
         layout: "horizontal",
         contents: [
           { type: "text", text: "📊 ข้อมูลจาก WiT Database", size: "xxs", color: "#9CA3AF" },
-          { type: "text", text: "✨ อาจารย์วิทยา", size: "xxs", color: "#9CA3AF", align: "end" }
+          { type: "text", text: "✨ โดย อาจารย์ วิทยา", size: "xxs", color: "#9CA3AF", align: "end" }
         ],
         paddingAll: "12px",
         backgroundColor: "#F9FAFB"
@@ -2075,7 +2075,7 @@ const createProgressIndicatorFlex = (progressData) => {
         layout: "horizontal",
         contents: [
           { type: "text", text: `📈 Step ${currentStep}/${steps.length}`, size: "xxs", color: "#9CA3AF" },
-          { type: "text", text: "✨ อาจารย์วิทยา", size: "xxs", color: "#9CA3AF", align: "end" }
+          { type: "text", text: "✨ โดย อาจารย์ วิทยา", size: "xxs", color: "#9CA3AF", align: "end" }
         ],
         paddingAll: "12px",
         backgroundColor: "#F9FAFB"
@@ -2333,7 +2333,7 @@ const createParameterSettingFlex = (paramData) => {
         layout: "horizontal",
         contents: [
           { type: "text", text: "⚙️ WiT Parameter Guide", size: "xxs", color: "#9CA3AF" },
-          { type: "text", text: "✨ อาจารย์วิทยา", size: "xxs", color: "#9CA3AF", align: "end" }
+          { type: "text", text: "✨ โดย อาจารย์ วิทยา", size: "xxs", color: "#9CA3AF", align: "end" }
         ],
         paddingAll: "12px",
         backgroundColor: "#F9FAFB"

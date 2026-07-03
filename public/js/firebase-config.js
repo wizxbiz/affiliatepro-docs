@@ -10,16 +10,38 @@
 // ===========================================
 // 📋 Firebase Configuration
 // ===========================================
-const firebaseConfig = {
-    apiKey: "AIzaSyBKL6HBLEndDX4LYo7APFNQ0IVICLJtaIE",
-    authDomain: "appinjproject.firebaseapp.com",
-    databaseURL: "https://appinjproject-default-rtdb.firebaseio.com",
-    projectId: "appinjproject",
-    storageBucket: "appinjproject.firebasestorage.app",
-    messagingSenderId: "408718656984",
-    appId: "1:408718656984:web:08bd8f084769d428251ead",
-    measurementId: "G-7ZM9H01D6E"
-};
+if (typeof window.firebaseConfig === 'undefined') {
+    window.firebaseConfig = {
+        apiKey: "AIzaSyBKL6HBLEndDX4LYo7APFNQ0IVICLJtaIE",
+        authDomain: "appinjproject.firebaseapp.com",
+        databaseURL: "https://appinjproject-default-rtdb.firebaseio.com",
+        projectId: "appinjproject",
+        storageBucket: "appinjproject.firebasestorage.app",
+        messagingSenderId: "408718656984",
+        appId: "1:408718656984:web:08bd8f084769d428251ead",
+        measurementId: "G-7ZM9H01D6E"
+    };
+}
+
+// Guard: Firebase App SDK must be loaded before this script
+if (typeof firebase === 'undefined') {
+    console.warn('[Cloudflare Migration] Firebase SDK missing in config. Fetching cloudflare-client.js synchronously...');
+    try {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', '/js/cloudflare-client.js', false); // synchronous request
+        xhr.send(null);
+        if (xhr.status === 200) {
+            const script = document.createElement('script');
+            script.text = xhr.responseText;
+            document.head.appendChild(script);
+            console.log('✅ Cloudflare Client fallback injected in config successfully');
+        } else {
+            throw new Error(`HTTP ${xhr.status}`);
+        }
+    } catch (e) {
+        console.error('[Cloudflare Migration] CRITICAL: Failed to load Cloudflare Client fallback in config:', e);
+    }
+}
 
 // ===========================================
 // 🚀 Initialize Firebase
@@ -30,7 +52,7 @@ function initializeFirebase() {
     try {
         // Initialize Firebase App
         if (!firebase.apps.length) {
-            app = firebase.initializeApp(firebaseConfig);
+            app = firebase.initializeApp(window.firebaseConfig);
         } else {
             app = firebase.app();
         }

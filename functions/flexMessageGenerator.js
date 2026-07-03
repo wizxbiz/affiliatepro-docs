@@ -310,7 +310,7 @@ const createStatsDashboard = (stats) => {
                 },
                 {
                   type: "text",
-                  text: "ระบบพัฒนาโดย อาจารย์วิทยา เทคนิคฉีดพลาสติก",
+                  text: "ระบบพัฒนาโดย อาจารย์ วิทยา",
                   size: "xs",
                   color: "#999999",
                   margin: "sm",
@@ -559,7 +559,7 @@ const createCalculationDashboard = (title, data, recommendation) => {
                 },
                 {
                   type: "text",
-                  text: "ระบบพัฒนาโดย อาจารย์วิทยา เทคนิคฉีดพลาสติก",
+                  text: "ระบบพัฒนาโดย อาจารย์ วิทยา",
                   size: "xs",
                   color: "#999999",
                   margin: "sm",
@@ -606,14 +606,14 @@ const createPackageDetailMessage = (packageType = "all") => {
         emoji: "👤",
         tag: "เริ่มต้น",
         features: [
-          {icon: "✅", text: "WiT ตอบคำถามไม่จำกัด."},
-          {icon: "✅", text: "ส่งรูปวิเคราะห์ภาพได้ 10 รูป/วัน"},
-          {icon: "✅", text: "เครื่องมือคำนวณทั้งหมด"},
-          {icon: "✅", text: "ถามปัญหาเทคนิคได้ตลอด"},
-          {icon: "⭐", text: "Support ตอบภายใน 24 ชม."},
+          { icon: "✅", text: "WiT ตอบคำถามไม่จำกัด." },
+          { icon: "✅", text: "ส่งรูปวิเคราะห์ภาพได้ 10 รูป/วัน" },
+          { icon: "✅", text: "เครื่องมือคำนวณทั้งหมด" },
+          { icon: "✅", text: "ถามปัญหาเทคนิคได้ตลอด" },
+          { icon: "⭐", text: "Support ตอบภายใน 24 ชม." },
         ],
         limitations: [
-          {icon: "ℹ️", text: "1 บัญชี / 1 ผู้ใช้"},
+          { icon: "ℹ️", text: "1 บัญชี / 1 ผู้ใช้" },
         ],
         selectAction: "เลือกรายเดือน",
       },
@@ -629,15 +629,15 @@ const createPackageDetailMessage = (packageType = "all") => {
         emoji: "⭐",
         tag: "ยอดนิยม",
         features: [
-          {icon: "✅", text: "WiT ตอบคำถามไม่จำกัด."},
-          {icon: "✅", text: "วิเคราะห์ภาพได้ 25 รูป/วัน"},
-          {icon: "✅", text: "เครื่องมือคำนวณทั้งหมด"},
-          {icon: "✅", text: "ถามปัญหาเทคนิคได้ตลอด"},
-          {icon: "⭐", text: "Support ตอบภายใน 12 ชม."},
-          {icon: "🎁", text: "ฟรี! คู่มือ Injection Molding"},
+          { icon: "✅", text: "WiT ตอบคำถามไม่จำกัด." },
+          { icon: "✅", text: "วิเคราะห์ภาพได้ 25 รูป/วัน" },
+          { icon: "✅", text: "เครื่องมือคำนวณทั้งหมด" },
+          { icon: "✅", text: "ถามปัญหาเทคนิคได้ตลอด" },
+          { icon: "⭐", text: "Support ตอบภายใน 12 ชม." },
+          { icon: "🎁", text: "ฟรี! คู่มือ Injection Molding" },
         ],
         limitations: [
-          {icon: "ℹ️", text: "1 บัญชี / 1 ผู้ใช้"},
+          { icon: "ℹ️", text: "1 บัญชี / 1 ผู้ใช้" },
         ],
         selectAction: "เลือก3เดือน",
       },
@@ -653,16 +653,16 @@ const createPackageDetailMessage = (packageType = "all") => {
         emoji: "🔥",
         tag: "คุ้มสุด!",
         features: [
-          {icon: "✅", text: "WiT ตอบคำถามไม่จำกัด."},
-          {icon: "✅", text: "วิเคราะห์ภาพไม่จำกัด"},
-          {icon: "✅", text: "เครื่องมือคำนวณทั้งหมด"},
-          {icon: "✅", text: "ถามปัญหาเทคนิคได้ตลอด"},
-          {icon: "⚡", text: "Priority Support ตอบเร็ว"},
-          {icon: "🎁", text: "ฟรี! คู่มือ + Video Course"},
-          {icon: "🏆", text: "Early Access ฟีเจอร์ใหม่"},
+          { icon: "✅", text: "WiT ตอบคำถามไม่จำกัด." },
+          { icon: "✅", text: "วิเคราะห์ภาพไม่จำกัด" },
+          { icon: "✅", text: "เครื่องมือคำนวณทั้งหมด" },
+          { icon: "✅", text: "ถามปัญหาเทคนิคได้ตลอด" },
+          { icon: "⚡", text: "Priority Support ตอบเร็ว" },
+          { icon: "🎁", text: "ฟรี! คู่มือ + Video Course" },
+          { icon: "🏆", text: "Early Access ฟีเจอร์ใหม่" },
         ],
         limitations: [
-          {icon: "ℹ️", text: "1 บัญชี / 1 ผู้ใช้"},
+          { icon: "ℹ️", text: "1 บัญชี / 1 ผู้ใช้" },
         ],
         selectAction: "เลือกรายปี",
       },
@@ -677,16 +677,16 @@ const createPackageDetailMessage = (packageType = "all") => {
         emoji: "🏢",
         tag: "องค์กร",
         features: [
-          {icon: "✅", text: "WiT ตอบคำถามไม่จำกัด 5 คน"},
-          {icon: "✅", text: "วิเคราะห์ภาพไม่จำกัดทุกคน"},
-          {icon: "✅", text: "เครื่องมือคำนวณทั้งหมด"},
-          {icon: "🔑", text: "Group Code ดึงทีมเข้าง่าย"},
-          {icon: "📊", text: "Dashboard ดูสถิติทีม"},
-          {icon: "⚡", text: "VIP Support"},
-          {icon: "🎁", text: "ฟรี! คู่มือ + Video + Consulting"},
+          { icon: "✅", text: "WiT ตอบคำถามไม่จำกัด 5 คน" },
+          { icon: "✅", text: "วิเคราะห์ภาพไม่จำกัดทุกคน" },
+          { icon: "✅", text: "เครื่องมือคำนวณทั้งหมด" },
+          { icon: "🔑", text: "Group Code ดึงทีมเข้าง่าย" },
+          { icon: "📊", text: "Dashboard ดูสถิติทีม" },
+          { icon: "⚡", text: "VIP Support" },
+          { icon: "🎁", text: "ฟรี! คู่มือ + Video + Consulting" },
         ],
         limitations: [
-          {icon: "💡", text: "เพิ่มสมาชิกได้ 199฿/คน/ปี"},
+          { icon: "💡", text: "เพิ่มสมาชิกได้ 199฿/คน/ปี" },
         ],
         selectAction: "เลือกทีมรายปี",
       },
@@ -706,9 +706,9 @@ const createPackageDetailMessage = (packageType = "all") => {
     // Build price per day row contents
     const pricePerDayContents = [];
     if (pkg.pricePerDay) {
-      pricePerDayContents.push({type: "text", text: `≈ ${pkg.pricePerDay} บาท/วัน`, size: "xs", color: "#ffffffaa"});
+      pricePerDayContents.push({ type: "text", text: `≈ ${pkg.pricePerDay} บาท/วัน`, size: "xs", color: "#ffffffaa" });
     } else if (pkg.pricePerUser) {
-      pricePerDayContents.push({type: "text", text: `ตกคนละ ${pkg.pricePerUser} บาท/เดือน`, size: "xs", color: "#ffffffaa"});
+      pricePerDayContents.push({ type: "text", text: `ตกคนละ ${pkg.pricePerUser} บาท/เดือน`, size: "xs", color: "#ffffffaa" });
     }
 
     if (pkg.discount) {
@@ -716,7 +716,7 @@ const createPackageDetailMessage = (packageType = "all") => {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: `ประหยัด ${pkg.discount}`, size: "xxs", color: "#ffffff", align: "center"},
+          { type: "text", text: `ประหยัด ${pkg.discount}`, size: "xxs", color: "#ffffff", align: "center" },
         ],
         backgroundColor: "#ff6b6b",
         cornerRadius: "10px",
@@ -747,7 +747,7 @@ const createPackageDetailMessage = (packageType = "all") => {
                   type: "box",
                   layout: "vertical",
                   contents: [
-                    {type: "text", text: pkg.tag, size: "xxs", color: "#ffffff", weight: "bold", align: "center"},
+                    { type: "text", text: pkg.tag, size: "xxs", color: "#ffffff", weight: "bold", align: "center" },
                   ],
                   backgroundColor: pkg.color,
                   cornerRadius: "12px",
@@ -755,7 +755,7 @@ const createPackageDetailMessage = (packageType = "all") => {
                   paddingStart: "10px",
                   paddingEnd: "10px",
                 },
-                {type: "spacer", size: "xl"},
+                { type: "spacer", size: "xl" },
               ],
             },
             // Package name
@@ -764,14 +764,14 @@ const createPackageDetailMessage = (packageType = "all") => {
               layout: "horizontal",
               margin: "lg",
               contents: [
-                {type: "text", text: pkg.emoji, size: "xxl", flex: 0},
+                { type: "text", text: pkg.emoji, size: "xxl", flex: 0 },
                 {
                   type: "box",
                   layout: "vertical",
                   margin: "lg",
                   contents: [
-                    {type: "text", text: pkg.thaiName, weight: "bold", size: "xl", color: "#ffffff"},
-                    {type: "text", text: pkg.name.toUpperCase(), size: "xs", color: "#ffffffaa"},
+                    { type: "text", text: pkg.thaiName, weight: "bold", size: "xl", color: "#ffffff" },
+                    { type: "text", text: pkg.name.toUpperCase(), size: "xs", color: "#ffffffaa" },
                   ],
                 },
               ],
@@ -782,9 +782,9 @@ const createPackageDetailMessage = (packageType = "all") => {
               layout: "horizontal",
               margin: "lg",
               contents: [
-                {type: "text", text: "฿", size: "lg", color: "#ffffff", flex: 0},
-                {type: "text", text: pkg.price, size: "xxl", weight: "bold", color: "#ffffff", flex: 0},
-                {type: "text", text: ` /${pkg.period}`, size: "sm", color: "#ffffffcc", margin: "sm"},
+                { type: "text", text: "฿", size: "lg", color: "#ffffff", flex: 0 },
+                { type: "text", text: pkg.price, size: "xxl", weight: "bold", color: "#ffffff", flex: 0 },
+                { type: "text", text: ` /${pkg.period}`, size: "sm", color: "#ffffffcc", margin: "sm" },
               ],
             },
             // Price per day (only if has contents)
@@ -801,7 +801,7 @@ const createPackageDetailMessage = (packageType = "all") => {
           type: "box",
           layout: "vertical",
           contents: [
-            {type: "text", text: "✨ สิ่งที่คุณจะได้รับ", weight: "bold", size: "md", color: "#1a1a1a"},
+            { type: "text", text: "✨ สิ่งที่คุณจะได้รับ", weight: "bold", size: "md", color: "#1a1a1a" },
             {
               type: "box",
               layout: "vertical",
@@ -811,12 +811,12 @@ const createPackageDetailMessage = (packageType = "all") => {
                 type: "box",
                 layout: "horizontal",
                 contents: [
-                  {type: "text", text: f.icon, size: "sm", flex: 0},
-                  {type: "text", text: f.text, size: "sm", color: "#333333", margin: "md", flex: 1, wrap: true},
+                  { type: "text", text: f.icon, size: "sm", flex: 0 },
+                  { type: "text", text: f.text, size: "sm", color: "#333333", margin: "md", flex: 1, wrap: true },
                 ],
               })),
             },
-            {type: "separator", margin: "lg"},
+            { type: "separator", margin: "lg" },
             {
               type: "box",
               layout: "vertical",
@@ -825,8 +825,8 @@ const createPackageDetailMessage = (packageType = "all") => {
                 type: "box",
                 layout: "horizontal",
                 contents: [
-                  {type: "text", text: l.icon, size: "xs", flex: 0},
-                  {type: "text", text: l.text, size: "xs", color: "#888888", margin: "md", flex: 1},
+                  { type: "text", text: l.icon, size: "xs", flex: 0 },
+                  { type: "text", text: l.text, size: "xs", color: "#888888", margin: "md", flex: 1 },
                 ],
               })),
             },
@@ -842,13 +842,13 @@ const createPackageDetailMessage = (packageType = "all") => {
               type: "button",
               style: "primary",
               color: pkg.color,
-              action: {type: "message", label: `✅ สมัคร ${pkg.thaiName} ${pkg.price}฿`, text: pkg.selectAction},
+              action: { type: "message", label: `✅ สมัคร ${pkg.thaiName} ${pkg.price}฿`, text: pkg.selectAction },
               height: "md",
             },
             {
               type: "button",
               style: "secondary",
-              action: {type: "message", label: "🔙 ดูแพ็คเกจทั้งหมด", text: "ดูแพ็คเกจทั้งหมด"},
+              action: { type: "message", label: "🔙 ดูแพ็คเกจทั้งหมด", text: "ดูแพ็คเกจทั้งหมด" },
               height: "sm",
             },
           ],
@@ -874,8 +874,8 @@ const createAllPackagesCarousel = (packages) => {
         type: "box",
         layout: "horizontal",
         contents: [
-          {type: "text", text: f.icon, size: "xs", flex: 0},
-          {type: "text", text: f.text, size: "xs", color: "#555555", margin: "sm", flex: 1, wrap: true},
+          { type: "text", text: f.icon, size: "xs", flex: 0 },
+          { type: "text", text: f.text, size: "xs", color: "#555555", margin: "sm", flex: 1, wrap: true },
         ],
         margin: "sm",
       }));
@@ -903,14 +903,14 @@ const createAllPackagesCarousel = (packages) => {
               type: "box",
               layout: "horizontal",
               contents: [
-                {type: "text", text: pkg.emoji, size: "xl", flex: 0},
+                { type: "text", text: pkg.emoji, size: "xl", flex: 0 },
                 {
                   type: "box",
                   layout: "vertical",
                   margin: "md",
                   contents: [
-                    {type: "text", text: pkg.thaiName, weight: "bold", size: "md", color: "#ffffff"},
-                    {type: "text", text: pkg.tag, size: "xxs", color: "#ffffffaa"},
+                    { type: "text", text: pkg.thaiName, weight: "bold", size: "md", color: "#ffffff" },
+                    { type: "text", text: pkg.tag, size: "xxs", color: "#ffffffaa" },
                   ],
                 },
               ],
@@ -920,8 +920,8 @@ const createAllPackagesCarousel = (packages) => {
               layout: "horizontal",
               margin: "lg",
               contents: [
-                {type: "text", text: "฿" + pkg.price, size: "xxl", weight: "bold", color: "#ffffff", flex: 0},
-                {type: "text", text: ` /${pkg.period}`, size: "xs", color: "#ffffffcc", margin: "sm"},
+                { type: "text", text: "฿" + pkg.price, size: "xxl", weight: "bold", color: "#ffffff", flex: 0 },
+                { type: "text", text: ` /${pkg.period}`, size: "xs", color: "#ffffffcc", margin: "sm" },
               ],
             },
           ],
@@ -943,13 +943,13 @@ const createAllPackagesCarousel = (packages) => {
               type: "button",
               style: "primary",
               color: pkg.color,
-              action: {type: "message", label: "📋 ดูรายละเอียด", text: `ดูรายละเอียดแพ็คเกจ${pkg.thaiName}`},
+              action: { type: "message", label: "📋 ดูรายละเอียด", text: `ดูรายละเอียดแพ็คเกจ${pkg.thaiName}` },
               height: "sm",
             },
             {
               type: "button",
               style: "link",
-              action: {type: "message", label: "สมัครเลย", text: pkg.selectAction},
+              action: { type: "message", label: "สมัครเลย", text: pkg.selectAction },
               height: "sm",
             },
           ],
@@ -1120,19 +1120,19 @@ const createQuotaLimitMessage = (usageCount = 15, hasUsedTrial = false) => {
                           type: "box",
                           layout: "horizontal",
                           contents: [
-                            {type: "text", text: "👤", size: "md", flex: 0},
-                            {type: "text", text: "รายเดือน", weight: "bold", size: "sm", color: "#7c4dff", margin: "sm"},
+                            { type: "text", text: "👤", size: "md", flex: 0 },
+                            { type: "text", text: "รายเดือน", weight: "bold", size: "sm", color: "#7c4dff", margin: "sm" },
                           ],
                         },
-                        {type: "text", text: "AI ไม่จำกัด + วิเคราะห์ภาพ 30 รูป/วัน", size: "xxs", color: "#888888", margin: "xs", wrap: true},
+                        { type: "text", text: "AI ไม่จำกัด + วิเคราะห์ภาพ 30 รูป/วัน", size: "xxs", color: "#888888", margin: "xs", wrap: true },
                       ],
                     },
                     {
                       type: "box",
                       layout: "vertical",
                       contents: [
-                        {type: "text", text: "99฿", weight: "bold", size: "lg", color: "#7c4dff", align: "end"},
-                        {type: "text", text: "ดูรายละเอียด →", size: "xxs", color: "#7c4dff", align: "end"},
+                        { type: "text", text: "99฿", weight: "bold", size: "lg", color: "#7c4dff", align: "end" },
+                        { type: "text", text: "ดูรายละเอียด →", size: "xxs", color: "#7c4dff", align: "end" },
                       ],
                       justifyContent: "center",
                     },
@@ -1159,8 +1159,8 @@ const createQuotaLimitMessage = (usageCount = 15, hasUsedTrial = false) => {
                           type: "box",
                           layout: "horizontal",
                           contents: [
-                            {type: "text", text: "⭐", size: "md", flex: 0},
-                            {type: "text", text: "3 เดือน", weight: "bold", size: "sm", color: "#1e88e5", margin: "sm"},
+                            { type: "text", text: "⭐", size: "md", flex: 0 },
+                            { type: "text", text: "3 เดือน", weight: "bold", size: "sm", color: "#1e88e5", margin: "sm" },
                             {
                               type: "box",
                               layout: "vertical",
@@ -1171,20 +1171,20 @@ const createQuotaLimitMessage = (usageCount = 15, hasUsedTrial = false) => {
                               paddingEnd: "6px",
                               margin: "sm",
                               contents: [
-                                {type: "text", text: "ยอดนิยม", size: "xxs", color: "#ffffff"},
+                                { type: "text", text: "ยอดนิยม", size: "xxs", color: "#ffffff" },
                               ],
                             },
                           ],
                         },
-                        {type: "text", text: "AI ไม่จำกัด + ภาพ 50 รูป/วัน + คู่มือฟรี", size: "xxs", color: "#888888", margin: "xs", wrap: true},
+                        { type: "text", text: "AI ไม่จำกัด + ภาพ 50 รูป/วัน + คู่มือฟรี", size: "xxs", color: "#888888", margin: "xs", wrap: true },
                       ],
                     },
                     {
                       type: "box",
                       layout: "vertical",
                       contents: [
-                        {type: "text", text: "259฿", weight: "bold", size: "lg", color: "#1e88e5", align: "end"},
-                        {type: "text", text: "ดูรายละเอียด →", size: "xxs", color: "#1e88e5", align: "end"},
+                        { type: "text", text: "259฿", weight: "bold", size: "lg", color: "#1e88e5", align: "end" },
+                        { type: "text", text: "ดูรายละเอียด →", size: "xxs", color: "#1e88e5", align: "end" },
                       ],
                       justifyContent: "center",
                     },
@@ -1213,8 +1213,8 @@ const createQuotaLimitMessage = (usageCount = 15, hasUsedTrial = false) => {
                           type: "box",
                           layout: "horizontal",
                           contents: [
-                            {type: "text", text: "🔥", size: "md", flex: 0},
-                            {type: "text", text: "รายปี", weight: "bold", size: "sm", color: "#e65100", margin: "sm"},
+                            { type: "text", text: "🔥", size: "md", flex: 0 },
+                            { type: "text", text: "รายปี", weight: "bold", size: "sm", color: "#e65100", margin: "sm" },
                             {
                               type: "box",
                               layout: "vertical",
@@ -1225,20 +1225,20 @@ const createQuotaLimitMessage = (usageCount = 15, hasUsedTrial = false) => {
                               paddingEnd: "6px",
                               margin: "sm",
                               contents: [
-                                {type: "text", text: "คุ้มสุด!", size: "xxs", color: "#ffffff"},
+                                { type: "text", text: "คุ้มสุด!", size: "xxs", color: "#ffffff" },
                               ],
                             },
                           ],
                         },
-                        {type: "text", text: "ทุกอย่างไม่จำกัด + Priority Support + Video", size: "xxs", color: "#888888", margin: "xs", wrap: true},
+                        { type: "text", text: "ทุกอย่างไม่จำกัด + Priority Support + Video", size: "xxs", color: "#888888", margin: "xs", wrap: true },
                       ],
                     },
                     {
                       type: "box",
                       layout: "vertical",
                       contents: [
-                        {type: "text", text: "699฿", weight: "bold", size: "lg", color: "#e65100", align: "end"},
-                        {type: "text", text: "≈ 1.9฿/วัน", size: "xxs", color: "#f57c00", align: "end"},
+                        { type: "text", text: "699฿", weight: "bold", size: "lg", color: "#e65100", align: "end" },
+                        { type: "text", text: "≈ 1.9฿/วัน", size: "xxs", color: "#f57c00", align: "end" },
                       ],
                       justifyContent: "center",
                     },
@@ -1265,8 +1265,8 @@ const createQuotaLimitMessage = (usageCount = 15, hasUsedTrial = false) => {
                           type: "box",
                           layout: "horizontal",
                           contents: [
-                            {type: "text", text: "🏢", size: "md", flex: 0},
-                            {type: "text", text: "ทีมรายปี", weight: "bold", size: "sm", color: "#2e7d32", margin: "sm"},
+                            { type: "text", text: "🏢", size: "md", flex: 0 },
+                            { type: "text", text: "ทีมรายปี", weight: "bold", size: "sm", color: "#2e7d32", margin: "sm" },
                             {
                               type: "box",
                               layout: "vertical",
@@ -1277,20 +1277,20 @@ const createQuotaLimitMessage = (usageCount = 15, hasUsedTrial = false) => {
                               paddingEnd: "6px",
                               margin: "sm",
                               contents: [
-                                {type: "text", text: "5 คน", size: "xxs", color: "#ffffff"},
+                                { type: "text", text: "5 คน", size: "xxs", color: "#ffffff" },
                               ],
                             },
                           ],
                         },
-                        {type: "text", text: "ใช้ได้ทั้งทีม + Group Code + VIP Support", size: "xxs", color: "#888888", margin: "xs", wrap: true},
+                        { type: "text", text: "ใช้ได้ทั้งทีม + Group Code + VIP Support", size: "xxs", color: "#888888", margin: "xs", wrap: true },
                       ],
                     },
                     {
                       type: "box",
                       layout: "vertical",
                       contents: [
-                        {type: "text", text: "2,490฿", weight: "bold", size: "md", color: "#2e7d32", align: "end"},
-                        {type: "text", text: "41฿/คน/เดือน", size: "xxs", color: "#388e3c", align: "end"},
+                        { type: "text", text: "2,490฿", weight: "bold", size: "md", color: "#2e7d32", align: "end" },
+                        { type: "text", text: "41฿/คน/เดือน", size: "xxs", color: "#388e3c", align: "end" },
                       ],
                       justifyContent: "center",
                     },
@@ -1311,15 +1311,15 @@ const createQuotaLimitMessage = (usageCount = 15, hasUsedTrial = false) => {
               cornerRadius: "8px",
               paddingAll: "10px",
               contents: [
-                {type: "text", text: "🔑", size: "md", flex: 0},
+                { type: "text", text: "🔑", size: "md", flex: 0 },
                 {
                   type: "box",
                   layout: "vertical",
                   margin: "md",
                   flex: 1,
                   contents: [
-                    {type: "text", text: "มีรหัสกลุ่มแล้ว?", weight: "bold", size: "xs", color: "#5e35b1"},
-                    {type: "text", text: "กดเพื่อใส่รหัสเข้าร่วมทีม", size: "xxs", color: "#7e57c2"},
+                    { type: "text", text: "มีรหัสกลุ่มแล้ว?", weight: "bold", size: "xs", color: "#5e35b1" },
+                    { type: "text", text: "กดเพื่อใส่รหัสเข้าร่วมทีม", size: "xxs", color: "#7e57c2" },
                   ],
                 },
               ],
@@ -1449,7 +1449,7 @@ const createWelcomeMessage = (displayName = "User") => {
               contents: [
                 {
                   type: "text",
-                  text: "🎯 เลือกระบบ ถามวิทย์ สำหรับคุณ",
+                  text: "🎯 Wit365 - วิศวกรรมพลาสติก",
                   size: "md",
                   weight: "bold",
                   color: "#1a1a1a",
@@ -2842,7 +2842,7 @@ const createWelcomeMessage = (displayName = "User") => {
                     },
                     {
                       type: "text",
-                      text: "Powered by WiT System",
+                      text: "โดย อาจารย์ วิทยา",
                       size: "xxs",
                       color: "#aaaaaa",
                       margin: "sm",
@@ -2871,7 +2871,7 @@ const createPlasticConsultationMenu = () => {
   try {
     return {
       type: "flex",
-      altText: "🏭 ศูนย์ปรึกษาเทคนิคฉีดพลาสติก - WiT AI",
+      altText: "🏭 Wit365 - วิศวกรรมพลาสติก",
       contents: {
         type: "carousel",
         contents: [
@@ -2883,13 +2883,13 @@ const createPlasticConsultationMenu = () => {
               type: "box",
               layout: "horizontal",
               contents: [
-                {type: "text", text: "🏭", size: "xxl", flex: 0},
+                { type: "text", text: "🏭", size: "xxl", flex: 0 },
                 {
                   type: "box",
                   layout: "vertical",
                   contents: [
-                    {type: "text", text: "ศูนย์ปรึกษาฉีดพลาสติก", weight: "bold", size: "lg", color: "#ffffff"},
-                    {type: "text", text: "INJECTION MOLDING EXPERT", size: "xs", color: "#ffffffcc"},
+                    { type: "text", text: "Wit365", weight: "bold", size: "lg", color: "#ffffff" },
+                    { type: "text", text: "วิศวกรรมพลาสติก โดย อาจารย์ วิทยา", size: "xs", color: "#ffffffcc" },
                   ],
                   margin: "md",
                 },
@@ -2901,7 +2901,7 @@ const createPlasticConsultationMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "🎯 เลือกหัวข้อที่ต้องการ", weight: "bold", size: "md", color: "#1a1a1a"},
+                { type: "text", text: "🎯 เลือกหัวข้อที่ต้องการ", weight: "bold", size: "md", color: "#1a1a1a" },
                 {
                   type: "box",
                   layout: "vertical",
@@ -2918,29 +2918,29 @@ const createPlasticConsultationMenu = () => {
                           type: "box",
                           layout: "vertical",
                           contents: [
-                            {type: "text", text: "🔍", size: "xxl", align: "center"},
-                            {type: "text", text: "วินิจฉัย Defect", weight: "bold", size: "sm", align: "center", color: "#1565c0", margin: "sm"},
-                            {type: "text", text: "9+ ปัญหา", size: "xxs", align: "center", color: "#888888"},
+                            { type: "text", text: "🔍", size: "xxl", align: "center" },
+                            { type: "text", text: "วินิจฉัย Defect", weight: "bold", size: "sm", align: "center", color: "#1565c0", margin: "sm" },
+                            { type: "text", text: "9+ ปัญหา", size: "xxs", align: "center", color: "#888888" },
                           ],
                           backgroundColor: "#e3f2fd",
                           cornerRadius: "12px",
                           paddingAll: "12px",
                           flex: 1,
-                          action: {type: "message", text: "/defect"},
+                          action: { type: "message", text: "/defect" },
                         },
                         {
                           type: "box",
                           layout: "vertical",
                           contents: [
-                            {type: "text", text: "🧮", size: "xxl", align: "center"},
-                            {type: "text", text: "เครื่องคำนวณ", weight: "bold", size: "sm", align: "center", color: "#2e7d32", margin: "sm"},
-                            {type: "text", text: "10+ สูตร", size: "xxs", align: "center", color: "#888888"},
+                            { type: "text", text: "🧮", size: "xxl", align: "center" },
+                            { type: "text", text: "เครื่องคำนวณ", weight: "bold", size: "sm", align: "center", color: "#2e7d32", margin: "sm" },
+                            { type: "text", text: "10+ สูตร", size: "xxs", align: "center", color: "#888888" },
                           ],
                           backgroundColor: "#e8f5e9",
                           cornerRadius: "12px",
                           paddingAll: "12px",
                           flex: 1,
-                          action: {type: "message", text: "/calc"},
+                          action: { type: "message", text: "/calc" },
                         },
                       ],
                     },
@@ -2954,29 +2954,29 @@ const createPlasticConsultationMenu = () => {
                           type: "box",
                           layout: "vertical",
                           contents: [
-                            {type: "text", text: "🌡️", size: "xxl", align: "center"},
-                            {type: "text", text: "ตารางอุณหภูมิ", weight: "bold", size: "sm", align: "center", color: "#d84315", margin: "sm"},
-                            {type: "text", text: "50+ วัสดุ", size: "xxs", align: "center", color: "#888888"},
+                            { type: "text", text: "🌡️", size: "xxl", align: "center" },
+                            { type: "text", text: "ตารางอุณหภูมิ", weight: "bold", size: "sm", align: "center", color: "#d84315", margin: "sm" },
+                            { type: "text", text: "50+ วัสดุ", size: "xxs", align: "center", color: "#888888" },
                           ],
                           backgroundColor: "#fbe9e7",
                           cornerRadius: "12px",
                           paddingAll: "12px",
                           flex: 1,
-                          action: {type: "message", text: "/temp"},
+                          action: { type: "message", text: "/temp" },
                         },
                         {
                           type: "box",
                           layout: "vertical",
                           contents: [
-                            {type: "text", text: "🧪", size: "xxl", align: "center"},
-                            {type: "text", text: "คู่มือวัสดุ", weight: "bold", size: "sm", align: "center", color: "#7b1fa2", margin: "sm"},
-                            {type: "text", text: "PP PE ABS...", size: "xxs", align: "center", color: "#888888"},
+                            { type: "text", text: "🧪", size: "xxl", align: "center" },
+                            { type: "text", text: "คู่มือวัสดุ", weight: "bold", size: "sm", align: "center", color: "#7b1fa2", margin: "sm" },
+                            { type: "text", text: "PP PE ABS...", size: "xxs", align: "center", color: "#888888" },
                           ],
                           backgroundColor: "#f3e5f5",
                           cornerRadius: "12px",
                           paddingAll: "12px",
                           flex: 1,
-                          action: {type: "message", text: "/material"},
+                          action: { type: "message", text: "/material" },
                         },
                       ],
                     },
@@ -2990,29 +2990,29 @@ const createPlasticConsultationMenu = () => {
                           type: "box",
                           layout: "vertical",
                           contents: [
-                            {type: "text", text: "👥", size: "xxl", align: "center"},
-                            {type: "text", text: "ทีมงาน", weight: "bold", size: "sm", align: "center", color: "#00838f", margin: "sm"},
-                            {type: "text", text: "จัดการทีม", size: "xxs", align: "center", color: "#888888"},
+                            { type: "text", text: "👥", size: "xxl", align: "center" },
+                            { type: "text", text: "ทีมงาน", weight: "bold", size: "sm", align: "center", color: "#00838f", margin: "sm" },
+                            { type: "text", text: "จัดการทีม", size: "xxs", align: "center", color: "#888888" },
                           ],
                           backgroundColor: "#e0f7fa",
                           cornerRadius: "12px",
                           paddingAll: "12px",
                           flex: 1,
-                          action: {type: "message", text: "/team"},
+                          action: { type: "message", text: "/team" },
                         },
                         {
                           type: "box",
                           layout: "vertical",
                           contents: [
-                            {type: "text", text: "🤖", size: "xxl", align: "center"},
-                            {type: "text", text: "ถาม WiT", weight: "bold", size: "sm", align: "center", color: "#f57c00", margin: "sm"},
-                            {type: "text", text: "พิมพ์คำถาม", size: "xxs", align: "center", color: "#888888"},
+                            { type: "text", text: "🤖", size: "xxl", align: "center" },
+                            { type: "text", text: "ถาม Wit365", weight: "bold", size: "sm", align: "center", color: "#f57c00", margin: "sm" },
+                            { type: "text", text: "พิมพ์คำถาม", size: "xxs", align: "center", color: "#888888" },
                           ],
                           backgroundColor: "#fff3e0",
                           cornerRadius: "12px",
                           paddingAll: "12px",
                           flex: 1,
-                          action: {type: "message", text: "Short shot แก้ยังไงครับ"},
+                          action: { type: "message", text: "Short shot แก้ยังไงครับ" },
                         },
                       ],
                     },
@@ -3025,7 +3025,7 @@ const createPlasticConsultationMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "💡 พิมพ์คำถามภาษาไทยได้เลย WiT เข้าใจครับ!", size: "xs", color: "#888888", align: "center", wrap: true},
+                { type: "text", text: "💡 พิมพ์คำถามภาษาไทยได้เลย WiT เข้าใจครับ!", size: "xs", color: "#888888", align: "center", wrap: true },
               ],
               paddingAll: "12px",
               backgroundColor: "#f5f5f5",
@@ -3039,13 +3039,13 @@ const createPlasticConsultationMenu = () => {
               type: "box",
               layout: "horizontal",
               contents: [
-                {type: "text", text: "🔍", size: "xl", flex: 0},
+                { type: "text", text: "🔍", size: "xl", flex: 0 },
                 {
                   type: "box",
                   layout: "vertical",
                   contents: [
-                    {type: "text", text: "คู่มือวินิจฉัย Defect", weight: "bold", size: "lg", color: "#ffffff"},
-                    {type: "text", text: "DEFECT DIAGNOSIS", size: "xs", color: "#ffffffcc"},
+                    { type: "text", text: "คู่มือวินิจฉัย Defect", weight: "bold", size: "lg", color: "#ffffff" },
+                    { type: "text", text: "DEFECT DIAGNOSIS", size: "xs", color: "#ffffffcc" },
                   ],
                   margin: "md",
                 },
@@ -3057,22 +3057,22 @@ const createPlasticConsultationMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "⚠️ ปัญหาที่พบบ่อย", weight: "bold", size: "md", color: "#1a1a1a"},
+                { type: "text", text: "⚠️ ปัญหาที่พบบ่อย", weight: "bold", size: "md", color: "#1a1a1a" },
                 {
                   type: "box",
                   layout: "vertical",
                   margin: "lg",
                   spacing: "sm",
                   contents: [
-                    {type: "box", layout: "horizontal", contents: [{type: "text", text: "🔸", size: "sm", flex: 0}, {type: "text", text: "Short Shot - ฉีดไม่เต็ม", size: "sm", color: "#333333", margin: "sm"}], action: {type: "message", text: "วินิจฉัย Short Shot"}},
-                    {type: "box", layout: "horizontal", contents: [{type: "text", text: "🔸", size: "sm", flex: 0}, {type: "text", text: "Flash - เนื้อเกิน/ครีบ", size: "sm", color: "#333333", margin: "sm"}], action: {type: "message", text: "วินิจฉัย Flash"}},
-                    {type: "box", layout: "horizontal", contents: [{type: "text", text: "🔸", size: "sm", flex: 0}, {type: "text", text: "Sink Mark - รอยยุบ", size: "sm", color: "#333333", margin: "sm"}], action: {type: "message", text: "วินิจฉัย Sink Mark"}},
-                    {type: "box", layout: "horizontal", contents: [{type: "text", text: "🔸", size: "sm", flex: 0}, {type: "text", text: "Burn Mark - รอยไหม้", size: "sm", color: "#333333", margin: "sm"}], action: {type: "message", text: "วินิจฉัย Burn Mark"}},
-                    {type: "box", layout: "horizontal", contents: [{type: "text", text: "🔸", size: "sm", flex: 0}, {type: "text", text: "Warp - บิดงอ", size: "sm", color: "#333333", margin: "sm"}], action: {type: "message", text: "วินิจฉัย Warpage"}},
-                    {type: "box", layout: "horizontal", contents: [{type: "text", text: "🔸", size: "sm", flex: 0}, {type: "text", text: "Weld Line - รอยเชื่อม", size: "sm", color: "#333333", margin: "sm"}], action: {type: "message", text: "วินิจฉัย Weld Line"}},
-                    {type: "box", layout: "horizontal", contents: [{type: "text", text: "🔸", size: "sm", flex: 0}, {type: "text", text: "Silver Streak - เส้นเงิน", size: "sm", color: "#333333", margin: "sm"}], action: {type: "message", text: "วินิจฉัย Silver Streak"}},
-                    {type: "box", layout: "horizontal", contents: [{type: "text", text: "🔸", size: "sm", flex: 0}, {type: "text", text: "Jetting - รอยพุ่ง", size: "sm", color: "#333333", margin: "sm"}], action: {type: "message", text: "วินิจฉัย Jetting"}},
-                    {type: "box", layout: "horizontal", contents: [{type: "text", text: "🔸", size: "sm", flex: 0}, {type: "text", text: "Void - โพรงอากาศ", size: "sm", color: "#333333", margin: "sm"}], action: {type: "message", text: "วินิจฉัย Void"}},
+                    { type: "box", layout: "horizontal", contents: [{ type: "text", text: "🔸", size: "sm", flex: 0 }, { type: "text", text: "Short Shot - ฉีดไม่เต็ม", size: "sm", color: "#333333", margin: "sm" }], action: { type: "message", text: "วินิจฉัย Short Shot" } },
+                    { type: "box", layout: "horizontal", contents: [{ type: "text", text: "🔸", size: "sm", flex: 0 }, { type: "text", text: "Flash - เนื้อเกิน/ครีบ", size: "sm", color: "#333333", margin: "sm" }], action: { type: "message", text: "วินิจฉัย Flash" } },
+                    { type: "box", layout: "horizontal", contents: [{ type: "text", text: "🔸", size: "sm", flex: 0 }, { type: "text", text: "Sink Mark - รอยยุบ", size: "sm", color: "#333333", margin: "sm" }], action: { type: "message", text: "วินิจฉัย Sink Mark" } },
+                    { type: "box", layout: "horizontal", contents: [{ type: "text", text: "🔸", size: "sm", flex: 0 }, { type: "text", text: "Burn Mark - รอยไหม้", size: "sm", color: "#333333", margin: "sm" }], action: { type: "message", text: "วินิจฉัย Burn Mark" } },
+                    { type: "box", layout: "horizontal", contents: [{ type: "text", text: "🔸", size: "sm", flex: 0 }, { type: "text", text: "Warp - บิดงอ", size: "sm", color: "#333333", margin: "sm" }], action: { type: "message", text: "วินิจฉัย Warpage" } },
+                    { type: "box", layout: "horizontal", contents: [{ type: "text", text: "🔸", size: "sm", flex: 0 }, { type: "text", text: "Weld Line - รอยเชื่อม", size: "sm", color: "#333333", margin: "sm" }], action: { type: "message", text: "วินิจฉัย Weld Line" } },
+                    { type: "box", layout: "horizontal", contents: [{ type: "text", text: "🔸", size: "sm", flex: 0 }, { type: "text", text: "Silver Streak - เส้นเงิน", size: "sm", color: "#333333", margin: "sm" }], action: { type: "message", text: "วินิจฉัย Silver Streak" } },
+                    { type: "box", layout: "horizontal", contents: [{ type: "text", text: "🔸", size: "sm", flex: 0 }, { type: "text", text: "Jetting - รอยพุ่ง", size: "sm", color: "#333333", margin: "sm" }], action: { type: "message", text: "วินิจฉัย Jetting" } },
+                    { type: "box", layout: "horizontal", contents: [{ type: "text", text: "🔸", size: "sm", flex: 0 }, { type: "text", text: "Void - โพรงอากาศ", size: "sm", color: "#333333", margin: "sm" }], action: { type: "message", text: "วินิจฉัย Void" } },
                   ],
                 },
               ],
@@ -3082,7 +3082,7 @@ const createPlasticConsultationMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "button", style: "primary", color: "#c62828", action: {type: "message", label: "📋 ดู Defect ทั้งหมด", text: "/defect"}},
+                { type: "button", style: "primary", color: "#c62828", action: { type: "message", label: "📋 ดู Defect ทั้งหมด", text: "/defect" } },
               ],
               paddingAll: "16px",
             },
@@ -3095,13 +3095,13 @@ const createPlasticConsultationMenu = () => {
               type: "box",
               layout: "horizontal",
               contents: [
-                {type: "text", text: "🧮", size: "xl", flex: 0},
+                { type: "text", text: "🧮", size: "xl", flex: 0 },
                 {
                   type: "box",
                   layout: "vertical",
                   contents: [
-                    {type: "text", text: "เครื่องคำนวณ", weight: "bold", size: "lg", color: "#ffffff"},
-                    {type: "text", text: "CALCULATION TOOLS", size: "xs", color: "#ffffffcc"},
+                    { type: "text", text: "เครื่องคำนวณ", weight: "bold", size: "lg", color: "#ffffff" },
+                    { type: "text", text: "CALCULATION TOOLS", size: "xs", color: "#ffffffcc" },
                   ],
                   margin: "md",
                 },
@@ -3113,21 +3113,21 @@ const createPlasticConsultationMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "📊 สูตรคำนวณยอดนิยม", weight: "bold", size: "md", color: "#1a1a1a"},
+                { type: "text", text: "📊 สูตรคำนวณยอดนิยม", weight: "bold", size: "md", color: "#1a1a1a" },
                 {
                   type: "box",
                   layout: "vertical",
                   margin: "lg",
                   spacing: "sm",
                   contents: [
-                    {type: "box", layout: "horizontal", contents: [{type: "text", text: "⏱️", size: "sm", flex: 0}, {type: "text", text: "Cooling Time", size: "sm", color: "#333333", margin: "sm"}], action: {type: "message", text: "คำนวณ Cooling Time หนา 3mm"}},
-                    {type: "box", layout: "horizontal", contents: [{type: "text", text: "💪", size: "sm", flex: 0}, {type: "text", text: "Clamping Force", size: "sm", color: "#333333", margin: "sm"}], action: {type: "message", text: "คำนวณ Clamping Force"}},
-                    {type: "box", layout: "horizontal", contents: [{type: "text", text: "📦", size: "sm", flex: 0}, {type: "text", text: "Shot Weight", size: "sm", color: "#333333", margin: "sm"}], action: {type: "message", text: "คำนวณ Shot Weight"}},
-                    {type: "box", layout: "horizontal", contents: [{type: "text", text: "🔄", size: "sm", flex: 0}, {type: "text", text: "Cycle Time", size: "sm", color: "#333333", margin: "sm"}], action: {type: "message", text: "คำนวณ Cycle Time"}},
-                    {type: "box", layout: "horizontal", contents: [{type: "text", text: "📐", size: "sm", flex: 0}, {type: "text", text: "Shrinkage", size: "sm", color: "#333333", margin: "sm"}], action: {type: "message", text: "คำนวณ Shrinkage PP"}},
-                    {type: "box", layout: "horizontal", contents: [{type: "text", text: "⚡", size: "sm", flex: 0}, {type: "text", text: "Injection Speed", size: "sm", color: "#333333", margin: "sm"}], action: {type: "message", text: "คำนวณ Injection Speed"}},
-                    {type: "box", layout: "horizontal", contents: [{type: "text", text: "🔥", size: "sm", flex: 0}, {type: "text", text: "Barrel Capacity", size: "sm", color: "#333333", margin: "sm"}], action: {type: "message", text: "คำนวณ Barrel Capacity"}},
-                    {type: "box", layout: "horizontal", contents: [{type: "text", text: "💨", size: "sm", flex: 0}, {type: "text", text: "Vent Depth", size: "sm", color: "#333333", margin: "sm"}], action: {type: "message", text: "คำนวณ Vent Depth PP"}},
+                    { type: "box", layout: "horizontal", contents: [{ type: "text", text: "⏱️", size: "sm", flex: 0 }, { type: "text", text: "Cooling Time", size: "sm", color: "#333333", margin: "sm" }], action: { type: "message", text: "คำนวณ Cooling Time หนา 3mm" } },
+                    { type: "box", layout: "horizontal", contents: [{ type: "text", text: "💪", size: "sm", flex: 0 }, { type: "text", text: "Clamping Force", size: "sm", color: "#333333", margin: "sm" }], action: { type: "message", text: "คำนวณ Clamping Force" } },
+                    { type: "box", layout: "horizontal", contents: [{ type: "text", text: "📦", size: "sm", flex: 0 }, { type: "text", text: "Shot Weight", size: "sm", color: "#333333", margin: "sm" }], action: { type: "message", text: "คำนวณ Shot Weight" } },
+                    { type: "box", layout: "horizontal", contents: [{ type: "text", text: "🔄", size: "sm", flex: 0 }, { type: "text", text: "Cycle Time", size: "sm", color: "#333333", margin: "sm" }], action: { type: "message", text: "คำนวณ Cycle Time" } },
+                    { type: "box", layout: "horizontal", contents: [{ type: "text", text: "📐", size: "sm", flex: 0 }, { type: "text", text: "Shrinkage", size: "sm", color: "#333333", margin: "sm" }], action: { type: "message", text: "คำนวณ Shrinkage PP" } },
+                    { type: "box", layout: "horizontal", contents: [{ type: "text", text: "⚡", size: "sm", flex: 0 }, { type: "text", text: "Injection Speed", size: "sm", color: "#333333", margin: "sm" }], action: { type: "message", text: "คำนวณ Injection Speed" } },
+                    { type: "box", layout: "horizontal", contents: [{ type: "text", text: "🔥", size: "sm", flex: 0 }, { type: "text", text: "Barrel Capacity", size: "sm", color: "#333333", margin: "sm" }], action: { type: "message", text: "คำนวณ Barrel Capacity" } },
+                    { type: "box", layout: "horizontal", contents: [{ type: "text", text: "💨", size: "sm", flex: 0 }, { type: "text", text: "Vent Depth", size: "sm", color: "#333333", margin: "sm" }], action: { type: "message", text: "คำนวณ Vent Depth PP" } },
                   ],
                 },
               ],
@@ -3137,7 +3137,7 @@ const createPlasticConsultationMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "button", style: "primary", color: "#2e7d32", action: {type: "message", label: "🧮 ดูสูตรทั้งหมด", text: "/calc"}},
+                { type: "button", style: "primary", color: "#2e7d32", action: { type: "message", label: "🧮 ดูสูตรทั้งหมด", text: "/calc" } },
               ],
               paddingAll: "16px",
             },
@@ -3150,13 +3150,13 @@ const createPlasticConsultationMenu = () => {
               type: "box",
               layout: "horizontal",
               contents: [
-                {type: "text", text: "🌡️", size: "xl", flex: 0},
+                { type: "text", text: "🌡️", size: "xl", flex: 0 },
                 {
                   type: "box",
                   layout: "vertical",
                   contents: [
-                    {type: "text", text: "ตารางอุณหภูมิ", weight: "bold", size: "lg", color: "#ffffff"},
-                    {type: "text", text: "PROCESSING TEMP", size: "xs", color: "#ffffffcc"},
+                    { type: "text", text: "ตารางอุณหภูมิ", weight: "bold", size: "lg", color: "#ffffff" },
+                    { type: "text", text: "PROCESSING TEMP", size: "xs", color: "#ffffffcc" },
                   ],
                   margin: "md",
                 },
@@ -3168,21 +3168,21 @@ const createPlasticConsultationMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "🧪 วัสดุยอดนิยม", weight: "bold", size: "md", color: "#1a1a1a"},
+                { type: "text", text: "🧪 วัสดุยอดนิยม", weight: "bold", size: "md", color: "#1a1a1a" },
                 {
                   type: "box",
                   layout: "vertical",
                   margin: "lg",
                   spacing: "sm",
                   contents: [
-                    {type: "box", layout: "horizontal", contents: [{type: "text", text: "PP", weight: "bold", size: "sm", color: "#d84315", flex: 1}, {type: "text", text: "200-280°C", size: "sm", color: "#333333", align: "end"}], action: {type: "message", text: "อุณหภูมิ PP"}},
-                    {type: "box", layout: "horizontal", contents: [{type: "text", text: "PE", weight: "bold", size: "sm", color: "#d84315", flex: 1}, {type: "text", text: "180-280°C", size: "sm", color: "#333333", align: "end"}], action: {type: "message", text: "อุณหภูมิ PE"}},
-                    {type: "box", layout: "horizontal", contents: [{type: "text", text: "ABS", weight: "bold", size: "sm", color: "#d84315", flex: 1}, {type: "text", text: "210-270°C", size: "sm", color: "#333333", align: "end"}], action: {type: "message", text: "อุณหภูมิ ABS"}},
-                    {type: "box", layout: "horizontal", contents: [{type: "text", text: "PC", weight: "bold", size: "sm", color: "#d84315", flex: 1}, {type: "text", text: "280-320°C", size: "sm", color: "#333333", align: "end"}], action: {type: "message", text: "อุณหภูมิ PC"}},
-                    {type: "box", layout: "horizontal", contents: [{type: "text", text: "PA (Nylon)", weight: "bold", size: "sm", color: "#d84315", flex: 1}, {type: "text", text: "230-290°C", size: "sm", color: "#333333", align: "end"}], action: {type: "message", text: "อุณหภูมิ Nylon"}},
-                    {type: "box", layout: "horizontal", contents: [{type: "text", text: "POM", weight: "bold", size: "sm", color: "#d84315", flex: 1}, {type: "text", text: "180-220°C", size: "sm", color: "#333333", align: "end"}], action: {type: "message", text: "อุณหภูมิ POM"}},
-                    {type: "box", layout: "horizontal", contents: [{type: "text", text: "PBT", weight: "bold", size: "sm", color: "#d84315", flex: 1}, {type: "text", text: "230-270°C", size: "sm", color: "#333333", align: "end"}], action: {type: "message", text: "อุณหภูมิ PBT"}},
-                    {type: "box", layout: "horizontal", contents: [{type: "text", text: "PMMA", weight: "bold", size: "sm", color: "#d84315", flex: 1}, {type: "text", text: "220-260°C", size: "sm", color: "#333333", align: "end"}], action: {type: "message", text: "อุณหภูมิ PMMA"}},
+                    { type: "box", layout: "horizontal", contents: [{ type: "text", text: "PP", weight: "bold", size: "sm", color: "#d84315", flex: 1 }, { type: "text", text: "200-280°C", size: "sm", color: "#333333", align: "end" }], action: { type: "message", text: "อุณหภูมิ PP" } },
+                    { type: "box", layout: "horizontal", contents: [{ type: "text", text: "PE", weight: "bold", size: "sm", color: "#d84315", flex: 1 }, { type: "text", text: "180-280°C", size: "sm", color: "#333333", align: "end" }], action: { type: "message", text: "อุณหภูมิ PE" } },
+                    { type: "box", layout: "horizontal", contents: [{ type: "text", text: "ABS", weight: "bold", size: "sm", color: "#d84315", flex: 1 }, { type: "text", text: "210-270°C", size: "sm", color: "#333333", align: "end" }], action: { type: "message", text: "อุณหภูมิ ABS" } },
+                    { type: "box", layout: "horizontal", contents: [{ type: "text", text: "PC", weight: "bold", size: "sm", color: "#d84315", flex: 1 }, { type: "text", text: "280-320°C", size: "sm", color: "#333333", align: "end" }], action: { type: "message", text: "อุณหภูมิ PC" } },
+                    { type: "box", layout: "horizontal", contents: [{ type: "text", text: "PA (Nylon)", weight: "bold", size: "sm", color: "#d84315", flex: 1 }, { type: "text", text: "230-290°C", size: "sm", color: "#333333", align: "end" }], action: { type: "message", text: "อุณหภูมิ Nylon" } },
+                    { type: "box", layout: "horizontal", contents: [{ type: "text", text: "POM", weight: "bold", size: "sm", color: "#d84315", flex: 1 }, { type: "text", text: "180-220°C", size: "sm", color: "#333333", align: "end" }], action: { type: "message", text: "อุณหภูมิ POM" } },
+                    { type: "box", layout: "horizontal", contents: [{ type: "text", text: "PBT", weight: "bold", size: "sm", color: "#d84315", flex: 1 }, { type: "text", text: "230-270°C", size: "sm", color: "#333333", align: "end" }], action: { type: "message", text: "อุณหภูมิ PBT" } },
+                    { type: "box", layout: "horizontal", contents: [{ type: "text", text: "PMMA", weight: "bold", size: "sm", color: "#d84315", flex: 1 }, { type: "text", text: "220-260°C", size: "sm", color: "#333333", align: "end" }], action: { type: "message", text: "อุณหภูมิ PMMA" } },
                   ],
                 },
               ],
@@ -3192,7 +3192,7 @@ const createPlasticConsultationMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "button", style: "primary", color: "#d84315", action: {type: "message", label: "🌡️ ดูวัสดุทั้งหมด", text: "/temp"}},
+                { type: "button", style: "primary", color: "#d84315", action: { type: "message", label: "🌡️ ดูวัสดุทั้งหมด", text: "/temp" } },
               ],
               paddingAll: "16px",
             },
@@ -3205,13 +3205,13 @@ const createPlasticConsultationMenu = () => {
               type: "box",
               layout: "horizontal",
               contents: [
-                {type: "text", text: "👥", size: "xl", flex: 0},
+                { type: "text", text: "👥", size: "xl", flex: 0 },
                 {
                   type: "box",
                   layout: "vertical",
                   contents: [
-                    {type: "text", text: "การใช้งานแบบทีม", weight: "bold", size: "lg", color: "#ffffff"},
-                    {type: "text", text: "TEAM COLLABORATION", size: "xs", color: "#ffffffcc"},
+                    { type: "text", text: "การใช้งานแบบทีม", weight: "bold", size: "lg", color: "#ffffff" },
+                    { type: "text", text: "TEAM COLLABORATION", size: "xs", color: "#ffffffcc" },
                   ],
                   margin: "md",
                 },
@@ -3223,7 +3223,7 @@ const createPlasticConsultationMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "🚀 ฟีเจอร์ทีม", weight: "bold", size: "md", color: "#1a1a1a"},
+                { type: "text", text: "🚀 ฟีเจอร์ทีม", weight: "bold", size: "md", color: "#1a1a1a" },
                 {
                   type: "box",
                   layout: "vertical",
@@ -3234,37 +3234,37 @@ const createPlasticConsultationMenu = () => {
                       type: "box",
                       layout: "horizontal",
                       contents: [
-                        {type: "box", layout: "vertical", contents: [{type: "text", text: "📢", size: "lg"}], backgroundColor: "#e0f7fa", cornerRadius: "8px", width: "40px", height: "40px", justifyContent: "center", alignItems: "center", flex: 0},
-                        {type: "box", layout: "vertical", contents: [{type: "text", text: "ประกาศทีม", weight: "bold", size: "sm", color: "#333333"}, {type: "text", text: "แจ้งข่าวสารถึงสมาชิก", size: "xs", color: "#666666", wrap: true}], margin: "md", flex: 1},
+                        { type: "box", layout: "vertical", contents: [{ type: "text", text: "📢", size: "lg" }], backgroundColor: "#e0f7fa", cornerRadius: "8px", width: "40px", height: "40px", justifyContent: "center", alignItems: "center", flex: 0 },
+                        { type: "box", layout: "vertical", contents: [{ type: "text", text: "ประกาศทีม", weight: "bold", size: "sm", color: "#333333" }, { type: "text", text: "แจ้งข่าวสารถึงสมาชิก", size: "xs", color: "#666666", wrap: true }], margin: "md", flex: 1 },
                       ],
-                      action: {type: "message", text: "/broadcast"},
+                      action: { type: "message", text: "/broadcast" },
                     },
                     {
                       type: "box",
                       layout: "horizontal",
                       contents: [
-                        {type: "box", layout: "vertical", contents: [{type: "text", text: "📝", size: "lg"}], backgroundColor: "#e0f7fa", cornerRadius: "8px", width: "40px", height: "40px", justifyContent: "center", alignItems: "center", flex: 0},
-                        {type: "box", layout: "vertical", contents: [{type: "text", text: "บันทึกการผลิต", weight: "bold", size: "sm", color: "#333333"}, {type: "text", text: "รายงานผลผลิตประจำวัน", size: "xs", color: "#666666", wrap: true}], margin: "md", flex: 1},
+                        { type: "box", layout: "vertical", contents: [{ type: "text", text: "📝", size: "lg" }], backgroundColor: "#e0f7fa", cornerRadius: "8px", width: "40px", height: "40px", justifyContent: "center", alignItems: "center", flex: 0 },
+                        { type: "box", layout: "vertical", contents: [{ type: "text", text: "บันทึกการผลิต", weight: "bold", size: "sm", color: "#333333" }, { type: "text", text: "รายงานผลผลิตประจำวัน", size: "xs", color: "#666666", wrap: true }], margin: "md", flex: 1 },
                       ],
-                      action: {type: "message", text: "/report"},
+                      action: { type: "message", text: "/report" },
                     },
                     {
                       type: "box",
                       layout: "horizontal",
                       contents: [
-                        {type: "box", layout: "vertical", contents: [{type: "text", text: "📊", size: "lg"}], backgroundColor: "#e0f7fa", cornerRadius: "8px", width: "40px", height: "40px", justifyContent: "center", alignItems: "center", flex: 0},
-                        {type: "box", layout: "vertical", contents: [{type: "text", text: "สรุปผลผลิต", weight: "bold", size: "sm", color: "#333333"}, {type: "text", text: "Dashboard รายงาน", size: "xs", color: "#666666", wrap: true}], margin: "md", flex: 1},
+                        { type: "box", layout: "vertical", contents: [{ type: "text", text: "📊", size: "lg" }], backgroundColor: "#e0f7fa", cornerRadius: "8px", width: "40px", height: "40px", justifyContent: "center", alignItems: "center", flex: 0 },
+                        { type: "box", layout: "vertical", contents: [{ type: "text", text: "สรุปผลผลิต", weight: "bold", size: "sm", color: "#333333" }, { type: "text", text: "Dashboard รายงาน", size: "xs", color: "#666666", wrap: true }], margin: "md", flex: 1 },
                       ],
-                      action: {type: "message", text: "/summary"},
+                      action: { type: "message", text: "/summary" },
                     },
                     {
                       type: "box",
                       layout: "horizontal",
                       contents: [
-                        {type: "box", layout: "vertical", contents: [{type: "text", text: "🔗", size: "lg"}], backgroundColor: "#e0f7fa", cornerRadius: "8px", width: "40px", height: "40px", justifyContent: "center", alignItems: "center", flex: 0},
-                        {type: "box", layout: "vertical", contents: [{type: "text", text: "เชื่อมต่อทีม", weight: "bold", size: "sm", color: "#333333"}, {type: "text", text: "เข้าร่วมองค์กรด้วยรหัส", size: "xs", color: "#666666", wrap: true}], margin: "md", flex: 1},
+                        { type: "box", layout: "vertical", contents: [{ type: "text", text: "🔗", size: "lg" }], backgroundColor: "#e0f7fa", cornerRadius: "8px", width: "40px", height: "40px", justifyContent: "center", alignItems: "center", flex: 0 },
+                        { type: "box", layout: "vertical", contents: [{ type: "text", text: "เชื่อมต่อทีม", weight: "bold", size: "sm", color: "#333333" }, { type: "text", text: "เข้าร่วมองค์กรด้วยรหัส", size: "xs", color: "#666666", wrap: true }], margin: "md", flex: 1 },
                       ],
-                      action: {type: "message", text: "/joinorg"},
+                      action: { type: "message", text: "/joinorg" },
                     },
                   ],
                 },
@@ -3275,7 +3275,7 @@ const createPlasticConsultationMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "button", style: "primary", color: "#00838f", action: {type: "message", label: "👥 จัดการทีม", text: "/team"}},
+                { type: "button", style: "primary", color: "#00838f", action: { type: "message", label: "👥 จัดการทีม", text: "/team" } },
               ],
               paddingAll: "16px",
             },
@@ -3309,8 +3309,8 @@ const createPremiumPackageMessage = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "👤 แพ็คเกจส่วนตัว", weight: "bold", color: "#ffffff", size: "md"},
-                {type: "text", text: "INDIVIDUAL PLAN", color: "#ffffffaa", size: "xxs"},
+                { type: "text", text: "👤 แพ็คเกจส่วนตัว", weight: "bold", color: "#ffffff", size: "md" },
+                { type: "text", text: "INDIVIDUAL PLAN", color: "#ffffffaa", size: "xxs" },
               ],
               backgroundColor: "#7c4dff",
               paddingAll: "15px",
@@ -3327,8 +3327,8 @@ const createPremiumPackageMessage = () => {
                   paddingAll: "10px",
                   margin: "none",
                   contents: [
-                    {type: "text", text: "รายเดือน", size: "sm", color: "#333333", flex: 1},
-                    {type: "text", text: "99฿", weight: "bold", size: "md", color: "#7c4dff", align: "end"},
+                    { type: "text", text: "รายเดือน", size: "sm", color: "#333333", flex: 1 },
+                    { type: "text", text: "99฿", weight: "bold", size: "md", color: "#7c4dff", align: "end" },
                   ],
                 },
                 {
@@ -3339,13 +3339,13 @@ const createPremiumPackageMessage = () => {
                   paddingAll: "10px",
                   margin: "sm",
                   contents: [
-                    {type: "text", text: "3 เดือน", size: "sm", color: "#333333", flex: 1},
+                    { type: "text", text: "3 เดือน", size: "sm", color: "#333333", flex: 1 },
                     {
                       type: "box",
                       layout: "vertical",
                       contents: [
-                        {type: "text", text: "259฿", weight: "bold", size: "md", color: "#7c4dff", align: "end"},
-                        {type: "text", text: "ประหยัด 12%", size: "xxs", color: "#888888", align: "end"},
+                        { type: "text", text: "259฿", weight: "bold", size: "md", color: "#7c4dff", align: "end" },
+                        { type: "text", text: "ประหยัด 12%", size: "xxs", color: "#888888", align: "end" },
                       ],
                     },
                   ],
@@ -3363,16 +3363,16 @@ const createPremiumPackageMessage = () => {
                       layout: "horizontal",
                       flex: 1,
                       contents: [
-                        {type: "text", text: "รายปี", size: "sm", color: "#e65100"},
-                        {type: "text", text: "🔥", size: "sm", margin: "xs"},
+                        { type: "text", text: "รายปี", size: "sm", color: "#e65100" },
+                        { type: "text", text: "🔥", size: "sm", margin: "xs" },
                       ],
                     },
                     {
                       type: "box",
                       layout: "vertical",
                       contents: [
-                        {type: "text", text: "699฿", weight: "bold", size: "md", color: "#e65100", align: "end"},
-                        {type: "text", text: "คุ้มสุด! 1.9฿/วัน", size: "xxs", color: "#f57c00", align: "end"},
+                        { type: "text", text: "699฿", weight: "bold", size: "md", color: "#e65100", align: "end" },
+                        { type: "text", text: "คุ้มสุด! 1.9฿/วัน", size: "xxs", color: "#f57c00", align: "end" },
                       ],
                     },
                   ],
@@ -3388,7 +3388,7 @@ const createPremiumPackageMessage = () => {
                   type: "button",
                   style: "primary",
                   color: "#7c4dff",
-                  action: {type: "message", label: "เลือกแพ็คเกจนี้", text: "ดูแพ็คเกจส่วนตัว"},
+                  action: { type: "message", label: "เลือกแพ็คเกจนี้", text: "ดูแพ็คเกจส่วนตัว" },
                 },
               ],
               paddingAll: "10px",
@@ -3402,8 +3402,8 @@ const createPremiumPackageMessage = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "🏢 แพ็คเกจทีม", weight: "bold", color: "#ffffff", size: "md"},
-                {type: "text", text: "TEAM PLAN (5 USERS)", color: "#ffffffaa", size: "xxs"},
+                { type: "text", text: "🏢 แพ็คเกจทีม", weight: "bold", color: "#ffffff", size: "md" },
+                { type: "text", text: "TEAM PLAN (5 USERS)", color: "#ffffffaa", size: "xxs" },
               ],
               backgroundColor: "#2e7d32",
               paddingAll: "15px",
@@ -3420,8 +3420,8 @@ const createPremiumPackageMessage = () => {
                   paddingAll: "10px",
                   margin: "none",
                   contents: [
-                    {type: "text", text: "รายเดือน", size: "sm", color: "#333333", flex: 1},
-                    {type: "text", text: "399฿", weight: "bold", size: "md", color: "#2e7d32", align: "end"},
+                    { type: "text", text: "รายเดือน", size: "sm", color: "#333333", flex: 1 },
+                    { type: "text", text: "399฿", weight: "bold", size: "md", color: "#2e7d32", align: "end" },
                   ],
                 },
                 {
@@ -3437,16 +3437,16 @@ const createPremiumPackageMessage = () => {
                       layout: "horizontal",
                       flex: 1,
                       contents: [
-                        {type: "text", text: "รายปี", size: "sm", color: "#2e7d32"},
-                        {type: "text", text: "🔥", size: "sm", margin: "xs"},
+                        { type: "text", text: "รายปี", size: "sm", color: "#2e7d32" },
+                        { type: "text", text: "🔥", size: "sm", margin: "xs" },
                       ],
                     },
                     {
                       type: "box",
                       layout: "vertical",
                       contents: [
-                        {type: "text", text: "2,999฿", weight: "bold", size: "md", color: "#2e7d32", align: "end"},
-                        {type: "text", text: "ประหยัด 37%", size: "xxs", color: "#4caf50", align: "end"},
+                        { type: "text", text: "2,999฿", weight: "bold", size: "md", color: "#2e7d32", align: "end" },
+                        { type: "text", text: "ประหยัด 37%", size: "xxs", color: "#4caf50", align: "end" },
                       ],
                     },
                   ],
@@ -3462,7 +3462,7 @@ const createPremiumPackageMessage = () => {
                   type: "button",
                   style: "primary",
                   color: "#2e7d32",
-                  action: {type: "message", label: "เลือกแพ็คเกจนี้", text: "ดูแพ็คเกจทีม"},
+                  action: { type: "message", label: "เลือกแพ็คเกจนี้", text: "ดูแพ็คเกจทีม" },
                 },
               ],
               paddingAll: "10px",
@@ -3485,7 +3485,7 @@ const createHelpMenuMessage = () => {
   try {
     return {
       type: "flex",
-      altText: "📖 คู่มือการใช้งาน ถาม WiT - กดปุ่มเพื่อเริ่มใช้งาน!",
+      altText: "📖 คู่มือการใช้งาน Wit365 - กดปุ่มเพื่อเริ่มใช้งาน!",
       contents: {
         type: "bubble",
         size: "mega",
@@ -3522,8 +3522,8 @@ const createHelpMenuMessage = () => {
                   layout: "vertical",
                   margin: "lg",
                   contents: [
-                    {type: "text", text: "ถาม WiT", weight: "bold", color: "#ffffff", size: "xl"},
-                    {type: "text", text: "WiT ผู้ช่วยอัจฉริยะ v2.5", color: "#FFD700", size: "sm", weight: "bold"},
+                    { type: "text", text: "Wit365", weight: "bold", color: "#ffffff", size: "xl" },
+                    { type: "text", text: "ผู้ช่วยวิศวกรรมพลาสติกอัจฉริยะ", color: "#FFD700", size: "sm", weight: "bold" },
                   ],
                 },
               ],
@@ -3557,14 +3557,14 @@ const createHelpMenuMessage = () => {
                   style: "primary",
                   color: "#1565c0",
                   height: "sm",
-                  action: {type: "message", label: "📸 วิเคราะห์ภาพ", text: "วิเคราะห์ภาพ"},
+                  action: { type: "message", label: "📸 วิเคราะห์ภาพ", text: "วิเคราะห์ภาพ" },
                 },
                 {
                   type: "button",
                   style: "primary",
                   color: "#e65100",
                   height: "sm",
-                  action: {type: "message", label: "🏭 ฉีดพลาสติก", text: "ปัญหา Short Shot แก้ยังไง"},
+                  action: { type: "message", label: "🏭 ฉีดพลาสติก", text: "ปัญหา Short Shot แก้ยังไง" },
                 },
               ],
             },
@@ -3579,14 +3579,14 @@ const createHelpMenuMessage = () => {
                   style: "primary",
                   color: "#2e7d32",
                   height: "sm",
-                  action: {type: "message", label: "🔢 คำนวณ", text: "เมนูคำนวณ"},
+                  action: { type: "message", label: "🔢 คำนวณ", text: "เมนูคำนวณ" },
                 },
                 {
                   type: "button",
                   style: "primary",
                   color: "#558b2f",
                   height: "sm",
-                  action: {type: "message", label: "🌾 เกษตร", text: "ปรึกษาเรื่องเกษตรครับ"},
+                  action: { type: "message", label: "🌾 เกษตร", text: "ปรึกษาเรื่องเกษตรครับ" },
                 },
               ],
             },
@@ -3601,14 +3601,14 @@ const createHelpMenuMessage = () => {
                   style: "primary",
                   color: "#7b1fa2",
                   height: "sm",
-                  action: {type: "message", label: "📚 เครื่องมือเรียน", text: "/tools"},
+                  action: { type: "message", label: "📚 เครื่องมือเรียน", text: "/tools" },
                 },
                 {
                   type: "button",
                   style: "primary",
                   color: "#1976d2",
                   height: "sm",
-                  action: {type: "message", label: "🎯 AI 18 หมวด", text: "/categories"},
+                  action: { type: "message", label: "🎯 AI 18 หมวด", text: "/categories" },
                 },
               ],
             },
@@ -3623,19 +3623,19 @@ const createHelpMenuMessage = () => {
                   style: "primary",
                   color: "#f57c00",
                   height: "sm",
-                  action: {type: "message", label: "💰 บัญชี", text: "วิธีใช้บัญชี"},
+                  action: { type: "message", label: "💰 บัญชี", text: "วิธีใช้บัญชี" },
                 },
                 {
                   type: "button",
                   style: "primary",
                   color: "#00897b",
                   height: "sm",
-                  action: {type: "message", label: "🌐 แปลภาษา", text: "ช่วยแปลภาษาหน่อย"},
+                  action: { type: "message", label: "🌐 แปลภาษา", text: "ช่วยแปลภาษาหน่อย" },
                 },
               ],
             },
             // Separator
-            {type: "separator", margin: "md"},
+            { type: "separator", margin: "md" },
             // คำอธิบายสั้นๆ
             {
               type: "text",
@@ -3654,11 +3654,11 @@ const createHelpMenuMessage = () => {
               paddingAll: "12px",
               margin: "sm",
               contents: [
-                {type: "text", text: "💬 ตัวอย่างคำถาม:", weight: "bold", size: "xs", color: "#333333"},
-                {type: "text", text: "• \"รอยไหม้เกิดจากอะไร\"", size: "xs", color: "#666666", margin: "xs"},
-                {type: "text", text: "• \"คำนวณ cooling time หนา 3mm\"", size: "xs", color: "#666666"},
-                {type: "text", text: "• \"ขายมะม่วง 50 กก. 1500 บาท\"", size: "xs", color: "#666666"},
-                {type: "text", text: "• ส่งรูปมา = AI วิเคราะห์ให้!", size: "xs", color: "#1565c0", weight: "bold"},
+                { type: "text", text: "💬 ตัวอย่างคำถาม:", weight: "bold", size: "xs", color: "#333333" },
+                { type: "text", text: "• \"รอยไหม้เกิดจากอะไร\"", size: "xs", color: "#666666", margin: "xs" },
+                { type: "text", text: "• \"คำนวณ cooling time หนา 3mm\"", size: "xs", color: "#666666" },
+                { type: "text", text: "• \"ขายมะม่วง 50 กก. 1500 บาท\"", size: "xs", color: "#666666" },
+                { type: "text", text: "• ส่งรูปมา = AI วิเคราะห์ให้!", size: "xs", color: "#1565c0", weight: "bold" },
               ],
             },
           ],
@@ -3675,7 +3675,7 @@ const createHelpMenuMessage = () => {
               style: "secondary",
               color: "#ede7f6",
               height: "sm",
-              action: {type: "message", label: "💎 ดูแพ็คเกจ Premium", text: "ดูแพ็คเกจทั้งหมด"},
+              action: { type: "message", label: "💎 ดูแพ็คเกจ Premium", text: "ดูแพ็คเกจทั้งหมด" },
             },
             // Footer text
             {
@@ -3702,7 +3702,7 @@ const createHelpMenuMessage = () => {
                 },
                 {
                   type: "text",
-                  text: "พัฒนาโดย อาจารย์วิทยา เทคนิคฉีดพลาสติก",
+                  text: "โดย อาจารย์ วิทยา",
                   size: "xxs",
                   color: "#aaaaaa",
                   margin: "sm",
@@ -3786,8 +3786,8 @@ const createProductionReportMessage = (reportData) => {
             layout: "vertical",
             flex: 1,
             contents: [
-              {type: "text", text: "📅 วันที่", size: "xxs", color: "#888888"},
-              {type: "text", text: date, weight: "bold", size: "sm"},
+              { type: "text", text: "📅 วันที่", size: "xxs", color: "#888888" },
+              { type: "text", text: date, weight: "bold", size: "sm" },
             ],
           },
           {
@@ -3795,8 +3795,8 @@ const createProductionReportMessage = (reportData) => {
             layout: "vertical",
             flex: 1,
             contents: [
-              {type: "text", text: "⏰ เวลา", size: "xxs", color: "#888888"},
-              {type: "text", text: time, weight: "bold", size: "sm"},
+              { type: "text", text: "⏰ เวลา", size: "xxs", color: "#888888" },
+              { type: "text", text: time, weight: "bold", size: "sm" },
             ],
           },
           {
@@ -3804,15 +3804,15 @@ const createProductionReportMessage = (reportData) => {
             layout: "vertical",
             flex: 1,
             contents: [
-              {type: "text", text: `${shiftIcon} กะ`, size: "xxs", color: "#888888"},
-              {type: "text", text: shift, weight: "bold", size: "sm"},
+              { type: "text", text: `${shiftIcon} กะ`, size: "xxs", color: "#888888" },
+              { type: "text", text: shift, weight: "bold", size: "sm" },
             ],
           },
         ],
         paddingBottom: "15px",
       },
       // Separator
-      {type: "separator", color: "#eeeeee"},
+      { type: "separator", color: "#eeeeee" },
       // Operator & Mold Info
       {
         type: "box",
@@ -3823,8 +3823,8 @@ const createProductionReportMessage = (reportData) => {
             layout: "vertical",
             flex: 1,
             contents: [
-              {type: "text", text: "👤 พนักงาน", size: "xxs", color: "#888888"},
-              {type: "text", text: operator, weight: "bold", size: "sm", wrap: true},
+              { type: "text", text: "👤 พนักงาน", size: "xxs", color: "#888888" },
+              { type: "text", text: operator, weight: "bold", size: "sm", wrap: true },
             ],
           },
           {
@@ -3832,8 +3832,8 @@ const createProductionReportMessage = (reportData) => {
             layout: "vertical",
             flex: 1,
             contents: [
-              {type: "text", text: "🏭 แม่พิมพ์", size: "xxs", color: "#888888"},
-              {type: "text", text: moldName, weight: "bold", size: "sm", wrap: true},
+              { type: "text", text: "🏭 แม่พิมพ์", size: "xxs", color: "#888888" },
+              { type: "text", text: moldName, weight: "bold", size: "sm", wrap: true },
             ],
           },
         ],
@@ -3841,7 +3841,7 @@ const createProductionReportMessage = (reportData) => {
         paddingBottom: "15px",
       },
       // Separator
-      {type: "separator", color: "#eeeeee"},
+      { type: "separator", color: "#eeeeee" },
       // Production Stats Title
       {
         type: "text",
@@ -3861,37 +3861,37 @@ const createProductionReportMessage = (reportData) => {
             layout: "vertical",
             flex: 1,
             contents: [
-              {type: "text", text: "Shot ทั้งหมด", size: "xxs", color: "#888888", align: "center"},
-              {type: "text", text: totalShots.toLocaleString(), weight: "bold", size: "lg", align: "center", color: "#333333"},
-              {type: "text", text: "ครั้ง", size: "xxs", color: "#888888", align: "center"},
+              { type: "text", text: "Shot ทั้งหมด", size: "xxs", color: "#888888", align: "center" },
+              { type: "text", text: totalShots.toLocaleString(), weight: "bold", size: "lg", align: "center", color: "#333333" },
+              { type: "text", text: "ครั้ง", size: "xxs", color: "#888888", align: "center" },
             ],
             backgroundColor: "#f5f5f5",
             cornerRadius: "8px",
             paddingAll: "10px",
           },
-          {type: "separator", color: "#ffffff00", margin: "sm"},
+          { type: "separator", color: "#ffffff00", margin: "sm" },
           {
             type: "box",
             layout: "vertical",
             flex: 1,
             contents: [
-              {type: "text", text: "ชิ้นงานดี", size: "xxs", color: "#888888", align: "center"},
-              {type: "text", text: goodParts.toLocaleString(), weight: "bold", size: "lg", align: "center", color: "#27ae60"},
-              {type: "text", text: "ชิ้น", size: "xxs", color: "#888888", align: "center"},
+              { type: "text", text: "ชิ้นงานดี", size: "xxs", color: "#888888", align: "center" },
+              { type: "text", text: goodParts.toLocaleString(), weight: "bold", size: "lg", align: "center", color: "#27ae60" },
+              { type: "text", text: "ชิ้น", size: "xxs", color: "#888888", align: "center" },
             ],
             backgroundColor: "#e8f5e9",
             cornerRadius: "8px",
             paddingAll: "10px",
           },
-          {type: "separator", color: "#ffffff00", margin: "sm"},
+          { type: "separator", color: "#ffffff00", margin: "sm" },
           {
             type: "box",
             layout: "vertical",
             flex: 1,
             contents: [
-              {type: "text", text: "ของเสีย", size: "xxs", color: "#888888", align: "center"},
-              {type: "text", text: rejectParts.toLocaleString(), weight: "bold", size: "lg", align: "center", color: rejectParts > 0 ? "#e74c3c" : "#27ae60"},
-              {type: "text", text: `${rejectRate}%`, size: "xxs", color: rejectParts > 0 ? "#e74c3c" : "#888888", align: "center"},
+              { type: "text", text: "ของเสีย", size: "xxs", color: "#888888", align: "center" },
+              { type: "text", text: rejectParts.toLocaleString(), weight: "bold", size: "lg", align: "center", color: rejectParts > 0 ? "#e74c3c" : "#27ae60" },
+              { type: "text", text: `${rejectRate}%`, size: "xxs", color: rejectParts > 0 ? "#e74c3c" : "#888888", align: "center" },
             ],
             backgroundColor: rejectParts > 0 ? "#ffebee" : "#f5f5f5",
             cornerRadius: "8px",
@@ -3909,8 +3909,8 @@ const createProductionReportMessage = (reportData) => {
             type: "box",
             layout: "horizontal",
             contents: [
-              {type: "text", text: `${efficiencyIcon} ประสิทธิภาพ`, weight: "bold", size: "sm", flex: 1},
-              {type: "text", text: `${efficiency}%`, weight: "bold", size: "md", color: efficiencyColor, align: "end"},
+              { type: "text", text: `${efficiencyIcon} ประสิทธิภาพ`, weight: "bold", size: "sm", flex: 1 },
+              { type: "text", text: `${efficiency}%`, weight: "bold", size: "md", color: efficiencyColor, align: "end" },
             ],
           },
           {
@@ -3920,7 +3920,7 @@ const createProductionReportMessage = (reportData) => {
               {
                 type: "box",
                 layout: "vertical",
-                contents: [{type: "filler"}],
+                contents: [{ type: "filler" }],
                 backgroundColor: efficiencyColor,
                 height: "8px",
                 width: `${Math.min(100, Math.max(0, efficiency))}%`,
@@ -3932,7 +3932,7 @@ const createProductionReportMessage = (reportData) => {
             cornerRadius: "4px",
             margin: "sm",
           },
-          {type: "text", text: statusText, size: "xxs", color: efficiencyColor, align: "end", margin: "xs"},
+          { type: "text", text: statusText, size: "xxs", color: efficiencyColor, align: "end", margin: "xs" },
         ],
         margin: "lg",
         paddingAll: "12px",
@@ -3947,8 +3947,8 @@ const createProductionReportMessage = (reportData) => {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: "❌ สาเหตุของเสีย", weight: "bold", size: "xs", color: "#e74c3c"},
-          {type: "text", text: rejectReason, size: "xs", color: "#666666", wrap: true, margin: "xs"},
+          { type: "text", text: "❌ สาเหตุของเสีย", weight: "bold", size: "xs", color: "#e74c3c" },
+          { type: "text", text: rejectReason, size: "xs", color: "#666666", wrap: true, margin: "xs" },
         ],
         margin: "md",
         paddingAll: "10px",
@@ -3963,8 +3963,8 @@ const createProductionReportMessage = (reportData) => {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: `⏰ Downtime: ${downtime} นาที`, weight: "bold", size: "xs", color: "#f39c12"},
-          {type: "text", text: downtimeReason !== "-" ? `สาเหตุ: ${downtimeReason}` : "", size: "xs", color: "#666666", wrap: true, margin: "xs"},
+          { type: "text", text: `⏰ Downtime: ${downtime} นาที`, weight: "bold", size: "xs", color: "#f39c12" },
+          { type: "text", text: downtimeReason !== "-" ? `สาเหตุ: ${downtimeReason}` : "", size: "xs", color: "#666666", wrap: true, margin: "xs" },
         ],
         margin: "md",
         paddingAll: "10px",
@@ -3979,8 +3979,8 @@ const createProductionReportMessage = (reportData) => {
         type: "box",
         layout: "horizontal",
         contents: [
-          {type: "text", text: "🏢", size: "sm", flex: 0},
-          {type: "text", text: `รหัสองค์กร: ${orgCode}`, size: "xs", color: "#5e35b1", flex: 1, margin: "sm"},
+          { type: "text", text: "🏢", size: "sm", flex: 0 },
+          { type: "text", text: `รหัสองค์กร: ${orgCode}`, size: "xs", color: "#5e35b1", flex: 1, margin: "sm" },
         ],
         margin: "md",
         paddingAll: "8px",
@@ -4003,23 +4003,23 @@ const createProductionReportMessage = (reportData) => {
               type: "box",
               layout: "horizontal",
               contents: [
-                {type: "text", text: "📱", size: "xl", flex: 0},
+                { type: "text", text: "📱", size: "xl", flex: 0 },
                 {
                   type: "box",
                   layout: "vertical",
                   margin: "md",
                   flex: 1,
                   contents: [
-                    {type: "text", text: "Digital Logbook", weight: "bold", color: "#ffffff", size: "lg"},
-                    {type: "text", text: "ใบรายงานการผลิต", color: "#ffffff99", size: "xs"},
+                    { type: "text", text: "Digital Logbook", weight: "bold", color: "#ffffff", size: "lg" },
+                    { type: "text", text: "ใบรายงานการผลิต", color: "#ffffff99", size: "xs" },
                   ],
                 },
                 {
                   type: "box",
                   layout: "vertical",
                   contents: [
-                    {type: "text", text: "✅", size: "xxl", align: "center"},
-                    {type: "text", text: "บันทึกแล้ว", size: "xxs", color: "#ffffffcc", align: "center"},
+                    { type: "text", text: "✅", size: "xxl", align: "center" },
+                    { type: "text", text: "บันทึกแล้ว", size: "xxs", color: "#ffffffcc", align: "center" },
                   ],
                   flex: 0,
                 },
@@ -4029,7 +4029,7 @@ const createProductionReportMessage = (reportData) => {
               type: "box",
               layout: "horizontal",
               contents: [
-                {type: "text", text: `🆔 Ref: ${verificationCode}`, size: "sm", color: "#ffffffdd", weight: "bold"},
+                { type: "text", text: `🆔 Ref: ${verificationCode}`, size: "sm", color: "#ffffffdd", weight: "bold" },
               ],
               margin: "md",
               paddingAll: "8px",
@@ -4056,15 +4056,15 @@ const createProductionReportMessage = (reportData) => {
               contents: [
                 {
                   type: "button",
-                  action: {type: "message", text: "/summary"},
+                  action: { type: "message", text: "/summary" },
                   style: "secondary",
                   height: "sm",
                   flex: 1,
                 },
-                {type: "separator", color: "#ffffff00", margin: "sm"},
+                { type: "separator", color: "#ffffff00", margin: "sm" },
                 {
                   type: "button",
-                  action: {type: "message", text: "/report"},
+                  action: { type: "message", text: "/report" },
                   style: "primary",
                   height: "sm",
                   flex: 1,
@@ -4098,8 +4098,8 @@ const createProductionReportMessage = (reportData) => {
  */
 const createSummaryDashboardMessage = (reports, options = {}) => {
   try {
-    const {orgCode = null, groupName = null} = options;
-    const today = new Date().toLocaleDateString("th-TH", {weekday: "long", year: "numeric", month: "long", day: "numeric"});
+    const { orgCode = null, groupName = null } = options;
+    const today = new Date().toLocaleDateString("th-TH", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
 
     if (!reports || reports.length === 0) {
       // Empty State
@@ -4117,15 +4117,15 @@ const createSummaryDashboardMessage = (reports, options = {}) => {
                 type: "box",
                 layout: "horizontal",
                 contents: [
-                  {type: "text", text: "📊", size: "xl", flex: 0},
+                  { type: "text", text: "📊", size: "xl", flex: 0 },
                   {
                     type: "box",
                     layout: "vertical",
                     margin: "md",
                     flex: 1,
                     contents: [
-                      {type: "text", text: "สรุปรายงานการผลิต", weight: "bold", color: "#ffffff", size: "md"},
-                      {type: "text", text: orgCode ? `🏢 ${orgCode}` : "วันนี้", color: "#ffffff99", size: "xs"},
+                      { type: "text", text: "สรุปรายงานการผลิต", weight: "bold", color: "#ffffff", size: "md" },
+                      { type: "text", text: orgCode ? `🏢 ${orgCode}` : "วันนี้", color: "#ffffff99", size: "xs" },
                     ],
                   },
                 ],
@@ -4138,9 +4138,9 @@ const createSummaryDashboardMessage = (reports, options = {}) => {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: "📭", size: "xxl", align: "center", margin: "lg"},
-              {type: "text", text: "ยังไม่มีรายงานในวันนี้", weight: "bold", align: "center", margin: "md", color: "#666666"},
-              {type: "text", text: "รอพนักงานส่งรายงานเข้ามา", size: "sm", align: "center", color: "#888888", margin: "sm"},
+              { type: "text", text: "📭", size: "xxl", align: "center", margin: "lg" },
+              { type: "text", text: "ยังไม่มีรายงานในวันนี้", weight: "bold", align: "center", margin: "md", color: "#666666" },
+              { type: "text", text: "รอพนักงานส่งรายงานเข้ามา", size: "sm", align: "center", color: "#888888", margin: "sm" },
             ],
             paddingAll: "20px",
           },
@@ -4150,12 +4150,12 @@ const createSummaryDashboardMessage = (reports, options = {}) => {
             contents: [
               {
                 type: "button",
-                action: {type: "message", text: "/report"},
+                action: { type: "message", text: "/report" },
                 style: "primary",
                 height: "sm",
                 color: "#1e88e5",
               },
-              {type: "text", text: "กดเพื่อส่งรายงานใหม่", size: "xxs", color: "#888888", align: "center", margin: "sm"},
+              { type: "text", text: "กดเพื่อส่งรายงานใหม่", size: "xxs", color: "#888888", align: "center", margin: "sm" },
             ],
             paddingAll: "15px",
           },
@@ -4196,15 +4196,15 @@ const createSummaryDashboardMessage = (reports, options = {}) => {
       type: "box",
       layout: "horizontal",
       contents: [
-        {type: "text", text: `${index + 1}.`, size: "xs", color: "#888888", flex: 0},
+        { type: "text", text: `${index + 1}.`, size: "xs", color: "#888888", flex: 0 },
         {
           type: "box",
           layout: "vertical",
           flex: 3,
           margin: "sm",
           contents: [
-            {type: "text", text: r.moldName || "N/A", weight: "bold", size: "xs", wrap: true},
-            {type: "text", text: `👤 ${r.operator || "N/A"} | 🕐 ${r.time || "N/A"}`, size: "xxs", color: "#888888"},
+            { type: "text", text: r.moldName || "N/A", weight: "bold", size: "xs", wrap: true },
+            { type: "text", text: `👤 ${r.operator || "N/A"} | 🕐 ${r.time || "N/A"}`, size: "xxs", color: "#888888" },
           ],
         },
         {
@@ -4243,29 +4243,29 @@ const createSummaryDashboardMessage = (reports, options = {}) => {
               type: "box",
               layout: "horizontal",
               contents: [
-                {type: "text", text: "📊", size: "xl", flex: 0},
+                { type: "text", text: "📊", size: "xl", flex: 0 },
                 {
                   type: "box",
                   layout: "vertical",
                   margin: "md",
                   flex: 1,
                   contents: [
-                    {type: "text", text: "สรุปรายงานการผลิต", weight: "bold", color: "#ffffff", size: "lg"},
-                    {type: "text", text: orgCode ? `🏢 ${orgCode}` : "วันนี้", color: "#ffffff99", size: "xs"},
+                    { type: "text", text: "สรุปรายงานการผลิต", weight: "bold", color: "#ffffff", size: "lg" },
+                    { type: "text", text: orgCode ? `🏢 ${orgCode}` : "วันนี้", color: "#ffffff99", size: "xs" },
                   ],
                 },
                 {
                   type: "box",
                   layout: "vertical",
                   contents: [
-                    {type: "text", text: `${reports.length}`, size: "xxl", weight: "bold", color: "#ffffff", align: "center"},
-                    {type: "text", text: "รายการ", size: "xxs", color: "#ffffffcc", align: "center"},
+                    { type: "text", text: `${reports.length}`, size: "xxl", weight: "bold", color: "#ffffff", align: "center" },
+                    { type: "text", text: "รายการ", size: "xxs", color: "#ffffffcc", align: "center" },
                   ],
                   flex: 0,
                 },
               ],
             },
-            {type: "text", text: today, size: "xxs", color: "#ffffffaa", margin: "md"},
+            { type: "text", text: today, size: "xxs", color: "#ffffffaa", margin: "md" },
           ],
           backgroundColor: headerBg,
           paddingAll: "20px",
@@ -4284,34 +4284,34 @@ const createSummaryDashboardMessage = (reports, options = {}) => {
                   layout: "vertical",
                   flex: 1,
                   contents: [
-                    {type: "text", text: "📦 Shot รวม", size: "xxs", color: "#888888", align: "center"},
-                    {type: "text", text: totalShots.toLocaleString(), weight: "bold", size: "md", align: "center"},
+                    { type: "text", text: "📦 Shot รวม", size: "xxs", color: "#888888", align: "center" },
+                    { type: "text", text: totalShots.toLocaleString(), weight: "bold", size: "md", align: "center" },
                   ],
                   backgroundColor: "#f5f5f5",
                   cornerRadius: "8px",
                   paddingAll: "10px",
                 },
-                {type: "separator", color: "#ffffff00", margin: "sm"},
+                { type: "separator", color: "#ffffff00", margin: "sm" },
                 {
                   type: "box",
                   layout: "vertical",
                   flex: 1,
                   contents: [
-                    {type: "text", text: "✅ ชิ้นดี", size: "xxs", color: "#888888", align: "center"},
-                    {type: "text", text: totalGood.toLocaleString(), weight: "bold", size: "md", align: "center", color: "#27ae60"},
+                    { type: "text", text: "✅ ชิ้นดี", size: "xxs", color: "#888888", align: "center" },
+                    { type: "text", text: totalGood.toLocaleString(), weight: "bold", size: "md", align: "center", color: "#27ae60" },
                   ],
                   backgroundColor: "#e8f5e9",
                   cornerRadius: "8px",
                   paddingAll: "10px",
                 },
-                {type: "separator", color: "#ffffff00", margin: "sm"},
+                { type: "separator", color: "#ffffff00", margin: "sm" },
                 {
                   type: "box",
                   layout: "vertical",
                   flex: 1,
                   contents: [
-                    {type: "text", text: "❌ ของเสีย", size: "xxs", color: "#888888", align: "center"},
-                    {type: "text", text: totalReject.toLocaleString(), weight: "bold", size: "md", align: "center", color: totalReject > 0 ? "#e74c3c" : "#27ae60"},
+                    { type: "text", text: "❌ ของเสีย", size: "xxs", color: "#888888", align: "center" },
+                    { type: "text", text: totalReject.toLocaleString(), weight: "bold", size: "md", align: "center", color: totalReject > 0 ? "#e74c3c" : "#27ae60" },
                   ],
                   backgroundColor: totalReject > 0 ? "#ffebee" : "#f5f5f5",
                   cornerRadius: "8px",
@@ -4325,8 +4325,8 @@ const createSummaryDashboardMessage = (reports, options = {}) => {
               type: "box",
               layout: "horizontal",
               contents: [
-                {type: "text", text: `${statusEmoji} ประสิทธิภาพเฉลี่ย`, weight: "bold", size: "sm", flex: 1},
-                {type: "text", text: `${avgEfficiency}%`, weight: "bold", size: "xl", color: efficiencyColor, align: "end"},
+                { type: "text", text: `${statusEmoji} ประสิทธิภาพเฉลี่ย`, weight: "bold", size: "sm", flex: 1 },
+                { type: "text", text: `${avgEfficiency}%`, weight: "bold", size: "xl", color: efficiencyColor, align: "end" },
               ],
               paddingAll: "15px",
               backgroundColor: "#fafafa",
@@ -4334,9 +4334,9 @@ const createSummaryDashboardMessage = (reports, options = {}) => {
               margin: "md",
             },
             // Separator
-            {type: "separator", color: "#eeeeee", margin: "lg"},
+            { type: "separator", color: "#eeeeee", margin: "lg" },
             // Recent Reports Title
-            {type: "text", text: "📋 รายงานล่าสุด", weight: "bold", size: "sm", margin: "lg"},
+            { type: "text", text: "📋 รายงานล่าสุด", weight: "bold", size: "sm", margin: "lg" },
             // Report List
             {
               type: "box",
@@ -4366,16 +4366,16 @@ const createSummaryDashboardMessage = (reports, options = {}) => {
               contents: [
                 {
                   type: "button",
-                  action: {type: "message", text: "/report"},
+                  action: { type: "message", text: "/report" },
                   style: "primary",
                   height: "sm",
                   flex: 1,
                   color: "#1e88e5",
                 },
-                {type: "separator", color: "#ffffff00", margin: "sm"},
+                { type: "separator", color: "#ffffff00", margin: "sm" },
                 {
                   type: "button",
-                  action: {type: "message", text: "ดูสถิติเพิ่มเติม"},
+                  action: { type: "message", text: "ดูสถิติเพิ่มเติม" },
                   style: "secondary",
                   height: "sm",
                   flex: 1,
@@ -4428,15 +4428,15 @@ const createTeamAnnouncementMessage = (params) => {
               type: "box",
               layout: "horizontal",
               contents: [
-                {type: "text", text: "📢", size: "xl", flex: 0},
+                { type: "text", text: "📢", size: "xl", flex: 0 },
                 {
                   type: "box",
                   layout: "vertical",
                   margin: "md",
                   flex: 1,
                   contents: [
-                    {type: "text", text: "ประกาศจากหัวหน้าทีม", weight: "bold", color: "#ffffff", size: "md"},
-                    {type: "text", text: `🏢 ${orgCode}`, color: "#ffffff99", size: "xs"},
+                    { type: "text", text: "ประกาศจากหัวหน้าทีม", weight: "bold", color: "#ffffff", size: "md" },
+                    { type: "text", text: `🏢 ${orgCode}`, color: "#ffffff99", size: "xs" },
                   ],
                 },
               ],
@@ -4456,13 +4456,13 @@ const createTeamAnnouncementMessage = (params) => {
               size: "md",
               color: "#333333",
             },
-            {type: "separator", color: "#eeeeee", margin: "lg"},
+            { type: "separator", color: "#eeeeee", margin: "lg" },
             {
               type: "box",
               layout: "horizontal",
               contents: [
-                {type: "text", text: `👤 ${senderName}`, size: "xs", color: "#888888", flex: 1},
-                {type: "text", text: `🕐 ${timestamp}`, size: "xs", color: "#888888", align: "end"},
+                { type: "text", text: `👤 ${senderName}`, size: "xs", color: "#888888", flex: 1 },
+                { type: "text", text: `🕐 ${timestamp}`, size: "xs", color: "#888888", align: "end" },
               ],
               margin: "md",
             },
@@ -4475,7 +4475,7 @@ const createTeamAnnouncementMessage = (params) => {
           contents: [
             {
               type: "button",
-              action: {type: "message", text: `${orgCode}/summary`},
+              action: { type: "message", text: `${orgCode}/summary` },
               style: "secondary",
               height: "sm",
             },
@@ -4519,15 +4519,15 @@ const createBroadcastResultMessage = (params) => {
               type: "box",
               layout: "horizontal",
               contents: [
-                {type: "text", text: isSuccess ? "✅" : "⚠️", size: "xl", flex: 0},
+                { type: "text", text: isSuccess ? "✅" : "⚠️", size: "xl", flex: 0 },
                 {
                   type: "box",
                   layout: "vertical",
                   margin: "md",
                   flex: 1,
                   contents: [
-                    {type: "text", text: isSuccess ? "ส่งประกาศสำเร็จ" : "ส่งประกาศไม่สำเร็จ", weight: "bold", color: "#ffffff", size: "md"},
-                    {type: "text", text: `🏢 ${orgCode}`, color: "#ffffff99", size: "xs"},
+                    { type: "text", text: isSuccess ? "ส่งประกาศสำเร็จ" : "ส่งประกาศไม่สำเร็จ", weight: "bold", color: "#ffffff", size: "md" },
+                    { type: "text", text: `🏢 ${orgCode}`, color: "#ffffff99", size: "xs" },
                   ],
                 },
               ],
@@ -4549,23 +4549,23 @@ const createBroadcastResultMessage = (params) => {
                   layout: "vertical",
                   flex: 1,
                   contents: [
-                    {type: "text", text: "👥 ผู้รับ", size: "xxs", color: "#888888", align: "center"},
-                    {type: "text", text: `${successCount}`, weight: "bold", size: "xxl", align: "center", color: "#27ae60"},
-                    {type: "text", text: "คน", size: "xs", color: "#888888", align: "center"},
+                    { type: "text", text: "👥 ผู้รับ", size: "xxs", color: "#888888", align: "center" },
+                    { type: "text", text: `${successCount}`, weight: "bold", size: "xxl", align: "center", color: "#27ae60" },
+                    { type: "text", text: "คน", size: "xs", color: "#888888", align: "center" },
                   ],
                   backgroundColor: "#e8f5e9",
                   cornerRadius: "8px",
                   paddingAll: "15px",
                 },
-                {type: "separator", color: "#ffffff00", margin: "sm"},
+                { type: "separator", color: "#ffffff00", margin: "sm" },
                 {
                   type: "box",
                   layout: "vertical",
                   flex: 1,
                   contents: [
-                    {type: "text", text: "❌ ส่งไม่สำเร็จ", size: "xxs", color: "#888888", align: "center"},
-                    {type: "text", text: `${failedCount}`, weight: "bold", size: "xxl", align: "center", color: failedCount > 0 ? "#e74c3c" : "#888888"},
-                    {type: "text", text: "คน", size: "xs", color: "#888888", align: "center"},
+                    { type: "text", text: "❌ ส่งไม่สำเร็จ", size: "xxs", color: "#888888", align: "center" },
+                    { type: "text", text: `${failedCount}`, weight: "bold", size: "xxl", align: "center", color: failedCount > 0 ? "#e74c3c" : "#888888" },
+                    { type: "text", text: "คน", size: "xs", color: "#888888", align: "center" },
                   ],
                   backgroundColor: failedCount > 0 ? "#ffebee" : "#f5f5f5",
                   cornerRadius: "8px",
@@ -4573,8 +4573,8 @@ const createBroadcastResultMessage = (params) => {
                 },
               ],
             },
-            {type: "separator", color: "#eeeeee", margin: "lg"},
-            {type: "text", text: "📝 ข้อความที่ส่ง:", size: "xs", color: "#888888", margin: "md"},
+            { type: "separator", color: "#eeeeee", margin: "lg" },
+            { type: "text", text: "📝 ข้อความที่ส่ง:", size: "xs", color: "#888888", margin: "md" },
             {
               type: "text",
               text: `"${message.length > 100 ? message.substring(0, 100) + "..." : message}"`,
@@ -4593,7 +4593,7 @@ const createBroadcastResultMessage = (params) => {
           contents: [
             {
               type: "button",
-              action: {type: "message", text: `${orgCode}/summary`},
+              action: { type: "message", text: `${orgCode}/summary` },
               style: "secondary",
               height: "sm",
             },
@@ -4627,22 +4627,22 @@ const createOrgCodeGuideMessage = () => {
               type: "box",
               layout: "horizontal",
               contents: [
-                {type: "text", text: "🏢", size: "xl", flex: 0},
+                { type: "text", text: "🏢", size: "xl", flex: 0 },
                 {
                   type: "box",
                   layout: "vertical",
                   margin: "md",
                   flex: 1,
                   contents: [
-                    {type: "text", text: "ระบบรหัสองค์กร", weight: "bold", color: "#ffffff", size: "lg"},
-                    {type: "text", text: "Organization Code System", color: "#ffffff99", size: "xs"},
+                    { type: "text", text: "ระบบรหัสองค์กร", weight: "bold", color: "#ffffff", size: "lg" },
+                    { type: "text", text: "Organization Code System", color: "#ffffff99", size: "xs" },
                   ],
                 },
                 {
                   type: "box",
                   layout: "vertical",
                   contents: [
-                    {type: "text", text: "NEW", size: "xs", color: "#ffffff", align: "center", weight: "bold"},
+                    { type: "text", text: "NEW", size: "xs", color: "#ffffff", align: "center", weight: "bold" },
                   ],
                   backgroundColor: "#ff5722",
                   cornerRadius: "10px",
@@ -4659,11 +4659,11 @@ const createOrgCodeGuideMessage = () => {
           type: "box",
           layout: "vertical",
           contents: [
-            {type: "text", text: "ทำงานร่วมกันเป็นทีมได้ง่ายขึ้น!", weight: "bold", size: "md", color: "#333333"},
-            {type: "text", text: "ไม่ต้องสร้างกลุ่ม LINE ใหม่ ใช้รหัสองค์กรนำหน้าคำสั่ง", size: "sm", color: "#666666", wrap: true, margin: "sm"},
-            {type: "separator", color: "#eeeeee", margin: "lg"},
+            { type: "text", text: "ทำงานร่วมกันเป็นทีมได้ง่ายขึ้น!", weight: "bold", size: "md", color: "#333333" },
+            { type: "text", text: "ไม่ต้องสร้างกลุ่ม LINE ใหม่ ใช้รหัสองค์กรนำหน้าคำสั่ง", size: "sm", color: "#666666", wrap: true, margin: "sm" },
+            { type: "separator", color: "#eeeeee", margin: "lg" },
             // How to use
-            {type: "text", text: "📖 วิธีใช้งาน", weight: "bold", size: "sm", margin: "lg", color: "#1e88e5"},
+            { type: "text", text: "📖 วิธีใช้งาน", weight: "bold", size: "sm", margin: "lg", color: "#1e88e5" },
             // Command examples
             {
               type: "box",
@@ -4673,15 +4673,15 @@ const createOrgCodeGuideMessage = () => {
                   type: "box",
                   layout: "horizontal",
                   contents: [
-                    {type: "text", text: "👷", size: "sm", flex: 0},
+                    { type: "text", text: "👷", size: "sm", flex: 0 },
                     {
                       type: "box",
                       layout: "vertical",
                       flex: 1,
                       margin: "sm",
                       contents: [
-                        {type: "text", text: "พนักงานส่งรายงาน", weight: "bold", size: "xs"},
-                        {type: "text", text: "KCTLINE01/report shift=เช้า ...", size: "xs", color: "#5e35b1", wrap: true},
+                        { type: "text", text: "พนักงานส่งรายงาน", weight: "bold", size: "xs" },
+                        { type: "text", text: "KCTLINE01/report shift=เช้า ...", size: "xs", color: "#5e35b1", wrap: true },
                       ],
                     },
                   ],
@@ -4693,15 +4693,15 @@ const createOrgCodeGuideMessage = () => {
                   type: "box",
                   layout: "horizontal",
                   contents: [
-                    {type: "text", text: "👨‍🔧", size: "sm", flex: 0},
+                    { type: "text", text: "👨‍🔧", size: "sm", flex: 0 },
                     {
                       type: "box",
                       layout: "vertical",
                       flex: 1,
                       margin: "sm",
                       contents: [
-                        {type: "text", text: "หัวหน้าเช็คยอด", weight: "bold", size: "xs"},
-                        {type: "text", text: "KCTLINE01/summary", size: "xs", color: "#5e35b1"},
+                        { type: "text", text: "หัวหน้าเช็คยอด", weight: "bold", size: "xs" },
+                        { type: "text", text: "KCTLINE01/summary", size: "xs", color: "#5e35b1" },
                       ],
                     },
                   ],
@@ -4714,15 +4714,15 @@ const createOrgCodeGuideMessage = () => {
                   type: "box",
                   layout: "horizontal",
                   contents: [
-                    {type: "text", text: "📢", size: "sm", flex: 0},
+                    { type: "text", text: "📢", size: "sm", flex: 0 },
                     {
                       type: "box",
                       layout: "vertical",
                       flex: 1,
                       margin: "sm",
                       contents: [
-                        {type: "text", text: "ประกาศข่าวสาร", weight: "bold", size: "xs"},
-                        {type: "text", text: "KCTLINE01/announce พรุ่งนี้ประชุม", size: "xs", color: "#5e35b1", wrap: true},
+                        { type: "text", text: "ประกาศข่าวสาร", weight: "bold", size: "xs" },
+                        { type: "text", text: "KCTLINE01/announce พรุ่งนี้ประชุม", size: "xs", color: "#5e35b1", wrap: true },
                       ],
                     },
                   ],
@@ -4734,17 +4734,17 @@ const createOrgCodeGuideMessage = () => {
               ],
               margin: "md",
             },
-            {type: "separator", color: "#eeeeee", margin: "lg"},
+            { type: "separator", color: "#eeeeee", margin: "lg" },
             // Benefits
-            {type: "text", text: "✨ ข้อดี", weight: "bold", size: "sm", margin: "md", color: "#27ae60"},
+            { type: "text", text: "✨ ข้อดี", weight: "bold", size: "sm", margin: "md", color: "#27ae60" },
             {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "• ข้อมูลรวมที่เดียว ไม่ว่าส่งจากที่ไหน", size: "xs", color: "#666666"},
-                {type: "text", text: "• ไม่ต้องเชิญคนเข้ากลุ่มไลน์ใหม่", size: "xs", color: "#666666", margin: "xs"},
-                {type: "text", text: "• หัวหน้าดูสรุปทีมได้ทุกที่ทุกเวลา", size: "xs", color: "#666666", margin: "xs"},
-                {type: "text", text: "• ส่งประกาศถึงทีมได้ทันที", size: "xs", color: "#666666", margin: "xs"},
+                { type: "text", text: "• ข้อมูลรวมที่เดียว ไม่ว่าส่งจากที่ไหน", size: "xs", color: "#666666" },
+                { type: "text", text: "• ไม่ต้องเชิญคนเข้ากลุ่มไลน์ใหม่", size: "xs", color: "#666666", margin: "xs" },
+                { type: "text", text: "• หัวหน้าดูสรุปทีมได้ทุกที่ทุกเวลา", size: "xs", color: "#666666", margin: "xs" },
+                { type: "text", text: "• ส่งประกาศถึงทีมได้ทันที", size: "xs", color: "#666666", margin: "xs" },
               ],
               margin: "sm",
             },
@@ -4757,12 +4757,12 @@ const createOrgCodeGuideMessage = () => {
           contents: [
             {
               type: "button",
-              action: {type: "message", text: "สนใจสมัครแบบทีม"},
+              action: { type: "message", text: "สนใจสมัครแบบทีม" },
               style: "primary",
               height: "sm",
               color: "#5e35b1",
             },
-            {type: "text", text: "🏢 Team Pack เริ่มต้น 399฿/เดือน (5 คน)", size: "xxs", color: "#888888", align: "center", margin: "sm"},
+            { type: "text", text: "🏢 Team Pack เริ่มต้น 399฿/เดือน (5 คน)", size: "xxs", color: "#888888", align: "center", margin: "sm" },
           ],
           paddingAll: "15px",
         },
@@ -4797,7 +4797,7 @@ const createReportSuccessQuickMessage = (verificationCode, moldName, efficiency)
               layout: "vertical",
               flex: 0,
               contents: [
-                {type: "text", text: "✅", size: "xxl"},
+                { type: "text", text: "✅", size: "xxl" },
               ],
               justifyContent: "center",
             },
@@ -4807,14 +4807,14 @@ const createReportSuccessQuickMessage = (verificationCode, moldName, efficiency)
               flex: 1,
               margin: "lg",
               contents: [
-                {type: "text", text: "บันทึกสำเร็จ!", weight: "bold", size: "md"},
-                {type: "text", text: `🆔 Ref: ${verificationCode}`, size: "xs", color: "#1e88e5", margin: "xs"},
+                { type: "text", text: "บันทึกสำเร็จ!", weight: "bold", size: "md" },
+                { type: "text", text: `🆔 Ref: ${verificationCode}`, size: "xs", color: "#1e88e5", margin: "xs" },
                 {
                   type: "box",
                   layout: "horizontal",
                   contents: [
-                    {type: "text", text: `🏭 ${moldName}`, size: "xs", color: "#666666", flex: 1},
-                    {type: "text", text: `${effIcon} ${efficiency}%`, size: "xs", color: effColor, weight: "bold", align: "end"},
+                    { type: "text", text: `🏭 ${moldName}`, size: "xs", color: "#666666", flex: 1 },
+                    { type: "text", text: `${effIcon} ${efficiency}%`, size: "xs", color: effColor, weight: "bold", align: "end" },
                   ],
                   margin: "sm",
                 },
@@ -4845,12 +4845,12 @@ const createPaymentInstructionMessage = (packageName, price, isTeam = false) => 
 
     // สร้าง steps ตาม package type
     const steps = [
-      {num: "1", text: "📸 ส่งสลิปการโอน (รูปภาพ)", color: "#059669"},
-      {num: "2", text: "📧 พิมพ์ Email ของคุณส่งมา", color: "#0891b2"},
+      { num: "1", text: "📸 ส่งสลิปการโอน (รูปภาพ)", color: "#059669" },
+      { num: "2", text: "📧 พิมพ์ Email ของคุณส่งมา", color: "#0891b2" },
     ];
 
     if (isTeam) {
-      steps.push({num: "3", text: "🏢 ชื่อทีม/รหัสองค์กร (เช่น KCT2024)", color: "#7c3aed"});
+      steps.push({ num: "3", text: "🏢 ชื่อทีม/รหัสองค์กร (เช่น KCT2024)", color: "#7c3aed" });
     }
 
     return {
@@ -5296,7 +5296,7 @@ const createAccountingGuideMessage = () => {
                       type: "box",
                       layout: "vertical",
                       contents: [
-                        {type: "text", text: "💰", size: "3xl", align: "center"},
+                        { type: "text", text: "💰", size: "3xl", align: "center" },
                       ],
                       width: "60px",
                       height: "60px",
@@ -5310,8 +5310,8 @@ const createAccountingGuideMessage = () => {
                       layout: "vertical",
                       margin: "lg",
                       contents: [
-                        {type: "text", text: "บัญชี WiT", weight: "bold", color: "#ffffff", size: "xl"},
-                        {type: "text", text: "จดบัญชีง่าย แค่พิมพ์ไทย!", color: "#FFD700", size: "sm", weight: "bold"},
+                        { type: "text", text: "บัญชี WiT", weight: "bold", color: "#ffffff", size: "xl" },
+                        { type: "text", text: "จดบัญชีง่าย แค่พิมพ์ไทย!", color: "#FFD700", size: "sm", weight: "bold" },
                       ],
                     },
                   ],
@@ -5326,8 +5326,8 @@ const createAccountingGuideMessage = () => {
                       type: "box",
                       layout: "vertical",
                       contents: [
-                        {type: "text", text: "🆓", size: "md", align: "center"},
-                        {type: "text", text: "ฟรี!", size: "xxs", color: "#ffffff", align: "center"},
+                        { type: "text", text: "🆓", size: "md", align: "center" },
+                        { type: "text", text: "ฟรี!", size: "xxs", color: "#ffffff", align: "center" },
                       ],
                       flex: 1,
                     },
@@ -5335,8 +5335,8 @@ const createAccountingGuideMessage = () => {
                       type: "box",
                       layout: "vertical",
                       contents: [
-                        {type: "text", text: "⚡", size: "md", align: "center"},
-                        {type: "text", text: "ทันที", size: "xxs", color: "#ffffff", align: "center"},
+                        { type: "text", text: "⚡", size: "md", align: "center" },
+                        { type: "text", text: "ทันที", size: "xxs", color: "#ffffff", align: "center" },
                       ],
                       flex: 1,
                     },
@@ -5344,8 +5344,8 @@ const createAccountingGuideMessage = () => {
                       type: "box",
                       layout: "vertical",
                       contents: [
-                        {type: "text", text: "☁️", size: "md", align: "center"},
-                        {type: "text", text: "Cloud", size: "xxs", color: "#ffffff", align: "center"},
+                        { type: "text", text: "☁️", size: "md", align: "center" },
+                        { type: "text", text: "Cloud", size: "xxs", color: "#ffffff", align: "center" },
                       ],
                       flex: 1,
                     },
@@ -5353,8 +5353,8 @@ const createAccountingGuideMessage = () => {
                       type: "box",
                       layout: "vertical",
                       contents: [
-                        {type: "text", text: "📊", size: "md", align: "center"},
-                        {type: "text", text: "สรุปอัตโนมัติ", size: "xxs", color: "#ffffff", align: "center"},
+                        { type: "text", text: "📊", size: "md", align: "center" },
+                        { type: "text", text: "สรุปอัตโนมัติ", size: "xxs", color: "#ffffff", align: "center" },
                       ],
                       flex: 1,
                     },
@@ -5371,7 +5371,7 @@ const createAccountingGuideMessage = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "✨ ทำไมต้องใช้บัญชี WiT?", weight: "bold", size: "md", color: "#333333"},
+                { type: "text", text: "✨ ทำไมต้องใช้บัญชี WiT?", weight: "bold", size: "md", color: "#333333" },
                 {
                   type: "box",
                   layout: "vertical",
@@ -5382,37 +5382,37 @@ const createAccountingGuideMessage = () => {
                       type: "box",
                       layout: "horizontal",
                       contents: [
-                        {type: "text", text: "✅", size: "md", flex: 0},
-                        {type: "text", text: "ไม่ต้องเรียนรู้แอปใหม่", size: "sm", color: "#666666", margin: "md", flex: 1},
+                        { type: "text", text: "✅", size: "md", flex: 0 },
+                        { type: "text", text: "ไม่ต้องเรียนรู้แอปใหม่", size: "sm", color: "#666666", margin: "md", flex: 1 },
                       ],
                     },
                     {
                       type: "box",
                       layout: "horizontal",
                       contents: [
-                        {type: "text", text: "✅", size: "md", flex: 0},
-                        {type: "text", text: "พิมพ์ภาษาไทยธรรมดา = จดบัญชี", size: "sm", color: "#666666", margin: "md", flex: 1},
+                        { type: "text", text: "✅", size: "md", flex: 0 },
+                        { type: "text", text: "พิมพ์ภาษาไทยธรรมดา = จดบัญชี", size: "sm", color: "#666666", margin: "md", flex: 1 },
                       ],
                     },
                     {
                       type: "box",
                       layout: "horizontal",
                       contents: [
-                        {type: "text", text: "✅", size: "md", flex: 0},
-                        {type: "text", text: "AI เข้าใจและจัดหมวดหมู่ให้", size: "sm", color: "#666666", margin: "md", flex: 1},
+                        { type: "text", text: "✅", size: "md", flex: 0 },
+                        { type: "text", text: "AI เข้าใจและจัดหมวดหมู่ให้", size: "sm", color: "#666666", margin: "md", flex: 1 },
                       ],
                     },
                     {
                       type: "box",
                       layout: "horizontal",
                       contents: [
-                        {type: "text", text: "✅", size: "md", flex: 0},
-                        {type: "text", text: "ดูสรุปรายรับ-รายจ่ายได้ทันที", size: "sm", color: "#666666", margin: "md", flex: 1},
+                        { type: "text", text: "✅", size: "md", flex: 0 },
+                        { type: "text", text: "ดูสรุปรายรับ-รายจ่ายได้ทันที", size: "sm", color: "#666666", margin: "md", flex: 1 },
                       ],
                     },
                   ],
                 },
-                {type: "separator", margin: "lg"},
+                { type: "separator", margin: "lg" },
                 {
                   type: "text",
                   text: "👉 เลื่อนดูวิธีใช้งาน →",
@@ -5433,7 +5433,7 @@ const createAccountingGuideMessage = () => {
                   type: "button",
                   style: "primary",
                   color: "#F57C00",
-                  action: {type: "message", label: "🚀 เริ่มใช้งานเลย!", text: "ขายมะม่วง 50 กก. 1500 บาท"},
+                  action: { type: "message", label: "🚀 เริ่มใช้งานเลย!", text: "ขายมะม่วง 50 กก. 1500 บาท" },
                 },
               ],
               paddingAll: "12px",
@@ -5449,8 +5449,8 @@ const createAccountingGuideMessage = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "📈 บันทึกรายรับ", weight: "bold", color: "#ffffff", size: "lg"},
-                {type: "text", text: "พิมพ์แบบนี้เลย!", color: "#ffffffcc", size: "sm"},
+                { type: "text", text: "📈 บันทึกรายรับ", weight: "bold", color: "#ffffff", size: "lg" },
+                { type: "text", text: "พิมพ์แบบนี้เลย!", color: "#ffffffcc", size: "sm" },
               ],
               backgroundColor: "#27ae60",
               paddingAll: "20px",
@@ -5459,7 +5459,7 @@ const createAccountingGuideMessage = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "💬 ตัวอย่างการพิมพ์:", weight: "bold", size: "sm", color: "#333333"},
+                { type: "text", text: "💬 ตัวอย่างการพิมพ์:", weight: "bold", size: "sm", color: "#333333" },
                 {
                   type: "box",
                   layout: "vertical",
@@ -5473,8 +5473,8 @@ const createAccountingGuideMessage = () => {
                       cornerRadius: "8px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "\"ขายทุเรียน 100 กก. 15000\"", size: "sm", color: "#27ae60", weight: "bold"},
-                        {type: "text", text: "→ รายรับ: ทุเรียน 15,000฿", size: "xs", color: "#666666", margin: "xs"},
+                        { type: "text", text: "\"ขายทุเรียน 100 กก. 15000\"", size: "sm", color: "#27ae60", weight: "bold" },
+                        { type: "text", text: "→ รายรับ: ทุเรียน 15,000฿", size: "xs", color: "#666666", margin: "xs" },
                       ],
                     },
                     {
@@ -5484,8 +5484,8 @@ const createAccountingGuideMessage = () => {
                       cornerRadius: "8px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "\"รับเงินค่าจ้าง 5000\"", size: "sm", color: "#27ae60", weight: "bold"},
-                        {type: "text", text: "→ รายรับ: ค่าจ้าง 5,000฿", size: "xs", color: "#666666", margin: "xs"},
+                        { type: "text", text: "\"รับเงินค่าจ้าง 5000\"", size: "sm", color: "#27ae60", weight: "bold" },
+                        { type: "text", text: "→ รายรับ: ค่าจ้าง 5,000฿", size: "xs", color: "#666666", margin: "xs" },
                       ],
                     },
                     {
@@ -5495,20 +5495,20 @@ const createAccountingGuideMessage = () => {
                       cornerRadius: "8px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "\"ลูกค้าโอนมา 3500\"", size: "sm", color: "#27ae60", weight: "bold"},
-                        {type: "text", text: "→ รายรับ: รับโอน 3,500฿", size: "xs", color: "#666666", margin: "xs"},
+                        { type: "text", text: "\"ลูกค้าโอนมา 3500\"", size: "sm", color: "#27ae60", weight: "bold" },
+                        { type: "text", text: "→ รายรับ: รับโอน 3,500฿", size: "xs", color: "#666666", margin: "xs" },
                       ],
                     },
                   ],
                 },
-                {type: "separator", margin: "lg"},
+                { type: "separator", margin: "lg" },
                 {
                   type: "box",
                   layout: "horizontal",
                   margin: "md",
                   contents: [
-                    {type: "text", text: "💡", size: "sm", flex: 0},
-                    {type: "text", text: "คำว่า ขาย, รับ, โอนมา = รายรับ", size: "xs", color: "#888888", margin: "sm", flex: 1, wrap: true},
+                    { type: "text", text: "💡", size: "sm", flex: 0 },
+                    { type: "text", text: "คำว่า ขาย, รับ, โอนมา = รายรับ", size: "xs", color: "#888888", margin: "sm", flex: 1, wrap: true },
                   ],
                 },
               ],
@@ -5522,7 +5522,7 @@ const createAccountingGuideMessage = () => {
                   type: "button",
                   style: "primary",
                   color: "#27ae60",
-                  action: {type: "message", label: "📈 ลองบันทึกรายรับ", text: "ขายผัก 200 บาท"},
+                  action: { type: "message", label: "📈 ลองบันทึกรายรับ", text: "ขายผัก 200 บาท" },
                 },
               ],
               paddingAll: "12px",
@@ -5538,8 +5538,8 @@ const createAccountingGuideMessage = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "📉 บันทึกรายจ่าย", weight: "bold", color: "#ffffff", size: "lg"},
-                {type: "text", text: "พิมพ์แบบนี้เลย!", color: "#ffffffcc", size: "sm"},
+                { type: "text", text: "📉 บันทึกรายจ่าย", weight: "bold", color: "#ffffff", size: "lg" },
+                { type: "text", text: "พิมพ์แบบนี้เลย!", color: "#ffffffcc", size: "sm" },
               ],
               backgroundColor: "#e74c3c",
               paddingAll: "20px",
@@ -5548,7 +5548,7 @@ const createAccountingGuideMessage = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "💬 ตัวอย่างการพิมพ์:", weight: "bold", size: "sm", color: "#333333"},
+                { type: "text", text: "💬 ตัวอย่างการพิมพ์:", weight: "bold", size: "sm", color: "#333333" },
                 {
                   type: "box",
                   layout: "vertical",
@@ -5562,8 +5562,8 @@ const createAccountingGuideMessage = () => {
                       cornerRadius: "8px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "\"ซื้อปุ๋ย 2 กระสอบ 1200\"", size: "sm", color: "#e74c3c", weight: "bold"},
-                        {type: "text", text: "→ รายจ่าย: ปุ๋ย 1,200฿", size: "xs", color: "#666666", margin: "xs"},
+                        { type: "text", text: "\"ซื้อปุ๋ย 2 กระสอบ 1200\"", size: "sm", color: "#e74c3c", weight: "bold" },
+                        { type: "text", text: "→ รายจ่าย: ปุ๋ย 1,200฿", size: "xs", color: "#666666", margin: "xs" },
                       ],
                     },
                     {
@@ -5573,8 +5573,8 @@ const createAccountingGuideMessage = () => {
                       cornerRadius: "8px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "\"จ่ายค่าน้ำมัน 500\"", size: "sm", color: "#e74c3c", weight: "bold"},
-                        {type: "text", text: "→ รายจ่าย: น้ำมัน 500฿", size: "xs", color: "#666666", margin: "xs"},
+                        { type: "text", text: "\"จ่ายค่าน้ำมัน 500\"", size: "sm", color: "#e74c3c", weight: "bold" },
+                        { type: "text", text: "→ รายจ่าย: น้ำมัน 500฿", size: "xs", color: "#666666", margin: "xs" },
                       ],
                     },
                     {
@@ -5584,20 +5584,20 @@ const createAccountingGuideMessage = () => {
                       cornerRadius: "8px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "\"โอนค่าแรงคนงาน 3000\"", size: "sm", color: "#e74c3c", weight: "bold"},
-                        {type: "text", text: "→ รายจ่าย: ค่าแรง 3,000฿", size: "xs", color: "#666666", margin: "xs"},
+                        { type: "text", text: "\"โอนค่าแรงคนงาน 3000\"", size: "sm", color: "#e74c3c", weight: "bold" },
+                        { type: "text", text: "→ รายจ่าย: ค่าแรง 3,000฿", size: "xs", color: "#666666", margin: "xs" },
                       ],
                     },
                   ],
                 },
-                {type: "separator", margin: "lg"},
+                { type: "separator", margin: "lg" },
                 {
                   type: "box",
                   layout: "horizontal",
                   margin: "md",
                   contents: [
-                    {type: "text", text: "💡", size: "sm", flex: 0},
-                    {type: "text", text: "คำว่า ซื้อ, จ่าย, โอนไป = รายจ่าย", size: "xs", color: "#888888", margin: "sm", flex: 1, wrap: true},
+                    { type: "text", text: "💡", size: "sm", flex: 0 },
+                    { type: "text", text: "คำว่า ซื้อ, จ่าย, โอนไป = รายจ่าย", size: "xs", color: "#888888", margin: "sm", flex: 1, wrap: true },
                   ],
                 },
               ],
@@ -5611,7 +5611,7 @@ const createAccountingGuideMessage = () => {
                   type: "button",
                   style: "primary",
                   color: "#e74c3c",
-                  action: {type: "message", label: "📉 ลองบันทึกรายจ่าย", text: "ซื้อเมล็ดพันธุ์ 350 บาท"},
+                  action: { type: "message", label: "📉 ลองบันทึกรายจ่าย", text: "ซื้อเมล็ดพันธุ์ 350 บาท" },
                 },
               ],
               paddingAll: "12px",
@@ -5627,8 +5627,8 @@ const createAccountingGuideMessage = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "📊 ดูสรุป & รายงาน", weight: "bold", color: "#ffffff", size: "lg"},
-                {type: "text", text: "คำสั่งพิเศษ", color: "#ffffffcc", size: "sm"},
+                { type: "text", text: "📊 ดูสรุป & รายงาน", weight: "bold", color: "#ffffff", size: "lg" },
+                { type: "text", text: "คำสั่งพิเศษ", color: "#ffffffcc", size: "sm" },
               ],
               backgroundColor: "#3498db",
               paddingAll: "20px",
@@ -5637,7 +5637,7 @@ const createAccountingGuideMessage = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "🎯 คำสั่งที่ใช้บ่อย:", weight: "bold", size: "sm", color: "#333333"},
+                { type: "text", text: "🎯 คำสั่งที่ใช้บ่อย:", weight: "bold", size: "sm", color: "#333333" },
                 {
                   type: "box",
                   layout: "vertical",
@@ -5651,19 +5651,19 @@ const createAccountingGuideMessage = () => {
                       cornerRadius: "8px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "📊", size: "lg", flex: 0},
+                        { type: "text", text: "📊", size: "lg", flex: 0 },
                         {
                           type: "box",
                           layout: "vertical",
                           margin: "md",
                           flex: 1,
                           contents: [
-                            {type: "text", text: "\"สรุปบัญชี\"", weight: "bold", size: "sm", color: "#1565c0"},
-                            {type: "text", text: "ดูยอดรวมวันนี้", size: "xs", color: "#666666"},
+                            { type: "text", text: "\"สรุปบัญชี\"", weight: "bold", size: "sm", color: "#1565c0" },
+                            { type: "text", text: "ดูยอดรวมวันนี้", size: "xs", color: "#666666" },
                           ],
                         },
                       ],
-                      action: {type: "message", text: "สรุปบัญชี"},
+                      action: { type: "message", text: "สรุปบัญชี" },
                     },
                     {
                       type: "box",
@@ -5672,19 +5672,19 @@ const createAccountingGuideMessage = () => {
                       cornerRadius: "8px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "📅", size: "lg", flex: 0},
+                        { type: "text", text: "📅", size: "lg", flex: 0 },
                         {
                           type: "box",
                           layout: "vertical",
                           margin: "md",
                           flex: 1,
                           contents: [
-                            {type: "text", text: "\"สรุปบัญชีเดือนนี้\"", weight: "bold", size: "sm", color: "#1565c0"},
-                            {type: "text", text: "รายงานประจำเดือน", size: "xs", color: "#666666"},
+                            { type: "text", text: "\"สรุปบัญชีเดือนนี้\"", weight: "bold", size: "sm", color: "#1565c0" },
+                            { type: "text", text: "รายงานประจำเดือน", size: "xs", color: "#666666" },
                           ],
                         },
                       ],
-                      action: {type: "message", text: "สรุปบัญชีเดือนนี้"},
+                      action: { type: "message", text: "สรุปบัญชีเดือนนี้" },
                     },
                     {
                       type: "box",
@@ -5693,30 +5693,30 @@ const createAccountingGuideMessage = () => {
                       cornerRadius: "8px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "📜", size: "lg", flex: 0},
+                        { type: "text", text: "📜", size: "lg", flex: 0 },
                         {
                           type: "box",
                           layout: "vertical",
                           margin: "md",
                           flex: 1,
                           contents: [
-                            {type: "text", text: "\"ดูรายการบัญชี\"", weight: "bold", size: "sm", color: "#1565c0"},
-                            {type: "text", text: "ดูรายการที่บันทึกไว้", size: "xs", color: "#666666"},
+                            { type: "text", text: "\"ดูรายการบัญชี\"", weight: "bold", size: "sm", color: "#1565c0" },
+                            { type: "text", text: "ดูรายการที่บันทึกไว้", size: "xs", color: "#666666" },
                           ],
                         },
                       ],
-                      action: {type: "message", text: "ดูรายการบัญชี"},
+                      action: { type: "message", text: "ดูรายการบัญชี" },
                     },
                   ],
                 },
-                {type: "separator", margin: "lg"},
+                { type: "separator", margin: "lg" },
                 {
                   type: "box",
                   layout: "horizontal",
                   margin: "md",
                   contents: [
-                    {type: "text", text: "💡", size: "sm", flex: 0},
-                    {type: "text", text: "กดที่กล่องด้านบนได้เลย!", size: "xs", color: "#888888", margin: "sm", flex: 1},
+                    { type: "text", text: "💡", size: "sm", flex: 0 },
+                    { type: "text", text: "กดที่กล่องด้านบนได้เลย!", size: "xs", color: "#888888", margin: "sm", flex: 1 },
                   ],
                 },
               ],
@@ -5730,7 +5730,7 @@ const createAccountingGuideMessage = () => {
                   type: "button",
                   style: "primary",
                   color: "#3498db",
-                  action: {type: "message", label: "📊 ดูสรุปบัญชีตอนนี้", text: "สรุปบัญชี"},
+                  action: { type: "message", label: "📊 ดูสรุปบัญชีตอนนี้", text: "สรุปบัญชี" },
                 },
               ],
               paddingAll: "12px",
@@ -5746,8 +5746,8 @@ const createAccountingGuideMessage = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "🎁 เคล็ดลับการใช้งาน", weight: "bold", color: "#ffffff", size: "lg"},
-                {type: "text", text: "ใช้งานให้เต็มประสิทธิภาพ", color: "#ffffffcc", size: "sm"},
+                { type: "text", text: "🎁 เคล็ดลับการใช้งาน", weight: "bold", color: "#ffffff", size: "lg" },
+                { type: "text", text: "ใช้งานให้เต็มประสิทธิภาพ", color: "#ffffffcc", size: "sm" },
               ],
               backgroundColor: "#9b59b6",
               paddingAll: "20px",
@@ -5765,15 +5765,15 @@ const createAccountingGuideMessage = () => {
                       type: "box",
                       layout: "horizontal",
                       contents: [
-                        {type: "text", text: "1️⃣", size: "md", flex: 0},
+                        { type: "text", text: "1️⃣", size: "md", flex: 0 },
                         {
                           type: "box",
                           layout: "vertical",
                           margin: "md",
                           flex: 1,
                           contents: [
-                            {type: "text", text: "ระบุจำนวนเงินชัดเจน", weight: "bold", size: "sm", color: "#333333"},
-                            {type: "text", text: "เช่น 1500 หรือ 1,500 บาท", size: "xs", color: "#888888", wrap: true},
+                            { type: "text", text: "ระบุจำนวนเงินชัดเจน", weight: "bold", size: "sm", color: "#333333" },
+                            { type: "text", text: "เช่น 1500 หรือ 1,500 บาท", size: "xs", color: "#888888", wrap: true },
                           ],
                         },
                       ],
@@ -5782,15 +5782,15 @@ const createAccountingGuideMessage = () => {
                       type: "box",
                       layout: "horizontal",
                       contents: [
-                        {type: "text", text: "2️⃣", size: "md", flex: 0},
+                        { type: "text", text: "2️⃣", size: "md", flex: 0 },
                         {
                           type: "box",
                           layout: "vertical",
                           margin: "md",
                           flex: 1,
                           contents: [
-                            {type: "text", text: "บอกรายละเอียดสินค้า", weight: "bold", size: "sm", color: "#333333"},
-                            {type: "text", text: "ช่วยให้สรุปหมวดหมู่ได้ดี", size: "xs", color: "#888888", wrap: true},
+                            { type: "text", text: "บอกรายละเอียดสินค้า", weight: "bold", size: "sm", color: "#333333" },
+                            { type: "text", text: "ช่วยให้สรุปหมวดหมู่ได้ดี", size: "xs", color: "#888888", wrap: true },
                           ],
                         },
                       ],
@@ -5799,15 +5799,15 @@ const createAccountingGuideMessage = () => {
                       type: "box",
                       layout: "horizontal",
                       contents: [
-                        {type: "text", text: "3️⃣", size: "md", flex: 0},
+                        { type: "text", text: "3️⃣", size: "md", flex: 0 },
                         {
                           type: "box",
                           layout: "vertical",
                           margin: "md",
                           flex: 1,
                           contents: [
-                            {type: "text", text: "บันทึกทันทีที่ทำรายการ", weight: "bold", size: "sm", color: "#333333"},
-                            {type: "text", text: "ไม่ลืม ไม่ตกหล่น", size: "xs", color: "#888888", wrap: true},
+                            { type: "text", text: "บันทึกทันทีที่ทำรายการ", weight: "bold", size: "sm", color: "#333333" },
+                            { type: "text", text: "ไม่ลืม ไม่ตกหล่น", size: "xs", color: "#888888", wrap: true },
                           ],
                         },
                       ],
@@ -5816,22 +5816,22 @@ const createAccountingGuideMessage = () => {
                       type: "box",
                       layout: "horizontal",
                       contents: [
-                        {type: "text", text: "4️⃣", size: "md", flex: 0},
+                        { type: "text", text: "4️⃣", size: "md", flex: 0 },
                         {
                           type: "box",
                           layout: "vertical",
                           margin: "md",
                           flex: 1,
                           contents: [
-                            {type: "text", text: "ดูสรุปเป็นประจำ", weight: "bold", size: "sm", color: "#333333"},
-                            {type: "text", text: "รู้สถานะการเงินตลอดเวลา", size: "xs", color: "#888888", wrap: true},
+                            { type: "text", text: "ดูสรุปเป็นประจำ", weight: "bold", size: "sm", color: "#333333" },
+                            { type: "text", text: "รู้สถานะการเงินตลอดเวลา", size: "xs", color: "#888888", wrap: true },
                           ],
                         },
                       ],
                     },
                   ],
                 },
-                {type: "separator", margin: "lg"},
+                { type: "separator", margin: "lg" },
                 {
                   type: "box",
                   layout: "vertical",
@@ -5840,10 +5840,10 @@ const createAccountingGuideMessage = () => {
                   cornerRadius: "8px",
                   paddingAll: "10px",
                   contents: [
-                    {type: "text", text: "🎯 เหมาะสำหรับ:", weight: "bold", size: "xs", color: "#9b59b6"},
-                    {type: "text", text: "• เกษตรกร ชาวสวน ชาวไร่", size: "xs", color: "#666666"},
-                    {type: "text", text: "• ร้านค้าปลีก ร้านขายของ", size: "xs", color: "#666666"},
-                    {type: "text", text: "• Freelance รับงานอิสระ", size: "xs", color: "#666666"},
+                    { type: "text", text: "🎯 เหมาะสำหรับ:", weight: "bold", size: "xs", color: "#9b59b6" },
+                    { type: "text", text: "• เกษตรกร ชาวสวน ชาวไร่", size: "xs", color: "#666666" },
+                    { type: "text", text: "• ร้านค้าปลีก ร้านขายของ", size: "xs", color: "#666666" },
+                    { type: "text", text: "• Freelance รับงานอิสระ", size: "xs", color: "#666666" },
                   ],
                 },
               ],
@@ -5858,7 +5858,7 @@ const createAccountingGuideMessage = () => {
                   type: "button",
                   style: "primary",
                   color: "#9b59b6",
-                  action: {type: "message", label: "🚀 เริ่มจดบัญชีเลย!", text: "ขายของวันนี้ 2500 บาท"},
+                  action: { type: "message", label: "🚀 เริ่มจดบัญชีเลย!", text: "ขายของวันนี้ 2500 บาท" },
                 },
                 {
                   type: "box",
@@ -5882,7 +5882,7 @@ const createAccountingGuideMessage = () => {
                       height: "16px",
                       cornerRadius: "8px",
                     },
-                    {type: "text", text: "บัญชี WiT by อ.วิทยา", size: "xxs", color: "#aaaaaa", margin: "sm"},
+                    { type: "text", text: "บัญชี WiT by อ.วิทยา", size: "xxs", color: "#aaaaaa", margin: "sm" },
                   ],
                 },
               ],
@@ -5937,7 +5937,7 @@ const createTemperatureTableMessage = () => {
                       type: "box",
                       layout: "vertical",
                       contents: [
-                        {type: "text", text: "🌡️", size: "3xl", align: "center"},
+                        { type: "text", text: "🌡️", size: "3xl", align: "center" },
                       ],
                       width: "60px",
                       height: "60px",
@@ -5951,8 +5951,8 @@ const createTemperatureTableMessage = () => {
                       layout: "vertical",
                       margin: "lg",
                       contents: [
-                        {type: "text", text: "Temperature Guide", weight: "bold", color: "#ffffff", size: "lg"},
-                        {type: "text", text: "ตารางอุณหภูมิฉีดพลาสติก", color: "#FFD700", size: "sm", weight: "bold"},
+                        { type: "text", text: "Temperature Guide", weight: "bold", color: "#ffffff", size: "lg" },
+                        { type: "text", text: "ตารางอุณหภูมิฉีดพลาสติก", color: "#FFD700", size: "sm", weight: "bold" },
                       ],
                     },
                   ],
@@ -5963,10 +5963,10 @@ const createTemperatureTableMessage = () => {
                   layout: "horizontal",
                   margin: "lg",
                   contents: [
-                    {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "🔥", size: "md", align: "center"}, {type: "text", text: "Barrel", size: "xxs", color: "#ffffff", align: "center"}]},
-                    {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "🎯", size: "md", align: "center"}, {type: "text", text: "Mold", size: "xxs", color: "#ffffff", align: "center"}]},
-                    {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "💨", size: "md", align: "center"}, {type: "text", text: "Drying", size: "xxs", color: "#ffffff", align: "center"}]},
-                    {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "🔴", size: "md", align: "center"}, {type: "text", text: "HotRunner", size: "xxs", color: "#ffffff", align: "center"}]},
+                    { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "🔥", size: "md", align: "center" }, { type: "text", text: "Barrel", size: "xxs", color: "#ffffff", align: "center" }] },
+                    { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "🎯", size: "md", align: "center" }, { type: "text", text: "Mold", size: "xxs", color: "#ffffff", align: "center" }] },
+                    { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "💨", size: "md", align: "center" }, { type: "text", text: "Drying", size: "xxs", color: "#ffffff", align: "center" }] },
+                    { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "🔴", size: "md", align: "center" }, { type: "text", text: "HotRunner", size: "xxs", color: "#ffffff", align: "center" }] },
                   ],
                   backgroundColor: "#ffffff22",
                   cornerRadius: "12px",
@@ -5980,7 +5980,7 @@ const createTemperatureTableMessage = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "📊 วัสดุยอดนิยม (Quick View)", weight: "bold", size: "md", color: "#333333"},
+                { type: "text", text: "📊 วัสดุยอดนิยม (Quick View)", weight: "bold", size: "md", color: "#333333" },
                 {
                   type: "box",
                   layout: "vertical",
@@ -5994,11 +5994,11 @@ const createTemperatureTableMessage = () => {
                       cornerRadius: "8px",
                       paddingAll: "10px",
                       contents: [
-                        {type: "text", text: "PP", weight: "bold", size: "sm", color: "#d84315", flex: 2},
-                        {type: "text", text: "200-280°C", size: "xs", color: "#666666", flex: 3, align: "center"},
-                        {type: "text", text: "40-80°C", size: "xs", color: "#666666", flex: 2, align: "end"},
+                        { type: "text", text: "PP", weight: "bold", size: "sm", color: "#d84315", flex: 2 },
+                        { type: "text", text: "200-280°C", size: "xs", color: "#666666", flex: 3, align: "center" },
+                        { type: "text", text: "40-80°C", size: "xs", color: "#666666", flex: 2, align: "end" },
                       ],
-                      action: {type: "message", text: "อุณหภูมิ PP แบบละเอียด"},
+                      action: { type: "message", text: "อุณหภูมิ PP แบบละเอียด" },
                     },
                     {
                       type: "box",
@@ -6007,11 +6007,11 @@ const createTemperatureTableMessage = () => {
                       cornerRadius: "8px",
                       paddingAll: "10px",
                       contents: [
-                        {type: "text", text: "ABS", weight: "bold", size: "sm", color: "#1565c0", flex: 2},
-                        {type: "text", text: "210-270°C", size: "xs", color: "#666666", flex: 3, align: "center"},
-                        {type: "text", text: "50-80°C", size: "xs", color: "#666666", flex: 2, align: "end"},
+                        { type: "text", text: "ABS", weight: "bold", size: "sm", color: "#1565c0", flex: 2 },
+                        { type: "text", text: "210-270°C", size: "xs", color: "#666666", flex: 3, align: "center" },
+                        { type: "text", text: "50-80°C", size: "xs", color: "#666666", flex: 2, align: "end" },
                       ],
-                      action: {type: "message", text: "อุณหภูมิ ABS แบบละเอียด"},
+                      action: { type: "message", text: "อุณหภูมิ ABS แบบละเอียด" },
                     },
                     {
                       type: "box",
@@ -6020,11 +6020,11 @@ const createTemperatureTableMessage = () => {
                       cornerRadius: "8px",
                       paddingAll: "10px",
                       contents: [
-                        {type: "text", text: "PC", weight: "bold", size: "sm", color: "#2e7d32", flex: 2},
-                        {type: "text", text: "280-320°C", size: "xs", color: "#666666", flex: 3, align: "center"},
-                        {type: "text", text: "80-120°C", size: "xs", color: "#666666", flex: 2, align: "end"},
+                        { type: "text", text: "PC", weight: "bold", size: "sm", color: "#2e7d32", flex: 2 },
+                        { type: "text", text: "280-320°C", size: "xs", color: "#666666", flex: 3, align: "center" },
+                        { type: "text", text: "80-120°C", size: "xs", color: "#666666", flex: 2, align: "end" },
                       ],
-                      action: {type: "message", text: "อุณหภูมิ PC แบบละเอียด"},
+                      action: { type: "message", text: "อุณหภูมิ PC แบบละเอียด" },
                     },
                     {
                       type: "box",
@@ -6033,22 +6033,22 @@ const createTemperatureTableMessage = () => {
                       cornerRadius: "8px",
                       paddingAll: "10px",
                       contents: [
-                        {type: "text", text: "PA6", weight: "bold", size: "sm", color: "#c2185b", flex: 2},
-                        {type: "text", text: "230-290°C", size: "xs", color: "#666666", flex: 3, align: "center"},
-                        {type: "text", text: "60-90°C", size: "xs", color: "#666666", flex: 2, align: "end"},
+                        { type: "text", text: "PA6", weight: "bold", size: "sm", color: "#c2185b", flex: 2 },
+                        { type: "text", text: "230-290°C", size: "xs", color: "#666666", flex: 3, align: "center" },
+                        { type: "text", text: "60-90°C", size: "xs", color: "#666666", flex: 2, align: "end" },
                       ],
-                      action: {type: "message", text: "อุณหภูมิ Nylon แบบละเอียด"},
+                      action: { type: "message", text: "อุณหภูมิ Nylon แบบละเอียด" },
                     },
                   ],
                 },
-                {type: "separator", margin: "lg"},
+                { type: "separator", margin: "lg" },
                 {
                   type: "box",
                   layout: "horizontal",
                   margin: "md",
                   contents: [
-                    {type: "text", text: "💡", size: "sm", flex: 0},
-                    {type: "text", text: "เลื่อนดูวัสดุเพิ่มเติม →", size: "xs", color: "#d84315", margin: "sm", flex: 1, weight: "bold"},
+                    { type: "text", text: "💡", size: "sm", flex: 0 },
+                    { type: "text", text: "เลื่อนดูวัสดุเพิ่มเติม →", size: "xs", color: "#d84315", margin: "sm", flex: 1, weight: "bold" },
                   ],
                 },
               ],
@@ -6059,8 +6059,8 @@ const createTemperatureTableMessage = () => {
               layout: "horizontal",
               spacing: "sm",
               contents: [
-                {type: "button", style: "primary", color: "#d84315", flex: 1, action: {type: "message", label: "🔥 การอบวัสดุ", text: "วิธีอบวัสดุพลาสติก"}},
-                {type: "button", style: "secondary", flex: 1, action: {type: "message", label: "🔴 Hot Runner", text: "อุณหภูมิ Hot Runner"}},
+                { type: "button", style: "primary", color: "#d84315", flex: 1, action: { type: "message", label: "🔥 การอบวัสดุ", text: "วิธีอบวัสดุพลาสติก" } },
+                { type: "button", style: "secondary", flex: 1, action: { type: "message", label: "🔴 Hot Runner", text: "อุณหภูมิ Hot Runner" } },
               ],
               paddingAll: "12px",
             },
@@ -6075,8 +6075,8 @@ const createTemperatureTableMessage = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "🔥 Commodity Plastics", weight: "bold", color: "#ffffff", size: "lg"},
-                {type: "text", text: "PP | PE | HDPE | LDPE | PVC", color: "#ffffffcc", size: "sm"},
+                { type: "text", text: "🔥 Commodity Plastics", weight: "bold", color: "#ffffff", size: "lg" },
+                { type: "text", text: "PP | PE | HDPE | LDPE | PVC", color: "#ffffffcc", size: "sm" },
               ],
               backgroundColor: "#ff5722",
               paddingAll: "20px",
@@ -6094,19 +6094,19 @@ const createTemperatureTableMessage = () => {
                   paddingAll: "12px",
                   margin: "none",
                   contents: [
-                    {type: "text", text: "🟠 PP (Polypropylene)", weight: "bold", size: "sm", color: "#e65100"},
+                    { type: "text", text: "🟠 PP (Polypropylene)", weight: "bold", size: "sm", color: "#e65100" },
                     {
                       type: "box",
                       layout: "horizontal",
                       margin: "sm",
                       contents: [
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Barrel", size: "xxs", color: "#888888"}, {type: "text", text: "200-280°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Mold", size: "xxs", color: "#888888"}, {type: "text", text: "40-80°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Drying", size: "xxs", color: "#888888"}, {type: "text", text: "ไม่จำเป็น", size: "xs", weight: "bold", color: "#27ae60"}]},
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Barrel", size: "xxs", color: "#888888" }, { type: "text", text: "200-280°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Mold", size: "xxs", color: "#888888" }, { type: "text", text: "40-80°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Drying", size: "xxs", color: "#888888" }, { type: "text", text: "ไม่จำเป็น", size: "xs", weight: "bold", color: "#27ae60" }] },
                       ],
                     },
                   ],
-                  action: {type: "message", text: "อุณหภูมิ PP แบบละเอียด"},
+                  action: { type: "message", text: "อุณหภูมิ PP แบบละเอียด" },
                 },
                 // HDPE
                 {
@@ -6117,19 +6117,19 @@ const createTemperatureTableMessage = () => {
                   paddingAll: "12px",
                   margin: "md",
                   contents: [
-                    {type: "text", text: "🔵 HDPE (High Density PE)", weight: "bold", size: "sm", color: "#1565c0"},
+                    { type: "text", text: "🔵 HDPE (High Density PE)", weight: "bold", size: "sm", color: "#1565c0" },
                     {
                       type: "box",
                       layout: "horizontal",
                       margin: "sm",
                       contents: [
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Barrel", size: "xxs", color: "#888888"}, {type: "text", text: "200-280°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Mold", size: "xxs", color: "#888888"}, {type: "text", text: "20-60°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Drying", size: "xxs", color: "#888888"}, {type: "text", text: "ไม่จำเป็น", size: "xs", weight: "bold", color: "#27ae60"}]},
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Barrel", size: "xxs", color: "#888888" }, { type: "text", text: "200-280°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Mold", size: "xxs", color: "#888888" }, { type: "text", text: "20-60°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Drying", size: "xxs", color: "#888888" }, { type: "text", text: "ไม่จำเป็น", size: "xs", weight: "bold", color: "#27ae60" }] },
                       ],
                     },
                   ],
-                  action: {type: "message", text: "อุณหภูมิ HDPE แบบละเอียด"},
+                  action: { type: "message", text: "อุณหภูมิ HDPE แบบละเอียด" },
                 },
                 // LDPE
                 {
@@ -6140,19 +6140,19 @@ const createTemperatureTableMessage = () => {
                   paddingAll: "12px",
                   margin: "md",
                   contents: [
-                    {type: "text", text: "🟢 LDPE (Low Density PE)", weight: "bold", size: "sm", color: "#2e7d32"},
+                    { type: "text", text: "🟢 LDPE (Low Density PE)", weight: "bold", size: "sm", color: "#2e7d32" },
                     {
                       type: "box",
                       layout: "horizontal",
                       margin: "sm",
                       contents: [
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Barrel", size: "xxs", color: "#888888"}, {type: "text", text: "180-240°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Mold", size: "xxs", color: "#888888"}, {type: "text", text: "20-50°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Drying", size: "xxs", color: "#888888"}, {type: "text", text: "ไม่จำเป็น", size: "xs", weight: "bold", color: "#27ae60"}]},
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Barrel", size: "xxs", color: "#888888" }, { type: "text", text: "180-240°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Mold", size: "xxs", color: "#888888" }, { type: "text", text: "20-50°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Drying", size: "xxs", color: "#888888" }, { type: "text", text: "ไม่จำเป็น", size: "xs", weight: "bold", color: "#27ae60" }] },
                       ],
                     },
                   ],
-                  action: {type: "message", text: "อุณหภูมิ LDPE แบบละเอียด"},
+                  action: { type: "message", text: "อุณหภูมิ LDPE แบบละเอียด" },
                 },
                 // PVC
                 {
@@ -6163,20 +6163,20 @@ const createTemperatureTableMessage = () => {
                   paddingAll: "12px",
                   margin: "md",
                   contents: [
-                    {type: "text", text: "🟣 PVC (Polyvinyl Chloride)", weight: "bold", size: "sm", color: "#c2185b"},
+                    { type: "text", text: "🟣 PVC (Polyvinyl Chloride)", weight: "bold", size: "sm", color: "#c2185b" },
                     {
                       type: "box",
                       layout: "horizontal",
                       margin: "sm",
                       contents: [
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Barrel", size: "xxs", color: "#888888"}, {type: "text", text: "160-200°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Mold", size: "xxs", color: "#888888"}, {type: "text", text: "30-50°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Drying", size: "xxs", color: "#888888"}, {type: "text", text: "70°C/2h", size: "xs", weight: "bold", color: "#e74c3c"}]},
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Barrel", size: "xxs", color: "#888888" }, { type: "text", text: "160-200°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Mold", size: "xxs", color: "#888888" }, { type: "text", text: "30-50°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Drying", size: "xxs", color: "#888888" }, { type: "text", text: "70°C/2h", size: "xs", weight: "bold", color: "#e74c3c" }] },
                       ],
                     },
-                    {type: "text", text: "⚠️ ระวัง: ไวต่อความร้อน อย่าให้เกิน 210°C", size: "xxs", color: "#e74c3c", margin: "sm", wrap: true},
+                    { type: "text", text: "⚠️ ระวัง: ไวต่อความร้อน อย่าให้เกิน 210°C", size: "xxs", color: "#e74c3c", margin: "sm", wrap: true },
                   ],
-                  action: {type: "message", text: "อุณหภูมิ PVC แบบละเอียด"},
+                  action: { type: "message", text: "อุณหภูมิ PVC แบบละเอียด" },
                 },
               ],
               paddingAll: "16px",
@@ -6186,7 +6186,7 @@ const createTemperatureTableMessage = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "button", style: "primary", color: "#ff5722", action: {type: "message", label: "📋 ดู PE ทุกชนิด", text: "เปรียบเทียบ PE HDPE LDPE"}},
+                { type: "button", style: "primary", color: "#ff5722", action: { type: "message", label: "📋 ดู PE ทุกชนิด", text: "เปรียบเทียบ PE HDPE LDPE" } },
               ],
               paddingAll: "12px",
             },
@@ -6201,8 +6201,8 @@ const createTemperatureTableMessage = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "🔧 Engineering Plastics", weight: "bold", color: "#ffffff", size: "lg"},
-                {type: "text", text: "ABS | PC | PA | POM | PBT", color: "#ffffffcc", size: "sm"},
+                { type: "text", text: "🔧 Engineering Plastics", weight: "bold", color: "#ffffff", size: "lg" },
+                { type: "text", text: "ABS | PC | PA | POM | PBT", color: "#ffffffcc", size: "sm" },
               ],
               backgroundColor: "#1565c0",
               paddingAll: "20px",
@@ -6220,19 +6220,19 @@ const createTemperatureTableMessage = () => {
                   paddingAll: "12px",
                   margin: "none",
                   contents: [
-                    {type: "text", text: "🔷 ABS", weight: "bold", size: "sm", color: "#1565c0"},
+                    { type: "text", text: "🔷 ABS", weight: "bold", size: "sm", color: "#1565c0" },
                     {
                       type: "box",
                       layout: "horizontal",
                       margin: "sm",
                       contents: [
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Barrel", size: "xxs", color: "#888888"}, {type: "text", text: "210-270°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Mold", size: "xxs", color: "#888888"}, {type: "text", text: "50-80°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Drying", size: "xxs", color: "#888888"}, {type: "text", text: "80°C/2-4h", size: "xs", weight: "bold", color: "#e74c3c"}]},
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Barrel", size: "xxs", color: "#888888" }, { type: "text", text: "210-270°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Mold", size: "xxs", color: "#888888" }, { type: "text", text: "50-80°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Drying", size: "xxs", color: "#888888" }, { type: "text", text: "80°C/2-4h", size: "xs", weight: "bold", color: "#e74c3c" }] },
                       ],
                     },
                   ],
-                  action: {type: "message", text: "อุณหภูมิ ABS แบบละเอียด"},
+                  action: { type: "message", text: "อุณหภูมิ ABS แบบละเอียด" },
                 },
                 // PC
                 {
@@ -6243,20 +6243,20 @@ const createTemperatureTableMessage = () => {
                   paddingAll: "12px",
                   margin: "md",
                   contents: [
-                    {type: "text", text: "🟢 PC (Polycarbonate)", weight: "bold", size: "sm", color: "#2e7d32"},
+                    { type: "text", text: "🟢 PC (Polycarbonate)", weight: "bold", size: "sm", color: "#2e7d32" },
                     {
                       type: "box",
                       layout: "horizontal",
                       margin: "sm",
                       contents: [
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Barrel", size: "xxs", color: "#888888"}, {type: "text", text: "280-320°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Mold", size: "xxs", color: "#888888"}, {type: "text", text: "80-120°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Drying", size: "xxs", color: "#888888"}, {type: "text", text: "120°C/4h", size: "xs", weight: "bold", color: "#e74c3c"}]},
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Barrel", size: "xxs", color: "#888888" }, { type: "text", text: "280-320°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Mold", size: "xxs", color: "#888888" }, { type: "text", text: "80-120°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Drying", size: "xxs", color: "#888888" }, { type: "text", text: "120°C/4h", size: "xs", weight: "bold", color: "#e74c3c" }] },
                       ],
                     },
-                    {type: "text", text: "⚠️ ความชื้นต้อง < 0.02%", size: "xxs", color: "#e74c3c", margin: "sm"},
+                    { type: "text", text: "⚠️ ความชื้นต้อง < 0.02%", size: "xxs", color: "#e74c3c", margin: "sm" },
                   ],
-                  action: {type: "message", text: "อุณหภูมิ PC แบบละเอียด"},
+                  action: { type: "message", text: "อุณหภูมิ PC แบบละเอียด" },
                 },
                 // PA6 (Nylon)
                 {
@@ -6267,20 +6267,20 @@ const createTemperatureTableMessage = () => {
                   paddingAll: "12px",
                   margin: "md",
                   contents: [
-                    {type: "text", text: "🟠 PA6 / PA66 (Nylon)", weight: "bold", size: "sm", color: "#e65100"},
+                    { type: "text", text: "🟠 PA6 / PA66 (Nylon)", weight: "bold", size: "sm", color: "#e65100" },
                     {
                       type: "box",
                       layout: "horizontal",
                       margin: "sm",
                       contents: [
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Barrel", size: "xxs", color: "#888888"}, {type: "text", text: "230-290°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Mold", size: "xxs", color: "#888888"}, {type: "text", text: "60-90°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Drying", size: "xxs", color: "#888888"}, {type: "text", text: "80°C/4-6h", size: "xs", weight: "bold", color: "#e74c3c"}]},
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Barrel", size: "xxs", color: "#888888" }, { type: "text", text: "230-290°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Mold", size: "xxs", color: "#888888" }, { type: "text", text: "60-90°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Drying", size: "xxs", color: "#888888" }, { type: "text", text: "80°C/4-6h", size: "xs", weight: "bold", color: "#e74c3c" }] },
                       ],
                     },
-                    {type: "text", text: "⚠️ ดูดความชื้นง่าย ต้องอบก่อนฉีด", size: "xxs", color: "#e74c3c", margin: "sm", wrap: true},
+                    { type: "text", text: "⚠️ ดูดความชื้นง่าย ต้องอบก่อนฉีด", size: "xxs", color: "#e74c3c", margin: "sm", wrap: true },
                   ],
-                  action: {type: "message", text: "อุณหภูมิ Nylon แบบละเอียด"},
+                  action: { type: "message", text: "อุณหภูมิ Nylon แบบละเอียด" },
                 },
                 // POM
                 {
@@ -6291,19 +6291,19 @@ const createTemperatureTableMessage = () => {
                   paddingAll: "12px",
                   margin: "md",
                   contents: [
-                    {type: "text", text: "🟣 POM (Acetal)", weight: "bold", size: "sm", color: "#c2185b"},
+                    { type: "text", text: "🟣 POM (Acetal)", weight: "bold", size: "sm", color: "#c2185b" },
                     {
                       type: "box",
                       layout: "horizontal",
                       margin: "sm",
                       contents: [
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Barrel", size: "xxs", color: "#888888"}, {type: "text", text: "180-220°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Mold", size: "xxs", color: "#888888"}, {type: "text", text: "60-90°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Drying", size: "xxs", color: "#888888"}, {type: "text", text: "80°C/2-3h", size: "xs", weight: "bold", color: "#e74c3c"}]},
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Barrel", size: "xxs", color: "#888888" }, { type: "text", text: "180-220°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Mold", size: "xxs", color: "#888888" }, { type: "text", text: "60-90°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Drying", size: "xxs", color: "#888888" }, { type: "text", text: "80°C/2-3h", size: "xs", weight: "bold", color: "#e74c3c" }] },
                       ],
                     },
                   ],
-                  action: {type: "message", text: "อุณหภูมิ POM แบบละเอียด"},
+                  action: { type: "message", text: "อุณหภูมิ POM แบบละเอียด" },
                 },
               ],
               paddingAll: "16px",
@@ -6313,7 +6313,7 @@ const createTemperatureTableMessage = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "button", style: "primary", color: "#1565c0", action: {type: "message", label: "📋 ดู PBT/PMMA", text: "อุณหภูมิ PBT PMMA"}},
+                { type: "button", style: "primary", color: "#1565c0", action: { type: "message", label: "📋 ดู PBT/PMMA", text: "อุณหภูมิ PBT PMMA" } },
               ],
               paddingAll: "12px",
             },
@@ -6328,8 +6328,8 @@ const createTemperatureTableMessage = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "⚡ High Performance", weight: "bold", color: "#ffffff", size: "lg"},
-                {type: "text", text: "PPS | PEEK | PEI | LCP", color: "#ffffffcc", size: "sm"},
+                { type: "text", text: "⚡ High Performance", weight: "bold", color: "#ffffff", size: "lg" },
+                { type: "text", text: "PPS | PEEK | PEI | LCP", color: "#ffffffcc", size: "sm" },
               ],
               backgroundColor: "#6a1b9a",
               paddingAll: "20px",
@@ -6347,20 +6347,20 @@ const createTemperatureTableMessage = () => {
                   paddingAll: "12px",
                   margin: "none",
                   contents: [
-                    {type: "text", text: "⚡ PPS (Polyphenylene Sulfide)", weight: "bold", size: "sm", color: "#6a1b9a"},
+                    { type: "text", text: "⚡ PPS (Polyphenylene Sulfide)", weight: "bold", size: "sm", color: "#6a1b9a" },
                     {
                       type: "box",
                       layout: "horizontal",
                       margin: "sm",
                       contents: [
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Barrel", size: "xxs", color: "#888888"}, {type: "text", text: "300-340°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Mold", size: "xxs", color: "#888888"}, {type: "text", text: "120-150°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Drying", size: "xxs", color: "#888888"}, {type: "text", text: "150°C/3h", size: "xs", weight: "bold", color: "#e74c3c"}]},
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Barrel", size: "xxs", color: "#888888" }, { type: "text", text: "300-340°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Mold", size: "xxs", color: "#888888" }, { type: "text", text: "120-150°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Drying", size: "xxs", color: "#888888" }, { type: "text", text: "150°C/3h", size: "xs", weight: "bold", color: "#e74c3c" }] },
                       ],
                     },
-                    {type: "text", text: "💡 ทนความร้อน/สารเคมีสูง เหมาะกับชิ้นส่วนยานยนต์", size: "xxs", color: "#6a1b9a", margin: "sm", wrap: true},
+                    { type: "text", text: "💡 ทนความร้อน/สารเคมีสูง เหมาะกับชิ้นส่วนยานยนต์", size: "xxs", color: "#6a1b9a", margin: "sm", wrap: true },
                   ],
-                  action: {type: "message", text: "อุณหภูมิ PPS แบบละเอียด"},
+                  action: { type: "message", text: "อุณหภูมิ PPS แบบละเอียด" },
                 },
                 // PEEK
                 {
@@ -6371,20 +6371,20 @@ const createTemperatureTableMessage = () => {
                   paddingAll: "12px",
                   margin: "md",
                   contents: [
-                    {type: "text", text: "🔶 PEEK", weight: "bold", size: "sm", color: "#ff6f00"},
+                    { type: "text", text: "🔶 PEEK", weight: "bold", size: "sm", color: "#ff6f00" },
                     {
                       type: "box",
                       layout: "horizontal",
                       margin: "sm",
                       contents: [
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Barrel", size: "xxs", color: "#888888"}, {type: "text", text: "350-400°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Mold", size: "xxs", color: "#888888"}, {type: "text", text: "150-180°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Drying", size: "xxs", color: "#888888"}, {type: "text", text: "150°C/4h", size: "xs", weight: "bold", color: "#e74c3c"}]},
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Barrel", size: "xxs", color: "#888888" }, { type: "text", text: "350-400°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Mold", size: "xxs", color: "#888888" }, { type: "text", text: "150-180°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Drying", size: "xxs", color: "#888888" }, { type: "text", text: "150°C/4h", size: "xs", weight: "bold", color: "#e74c3c" }] },
                       ],
                     },
-                    {type: "text", text: "💎 Super Engineering Plastic - ราคาสูง", size: "xxs", color: "#ff6f00", margin: "sm", wrap: true},
+                    { type: "text", text: "💎 Super Engineering Plastic - ราคาสูง", size: "xxs", color: "#ff6f00", margin: "sm", wrap: true },
                   ],
-                  action: {type: "message", text: "อุณหภูมิ PEEK แบบละเอียด"},
+                  action: { type: "message", text: "อุณหภูมิ PEEK แบบละเอียด" },
                 },
                 // PEI
                 {
@@ -6395,19 +6395,19 @@ const createTemperatureTableMessage = () => {
                   paddingAll: "12px",
                   margin: "md",
                   contents: [
-                    {type: "text", text: "🔷 PEI (Ultem)", weight: "bold", size: "sm", color: "#3949ab"},
+                    { type: "text", text: "🔷 PEI (Ultem)", weight: "bold", size: "sm", color: "#3949ab" },
                     {
                       type: "box",
                       layout: "horizontal",
                       margin: "sm",
                       contents: [
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Barrel", size: "xxs", color: "#888888"}, {type: "text", text: "340-400°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Mold", size: "xxs", color: "#888888"}, {type: "text", text: "140-175°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Drying", size: "xxs", color: "#888888"}, {type: "text", text: "150°C/4-8h", size: "xs", weight: "bold", color: "#e74c3c"}]},
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Barrel", size: "xxs", color: "#888888" }, { type: "text", text: "340-400°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Mold", size: "xxs", color: "#888888" }, { type: "text", text: "140-175°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Drying", size: "xxs", color: "#888888" }, { type: "text", text: "150°C/4-8h", size: "xs", weight: "bold", color: "#e74c3c" }] },
                       ],
                     },
                   ],
-                  action: {type: "message", text: "อุณหภูมิ PEI แบบละเอียด"},
+                  action: { type: "message", text: "อุณหภูมิ PEI แบบละเอียด" },
                 },
                 // LCP
                 {
@@ -6418,19 +6418,19 @@ const createTemperatureTableMessage = () => {
                   paddingAll: "12px",
                   margin: "md",
                   contents: [
-                    {type: "text", text: "🌊 LCP (Liquid Crystal Polymer)", weight: "bold", size: "sm", color: "#00695c"},
+                    { type: "text", text: "🌊 LCP (Liquid Crystal Polymer)", weight: "bold", size: "sm", color: "#00695c" },
                     {
                       type: "box",
                       layout: "horizontal",
                       margin: "sm",
                       contents: [
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Barrel", size: "xxs", color: "#888888"}, {type: "text", text: "280-350°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Mold", size: "xxs", color: "#888888"}, {type: "text", text: "70-120°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Drying", size: "xxs", color: "#888888"}, {type: "text", text: "150°C/4h", size: "xs", weight: "bold", color: "#e74c3c"}]},
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Barrel", size: "xxs", color: "#888888" }, { type: "text", text: "280-350°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Mold", size: "xxs", color: "#888888" }, { type: "text", text: "70-120°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Drying", size: "xxs", color: "#888888" }, { type: "text", text: "150°C/4h", size: "xs", weight: "bold", color: "#e74c3c" }] },
                       ],
                     },
                   ],
-                  action: {type: "message", text: "อุณหภูมิ LCP แบบละเอียด"},
+                  action: { type: "message", text: "อุณหภูมิ LCP แบบละเอียด" },
                 },
               ],
               paddingAll: "16px",
@@ -6440,7 +6440,7 @@ const createTemperatureTableMessage = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "button", style: "primary", color: "#6a1b9a", action: {type: "message", label: "📖 คู่มือวัสดุพิเศษ", text: "คู่มือวัสดุ High Performance"}},
+                { type: "button", style: "primary", color: "#6a1b9a", action: { type: "message", label: "📖 คู่มือวัสดุพิเศษ", text: "คู่มือวัสดุ High Performance" } },
               ],
               paddingAll: "12px",
             },
@@ -6455,8 +6455,8 @@ const createTemperatureTableMessage = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "💨 คู่มือการอบวัสดุ", weight: "bold", color: "#ffffff", size: "lg"},
-                {type: "text", text: "Drying Temperature & Time", color: "#ffffffcc", size: "sm"},
+                { type: "text", text: "💨 คู่มือการอบวัสดุ", weight: "bold", color: "#ffffff", size: "lg" },
+                { type: "text", text: "Drying Temperature & Time", color: "#ffffffcc", size: "sm" },
               ],
               backgroundColor: "#00838f",
               paddingAll: "20px",
@@ -6465,7 +6465,7 @@ const createTemperatureTableMessage = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "⏱️ ตารางอบวัสดุ", weight: "bold", size: "md", color: "#333333"},
+                { type: "text", text: "⏱️ ตารางอบวัสดุ", weight: "bold", size: "md", color: "#333333" },
                 {
                   type: "box",
                   layout: "vertical",
@@ -6480,22 +6480,22 @@ const createTemperatureTableMessage = () => {
                       cornerRadius: "8px",
                       paddingAll: "8px",
                       contents: [
-                        {type: "text", text: "วัสดุ", weight: "bold", size: "xs", color: "#ffffff", flex: 2},
-                        {type: "text", text: "อุณหภูมิ", weight: "bold", size: "xs", color: "#ffffff", flex: 2, align: "center"},
-                        {type: "text", text: "เวลา", weight: "bold", size: "xs", color: "#ffffff", flex: 2, align: "end"},
+                        { type: "text", text: "วัสดุ", weight: "bold", size: "xs", color: "#ffffff", flex: 2 },
+                        { type: "text", text: "อุณหภูมิ", weight: "bold", size: "xs", color: "#ffffff", flex: 2, align: "center" },
+                        { type: "text", text: "เวลา", weight: "bold", size: "xs", color: "#ffffff", flex: 2, align: "end" },
                       ],
                     },
                     // Data rows
-                    {type: "box", layout: "horizontal", paddingAll: "6px", contents: [{type: "text", text: "ABS", size: "xs", color: "#333333", flex: 2, weight: "bold"}, {type: "text", text: "80°C", size: "xs", color: "#666666", flex: 2, align: "center"}, {type: "text", text: "2-4 ชม.", size: "xs", color: "#666666", flex: 2, align: "end"}]},
-                    {type: "box", layout: "horizontal", paddingAll: "6px", backgroundColor: "#f5f5f5", contents: [{type: "text", text: "PC", size: "xs", color: "#333333", flex: 2, weight: "bold"}, {type: "text", text: "120°C", size: "xs", color: "#666666", flex: 2, align: "center"}, {type: "text", text: "4 ชม.", size: "xs", color: "#666666", flex: 2, align: "end"}]},
-                    {type: "box", layout: "horizontal", paddingAll: "6px", contents: [{type: "text", text: "PA (Nylon)", size: "xs", color: "#333333", flex: 2, weight: "bold"}, {type: "text", text: "80°C", size: "xs", color: "#666666", flex: 2, align: "center"}, {type: "text", text: "4-6 ชม.", size: "xs", color: "#666666", flex: 2, align: "end"}]},
-                    {type: "box", layout: "horizontal", paddingAll: "6px", backgroundColor: "#f5f5f5", contents: [{type: "text", text: "POM", size: "xs", color: "#333333", flex: 2, weight: "bold"}, {type: "text", text: "80°C", size: "xs", color: "#666666", flex: 2, align: "center"}, {type: "text", text: "2-3 ชม.", size: "xs", color: "#666666", flex: 2, align: "end"}]},
-                    {type: "box", layout: "horizontal", paddingAll: "6px", contents: [{type: "text", text: "PBT", size: "xs", color: "#333333", flex: 2, weight: "bold"}, {type: "text", text: "120°C", size: "xs", color: "#666666", flex: 2, align: "center"}, {type: "text", text: "3-4 ชม.", size: "xs", color: "#666666", flex: 2, align: "end"}]},
-                    {type: "box", layout: "horizontal", paddingAll: "6px", backgroundColor: "#f5f5f5", contents: [{type: "text", text: "PPS", size: "xs", color: "#333333", flex: 2, weight: "bold"}, {type: "text", text: "150°C", size: "xs", color: "#666666", flex: 2, align: "center"}, {type: "text", text: "3 ชม.", size: "xs", color: "#666666", flex: 2, align: "end"}]},
-                    {type: "box", layout: "horizontal", paddingAll: "6px", contents: [{type: "text", text: "PEEK", size: "xs", color: "#333333", flex: 2, weight: "bold"}, {type: "text", text: "150°C", size: "xs", color: "#666666", flex: 2, align: "center"}, {type: "text", text: "4 ชม.", size: "xs", color: "#666666", flex: 2, align: "end"}]},
+                    { type: "box", layout: "horizontal", paddingAll: "6px", contents: [{ type: "text", text: "ABS", size: "xs", color: "#333333", flex: 2, weight: "bold" }, { type: "text", text: "80°C", size: "xs", color: "#666666", flex: 2, align: "center" }, { type: "text", text: "2-4 ชม.", size: "xs", color: "#666666", flex: 2, align: "end" }] },
+                    { type: "box", layout: "horizontal", paddingAll: "6px", backgroundColor: "#f5f5f5", contents: [{ type: "text", text: "PC", size: "xs", color: "#333333", flex: 2, weight: "bold" }, { type: "text", text: "120°C", size: "xs", color: "#666666", flex: 2, align: "center" }, { type: "text", text: "4 ชม.", size: "xs", color: "#666666", flex: 2, align: "end" }] },
+                    { type: "box", layout: "horizontal", paddingAll: "6px", contents: [{ type: "text", text: "PA (Nylon)", size: "xs", color: "#333333", flex: 2, weight: "bold" }, { type: "text", text: "80°C", size: "xs", color: "#666666", flex: 2, align: "center" }, { type: "text", text: "4-6 ชม.", size: "xs", color: "#666666", flex: 2, align: "end" }] },
+                    { type: "box", layout: "horizontal", paddingAll: "6px", backgroundColor: "#f5f5f5", contents: [{ type: "text", text: "POM", size: "xs", color: "#333333", flex: 2, weight: "bold" }, { type: "text", text: "80°C", size: "xs", color: "#666666", flex: 2, align: "center" }, { type: "text", text: "2-3 ชม.", size: "xs", color: "#666666", flex: 2, align: "end" }] },
+                    { type: "box", layout: "horizontal", paddingAll: "6px", contents: [{ type: "text", text: "PBT", size: "xs", color: "#333333", flex: 2, weight: "bold" }, { type: "text", text: "120°C", size: "xs", color: "#666666", flex: 2, align: "center" }, { type: "text", text: "3-4 ชม.", size: "xs", color: "#666666", flex: 2, align: "end" }] },
+                    { type: "box", layout: "horizontal", paddingAll: "6px", backgroundColor: "#f5f5f5", contents: [{ type: "text", text: "PPS", size: "xs", color: "#333333", flex: 2, weight: "bold" }, { type: "text", text: "150°C", size: "xs", color: "#666666", flex: 2, align: "center" }, { type: "text", text: "3 ชม.", size: "xs", color: "#666666", flex: 2, align: "end" }] },
+                    { type: "box", layout: "horizontal", paddingAll: "6px", contents: [{ type: "text", text: "PEEK", size: "xs", color: "#333333", flex: 2, weight: "bold" }, { type: "text", text: "150°C", size: "xs", color: "#666666", flex: 2, align: "center" }, { type: "text", text: "4 ชม.", size: "xs", color: "#666666", flex: 2, align: "end" }] },
                   ],
                 },
-                {type: "separator", margin: "lg"},
+                { type: "separator", margin: "lg" },
                 {
                   type: "box",
                   layout: "vertical",
@@ -6504,10 +6504,10 @@ const createTemperatureTableMessage = () => {
                   cornerRadius: "8px",
                   paddingAll: "10px",
                   contents: [
-                    {type: "text", text: "💡 เคล็ดลับการอบ:", weight: "bold", size: "xs", color: "#e65100"},
-                    {type: "text", text: "• ใช้ Dehumidifying Dryer สำหรับ PC, PA", size: "xxs", color: "#666666", wrap: true},
-                    {type: "text", text: "• ความชื้นเป้าหมาย: < 0.02% สำหรับ PC", size: "xxs", color: "#666666", wrap: true},
-                    {type: "text", text: "• PP, PE ไม่จำเป็นต้องอบ (Non-hygroscopic)", size: "xxs", color: "#666666", wrap: true},
+                    { type: "text", text: "💡 เคล็ดลับการอบ:", weight: "bold", size: "xs", color: "#e65100" },
+                    { type: "text", text: "• ใช้ Dehumidifying Dryer สำหรับ PC, PA", size: "xxs", color: "#666666", wrap: true },
+                    { type: "text", text: "• ความชื้นเป้าหมาย: < 0.02% สำหรับ PC", size: "xxs", color: "#666666", wrap: true },
+                    { type: "text", text: "• PP, PE ไม่จำเป็นต้องอบ (Non-hygroscopic)", size: "xxs", color: "#666666", wrap: true },
                   ],
                 },
               ],
@@ -6517,7 +6517,7 @@ const createTemperatureTableMessage = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "button", style: "primary", color: "#00838f", action: {type: "message", label: "❓ ถาม AI เรื่องการอบ", text: "วิธีอบวัสดุพลาสติกที่ถูกต้อง"}},
+                { type: "button", style: "primary", color: "#00838f", action: { type: "message", label: "❓ ถาม AI เรื่องการอบ", text: "วิธีอบวัสดุพลาสติกที่ถูกต้อง" } },
               ],
               paddingAll: "12px",
             },
@@ -6532,8 +6532,8 @@ const createTemperatureTableMessage = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "🔴 Hot Runner Guide", weight: "bold", color: "#ffffff", size: "lg"},
-                {type: "text", text: "อุณหภูมิ Manifold & Nozzle Tip", color: "#ffffffcc", size: "sm"},
+                { type: "text", text: "🔴 Hot Runner Guide", weight: "bold", color: "#ffffff", size: "lg" },
+                { type: "text", text: "อุณหภูมิ Manifold & Nozzle Tip", color: "#ffffffcc", size: "sm" },
               ],
               backgroundColor: "#b71c1c",
               paddingAll: "20px",
@@ -6542,7 +6542,7 @@ const createTemperatureTableMessage = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "🔥 Hot Runner Temperature", weight: "bold", size: "md", color: "#333333"},
+                { type: "text", text: "🔥 Hot Runner Temperature", weight: "bold", size: "md", color: "#333333" },
                 {
                   type: "box",
                   layout: "vertical",
@@ -6557,20 +6557,20 @@ const createTemperatureTableMessage = () => {
                       cornerRadius: "8px",
                       paddingAll: "8px",
                       contents: [
-                        {type: "text", text: "วัสดุ", weight: "bold", size: "xs", color: "#ffffff", flex: 2},
-                        {type: "text", text: "Manifold", weight: "bold", size: "xs", color: "#ffffff", flex: 2, align: "center"},
-                        {type: "text", text: "Nozzle", weight: "bold", size: "xs", color: "#ffffff", flex: 2, align: "end"},
+                        { type: "text", text: "วัสดุ", weight: "bold", size: "xs", color: "#ffffff", flex: 2 },
+                        { type: "text", text: "Manifold", weight: "bold", size: "xs", color: "#ffffff", flex: 2, align: "center" },
+                        { type: "text", text: "Nozzle", weight: "bold", size: "xs", color: "#ffffff", flex: 2, align: "end" },
                       ],
                     },
-                    {type: "box", layout: "horizontal", paddingAll: "6px", contents: [{type: "text", text: "PP", size: "xs", color: "#333333", flex: 2, weight: "bold"}, {type: "text", text: "220-260°C", size: "xs", color: "#666666", flex: 2, align: "center"}, {type: "text", text: "230-270°C", size: "xs", color: "#666666", flex: 2, align: "end"}]},
-                    {type: "box", layout: "horizontal", paddingAll: "6px", backgroundColor: "#ffebee", contents: [{type: "text", text: "ABS", size: "xs", color: "#333333", flex: 2, weight: "bold"}, {type: "text", text: "220-250°C", size: "xs", color: "#666666", flex: 2, align: "center"}, {type: "text", text: "230-260°C", size: "xs", color: "#666666", flex: 2, align: "end"}]},
-                    {type: "box", layout: "horizontal", paddingAll: "6px", contents: [{type: "text", text: "PC", size: "xs", color: "#333333", flex: 2, weight: "bold"}, {type: "text", text: "280-310°C", size: "xs", color: "#666666", flex: 2, align: "center"}, {type: "text", text: "290-320°C", size: "xs", color: "#666666", flex: 2, align: "end"}]},
-                    {type: "box", layout: "horizontal", paddingAll: "6px", backgroundColor: "#ffebee", contents: [{type: "text", text: "PA", size: "xs", color: "#333333", flex: 2, weight: "bold"}, {type: "text", text: "250-280°C", size: "xs", color: "#666666", flex: 2, align: "center"}, {type: "text", text: "260-290°C", size: "xs", color: "#666666", flex: 2, align: "end"}]},
-                    {type: "box", layout: "horizontal", paddingAll: "6px", contents: [{type: "text", text: "POM", size: "xs", color: "#333333", flex: 2, weight: "bold"}, {type: "text", text: "190-210°C", size: "xs", color: "#666666", flex: 2, align: "center"}, {type: "text", text: "195-215°C", size: "xs", color: "#666666", flex: 2, align: "end"}]},
-                    {type: "box", layout: "horizontal", paddingAll: "6px", backgroundColor: "#ffebee", contents: [{type: "text", text: "PPS", size: "xs", color: "#333333", flex: 2, weight: "bold"}, {type: "text", text: "300-330°C", size: "xs", color: "#666666", flex: 2, align: "center"}, {type: "text", text: "310-340°C", size: "xs", color: "#666666", flex: 2, align: "end"}]},
+                    { type: "box", layout: "horizontal", paddingAll: "6px", contents: [{ type: "text", text: "PP", size: "xs", color: "#333333", flex: 2, weight: "bold" }, { type: "text", text: "220-260°C", size: "xs", color: "#666666", flex: 2, align: "center" }, { type: "text", text: "230-270°C", size: "xs", color: "#666666", flex: 2, align: "end" }] },
+                    { type: "box", layout: "horizontal", paddingAll: "6px", backgroundColor: "#ffebee", contents: [{ type: "text", text: "ABS", size: "xs", color: "#333333", flex: 2, weight: "bold" }, { type: "text", text: "220-250°C", size: "xs", color: "#666666", flex: 2, align: "center" }, { type: "text", text: "230-260°C", size: "xs", color: "#666666", flex: 2, align: "end" }] },
+                    { type: "box", layout: "horizontal", paddingAll: "6px", contents: [{ type: "text", text: "PC", size: "xs", color: "#333333", flex: 2, weight: "bold" }, { type: "text", text: "280-310°C", size: "xs", color: "#666666", flex: 2, align: "center" }, { type: "text", text: "290-320°C", size: "xs", color: "#666666", flex: 2, align: "end" }] },
+                    { type: "box", layout: "horizontal", paddingAll: "6px", backgroundColor: "#ffebee", contents: [{ type: "text", text: "PA", size: "xs", color: "#333333", flex: 2, weight: "bold" }, { type: "text", text: "250-280°C", size: "xs", color: "#666666", flex: 2, align: "center" }, { type: "text", text: "260-290°C", size: "xs", color: "#666666", flex: 2, align: "end" }] },
+                    { type: "box", layout: "horizontal", paddingAll: "6px", contents: [{ type: "text", text: "POM", size: "xs", color: "#333333", flex: 2, weight: "bold" }, { type: "text", text: "190-210°C", size: "xs", color: "#666666", flex: 2, align: "center" }, { type: "text", text: "195-215°C", size: "xs", color: "#666666", flex: 2, align: "end" }] },
+                    { type: "box", layout: "horizontal", paddingAll: "6px", backgroundColor: "#ffebee", contents: [{ type: "text", text: "PPS", size: "xs", color: "#333333", flex: 2, weight: "bold" }, { type: "text", text: "300-330°C", size: "xs", color: "#666666", flex: 2, align: "center" }, { type: "text", text: "310-340°C", size: "xs", color: "#666666", flex: 2, align: "end" }] },
                   ],
                 },
-                {type: "separator", margin: "lg"},
+                { type: "separator", margin: "lg" },
                 {
                   type: "box",
                   layout: "vertical",
@@ -6579,10 +6579,10 @@ const createTemperatureTableMessage = () => {
                   cornerRadius: "8px",
                   paddingAll: "10px",
                   contents: [
-                    {type: "text", text: "⚠️ ข้อควรระวัง Hot Runner:", weight: "bold", size: "xs", color: "#b71c1c"},
-                    {type: "text", text: "• Nozzle Tip สูงกว่า Manifold 5-15°C", size: "xxs", color: "#666666", wrap: true},
-                    {type: "text", text: "• ตรวจสอบ Thermocouple สม่ำเสมอ", size: "xxs", color: "#666666", wrap: true},
-                    {type: "text", text: "• POM ระวังเรื่อง Thermal Degradation", size: "xxs", color: "#666666", wrap: true},
+                    { type: "text", text: "⚠️ ข้อควรระวัง Hot Runner:", weight: "bold", size: "xs", color: "#b71c1c" },
+                    { type: "text", text: "• Nozzle Tip สูงกว่า Manifold 5-15°C", size: "xxs", color: "#666666", wrap: true },
+                    { type: "text", text: "• ตรวจสอบ Thermocouple สม่ำเสมอ", size: "xxs", color: "#666666", wrap: true },
+                    { type: "text", text: "• POM ระวังเรื่อง Thermal Degradation", size: "xxs", color: "#666666", wrap: true },
                   ],
                 },
               ],
@@ -6592,7 +6592,7 @@ const createTemperatureTableMessage = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "button", style: "primary", color: "#b71c1c", action: {type: "message", label: "❓ ถาม AI เรื่อง Hot Runner", text: "ปัญหา Hot Runner แก้ยังไง"}},
+                { type: "button", style: "primary", color: "#b71c1c", action: { type: "message", label: "❓ ถาม AI เรื่อง Hot Runner", text: "ปัญหา Hot Runner แก้ยังไง" } },
               ],
               paddingAll: "12px",
             },
@@ -6607,8 +6607,8 @@ const createTemperatureTableMessage = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "🧪 Special Materials", weight: "bold", color: "#ffffff", size: "lg"},
-                {type: "text", text: "TPE | TPU | PMMA | PBT", color: "#ffffffcc", size: "sm"},
+                { type: "text", text: "🧪 Special Materials", weight: "bold", color: "#ffffff", size: "lg" },
+                { type: "text", text: "TPE | TPU | PMMA | PBT", color: "#ffffffcc", size: "sm" },
               ],
               backgroundColor: "#00695c",
               paddingAll: "20px",
@@ -6626,19 +6626,19 @@ const createTemperatureTableMessage = () => {
                   paddingAll: "12px",
                   margin: "none",
                   contents: [
-                    {type: "text", text: "🟢 TPE (Thermoplastic Elastomer)", weight: "bold", size: "sm", color: "#00695c"},
+                    { type: "text", text: "🟢 TPE (Thermoplastic Elastomer)", weight: "bold", size: "sm", color: "#00695c" },
                     {
                       type: "box",
                       layout: "horizontal",
                       margin: "sm",
                       contents: [
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Barrel", size: "xxs", color: "#888888"}, {type: "text", text: "180-230°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Mold", size: "xxs", color: "#888888"}, {type: "text", text: "30-50°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Drying", size: "xxs", color: "#888888"}, {type: "text", text: "70°C/2h", size: "xs", weight: "bold", color: "#e74c3c"}]},
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Barrel", size: "xxs", color: "#888888" }, { type: "text", text: "180-230°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Mold", size: "xxs", color: "#888888" }, { type: "text", text: "30-50°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Drying", size: "xxs", color: "#888888" }, { type: "text", text: "70°C/2h", size: "xs", weight: "bold", color: "#e74c3c" }] },
                       ],
                     },
                   ],
-                  action: {type: "message", text: "อุณหภูมิ TPE แบบละเอียด"},
+                  action: { type: "message", text: "อุณหภูมิ TPE แบบละเอียด" },
                 },
                 // TPU
                 {
@@ -6649,19 +6649,19 @@ const createTemperatureTableMessage = () => {
                   paddingAll: "12px",
                   margin: "md",
                   contents: [
-                    {type: "text", text: "🔵 TPU (Thermoplastic Polyurethane)", weight: "bold", size: "sm", color: "#1565c0"},
+                    { type: "text", text: "🔵 TPU (Thermoplastic Polyurethane)", weight: "bold", size: "sm", color: "#1565c0" },
                     {
                       type: "box",
                       layout: "horizontal",
                       margin: "sm",
                       contents: [
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Barrel", size: "xxs", color: "#888888"}, {type: "text", text: "180-220°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Mold", size: "xxs", color: "#888888"}, {type: "text", text: "30-50°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Drying", size: "xxs", color: "#888888"}, {type: "text", text: "80°C/3h", size: "xs", weight: "bold", color: "#e74c3c"}]},
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Barrel", size: "xxs", color: "#888888" }, { type: "text", text: "180-220°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Mold", size: "xxs", color: "#888888" }, { type: "text", text: "30-50°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Drying", size: "xxs", color: "#888888" }, { type: "text", text: "80°C/3h", size: "xs", weight: "bold", color: "#e74c3c" }] },
                       ],
                     },
                   ],
-                  action: {type: "message", text: "อุณหภูมิ TPU แบบละเอียด"},
+                  action: { type: "message", text: "อุณหภูมิ TPU แบบละเอียด" },
                 },
                 // PMMA
                 {
@@ -6672,20 +6672,20 @@ const createTemperatureTableMessage = () => {
                   paddingAll: "12px",
                   margin: "md",
                   contents: [
-                    {type: "text", text: "🟠 PMMA (Acrylic)", weight: "bold", size: "sm", color: "#e65100"},
+                    { type: "text", text: "🟠 PMMA (Acrylic)", weight: "bold", size: "sm", color: "#e65100" },
                     {
                       type: "box",
                       layout: "horizontal",
                       margin: "sm",
                       contents: [
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Barrel", size: "xxs", color: "#888888"}, {type: "text", text: "220-260°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Mold", size: "xxs", color: "#888888"}, {type: "text", text: "60-90°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Drying", size: "xxs", color: "#888888"}, {type: "text", text: "80°C/4h", size: "xs", weight: "bold", color: "#e74c3c"}]},
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Barrel", size: "xxs", color: "#888888" }, { type: "text", text: "220-260°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Mold", size: "xxs", color: "#888888" }, { type: "text", text: "60-90°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Drying", size: "xxs", color: "#888888" }, { type: "text", text: "80°C/4h", size: "xs", weight: "bold", color: "#e74c3c" }] },
                       ],
                     },
-                    {type: "text", text: "💡 ใสเหมือนแก้ว เหมาะทำไฟ/จอแสดงผล", size: "xxs", color: "#e65100", margin: "sm", wrap: true},
+                    { type: "text", text: "💡 ใสเหมือนแก้ว เหมาะทำไฟ/จอแสดงผล", size: "xxs", color: "#e65100", margin: "sm", wrap: true },
                   ],
-                  action: {type: "message", text: "อุณหภูมิ PMMA แบบละเอียด"},
+                  action: { type: "message", text: "อุณหภูมิ PMMA แบบละเอียด" },
                 },
                 // PBT
                 {
@@ -6696,19 +6696,19 @@ const createTemperatureTableMessage = () => {
                   paddingAll: "12px",
                   margin: "md",
                   contents: [
-                    {type: "text", text: "🟣 PBT (Polybutylene Terephthalate)", weight: "bold", size: "sm", color: "#c2185b"},
+                    { type: "text", text: "🟣 PBT (Polybutylene Terephthalate)", weight: "bold", size: "sm", color: "#c2185b" },
                     {
                       type: "box",
                       layout: "horizontal",
                       margin: "sm",
                       contents: [
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Barrel", size: "xxs", color: "#888888"}, {type: "text", text: "230-270°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Mold", size: "xxs", color: "#888888"}, {type: "text", text: "60-90°C", size: "xs", weight: "bold", color: "#333333"}]},
-                        {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "Drying", size: "xxs", color: "#888888"}, {type: "text", text: "120°C/4h", size: "xs", weight: "bold", color: "#e74c3c"}]},
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Barrel", size: "xxs", color: "#888888" }, { type: "text", text: "230-270°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Mold", size: "xxs", color: "#888888" }, { type: "text", text: "60-90°C", size: "xs", weight: "bold", color: "#333333" }] },
+                        { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "Drying", size: "xxs", color: "#888888" }, { type: "text", text: "120°C/4h", size: "xs", weight: "bold", color: "#e74c3c" }] },
                       ],
                     },
                   ],
-                  action: {type: "message", text: "อุณหภูมิ PBT แบบละเอียด"},
+                  action: { type: "message", text: "อุณหภูมิ PBT แบบละเอียด" },
                 },
               ],
               paddingAll: "16px",
@@ -6719,8 +6719,8 @@ const createTemperatureTableMessage = () => {
               layout: "horizontal",
               spacing: "sm",
               contents: [
-                {type: "button", style: "primary", color: "#00695c", flex: 1, action: {type: "message", label: "🏭 เมนูหลัก", text: "/plastic"}},
-                {type: "button", style: "secondary", flex: 1, action: {type: "message", label: "🤖 ถาม AI", text: "แนะนำวัสดุฉีดพลาสติก"}},
+                { type: "button", style: "primary", color: "#00695c", flex: 1, action: { type: "message", label: "🏭 เมนูหลัก", text: "/plastic" } },
+                { type: "button", style: "secondary", flex: 1, action: { type: "message", label: "🤖 ถาม AI", text: "แนะนำวัสดุฉีดพลาสติก" } },
               ],
               paddingAll: "12px",
             },
@@ -6774,7 +6774,7 @@ const createSmartFarmMenu = () => {
                       type: "box",
                       layout: "vertical",
                       contents: [
-                        {type: "text", text: "🌱", size: "3xl", align: "center"},
+                        { type: "text", text: "🌱", size: "3xl", align: "center" },
                       ],
                       width: "70px",
                       height: "70px",
@@ -6788,8 +6788,8 @@ const createSmartFarmMenu = () => {
                       layout: "vertical",
                       margin: "lg",
                       contents: [
-                        {type: "text", text: "Smart Farm", weight: "bold", color: "#ffffff", size: "xl"},
-                        {type: "text", text: "ศูนย์ปรึกษาเกษตรอัจฉริยะ", color: "#90EE90", size: "sm", weight: "bold"},
+                        { type: "text", text: "Smart Farm", weight: "bold", color: "#ffffff", size: "xl" },
+                        { type: "text", text: "ศูนย์ปรึกษาเกษตรอัจฉริยะ", color: "#90EE90", size: "sm", weight: "bold" },
                       ],
                     },
                   ],
@@ -6800,10 +6800,10 @@ const createSmartFarmMenu = () => {
                   layout: "horizontal",
                   margin: "lg",
                   contents: [
-                    {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "🧪", size: "md", align: "center"}, {type: "text", text: "สูตรปุ๋ย", size: "xxs", color: "#ffffff", align: "center"}]},
-                    {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "🌾", size: "md", align: "center"}, {type: "text", text: "พืชเศรษฐกิจ", size: "xxs", color: "#ffffff", align: "center"}]},
-                    {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "💰", size: "md", align: "center"}, {type: "text", text: "ต้นทุน", size: "xxs", color: "#ffffff", align: "center"}]},
-                    {type: "box", layout: "vertical", flex: 1, contents: [{type: "text", text: "🏛️", size: "md", align: "center"}, {type: "text", text: "เงินอุดหนุน", size: "xxs", color: "#ffffff", align: "center"}]},
+                    { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "🧪", size: "md", align: "center" }, { type: "text", text: "สูตรปุ๋ย", size: "xxs", color: "#ffffff", align: "center" }] },
+                    { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "🌾", size: "md", align: "center" }, { type: "text", text: "พืชเศรษฐกิจ", size: "xxs", color: "#ffffff", align: "center" }] },
+                    { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "💰", size: "md", align: "center" }, { type: "text", text: "ต้นทุน", size: "xxs", color: "#ffffff", align: "center" }] },
+                    { type: "box", layout: "vertical", flex: 1, contents: [{ type: "text", text: "🏛️", size: "md", align: "center" }, { type: "text", text: "เงินอุดหนุน", size: "xxs", color: "#ffffff", align: "center" }] },
                   ],
                   backgroundColor: "#ffffff22",
                   cornerRadius: "12px",
@@ -6817,7 +6817,7 @@ const createSmartFarmMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "🎯 เลือกหัวข้อที่สนใจ", weight: "bold", size: "md", color: "#333333"},
+                { type: "text", text: "🎯 เลือกหัวข้อที่สนใจ", weight: "bold", size: "md", color: "#333333" },
                 {
                   type: "box",
                   layout: "vertical",
@@ -6831,10 +6831,10 @@ const createSmartFarmMenu = () => {
                       cornerRadius: "12px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "box", layout: "vertical", contents: [{type: "text", text: "🧪", size: "xl"}], backgroundColor: "#4caf50", cornerRadius: "8px", width: "44px", height: "44px", justifyContent: "center", alignItems: "center", flex: 0},
-                        {type: "box", layout: "vertical", contents: [{type: "text", text: "สูตรปุ๋ย & ธาตุอาหาร", weight: "bold", size: "sm", color: "#2e7d32"}, {type: "text", text: "NPK, ปุ๋ยหมัก, ฮอร์โมน", size: "xs", color: "#666666"}], margin: "md", flex: 1, justifyContent: "center"},
+                        { type: "box", layout: "vertical", contents: [{ type: "text", text: "🧪", size: "xl" }], backgroundColor: "#4caf50", cornerRadius: "8px", width: "44px", height: "44px", justifyContent: "center", alignItems: "center", flex: 0 },
+                        { type: "box", layout: "vertical", contents: [{ type: "text", text: "สูตรปุ๋ย & ธาตุอาหาร", weight: "bold", size: "sm", color: "#2e7d32" }, { type: "text", text: "NPK, ปุ๋ยหมัก, ฮอร์โมน", size: "xs", color: "#666666" }], margin: "md", flex: 1, justifyContent: "center" },
                       ],
-                      action: {type: "message", text: "สูตรปุ๋ยสำหรับพืช"},
+                      action: { type: "message", text: "สูตรปุ๋ยสำหรับพืช" },
                     },
                     {
                       type: "box",
@@ -6843,10 +6843,10 @@ const createSmartFarmMenu = () => {
                       cornerRadius: "12px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "box", layout: "vertical", contents: [{type: "text", text: "🌾", size: "xl"}], backgroundColor: "#ff9800", cornerRadius: "8px", width: "44px", height: "44px", justifyContent: "center", alignItems: "center", flex: 0},
-                        {type: "box", layout: "vertical", contents: [{type: "text", text: "พืชเศรษฐกิจ", weight: "bold", size: "sm", color: "#e65100"}, {type: "text", text: "ทุเรียน, มะม่วง, ข้าว, ยาง", size: "xs", color: "#666666"}], margin: "md", flex: 1, justifyContent: "center"},
+                        { type: "box", layout: "vertical", contents: [{ type: "text", text: "🌾", size: "xl" }], backgroundColor: "#ff9800", cornerRadius: "8px", width: "44px", height: "44px", justifyContent: "center", alignItems: "center", flex: 0 },
+                        { type: "box", layout: "vertical", contents: [{ type: "text", text: "พืชเศรษฐกิจ", weight: "bold", size: "sm", color: "#e65100" }, { type: "text", text: "ทุเรียน, มะม่วง, ข้าว, ยาง", size: "xs", color: "#666666" }], margin: "md", flex: 1, justifyContent: "center" },
                       ],
-                      action: {type: "message", text: "แนะนำพืชเศรษฐกิจ"},
+                      action: { type: "message", text: "แนะนำพืชเศรษฐกิจ" },
                     },
                     {
                       type: "box",
@@ -6855,10 +6855,10 @@ const createSmartFarmMenu = () => {
                       cornerRadius: "12px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "box", layout: "vertical", contents: [{type: "text", text: "💰", size: "xl"}], backgroundColor: "#1976d2", cornerRadius: "8px", width: "44px", height: "44px", justifyContent: "center", alignItems: "center", flex: 0},
-                        {type: "box", layout: "vertical", contents: [{type: "text", text: "วิเคราะห์ต้นทุน-กำไร", weight: "bold", size: "sm", color: "#1565c0"}, {type: "text", text: "คำนวณความคุ้มค่าการลงทุน", size: "xs", color: "#666666"}], margin: "md", flex: 1, justifyContent: "center"},
+                        { type: "box", layout: "vertical", contents: [{ type: "text", text: "💰", size: "xl" }], backgroundColor: "#1976d2", cornerRadius: "8px", width: "44px", height: "44px", justifyContent: "center", alignItems: "center", flex: 0 },
+                        { type: "box", layout: "vertical", contents: [{ type: "text", text: "วิเคราะห์ต้นทุน-กำไร", weight: "bold", size: "sm", color: "#1565c0" }, { type: "text", text: "คำนวณความคุ้มค่าการลงทุน", size: "xs", color: "#666666" }], margin: "md", flex: 1, justifyContent: "center" },
                       ],
-                      action: {type: "message", text: "วิเคราะห์ต้นทุนการเกษตร"},
+                      action: { type: "message", text: "วิเคราะห์ต้นทุนการเกษตร" },
                     },
                   ],
                 },
@@ -6870,8 +6870,8 @@ const createSmartFarmMenu = () => {
               layout: "horizontal",
               spacing: "sm",
               contents: [
-                {type: "button", style: "primary", color: "#2e7d32", flex: 1, action: {type: "message", label: "🤖 ถาม AI", text: "ถามเรื่องการเกษตร"}},
-                {type: "button", style: "secondary", flex: 1, action: {type: "message", label: "📊 บัญชีฟาร์ม", text: "/acc"}},
+                { type: "button", style: "primary", color: "#2e7d32", flex: 1, action: { type: "message", label: "🤖 ถาม AI", text: "ถามเรื่องการเกษตร" } },
+                { type: "button", style: "secondary", flex: 1, action: { type: "message", label: "📊 บัญชีฟาร์ม", text: "/acc" } },
               ],
               paddingAll: "12px",
             },
@@ -6886,8 +6886,8 @@ const createSmartFarmMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "🧪 สูตรปุ๋ย & ธาตุอาหาร", weight: "bold", color: "#ffffff", size: "lg"},
-                {type: "text", text: "Fertilizer & Nutrients Guide", color: "#ffffffcc", size: "sm"},
+                { type: "text", text: "🧪 สูตรปุ๋ย & ธาตุอาหาร", weight: "bold", color: "#ffffff", size: "lg" },
+                { type: "text", text: "Fertilizer & Nutrients Guide", color: "#ffffffcc", size: "sm" },
               ],
               backgroundColor: "#4caf50",
               paddingAll: "20px",
@@ -6896,7 +6896,7 @@ const createSmartFarmMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "📋 เลือกประเภทปุ๋ย", weight: "bold", size: "md", color: "#333333"},
+                { type: "text", text: "📋 เลือกประเภทปุ๋ย", weight: "bold", size: "md", color: "#333333" },
                 {
                   type: "box",
                   layout: "vertical",
@@ -6910,10 +6910,10 @@ const createSmartFarmMenu = () => {
                       cornerRadius: "10px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "🔵", size: "lg", flex: 0},
-                        {type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{type: "text", text: "ปุ๋ยเคมี NPK", weight: "bold", size: "sm", color: "#2e7d32"}, {type: "text", text: "15-15-15, 46-0-0, 16-20-0", size: "xs", color: "#666666"}]},
+                        { type: "text", text: "🔵", size: "lg", flex: 0 },
+                        { type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{ type: "text", text: "ปุ๋ยเคมี NPK", weight: "bold", size: "sm", color: "#2e7d32" }, { type: "text", text: "15-15-15, 46-0-0, 16-20-0", size: "xs", color: "#666666" }] },
                       ],
-                      action: {type: "message", text: "สูตรปุ๋ย NPK แนะนำ"},
+                      action: { type: "message", text: "สูตรปุ๋ย NPK แนะนำ" },
                     },
                     {
                       type: "box",
@@ -6922,10 +6922,10 @@ const createSmartFarmMenu = () => {
                       cornerRadius: "10px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "🟤", size: "lg", flex: 0},
-                        {type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{type: "text", text: "ปุ๋ยอินทรีย์/หมัก", weight: "bold", size: "sm", color: "#6d4c41"}, {type: "text", text: "มูลสัตว์, ปุ๋ยหมัก, โบกาฉิ", size: "xs", color: "#666666"}]},
+                        { type: "text", text: "🟤", size: "lg", flex: 0 },
+                        { type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{ type: "text", text: "ปุ๋ยอินทรีย์/หมัก", weight: "bold", size: "sm", color: "#6d4c41" }, { type: "text", text: "มูลสัตว์, ปุ๋ยหมัก, โบกาฉิ", size: "xs", color: "#666666" }] },
                       ],
-                      action: {type: "message", text: "วิธีทำปุ๋ยหมักอินทรีย์"},
+                      action: { type: "message", text: "วิธีทำปุ๋ยหมักอินทรีย์" },
                     },
                     {
                       type: "box",
@@ -6934,10 +6934,10 @@ const createSmartFarmMenu = () => {
                       cornerRadius: "10px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "💧", size: "lg", flex: 0},
-                        {type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{type: "text", text: "ปุ๋ยน้ำ/ฮอร์โมน", weight: "bold", size: "sm", color: "#1565c0"}, {type: "text", text: "น้ำหมักชีวภาพ, ไคโตซาน", size: "xs", color: "#666666"}]},
+                        { type: "text", text: "💧", size: "lg", flex: 0 },
+                        { type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{ type: "text", text: "ปุ๋ยน้ำ/ฮอร์โมน", weight: "bold", size: "sm", color: "#1565c0" }, { type: "text", text: "น้ำหมักชีวภาพ, ไคโตซาน", size: "xs", color: "#666666" }] },
                       ],
-                      action: {type: "message", text: "สูตรน้ำหมักชีวภาพ"},
+                      action: { type: "message", text: "สูตรน้ำหมักชีวภาพ" },
                     },
                     {
                       type: "box",
@@ -6946,14 +6946,14 @@ const createSmartFarmMenu = () => {
                       cornerRadius: "10px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "🌸", size: "lg", flex: 0},
-                        {type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{type: "text", text: "ปุ๋ยบำรุงดอก/ผล", weight: "bold", size: "sm", color: "#c2185b"}, {type: "text", text: "0-52-34, สูตรเร่งดอก", size: "xs", color: "#666666"}]},
+                        { type: "text", text: "🌸", size: "lg", flex: 0 },
+                        { type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{ type: "text", text: "ปุ๋ยบำรุงดอก/ผล", weight: "bold", size: "sm", color: "#c2185b" }, { type: "text", text: "0-52-34, สูตรเร่งดอก", size: "xs", color: "#666666" }] },
                       ],
-                      action: {type: "message", text: "ปุ๋ยเร่งดอกเร่งผล"},
+                      action: { type: "message", text: "ปุ๋ยเร่งดอกเร่งผล" },
                     },
                   ],
                 },
-                {type: "separator", margin: "lg"},
+                { type: "separator", margin: "lg" },
                 {
                   type: "box",
                   layout: "vertical",
@@ -6962,8 +6962,8 @@ const createSmartFarmMenu = () => {
                   cornerRadius: "8px",
                   paddingAll: "10px",
                   contents: [
-                    {type: "text", text: "💡 เคล็ดลับ: ตรวจดินก่อนใส่ปุ๋ย", weight: "bold", size: "xs", color: "#33691e"},
-                    {type: "text", text: "ช่วยประหยัดต้นทุนและเพิ่มประสิทธิภาพ", size: "xs", color: "#666666", wrap: true},
+                    { type: "text", text: "💡 เคล็ดลับ: ตรวจดินก่อนใส่ปุ๋ย", weight: "bold", size: "xs", color: "#33691e" },
+                    { type: "text", text: "ช่วยประหยัดต้นทุนและเพิ่มประสิทธิภาพ", size: "xs", color: "#666666", wrap: true },
                   ],
                 },
               ],
@@ -6973,7 +6973,7 @@ const createSmartFarmMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "button", style: "primary", color: "#4caf50", action: {type: "message", label: "🧮 คำนวณปุ๋ย", text: "คำนวณปริมาณปุ๋ยที่ต้องใช้"}},
+                { type: "button", style: "primary", color: "#4caf50", action: { type: "message", label: "🧮 คำนวณปุ๋ย", text: "คำนวณปริมาณปุ๋ยที่ต้องใช้" } },
               ],
               paddingAll: "12px",
             },
@@ -6988,8 +6988,8 @@ const createSmartFarmMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "🌾 พืชเศรษฐกิจยอดนิยม", weight: "bold", color: "#ffffff", size: "lg"},
-                {type: "text", text: "Cash Crops Guide", color: "#ffffffcc", size: "sm"},
+                { type: "text", text: "🌾 พืชเศรษฐกิจยอดนิยม", weight: "bold", color: "#ffffff", size: "lg" },
+                { type: "text", text: "Cash Crops Guide", color: "#ffffffcc", size: "sm" },
               ],
               backgroundColor: "#ff9800",
               paddingAll: "20px",
@@ -6998,7 +6998,7 @@ const createSmartFarmMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "🏆 พืชเศรษฐกิจแนะนำ", weight: "bold", size: "md", color: "#333333"},
+                { type: "text", text: "🏆 พืชเศรษฐกิจแนะนำ", weight: "bold", size: "md", color: "#333333" },
                 {
                   type: "box",
                   layout: "vertical",
@@ -7019,11 +7019,11 @@ const createSmartFarmMenu = () => {
                           paddingAll: "10px",
                           flex: 1,
                           contents: [
-                            {type: "text", text: "🍈", size: "xl", align: "center"},
-                            {type: "text", text: "ทุเรียน", weight: "bold", size: "xs", align: "center", color: "#e65100"},
-                            {type: "text", text: "กำไร: สูงมาก", size: "xxs", align: "center", color: "#666666"},
+                            { type: "text", text: "🍈", size: "xl", align: "center" },
+                            { type: "text", text: "ทุเรียน", weight: "bold", size: "xs", align: "center", color: "#e65100" },
+                            { type: "text", text: "กำไร: สูงมาก", size: "xxs", align: "center", color: "#666666" },
                           ],
-                          action: {type: "message", text: "วิธีปลูกทุเรียนให้ได้ผลดี"},
+                          action: { type: "message", text: "วิธีปลูกทุเรียนให้ได้ผลดี" },
                         },
                         {
                           type: "box",
@@ -7033,11 +7033,11 @@ const createSmartFarmMenu = () => {
                           paddingAll: "10px",
                           flex: 1,
                           contents: [
-                            {type: "text", text: "🥭", size: "xl", align: "center"},
-                            {type: "text", text: "มะม่วง", weight: "bold", size: "xs", align: "center", color: "#ff6f00"},
-                            {type: "text", text: "กำไร: สูง", size: "xxs", align: "center", color: "#666666"},
+                            { type: "text", text: "🥭", size: "xl", align: "center" },
+                            { type: "text", text: "มะม่วง", weight: "bold", size: "xs", align: "center", color: "#ff6f00" },
+                            { type: "text", text: "กำไร: สูง", size: "xxs", align: "center", color: "#666666" },
                           ],
-                          action: {type: "message", text: "วิธีปลูกมะม่วงน้ำดอกไม้"},
+                          action: { type: "message", text: "วิธีปลูกมะม่วงน้ำดอกไม้" },
                         },
                       ],
                     },
@@ -7055,11 +7055,11 @@ const createSmartFarmMenu = () => {
                           paddingAll: "10px",
                           flex: 1,
                           contents: [
-                            {type: "text", text: "🌳", size: "xl", align: "center"},
-                            {type: "text", text: "ยางพารา", weight: "bold", size: "xs", align: "center", color: "#2e7d32"},
-                            {type: "text", text: "รายได้: สม่ำเสมอ", size: "xxs", align: "center", color: "#666666"},
+                            { type: "text", text: "🌳", size: "xl", align: "center" },
+                            { type: "text", text: "ยางพารา", weight: "bold", size: "xs", align: "center", color: "#2e7d32" },
+                            { type: "text", text: "รายได้: สม่ำเสมอ", size: "xxs", align: "center", color: "#666666" },
                           ],
-                          action: {type: "message", text: "การปลูกยางพารา"},
+                          action: { type: "message", text: "การปลูกยางพารา" },
                         },
                         {
                           type: "box",
@@ -7069,11 +7069,11 @@ const createSmartFarmMenu = () => {
                           paddingAll: "10px",
                           flex: 1,
                           contents: [
-                            {type: "text", text: "🌴", size: "xl", align: "center"},
-                            {type: "text", text: "ปาล์มน้ำมัน", weight: "bold", size: "xs", align: "center", color: "#558b2f"},
-                            {type: "text", text: "รายได้: ต่อเนื่อง", size: "xxs", align: "center", color: "#666666"},
+                            { type: "text", text: "🌴", size: "xl", align: "center" },
+                            { type: "text", text: "ปาล์มน้ำมัน", weight: "bold", size: "xs", align: "center", color: "#558b2f" },
+                            { type: "text", text: "รายได้: ต่อเนื่อง", size: "xxs", align: "center", color: "#666666" },
                           ],
-                          action: {type: "message", text: "การปลูกปาล์มน้ำมัน"},
+                          action: { type: "message", text: "การปลูกปาล์มน้ำมัน" },
                         },
                       ],
                     },
@@ -7091,11 +7091,11 @@ const createSmartFarmMenu = () => {
                           paddingAll: "10px",
                           flex: 1,
                           contents: [
-                            {type: "text", text: "🌾", size: "xl", align: "center"},
-                            {type: "text", text: "ข้าว", weight: "bold", size: "xs", align: "center", color: "#f57f17"},
-                            {type: "text", text: "พื้นฐาน: มั่นคง", size: "xxs", align: "center", color: "#666666"},
+                            { type: "text", text: "🌾", size: "xl", align: "center" },
+                            { type: "text", text: "ข้าว", weight: "bold", size: "xs", align: "center", color: "#f57f17" },
+                            { type: "text", text: "พื้นฐาน: มั่นคง", size: "xxs", align: "center", color: "#666666" },
                           ],
-                          action: {type: "message", text: "เทคนิคปลูกข้าวให้ได้ผลผลิตดี"},
+                          action: { type: "message", text: "เทคนิคปลูกข้าวให้ได้ผลผลิตดี" },
                         },
                         {
                           type: "box",
@@ -7105,11 +7105,11 @@ const createSmartFarmMenu = () => {
                           paddingAll: "10px",
                           flex: 1,
                           contents: [
-                            {type: "text", text: "🎋", size: "xl", align: "center"},
-                            {type: "text", text: "อ้อย", weight: "bold", size: "xs", align: "center", color: "#00695c"},
-                            {type: "text", text: "ตลาด: แน่นอน", size: "xxs", align: "center", color: "#666666"},
+                            { type: "text", text: "🎋", size: "xl", align: "center" },
+                            { type: "text", text: "อ้อย", weight: "bold", size: "xs", align: "center", color: "#00695c" },
+                            { type: "text", text: "ตลาด: แน่นอน", size: "xxs", align: "center", color: "#666666" },
                           ],
-                          action: {type: "message", text: "การปลูกอ้อยส่งโรงงาน"},
+                          action: { type: "message", text: "การปลูกอ้อยส่งโรงงาน" },
                         },
                       ],
                     },
@@ -7123,8 +7123,8 @@ const createSmartFarmMenu = () => {
               layout: "horizontal",
               spacing: "sm",
               contents: [
-                {type: "button", style: "primary", color: "#ff9800", flex: 1, action: {type: "message", label: "🌿 พืชอื่นๆ", text: "แนะนำพืชเศรษฐกิจอื่นๆ"}},
-                {type: "button", style: "secondary", flex: 1, action: {type: "message", label: "📈 วิเคราะห์", text: "วิเคราะห์พืชที่เหมาะกับพื้นที่"}},
+                { type: "button", style: "primary", color: "#ff9800", flex: 1, action: { type: "message", label: "🌿 พืชอื่นๆ", text: "แนะนำพืชเศรษฐกิจอื่นๆ" } },
+                { type: "button", style: "secondary", flex: 1, action: { type: "message", label: "📈 วิเคราะห์", text: "วิเคราะห์พืชที่เหมาะกับพื้นที่" } },
               ],
               paddingAll: "12px",
             },
@@ -7139,8 +7139,8 @@ const createSmartFarmMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "🛡️ การดูแลรักษาพืช", weight: "bold", color: "#ffffff", size: "lg"},
-                {type: "text", text: "Plant Care & Disease Control", color: "#ffffffcc", size: "sm"},
+                { type: "text", text: "🛡️ การดูแลรักษาพืช", weight: "bold", color: "#ffffff", size: "lg" },
+                { type: "text", text: "Plant Care & Disease Control", color: "#ffffffcc", size: "sm" },
               ],
               backgroundColor: "#00897b",
               paddingAll: "20px",
@@ -7149,7 +7149,7 @@ const createSmartFarmMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "🔧 หมวดการดูแล", weight: "bold", size: "md", color: "#333333"},
+                { type: "text", text: "🔧 หมวดการดูแล", weight: "bold", size: "md", color: "#333333" },
                 {
                   type: "box",
                   layout: "vertical",
@@ -7163,10 +7163,10 @@ const createSmartFarmMenu = () => {
                       cornerRadius: "10px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "🐛", size: "lg", flex: 0},
-                        {type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{type: "text", text: "โรค & แมลงศัตรูพืช", weight: "bold", size: "sm", color: "#00695c"}, {type: "text", text: "วินิจฉัย, ป้องกัน, กำจัด", size: "xs", color: "#666666"}]},
+                        { type: "text", text: "🐛", size: "lg", flex: 0 },
+                        { type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{ type: "text", text: "โรค & แมลงศัตรูพืช", weight: "bold", size: "sm", color: "#00695c" }, { type: "text", text: "วินิจฉัย, ป้องกัน, กำจัด", size: "xs", color: "#666666" }] },
                       ],
-                      action: {type: "message", text: "โรคและแมลงศัตรูพืช"},
+                      action: { type: "message", text: "โรคและแมลงศัตรูพืช" },
                     },
                     {
                       type: "box",
@@ -7175,10 +7175,10 @@ const createSmartFarmMenu = () => {
                       cornerRadius: "10px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "💧", size: "lg", flex: 0},
-                        {type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{type: "text", text: "ระบบน้ำ & การให้น้ำ", weight: "bold", size: "sm", color: "#1565c0"}, {type: "text", text: "สปริงเกอร์, น้ำหยด, ท่วมขัง", size: "xs", color: "#666666"}]},
+                        { type: "text", text: "💧", size: "lg", flex: 0 },
+                        { type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{ type: "text", text: "ระบบน้ำ & การให้น้ำ", weight: "bold", size: "sm", color: "#1565c0" }, { type: "text", text: "สปริงเกอร์, น้ำหยด, ท่วมขัง", size: "xs", color: "#666666" }] },
                       ],
-                      action: {type: "message", text: "ระบบการให้น้ำพืช"},
+                      action: { type: "message", text: "ระบบการให้น้ำพืช" },
                     },
                     {
                       type: "box",
@@ -7187,10 +7187,10 @@ const createSmartFarmMenu = () => {
                       cornerRadius: "10px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "✂️", size: "lg", flex: 0},
-                        {type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{type: "text", text: "การตัดแต่งกิ่ง", weight: "bold", size: "sm", color: "#e65100"}, {type: "text", text: "ทรงพุ่ม, เสริมผลผลิต", size: "xs", color: "#666666"}]},
+                        { type: "text", text: "✂️", size: "lg", flex: 0 },
+                        { type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{ type: "text", text: "การตัดแต่งกิ่ง", weight: "bold", size: "sm", color: "#e65100" }, { type: "text", text: "ทรงพุ่ม, เสริมผลผลิต", size: "xs", color: "#666666" }] },
                       ],
-                      action: {type: "message", text: "เทคนิคตัดแต่งกิ่ง"},
+                      action: { type: "message", text: "เทคนิคตัดแต่งกิ่ง" },
                     },
                     {
                       type: "box",
@@ -7199,10 +7199,10 @@ const createSmartFarmMenu = () => {
                       cornerRadius: "10px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "🌞", size: "lg", flex: 0},
-                        {type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{type: "text", text: "สภาพอากาศ & ฤดูกาล", weight: "bold", size: "sm", color: "#c2185b"}, {type: "text", text: "การจัดการตามฤดู", size: "xs", color: "#666666"}]},
+                        { type: "text", text: "🌞", size: "lg", flex: 0 },
+                        { type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{ type: "text", text: "สภาพอากาศ & ฤดูกาล", weight: "bold", size: "sm", color: "#c2185b" }, { type: "text", text: "การจัดการตามฤดู", size: "xs", color: "#666666" }] },
                       ],
-                      action: {type: "message", text: "การดูแลพืชตามฤดูกาล"},
+                      action: { type: "message", text: "การดูแลพืชตามฤดูกาล" },
                     },
                   ],
                 },
@@ -7213,7 +7213,7 @@ const createSmartFarmMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "button", style: "primary", color: "#00897b", action: {type: "message", label: "📷 ส่งรูปถามโรค", text: "ต้องการวินิจฉัยโรคพืชจากรูปภาพ"}},
+                { type: "button", style: "primary", color: "#00897b", action: { type: "message", label: "📷 ส่งรูปถามโรค", text: "ต้องการวินิจฉัยโรคพืชจากรูปภาพ" } },
               ],
               paddingAll: "12px",
             },
@@ -7228,8 +7228,8 @@ const createSmartFarmMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "💰 ต้นทุน & การวิเคราะห์", weight: "bold", color: "#ffffff", size: "lg"},
-                {type: "text", text: "Cost Analysis & Profit Calculator", color: "#ffffffcc", size: "sm"},
+                { type: "text", text: "💰 ต้นทุน & การวิเคราะห์", weight: "bold", color: "#ffffff", size: "lg" },
+                { type: "text", text: "Cost Analysis & Profit Calculator", color: "#ffffffcc", size: "sm" },
               ],
               backgroundColor: "#1976d2",
               paddingAll: "20px",
@@ -7238,7 +7238,7 @@ const createSmartFarmMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "📊 เครื่องมือวิเคราะห์", weight: "bold", size: "md", color: "#333333"},
+                { type: "text", text: "📊 เครื่องมือวิเคราะห์", weight: "bold", size: "md", color: "#333333" },
                 {
                   type: "box",
                   layout: "vertical",
@@ -7252,10 +7252,10 @@ const createSmartFarmMenu = () => {
                       cornerRadius: "10px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "🧮", size: "lg", flex: 0},
-                        {type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{type: "text", text: "คำนวณต้นทุน/ไร่", weight: "bold", size: "sm", color: "#1565c0"}, {type: "text", text: "ปุ๋ย, ยา, แรงงาน, เครื่องจักร", size: "xs", color: "#666666"}]},
+                        { type: "text", text: "🧮", size: "lg", flex: 0 },
+                        { type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{ type: "text", text: "คำนวณต้นทุน/ไร่", weight: "bold", size: "sm", color: "#1565c0" }, { type: "text", text: "ปุ๋ย, ยา, แรงงาน, เครื่องจักร", size: "xs", color: "#666666" }] },
                       ],
-                      action: {type: "message", text: "คำนวณต้นทุนการเกษตรต่อไร่"},
+                      action: { type: "message", text: "คำนวณต้นทุนการเกษตรต่อไร่" },
                     },
                     {
                       type: "box",
@@ -7264,10 +7264,10 @@ const createSmartFarmMenu = () => {
                       cornerRadius: "10px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "📈", size: "lg", flex: 0},
-                        {type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{type: "text", text: "วิเคราะห์กำไร", weight: "bold", size: "sm", color: "#2e7d32"}, {type: "text", text: "จุดคุ้มทุน, ROI, Break-even", size: "xs", color: "#666666"}]},
+                        { type: "text", text: "📈", size: "lg", flex: 0 },
+                        { type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{ type: "text", text: "วิเคราะห์กำไร", weight: "bold", size: "sm", color: "#2e7d32" }, { type: "text", text: "จุดคุ้มทุน, ROI, Break-even", size: "xs", color: "#666666" }] },
                       ],
-                      action: {type: "message", text: "วิเคราะห์กำไรการเกษตร"},
+                      action: { type: "message", text: "วิเคราะห์กำไรการเกษตร" },
                     },
                     {
                       type: "box",
@@ -7276,10 +7276,10 @@ const createSmartFarmMenu = () => {
                       cornerRadius: "10px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "📋", size: "lg", flex: 0},
-                        {type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{type: "text", text: "เปรียบเทียบพืช", weight: "bold", size: "sm", color: "#e65100"}, {type: "text", text: "พืชไหนคุ้มค่ากว่ากัน", size: "xs", color: "#666666"}]},
+                        { type: "text", text: "📋", size: "lg", flex: 0 },
+                        { type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{ type: "text", text: "เปรียบเทียบพืช", weight: "bold", size: "sm", color: "#e65100" }, { type: "text", text: "พืชไหนคุ้มค่ากว่ากัน", size: "xs", color: "#666666" }] },
                       ],
-                      action: {type: "message", text: "เปรียบเทียบความคุ้มค่าพืช"},
+                      action: { type: "message", text: "เปรียบเทียบความคุ้มค่าพืช" },
                     },
                     {
                       type: "box",
@@ -7288,10 +7288,10 @@ const createSmartFarmMenu = () => {
                       cornerRadius: "10px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "🎯", size: "lg", flex: 0},
-                        {type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{type: "text", text: "วางแผนการเงิน", weight: "bold", size: "sm", color: "#7b1fa2"}, {type: "text", text: "งบประมาณ, สินเชื่อ", size: "xs", color: "#666666"}]},
+                        { type: "text", text: "🎯", size: "lg", flex: 0 },
+                        { type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{ type: "text", text: "วางแผนการเงิน", weight: "bold", size: "sm", color: "#7b1fa2" }, { type: "text", text: "งบประมาณ, สินเชื่อ", size: "xs", color: "#666666" }] },
                       ],
-                      action: {type: "message", text: "วางแผนการเงินการเกษตร"},
+                      action: { type: "message", text: "วางแผนการเงินการเกษตร" },
                     },
                   ],
                 },
@@ -7303,8 +7303,8 @@ const createSmartFarmMenu = () => {
               layout: "horizontal",
               spacing: "sm",
               contents: [
-                {type: "button", style: "primary", color: "#1976d2", flex: 1, action: {type: "message", label: "📊 บันทึกบัญชี", text: "/acc"}},
-                {type: "button", style: "secondary", flex: 1, action: {type: "message", label: "📑 รายงาน", text: "สรุปบัญชีเดือนนี้"}},
+                { type: "button", style: "primary", color: "#1976d2", flex: 1, action: { type: "message", label: "📊 บันทึกบัญชี", text: "/acc" } },
+                { type: "button", style: "secondary", flex: 1, action: { type: "message", label: "📑 รายงาน", text: "สรุปบัญชีเดือนนี้" } },
               ],
               paddingAll: "12px",
             },
@@ -7319,8 +7319,8 @@ const createSmartFarmMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "🏛️ เงินอุดหนุนภาครัฐ", weight: "bold", color: "#ffffff", size: "lg"},
-                {type: "text", text: "Government Subsidies & Support", color: "#ffffffcc", size: "sm"},
+                { type: "text", text: "🏛️ เงินอุดหนุนภาครัฐ", weight: "bold", color: "#ffffff", size: "lg" },
+                { type: "text", text: "Government Subsidies & Support", color: "#ffffffcc", size: "sm" },
               ],
               backgroundColor: "#5e35b1",
               paddingAll: "20px",
@@ -7329,7 +7329,7 @@ const createSmartFarmMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "🎁 สิทธิประโยชน์เกษตรกร", weight: "bold", size: "md", color: "#333333"},
+                { type: "text", text: "🎁 สิทธิประโยชน์เกษตรกร", weight: "bold", size: "md", color: "#333333" },
                 {
                   type: "box",
                   layout: "vertical",
@@ -7343,10 +7343,10 @@ const createSmartFarmMenu = () => {
                       cornerRadius: "10px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "💳", size: "lg", flex: 0},
-                        {type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{type: "text", text: "เงินช่วยเหลือ ธ.ก.ส.", weight: "bold", size: "sm", color: "#5e35b1"}, {type: "text", text: "สินเชื่อดอกเบี้ยต่ำ, ประกันราคา", size: "xs", color: "#666666"}]},
+                        { type: "text", text: "💳", size: "lg", flex: 0 },
+                        { type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{ type: "text", text: "เงินช่วยเหลือ ธ.ก.ส.", weight: "bold", size: "sm", color: "#5e35b1" }, { type: "text", text: "สินเชื่อดอกเบี้ยต่ำ, ประกันราคา", size: "xs", color: "#666666" }] },
                       ],
-                      action: {type: "message", text: "สินเชื่อ ธกส สำหรับเกษตรกร"},
+                      action: { type: "message", text: "สินเชื่อ ธกส สำหรับเกษตรกร" },
                     },
                     {
                       type: "box",
@@ -7355,10 +7355,10 @@ const createSmartFarmMenu = () => {
                       cornerRadius: "10px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "🌾", size: "lg", flex: 0},
-                        {type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{type: "text", text: "ประกันรายได้ชาวนา", weight: "bold", size: "sm", color: "#2e7d32"}, {type: "text", text: "โครงการประกันราคาข้าว", size: "xs", color: "#666666"}]},
+                        { type: "text", text: "🌾", size: "lg", flex: 0 },
+                        { type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{ type: "text", text: "ประกันรายได้ชาวนา", weight: "bold", size: "sm", color: "#2e7d32" }, { type: "text", text: "โครงการประกันราคาข้าว", size: "xs", color: "#666666" }] },
                       ],
-                      action: {type: "message", text: "โครงการประกันรายได้ชาวนา"},
+                      action: { type: "message", text: "โครงการประกันรายได้ชาวนา" },
                     },
                     {
                       type: "box",
@@ -7367,10 +7367,10 @@ const createSmartFarmMenu = () => {
                       cornerRadius: "10px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "🏆", size: "lg", flex: 0},
-                        {type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{type: "text", text: "Smart Farmer", weight: "bold", size: "sm", color: "#e65100"}, {type: "text", text: "สิทธิประโยชน์เกษตรกรรุ่นใหม่", size: "xs", color: "#666666"}]},
+                        { type: "text", text: "🏆", size: "lg", flex: 0 },
+                        { type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{ type: "text", text: "Smart Farmer", weight: "bold", size: "sm", color: "#e65100" }, { type: "text", text: "สิทธิประโยชน์เกษตรกรรุ่นใหม่", size: "xs", color: "#666666" }] },
                       ],
-                      action: {type: "message", text: "สิทธิประโยชน์ Smart Farmer"},
+                      action: { type: "message", text: "สิทธิประโยชน์ Smart Farmer" },
                     },
                     {
                       type: "box",
@@ -7379,14 +7379,14 @@ const createSmartFarmMenu = () => {
                       cornerRadius: "10px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "📝", size: "lg", flex: 0},
-                        {type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{type: "text", text: "ขึ้นทะเบียนเกษตรกร", weight: "bold", size: "sm", color: "#1565c0"}, {type: "text", text: "กรมส่งเสริมการเกษตร", size: "xs", color: "#666666"}]},
+                        { type: "text", text: "📝", size: "lg", flex: 0 },
+                        { type: "box", layout: "vertical", margin: "md", flex: 1, contents: [{ type: "text", text: "ขึ้นทะเบียนเกษตรกร", weight: "bold", size: "sm", color: "#1565c0" }, { type: "text", text: "กรมส่งเสริมการเกษตร", size: "xs", color: "#666666" }] },
                       ],
-                      action: {type: "message", text: "วิธีขึ้นทะเบียนเกษตรกร"},
+                      action: { type: "message", text: "วิธีขึ้นทะเบียนเกษตรกร" },
                     },
                   ],
                 },
-                {type: "separator", margin: "lg"},
+                { type: "separator", margin: "lg" },
                 {
                   type: "box",
                   layout: "vertical",
@@ -7395,8 +7395,8 @@ const createSmartFarmMenu = () => {
                   cornerRadius: "8px",
                   paddingAll: "10px",
                   contents: [
-                    {type: "text", text: "📞 สายด่วนเกษตร: 1170", weight: "bold", size: "xs", color: "#5e35b1", align: "center"},
-                    {type: "text", text: "กรมส่งเสริมการเกษตร", size: "xs", color: "#666666", align: "center"},
+                    { type: "text", text: "📞 สายด่วนเกษตร: 1170", weight: "bold", size: "xs", color: "#5e35b1", align: "center" },
+                    { type: "text", text: "กรมส่งเสริมการเกษตร", size: "xs", color: "#666666", align: "center" },
                   ],
                 },
               ],
@@ -7406,7 +7406,7 @@ const createSmartFarmMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "button", style: "primary", color: "#5e35b1", action: {type: "message", label: "📋 เช็คสิทธิ์ทั้งหมด", text: "สิทธิประโยชน์เกษตรกรทั้งหมด"}},
+                { type: "button", style: "primary", color: "#5e35b1", action: { type: "message", label: "📋 เช็คสิทธิ์ทั้งหมด", text: "สิทธิประโยชน์เกษตรกรทั้งหมด" } },
               ],
               paddingAll: "12px",
             },
@@ -7421,8 +7421,8 @@ const createSmartFarmMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "🤖 AI ที่ปรึกษาเกษตร", weight: "bold", color: "#ffffff", size: "lg"},
-                {type: "text", text: "Smart Agriculture AI Assistant", color: "#ffffffcc", size: "sm"},
+                { type: "text", text: "🤖 AI ที่ปรึกษาเกษตร", weight: "bold", color: "#ffffff", size: "lg" },
+                { type: "text", text: "Smart Agriculture AI Assistant", color: "#ffffffcc", size: "sm" },
               ],
               backgroundColor: "#00838f",
               paddingAll: "20px",
@@ -7431,7 +7431,7 @@ const createSmartFarmMenu = () => {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "💬 ถาม AI ได้ทุกเรื่อง", weight: "bold", size: "md", color: "#333333"},
+                { type: "text", text: "💬 ถาม AI ได้ทุกเรื่อง", weight: "bold", size: "md", color: "#333333" },
                 {
                   type: "box",
                   layout: "vertical",
@@ -7445,27 +7445,27 @@ const createSmartFarmMenu = () => {
                       cornerRadius: "10px",
                       paddingAll: "12px",
                       contents: [
-                        {type: "text", text: "💡 ตัวอย่างคำถาม:", weight: "bold", size: "sm", color: "#006064"},
-                        {type: "text", text: "• ทุเรียนใบเหลืองเกิดจากอะไร", size: "xs", color: "#666666", margin: "sm"},
-                        {type: "text", text: "• ปุ๋ยสูตรไหนเหมาะกับมะม่วง", size: "xs", color: "#666666"},
-                        {type: "text", text: "• ปลูกอะไรดีในช่วงหน้าฝน", size: "xs", color: "#666666"},
-                        {type: "text", text: "• ราคายางวันนี้เท่าไร", size: "xs", color: "#666666"},
-                        {type: "text", text: "• วิธีกำจัดเพลี้ยแป้งในมันสำปะหลัง", size: "xs", color: "#666666"},
+                        { type: "text", text: "💡 ตัวอย่างคำถาม:", weight: "bold", size: "sm", color: "#006064" },
+                        { type: "text", text: "• ทุเรียนใบเหลืองเกิดจากอะไร", size: "xs", color: "#666666", margin: "sm" },
+                        { type: "text", text: "• ปุ๋ยสูตรไหนเหมาะกับมะม่วง", size: "xs", color: "#666666" },
+                        { type: "text", text: "• ปลูกอะไรดีในช่วงหน้าฝน", size: "xs", color: "#666666" },
+                        { type: "text", text: "• ราคายางวันนี้เท่าไร", size: "xs", color: "#666666" },
+                        { type: "text", text: "• วิธีกำจัดเพลี้ยแป้งในมันสำปะหลัง", size: "xs", color: "#666666" },
                       ],
                     },
                   ],
                 },
-                {type: "separator", margin: "lg"},
-                {type: "text", text: "⚡ เครื่องมือด่วน", weight: "bold", size: "sm", color: "#333333", margin: "md"},
+                { type: "separator", margin: "lg" },
+                { type: "text", text: "⚡ เครื่องมือด่วน", weight: "bold", size: "sm", color: "#333333", margin: "md" },
                 {
                   type: "box",
                   layout: "horizontal",
                   margin: "md",
                   spacing: "sm",
                   contents: [
-                    {type: "box", layout: "vertical", flex: 1, backgroundColor: "#e8f5e9", cornerRadius: "8px", paddingAll: "10px", contents: [{type: "text", text: "📊", size: "lg", align: "center"}, {type: "text", text: "บัญชี", size: "xs", align: "center", color: "#2e7d32", weight: "bold"}], action: {type: "message", text: "/acc"}},
-                    {type: "box", layout: "vertical", flex: 1, backgroundColor: "#fff3e0", cornerRadius: "8px", paddingAll: "10px", contents: [{type: "text", text: "🧮", size: "lg", align: "center"}, {type: "text", text: "คำนวณ", size: "xs", align: "center", color: "#e65100", weight: "bold"}], action: {type: "message", text: "คำนวณต้นทุนการเกษตร"}},
-                    {type: "box", layout: "vertical", flex: 1, backgroundColor: "#e3f2fd", cornerRadius: "8px", paddingAll: "10px", contents: [{type: "text", text: "📈", size: "lg", align: "center"}, {type: "text", text: "ราคา", size: "xs", align: "center", color: "#1565c0", weight: "bold"}], action: {type: "message", text: "ราคาสินค้าเกษตรวันนี้"}},
+                    { type: "box", layout: "vertical", flex: 1, backgroundColor: "#e8f5e9", cornerRadius: "8px", paddingAll: "10px", contents: [{ type: "text", text: "📊", size: "lg", align: "center" }, { type: "text", text: "บัญชี", size: "xs", align: "center", color: "#2e7d32", weight: "bold" }], action: { type: "message", text: "/acc" } },
+                    { type: "box", layout: "vertical", flex: 1, backgroundColor: "#fff3e0", cornerRadius: "8px", paddingAll: "10px", contents: [{ type: "text", text: "🧮", size: "lg", align: "center" }, { type: "text", text: "คำนวณ", size: "xs", align: "center", color: "#e65100", weight: "bold" }], action: { type: "message", text: "คำนวณต้นทุนการเกษตร" } },
+                    { type: "box", layout: "vertical", flex: 1, backgroundColor: "#e3f2fd", cornerRadius: "8px", paddingAll: "10px", contents: [{ type: "text", text: "📈", size: "lg", align: "center" }, { type: "text", text: "ราคา", size: "xs", align: "center", color: "#1565c0", weight: "bold" }], action: { type: "message", text: "ราคาสินค้าเกษตรวันนี้" } },
                   ],
                 },
               ],
@@ -7476,8 +7476,8 @@ const createSmartFarmMenu = () => {
               layout: "horizontal",
               spacing: "sm",
               contents: [
-                {type: "button", style: "primary", color: "#00838f", flex: 1, action: {type: "message", label: "🏠 เมนูหลัก", text: "/welcome"}},
-                {type: "button", style: "secondary", flex: 1, action: {type: "message", label: "❓ ช่วยเหลือ", text: "/help"}},
+                { type: "button", style: "primary", color: "#00838f", flex: 1, action: { type: "message", label: "🏠 เมนูหลัก", text: "/welcome" } },
+                { type: "button", style: "secondary", flex: 1, action: { type: "message", label: "❓ ช่วยเหลือ", text: "/help" } },
               ],
               paddingAll: "12px",
             },

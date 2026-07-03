@@ -16,7 +16,10 @@
   'use strict';
 
   const VAPID_PUBLIC = 'BB1PIY55wKXv37de8hWFkxxyE3SMRu1PXOBwYPVY1dA5Tz5O7n9FHPpQDihraJ_G7qjnLVF6EiPGxI3XsU5m--Q';
-  const CF_BASE = (window.TUKTUK_LIFF?.apiBase) || 'https://us-central1-appinjproject.cloudfunctions.net';
+  
+  // 🔥 ALWAYS point Push logic to Firebase Cloud Functions (Node), NOT the Go Engine (Fly.io)
+  // The Go Engine does not handle Web Push subscriptions yet.
+  const CF_BASE = 'https://us-central1-appinjproject.cloudfunctions.net';
 
   // ── VAPID key helper ────────────────────────────────────────────────────────
   function _urlBase64ToUint8Array(base64String) {
@@ -248,7 +251,7 @@
     const price = product.price ? ` ฿${product.price.toLocaleString()}` : '';
     return share({
       title: `${name}${price} — TukTuk Thailand`,
-      text: `ดูสินค้า "${name}"${price} บน TukTuk Thailand 🛺`,
+      text: `ดูสินค้า "${name}"${price} บน TukTuk Thailand 🛍️`,
       url,
     });
   }

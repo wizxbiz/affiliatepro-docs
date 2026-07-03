@@ -29,6 +29,10 @@
     <script src="/js/auth.js"></script>
     <script src="/js/auth-service.js"></script>
     <script src="/js/tuktuk-api.js"></script>
+    <link rel="stylesheet" href="css/persistent-ui.css">
+    <link rel="stylesheet" href="css/pc-layout.css">
+    <script src="js/persistent-ui.js"></script>
+    <script src="js/spa-router.js" defer></script>
 
     <style>
         /* ========================================
@@ -87,7 +91,7 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             position: relative;
-            padding-bottom: 140px;
+            padding-bottom: 0; /* Changed from 140px to 0 for PC, mobile handled below */
         }
 
         /* Animated Background */
@@ -111,6 +115,23 @@
             position: relative;
             margin-bottom: 30px;
             animation: fadeInDown 0.8s ease;
+        }
+
+        /* Logo image size inside pc-logo */
+        .pc-logo-icon-img {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+        }
+
+        /* PC Top Nav offset — only when nav is visible (standalone mode) */
+        @media (min-width: 992px) {
+            body.pc-standalone {
+                padding-top: 64px;
+            }
+            body.pc-standalone #pcTopNav {
+                display: flex !important;
+            }
         }
 
         @keyframes fadeInDown {
@@ -706,134 +727,6 @@
             width: 100%;
             height: 70vh;
             border: none;
-            border-radius: var(--border-radius-xl);
-        }
-
-        /* ========================================
-           BOTTOM NAVIGATION
-           ======================================== */
-        .bottom-nav {
-            position: fixed;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 95%;
-            max-width: 600px;
-            height: 70px;
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(40px) saturate(220%);
-            -webkit-backdrop-filter: blur(40px) saturate(220%);
-            border: 1px solid var(--border);
-            border-radius: var(--border-radius-full);
-            display: flex;
-            align-items: center;
-            justify-content: stretch;
-            /* Modified from space-around */
-            padding: 0 10px;
-            box-shadow: var(--shadow-xl);
-            z-index: 10000000;
-            /* Increased to stay above all */
-            animation: slideUp 0.6s ease;
-            overflow: visible !important;
-            /* Ensure center-btn can pop out */
-            transition: all 0.3s ease;
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translate(-50%, 100%);
-                opacity: 0;
-            }
-
-            to {
-                transform: translate(-50%, 0);
-                opacity: 1;
-            }
-        }
-
-        .bottom-nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-secondary) !important;
-            text-decoration: none;
-            font-size: 0.7rem;
-            transition: var(--transition);
-            flex: 1 1 0;
-            /* Equal share */
-            min-width: 0;
-            padding: 8px 2px;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .bottom-nav-item i {
-            font-size: 1.4rem;
-            margin-bottom: 4px;
-        }
-
-        .bottom-nav-item.active::after {
-            content: '';
-            position: absolute;
-            bottom: 6px;
-            width: 5px;
-            height: 5px;
-            background: var(--primary);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--primary), 0 0 20px var(--primary);
-            transition: all 0.3s ease;
-        }
-
-        .bottom-nav-item.active {
-            color: var(--primary) !important;
-        }
-
-        .center-btn {
-            position: absolute !important;
-            left: 50% !important;
-            transform: translateX(-50%) !important;
-            top: -30px !important;
-            width: 60px !important;
-            height: 60px !important;
-            border-radius: 50% !important;
-            background: linear-gradient(135deg, #0f172a, #1e293b) !important;
-            border: 2px solid rgba(0, 242, 234, 0.3) !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 242, 234, 0.15) !important;
-            z-index: 100000005 !important;
-            text-decoration: none !important;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-        }
-
-        .center-btn.active {
-            transform: translateX(-50%) scale(0.9) !important;
-            border-color: var(--primary) !important;
-            box-shadow: 0 0 30px rgba(0, 242, 234, 0.4) !important;
-        }
-
-        .center-btn img {
-            width: 48px !important;
-            height: 48px !important;
-            border-radius: 50% !important;
-            object-fit: cover !important;
-            animation: breathe-premium 4s ease-in-out infinite;
-        }
-
-        @keyframes breathe-premium {
-
-            0%,
-            100% {
-                transform: scale(1);
-                filter: drop-shadow(0 0 5px rgba(0, 191, 255, 0.5));
-            }
-
-            50% {
-                transform: scale(1.1);
-                filter: drop-shadow(0 0 15px rgba(0, 191, 255, 0.8));
-            }
         }
 
         .center-nav-gap {
@@ -1429,238 +1322,8 @@
             color: var(--primary);
         }
 
-        /* ========================================
-           BOTTOM NAVIGATION - FUTURISTIC DOCK
-           ======================================== */
-        .bottom-nav {
-            position: fixed;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 95%;
-            max-width: 600px;
-            height: 72px;
-            background: transparent;
-            border-radius: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: stretch;
-            padding: 0 10px;
-            gap: 0;
-            overflow: visible !important;
-            z-index: 10000000;
-            transition: all 0.3s ease;
-        }
 
-        .bottom-nav::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 36px;
-            background: rgba(8, 14, 28, 0.85);
-            backdrop-filter: blur(40px) saturate(220%);
-            -webkit-backdrop-filter: blur(40px) saturate(220%);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(0, 210, 255, 0.05), 0 1px 0 rgba(255, 255, 255, 0.04) inset;
-            z-index: -1;
-            pointer-events: none;
-            transition: var(--transition);
-        }
 
-        .bottom-nav.overlay-active .bottom-nav-item {
-            pointer-events: none !important;
-            opacity: 0.2 !important;
-            filter: blur(2px) !important;
-            transform: scale(0.9) !important;
-            transition: all 0.3s ease !important;
-        }
-
-        .bottom-nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: rgba(255, 255, 255, 0.5);
-            text-decoration: none;
-            font-size: 0.72rem;
-            font-weight: 600;
-            letter-spacing: 0.1px;
-            line-height: 1.1;
-            transition: color 0.2s ease, transform 0.15s ease;
-            position: relative;
-            flex: 1 1 0;
-            min-width: 0;
-            min-height: 52px;
-            padding: 6px 2px;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-            overflow: hidden;
-        }
-
-        .bottom-nav-item span {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 100%;
-            display: block;
-            text-align: center;
-        }
-
-        .bottom-nav-item i {
-            font-size: 1.45rem;
-            margin-bottom: 3px;
-            transition: transform 0.2s ease;
-            flex-shrink: 0;
-        }
-
-        .bottom-nav-item:hover {
-            color: rgba(255, 255, 255, 0.75);
-        }
-
-        .bottom-nav-item:active {
-            transform: scale(0.92);
-        }
-
-        .bottom-nav-item:active i {
-            transform: scale(0.88);
-        }
-
-        .bottom-nav-item.active {
-            color: var(--primary);
-        }
-
-        .bottom-nav-item.active i {
-            filter: drop-shadow(0 0 6px rgba(0, 210, 255, 0.6));
-        }
-
-        .bottom-nav-item.active::after {
-            content: '';
-            position: absolute;
-            bottom: 4px;
-            width: 22px;
-            height: 3px;
-            background: var(--primary);
-            border-radius: 2px;
-            box-shadow: 0 0 8px var(--primary);
-        }
-
-        .center-nav-gap {
-            flex: 0 0 70px;
-            pointer-events: none;
-        }
-
-        .center-btn {
-            position: absolute !important;
-            left: 50% !important;
-            transform: translateX(-50%) !important;
-            top: -38px !important;
-            z-index: 10000005 !important;
-            background: linear-gradient(135deg, var(--secondary), var(--primary)) !important;
-            border: 3px solid #0a0e1a !important;
-            padding: 0 !important;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(0, 242, 234, 0.25) !important;
-            pointer-events: auto !important;
-            flex-shrink: 0 !important;
-            width: 66px !important;
-            height: 66px !important;
-            overflow: visible !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            border-radius: 50%;
-        }
-
-        .center-btn-inner {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Profile Image Wrapper */
-        .nav-profile-wrapper {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            padding: 1px;
-            background: linear-gradient(135deg, #6366f1, #a855f7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 4px;
-            transition: all 0.3s;
-        }
-
-        .bottom-nav-item.active .nav-profile-wrapper {
-            transform: translateY(-5px) scale(1.1);
-            box-shadow: 0 0 15px rgba(168, 85, 247, 0.6);
-        }
-
-        .nav-profile-wrapper img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #0f172a;
-        }
-
-        .tuktuk-brand-icon {
-            height: 54px !important;
-            width: 54px !important;
-            border-radius: 50%;
-            object-fit: cover;
-            animation: breathe-premium 4s ease-in-out infinite;
-        }
-
-        @keyframes breathe-premium {
-
-            0%,
-            100% {
-                transform: scale(1);
-                filter: drop-shadow(0 0 5px rgba(0, 210, 255, 0.5));
-            }
-
-            50% {
-                transform: scale(1.1);
-                filter: drop-shadow(0 0 20px rgba(0, 210, 255, 0.8));
-            }
-        }
-
-        @media (max-width: 991.98px) {
-            body {
-                padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px)) !important;
-            }
-
-            .bottom-nav {
-                width: calc(100% - 24px);
-                bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-                height: 64px;
-                padding: 0 8px;
-            }
-
-            .center-btn {
-                width: 62px !important;
-                height: 62px !important;
-                top: -32px !important;
-            }
-
-            .tuktuk-brand-icon {
-                height: 50px !important;
-                width: 50px !important;
-            }
-
-            .center-nav-gap {
-                flex: 0 0 66px;
-            }
-
-            .bottom-nav-item {
-                font-size: 0.58rem;
-            }
-
-            .bottom-nav-item i {
-                font-size: 1.15rem;
-            }
-        }
 
         @media (min-width: 992px) {
             .channel-header {
@@ -1744,6 +1407,55 @@
 </head>
 
 <body>
+
+    <!-- ===== PC TOP NAV (standalone only — hidden when embedded in SPA iframe) ===== -->
+    <div class="pc-top-nav" id="pcTopNav">
+        <div class="pc-nav-container">
+            <div class="pc-top-left">
+                <a href="index.html" class="pc-logo" title="TukTuk Thailand" onclick="event.preventDefault();_tnav('index.html')">
+                    <img src="/assets/images/logo.png" class="pc-logo-icon-img" alt="TukTuk logo">
+                    <span>TukTuk</span>
+                </a>
+            </div>
+            <div class="pc-top-center">
+                <div class="pc-nav-icons">
+                    <div class="pc-nav-icon" data-pc-nav="home" title="หน้าหลัก"
+                        onclick="_tnav('index.html')">
+                        <i class="fas fa-home"></i>
+                        <span class="pc-nav-label">หน้าหลัก</span>
+                    </div>
+                    <div class="pc-nav-icon" data-pc-nav="marketplace" title="ตลาดนัด"
+                        onclick="_tnav('marketplace.html')">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span class="pc-nav-label">ตลาดนัด</span>
+                    </div>
+                    <div class="pc-nav-icon active" data-pc-nav="channel" title="โปรไฟล์">
+                        <i class="fas fa-user-circle"></i>
+                        <span class="pc-nav-label">โปรไฟล์</span>
+                    </div>
+                </div>
+            </div>
+            <div class="pc-top-right">
+                <div class="pc-actions">
+                    <div class="pc-icon-btn" onclick="_tnav('messages.html')" title="ข้อความ">
+                        <i class="fas fa-comment-dots"></i>
+                    </div>
+                    <div class="pc-icon-btn"
+                        onclick="typeof WizmobizAuth!=='undefined'?WizmobizAuth.handleShopAccess():_tnav('seller-dashboard.html')"
+                        title="จัดการร้านค้า">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <div class="pc-user-menu" title="โปรไฟล์ของฉัน">
+                        <img src="/assets/images/logo.png" id="channelNavAvatar" class="pc-user-avatar"
+                            alt="avatar" onerror="this.src='/assets/images/logo.png'">
+                        <span class="pc-user-name" id="channelNavName">โปรไฟล์</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ===== END PC TOP NAV ===== -->
+
     <div class="channel-header-wrapper">
         <div id="channelBanner" class="channel-banner">
             <!-- Cover edit overlay — visible on hover for own profile -->
@@ -1792,7 +1504,7 @@
                         <i class="fas fa-pen me-1"></i>แก้ไข
                     </button>
                     <button type="button" class="btn btn-sm rounded-pill px-3 own-action-btn analytics-btn"
-                        onclick="window.location.href='seller-dashboard.html'" title="สตูดิโอผู้สร้าง">
+                        onclick="_tnav('seller-dashboard.html')" title="สตูดิโอผู้สร้าง">
                         <i class="fas fa-chart-bar"></i>
                     </button>
                     <button type="button" class="btn btn-sm rounded-pill px-3 own-action-btn wallet-btn"
@@ -1821,7 +1533,7 @@
 
                 <!-- Mission Center Card (own profile only) -->
                 <div id="rewardCard" class="reward-card mt-3 mx-auto" style="display:none; cursor:pointer;"
-                    onclick="window.location.href='mission-center.html'">
+                    onclick="_tnav('mission-center.html')">
                     <div class="reward-card-content">
                         <div class="reward-icon-wrapper"><i class="fas fa-star"></i></div>
                         <div class="reward-info">
@@ -2171,17 +1883,45 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
     <script>
-        // 🚀 Detect Iframe / Embedded Mode to Prevent Duplicate Navbars
+        // SPA-aware navigation helper — postMessage to parent if inside iframe
+        function _tnav(href) {
+            if (window.self !== window.top) {
+                window.top.postMessage({ type: 'NAVIGATE', href: href }, window.location.origin);
+            } else if (typeof window.navigateToSPA === 'function') {
+                window.navigateToSPA(href);
+            } else {
+                window.location.href = href;
+            }
+        }
+
+        // Detect Iframe / Embedded Mode — hide all navbars (runs once)
         (function () {
-            if (window.self !== window.top || window.location.search.includes('embedded=true')) {
+            const isEmbedded = window.self !== window.top || window.location.search.includes('embedded=true');
+            if (isEmbedded) {
                 document.body.classList.add('embedded-mode');
                 const navStyle = document.createElement('style');
                 navStyle.textContent = `
                     #bottomNav, .bottom-nav { display: none !important; visibility: hidden !important; height: 0 !important; overflow: hidden !important; pointer-events: none !important; }
-                    body { padding-bottom: 0 !important; }
+                    #pcTopNav, .pc-top-nav { display: none !important; }
+                    body { padding-bottom: 0 !important; margin-top: 0 !important; }
                     .center-btn { display: none !important; }
                 `;
                 document.head.appendChild(navStyle);
+            } else if (window.innerWidth >= 992) {
+                // Standalone PC mode — show pcTopNav + adjust body offset
+                document.body.classList.add('pc-standalone');
+                // Pre-fill nav with session data immediately (before Firestore loads)
+                const sess = (typeof WizmobizAuth !== 'undefined') ? WizmobizAuth.getUser() : null;
+                if (sess) {
+                    const navAvatar = document.getElementById('channelNavAvatar');
+                    const navName   = document.getElementById('channelNavName');
+                    if (navAvatar && (sess.pictureUrl || sess.photoURL)) {
+                        navAvatar.src = sess.pictureUrl || sess.photoURL;
+                    }
+                    if (navName && sess.displayName) {
+                        navName.textContent = sess.displayName;
+                    }
+                }
             }
         })();
 
@@ -2194,12 +1934,12 @@
 
         // Firebase Config
         const firebaseConfig = {
-            apiKey: "AIzaSyCjT-02SUgItq2ogDm_gJt7L0EdBrNl63M",
+            apiKey: "AIzaSyBKL6HBLEndDX4LYo7APFNQ0IVICLJtaIE",
             authDomain: "appinjproject.firebaseapp.com",
             projectId: "appinjproject",
             storageBucket: "appinjproject.firebasestorage.app",
-            messagingSenderId: "1065805249498",
-            appId: "1:1065805249498:web:845d06b73d6d21ae7c1c8a"
+            messagingSenderId: "408718656984",
+            appId: "1:408718656984:web:08bd8f084769d428251ead"
         };
 
         if (!firebase.apps.length) {
@@ -2232,17 +1972,43 @@
         // ========================================
         // INIT
         // ========================================
+        // Safe redirect — uses postMessage if inside SPA iframe
+        function safeRedirectToLogin(returnPath) {
+            if (window.self !== window.top) {
+                window.top.postMessage({ type: 'NAVIGATE', href: 'login.html' }, window.location.origin);
+            } else {
+                WizmobizAuth.redirectToLogin(returnPath);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const queryUserId = urlParams.get('userId');
             const currentUser = WizmobizAuth.getUser();
 
             if (!currentUser && !queryUserId) {
-                WizmobizAuth.redirectToLogin('/channel.html');
+                safeRedirectToLogin('/channel.html');
                 return;
             }
 
             currentTargetUserId = queryUserId || (currentUser ? (currentUser.uid || currentUser.lineUserId) : null);
+
+            if (!currentTargetUserId) {
+                safeRedirectToLogin('/channel.html');
+                return;
+            }
+
+            // ✅ แสดงข้อมูลจาก session ทันที (ไม่ต้องรอ Firestore)
+            if (!queryUserId && currentUser) {
+                const sessionName = currentUser.displayName || currentUser.name || 'TukTuk User';
+                document.getElementById('userName').textContent = sessionName;
+                const avatarImg = document.getElementById('userAvatar');
+                avatarImg.src = currentUser.pictureUrl || currentUser.photoURL ||
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(sessionName)}&background=00D2FF&color=fff&size=160`;
+                avatarImg.onerror = function() {
+                    this.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(sessionName)}&background=00D2FF&color=fff&size=160`;
+                };
+            }
 
             if (currentUser) {
                 try {
@@ -2252,16 +2018,24 @@
                         myFollowingIds = myDoc.data().following || [];
                         updateBottomNavProfile(myDoc.data());
                     } else {
-                        updateBottomNavProfile(currentUser);
+                        // Firestore doc ไม่มี — ลอง firebaseUid เป็น fallback
+                        if (currentUser.firebaseUid && currentUser.firebaseUid !== myId) {
+                            const fbDoc = await db.collection('users').doc(currentUser.firebaseUid).get();
+                            if (fbDoc.exists) {
+                                myFollowingIds = fbDoc.data().following || [];
+                                // ใช้ firebaseUid เป็น targetId จริง
+                                if (!queryUserId) currentTargetUserId = currentUser.firebaseUid;
+                                updateBottomNavProfile(fbDoc.data());
+                            } else {
+                                updateBottomNavProfile(currentUser);
+                            }
+                        } else {
+                            updateBottomNavProfile(currentUser);
+                        }
                     }
                 } catch (e) {
                     console.error('Error loading user data:', e);
                 }
-            }
-
-            if (!currentTargetUserId) {
-                WizmobizAuth.redirectToLogin('/channel.html');
-                return;
             }
 
             // Show back button if visiting someone else
@@ -2271,19 +2045,36 @@
                 backBtn.className = 'btn text-white position-absolute top-0 start-0 m-3';
                 backBtn.style.zIndex = '100';
                 backBtn.innerHTML = '<i class="fas fa-arrow-left fa-lg"></i>';
-                backBtn.onclick = () => window.history.back();
+                backBtn.onclick = () => _tnav('index.html');
                 header.style.position = 'relative';
                 header.prepend(backBtn);
             }
 
-            // Load Profile Data with Real-time Listener (Matching ProfileScreen.dart)
+            // Load Profile Data with Real-time Listener
             db.collection('users').doc(currentTargetUserId).onSnapshot(doc => {
                 if (doc.exists) {
                     currentUserData = doc.data();
                     currentUserData.uid = doc.id;
                     updateProfileUI(currentUserData);
                 } else {
-                    document.getElementById('userName').textContent = 'User Not Found';
+                    // ลอง firebaseUid หาก lineUserId ไม่เจอใน users collection
+                    const fbUid = currentUser?.firebaseUid;
+                    if (fbUid && fbUid !== currentTargetUserId) {
+                        currentTargetUserId = fbUid;
+                        db.collection('users').doc(fbUid).onSnapshot(d2 => {
+                            if (d2.exists) {
+                                currentUserData = d2.data();
+                                currentUserData.uid = d2.id;
+                                updateProfileUI(currentUserData);
+                            } else {
+                                document.getElementById('userName').textContent =
+                                    currentUser?.displayName || 'TukTuk User';
+                            }
+                        });
+                    } else {
+                        document.getElementById('userName').textContent =
+                            currentUser?.displayName || 'TukTuk User';
+                    }
                 }
             }, err => {
                 console.error('Snapshot error:', err);
@@ -2293,7 +2084,6 @@
             });
 
             loadUserPosts(currentTargetUserId);
-            // Check for products early to show tab if applicable
             checkHasProducts(currentTargetUserId);
         });
 
@@ -2319,12 +2109,50 @@
             const currentUid = currentUser?.uid || currentUser?.lineUserId;
             const isOwnProfile = (currentUid === currentTargetUserId);
 
-            const displayName = user.displayName || user.name || user.username || 'TukTuk User';
+            // ชื่อ: Firestore → session → fallback
+            const displayName = user.displayName || user.name || user.username
+                || currentUser?.displayName || 'TukTuk User';
             document.getElementById('userName').textContent = displayName;
 
+            // รูป: Firestore → session → fallback ui-avatars
             const avatarImg = document.getElementById('userAvatar');
-            const pic = user.pictureUrl || user.photoURL || user.picture || user.avatar;
-            avatarImg.src = pic || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=00D2FF&color=fff&size=160`;
+            const rawPic = user.pictureUrl || user.photoURL || user.picture || user.avatar
+                || currentUser?.pictureUrl || currentUser?.photoURL;
+            const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=00D2FF&color=fff&size=160`;
+            const validPic = rawPic && rawPic !== '' && rawPic !== 'null' && rawPic !== 'undefined';
+            avatarImg.src = validPic ? rawPic : fallbackAvatar;
+            avatarImg.onerror = () => { avatarImg.onerror = null; avatarImg.src = fallbackAvatar; };
+
+            // Sync pcTopNav avatar/name (standalone PC mode)
+            const navAvatar = document.getElementById('channelNavAvatar');
+            const navName   = document.getElementById('channelNavName');
+            if (navAvatar) { navAvatar.src = validPic ? rawPic : fallbackAvatar; }
+            if (navName)   { navName.textContent = displayName; }
+
+            // Last resort: ถ้ายังไม่มีรูป/ชื่อ → ลอง line_users collection
+            if (!validPic || displayName === 'TukTuk User') {
+                const lookupId = user.lineUserId || user.uid || currentTargetUserId;
+                if (lookupId) {
+                    db.collection('line_users').doc(lookupId).get().then(d => {
+                        if (!d.exists) return;
+                        const ld = d.data();
+                        if (!validPic) {
+                            const lp = ld.pictureUrl || ld.picture || ld.photoURL || ld.avatar;
+                            if (lp) {
+                                avatarImg.src = lp;
+                                if (navAvatar) navAvatar.src = lp;
+                            }
+                        }
+                        if (displayName === 'TukTuk User') {
+                            const ln = ld.displayName || ld.name;
+                            if (ln) {
+                                document.getElementById('userName').textContent = ln;
+                                if (navName) navName.textContent = ln;
+                            }
+                        }
+                    }).catch(() => {});
+                }
+            }
 
             if (document.getElementById('editAvatarBtn')) document.getElementById('editAvatarBtn').style.display = isOwnProfile ? 'flex' : 'none';
             if (document.getElementById('editNameBtn')) document.getElementById('editNameBtn').style.display = isOwnProfile ? 'flex' : 'none';
@@ -3355,7 +3183,7 @@
                 const nav = document.getElementById('bottomNav');
 
                 if (!overlay) {
-                    window.location.href = 'index.html';
+                    _tnav('index.html');
                     return;
                 }
 
@@ -3441,19 +3269,19 @@
                     &times;</div>
             </div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
-                <div onclick="window.location.href='index.html'"
+                <div onclick="_tnav('index.html')"
                     style="padding:24px 16px;background:rgba(0,210,255,0.1);border:1px solid rgba(0,210,255,0.25);border-radius:24px;text-align:center;cursor:pointer;">
                     <i class="fas fa-home"
                         style="color:var(--primary);font-size:1.8rem;display:block;margin-bottom:8px;"></i>
                     <span style="color:white;font-weight:700;">หน้าแรก</span>
                 </div>
-                <div onclick="window.location.href='marketplace.html'"
+                <div onclick="_tnav('marketplace.html')"
                     style="padding:24px 16px;background:rgba(255,107,43,0.1);border:1px solid rgba(255,107,43,0.25);border-radius:24px;text-align:center;cursor:pointer;">
                     <i class="fas fa-store"
                         style="color:var(--secondary);font-size:1.8rem;display:block;margin-bottom:8px;"></i>
                     <span style="color:white;font-weight:700;">ตลาด</span>
                 </div>
-                <div onclick="window.location.href='analytics-dashboard.html'"
+                <div onclick="_tnav('analytics-dashboard.html')"
                     style="padding:24px 16px;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);border-radius:24px;text-align:center;cursor:pointer;">
                     <i class="fas fa-chart-line"
                         style="color:#6366f1;font-size:1.8rem;display:block;margin-bottom:8px;"></i>
@@ -3463,56 +3291,7 @@
         </div>
     </div>
 
-    <!-- Iframe detection -->
-    <script>
-        (function () {
-            if (window.self !== window.top || window.location.search.includes('embedded=true')) {
-                document.body.classList.add('embedded-mode');
-                const s = document.createElement('style');
-                s.textContent = '#bottomNav,.bottom-nav{display:none!important;}body{padding-bottom:0!important;}.center-btn{display:none!important;}';
-                document.head.appendChild(s);
-            }
-        })();
-    </script>
-    <!-- Smart Floating Bottom Nav (Mobile) - MOVED TO FRONT -->
-    <div class="bottom-nav" id="bottomNav" style="z-index: 100000000 !important; overflow: visible !important;">
-        <!-- 1. Home -->
-        <a href="index.html" class="bottom-nav-item">
-            <i class="fas fa-home"></i>
-            <span>หน้าแรก</span>
-        </a>
-
-        <!-- 2. Market -->
-        <a href="marketplace.html" class="bottom-nav-item">
-            <i class="fas fa-store"></i>
-            <span>ตลาด</span>
-        </a>
-
-        <!-- 3. Spacer for Center Button -->
-        <div class="center-nav-gap" style="flex: 0 0 70px; pointer-events: none;"></div>
-
-        <!-- 4. Center Button -->
-        <a href="javascript:void(0)" id="centerBtn" onclick="handleTukTukButtonClick()" class="center-btn">
-            <div class="center-btn-inner" style="pointer-events: none;">
-                <img src="assets/images/logo.png" class="tuktuk-brand-icon">
-            </div>
-        </a>
-
-        <!-- 5. My Shop -->
-        <a href="javascript:void(0)" onclick="WizmobizAuth.handleShopAccess()" class="bottom-nav-item">
-            <i class="fas fa-store-alt"></i>
-            <span>ร้านของฉัน</span>
-        </a>
-
-        <!-- 6. Profile (Active) -->
-        <a href="javascript:void(0)" onclick="WizmobizAuth.handleProfileClick()" class="bottom-nav-item active">
-            <div class="nav-profile-wrapper">
-                <img src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" id="navProfileImg"
-                    onerror="this.src='assets/images/logo.png'">
-            </div>
-            <span>โปรไฟล์</span>
-        </a>
-    </div>
+    <div id="persistent-ui-root"></div>
 </body>
 
 </html>
