@@ -36,20 +36,21 @@ const FEED_RENDERER_CONFIG = {
     ENABLE_AI_ASSISTANT: true,
     
     // URLs
-    R2_PRESIGN_URL: 'https://us-central1-appinjproject.cloudfunctions.net/r2PresignedUrl',
+    // ✅ ใช้ Cloudflare Workers API แทน Cloud Function
+    R2_PRESIGN_URL: '/api/utility/r2-presigned-url',
     AI_ASSIST_URL: 'https://aicontentassist-47mhcx3iqq-uc.a.run.app',
     GO_ENGINE_URL: window.location.origin.includes('localhost') 
         ? 'http://localhost:8080' 
         : (window.TUKTUK_LIFF?.apiBase || 'https://tuktuk-engine.fly.dev'),
     
-    // Collections
+    // ✅ Collections (Cloudflare D1)
     COLLECTIONS: {
-        POSTS: 'community_posts',
+        POSTS: 'posts',
         NEWS: 'news_feed',
-        PRODUCTS: 'marketplace_items',
+        PRODUCTS: 'products',
         USERS: 'users',
         NOTIFICATIONS: 'notifications',
-        LIKES: 'user_likes'
+        LIKES: 'post_likes'
     }
 };
 

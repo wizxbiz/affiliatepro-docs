@@ -1910,9 +1910,8 @@ async function fetchFirebaseFeedData(mode, location, cursors = {}) {
     if (!fb || !fb.firestore || !fb.firestore.Timestamp) throw new Error('Firebase SDK is not ready');
 
     // Query without status/published filter — covers posts from both Flutter screens
-    // (community_post_screen saves 'status:active', create_post_screen saves 'published:true')
-    // Privacy filtered client-side in normalizeFeedItem
-    let communityQ = feedDb.collection('community_posts')
+    // ✅ Cloudflare D1 collections
+    let communityQ = feedDb.collection('posts')
         .orderBy('createdAt', 'desc')
         .limit(TUKTUK_FEED_CONFIG.POSTS_LIMIT);
     if (cursors.posts) communityQ = communityQ.startAfter(cursors.posts);
@@ -1924,7 +1923,7 @@ async function fetchFirebaseFeedData(mode, location, cursors = {}) {
         .limit(TUKTUK_FEED_CONFIG.NEWS_LIMIT);
     if (cursors.news) newsQ = newsQ.startAfter(cursors.news);
 
-    let productsQ = feedDb.collection('marketplace_items')
+    let productsQ = feedDb.collection('products')
         .where('status', '==', 'active')
         .limit(TUKTUK_FEED_CONFIG.PRODUCTS_LIMIT);
     if (cursors.products) productsQ = productsQ.startAfter(cursors.products);
@@ -1936,14 +1935,14 @@ async function fetchFirebaseFeedData(mode, location, cursors = {}) {
     ]);
 
     const queryResults = [
-        ['community_posts', postsSnap],
+        ['posts', postsSnap],
         ['news_feed', newsSnap],
-        ['marketplace_items', productsSnap]
+        ['products', productsSnap]
     ];
     const failedQueries = queryResults.filter(([, result]) => result.status === 'rejected');
-    failedQueries.forEach(([name, result]) => console.warn(`[TukTukFeed] Firebase ${name} query failed:`, result.reason));
+    failedQueries.forEach(([name, result]) => console.warn(`[TukTukFeed] D1 ${name} query failed:`, result.reason));
     if (failedQueries.length === queryResults.length) {
-        throw new Error('All Firebase feed queries failed');
+        throw new Error('All D1 feed queries failed');
     }
 
     const postsDocs  = postsSnap.status === 'fulfilled'    ? postsSnap.value.docs    : [];

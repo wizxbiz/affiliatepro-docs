@@ -119,7 +119,7 @@
 
         try {
             _commentsUnsub = window.db
-                .collection('community_posts')
+                .collection('posts')
                 .doc(postId)
                 .collection('comments')
                 .orderBy('createdAt', 'asc')
@@ -219,13 +219,13 @@
 
             // Write to subcollection (preferred) and top-level
             await window.db
-                .collection('community_posts')
+                .collection('posts')
                 .doc(_activePostId)
                 .collection('comments')
                 .add(commentData);
 
             // Increment comment count on post doc
-            await window.db.collection('community_posts').doc(_activePostId).update({
+            await window.db.collection('posts').doc(_activePostId).update({
                 commentsCount: firebase.firestore.FieldValue.increment(1),
                 commentCount:  firebase.firestore.FieldValue.increment(1),
             }).catch(() => {}); // ignore if field missing

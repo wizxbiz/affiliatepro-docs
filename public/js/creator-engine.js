@@ -276,7 +276,7 @@ async function verifyLinkedProduct(idOverride) {
     if (!id || !preview) return;
 
     try {
-        const doc = await db.collection('marketplace_items').doc(id).get();
+        const doc = await db.collection('products').doc(id).get();
         if (doc.exists) {
             const product = doc.data();
             window.lastVerifiedProduct = product;

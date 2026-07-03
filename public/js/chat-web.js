@@ -278,7 +278,7 @@ window.TukTukChat = (function () {
     if (!uid) return null;
     const [snap1, snap2] = await Promise.all([
       db.collection('users').doc(uid).get(),
-      db.collection('line_users').doc(uid).get(),
+      db.collection('users').doc(uid).get(),
     ]);
     if (snap1.exists) return { id: snap1.id, ...snap1.data() };
     if (snap2.exists) return { id: snap2.id, ...snap2.data() };

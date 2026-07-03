@@ -191,7 +191,7 @@ const TukTukFeed = (function () {
     // Track in database (if logged in)
     if (window.db && window.currentUserId) {
       try {
-        window.db.collection('community_posts').doc(postId).update({
+        window.db.collection('posts').doc(postId).update({
           views: firebase.firestore.FieldValue.increment(1)
         }).catch(() => { });
       } catch (e) { }
@@ -403,7 +403,7 @@ const TukTukFeed = (function () {
     // Update database
     if (window.db) {
       try {
-        await window.db.collection('community_posts').doc(postId).update({
+        await window.db.collection('posts').doc(postId).update({
           likes: firebase.firestore.FieldValue.increment(1)
         });
       } catch (e) { }
@@ -427,7 +427,7 @@ const TukTukFeed = (function () {
     isLoadingMore = true;
 
     try {
-      const snapshot = await window.db.collection('community_posts')
+      const snapshot = await window.db.collection('posts')
         .where('published', '==', true)
         .orderBy('createdAt', 'desc')
         .startAfter(lastVisibleDoc)

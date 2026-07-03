@@ -4,7 +4,7 @@
 
 async function loadInterleavedData() {
     try {
-        const prodSnapshot = await db.collection('marketplace_items')
+        const prodSnapshot = await db.collection('products')
             .where('status', '==', 'active')
             .limit(20).get();
         window.marketplaceProducts = prodSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));

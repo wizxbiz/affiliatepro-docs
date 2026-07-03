@@ -129,7 +129,7 @@
         if (typeof firebase === 'undefined') return;
         try {
             const db = firebase.firestore();
-            await db.collection('line_users').doc(profile.userId).set({
+            await db.collection('users').doc(profile.userId).set({
                 lineUserId:   profile.userId,
                 displayName:  profile.displayName,
                 pictureUrl:   profile.pictureUrl || null,

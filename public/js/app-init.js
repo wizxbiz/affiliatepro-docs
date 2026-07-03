@@ -1233,7 +1233,7 @@ if ('serviceWorker' in navigator) {
             return;
         }
         try {
-            const ref = window.db.collection('community_posts').doc(postId);
+            const ref = window.db.collection('posts').doc(postId);
             const liked = btn.classList.contains('liked');
             const delta = liked ? -1 : 1;
             await ref.update({ likes: window.firebase.firestore.FieldValue.increment(delta) });
@@ -1286,7 +1286,7 @@ if ('serviceWorker' in navigator) {
             </div>`;
 
         try {
-            const snap = await window.db.collection('community_posts')
+            const snap = await window.db.collection('posts')
                 .where('published', '==', true)
                 .orderBy('createdAt', 'desc')
                 .limit(15)
@@ -1398,7 +1398,7 @@ if ('serviceWorker' in navigator) {
             debTimer = setTimeout(async () => {
                 if (!window.db) return;
                 try {
-                    const snap = await window.db.collection('community_posts')
+                    const snap = await window.db.collection('posts')
                         .where('published', '==', true)
                         .where('titleLower', '>=', q.toLowerCase())
                         .where('titleLower', '<', q.toLowerCase() + '\uf8ff')
@@ -1507,7 +1507,7 @@ if ('serviceWorker' in navigator) {
         const el = document.getElementById('pcNewsSection');
         if (!el || !window.db) return;
         try {
-            const snap = await window.db.collection('community_posts')
+            const snap = await window.db.collection('posts')
                 .where('published', '==', true)
                 .orderBy('createdAt', 'desc')
                 .limit(5).get();
@@ -1534,7 +1534,7 @@ if ('serviceWorker' in navigator) {
         const el = document.getElementById('pcRecommendedProducts');
         if (!el || !window.db) return;
         try {
-            const snap = await window.db.collection('marketplace_items')
+            const snap = await window.db.collection('products')
                 .where('status', '==', 'active')
                 .orderBy('createdAt', 'desc')
                 .limit(4).get();

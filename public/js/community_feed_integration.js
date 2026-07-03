@@ -207,7 +207,7 @@ function initCommunityFeed(container) {
             if (el) el.textContent = `${snap.size || 0} คอนเทนต์`;
         }).catch(() => null);
 
-        statsDb.collection('community_posts').get().then(snap => {
+        statsDb.collection('posts').get().then(snap => {
             const el = document.getElementById('live-stat-comm');
             if (el) el.textContent = `${snap.size || 0} โพสต์`;
 
@@ -353,7 +353,7 @@ function loadCommunityPosts(filter = 'all') {
         </div>
     `;
 
-    let query = communityDb.collection('community_posts');
+    let query = communityDb.collection('posts');
 
     if (filter === 'groups') {
         query = query.where('category', '==', 'groups');
@@ -969,7 +969,7 @@ async function submitQuickPost() {
             throw new Error('Database connection not ready');
         }
 
-        await db.collection('community_posts').add({
+        await db.collection('posts').add({
             title,
             content,
             imageUrl,
@@ -1005,13 +1005,13 @@ function likeCommunityPost(btn, postId) {
         btn.classList.remove('liked', 'animate__pulse');
         btn.querySelector('i').className = 'far fa-thumbs-up';
         currentCount = Math.max(0, currentCount - 1);
-        db.collection('community_posts').doc(postId).update({ likes: firebase.firestore.FieldValue.increment(-1) });
+        db.collection('posts').doc(postId).update({ likes: firebase.firestore.FieldValue.increment(-1) });
     } else {
         localStorage.setItem('tuktuk_liked_posts', JSON.stringify([...likes, postId]));
         btn.classList.add('liked', 'animate__pulse');
         btn.querySelector('i').className = 'fas fa-thumbs-up';
         currentCount++;
-        db.collection('community_posts').doc(postId).update({ likes: firebase.firestore.FieldValue.increment(1) });
+        db.collection('posts').doc(postId).update({ likes: firebase.firestore.FieldValue.increment(1) });
     }
     countEl.textContent = currentCount;
 }
@@ -1020,7 +1020,7 @@ function shareCommunityPost(postId, text) {
     const url = `${location.origin}/?post=${postId}`;
     // Track share count (fire & forget)
     if (window.db) {
-        window.db.collection('community_posts').doc(postId).update({
+        window.db.collection('posts').doc(postId).update({
             shareCount: firebase.firestore.FieldValue.increment(1)
         }).catch(() => {});
     }
@@ -1128,7 +1128,7 @@ window.openComments = function(postId) {
     if (window.commentModal) window.commentModal.show();
 
     if (window.commentsUnsubscribe) window.commentsUnsubscribe();
-    window.commentsUnsubscribe = db.collection('community_posts').doc(postId).collection('comments')
+    window.commentsUnsubscribe = db.collection('posts').doc(postId).collection('comments')
         .orderBy('createdAt', 'desc')
         .onSnapshot(snap => {
             const list = document.getElementById('commentList');
@@ -1181,14 +1181,14 @@ async function submitComment() {
     if (!user) return WizmobizAuth.showLoginModal();
 
     input.value = '';
-    await db.collection('community_posts').doc(window.currentCommentPostId).collection('comments').add({
+    await db.collection('posts').doc(window.currentCommentPostId).collection('comments').add({
         text,
         authorId: user.uid || user.lineUserId,
         authorName: getUserDisplayName(),
         authorAvatar: getUserAvatar(),
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
-    db.collection('community_posts').doc(window.currentCommentPostId).update({ commentsCount: firebase.firestore.FieldValue.increment(1) });
+    db.collection('posts').doc(window.currentCommentPostId).update({ commentsCount: firebase.firestore.FieldValue.increment(1) });
 }
 
 // Ensure functions are globally accessible and override older versions

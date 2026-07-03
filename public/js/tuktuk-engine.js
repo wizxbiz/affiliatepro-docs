@@ -662,7 +662,7 @@ async function trackView(postId) {
         // Delay to avoid counting accidental views
         setTimeout(async () => {
             try {
-                await db.collection('community_posts').doc(postId).update({
+                await db.collection('posts').doc(postId).update({
                     views: firebase.firestore.FieldValue.increment(1)
                 });
                 console.log('[TukTukEngine] View tracked for:', postId);
@@ -955,7 +955,7 @@ async function likePost(postId) {
         
         // Update DB
         if (typeof db !== 'undefined' && navigator.onLine) {
-            db.collection('community_posts').doc(postId).update({
+            db.collection('posts').doc(postId).update({
                 likes: firebase.firestore.FieldValue.increment(-1)
             }).catch(() => {});
         }
@@ -973,7 +973,7 @@ async function likePost(postId) {
         
         // Update DB
         if (typeof db !== 'undefined' && navigator.onLine) {
-            db.collection('community_posts').doc(postId).update({
+            db.collection('posts').doc(postId).update({
                 likes: firebase.firestore.FieldValue.increment(1)
             }).catch(() => {});
         }

@@ -280,7 +280,7 @@ var WizmobizAuth = {
 
             // Also check 'line_users' for backward compatibility check
             if (!sessionData.isPremium && (existingData?.lineUserId || sessionData.lineUserId)) {
-                const lineUserDoc = await firebase.firestore().collection('line_users')
+                const lineUserDoc = await firebase.firestore().collection('users')
                     .doc(existingData?.lineUserId || sessionData.lineUserId || user.uid)
                     .get();
                 if (lineUserDoc.exists) {

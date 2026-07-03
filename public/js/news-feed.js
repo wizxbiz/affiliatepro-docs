@@ -45,7 +45,7 @@ async function likePost(postId) {
                 if (typeof showToast === 'function') showToast('ℹ️ คุณกดถูกใจโพสต์นี้ไปแล้วครับ', 'info');
                 return;
             }
-            await db.collection('community_posts').doc(postId).update({
+            await db.collection('posts').doc(postId).update({
                 likes: firebase.firestore.FieldValue.increment(1)
             });
             await db.collection('user_likes').doc(window.currentUserId).set({
@@ -63,7 +63,7 @@ async function likePost(postId) {
             if (typeof showToast === 'function') showToast('ℹ️ คุณกดถูกใจโพสต์นี้ในรอบการเยี่ยมชมนี้ไปแล้วครับ', 'info');
             return;
         }
-        await db.collection('community_posts').doc(postId).update({
+        await db.collection('posts').doc(postId).update({
             likes: firebase.firestore.FieldValue.increment(1)
         });
         guestLikes.push(postId);
@@ -98,7 +98,7 @@ async function openComments(postId) {
     if (window.commentModal) window.commentModal.show();
 
     try {
-        const snapshot = await db.collection('community_posts').doc(postId)
+        const snapshot = await db.collection('posts').doc(postId)
             .collection('comments').orderBy('createdAt', 'desc').get();
 
         container.innerHTML = '';
@@ -171,8 +171,8 @@ async function submitComment() {
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        await db.collection('community_posts').doc(window.currentCommentPostId).collection('comments').add(commentData);
-        await db.collection('community_posts').doc(window.currentCommentPostId).update({
+        await db.collection('posts').doc(window.currentCommentPostId).collection('comments').add(commentData);
+        await db.collection('posts').doc(window.currentCommentPostId).update({
             commentsCount: firebase.firestore.FieldValue.increment(1)
         });
 

@@ -38,14 +38,14 @@ async function loadPosts(isAppend = false) {
     }
 
     try {
-        let query = db.collection('community_posts')
+        let query = db.collection('posts')
             .where('published', '==', true)
             .orderBy('createdAt', 'desc')
             .limit(10);
 
         // Apply filters (simplified example)
         if (_feedType === 'trending') {
-            query = db.collection('community_posts')
+            query = db.collection('posts')
                 .where('published', '==', true)
                 .orderBy('likes', 'desc')
                 .limit(10);
@@ -114,7 +114,7 @@ function handlePostLike(postId, element) {
     const currentCount = parseInt(countEl.innerText) || 0;
     countEl.innerText = Math.max(0, currentCount + increment);
 
-    db.collection('community_posts').doc(postId).update({
+    db.collection('posts').doc(postId).update({
         likes: firebase.firestore.FieldValue.increment(increment)
     });
 }

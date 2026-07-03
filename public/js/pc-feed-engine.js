@@ -309,7 +309,7 @@
         }
 
         try {
-            let q = window.db.collection('community_posts')
+            let q = window.db.collection('posts')
                 .orderBy('createdAt', 'desc')
                 .limit(12);
             if (append && _pcLastDoc) q = q.startAfter(_pcLastDoc);
@@ -371,7 +371,7 @@
     /* ─── Real-time New Posts Banner ─────────────────────────── */
     function _startRealtime() {
         if (!window.db || !_latestPostTs) return;
-        _realtimeUnsub = window.db.collection('community_posts')
+        _realtimeUnsub = window.db.collection('posts')
             .where('createdAt', '>', _latestPostTs)
             .onSnapshot(snap => {
                 const n = snap.docs.filter(d => {
@@ -454,7 +454,7 @@
             }
 
             if (window.db) {
-                const ref = window.db.collection('community_posts').doc(postId);
+                const ref = window.db.collection('posts').doc(postId);
                 await ref.update({
                     likes: firebase.firestore.FieldValue.increment(delta)
                 });
@@ -476,7 +476,7 @@
         const bar = document.getElementById('pcStoriesBar');
         if (!bar || !window.db) return;
         try {
-            const snap = await window.db.collection('community_posts')
+            const snap = await window.db.collection('posts')
                 .where('published', '==', true)
                 .orderBy('createdAt', 'desc')
                 .limit(15)
@@ -517,7 +517,7 @@
         const el = document.getElementById('pcTrendingSellers');
         if (!el || !window.db) return;
         try {
-            const snap = await window.db.collection('marketplace_items')
+            const snap = await window.db.collection('products')
                 .where('status', '==', 'active')
                 .orderBy('createdAt', 'desc')
                 .limit(5)
@@ -559,7 +559,7 @@
 
             // Fallback: community_posts of type news
             if (snap.empty) {
-                snap = await window.db.collection('community_posts')
+                snap = await window.db.collection('posts')
                     .where('type', '==', 'news')
                     .orderBy('createdAt', 'desc')
                     .limit(5)
@@ -603,7 +603,7 @@
 
             // Fallback: derive unique users from recent posts
             if (!snap.docs.length) {
-                const pSnap = await window.db.collection('community_posts').orderBy('createdAt', 'desc').limit(30).get();
+                const pSnap = await window.db.collection('posts').orderBy('createdAt', 'desc').limit(30).get();
                 const seen  = new Set();
                 const fake  = [];
                 pSnap.docs.forEach(d => {
@@ -644,7 +644,7 @@
         const el = document.getElementById('pcRecommendedProducts');
         if (!el || !window.db) return;
         try {
-            const snap = await window.db.collection('marketplace_items')
+            const snap = await window.db.collection('products')
                 .where('status', '==', 'active')
                 .orderBy('createdAt', 'desc')
                 .limit(4)
@@ -678,7 +678,7 @@
             // ⚠️ Single-field orderBy only — remove where('published') to avoid
             //    FirebaseError: composite index required (published + likes).
             //    Sort by likes client-side from recent 50 posts instead.
-            const snap = await window.db.collection('community_posts')
+            const snap = await window.db.collection('posts')
                 .orderBy('createdAt', 'desc')
                 .limit(50)
                 .get();
@@ -755,7 +755,7 @@
             timer = setTimeout(async () => {
                 try {
                     // ⚠️ Single-field orderBy only — no where() to avoid composite index requirement
-                    const snap = await window.db.collection('community_posts')
+                    const snap = await window.db.collection('posts')
                         .orderBy('title').startAt(q).endAt(q + '\uf8ff').limit(5).get();
                     if (snap.empty) { sugg.classList.remove('show'); return; }
                     sugg.innerHTML = snap.docs.map(d => {
