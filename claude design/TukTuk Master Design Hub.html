@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TukTuk — Master Design Hub</title>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Main Canvas Reset */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#f0eee9;font-family:'Kanit',sans-serif;overflow:hidden}
+#root{height:100%}
+
+/* Canvas Specific Styles */
+.dc-editable{cursor:text;outline:none;white-space:nowrap;border-radius:3px;padding:0 2px;margin:0 -2px}
+.dc-editable:focus{background:#fff;box-shadow:0 0 0 1.5px #c96442}
+[data-dc-slot]{transition:transform .18s cubic-bezier(.2,.7,.3,1)}
+[data-dc-slot].dc-dragging{transition:none;z-index:10;pointer-events:none}
+[data-dc-slot].dc-dragging .dc-card{box-shadow:0 12px 40px rgba(0,0,0,.25),0 0 0 2px #c96442;transform:scale(1.02)}
+.dc-card{transition:box-shadow .15s,transform .15s; background:#fff; border-radius:4px; box-shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06); overflow:hidden;}
+.dc-card *{scrollbar-width:none}
+.dc-card *::-webkit-scrollbar{display:none}
+.dc-labelrow{display:flex;align-items:center;gap:4px;height:24px}
+.dc-grip{cursor:grab;display:flex;align-items:center;padding:5px 4px;border-radius:4px;transition:background .12s}
+.dc-grip:hover{background:rgba(0,0,0,.08)}
+.dc-grip:active{cursor:grabbing}
+.dc-labeltext{cursor:pointer;border-radius:4px;padding:3px 6px;display:flex;align-items:center;transition:background .12s}
+.dc-labeltext:hover{background:rgba(0,0,0,.05)}
+.dc-expand{position:absolute;bottom:100%;right:0;margin-bottom:5px;z-index:2;opacity:0;transition:opacity .12s,background .12s;
+  width:22px;height:22px;border-radius:5px;border:none;cursor:pointer;padding:0;
+  background:transparent;color:rgba(60,50,40,.7);display:flex;align-items:center;justify-content:center}
+.dc-expand:hover{background:rgba(0,0,0,.06);color:#2a251f}
+[data-dc-slot]:hover .dc-expand{opacity:1}
+
+/* Prototype Specific Keyframes */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes countUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+@keyframes recordPulse{0%,100%{box-shadow:0 0 0 0 rgba(244,63,94,0.6)}50%{box-shadow:0 0 0 12px rgba(244,63,94,0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+// --- DESIGN TOKENS ---
+const C = {
+    bg: '#0f172a', bgDeep: '#080c18', bgCard: '#111827',
+    border: 'rgba(255,255,255,0.07)', border2: 'rgba(255,255,255,0.12)',
+    p: '#6366f1', pg: 'rgba(99,102,241,0.3)',
+    s: '#a855f7', sg: 'rgba(168,85,247,0.25)',
+    g: '#10b981', gg: 'rgba(16,185,129,0.25)',
+    o: '#f97316', og: 'rgba(249,115,22,0.25)',
+    y: '#facc15', r: '#f43f5e', rg: 'rgba(244,63,94,0.25)',
+    t: '#f1f5f9', tm: 'rgba(255,255,255,0.45)', tf: 'rgba(255,255,255,0.18)',
+    k: "'Kanit',sans-serif",
+    canvas: {
+        bg: '#f0eee9', grid: 'rgba(0,0,0,0.06)',
+        label: 'rgba(60,50,40,0.7)', title: 'rgba(40,30,20,0.85)',
+        subtitle: 'rgba(60,50,40,0.6)'
+    }
+};
+
+// --- CORE FRAME COMPONENTS (Design Canvas) ---
+const DCCtx = React.createContext(null);
+
+function DesignCanvas({ children }) {
+    const [state, setState] = React.useState({ sections: {}, focus: null });
+    const registry = React.useRef({});
+    const sectionMeta = React.useRef({});
+    const sectionOrder = React.useRef([]);
+
+    const api = React.useMemo(() => ({
+        state,
+        section: (id) => state.sections[id] || {},
+        patchSection: (id, p) => setState(s => ({
+            ...s,
+            sections: { ...s.sections, [id]: { ...s.sections[id], ...(typeof p === 'function' ? p(s.sections[id] || {}) : p) }}
+        })),
+        setFocus: (id) => setState(s => ({ ...s, focus: id }))
+    }), [state]);
+
+    // Build registry synchronously
+    sectionOrder.current = [];
+    React.Children.forEach(children, (sec) => {
+        if (!sec || sec.type !== DCSection) return;
+        const sid = sec.props.id || sec.props.title;
+        sectionOrder.current.push(sid);
+        const srcIds = [];
+        React.Children.forEach(sec.props.children, (ab) => {
+            if (!ab || ab.type !== DCArtboard) return;
+            const aid = ab.props.id || ab.props.label;
+            registry.current[`${sid}/${aid}`] = { sectionId: sid, artboard: ab };
+            srcIds.push(aid);
+        });
+        const persisted = state.sections[sid] || {};
+        sectionMeta.current[sid] = {
+            title: persisted.title || sec.props.title,
+            subtitle: sec.props.subtitle,
+            slotIds: [...(persisted.order || []).filter(k => srcIds.includes(k)), ...srcIds.filter(k => !(persisted.order || []).includes(k))]
+        };
+    });
+
+    return (
+        <DCCtx.Provider value={api}>
+            <DCViewport>{children}</DCViewport>
+            {state.focus && registry.current[state.focus] && (
+                <DCFocusOverlay entry={registry.current[state.focus]} meta={sectionMeta.current} order={sectionOrder.current} />
+            )}
+        </DCCtx.Provider>
+    );
+}
+
+function DCViewport({ children }) {
+    const vpRef = React.useRef(null);
+    const worldRef = React.useRef(null);
+    const [tf, setTf] = React.useState({ x: 0, y: 0, scale: 0.8 });
+
+    React.useEffect(() => {
+        const vp = vpRef.current;
+        const onWheel = (e) => {
+            if (e.ctrlKey) {
+                e.preventDefault();
+                setTf(t => {
+                    const next = Math.min(4, Math.max(0.05, t.scale * Math.exp(-e.deltaY * 0.01)));
+                    return { ...t, scale: next };
+                });
+            } else {
+                setTf(t => ({ ...t, x: t.x - e.deltaX, y: t.y - e.deltaY }));
+            }
+        };
+        vp.addEventListener('wheel', onWheel, { passive: false });
+        return () => vp.removeEventListener('wheel', onWheel);
+    }, []);
+
+    const gridSvg = `url("data:image/svg+xml,%3Csvg width='120' height='120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M120 0H0v120' fill='none' stroke='${encodeURIComponent(C.canvas.grid)}' stroke-width='1'/%3E%3C/svg%3E")`;
+
+    return (
+        <div ref={vpRef} style={{ height: '100%', width: '100%', overflow: 'hidden', overscrollBehavior: 'none', touchAction: 'none', position: 'relative' }}>
+            <div ref={worldRef} style={{ 
+                position: 'absolute', top: 0, left: 0, transformOrigin: '0 0',
+                transform: `translate3d(${tf.x}px, ${tf.y}px, 0) scale(${tf.scale})`,
+                padding: '60px 0 80px', width: 'max-content', minWidth: '100%'
+            }}>
+                <div style={{ position: 'absolute', inset: -10000, backgroundImage: gridSvg, pointerEvents: 'none', zIndex: -1 }} />
+                {children}
+            </div>
+        </div>
+    );
+}
+
+function DCSection({ title, subtitle, children, gap = 48 }) {
+    const ctx = React.useContext(DCCtx);
+    const sid = title;
+    const artboards = React.Children.toArray(children).filter(c => c && c.type === DCArtboard);
+    const sec = ctx.section(sid);
+    const order = sec.order || artboards.map(a => a.props.id || a.props.label);
+    const byId = Object.fromEntries(artboards.map(a => [a.props.id || a.props.label, a]));
+
+    return (
+        <div data-dc-section={sid} style={{ marginBottom: 120 }}>
+            <div style={{ padding: '0 60px 48px' }}>
+                <div style={{ fontSize: 32, fontWeight: 700, color: C.canvas.title, letterSpacing: -0.5, marginBottom: 8 }}>{sec.title || title}</div>
+                {subtitle && <div style={{ fontSize: 18, color: C.canvas.subtitle }}>{subtitle}</div>}
+            </div>
+            <div style={{ display: 'flex', gap, padding: '0 60px', alignItems: 'flex-start' }}>
+                {order.map(aid => (
+                    <DCArtboardFrame key={aid} sid={sid} aid={aid} ab={byId[aid]} order={order} />
+                ))}
+            </div>
+        </div>
+    );
+}
+
+function DCArtboard({ label, width = 390, height = 844, children }) { return null; }
+
+function DCArtboardFrame({ sid, aid, ab, order }) {
+    const ctx = React.useContext(DCCtx);
+    const { width = 390, height = 844, children, label } = ab.props;
+    return (
+        <div data-dc-slot={aid} style={{ position: 'relative', flexShrink: 0 }}>
+            <div className="dc-labelrow" style={{ position: 'absolute', bottom: '100%', left: 0, marginBottom: 6 }}>
+                <div className="dc-grip" title="Reorder">
+                    <svg width="9" height="13" viewBox="0 0 9 13" fill={C.canvas.label}><circle cx="2" cy="2" r="1"/><circle cx="7" cy="2" r="1"/><circle cx="2" cy="6.5" r="1"/><circle cx="7" cy="6.5" r="1"/><circle cx="2" cy="11" r="1"/><circle cx="7" cy="11" r="1"/></svg>
+                </div>
+                <div className="dc-labeltext" onClick={() => ctx.setFocus(`${sid}/${aid}`)}>
+                    <span style={{ fontSize: 15, fontWeight: 500, color: C.canvas.label }}>{label || aid}</span>
+                </div>
+            </div>
+            <div className="dc-card" style={{ width, height, position: 'relative' }}>
+                {children}
+            </div>
+        </div>
+    );
+}
+
+function DCFocusOverlay({ entry, meta, order }) {
+    const ctx = React.useContext(DCCtx);
+    const { sectionId, artboard } = entry;
+    const { width = 390, height = 844, children, label } = artboard.props;
+    const vp = { w: window.innerWidth, h: window.innerHeight };
+    const scale = Math.min((vp.w - 100) / width, (vp.h - 100) / height, 1);
+
+    return (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(20px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => ctx.setFocus(null)}>
+            <div onClick={e => e.stopPropagation()} style={{ transform: `scale(${scale})`, transformOrigin: 'center' }}>
+                <div className="dc-card" style={{ width, height, boxShadow: '0 40px 100px rgba(0,0,0,0.8)' }}>
+                    {children}
+                </div>
+            </div>
+            <button style={{ position: 'absolute', top: 30, right: 30, background: 'none', border: 'none', color: '#fff', fontSize: 40, cursor: 'pointer' }} onClick={() => ctx.setFocus(null)}>✕</button>
+        </div>
+    );
+}
+
+// --- SHARED APP UI ---
+const Phone = ({ children }) => (
+  <div style={{ width: '100%', height: '100%', background: C.bgDeep, position: 'relative', overflow: 'hidden' }}>
+    {/* Dynamic Island */}
+    <div style={{ position: 'absolute', top: 10, left: '50%', transform: 'translateX(-50%)', width: 120, height: 34, borderRadius: 20, background: '#000', zIndex: 200 }}/>
+    {/* Status Bar */}
+    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 54, zIndex: 100, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', padding: '0 28px 8px', pointerEvents: 'none' }}>
+      <span style={{ color: '#fff', fontSize: 15, fontWeight: 600 }}>9:41</span>
+      <span style={{ color: '#fff', fontSize: 12 }}>●●● 📶 🔋</span>
+    </div>
+    <div style={{ height: '100%', overflowY: 'auto' }}>{children}</div>
+    {/* Home Bar */}
+    <div style={{ position: 'absolute', bottom: 8, left: '50%', transform: 'translateX(-50%)', width: 134, height: 5, borderRadius: 3, background: 'rgba(255,255,255,0.22)', zIndex: 200 }}/>
+  </div>
+);
+
+// --- SCREEN COMPONENTS ---
+const vendors = [
+    {id:1,name:'สวนมะพร้าวออร์แกนิค',cat:'🥥 เกษตร',dist:1.2,price:'฿45',rating:4.9,color:C.g},
+    {id:2,name:'ส้มตำป้าแดง',cat:'🌶️ อาหาร',dist:0.8,price:'฿60',rating:5.0,color:C.o},
+];
+
+function HomeScreen() {
+    return (
+        <Phone>
+            <div style={{ padding: '64px 20px 20px', background: C.bgDeep }}>
+                <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 24 }}>
+                    <div style={{ width: 48, height: 48, borderRadius: 12, background: `linear-gradient(135deg, ${C.p}, ${C.s})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}>🛺</div>
+                    <div>
+                        <div style={{ color: '#fff', fontWeight: 800, fontSize: 24 }}>TukTuk</div>
+                        <div style={{ color: C.tm, fontSize: 12 }}>ยินดีต้อนรับสู่ราชบุรี</div>
+                    </div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                    {[['ดูเพลิน', '▶', C.p], ['ใกล้ฉัน', '📍', C.g], ['ตลาด', '🛒', C.o], ['แชท', '💬', C.s]].map(([l,i,c]) => (
+                        <div key={l} style={{ background: C.bgCard, borderRadius: 16, padding: 20, border: `1px solid ${C.border}` }}>
+                            <div style={{ fontSize: 32, marginBottom: 8 }}>{i}</div>
+                            <div style={{ color: '#fff', fontWeight: 600 }}>{l}</div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </Phone>
+    );
+}
+
+function FeedScreen() {
+    return (
+        <Phone>
+            <div style={{ height: '100%', background: 'linear-gradient(160deg,#0d2b1a,#1a4a2e)', position: 'relative' }}>
+                <div style={{ position: 'absolute', top: 70, right: 16, display: 'flex', flexDirection: 'column', gap: 24 }}>
+                    {['❤️', '💬', '↗️'].map(i => (
+                        <div key={i} style={{ width: 50, height: 50, borderRadius: '50%', background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, color: '#fff' }}>{i}</div>
+                    ))}
+                </div>
+                <div style={{ position: 'absolute', bottom: 100, left: 16, right: 16 }}>
+                    <div style={{ color: '#fff', fontWeight: 700, fontSize: 16, marginBottom: 4 }}>@สวนมะพร้าวออร์แกนิค</div>
+                    <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: 13 }}>มะพร้าวน้ำหอม สดจากสวน 🥥</div>
+                    <div style={{ marginTop: 12, padding: 16, background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(10px)', borderRadius: 20, color: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span>🛒 มะพร้าวน้ำหอม</span>
+                        <span style={{ fontWeight: 700, color: C.y }}>฿45</span>
+                    </div>
+                </div>
+            </div>
+        </Phone>
+    );
+}
+
+function NearMeScreen() {
+    return (
+        <Phone>
+            <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ height: '60%', background: '#0d1b2e', position: 'relative' }}>
+                    <svg viewBox="0 0 100 100" style={{ width: '100%', height: '100%' }}>
+                        <rect width="100" height="100" fill="#0d1b2e"/>
+                        <circle cx="50" cy="50" r="3" fill={C.p}/>
+                        <circle cx="42" cy="38" r="4" fill={C.g}/>
+                        <circle cx="62" cy="55" r="4" fill={C.o}/>
+                    </svg>
+                    <div style={{ position: 'absolute', top: 60, left: 20, background: C.bgCard, padding: 12, borderRadius: 12, border: `1px solid ${C.border}` }}>
+                        <div style={{ color: '#fff', fontSize: 12 }}>พบ 12 ร้านค้าใกล้บ้านคุณ</div>
+                    </div>
+                </div>
+                <div style={{ flex: 1, background: C.bgDeep, padding: 20 }}>
+                    <div style={{ color: '#fff', fontWeight: 600, marginBottom: 12 }}>ร้านค้าแนะนำ</div>
+                    {vendors.map(v => (
+                        <div key={v.id} style={{ display: 'flex', gap: 12, background: C.bgCard, padding: 12, borderRadius: 12, marginBottom: 8 }}>
+                            <div style={{ width: 40, height: 40, background: v.color + '22', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{v.cat.split(' ')[0]}</div>
+                            <div style={{ flex: 1 }}>
+                                <div style={{ color: '#fff', fontSize: 14, fontWeight: 600 }}>{v.name}</div>
+                                <div style={{ color: C.tm, fontSize: 11 }}>{v.dist} กม. · ⭐ {v.rating}</div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </Phone>
+    );
+}
+
+function CreatorStudioScreen() {
+    return (
+        <Phone>
+            <div style={{ height: '100%', background: '#000', position: 'relative' }}>
+                <div style={{ position: 'absolute', top: 64, left: 16, right: 16, display: 'flex', justifyContent: 'space-between' }}>
+                    <div style={{ color: '#fff', fontSize: 24 }}>✕</div>
+                    <div style={{ color: '#fff', fontSize: 16 }}>30s</div>
+                    <div style={{ color: '#fff', fontSize: 16 }}>ถัดไป</div>
+                </div>
+                <div style={{ position: 'absolute', right: 16, top: '40%', display: 'flex', flexDirection: 'column', gap: 20 }}>
+                    {['🔄', '⚡', '🎵', '✨'].map(i => (
+                        <div key={i} style={{ fontSize: 24 }}>{i}</div>
+                    ))}
+                </div>
+                <div style={{ position: 'absolute', bottom: 100, left: 0, right: 0, display: 'flex', justifyContent: 'center' }}>
+                    <div style={{ width: 80, height: 80, borderRadius: '50%', border: '4px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ width: 68, height: 68, borderRadius: '50%', background: C.r }}/>
+                    </div>
+                </div>
+            </div>
+        </Phone>
+    );
+}
+
+function DashboardScreen() {
+    return (
+        <Phone>
+            <div style={{ height: '100%', background: C.bgDeep, padding: '64px 20px' }}>
+                <div style={{ color: '#fff', fontWeight: 800, fontSize: 24, marginBottom: 20 }}>Creator Studio</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 }}>
+                    <div style={{ background: C.bgCard, padding: 16, borderRadius: 16 }}>
+                        <div style={{ color: C.tm, fontSize: 11 }}>ยอดดู</div>
+                        <div style={{ color: '#fff', fontSize: 20, fontWeight: 700 }}>124.5K</div>
+                    </div>
+                    <div style={{ background: C.bgCard, padding: 16, borderRadius: 16 }}>
+                        <div style={{ color: C.tm, fontSize: 11 }}>ออเดอร์</div>
+                        <div style={{ color: C.g, fontSize: 20, fontWeight: 700 }}>892</div>
+                    </div>
+                </div>
+                <div style={{ background: C.bgCard, padding: 20, borderRadius: 16, height: 160 }}>
+                    <div style={{ color: '#fff', fontSize: 13, marginBottom: 16 }}>กราฟรายได้รายสัปดาห์</div>
+                    <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: 80 }}>
+                        {[40, 60, 35, 90, 75, 45, 100].map((h, i) => (
+                            <div key={i} style={{ flex: 1, height: h + '%', background: C.p, borderRadius: '4px 4px 0 0' }}/>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </Phone>
+    );
+}
+
+function CheckoutScreen() {
+    return (
+        <Phone>
+            <div style={{ height: '100%', background: C.bgDeep, display: 'flex', flexDirection: 'column' }}>
+                <div style={{ padding: '64px 20px 20px', borderBottom: `1px solid ${C.border}` }}>
+                    <div style={{ color: '#fff', fontWeight: 700, fontSize: 18 }}>Checkout</div>
+                </div>
+                <div style={{ flex: 1, padding: 20 }}>
+                    <div style={{ background: C.bgCard, padding: 16, borderRadius: 16, marginBottom: 16 }}>
+                        <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
+                            <div style={{ fontSize: 32 }}>🥥</div>
+                            <div>
+                                <div style={{ color: '#fff', fontWeight: 600 }}>มะพร้าวน้ำหอม</div>
+                                <div style={{ color: C.tm, fontSize: 12 }}>3 ลูก · ฿135</div>
+                            </div>
+                        </div>
+                        <div style={{ height: 1, background: C.border, marginBottom: 12 }}/>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', color: C.tm, fontSize: 12 }}>
+                            <span>จัดส่ง Kerry Express</span>
+                            <span>฿40</span>
+                        </div>
+                    </div>
+                    <div style={{ background: C.bgCard, padding: 16, borderRadius: 16 }}>
+                        <div style={{ color: C.tm, fontSize: 12, marginBottom: 8 }}>ที่อยู่จัดส่ง</div>
+                        <div style={{ color: '#fff', fontSize: 14 }}>นาย ก. สมบูรณ์</div>
+                        <div style={{ color: C.tm, fontSize: 12 }}>123 ถนนสุขุมวิท กรุงเทพฯ</div>
+                    </div>
+                </div>
+                <div style={{ padding: 20, background: C.bgCard, borderTop: `1px solid ${C.border}` }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+                        <span style={{ color: '#fff' }}>รวมทั้งสิ้น</span>
+                        <span style={{ color: C.y, fontWeight: 800, fontSize: 24 }}>฿175</span>
+                    </div>
+                    <button style={{ width: '100%', height: 50, borderRadius: 25, background: C.p, color: '#fff', fontWeight: 700, border: 'none' }}>ชำระเงิน</button>
+                </div>
+            </div>
+        </Phone>
+    );
+}
+
+// --- MASTER HUB APP ---
+function MasterHub() {
+    return (
+        <DesignCanvas>
+            <DCSection title="Discovery & Core Flow" subtitle="The entry points and primary consumer experience">
+                <DCArtboard label="Home Hub"><HomeScreen /></DCArtboard>
+                <DCArtboard label="Video Discovery"><FeedScreen /></DCArtboard>
+                <DCArtboard label="Hyper-Local Map"><NearMeScreen /></DCArtboard>
+            </DCSection>
+
+            <DCSection title="Shopping & Checkout" subtitle="The conversion funnel from cart to success">
+                <DCArtboard label="Checkout Progress"><CheckoutScreen /></DCArtboard>
+                <DCArtboard label="Order Confirmation" width={390} height={844}>
+                    <Phone>
+                        <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 32 }}>
+                            <div style={{ width: 80, height: 80, borderRadius: '50%', background: C.g, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, color: '#fff', marginBottom: 24 }}>✓</div>
+                            <div style={{ color: '#fff', fontSize: 24, fontWeight: 700, marginBottom: 8 }}>สำเร็จ!</div>
+                            <div style={{ color: C.tm, textAlign: 'center', fontSize: 14 }}>เราได้รับคำสั่งซื้อของคุณแล้ว<br/>มะพร้าวน้ำหอม 3 ลูก กำลังเดินทาง</div>
+                        </div>
+                    </Phone>
+                </DCArtboard>
+            </DCSection>
+
+            <DCSection title="Creator & Seller Tools" subtitle="Dashboard and video production interface">
+                <DCArtboard label="Creator Studio"><CreatorStudioScreen /></DCArtboard>
+                <DCArtboard label="Performance Dashboard"><DashboardScreen /></DCArtboard>
+            </DCSection>
+        </DesignCanvas>
+    );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<MasterHub />);
+</script>
+</body>
+</html>

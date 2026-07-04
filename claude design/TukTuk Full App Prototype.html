@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TukTuk — Full App Prototype</title>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#080c18;font-family:'Kanit',sans-serif;overflow:hidden}
+#root{height:100%}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes slideRight{from{transform:translateX(-20px);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes scaleIn{from{transform:scale(0.92);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+@keyframes ping{0%{transform:scale(1);opacity:0.8}100%{transform:scale(2.2);opacity:0}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes mapFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-4px) scale(1.05)}}
+@keyframes barGrow{from{width:0}to{width:var(--w)}}
+@keyframes countUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+// ─── Tokens ──────────────────────────────────────────────────
+const C = {
+  bg:'#0f172a', deep:'#080c18', card:'#111827',
+  border:'rgba(255,255,255,0.07)', border2:'rgba(255,255,255,0.12)',
+  p:'#6366f1', pg:'rgba(99,102,241,0.3)',
+  s:'#a855f7', sg:'rgba(168,85,247,0.25)',
+  g:'#10b981', gg:'rgba(16,185,129,0.25)',
+  o:'#f97316', og:'rgba(249,115,22,0.25)',
+  y:'#facc15', r:'#f43f5e', rg:'rgba(244,63,94,0.25)',
+  t:'#f1f5f9', tm:'rgba(255,255,255,0.45)', tf:'rgba(255,255,255,0.18)',
+  k:"'Kanit',sans-serif",
+};
+
+function useLs(key,def){
+  const[v,sv]=React.useState(()=>{try{const s=localStorage.getItem(key);return s?JSON.parse(s):def}catch{return def}});
+  const set=React.useCallback(x=>{sv(x);try{localStorage.setItem(key,JSON.stringify(x))}catch{}},[key]);
+  return[v,set];
+}
+
+// ─── Shared UI ────────────────────────────────────────────────
+const Box=({ch,p=16,r=16,style={}})=>(
+  <div style={{background:C.card,borderRadius:r,border:`1px solid ${C.border}`,padding:p,...style}}>{ch}</div>
+);
+const Row=({children,gap=12,center=false,between=false,style={}})=>(
+  <div style={{display:'flex',gap,alignItems:center?'center':'flex-start',justifyContent:between?'space-between':'flex-start',...style}}>{children}</div>
+);
+const Col=({children,gap=8,style={}})=>(
+  <div style={{display:'flex',flexDirection:'column',gap,...style}}>{children}</div>
+);
+const Tag=({children,color=C.p,bg})=>(
+  <div style={{display:'inline-flex',alignItems:'center',padding:'3px 10px',borderRadius:20,
+    background:bg||`${color}22`,border:`1px solid ${color}44`,
+    color,fontSize:11,fontWeight:500,lineHeight:1.2}}>{children}</div>
+);
+const Stat=({label,value,delta,color=C.p,icon})=>(
+  <div style={{background:C.card,borderRadius:14,border:`1px solid ${C.border}`,padding:'14px 16px',flex:1,minWidth:0}}>
+    <div style={{color:C.tm,fontSize:11,marginBottom:6}}>{icon} {label}</div>
+    <div style={{color:C.t,fontWeight:700,fontSize:22,letterSpacing:-0.5,animation:'countUp 0.6s ease'}}>{value}</div>
+    {delta&&<div style={{color:delta.startsWith('+')?C.g:C.r,fontSize:11,marginTop:4,fontWeight:500}}>{delta}</div>}
+  </div>
+);
+
+// Phone shell
+const Phone=({children,style={}})=>(
+  <div style={{width:390,height:'min(844px,calc(100vh - 100px))',
+    borderRadius:48,overflow:'hidden',position:'relative',
+    background:C.bg,flexShrink:0,
+    boxShadow:'0 40px 100px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.1)',...style}}>
+    <div style={{position:'absolute',top:10,left:'50%',transform:'translateX(-50%)',
+      width:120,height:34,borderRadius:20,background:'#000',zIndex:200}}/>
+    <div style={{position:'absolute',top:0,left:0,right:0,height:54,zIndex:100,pointerEvents:'none',
+      display:'flex',alignItems:'flex-end',justifyContent:'space-between',padding:'0 28px 8px'}}>
+      <span style={{color:C.t,fontSize:15,fontWeight:600}}>9:41</span>
+      <span style={{color:C.t,fontSize:12}}>●●● 📶 🔋</span>
+    </div>
+    <div style={{height:'100%',overflowY:'auto',paddingTop:54}}>{children}</div>
+    <div style={{position:'absolute',bottom:8,left:'50%',transform:'translateX(-50%)',
+      width:134,height:5,borderRadius:3,background:'rgba(255,255,255,0.22)',zIndex:200,pointerEvents:'none'}}/>
+  </div>
+);
+
+// Bottom nav
+const BottomNav=({active,setActive})=>{
+  const items=[['⌂','ฟีด','feed'],['📍','ใกล้ฉัน','near'],['➕','','create'],['💬','แชท','chat'],['👤','โปรไฟล์','profile']];
+  return(
+    <div style={{position:'absolute',bottom:0,left:0,right:0,zIndex:60,
+      background:'rgba(8,12,24,0.96)',backdropFilter:'blur(20px)',
+      borderTop:`1px solid ${C.border}`,display:'flex',height:70,paddingBottom:8}}>
+      {items.map(([ic,lb,id])=>(
+        <button key={id} onClick={()=>setActive(id)} style={{
+          flex:1,border:'none',background:'transparent',cursor:'pointer',
+          display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:3}}>
+          {id==='create'?(
+            <div style={{width:44,height:28,borderRadius:14,
+              background:`linear-gradient(135deg,${C.p},${C.s})`,
+              display:'flex',alignItems:'center',justifyContent:'center',
+              color:'#fff',fontSize:20,fontWeight:300,
+              boxShadow:`0 4px 14px ${C.pg}`}}>+</div>
+          ):(
+            <>
+              <span style={{fontSize:19,filter:active===id?'none':'grayscale(40%)',
+                transform:active===id?'scale(1.12)':'scale(1)',transition:'transform 0.2s'}}>{ic}</span>
+              <span style={{fontSize:10,color:active===id?C.p:C.tf,fontWeight:active===id?600:400,transition:'color 0.2s'}}>{lb}</span>
+            </>
+          )}
+        </button>
+      ))}
+    </div>
+  );
+};
+
+// Topbar
+const Topbar=({title,back,onBack,action,right})=>(
+  <div style={{padding:'12px 18px 12px',display:'flex',alignItems:'center',gap:12,
+    borderBottom:`1px solid ${C.border}`,flexShrink:0}}>
+    {back&&<button onClick={onBack} style={{width:36,height:36,borderRadius:11,
+      background:C.border,border:`1px solid ${C.border2}`,color:C.t,fontSize:17,
+      cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}>←</button>}
+    <div style={{flex:1}}>
+      <div style={{color:C.t,fontWeight:700,fontSize:16}}>{title}</div>
+      {action&&<div style={{color:C.tm,fontSize:12}}>{action}</div>}
+    </div>
+    {right}
+  </div>
+);
+
+// ════════════════════════════════════
+// NEAR ME SCREEN
+// ════════════════════════════════════
+const VENDORS=[
+  {id:1,name:'สวนมะพร้าวออร์แกนิค',cat:'🥥 เกษตร',dist:1.2,price:'฿45',rating:4.9,rev:234,live:false,x:42,y:38,color:C.g},
+  {id:2,name:'ส้มตำป้าแดง',cat:'🌶️ อาหาร',dist:0.8,price:'฿60',rating:5.0,rev:891,live:true,x:62,y:55,color:C.o},
+  {id:3,name:'ชุดไทยพรีเมี่ยม',cat:'👗 แฟชั่น',dist:2.1,price:'฿380',rating:4.8,rev:156,live:false,x:28,y:62,color:C.s},
+  {id:4,name:'วินมอเตอร์ไซค์ด่วน',cat:'🛵 วินมอ',dist:0.3,price:'฿25',rating:4.7,rev:2341,live:false,x:55,y:30,color:C.p},
+  {id:5,name:'ขนมครกป้าน้อย',cat:'🍮 ขนม',dist:1.8,price:'฿35',rating:4.9,rev:445,live:false,x:75,y:70,color:C.y},
+];
+const CATS=['ทั้งหมด','อาหาร','เกษตร','แฟชั่น','วินมอ','ขนม'];
+
+function NearMeScreen({setScreen}){
+  const[cat,setCat]=useLs('tt_nm_cat',0);
+  const[sel,setSel]=useLs('tt_nm_sel',null);
+  const[mapMode,setMapMode]=useLs('tt_nm_mode','map');
+  const filtered=cat===0?VENDORS:VENDORS.filter(v=>v.cat.includes(CATS[cat]));
+  const selV=VENDORS.find(v=>v.id===sel);
+
+  return(
+    <div style={{height:'100%',display:'flex',flexDirection:'column',background:C.bg}}>
+      {/* header */}
+      <div style={{padding:'12px 18px 8px',background:C.deep,borderBottom:`1px solid ${C.border}`}}>
+        <Row center between style={{marginBottom:10}}>
+          <div>
+            <div style={{color:C.t,fontWeight:700,fontSize:17}}>📍 ใกล้ฉัน</div>
+            <div style={{color:C.tm,fontSize:12}}>ราชบุรี · อัปเดตล่าสุด 2 นาทีที่แล้ว</div>
+          </div>
+          <Row gap={8}>
+            <button onClick={()=>setMapMode(m=>m==='map'?'list':'map')} style={{
+              padding:'6px 14px',borderRadius:20,border:`1px solid ${C.border2}`,
+              background:C.card,color:C.t,fontFamily:C.k,fontSize:12,cursor:'pointer'}}>
+              {mapMode==='map'?'📋 รายการ':'🗺️ แผนที่'}
+            </button>
+          </Row>
+        </Row>
+        {/* category pills */}
+        <div style={{display:'flex',gap:6,overflowX:'auto',paddingBottom:2,scrollbarWidth:'none'}}>
+          {CATS.map((c,i)=>(
+            <button key={i} onClick={()=>setCat(i)} style={{
+              padding:'5px 14px',borderRadius:20,border:'none',whiteSpace:'nowrap',
+              background:cat===i?C.p:`rgba(255,255,255,0.06)`,
+              color:cat===i?'#fff':C.tm,fontFamily:C.k,fontSize:12,
+              cursor:'pointer',transition:'all 0.2s',flexShrink:0,
+              boxShadow:cat===i?`0 2px 10px ${C.pg}`:'none'}}>
+              {c}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {mapMode==='map'?(
+        <div style={{flex:1,position:'relative',overflow:'hidden'}}>
+          {/* SVG map */}
+          <svg style={{position:'absolute',inset:0,width:'100%',height:'100%'}} viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
+            <rect width="100" height="100" fill="#0d1b2e"/>
+            {/* roads */}
+            <path d="M0,50 Q25,45 50,52 Q75,58 100,50" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="3"/>
+            <path d="M50,0 Q52,30 50,50 Q48,70 50,100" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="2.5"/>
+            <path d="M0,30 Q30,28 60,35" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="2"/>
+            <path d="M40,60 Q70,65 100,70" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="2"/>
+            {/* blocks */}
+            {[[10,15,18,12],[35,10,20,14],[65,8,22,16],[5,60,16,14],[30,70,18,14],[68,62,20,14],[15,40,14,10],[55,42,16,12]].map(([x,y,w,h],i)=>(
+              <rect key={i} x={x} y={y} width={w} height={h} rx={1.5} fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.06)" strokeWidth="0.3"/>
+            ))}
+            {/* user location */}
+            <circle cx="50" cy="52" r="3" fill={C.p}/>
+            <circle cx="50" cy="52" r="6" fill="none" stroke={C.p} strokeWidth="0.8" opacity="0.5">
+              <animate attributeName="r" values="3;9;3" dur="2s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="0.5;0;0.5" dur="2s" repeatCount="indefinite"/>
+            </circle>
+            {/* vendor pins */}
+            {filtered.map(v=>(
+              <g key={v.id} style={{cursor:'pointer'}} onClick={()=>setSel(sel===v.id?null:v.id)}>
+                <circle cx={v.x} cy={v.y} r={sel===v.id?5.5:4}
+                  fill={sel===v.id?'#fff':v.color}
+                  stroke={sel===v.id?v.color:'rgba(0,0,0,0.3)'}
+                  strokeWidth={sel===v.id?1.5:0.5}
+                  style={{transition:'all 0.2s',filter:v.live?`drop-shadow(0 0 3px ${v.color})`:''}}/>
+                {v.live&&(
+                  <circle cx={v.x} cy={v.y} r={7} fill="none" stroke={v.color} strokeWidth="0.5" opacity="0.6">
+                    <animate attributeName="r" values="4;8;4" dur="1.5s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0.6;0;0.6" dur="1.5s" repeatCount="indefinite"/>
+                  </circle>
+                )}
+                <text x={v.x} y={v.y+10} fontSize="3.5" fill="rgba(255,255,255,0.7)" textAnchor="middle" fontFamily="Kanit">
+                  {v.dist}กม
+                </text>
+              </g>
+            ))}
+          </svg>
+
+          {/* vendor card popup */}
+          {selV&&(
+            <div style={{
+              position:'absolute',bottom:80,left:12,right:12,
+              background:'rgba(17,24,39,0.97)',backdropFilter:'blur(16px)',
+              borderRadius:18,padding:16,border:`1px solid ${selV.color}44`,
+              animation:'slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1)',
+              boxShadow:`0 8px 32px rgba(0,0,0,0.5),0 0 0 1px ${selV.color}22`,
+            }}>
+              <Row center between style={{marginBottom:10}}>
+                <Row center gap={10}>
+                  <div style={{width:44,height:44,borderRadius:12,
+                    background:`${selV.color}22`,border:`1px solid ${selV.color}44`,
+                    display:'flex',alignItems:'center',justifyContent:'center',fontSize:22}}>
+                    {selV.cat.split(' ')[0]}
+                  </div>
+                  <div>
+                    <div style={{color:C.t,fontWeight:700,fontSize:14}}>{selV.name}</div>
+                    <Row center gap={6} style={{marginTop:2}}>
+                      <Tag color={selV.color}>{selV.cat}</Tag>
+                      {selV.live&&<Tag color={C.r}>🔴 LIVE</Tag>}
+                    </Row>
+                  </div>
+                </Row>
+                <button onClick={()=>setSel(null)} style={{background:'none',border:'none',color:C.tm,cursor:'pointer',fontSize:18}}>✕</button>
+              </Row>
+              <Row between center style={{marginBottom:14}}>
+                <Row gap={14}>
+                  <div style={{color:C.tm,fontSize:12}}>📍 {selV.dist} กม.</div>
+                  <div style={{color:C.tm,fontSize:12}}>⭐ {selV.rating} ({selV.rev})</div>
+                </Row>
+                <div style={{color:C.y,fontWeight:700,fontSize:18}}>{selV.price}</div>
+              </Row>
+              <Row gap={8}>
+                <button style={{
+                  flex:1,height:42,borderRadius:21,border:`1px solid ${C.border2}`,
+                  background:'rgba(255,255,255,0.05)',color:C.t,
+                  fontFamily:C.k,fontSize:13,cursor:'pointer'}}>
+                  💬 ติดต่อ
+                </button>
+                <button onClick={()=>setScreen('feed')} style={{
+                  flex:2,height:42,borderRadius:21,border:'none',
+                  background:`linear-gradient(135deg,${C.p},${C.s})`,
+                  color:'#fff',fontFamily:C.k,fontSize:13,fontWeight:600,cursor:'pointer',
+                  boxShadow:`0 4px 16px ${C.pg}`}}>
+                  🛒 ดูวิดีโอสินค้า →
+                </button>
+              </Row>
+            </div>
+          )}
+
+          {/* legend */}
+          <div style={{position:'absolute',top:12,right:12,
+            background:'rgba(8,12,24,0.85)',backdropFilter:'blur(10px)',
+            borderRadius:10,padding:'8px 12px',border:`1px solid ${C.border}`}}>
+            <div style={{color:C.tm,fontSize:10,marginBottom:6}}>ตำนาน</div>
+            {[[C.p,'คุณ'],[C.o,'LIVE'],[C.g,'ร้านค้า']].map(([c,l])=>(
+              <Row key={l} center gap={6} style={{marginBottom:4}}>
+                <div style={{width:8,height:8,borderRadius:'50%',background:c}}/>
+                <span style={{color:C.tm,fontSize:10}}>{l}</span>
+              </Row>
+            ))}
+          </div>
+        </div>
+      ):(
+        /* List mode */
+        <div style={{flex:1,overflowY:'auto',padding:'10px 14px'}}>
+          {filtered.map((v,i)=>(
+            <div key={v.id} onClick={()=>{setSel(v.id);setMapMode('map');}}
+              style={{
+                display:'flex',gap:12,padding:'12px 14px',marginBottom:8,
+                background:C.card,borderRadius:14,border:`1px solid ${C.border}`,
+                cursor:'pointer',transition:'all 0.15s',
+                animation:`slideUp 0.3s ease ${i*0.05}s both`,
+              }}>
+              <div style={{width:56,height:56,borderRadius:12,flexShrink:0,
+                background:`${v.color}22`,border:`1px solid ${v.color}33`,
+                display:'flex',alignItems:'center',justifyContent:'center',fontSize:26}}>
+                {v.cat.split(' ')[0]}
+              </div>
+              <div style={{flex:1,minWidth:0}}>
+                <Row center between style={{marginBottom:3}}>
+                  <div style={{color:C.t,fontWeight:600,fontSize:14,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{v.name}</div>
+                  <div style={{color:C.y,fontWeight:700,fontSize:15,flexShrink:0}}>{v.price}</div>
+                </Row>
+                <Row center gap={8} style={{marginBottom:4}}>
+                  <Tag color={v.color}>{v.cat}</Tag>
+                  {v.live&&<Tag color={C.r}>🔴 LIVE</Tag>}
+                </Row>
+                <Row center gap={12}>
+                  <span style={{color:C.tm,fontSize:11}}>📍 {v.dist} กม.</span>
+                  <span style={{color:C.tm,fontSize:11}}>⭐ {v.rating} ({v.rev})</span>
+                </Row>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      <BottomNav active="near" setActive={setScreen}/>
+    </div>
+  );
+}
+
+// ════════════════════════════════════
+// SELLER DASHBOARD
+// ════════════════════════════════════
+const CHART_DATA=[32,45,38,62,55,78,65,82,70,95,88,100,76,94,110,98,120,105,135,118,142,128,155,140];
+const TOP_PRODUCTS=[
+  {name:'มะพร้าวน้ำหอม',sales:234,revenue:10530,cvr:5.2,emoji:'🥥',trend:'+18%'},
+  {name:'มะพร้าวแก้ว',sales:189,revenue:8505,cvr:4.8,emoji:'🥥',trend:'+12%'},
+  {name:'น้ำมะพร้าว',sales:156,revenue:4680,cvr:6.1,emoji:'🧃',trend:'+34%'},
+];
+const ORDERS=[
+  {id:'#4521',item:'มะพร้าวน้ำหอม ×3',total:135,status:'จัดส่งแล้ว',color:C.g,time:'10 นาทีที่แล้ว'},
+  {id:'#4520',item:'น้ำมะพร้าว ×2',total:60,status:'กำลังเตรียม',color:C.o,time:'25 นาทีที่แล้ว'},
+  {id:'#4519',item:'มะพร้าวแก้ว ×5',total:225,status:'รับออเดอร์',color:C.p,time:'1 ชั่วโมงที่แล้ว'},
+  {id:'#4518',item:'มะพร้าวน้ำหอม ×1',total:45,status:'จัดส่งแล้ว',color:C.g,time:'2 ชั่วโมงที่แล้ว'},
+];
+
+function DashboardScreen({setScreen}){
+  const[tab,setTab]=useLs('tt_dash_tab','overview');
+  const maxBar=Math.max(...CHART_DATA);
+
+  return(
+    <div style={{height:'100%',display:'flex',flexDirection:'column',background:C.bg}}>
+      <Topbar title="📊 Creator Studio"
+        right={
+          <button onClick={()=>setScreen('feed')} style={{
+            padding:'6px 14px',borderRadius:20,border:'none',
+            background:`linear-gradient(135deg,${C.p},${C.s})`,
+            color:'#fff',fontFamily:C.k,fontSize:12,fontWeight:600,cursor:'pointer'}}>
+            + สร้างวิดีโอ
+          </button>
+        }/>
+
+      {/* sub tabs */}
+      <div style={{display:'flex',padding:'8px 14px',gap:6,borderBottom:`1px solid ${C.border}`,flexShrink:0,overflowX:'auto',scrollbarWidth:'none'}}>
+        {[['overview','📊 ภาพรวม'],['products','🏷️ สินค้า'],['orders','📦 ออเดอร์'],['videos','📹 วิดีโอ']].map(([id,l])=>(
+          <button key={id} onClick={()=>setTab(id)} style={{
+            padding:'6px 14px',borderRadius:16,border:'none',flexShrink:0,
+            background:tab===id?C.p:'rgba(255,255,255,0.05)',
+            color:tab===id?'#fff':C.tm,fontFamily:C.k,fontSize:12,fontWeight:tab===id?600:400,
+            cursor:'pointer',transition:'all 0.2s',
+            boxShadow:tab===id?`0 2px 10px ${C.pg}`:'none'}}>
+            {l}
+          </button>
+        ))}
+      </div>
+
+      <div style={{flex:1,overflowY:'auto',padding:'14px 14px 80px'}}>
+
+        {tab==='overview'&&(
+          <Col gap={12}>
+            {/* period selector */}
+            <Row center between>
+              <div style={{color:C.t,fontWeight:600,fontSize:14}}>30 วันที่ผ่านมา</div>
+              <select style={{background:C.card,border:`1px solid ${C.border}`,color:C.tm,
+                borderRadius:10,padding:'4px 10px',fontFamily:C.k,fontSize:12,cursor:'pointer'}}>
+                <option>30 วัน</option><option>7 วัน</option><option>เดือนนี้</option>
+              </select>
+            </Row>
+            {/* stats grid */}
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
+              <Stat label="ยอดดู" value="124.5K" delta="+18%" color={C.p} icon="👁️"/>
+              <Stat label="ออเดอร์" value="892" delta="+34%" color={C.g} icon="🛒"/>
+              <Stat label="รายได้" value="฿48.2K" delta="+22%" color={C.y} icon="💰"/>
+              <Stat label="ผู้ติดตาม" value="5,230" delta="+8%" color={C.s} icon="❤️"/>
+            </div>
+
+            {/* revenue chart */}
+            <div style={{background:C.card,borderRadius:16,border:`1px solid ${C.border}`,padding:16}}>
+              <Row center between style={{marginBottom:14}}>
+                <div style={{color:C.t,fontWeight:600,fontSize:13}}>📈 รายได้รายวัน</div>
+                <Tag color={C.g}>+22% vs เดือนที่แล้ว</Tag>
+              </Row>
+              {/* chart */}
+              <div style={{display:'flex',gap:3,alignItems:'flex-end',height:80,padding:'0 2px'}}>
+                {CHART_DATA.map((v,i)=>(
+                  <div key={i} style={{flex:1,borderRadius:'3px 3px 0 0',
+                    background:i===CHART_DATA.length-1?C.p:`linear-gradient(180deg,${C.p}88,${C.p}44)`,
+                    height:`${(v/maxBar)*100}%`,
+                    transition:'height 0.6s ease',minWidth:0,cursor:'pointer',
+                    boxShadow:i===CHART_DATA.length-1?`0 0 8px ${C.pg}`:'none'}}/>
+                ))}
+              </div>
+              <div style={{display:'flex',justifyContent:'space-between',marginTop:6}}>
+                {['1','8','15','22','30'].map(d=>(
+                  <span key={d} style={{color:C.tf,fontSize:9}}>{d}</span>
+                ))}
+              </div>
+            </div>
+
+            {/* top metrics */}
+            <div style={{background:C.card,borderRadius:16,border:`1px solid ${C.border}`,padding:16}}>
+              <div style={{color:C.t,fontWeight:600,fontSize:13,marginBottom:12}}>🔥 ตัวชี้วัดสำคัญ</div>
+              {[
+                {label:'Conversion Rate (CVR)',value:'5.4%',bar:54,color:C.p},
+                {label:'Average Order Value',value:'฿137',bar:68,color:C.g},
+                {label:'Customer Retention',value:'62%',bar:62,color:C.s},
+                {label:'Response Rate',value:'98%',bar:98,color:C.o},
+              ].map(m=>(
+                <div key={m.label} style={{marginBottom:10}}>
+                  <Row center between style={{marginBottom:4}}>
+                    <span style={{color:C.tm,fontSize:12}}>{m.label}</span>
+                    <span style={{color:C.t,fontWeight:700,fontSize:13}}>{m.value}</span>
+                  </Row>
+                  <div style={{height:5,borderRadius:3,background:'rgba(255,255,255,0.06)'}}>
+                    <div style={{height:'100%',borderRadius:3,background:m.color,
+                      width:`${m.bar}%`,transition:'width 0.8s ease'}}/>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Col>
+        )}
+
+        {tab==='products'&&(
+          <Col gap={10}>
+            <Row center between>
+              <div style={{color:C.t,fontWeight:600,fontSize:14}}>สินค้าของฉัน</div>
+              <button style={{padding:'6px 14px',borderRadius:16,border:'none',
+                background:C.p,color:'#fff',fontFamily:C.k,fontSize:12,cursor:'pointer'}}>+ เพิ่มสินค้า</button>
+            </Row>
+            {TOP_PRODUCTS.map((p,i)=>(
+              <div key={i} style={{background:C.card,borderRadius:14,border:`1px solid ${C.border}`,padding:14,
+                animation:`slideUp 0.3s ease ${i*0.08}s both`}}>
+                <Row center gap={12} style={{marginBottom:10}}>
+                  <div style={{width:52,height:52,borderRadius:12,flexShrink:0,
+                    background:`${C.g}22`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:26}}>
+                    {p.emoji}
+                  </div>
+                  <div style={{flex:1}}>
+                    <Row center between>
+                      <div style={{color:C.t,fontWeight:600,fontSize:14}}>{p.name}</div>
+                      <Tag color={C.g}>{p.trend}</Tag>
+                    </Row>
+                    <div style={{color:C.tm,fontSize:12,marginTop:2}}>รายได้: <span style={{color:C.y,fontWeight:600}}>฿{p.revenue.toLocaleString()}</span></div>
+                  </div>
+                </Row>
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:6}}>
+                  {[['ยอดขาย',p.sales+' ชิ้น',C.p],['CVR',p.cvr+'%',C.g],['รีวิว','⭐ 4.9',C.y]].map(([l,v,c])=>(
+                    <div key={l} style={{background:'rgba(255,255,255,0.04)',borderRadius:10,padding:'8px 10px'}}>
+                      <div style={{color:C.tf,fontSize:10}}>{l}</div>
+                      <div style={{color:c,fontWeight:700,fontSize:13,marginTop:2}}>{v}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </Col>
+        )}
+
+        {tab==='orders'&&(
+          <Col gap={8}>
+            <Row center between style={{marginBottom:4}}>
+              <div style={{color:C.t,fontWeight:600,fontSize:14}}>ออเดอร์ล่าสุด</div>
+              <Tag color={C.o}>4 รายการใหม่</Tag>
+            </Row>
+            {ORDERS.map((o,i)=>(
+              <div key={o.id} style={{background:C.card,borderRadius:14,
+                border:`1px solid ${C.border}`,padding:14,
+                animation:`slideUp 0.3s ease ${i*0.06}s both`,
+                borderLeft:`3px solid ${o.color}`}}>
+                <Row center between style={{marginBottom:6}}>
+                  <Row center gap={8}>
+                    <span style={{color:C.tm,fontSize:12,fontWeight:600}}>{o.id}</span>
+                    <div style={{padding:'2px 8px',borderRadius:10,
+                      background:`${o.color}22`,border:`1px solid ${o.color}44`,
+                      color:o.color,fontSize:10,fontWeight:600}}>
+                      {o.status}
+                    </div>
+                  </Row>
+                  <span style={{color:C.y,fontWeight:700,fontSize:15}}>฿{o.total}</span>
+                </Row>
+                <div style={{color:C.tm,fontSize:13}}>{o.item}</div>
+                <div style={{color:C.tf,fontSize:11,marginTop:4}}>🕐 {o.time}</div>
+              </div>
+            ))}
+          </Col>
+        )}
+
+        {tab==='videos'&&(
+          <Col gap={10}>
+            <Row center between>
+              <div style={{color:C.t,fontWeight:600,fontSize:14}}>วิดีโอของฉัน</div>
+              <button onClick={()=>setScreen('creator')} style={{padding:'6px 14px',borderRadius:16,border:'none',
+                background:`linear-gradient(135deg,${C.p},${C.s})`,color:'#fff',
+                fontFamily:C.k,fontSize:12,fontWeight:600,cursor:'pointer',
+                boxShadow:`0 2px 10px ${C.pg}`}}>+ อัปโหลด</button>
+            </Row>
+            {[
+              {title:'มะพร้าวน้ำหอม สดๆ จากสวน',views:'45.2K',orders:234,cvr:5.2,dur:'00:28',thumb:'🥥'},
+              {title:'วิธีเลือกมะพร้าวสด',views:'32.1K',orders:189,cvr:5.9,dur:'00:45',thumb:'🥥'},
+              {title:'มะพร้าวน้ำ สุดพิเศษ',views:'18.9K',orders:98,cvr:5.4,dur:'00:15',thumb:'🧃'},
+            ].map((v,i)=>(
+              <div key={i} style={{background:C.card,borderRadius:14,border:`1px solid ${C.border}`,overflow:'hidden',
+                animation:`slideUp 0.3s ease ${i*0.08}s both`}}>
+                <Row gap={0}>
+                  <div style={{width:96,height:80,flexShrink:0,
+                    background:`linear-gradient(135deg,#0d2b1a,#1a4a2e)`,
+                    display:'flex',alignItems:'center',justifyContent:'center',fontSize:36,
+                    position:'relative'}}>
+                    {v.thumb}
+                    <div style={{position:'absolute',bottom:4,right:4,
+                      background:'rgba(0,0,0,0.7)',color:'#fff',fontSize:9,
+                      padding:'1px 5px',borderRadius:4}}>{v.dur}</div>
+                  </div>
+                  <div style={{flex:1,padding:'10px 12px'}}>
+                    <div style={{color:C.t,fontSize:13,fontWeight:600,marginBottom:4,
+                      overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{v.title}</div>
+                    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:4}}>
+                      {[['👁️',v.views],[['🛒'],v.orders],['CVR',v.cvr+'%']].map(([l,val],j)=>(
+                        <div key={j} style={{fontSize:10}}>
+                          <div style={{color:C.tf}}>{l}</div>
+                          <div style={{color:[C.t,C.g,C.p][j],fontWeight:600}}>{val}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </Row>
+                {/* performance bar */}
+                <div style={{padding:'0 12px 10px'}}>
+                  <div style={{height:3,borderRadius:2,background:'rgba(255,255,255,0.06)'}}>
+                    <div style={{height:'100%',borderRadius:2,background:`linear-gradient(90deg,${C.p},${C.s})`,
+                      width:`${[80,65,45][i]}%`,transition:'width 0.8s ease'}}/>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </Col>
+        )}
+      </div>
+      <BottomNav active="profile" setActive={setScreen}/>
+    </div>
+  );
+}
+
+// ════════════════════════════════════
+// FEED SCREEN (mini)
+// ════════════════════════════════════
+const FEEDS2=[
+  {id:1,seller:'@สวนมะพร้าวออร์แกนิค',loc:'ราชบุรี',dist:'1.2 กม.',
+   desc:'มะพร้าวน้ำหอม ส่งตรงจากสวน 🥥',price:'฿45',unit:'/ลูก',
+   bg:'linear-gradient(160deg,#0d2b1a,#1a4a2e)',emoji:'🥥',color:C.g,likes:'1.2K',isLive:false},
+  {id:2,seller:'@ส้มตำป้าแดง',loc:'โคราช',dist:'0.8 กม.',
+   desc:'ส้มตำไทย รสเด็ด 🌶️ รับออเดอร์วันนี้',price:'฿60',unit:'/จาน',
+   bg:'linear-gradient(160deg,#2d1a0d,#4a2e1a)',emoji:'🌶️',color:C.o,likes:'3.4K',isLive:true},
+  {id:3,seller:'@ชุดไทยพรีเมี่ยม',loc:'กรุงเทพฯ',dist:'2.1 กม.',
+   desc:'ผ้าไหมไทยแท้ งานมือ 👗',price:'฿380',unit:'/ชุด',
+   bg:'linear-gradient(160deg,#1a0d2d,#2e1a4a)',emoji:'👗',color:C.s,likes:'892',isLive:false},
+];
+
+function FeedScreen({setScreen}){
+  const[idx,setIdx]=useLs('tt_f2_idx',0);
+  const[liked,setLiked]=React.useState({});
+  const[sheet,setSheet]=React.useState(false);
+  const[lastTap,setLastTap]=React.useState(0);
+  const touchY=React.useRef(null);
+  const f=FEEDS2[idx%FEEDS2.length];
+
+  const onTouchStart=e=>{touchY.current=e.touches[0].clientY};
+  const onTouchEnd=e=>{
+    if(!touchY.current)return;
+    const dy=touchY.current-e.changedTouches[0].clientY;
+    if(Math.abs(dy)>50){setIdx(i=>(i+(dy>0?1:-1)+FEEDS2.length)%FEEDS2.length);setSheet(false);}
+    touchY.current=null;
+  };
+  const onTap=()=>{const now=Date.now();if(now-lastTap<300)setLiked(l=>({...l,[f.id]:true}));setLastTap(now);};
+
+  return(
+    <div style={{height:'100%',position:'relative',overflow:'hidden',background:'#000'}}
+      onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} onClick={onTap}>
+      {/* bg */}
+      <div style={{position:'absolute',inset:0,background:f.bg,transition:'background 0.5s'}}>
+        <div style={{position:'absolute',top:'30%',left:'50%',transform:'translate(-50%,-50%)',
+          fontSize:130,opacity:0.08,filter:'blur(2px)',pointerEvents:'none'}}>{f.emoji}</div>
+        <div style={{position:'absolute',inset:0,
+          background:'linear-gradient(180deg,rgba(0,0,0,0.4) 0%,transparent 30%,rgba(0,0,0,0.75) 100%)',
+          pointerEvents:'none'}}/>
+      </div>
+
+      {/* header */}
+      <div style={{position:'absolute',top:0,left:0,right:0,zIndex:40,
+        padding:'0 16px',background:'linear-gradient(180deg,rgba(0,0,0,0.6) 0%,transparent 100%)'}}>
+        <Row center style={{height:52,gap:8}}>
+          <div style={{width:28,height:28,borderRadius:7,
+            background:`linear-gradient(135deg,${C.p},${C.s})`,
+            display:'flex',alignItems:'center',justifyContent:'center',fontSize:14}}>🛺</div>
+          <span style={{color:'#fff',fontWeight:700,fontSize:17}}>TukTuk</span>
+          <div style={{flex:1,display:'flex',justifyContent:'center',gap:4}}>
+            {['ดูเพลิน','ใกล้ฉัน','ชุมชน'].map((t,i)=>(
+              <button key={t} onClick={e=>{e.stopPropagation();if(i===1)setScreen('near');}} style={{
+                padding:'5px 12px',borderRadius:18,border:'none',
+                background:i===0?'rgba(99,102,241,0.9)':'rgba(255,255,255,0.1)',
+                color:i===0?'#fff':'rgba(255,255,255,0.6)',
+                fontFamily:C.k,fontSize:11,fontWeight:500,cursor:'pointer'}}>
+                {t}
+              </button>
+            ))}
+          </div>
+          <button style={{width:34,height:34,borderRadius:'50%',
+            background:'rgba(255,255,255,0.12)',border:'none',color:'#fff',fontSize:16,
+            cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}>🔍</button>
+        </Row>
+      </div>
+
+      {/* right actions */}
+      <div style={{position:'absolute',right:12,bottom:170,zIndex:40,
+        display:'flex',flexDirection:'column',gap:18,alignItems:'center'}}>
+        <div style={{width:46,height:46,borderRadius:'50%',
+          background:`linear-gradient(135deg,${f.color},${C.p})`,
+          display:'flex',alignItems:'center',justifyContent:'center',fontSize:22,
+          border:'2px solid rgba(255,255,255,0.3)',marginBottom:4}}>{f.emoji}</div>
+        {[['❤️','🤍','likes',f.likes],['💬','💬','cm','89'],['↗️','↗️','sh','']].map(([on,off,k,l])=>(
+          <div key={k} onClick={e=>{e.stopPropagation();if(k==='likes')setLiked(p=>({...p,[f.id]:!p[f.id]}));if(k==='cm')setSheet(true);}}
+            style={{display:'flex',flexDirection:'column',alignItems:'center',gap:3,cursor:'pointer'}}>
+            <div style={{width:46,height:46,borderRadius:'50%',
+              background:'rgba(0,0,0,0.35)',backdropFilter:'blur(10px)',
+              border:'1px solid rgba(255,255,255,0.08)',
+              display:'flex',alignItems:'center',justifyContent:'center',fontSize:20}}>
+              {k==='likes'&&liked[f.id]?on:off}
+            </div>
+            {l&&<span style={{color:'#fff',fontSize:11}}>{l}</span>}
+          </div>
+        ))}
+      </div>
+
+      {/* bottom info */}
+      {!sheet&&(
+        <div style={{position:'absolute',bottom:74,left:0,right:0,padding:'0 14px',zIndex:40}}>
+          <Row center gap={10} style={{marginBottom:8}}>
+            <div style={{width:34,height:34,borderRadius:'50%',
+              background:`linear-gradient(135deg,${f.color},${C.p})`,
+              display:'flex',alignItems:'center',justifyContent:'center',fontSize:16}}>{f.emoji}</div>
+            <div>
+              <div style={{color:'#fff',fontWeight:600,fontSize:13}}>{f.seller}</div>
+              <div style={{color:'rgba(255,255,255,0.5)',fontSize:11}}>📍 {f.loc} · {f.dist}</div>
+            </div>
+            {f.isLive&&<div style={{marginLeft:'auto',padding:'3px 8px',borderRadius:14,
+              background:'rgba(244,63,94,0.9)',color:'#fff',fontSize:10,fontWeight:700,
+              animation:'pulse 1.5s infinite',display:'flex',alignItems:'center',gap:3}}>
+              <div style={{width:5,height:5,borderRadius:'50%',background:'#fff'}}/>LIVE
+            </div>}
+          </Row>
+          <div style={{color:'rgba(255,255,255,0.9)',fontSize:13,lineHeight:1.5,marginBottom:10}}>{f.desc}</div>
+          <button onClick={e=>{e.stopPropagation();setSheet(true);}} style={{
+            width:'100%',height:44,borderRadius:22,border:'none',
+            background:`linear-gradient(135deg,${C.p}cc,${C.s}cc)`,
+            backdropFilter:'blur(10px)',
+            color:'#fff',fontFamily:C.k,fontSize:14,fontWeight:600,cursor:'pointer',
+            display:'flex',alignItems:'center',justifyContent:'center',gap:6,
+            boxShadow:`0 4px 18px ${C.pg}`}}>
+            🛒 ดูสินค้า &nbsp;<span style={{color:C.y,fontWeight:700}}>{f.price}</span>
+            <span style={{marginLeft:'auto',color:'rgba(255,255,255,0.4)',fontSize:11}}>↑</span>
+          </button>
+        </div>
+      )}
+
+      {/* sheet */}
+      {sheet&&(
+        <div style={{position:'absolute',inset:0,zIndex:80,
+          background:'rgba(0,0,0,0.55)',backdropFilter:'blur(4px)'}}
+          onClick={()=>setSheet(false)}>
+          <div style={{position:'absolute',bottom:0,left:0,right:0,
+            background:'linear-gradient(180deg,#1a2240,#0f172a)',
+            borderRadius:'22px 22px 0 0',padding:'0 0 34px',
+            border:`1px solid ${C.border}`,borderBottom:'none',
+            animation:'slideUp 0.32s cubic-bezier(0.34,1.56,0.64,1)'}}
+            onClick={e=>e.stopPropagation()}>
+            <div style={{display:'flex',justifyContent:'center',padding:'10px 0 6px'}}>
+              <div style={{width:38,height:4,borderRadius:2,background:'rgba(255,255,255,0.18)'}}/>
+            </div>
+            <Row center gap={12} style={{padding:'8px 18px 14px'}}>
+              <div style={{width:44,height:44,borderRadius:12,
+                background:`${f.color}22`,border:`1px solid ${f.color}44`,
+                display:'flex',alignItems:'center',justifyContent:'center',fontSize:24}}>{f.emoji}</div>
+              <div style={{flex:1}}>
+                <div style={{color:C.t,fontWeight:700,fontSize:15}}>{f.desc.split(' ').slice(0,3).join(' ')}</div>
+                <div style={{color:C.tm,fontSize:12}}>📍 {f.loc} · {f.dist}</div>
+              </div>
+              <div>
+                <div style={{color:C.y,fontWeight:800,fontSize:22}}>{f.price}</div>
+                <div style={{color:C.tm,fontSize:11}}>{f.unit}</div>
+              </div>
+            </Row>
+            <div style={{height:1,background:C.border,margin:'0 18px 14px'}}/>
+            <Row gap={8} style={{padding:'0 18px'}}>
+              <button style={{flex:1,height:46,borderRadius:23,border:`1px solid ${C.border2}`,
+                background:'rgba(255,255,255,0.05)',color:C.t,
+                fontFamily:C.k,fontSize:13,cursor:'pointer'}}>💬 ถามร้านค้า</button>
+              <button onClick={()=>setScreen('checkout')} style={{flex:2,height:46,borderRadius:23,border:'none',
+                background:`linear-gradient(135deg,${C.p},${C.s})`,
+                color:'#fff',fontFamily:C.k,fontSize:14,fontWeight:600,cursor:'pointer',
+                boxShadow:`0 4px 18px ${C.pg}`}}>
+                🛒 สั่งเลย {f.price}
+              </button>
+            </Row>
+          </div>
+        </div>
+      )}
+
+      {/* dots */}
+      <div style={{position:'absolute',right:6,top:'50%',transform:'translateY(-50%)',
+        display:'flex',flexDirection:'column',gap:5,zIndex:40}}>
+        {FEEDS2.map((_,i)=>(
+          <div key={i} onClick={e=>{e.stopPropagation();setIdx(i);setSheet(false);}}
+            style={{width:idx===i?4:3,height:idx===i?18:10,borderRadius:3,
+              background:idx===i?'#fff':'rgba(255,255,255,0.25)',
+              transition:'all 0.3s',cursor:'pointer'}}/>
+        ))}
+      </div>
+
+      <BottomNav active="feed" setActive={setScreen}/>
+    </div>
+  );
+}
+
+// ════════════════════════════════════
+// HOME / HUB SCREEN
+// ════════════════════════════════════
+function HomeScreen({setScreen}){
+  const tiles=[
+    {id:'feed',icon:'▶',label:'ดูเพลิน',sub:'Video Feed',color:C.p,bg:`${C.p}22`},
+    {id:'near',icon:'📍',label:'ใกล้ฉัน',sub:'Map · 5 ร้าน',color:C.g,bg:`${C.g}22`},
+    {id:'checkout',icon:'🛒',label:'Checkout',sub:'4 ขั้นตอน',color:C.o,bg:`${C.o}22`},
+    {id:'creator',icon:'🎬',label:'Creator',sub:'Studio + โพสต์',color:C.r,bg:`${C.r}22`},
+    {id:'dashboard',icon:'📊',label:'Dashboard',sub:'Analytics',color:C.y,bg:`${C.y}22`},
+  ];
+  return(
+    <div style={{height:'100%',display:'flex',flexDirection:'column',background:C.bg}}>
+      {/* hero */}
+      <div style={{padding:'24px 20px 20px',
+        background:`linear-gradient(135deg,${C.deep} 0%,rgba(99,102,241,0.08) 100%)`,
+        borderBottom:`1px solid ${C.border}`}}>
+        <Row center gap={12} style={{marginBottom:16}}>
+          <div style={{width:44,height:44,borderRadius:12,
+            background:`linear-gradient(135deg,${C.p},${C.s})`,
+            display:'flex',alignItems:'center',justifyContent:'center',fontSize:22,
+            boxShadow:`0 4px 16px ${C.pg}`}}>🛺</div>
+          <div>
+            <div style={{color:C.t,fontWeight:800,fontSize:22,letterSpacing:-0.5}}>TukTuk Feed</div>
+            <div style={{color:C.tm,fontSize:12}}>Full App Prototype · v1.0</div>
+          </div>
+        </Row>
+        <div style={{background:'rgba(99,102,241,0.08)',border:`1px solid rgba(99,102,241,0.2)`,
+          borderRadius:12,padding:'10px 14px'}}>
+          <div style={{color:C.tm,fontSize:12,lineHeight:1.6}}>
+            🎯 Prototype ครบทุก flow — แตะที่หน้าจอด้านล่างเพื่อสำรวจ
+          </div>
+        </div>
+      </div>
+
+      <div style={{flex:1,overflowY:'auto',padding:'16px 16px 80px'}}>
+        <div style={{color:C.tm,fontSize:12,fontWeight:600,letterSpacing:0.5,marginBottom:10}}>SCREENS</div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:16}}>
+          {tiles.map((t,i)=>(
+            <button key={t.id} onClick={()=>setScreen(t.id)} style={{
+              background:t.bg,border:`1px solid ${t.color}33`,
+              borderRadius:16,padding:'18px 16px',cursor:'pointer',
+              textAlign:'left',transition:'all 0.2s',
+              animation:`scaleIn 0.3s ease ${i*0.05}s both`,
+              boxShadow:`0 2px 12px rgba(0,0,0,0.2)`,
+            }}
+            onMouseEnter={e=>e.currentTarget.style.transform='scale(1.03)'}
+            onMouseLeave={e=>e.currentTarget.style.transform='scale(1)'}>
+              <div style={{fontSize:28,marginBottom:8}}>{t.icon}</div>
+              <div style={{color:C.t,fontWeight:700,fontSize:15}}>{t.label}</div>
+              <div style={{color:C.tm,fontSize:11,marginTop:2}}>{t.sub}</div>
+            </button>
+          ))}
+        </div>
+
+        {/* prototype links */}
+        <div style={{color:C.tm,fontSize:12,fontWeight:600,letterSpacing:0.5,marginBottom:10}}>ไฟล์ Prototype อื่น</div>
+        {[
+          {label:'Hi-Fi Feed + Desktop','href':'TukTuk Hi-Fi Prototype.html',color:C.p},
+          {label:'Checkout & Creator Studio','href':'TukTuk Checkout & Creator.html',color:C.g},
+          {label:'Wireframe Exploration','href':'TukTuk Feed Wireframe.html',color:C.s},
+        ].map((l,i)=>(
+          <a key={i} href={l.href} style={{
+            display:'flex',alignItems:'center',gap:12,padding:'12px 14px',
+            background:C.card,borderRadius:12,border:`1px solid ${C.border}`,
+            textDecoration:'none',marginBottom:8,transition:'all 0.15s',
+            animation:`slideUp 0.3s ease ${0.2+i*0.06}s both`,
+          }}
+          onMouseEnter={e=>e.currentTarget.style.borderColor=l.color+'66'}
+          onMouseLeave={e=>e.currentTarget.style.borderColor=C.border}>
+            <div style={{width:8,height:8,borderRadius:'50%',background:l.color,flexShrink:0}}/>
+            <span style={{color:C.t,fontSize:13,flex:1}}>{l.label}</span>
+            <span style={{color:C.tm,fontSize:14}}>→</span>
+          </a>
+        ))}
+
+        {/* design notes */}
+        <div style={{background:'rgba(99,102,241,0.06)',border:`1px solid rgba(99,102,241,0.15)`,
+          borderRadius:12,padding:14,marginTop:8,animation:'fadeIn 0.5s ease 0.4s both'}}>
+          <div style={{color:C.tm,fontSize:12,fontWeight:600,marginBottom:8}}>📝 Design Decisions</div>
+          {[
+            'Mobile B: Product Sheet = ซื้อได้ทันทีโดยไม่ออกจาก feed',
+            'Desktop B: Dual video + live chat = ประสบการณ์ seller ที่ unique',
+            'Checkout: 4 steps + PromptPay first = ลด friction สูงสุด',
+            'Creator: Product tag in-video = core DNA ของแพลตฟอร์ม',
+          ].map((n,i)=>(
+            <div key={i} style={{color:C.tm,fontSize:11,lineHeight:1.6,marginBottom:4}}>
+              · {n}
+            </div>
+          ))}
+        </div>
+      </div>
+      <BottomNav active="home" setActive={setScreen}/>
+    </div>
+  );
+}
+
+// ════════════════════════════════════
+// PLACEHOLDER SCREENS
+// ════════════════════════════════════
+function PlaceholderScreen({title,icon,setScreen}){
+  return(
+    <div style={{height:'100%',display:'flex',flexDirection:'column',background:C.bg}}>
+      <Topbar title={title} back onBack={()=>setScreen('home')}/>
+      <div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:16,padding:32}}>
+        <div style={{fontSize:64,animation:'float 3s ease-in-out infinite'}}>{icon}</div>
+        <div style={{color:C.t,fontWeight:700,fontSize:18}}>{title}</div>
+        <div style={{color:C.tm,fontSize:13,textAlign:'center',lineHeight:1.7}}>
+          Screen นี้อยู่ระหว่างการพัฒนา<br/>กลับไปหน้า Home เพื่อดู screens อื่น
+        </div>
+        <button onClick={()=>setScreen('home')} style={{
+          padding:'10px 28px',borderRadius:22,border:'none',
+          background:`linear-gradient(135deg,${C.p},${C.s})`,
+          color:'#fff',fontFamily:C.k,fontSize:14,fontWeight:600,cursor:'pointer',
+          boxShadow:`0 4px 16px ${C.pg}`}}>← กลับ Home</button>
+      </div>
+      <BottomNav active="chat" setActive={setScreen}/>
+    </div>
+  );
+}
+
+// Checkout embedded (redirect)
+function CheckoutEmbed({setScreen}){
+  return(
+    <div style={{height:'100%',display:'flex',flexDirection:'column',background:C.bg}}>
+      <Topbar title="🛒 Checkout" back onBack={()=>setScreen('feed')}/>
+      <div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:16,padding:32}}>
+        <div style={{fontSize:60}}>🛒</div>
+        <div style={{color:C.t,fontWeight:700,fontSize:18}}>Checkout Flow</div>
+        <div style={{color:C.tm,fontSize:13,textAlign:'center',lineHeight:1.7}}>
+          Checkout Flow แบบ interactive ครบ 4 ขั้นตอน<br/>อยู่ในไฟล์แยกต่างหาก
+        </div>
+        <a href="TukTuk Checkout & Creator.html" style={{
+          padding:'10px 28px',borderRadius:22,border:'none',
+          background:`linear-gradient(135deg,${C.p},${C.s})`,
+          color:'#fff',fontFamily:C.k,fontSize:14,fontWeight:600,cursor:'pointer',
+          textDecoration:'none',display:'block',
+          boxShadow:`0 4px 16px ${C.pg}`}}>เปิด Checkout Prototype →</a>
+        <button onClick={()=>setScreen('home')} style={{
+          background:'none',border:'none',color:C.tm,fontFamily:C.k,fontSize:13,cursor:'pointer'}}>
+          ← กลับ Home
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function CreatorEmbed({setScreen}){
+  return(
+    <div style={{height:'100%',display:'flex',flexDirection:'column',background:C.bg}}>
+      <Topbar title="🎬 Creator Studio" back onBack={()=>setScreen('home')}/>
+      <div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:16,padding:32}}>
+        <div style={{fontSize:60,animation:'float 3s ease-in-out infinite'}}>🎬</div>
+        <div style={{color:C.t,fontWeight:700,fontSize:18}}>Creator Studio</div>
+        <div style={{color:C.tm,fontSize:13,textAlign:'center',lineHeight:1.7}}>
+          Camera preview + Effects + Product tagging<br/>อยู่ในไฟล์แยกต่างหาก
+        </div>
+        <a href="TukTuk Checkout & Creator.html" style={{
+          padding:'10px 28px',borderRadius:22,border:'none',
+          background:`linear-gradient(135deg,${C.r},#e11d48)`,
+          color:'#fff',fontFamily:C.k,fontSize:14,fontWeight:600,cursor:'pointer',
+          textDecoration:'none',display:'block',
+          boxShadow:`0 4px 16px ${C.rg}`}}>เปิด Creator Studio →</a>
+        <button onClick={()=>setScreen('home')} style={{
+          background:'none',border:'none',color:C.tm,fontFamily:C.k,fontSize:13,cursor:'pointer'}}>
+          ← กลับ Home
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ════════════════════════════════════
+// ROOT
+// ════════════════════════════════════
+function App(){
+  const[screen,setScreen]=useLs('tt_full_screen','home');
+
+  const screens={
+    home: <HomeScreen setScreen={setScreen}/>,
+    feed: <FeedScreen setScreen={setScreen}/>,
+    near: <NearMeScreen setScreen={setScreen}/>,
+    checkout: <CheckoutEmbed setScreen={setScreen}/>,
+    creator: <CreatorEmbed setScreen={setScreen}/>,
+    dashboard: <DashboardScreen setScreen={setScreen}/>,
+    chat: <PlaceholderScreen title="💬 แชท" icon="💬" setScreen={setScreen}/>,
+    profile: <DashboardScreen setScreen={setScreen}/>,
+  };
+
+  return(
+    <div style={{height:'100vh',display:'flex',flexDirection:'column',background:'#080c18',alignItems:'center',justifyContent:'center'}}>
+      {/* title bar */}
+      <div style={{position:'fixed',top:16,left:'50%',transform:'translateX(-50%)',
+        display:'flex',gap:6,background:'rgba(255,255,255,0.05)',
+        border:'1px solid rgba(255,255,255,0.1)',borderRadius:10,
+        padding:4,zIndex:9999,backdropFilter:'blur(20px)'}}>
+        {[['home','🏠'],['feed','▶'],['near','📍'],['dashboard','📊']].map(([id,ic])=>(
+          <button key={id} onClick={()=>setScreen(id)} style={{
+            width:36,height:28,borderRadius:6,border:'none',
+            background:screen===id?C.p:'transparent',
+            color:screen===id?'#fff':C.tm,
+            fontFamily:C.k,fontSize:13,cursor:'pointer',transition:'all 0.2s'}}>
+            {ic}
+          </button>
+        ))}
+      </div>
+
+      {/* phone */}
+      <Phone>
+        <div style={{height:'100%',animation:'fadeIn 0.3s ease'}}>
+          {React.cloneElement(screens[screen]||screens.home)}
+        </div>
+      </Phone>
+
+      {/* hints */}
+      <div style={{position:'fixed',bottom:16,color:'rgba(255,255,255,0.2)',fontSize:11,textAlign:'center'}}>
+        State บันทึกอัตโนมัติ · refresh ได้เลย
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

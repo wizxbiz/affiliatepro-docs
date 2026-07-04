@@ -1,0 +1,169 @@
+/* ==================== MARKETPLACE CSS STYLES ==================== */
+/* เพิ่มโค้ด CSS นี้ลงใน <style> tag ของ smart-farm.html (ก่อน </style>) */
+
+/* Market Search */
+.market-search-wrapper {
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto 30px;
+}
+
+.market-search-input {
+    width: 100%;
+    padding: 15px 50px 15px 25px;
+    border: 2px solid #e5e7eb;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+    background: white;
+    color: #374151;
+}
+
+.market-search-input:focus {
+    outline: none;
+    border-color: #ea580c;
+    box-shadow: 0 0 0 4px rgba(234, 88, 12, 0.1);
+}
+
+.market-search-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(135deg, #ea580c, #c2410c);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.market-search-btn:hover {
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 4px 10px rgba(234, 88, 12, 0.3);
+}
+
+/* Market Categories */
+.market-cat-scroll {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 5px 5px 20px;
+    margin-bottom: 20px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.market-cat-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.market-cat-item {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s;
+    white-space: nowrap;
+    color: #4b5563;
+    font-weight: 500;
+}
+
+.market-cat-item:hover, 
+.market-cat-item.active {
+    background: linear-gradient(135deg, #ea580c, #c2410c);
+    color: white;
+    border-color: #ea580c;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(234, 88, 12, 0.2);
+}
+
+/* Market Stats Banner */
+.market-stats-banner {
+    background: linear-gradient(135deg, #1f2937, #111827);
+    border-radius: 20px;
+    padding: 30px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 40px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.market-stats-banner::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(234, 88, 12, 0.2) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.m-stat-item {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.m-stat-val {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.m-stat-label {
+    font-size: 0.9rem;
+    color: #9ca3af;
+}
+
+/* Product Card Enhancements */
+.product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15) !important;
+}
+
+.product-img {
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover .product-img span {
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .market-stats-banner {
+        padding: 20px;
+    }
+    
+    .m-stat-val {
+        font-size: 1.5rem;
+    }
+    
+    .market-search-input {
+        font-size: 1rem;
+        padding: 12px 45px 12px 20px;
+    }
+}
+
+/* ==================== END OF MARKETPLACE CSS ==================== */

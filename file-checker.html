@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตรวจสอบโครงสร้างไฟล์ Wizmobiz</title>
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .file-structure {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: monospace;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .folder {
+            color: #40C4FF;
+            font-weight: bold;
+        }
+        .file {
+            color: #FFD740;
+        }
+        .required {
+            color: #4CAF50;
+        }
+        .missing {
+            color: #FF6F61;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+        }
+        .checklist {
+            text-align: left;
+            margin: 20px 0;
+        }
+        .check-item {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        .check-item i {
+            margin-right: 10px;
+        }
+        .fa-check { color: #4CAF50; }
+        .fa-times { color: #FF6F61; }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-folder-tree"></i> ตรวจสอบโครงสร้างไฟล์ Wizmobiz</h1>
+        
+        <div class="file-structure" id="fileStructure">
+            <!-- ไฟล์จะแสดงที่นี่โดย JavaScript -->
+            กำลังโหลดโครงสร้างไฟล์...
+        </div>
+
+        <div class="status" id="statusCheck">
+            <h3><i class="fas fa-clipboard-check"></i> ตรวจสอบไฟล์จำเป็น</h3>
+            <div class="checklist" id="checklist">
+                <!-- Checklist จะแสดงที่นี่ -->
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <button onclick="copyStructure()" class="btn">
+                <i class="fas fa-copy"></i> คัดลอกโครงสร้าง
+            </button>
+            <button onclick="refreshStructure()" class="btn">
+                <i class="fas fa-sync-alt"></i> รีเฟรช
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ตัวอย่างโครงสร้างไฟล์ (คุณต้องปรับเปลี่ยนตามโปรเจคต์จริงของคุณ)
+        const projectStructure = {
+            "name": "wizmobiz-project",
+            "type": "folder",
+            "children": [
+                {
+                    "name": "index.html",
+                    "type": "file",
+                    "required": true
+                },
+                {
+                    "name": "chat.html", 
+                    "type": "file",
+                    "required": false
+                },
+                {
+                    "name": "manifest.json",
+                    "type": "file", 
+                    "required": true
+                },
+                {
+                    "name": "sw.js",
+                    "type": "file",
+                    "required": true
+                },
+                {
+                    "name": "assets",
+                    "type": "folder",
+                    "children": [
+                        {
+                            "name": "css",
+                            "type": "folder", 
+                            "children": [
+                                {"name": "style.css", "type": "file"},
+                                {"name": "responsive.css", "type": "file"}
+                            ]
+                        },
+                        {
+                            "name": "js", 
+                            "type": "folder",
+                            "children": [
+                                {"name": "app.js", "type": "file"},
+                                {"name": "chat.js", "type": "file"}
+                            ]
+                        },
+                        {
+                            "name": "images",
+                            "type": "folder",
+                            "children": [
+                                {"name": "logo.png", "type": "file"},
+                                {"name": "hero-bg.jpg", "type": "file"}
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "icons",
+                    "type": "folder",
+                    "required": true,
+                    "children": [
+                        {"name": "icon-192x192.png", "type": "file", "required": true},
+                        {"name": "icon-512x512.png", "type": "file", "required": true}
+                    ]
+                }
+            ]
+        };
+
+        function renderStructure(structure, level = 0) {
+            let html = '';
+            const indent = '  '.repeat(level);
+            
+            if (structure.type === 'folder') {
+                html += `<div class="folder">${indent}📁 ${structure.name}/</div>`;
+                if (structure.children) {
+                    structure.children.forEach(child => {
+                        html += renderStructure(child, level + 1);
+                    });
+                }
+            } else {
+                const requiredClass = structure.required ? 'required' : '';
+                html += `<div class="file ${requiredClass}">${indent}📄 ${structure.name}</div>`;
+            }
+            
+            return html;
+        }
+
+        function checkRequirements(structure) {
+            const requirements = [
+                { name: 'index.html', found: false, required: true },
+                { name: 'manifest.json', found: false, required: true },
+                { name: 'sw.js', found: false, required: true },
+                { name: 'icon-192x192.png', found: false, required: true },
+                { name: 'icon-512x512.png', found: false, required: true }
+            ];
+
+            function checkItem(item) {
+                if (item.type === 'file') {
+                    requirements.forEach(req => {
+                        if (item.name === req.name) {
+                            req.found = true;
+                        }
+                    });
+                }
+                if (item.children) {
+                    item.children.forEach(child => checkItem(child));
+                }
+            }
+
+            structure.children.forEach(child => checkItem(child));
+            return requirements;
+        }
+
+        function displayChecklist(requirements) {
+            let html = '';
+            requirements.forEach(req => {
+                const icon = req.found ? 'fa-check' : 'fa-times';
+                const colorClass = req.found ? 'fa-check' : 'fa-times';
+                html += `
+                    <div class="check-item">
+                        <i class="fas ${icon} ${colorClass}"></i>
+                        ${req.name} 
+                        ${req.required ? '<span style="color: #FFD740;">(จำเป็น)</span>' : ''}
+                    </div>
+                `;
+            });
+            return html;
+        }
+
+        function init() {
+            const fileStructureDiv = document.getElementById('fileStructure');
+            const checklistDiv = document.getElementById('checklist');
+            
+            fileStructureDiv.innerHTML = renderStructure(projectStructure);
+            
+            const requirements = checkRequirements(projectStructure);
+            checklistDiv.innerHTML = displayChecklist(requirements);
+        }
+
+        function copyStructure() {
+            const structureText = JSON.stringify(projectStructure, null, 2);
+            navigator.clipboard.writeText(structureText).then(() => {
+                alert('คัดลอกโครงสร้างไฟล์เรียบร้อยแล้ว!');
+            });
+        }
+
+        function refreshStructure() {
+            init();
+            alert('รีเฟรชโครงสร้างไฟล์เรียบร้อย!');
+        }
+
+        // เริ่มต้นแสดงผล
+        init();
+    </script>
+
+    <style>
+        .btn {
+            background: #40C4FF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            margin: 0 10px;
+            cursor: pointer;
+            font-family: 'Kanit', sans-serif;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(64, 196, 255, 0.4);
+        }
+    </style>
+</body>
+</html>

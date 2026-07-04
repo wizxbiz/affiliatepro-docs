@@ -1,0 +1,1374 @@
+[
+  {
+    "insertId": "694006dd0002ea68b8f2c273",
+    "labels": {
+      "execution_id": "75yepzoyg4ln",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:21.446022193Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "7623407975914095164",
+    "textPayload": "??? Received: B1PIVPKeWliBlDb1M1sEMj5OGeN/RmAMDparVV2bdDs=\n",
+    "timestamp": "2025-12-15T13:02:21.191080Z"
+  },
+  {
+    "insertId": "694006dd0002ea0d32fe1074",
+    "labels": {
+      "execution_id": "75yepzoyg4ln",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:21.446022193Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "7623407975914095164",
+    "textPayload": "??? Expected: TjfBx9c2HSFjhUv/v0gPf47ko5jaFIM2g+pUjSl7axA=\n",
+    "timestamp": "2025-12-15T13:02:21.190989Z"
+  },
+  {
+    "insertId": "694006dd0002e9afa898359d",
+    "labels": {
+      "execution_id": "75yepzoyg4ln",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:21.446022193Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "7623407975914095164",
+    "textPayload": "? Invalid signature\n",
+    "timestamp": "2025-12-15T13:02:21.190895Z"
+  },
+  {
+    "insertId": "694006dd0002e8e0f069f7ac",
+    "labels": {
+      "execution_id": "75yepzoyg4ln",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:21.446022193Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "7623407975914095164",
+    "textPayload": "??? Headers: [\n  'host',\n  'x-line-signature',\n  'content-type',\n  'content-length',\n  'user-agent',\n  'x-cloud-trace-context',\n  'x-forwarded-proto',\n  'traceparent',\n  'x-forwarded-for',\n  'forwarded'\n]\n",
+    "timestamp": "2025-12-15T13:02:21.190688Z"
+  },
+  {
+    "insertId": "694006dd0002e801ef55d80b",
+    "labels": {
+      "execution_id": "75yepzoyg4ln",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:21.446022193Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "7623407975914095164",
+    "textPayload": "??? Path: /\n",
+    "timestamp": "2025-12-15T13:02:21.190465Z"
+  },
+  {
+    "insertId": "694006dd0002e79f5dea78c3",
+    "labels": {
+      "execution_id": "75yepzoyg4ln",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:21.446022193Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "7623407975914095164",
+    "textPayload": "??? Method: POST\n",
+    "timestamp": "2025-12-15T13:02:21.190367Z"
+  },
+  {
+    "insertId": "694006dd0002e742d2686104",
+    "labels": {
+      "execution_id": "75yepzoyg4ln",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:21.446022193Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "7623407975914095164",
+    "textPayload": "\n? LINE WEBHOOK RECEIVED [ubwi1emk]\n",
+    "timestamp": "2025-12-15T13:02:21.190274Z"
+  },
+  {
+    "httpRequest": {
+      "latency": "0.004085680s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "147.92.149.165",
+      "requestMethod": "POST",
+      "requestSize": "1308",
+      "requestUrl": "https://us-central1-appinjproject.cloudfunctions.net/lineWebhook",
+      "responseSize": "151",
+      "serverIp": "216.239.36.54",
+      "status": 401,
+      "userAgent": "LineBotWebhook/2.0"
+    },
+    "insertId": "694006dd0002ed0b4015554d",
+    "labels": {
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2025-12-15T13:02:21.411888606Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "WARNING",
+    "spanId": "69cbc929de3d423c",
+    "timestamp": "2025-12-15T13:02:21.186393Z",
+    "trace": "projects/appinjproject/traces/48ea6aad6337f67636f565088f643153"
+  },
+  {
+    "insertId": "694006d800034f57ce510eb7",
+    "labels": {
+      "execution_id": "75y95t3f288q",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:16.449009245Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18372728247245400849",
+    "textPayload": "\n? Webhook processed successfully [miw47inl]\n",
+    "timestamp": "2025-12-15T13:02:16.216919Z"
+  },
+  {
+    "insertId": "694006d800034ed1f3f933b9",
+    "labels": {
+      "execution_id": "75y95t3f288q",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:16.449009245Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18372728247245400849",
+    "textPayload": "? Sent AI-generated content for computertech\n",
+    "timestamp": "2025-12-15T13:02:16.216785Z"
+  },
+  {
+    "insertId": "694006d600002d0a5642be78",
+    "labels": {
+      "execution_id": "75y95t3f288q",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:14.118421558Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18372728247245400849",
+    "textPayload": "? Checking if startsWith /quiz: \"/edu vocational computertech\" -> false\n",
+    "timestamp": "2025-12-15T13:02:14.011530Z"
+  },
+  {
+    "insertId": "694006d600002c9e7c905c80",
+    "labels": {
+      "execution_id": "75y95t3f288q",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:14.118421558Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18372728247245400849",
+    "textPayload": "? startsWith /quiz : false\n",
+    "timestamp": "2025-12-15T13:02:14.011422Z"
+  },
+  {
+    "insertId": "694006d600002c3f800838a9",
+    "labels": {
+      "execution_id": "75y95t3f288q",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:14.118421558Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18372728247245400849",
+    "textPayload": "? msgTextLower: \"/edu vocational computertech\"\n",
+    "timestamp": "2025-12-15T13:02:14.011327Z"
+  },
+  {
+    "insertId": "694006d600002be10754e003",
+    "labels": {
+      "execution_id": "75y95t3f288q",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:14.118421558Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18372728247245400849",
+    "textPayload": "? === ENTERING STUDENT LEARNING MODULE ===\n",
+    "timestamp": "2025-12-15T13:02:14.011233Z"
+  },
+  {
+    "insertId": "694006d600002b7c8f93179f",
+    "labels": {
+      "execution_id": "75y95t3f288q",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:14.118421558Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18372728247245400849",
+    "textPayload": "? DEBUG: Passed HELP CHECK, heading to STUDENT LEARNING MODULE\n",
+    "timestamp": "2025-12-15T13:02:14.011132Z"
+  },
+  {
+    "insertId": "694006d600002af64dfb42be",
+    "labels": {
+      "execution_id": "75y95t3f288q",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:14.118421558Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18372728247245400849",
+    "textPayload": "? DEBUG: Passed user data setup, now at BAN CHECK\n",
+    "timestamp": "2025-12-15T13:02:14.010998Z"
+  },
+  {
+    "insertId": "694006d5000f0e891a714506",
+    "labels": {
+      "execution_id": "75y95t3f288q",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:14.118421558Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18372728247245400849",
+    "textPayload": "? ENTERING FREEMIUM QUOTA SYSTEM for text: \"/edu vocational computerTech\"\n",
+    "timestamp": "2025-12-15T13:02:13.986761Z"
+  },
+  {
+    "insertId": "694006d5000f0d819fa98e5d",
+    "labels": {
+      "execution_id": "75y95t3f288q",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:14.118421558Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18372728247245400849",
+    "textPayload": "??? Reply Token: 893288efbd184a9598327c4b87abd835\n",
+    "timestamp": "2025-12-15T13:02:13.986497Z"
+  },
+  {
+    "insertId": "694006d5000f0d254dafe2bc",
+    "labels": {
+      "execution_id": "75y95t3f288q",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:14.118421558Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18372728247245400849",
+    "textPayload": "??? Text: /edu vocational computerTech\n",
+    "timestamp": "2025-12-15T13:02:13.986405Z"
+  },
+  {
+    "insertId": "694006d5000f0cd627dac101",
+    "labels": {
+      "execution_id": "75y95t3f288q",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:14.118421558Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18372728247245400849",
+    "textPayload": "??? Type: text\n",
+    "timestamp": "2025-12-15T13:02:13.986326Z"
+  },
+  {
+    "insertId": "694006d5000f0c7b60f3ae92",
+    "labels": {
+      "execution_id": "75y95t3f288q",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:14.118421558Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18372728247245400849",
+    "textPayload": "\n? Message Event [miw47inl]:\n",
+    "timestamp": "2025-12-15T13:02:13.986235Z"
+  },
+  {
+    "insertId": "694006d5000f0be9bf66517b",
+    "labels": {
+      "execution_id": "75y95t3f288q",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:14.118421558Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18372728247245400849",
+    "textPayload": "??? Timestamp: 1765803733620\n",
+    "timestamp": "2025-12-15T13:02:13.986089Z"
+  },
+  {
+    "insertId": "694006d5000f0b846a18c486",
+    "labels": {
+      "execution_id": "75y95t3f288q",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:14.118421558Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18372728247245400849",
+    "textPayload": "??? User ID: Ud9bec6d2ea945cf4330a69cb74ac93cf\n",
+    "timestamp": "2025-12-15T13:02:13.985988Z"
+  },
+  {
+    "insertId": "694006d5000f0b20c2dd82a1",
+    "labels": {
+      "execution_id": "75y95t3f288q",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:14.118421558Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18372728247245400849",
+    "textPayload": "??? Source: user\n",
+    "timestamp": "2025-12-15T13:02:13.985888Z"
+  },
+  {
+    "insertId": "694006d5000f0a203fbfd1df",
+    "labels": {
+      "execution_id": "75y95t3f288q",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:14.118421558Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18372728247245400849",
+    "textPayload": "\n? Event Type: message\n",
+    "timestamp": "2025-12-15T13:02:13.985632Z"
+  },
+  {
+    "insertId": "694006d5000f08a7b89ec0b5",
+    "labels": {
+      "execution_id": "75y95t3f288q",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:14.118421558Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18372728247245400849",
+    "textPayload": "\n? Processing 1 event(s)\n",
+    "timestamp": "2025-12-15T13:02:13.985255Z"
+  },
+  {
+    "insertId": "694006d5000f084c3f805df9",
+    "labels": {
+      "execution_id": "75y95t3f288q",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:14.118421558Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18372728247245400849",
+    "textPayload": "? Signature validated\n",
+    "timestamp": "2025-12-15T13:02:13.985164Z"
+  },
+  {
+    "insertId": "694006d5000f077fd8142d83",
+    "labels": {
+      "execution_id": "75y95t3f288q",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:14.118421558Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18372728247245400849",
+    "textPayload": "??? Headers: [\n  'host',\n  'x-line-signature',\n  'content-type',\n  'content-length',\n  'user-agent',\n  'x-cloud-trace-context',\n  'x-forwarded-proto',\n  'traceparent',\n  'x-forwarded-for',\n  'forwarded'\n]\n",
+    "timestamp": "2025-12-15T13:02:13.984959Z"
+  },
+  {
+    "insertId": "694006d5000f061796527c9c",
+    "labels": {
+      "execution_id": "75y95t3f288q",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:14.118421558Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18372728247245400849",
+    "textPayload": "??? Path: /\n",
+    "timestamp": "2025-12-15T13:02:13.984599Z"
+  },
+  {
+    "insertId": "694006d5000f05b332b9a23a",
+    "labels": {
+      "execution_id": "75y95t3f288q",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:14.118421558Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18372728247245400849",
+    "textPayload": "??? Method: POST\n",
+    "timestamp": "2025-12-15T13:02:13.984499Z"
+  },
+  {
+    "insertId": "694006d5000f054afee11f43",
+    "labels": {
+      "execution_id": "75y95t3f288q",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:14.118421558Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "18372728247245400849",
+    "textPayload": "\n? LINE WEBHOOK RECEIVED [miw47inl]\n",
+    "timestamp": "2025-12-15T13:02:13.984394Z"
+  },
+  {
+    "httpRequest": {
+      "latency": "2.236986982s",
+      "protocol": "HTTP/1.1",
+      "remoteIp": "147.92.149.165",
+      "requestMethod": "POST",
+      "requestSize": "1238",
+      "requestUrl": "https://us-central1-appinjproject.cloudfunctions.net/lineWebhook",
+      "responseSize": "135",
+      "serverIp": "216.239.36.54",
+      "status": 200,
+      "userAgent": "LineBotWebhook/2.0"
+    },
+    "insertId": "694006d80003542014c0510b",
+    "labels": {
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Frequests",
+    "receiveTimestamp": "2025-12-15T13:02:16.415186186Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "severity": "INFO",
+    "spanId": "fef90aff7bd8eb11",
+    "timestamp": "2025-12-15T13:02:13.979465Z",
+    "trace": "projects/appinjproject/traces/dcdd0fb70567787f6893c22ebe5cab0c"
+  },
+  {
+    "insertId": "694006d3000b30d02ec898d6",
+    "labels": {
+      "execution_id": "75y70cqpc3sb",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:11.787471260Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "3060420920682412687",
+    "textPayload": "\n? Webhook processed successfully [drstinpb]\n",
+    "timestamp": "2025-12-15T13:02:11.733392Z"
+  },
+  {
+    "insertId": "694006d3000b304befa0b4f8",
+    "labels": {
+      "execution_id": "75y70cqpc3sb",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:11.787471260Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "3060420920682412687",
+    "textPayload": "? Sent Subjects Menu for vocational\n",
+    "timestamp": "2025-12-15T13:02:11.733259Z"
+  },
+  {
+    "insertId": "694006d30003b0eb954acd57",
+    "labels": {
+      "execution_id": "75y70cqpc3sb",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:11.455227563Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "3060420920682412687",
+    "textPayload": "? Checking if startsWith /quiz: \"/edu vocational\" -> false\n",
+    "timestamp": "2025-12-15T13:02:11.241899Z"
+  },
+  {
+    "insertId": "694006d30003b065a5ff7057",
+    "labels": {
+      "execution_id": "75y70cqpc3sb",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:11.455227563Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "3060420920682412687",
+    "textPayload": "? startsWith /quiz : false\n",
+    "timestamp": "2025-12-15T13:02:11.241765Z"
+  },
+  {
+    "insertId": "694006d30003b00ec9a5590a",
+    "labels": {
+      "execution_id": "75y70cqpc3sb",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:11.455227563Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "3060420920682412687",
+    "textPayload": "? msgTextLower: \"/edu vocational\"\n",
+    "timestamp": "2025-12-15T13:02:11.241678Z"
+  },
+  {
+    "insertId": "694006d30003af5b80d16999",
+    "labels": {
+      "execution_id": "75y70cqpc3sb",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:11.455227563Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "3060420920682412687",
+    "textPayload": "? === ENTERING STUDENT LEARNING MODULE ===\n",
+    "timestamp": "2025-12-15T13:02:11.241499Z"
+  },
+  {
+    "insertId": "694006d30003af0cf69ccd5e",
+    "labels": {
+      "execution_id": "75y70cqpc3sb",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:11.455227563Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "3060420920682412687",
+    "textPayload": "? DEBUG: Passed HELP CHECK, heading to STUDENT LEARNING MODULE\n",
+    "timestamp": "2025-12-15T13:02:11.241420Z"
+  },
+  {
+    "insertId": "694006d30003ae9b6ea61efe",
+    "labels": {
+      "execution_id": "75y70cqpc3sb",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:11.455227563Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "3060420920682412687",
+    "textPayload": "? DEBUG: Passed user data setup, now at BAN CHECK\n",
+    "timestamp": "2025-12-15T13:02:11.241307Z"
+  },
+  {
+    "insertId": "694006d30003056977797172",
+    "labels": {
+      "execution_id": "75y70cqpc3sb",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:11.455227563Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "3060420920682412687",
+    "textPayload": "? ENTERING FREEMIUM QUOTA SYSTEM for text: \"/edu vocational\"\n",
+    "timestamp": "2025-12-15T13:02:11.197993Z"
+  },
+  {
+    "insertId": "694006d3000304ba45b822e2",
+    "labels": {
+      "execution_id": "75y70cqpc3sb",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:11.455227563Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "3060420920682412687",
+    "textPayload": "??? Reply Token: 8e803b73f9a545c5804362b14c80a004\n",
+    "timestamp": "2025-12-15T13:02:11.197818Z"
+  },
+  {
+    "insertId": "694006d300030457f6397939",
+    "labels": {
+      "execution_id": "75y70cqpc3sb",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:11.455227563Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "3060420920682412687",
+    "textPayload": "??? Text: /edu vocational\n",
+    "timestamp": "2025-12-15T13:02:11.197719Z"
+  },
+  {
+    "insertId": "694006d3000303f0b049105f",
+    "labels": {
+      "execution_id": "75y70cqpc3sb",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:11.455227563Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "3060420920682412687",
+    "textPayload": "??? Type: text\n",
+    "timestamp": "2025-12-15T13:02:11.197616Z"
+  },
+  {
+    "insertId": "694006d30003038ebbd1c51b",
+    "labels": {
+      "execution_id": "75y70cqpc3sb",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:11.455227563Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "3060420920682412687",
+    "textPayload": "\n? Message Event [drstinpb]:\n",
+    "timestamp": "2025-12-15T13:02:11.197518Z"
+  },
+  {
+    "insertId": "694006d30003030d644bb59e",
+    "labels": {
+      "execution_id": "75y70cqpc3sb",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:11.455227563Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "3060420920682412687",
+    "textPayload": "??? Timestamp: 1765803730639\n",
+    "timestamp": "2025-12-15T13:02:11.197389Z"
+  },
+  {
+    "insertId": "694006d3000302acf375fbba",
+    "labels": {
+      "execution_id": "75y70cqpc3sb",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:11.455227563Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "3060420920682412687",
+    "textPayload": "??? User ID: Ud9bec6d2ea945cf4330a69cb74ac93cf\n",
+    "timestamp": "2025-12-15T13:02:11.197292Z"
+  },
+  {
+    "insertId": "694006d30003024c1a6d346b",
+    "labels": {
+      "execution_id": "75y70cqpc3sb",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:11.455227563Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "3060420920682412687",
+    "textPayload": "??? Source: user\n",
+    "timestamp": "2025-12-15T13:02:11.197196Z"
+  },
+  {
+    "insertId": "694006d3000301e43a5a2c4d",
+    "labels": {
+      "execution_id": "75y70cqpc3sb",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:11.455227563Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "3060420920682412687",
+    "textPayload": "\n? Event Type: message\n",
+    "timestamp": "2025-12-15T13:02:11.197092Z"
+  },
+  {
+    "insertId": "694006d30003014de08bd178",
+    "labels": {
+      "execution_id": "75y70cqpc3sb",
+      "firebase-functions-hash": "c48130ff260224a18dcc53d4e55d933ba9133c76",
+      "goog-drz-cloudfunctions-id": "linewebhook",
+      "goog-drz-cloudfunctions-location": "us-central1",
+      "goog-managed-by": "cloudfunctions",
+      "instanceId": "0007e26d68d7e5ef67245a1a94d228501cf9b0182aab3d2455ff4d88fab55f0ffea2d38b7cd8b37f95a04f926576ef597b8fd6290b7d26c326798017d526dd9d4189b0a077f0b831cd308ba5",
+      "run.googleapis.com/base_image_versions": "us-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs20:nodejs20_20251207_20_19_5_RC00"
+    },
+    "logName": "projects/appinjproject/logs/run.googleapis.com%2Fstdout",
+    "receiveTimestamp": "2025-12-15T13:02:11.455227563Z",
+    "resource": {
+      "labels": {
+        "configuration_name": "linewebhook",
+        "location": "us-central1",
+        "project_id": "appinjproject",
+        "revision_name": "linewebhook-00163-baw",
+        "service_name": "linewebhook"
+      },
+      "type": "cloud_run_revision"
+    },
+    "spanId": "3060420920682412687",
+    "textPayload": "\n? Processing 1 event(s)\n",
+    "timestamp": "2025-12-15T13:02:11.196941Z"
+  }
+]

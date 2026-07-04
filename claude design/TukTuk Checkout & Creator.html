@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TukTuk — Checkout & Creator Studio</title>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#080c18;font-family:'Kanit',sans-serif;overflow:hidden}
+#root{height:100%}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
+
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes scaleIn{from{transform:scale(0.85);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes checkDraw{from{stroke-dashoffset:50}to{stroke-dashoffset:0}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes recordPulse{0%,100%{box-shadow:0 0 0 0 rgba(244,63,94,0.6)}50%{box-shadow:0 0 0 12px rgba(244,63,94,0)}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+const T = {
+  bg: '#0f172a', bgDeep: '#080c18', bgCard: '#111827',
+  surface: 'rgba(255,255,255,0.05)',
+  border: 'rgba(255,255,255,0.08)',
+  primary: '#6366f1', primaryGlow: 'rgba(99,102,241,0.35)',
+  secondary: '#a855f7',
+  green: '#10b981', greenGlow: 'rgba(16,185,129,0.3)',
+  orange: '#f97316', yellow: '#facc15',
+  red: '#f43f5e', redGlow: 'rgba(244,63,94,0.3)',
+  text: '#f1f5f9', textMuted: 'rgba(255,255,255,0.45)', textFaint: 'rgba(255,255,255,0.2)',
+  kanit: "'Kanit',sans-serif",
+};
+
+function useLocalStorage(key, def) {
+  const [v, setV] = React.useState(() => {
+    try { const s = localStorage.getItem(key); return s ? JSON.parse(s) : def; } catch { return def; }
+  });
+  const set = React.useCallback(x => { setV(x); try { localStorage.setItem(key, JSON.stringify(x)); } catch {} }, [key]);
+  return [v, set];
+}
+
+// ─── Shared UI ────────────────────────────────────────────────
+const Btn = ({ children, variant='primary', onClick, disabled, full, style={} }) => {
+  const [press, setPress] = React.useState(false);
+  const bg = {
+    primary: `linear-gradient(135deg,${T.primary},${T.secondary})`,
+    ghost: 'rgba(255,255,255,0.06)',
+    green: `linear-gradient(135deg,${T.green},#059669)`,
+    danger: `linear-gradient(135deg,${T.red},#e11d48)`,
+  }[variant];
+  const shadow = {
+    primary: `0 4px 20px ${T.primaryGlow}`,
+    green: `0 4px 20px ${T.greenGlow}`,
+    ghost: 'none', danger: `0 4px 20px ${T.redGlow}`,
+  }[variant];
+  return (
+    <button onClick={onClick} disabled={disabled}
+      onMouseDown={() => setPress(true)} onMouseUp={() => setPress(false)} onMouseLeave={() => setPress(false)}
+      style={{
+        width: full ? '100%' : undefined, height: 50, borderRadius: 25,
+        border: variant === 'ghost' ? `1px solid ${T.border}` : 'none',
+        background: disabled ? 'rgba(255,255,255,0.05)' : bg,
+        color: disabled ? T.textFaint : '#fff',
+        fontFamily: T.kanit, fontSize: 15, fontWeight: 600,
+        cursor: disabled ? 'default' : 'pointer',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+        boxShadow: disabled ? 'none' : shadow,
+        transform: press ? 'scale(0.97)' : 'scale(1)',
+        transition: 'all 0.15s', padding: '0 24px',
+        ...style,
+      }}>{children}</button>
+  );
+};
+
+const Card = ({ children, style={} }) => (
+  <div style={{
+    background: T.bgCard, borderRadius: 16,
+    border: `1px solid ${T.border}`,
+    ...style,
+  }}>{children}</div>
+);
+
+const Divider = ({ style={} }) => (
+  <div style={{ height: 1, background: T.border, ...style }}/>
+);
+
+// ─── Phone shell ──────────────────────────────────────────────
+const Phone = ({ children }) => (
+  <div style={{
+    width: 390, height: 'min(844px,calc(100vh - 110px))',
+    borderRadius: 48, overflow: 'hidden', position: 'relative', flexShrink: 0,
+    background: T.bg,
+    boxShadow: '0 40px 100px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.1)',
+  }}>
+    {/* Dynamic Island */}
+    <div style={{
+      position: 'absolute', top: 10, left: '50%', transform: 'translateX(-50%)',
+      width: 120, height: 34, borderRadius: 20, background: '#000', zIndex: 200,
+    }}/>
+    {/* Status bar */}
+    <div style={{
+      position: 'absolute', top: 0, left: 0, right: 0, height: 54,
+      display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
+      padding: '0 28px 8px', zIndex: 100, pointerEvents: 'none',
+    }}>
+      <span style={{ color: T.text, fontSize: 15, fontWeight: 600 }}>9:41</span>
+      <span style={{ color: T.text, fontSize: 13 }}>●●● 📶 🔋</span>
+    </div>
+    {/* Content */}
+    <div style={{ height: '100%', overflowY: 'auto', paddingTop: 54 }}>
+      {children}
+    </div>
+    {/* Home indicator */}
+    <div style={{
+      position: 'absolute', bottom: 8, left: '50%', transform: 'translateX(-50%)',
+      width: 134, height: 5, borderRadius: 3,
+      background: 'rgba(255,255,255,0.25)', zIndex: 200, pointerEvents: 'none',
+    }}/>
+  </div>
+);
+
+// ════════════════════════════════════════════════════
+// CHECKOUT FLOW (4 steps)
+// ════════════════════════════════════════════════════
+const STEPS = ['สินค้า','จัดส่ง','ชำระเงิน','ยืนยัน'];
+const PRODUCT = { name: 'มะพร้าวน้ำหอม', seller: '@สวนมะพร้าวออร์แกนิค', price: 45, emoji: '🥥', color: '#10b981', loc: 'ราชบุรี', dist: '1.2 กม.' };
+const DELIVERY = [
+  { id: 'kerry', name: 'Kerry Express', days: '1-2 วัน', price: 40, icon: '📦' },
+  { id: 'flash', name: 'Flash Express', days: '2-3 วัน', price: 30, icon: '⚡' },
+  { id: 'pickup', name: 'รับเอง', days: 'วันนี้', price: 0, icon: '🏪' },
+];
+const PAYMENTS = [
+  { id: 'promptpay', name: 'PromptPay', sub: 'xxxx-xxxx-1234', icon: '💚', brand: '#00b900' },
+  { id: 'card', name: 'บัตรเครดิต', sub: '**** **** **** 4567', icon: '💳', brand: '#6366f1' },
+  { id: 'cod', name: 'เก็บเงินปลายทาง', sub: 'ชำระเมื่อได้รับสินค้า', icon: '💵', brand: '#f97316' },
+];
+
+function CheckoutFlow() {
+  const [step, setStep] = useLocalStorage('tt_checkout_step', 0);
+  const [qty, setQty] = React.useState(3);
+  const [delivery, setDelivery] = React.useState('kerry');
+  const [payment, setPayment] = React.useState('promptpay');
+  const [loading, setLoading] = React.useState(false);
+  const [done, setDone] = React.useState(false);
+
+  const deliv = DELIVERY.find(d => d.id === delivery);
+  const total = PRODUCT.price * qty + (deliv?.price || 0);
+
+  const handleNext = () => {
+    if (step === 2) {
+      setLoading(true);
+      setTimeout(() => { setLoading(false); setDone(true); setStep(3); }, 1800);
+    } else {
+      setStep(s => Math.min(3, s + 1));
+    }
+  };
+
+  if (done && step === 3) return <OrderSuccess onBack={() => { setStep(0); setDone(false); }}/>;
+
+  return (
+    <div style={{ minHeight: '100%', display: 'flex', flexDirection: 'column', background: T.bg }}>
+      {/* Header */}
+      <div style={{
+        padding: '12px 20px 0', display: 'flex', alignItems: 'center', gap: 14,
+        borderBottom: `1px solid ${T.border}`, paddingBottom: 14,
+      }}>
+        <button onClick={() => setStep(s => Math.max(0, s-1))} style={{
+          width: 38, height: 38, borderRadius: 12,
+          background: T.surface, border: `1px solid ${T.border}`,
+          color: T.text, fontSize: 18, cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>←</button>
+        <div style={{ flex: 1 }}>
+          <div style={{ color: T.text, fontWeight: 700, fontSize: 16 }}>สั่งสินค้า</div>
+          <div style={{ color: T.textMuted, fontSize: 12 }}>ขั้นตอน {step+1} จาก {STEPS.length}</div>
+        </div>
+      </div>
+
+      {/* Progress */}
+      <div style={{ padding: '16px 20px', display: 'flex', gap: 6, alignItems: 'center' }}>
+        {STEPS.map((s, i) => (
+          <React.Fragment key={i}>
+            <div style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+              flex: 1,
+            }}>
+              <div style={{
+                width: 28, height: 28, borderRadius: '50%',
+                background: i < step ? T.green : i === step ? T.primary : T.surface,
+                border: `2px solid ${i < step ? T.green : i === step ? T.primary : T.border}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: '#fff', fontSize: 12, fontWeight: 700,
+                transition: 'all 0.3s',
+                boxShadow: i === step ? `0 0 12px ${T.primaryGlow}` : 'none',
+              }}>{i < step ? '✓' : i + 1}</div>
+              <span style={{ color: i === step ? T.primary : T.textFaint, fontSize: 10, fontWeight: i === step ? 600 : 400 }}>{s}</span>
+            </div>
+            {i < STEPS.length - 1 && (
+              <div style={{ height: 2, flex: 1, borderRadius: 1, background: i < step ? T.green : T.border, marginBottom: 16, transition: 'background 0.3s' }}/>
+            )}
+          </React.Fragment>
+        ))}
+      </div>
+
+      {/* Step content */}
+      <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px' }}>
+        {step === 0 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            {/* seller */}
+            <Card style={{ padding: 14 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{
+                  width: 42, height: 42, borderRadius: 12,
+                  background: `${PRODUCT.color}22`, border: `1px solid ${PRODUCT.color}44`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22,
+                }}>{PRODUCT.emoji}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ color: T.text, fontWeight: 600, fontSize: 14 }}>{PRODUCT.seller}</div>
+                  <div style={{ color: T.textMuted, fontSize: 11 }}>📍 {PRODUCT.loc} · {PRODUCT.dist}</div>
+                </div>
+                <div style={{
+                  padding: '3px 10px', borderRadius: 12,
+                  background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.3)',
+                  color: T.green, fontSize: 11, fontWeight: 500,
+                }}>✓ ยืนยัน</div>
+              </div>
+            </Card>
+            {/* product */}
+            <Card style={{ padding: 16 }}>
+              <div style={{ display: 'flex', gap: 14, marginBottom: 16 }}>
+                <div style={{
+                  width: 76, height: 76, borderRadius: 14, flexShrink: 0,
+                  background: `linear-gradient(135deg,${PRODUCT.color}33,${T.primary}22)`,
+                  border: `1px solid ${PRODUCT.color}33`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 38,
+                }}>{PRODUCT.emoji}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ color: T.text, fontWeight: 600, fontSize: 15, marginBottom: 4 }}>{PRODUCT.name}</div>
+                  <div style={{ color: T.textMuted, fontSize: 12, marginBottom: 8 }}>สด · ส่งตรงจากสวน</div>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
+                    <span style={{ color: T.yellow, fontWeight: 700, fontSize: 22 }}>฿{PRODUCT.price}</span>
+                    <span style={{ color: T.textMuted, fontSize: 12 }}>/ลูก</span>
+                  </div>
+                </div>
+              </div>
+              <Divider style={{ marginBottom: 14 }}/>
+              {/* qty */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ color: T.textMuted, fontSize: 13 }}>จำนวน</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
+                  <button onClick={() => setQty(q => Math.max(1, q-1))} style={{
+                    width: 38, height: 38, borderRadius: '50%',
+                    border: `1px solid ${T.border}`, background: T.surface,
+                    color: T.text, fontSize: 18, cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>−</button>
+                  <span style={{ color: T.text, fontWeight: 700, fontSize: 20, minWidth: 28, textAlign: 'center' }}>{qty}</span>
+                  <button onClick={() => setQty(q => q+1)} style={{
+                    width: 38, height: 38, borderRadius: '50%',
+                    border: 'none', background: T.primary,
+                    color: '#fff', fontSize: 18, cursor: 'pointer',
+                    boxShadow: `0 4px 12px ${T.primaryGlow}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>+</button>
+                </div>
+                <span style={{ color: T.yellow, fontWeight: 700, fontSize: 17 }}>฿{PRODUCT.price * qty}</span>
+              </div>
+            </Card>
+            {/* address */}
+            <Card style={{ padding: 16 }}>
+              <div style={{ color: T.textMuted, fontSize: 12, fontWeight: 600, marginBottom: 10, letterSpacing: 0.5 }}>📍 ที่อยู่จัดส่ง</div>
+              <div style={{ color: T.text, fontSize: 14, fontWeight: 500, marginBottom: 4 }}>นาย ก. สมบูรณ์</div>
+              <div style={{ color: T.textMuted, fontSize: 13, lineHeight: 1.5, marginBottom: 10 }}>123 ถนนสุขุมวิท กรุงเทพฯ 10110</div>
+              <div style={{ color: T.textMuted, fontSize: 12 }}>📞 081-234-5678</div>
+              <Divider style={{ margin: '12px 0' }}/>
+              <button style={{
+                background: 'none', border: 'none', color: T.primary,
+                fontFamily: T.kanit, fontSize: 13, fontWeight: 500, cursor: 'pointer',
+              }}>+ เพิ่มที่อยู่ใหม่</button>
+            </Card>
+          </div>
+        )}
+
+        {step === 1 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ color: T.textMuted, fontSize: 13, marginBottom: 4 }}>เลือกวิธีจัดส่ง</div>
+            {DELIVERY.map(d => (
+              <Card key={d.id}
+                onClick={() => setDelivery(d.id)}
+                style={{
+                  padding: '14px 16px', cursor: 'pointer',
+                  border: delivery === d.id
+                    ? `1.5px solid ${T.primary}`
+                    : `1px solid ${T.border}`,
+                  background: delivery === d.id ? 'rgba(99,102,241,0.08)' : T.bgCard,
+                  transition: 'all 0.2s',
+                }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div style={{
+                    width: 44, height: 44, borderRadius: 12,
+                    background: delivery === d.id ? 'rgba(99,102,241,0.2)' : T.surface,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22,
+                  }}>{d.icon}</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ color: T.text, fontWeight: 600, fontSize: 14 }}>{d.name}</div>
+                    <div style={{ color: T.textMuted, fontSize: 12 }}>⏱ {d.days}</div>
+                  </div>
+                  <div>
+                    <div style={{ color: T.yellow, fontWeight: 700, fontSize: 16, textAlign: 'right' }}>
+                      {d.price === 0 ? 'ฟรี' : `฿${d.price}`}
+                    </div>
+                    {delivery === d.id && (
+                      <div style={{
+                        width: 20, height: 20, borderRadius: '50%',
+                        background: T.primary, marginLeft: 'auto',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        color: '#fff', fontSize: 11,
+                      }}>✓</div>
+                    )}
+                  </div>
+                </div>
+              </Card>
+            ))}
+            {/* order summary */}
+            <Card style={{ padding: 16, marginTop: 8 }}>
+              <div style={{ color: T.textMuted, fontSize: 12, fontWeight: 600, marginBottom: 12, letterSpacing: 0.5 }}>สรุปคำสั่งซื้อ</div>
+              {[
+                ['ยอดสินค้า', `฿${PRODUCT.price * qty}`],
+                ['ค่าส่ง', deliv?.price === 0 ? 'ฟรี' : `฿${deliv?.price}`],
+              ].map(([l, v]) => (
+                <div key={l} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                  <span style={{ color: T.textMuted, fontSize: 13 }}>{l}</span>
+                  <span style={{ color: T.text, fontSize: 13 }}>{v}</span>
+                </div>
+              ))}
+              <Divider style={{ margin: '10px 0' }}/>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: T.text, fontSize: 15, fontWeight: 600 }}>รวมทั้งหมด</span>
+                <span style={{ color: T.yellow, fontSize: 20, fontWeight: 700 }}>฿{total}</span>
+              </div>
+            </Card>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ color: T.textMuted, fontSize: 13, marginBottom: 4 }}>เลือกวิธีชำระเงิน</div>
+            {PAYMENTS.map(p => (
+              <Card key={p.id} onClick={() => setPayment(p.id)} style={{
+                padding: '14px 16px', cursor: 'pointer',
+                border: payment === p.id ? `1.5px solid ${p.brand}` : `1px solid ${T.border}`,
+                background: payment === p.id ? `${p.brand}10` : T.bgCard,
+                transition: 'all 0.2s',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div style={{
+                    width: 44, height: 44, borderRadius: 12,
+                    background: payment === p.id ? `${p.brand}22` : T.surface,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22,
+                  }}>{p.icon}</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ color: T.text, fontWeight: 600, fontSize: 14 }}>{p.name}</div>
+                    <div style={{ color: T.textMuted, fontSize: 12 }}>{p.sub}</div>
+                  </div>
+                  {payment === p.id && (
+                    <div style={{
+                      width: 22, height: 22, borderRadius: '50%',
+                      background: p.brand,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      color: '#fff', fontSize: 11,
+                    }}>✓</div>
+                  )}
+                </div>
+              </Card>
+            ))}
+            {/* final summary */}
+            <Card style={{ padding: 16, marginTop: 8, background: 'rgba(99,102,241,0.06)', border: `1px solid rgba(99,102,241,0.2)` }}>
+              <div style={{ color: T.textMuted, fontSize: 12, fontWeight: 600, marginBottom: 12 }}>สรุปคำสั่งซื้อ</div>
+              {[
+                ['สินค้า', `${PRODUCT.emoji} ${PRODUCT.name} ×${qty}`],
+                ['จัดส่ง', `${deliv?.icon} ${deliv?.name}`],
+                ['ชำระเงิน', PAYMENTS.find(p=>p.id===payment)?.name],
+              ].map(([l, v]) => (
+                <div key={l} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                  <span style={{ color: T.textMuted, fontSize: 12 }}>{l}</span>
+                  <span style={{ color: T.text, fontSize: 12 }}>{v}</span>
+                </div>
+              ))}
+              <Divider style={{ margin: '10px 0' }}/>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: T.text, fontWeight: 600, fontSize: 15 }}>ยอดชำระ</span>
+                <span style={{ color: T.yellow, fontWeight: 800, fontSize: 22 }}>฿{total}</span>
+              </div>
+            </Card>
+          </div>
+        )}
+      </div>
+
+      {/* Footer CTA */}
+      <div style={{ padding: '16px 20px 34px', borderTop: `1px solid ${T.border}` }}>
+        <Btn variant={loading ? 'ghost' : 'primary'} full onClick={handleNext} disabled={loading}>
+          {loading ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 18, height: 18, border: '2.5px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }}/>
+              กำลังดำเนินการ...
+            </div>
+          ) : step === 2 ? `✓ ยืนยันชำระ ฿${total}` : step === STEPS.length - 1 ? '✓ เสร็จสิ้น' : `ถัดไป →`}
+        </Btn>
+      </div>
+    </div>
+  );
+}
+
+function OrderSuccess({ onBack }) {
+  return (
+    <div style={{
+      minHeight: '100%', display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center',
+      padding: 32, background: T.bg,
+      animation: 'fadeIn 0.4s ease',
+    }}>
+      {/* success circle */}
+      <div style={{
+        width: 100, height: 100, borderRadius: '50%',
+        background: `linear-gradient(135deg, ${T.green}, #059669)`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: 48, marginBottom: 28,
+        boxShadow: `0 0 0 16px ${T.greenGlow}, 0 20px 40px ${T.greenGlow}`,
+        animation: 'scaleIn 0.4s cubic-bezier(0.34,1.56,0.64,1)',
+      }}>✓</div>
+      <div style={{ color: T.text, fontSize: 24, fontWeight: 700, marginBottom: 10 }}>สั่งซื้อสำเร็จ!</div>
+      <div style={{ color: T.textMuted, fontSize: 14, textAlign: 'center', lineHeight: 1.7, marginBottom: 8 }}>
+        คำสั่งซื้อ #TT-{Math.floor(Math.random()*9000)+1000}
+      </div>
+      <div style={{ color: T.textMuted, fontSize: 13, textAlign: 'center', marginBottom: 32 }}>
+        🥥 มะพร้าวน้ำหอม × 3<br/>
+        📦 จะได้รับสินค้าใน 1-2 วัน
+      </div>
+      {/* order tracker */}
+      <Card style={{ width: '100%', padding: 20, marginBottom: 24 }}>
+        <div style={{ color: T.textMuted, fontSize: 12, fontWeight: 600, marginBottom: 14, letterSpacing: 0.5 }}>ติดตามสถานะ</div>
+        {[
+          { label: 'รับออเดอร์แล้ว', done: true, time: 'เมื่อกี้' },
+          { label: 'กำลังเตรียมสินค้า', done: false, time: '' },
+          { label: 'จัดส่งแล้ว', done: false, time: '' },
+          { label: 'ได้รับสินค้า', done: false, time: '' },
+        ].map((s, i) => (
+          <div key={i} style={{ display: 'flex', gap: 14, marginBottom: i < 3 ? 0 : 0 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 20 }}>
+              <div style={{
+                width: 20, height: 20, borderRadius: '50%', flexShrink: 0,
+                background: s.done ? T.green : T.surface,
+                border: `2px solid ${s.done ? T.green : T.border}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: '#fff', fontSize: 10,
+              }}>{s.done ? '✓' : ''}</div>
+              {i < 3 && <div style={{ width: 2, flex: 1, minHeight: 24, background: s.done ? T.green : T.border, margin: '3px 0' }}/>}
+            </div>
+            <div style={{ paddingBottom: i < 3 ? 16 : 0 }}>
+              <div style={{ color: s.done ? T.text : T.textMuted, fontSize: 13, fontWeight: s.done ? 600 : 400 }}>{s.label}</div>
+              {s.time && <div style={{ color: T.textFaint, fontSize: 11 }}>{s.time}</div>}
+            </div>
+          </div>
+        ))}
+      </Card>
+      <Btn variant="primary" full onClick={onBack}>← กลับหน้า Feed</Btn>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════
+// CREATOR STUDIO
+// ════════════════════════════════════════════════════
+const DURATIONS = ['15 วิ', '30 วิ', '60 วิ', 'Live'];
+const EFFECTS = ['✨ กลิตเตอร์', '🌈 สี', '🎭 หน้ากาก', '🌟 ประกาย', '🔥 ไฟ', '❄️ หิมะ'];
+const SOUNDS = [
+  { name: 'แม่ค้า Trending', plays: '2.3M', icon: '🎵' },
+  { name: 'สวัสดีร้านค้า', plays: '1.1M', icon: '🎶' },
+  { name: 'ไม่ใช้เพลง', plays: '', icon: '🔇' },
+];
+
+function CreatorStudio() {
+  const [duration, setDuration] = useLocalStorage('tt_dur', 0);
+  const [recording, setRecording] = React.useState(false);
+  const [recTime, setRecTime] = React.useState(0);
+  const [panel, setPanel] = useLocalStorage('tt_panel', null);
+  const [taggedProduct, setTaggedProduct] = React.useState(null);
+  const [effect, setEffect] = React.useState(null);
+  const [sound, setSound] = React.useState(0);
+  const [readyToPost, setReadyToPost] = React.useState(false);
+
+  // recording timer
+  React.useEffect(() => {
+    if (!recording) return;
+    const t = setInterval(() => setRecTime(x => {
+      const max = [15, 30, 60, 3600][duration];
+      if (x >= max) { setRecording(false); setReadyToPost(true); return x; }
+      return x + 1;
+    }), 1000);
+    return () => clearInterval(t);
+  }, [recording, duration]);
+
+  const maxSec = [15, 30, 60, 3600][duration];
+  const progress = recTime / maxSec;
+
+  const fmtTime = s => s < 60 ? `0:${String(s).padStart(2,'0')}` : `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+
+  if (readyToPost) return <PostEditor onBack={() => { setReadyToPost(false); setRecTime(0); }}/>;
+
+  return (
+    <div style={{ height: '100%', position: 'relative', background: '#000', overflow: 'hidden' }}>
+      {/* camera preview BG */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(160deg, #0d1b2a 0%, #1a2f4a 50%, #0d1b2a 100%)',
+      }}>
+        {/* simulated camera noise/texture */}
+        {[...Array(8)].map((_, i) => (
+          <div key={i} style={{
+            position: 'absolute',
+            width: 80 + i * 30, height: 80 + i * 30,
+            borderRadius: '50%',
+            background: `radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)`,
+            left: `${[5,20,60,40,80,10,50,70][i]}%`,
+            top: `${[15,60,25,80,10,45,70,35][i]}%`,
+            animation: `float ${4+i}s ease-in-out infinite`,
+            animationDelay: `${i*0.5}s`,
+          }}/>
+        ))}
+        {/* grid overlay */}
+        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.08 }}>
+          <line x1="33%" y1="0" x2="33%" y2="100%" stroke="white" strokeWidth="0.5"/>
+          <line x1="66%" y1="0" x2="66%" y2="100%" stroke="white" strokeWidth="0.5"/>
+          <line x1="0" y1="33%" x2="100%" y2="33%" stroke="white" strokeWidth="0.5"/>
+          <line x1="0" y1="66%" x2="100%" y2="66%" stroke="white" strokeWidth="0.5"/>
+        </svg>
+        {/* focus reticle */}
+        <div style={{
+          position: 'absolute', top: '35%', left: '50%', transform: 'translate(-50%,-50%)',
+          width: 80, height: 80,
+        }}>
+          {[[-1,-1],[-1,1],[1,-1],[1,1]].map(([rx,ry], i) => (
+            <div key={i} style={{
+              position: 'absolute',
+              width: 20, height: 20,
+              left: rx < 0 ? 0 : 'auto', right: rx > 0 ? 0 : 'auto',
+              top: ry < 0 ? 0 : 'auto', bottom: ry > 0 ? 0 : 'auto',
+              borderLeft: rx < 0 ? '2px solid rgba(255,255,255,0.6)' : 'none',
+              borderRight: rx > 0 ? '2px solid rgba(255,255,255,0.6)' : 'none',
+              borderTop: ry < 0 ? '2px solid rgba(255,255,255,0.6)' : 'none',
+              borderBottom: ry > 0 ? '2px solid rgba(255,255,255,0.6)' : 'none',
+            }}/>
+          ))}
+        </div>
+        {/* tagged product overlay */}
+        {taggedProduct && (
+          <div style={{
+            position: 'absolute', bottom: '30%', left: 16,
+            background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(10px)',
+            borderRadius: 12, padding: '8px 12px',
+            border: `1px solid rgba(99,102,241,0.4)`,
+            display: 'flex', alignItems: 'center', gap: 8,
+            animation: 'slideUp 0.3s ease',
+          }}>
+            <span style={{ fontSize: 20 }}>🥥</span>
+            <div>
+              <div style={{ color: '#fff', fontSize: 12, fontWeight: 600 }}>มะพร้าวน้ำหอม</div>
+              <div style={{ color: T.yellow, fontSize: 11, fontWeight: 700 }}>฿45/ลูก</div>
+            </div>
+            <div style={{
+              padding: '2px 8px', borderRadius: 8,
+              background: T.primary, color: '#fff', fontSize: 10,
+            }}>🛒</div>
+          </div>
+        )}
+        {/* effect overlay */}
+        {effect !== null && (
+          <div style={{
+            position: 'absolute', inset: 0, pointerEvents: 'none',
+            background: [
+              'radial-gradient(ellipse at 50% 50%, rgba(168,85,247,0.15) 0%, transparent 70%)',
+              'linear-gradient(135deg, rgba(255,0,128,0.08) 0%, rgba(0,200,255,0.08) 100%)',
+              'radial-gradient(ellipse at 30% 70%, rgba(99,102,241,0.12) 0%, transparent 60%)',
+              'radial-gradient(ellipse at 70% 30%, rgba(250,204,21,0.1) 0%, transparent 60%)',
+              'radial-gradient(ellipse at 50% 100%, rgba(244,63,94,0.15) 0%, transparent 60%)',
+              'radial-gradient(ellipse at 50% 0%, rgba(147,197,253,0.1) 0%, transparent 60%)',
+            ][effect],
+          }}/>
+        )}
+      </div>
+
+      {/* TOP BAR */}
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0, zIndex: 50,
+        padding: '54px 16px 12px',
+        background: 'linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 100%)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <button onClick={() => setPanel(null)} style={{
+            width: 36, height: 36, borderRadius: '50%',
+            background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255,255,255,0.15)',
+            color: T.text, fontSize: 16, cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>✕</button>
+          <span style={{ color: '#fff', fontWeight: 600, fontSize: 16, flex: 1, textAlign: 'center' }}>สร้างวิดีโอ</span>
+          <button style={{
+            padding: '6px 16px', borderRadius: 18,
+            background: 'rgba(99,102,241,0.9)', border: 'none',
+            color: '#fff', fontFamily: T.kanit, fontSize: 13, fontWeight: 600, cursor: 'pointer',
+          }}>ถัดไป</button>
+        </div>
+        {/* duration pills */}
+        <div style={{ display: 'flex', gap: 6, marginTop: 12, justifyContent: 'center' }}>
+          {DURATIONS.map((d, i) => (
+            <button key={i} onClick={() => { setDuration(i); setRecTime(0); setRecording(false); }} style={{
+              padding: '5px 16px', borderRadius: 20, border: 'none',
+              background: duration === i ? '#fff' : 'rgba(255,255,255,0.12)',
+              color: duration === i ? T.bg : 'rgba(255,255,255,0.7)',
+              fontFamily: T.kanit, fontSize: 12, fontWeight: duration === i ? 700 : 400,
+              cursor: 'pointer', transition: 'all 0.2s',
+            }}>{d}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* RIGHT TOOLS */}
+      <div style={{
+        position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
+        display: 'flex', flexDirection: 'column', gap: 18, zIndex: 50,
+      }}>
+        {[
+          { icon: '🔄', label: 'พลิก' },
+          { icon: '⚡', label: 'แฟลช' },
+          { icon: '🎵', label: 'เสียง', onClick: () => setPanel(panel === 'sound' ? null : 'sound') },
+          { icon: '✨', label: 'เอฟเฟค', onClick: () => setPanel(panel === 'effect' ? null : 'effect') },
+          { icon: '🏷️', label: 'สินค้า', onClick: () => { setTaggedProduct(p => p ? null : true); } },
+        ].map((t, i) => (
+          <div key={i} onClick={t.onClick || (() => {})}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, cursor: 'pointer' }}>
+            <div style={{
+              width: 46, height: 46, borderRadius: '50%',
+              background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255,255,255,0.12)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20,
+              boxShadow: (t.label === 'สินค้า' && taggedProduct) || (t.label === 'เอฟเฟค' && effect !== null) || (t.label === 'เสียง' && panel === 'sound')
+                ? `0 0 12px ${T.primaryGlow}` : 'none',
+            }}>{t.icon}</div>
+            <span style={{ color: T.textMuted, fontSize: 9 }}>{t.label}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* RECORD BUTTON AREA */}
+      <div style={{
+        position: 'absolute', bottom: 100, left: 0, right: 0,
+        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, zIndex: 50,
+      }}>
+        {/* progress ring */}
+        {recording && (
+          <div style={{ position: 'relative', width: 100, height: 100 }}>
+            <svg width={100} height={100} style={{ position: 'absolute', top: 0, left: 0, transform: 'rotate(-90deg)' }}>
+              <circle cx={50} cy={50} r={44} fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth={4}/>
+              <circle cx={50} cy={50} r={44} fill="none" stroke={T.red} strokeWidth={4}
+                strokeDasharray={2 * Math.PI * 44}
+                strokeDashoffset={2 * Math.PI * 44 * (1 - progress)}
+                strokeLinecap="round" style={{ transition: 'stroke-dashoffset 0.5s linear' }}/>
+            </svg>
+            <div style={{
+              position: 'absolute', inset: 8,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: '#fff', fontSize: 13, fontWeight: 700,
+            }}>{fmtTime(recTime)}</div>
+          </div>
+        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 40 }}>
+          {/* gallery */}
+          <button style={{
+            width: 46, height: 46, borderRadius: 10, border: '2px solid rgba(255,255,255,0.3)',
+            background: 'rgba(0,0,0,0.3)', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20,
+          }}>🖼️</button>
+          {/* record */}
+          <button onClick={() => { setRecording(r => !r); if (recording) setReadyToPost(true); }} style={{
+            width: 80, height: 80, borderRadius: '50%', border: 'none', cursor: 'pointer',
+            background: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            position: 'relative',
+          }}>
+            <div style={{
+              width: 80, height: 80, borderRadius: '50%',
+              border: '4px solid rgba(255,255,255,0.8)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <div style={{
+                width: recording ? 28 : 58, height: recording ? 28 : 58,
+                borderRadius: recording ? 6 : '50%',
+                background: T.red,
+                transition: 'all 0.25s cubic-bezier(0.34,1.56,0.64,1)',
+                animation: recording ? 'recordPulse 1.5s infinite' : 'none',
+              }}/>
+            </div>
+          </button>
+          {/* flip */}
+          <button style={{
+            width: 46, height: 46, borderRadius: '50%',
+            border: '2px solid rgba(255,255,255,0.3)',
+            background: 'rgba(0,0,0,0.3)', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20,
+          }}>🤳</button>
+        </div>
+      </div>
+
+      {/* Panels */}
+      {panel === 'effect' && (
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0,
+          background: 'rgba(15,23,42,0.95)', backdropFilter: 'blur(20px)',
+          borderRadius: '20px 20px 0 0', padding: '16px 16px 34px',
+          border: `1px solid ${T.border}`, borderBottom: 'none',
+          animation: 'slideUp 0.3s ease', zIndex: 80,
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
+            <div style={{ width: 40, height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.2)' }}/>
+          </div>
+          <div style={{ color: T.text, fontWeight: 600, fontSize: 14, marginBottom: 14 }}>เอฟเฟคกล้อง</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }}>
+            {EFFECTS.map((ef, i) => (
+              <button key={i} onClick={() => { setEffect(effect === i ? null : i); setPanel(null); }} style={{
+                height: 52, borderRadius: 12, border: effect === i ? `1.5px solid ${T.primary}` : `1px solid ${T.border}`,
+                background: effect === i ? 'rgba(99,102,241,0.2)' : T.surface,
+                color: T.text, fontFamily: T.kanit, fontSize: 12,
+                cursor: 'pointer', transition: 'all 0.15s',
+              }}>{ef}</button>
+            ))}
+          </div>
+        </div>
+      )}
+      {panel === 'sound' && (
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0,
+          background: 'rgba(15,23,42,0.95)', backdropFilter: 'blur(20px)',
+          borderRadius: '20px 20px 0 0', padding: '16px 16px 34px',
+          border: `1px solid ${T.border}`, borderBottom: 'none',
+          animation: 'slideUp 0.3s ease', zIndex: 80,
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
+            <div style={{ width: 40, height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.2)' }}/>
+          </div>
+          <div style={{ color: T.text, fontWeight: 600, fontSize: 14, marginBottom: 14 }}>เสียงประกอบ</div>
+          {SOUNDS.map((s, i) => (
+            <div key={i} onClick={() => { setSound(i); setPanel(null); }} style={{
+              display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px',
+              borderRadius: 12, cursor: 'pointer', marginBottom: 8,
+              background: sound === i ? 'rgba(99,102,241,0.15)' : T.surface,
+              border: sound === i ? `1px solid ${T.primary}` : `1px solid ${T.border}`,
+              transition: 'all 0.15s',
+            }}>
+              <span style={{ fontSize: 22 }}>{s.icon}</span>
+              <div style={{ flex: 1 }}>
+                <div style={{ color: T.text, fontSize: 13, fontWeight: 500 }}>{s.name}</div>
+                {s.plays && <div style={{ color: T.textMuted, fontSize: 11 }}>▶ {s.plays}</div>}
+              </div>
+              {sound === i && <span style={{ color: T.primary }}>✓</span>}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Post editor (after recording)
+function PostEditor({ onBack }) {
+  const [caption, setCaption] = React.useState('');
+  const [hasProduct, setHasProduct] = React.useState(true);
+  const [posting, setPosting] = React.useState(false);
+  const [posted, setPosted] = React.useState(false);
+
+  const handlePost = () => {
+    setPosting(true);
+    setTimeout(() => { setPosting(false); setPosted(true); }, 2000);
+  };
+
+  if (posted) return (
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 20, padding: 32, background: T.bg, animation: 'fadeIn 0.4s ease' }}>
+      <div style={{
+        width: 90, height: 90, borderRadius: '50%',
+        background: `linear-gradient(135deg,${T.primary},${T.secondary})`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 44,
+        boxShadow: `0 0 0 14px ${T.primaryGlow}`,
+        animation: 'scaleIn 0.4s cubic-bezier(0.34,1.56,0.64,1)',
+      }}>🎉</div>
+      <div style={{ color: T.text, fontSize: 22, fontWeight: 700 }}>โพสต์แล้ว!</div>
+      <div style={{ color: T.textMuted, fontSize: 13, textAlign: 'center' }}>วิดีโอของคุณกำลังถูกประมวลผล<br/>จะพร้อมใน 1-2 นาที</div>
+      <Btn variant="primary" full onClick={onBack}>← กลับสตูดิโอ</Btn>
+    </div>
+  );
+
+  return (
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: T.bg }}>
+      <div style={{ padding: '12px 20px 14px', display: 'flex', alignItems: 'center', gap: 14, borderBottom: `1px solid ${T.border}` }}>
+        <button onClick={onBack} style={{
+          width: 38, height: 38, borderRadius: 12, background: T.surface, border: `1px solid ${T.border}`,
+          color: T.text, fontSize: 18, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>←</button>
+        <span style={{ color: T.text, fontWeight: 700, fontSize: 16, flex: 1 }}>แชร์วิดีโอ</span>
+      </div>
+      <div style={{ flex: 1, overflowY: 'auto', padding: 20, display: 'flex', flexDirection: 'column', gap: 14 }}>
+        {/* preview + caption */}
+        <div style={{ display: 'flex', gap: 14 }}>
+          <div style={{
+            width: 80, height: 120, borderRadius: 12, flexShrink: 0,
+            background: 'linear-gradient(160deg,#0d2b1a,#1a4a2e)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32,
+            border: `1px solid ${T.border}`,
+          }}>🥥</div>
+          <textarea value={caption} onChange={e => setCaption(e.target.value)}
+            placeholder="เขียนคำบรรยาย... #มะพร้าว #เกษตรไทย"
+            style={{
+              flex: 1, background: T.surface, border: `1px solid ${T.border}`,
+              borderRadius: 12, padding: 12, color: T.text,
+              fontFamily: T.kanit, fontSize: 13, lineHeight: 1.5,
+              resize: 'none', outline: 'none', height: 120,
+            }}/>
+        </div>
+        {/* product tag */}
+        <Card style={{ padding: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ fontSize: 20 }}>🏷️</span>
+              <div>
+                <div style={{ color: T.text, fontSize: 13, fontWeight: 500 }}>แท็กสินค้า</div>
+                {hasProduct && <div style={{ color: T.textMuted, fontSize: 11 }}>มะพร้าวน้ำหอม · ฿45</div>}
+              </div>
+            </div>
+            <button onClick={() => setHasProduct(p => !p)} style={{
+              width: 42, height: 24, borderRadius: 12, border: 'none', cursor: 'pointer',
+              background: hasProduct ? T.primary : 'rgba(255,255,255,0.1)',
+              transition: 'all 0.2s', position: 'relative',
+              boxShadow: hasProduct ? `0 2px 8px ${T.primaryGlow}` : 'none',
+            }}>
+              <div style={{
+                width: 18, height: 18, borderRadius: '50%', background: '#fff',
+                position: 'absolute', top: 3, left: hasProduct ? 21 : 3, transition: 'left 0.2s',
+              }}/>
+            </button>
+          </div>
+        </Card>
+        {/* privacy */}
+        <Card style={{ padding: 14 }}>
+          <div style={{ color: T.textMuted, fontSize: 11, fontWeight: 600, marginBottom: 10, letterSpacing: 0.5 }}>การมองเห็น</div>
+          {[['🌍 สาธารณะ', true],['👥 เฉพาะผู้ติดตาม', false],['🔒 ส่วนตัว', false]].map(([l, a]) => (
+            <div key={l} style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '9px 0',
+              borderBottom: l !== '🔒 ส่วนตัว' ? `1px solid ${T.border}` : 'none',
+            }}>
+              <span style={{ color: T.text, fontSize: 13 }}>{l}</span>
+              {a && <span style={{ color: T.primary }}>✓</span>}
+            </div>
+          ))}
+        </Card>
+      </div>
+      {/* post CTA */}
+      <div style={{ padding: '16px 20px 34px', borderTop: `1px solid ${T.border}` }}>
+        <Btn variant="primary" full onClick={handlePost} disabled={posting}>
+          {posting ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 18, height: 18, border: '2.5px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }}/>
+              กำลังอัปโหลด...
+            </div>
+          ) : '📤 โพสต์วิดีโอ'}
+        </Btn>
+      </div>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════
+// ROOT APP
+// ════════════════════════════════════════════════════
+function App() {
+  const [screen, setScreen] = useLocalStorage('tt_ccs_screen', 'checkout');
+
+  return (
+    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: '#080c18' }}>
+      {/* top toggle */}
+      <div style={{
+        position: 'fixed', top: 18, left: '50%', transform: 'translateX(-50%)',
+        display: 'flex', gap: 4, background: 'rgba(255,255,255,0.06)',
+        border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12,
+        padding: 4, zIndex: 9999, backdropFilter: 'blur(20px)',
+      }}>
+        {[['checkout','🛒 Checkout'],['creator','🎬 Creator Studio']].map(([id,l]) => (
+          <button key={id} onClick={() => setScreen(id)} style={{
+            padding: '7px 18px', borderRadius: 8, border: 'none',
+            fontFamily: T.kanit, fontSize: 13, fontWeight: 500, cursor: 'pointer',
+            background: screen === id ? T.primary : 'transparent',
+            color: screen === id ? '#fff' : T.textMuted,
+            transition: 'all 0.2s',
+            boxShadow: screen === id ? `0 2px 12px ${T.primaryGlow}` : 'none',
+          }}>{l}</button>
+        ))}
+      </div>
+
+      {/* content */}
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '68px 20px 20px' }}>
+        <Phone>
+          {screen === 'checkout' ? <CheckoutFlow/> : <CreatorStudio/>}
+        </Phone>
+      </div>
+
+      {/* hint */}
+      <div style={{ textAlign: 'center', padding: '0 0 16px', color: T.textFaint, fontSize: 11 }}>
+        {screen === 'checkout'
+          ? '🛒 กดปุ่ม "ถัดไป" เพื่อดำเนินการชำระเงิน'
+          : '🔴 กดปุ่มบันทึกเพื่อเริ่มถ่าย · ✨ เอฟเฟค · 🏷️ แท็กสินค้า'}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

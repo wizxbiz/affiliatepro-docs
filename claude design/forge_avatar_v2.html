@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>FORGE — Dynamic AI Thoughts v2</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; user-select:none; }
+body {
+  background: radial-gradient(circle at 50% 40%, #03030f 0%, #000000 100%);
+  overflow: hidden;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+canvas { display:block; position:fixed; top:0; left:0; z-index:0; }
+
+/* ── HUD CORNERS ── */
+.hud-corner {
+  position:fixed; width:28px; height:28px;
+  border-color: rgba(0,212,255,0.35); border-style:solid;
+  z-index:10; pointer-events:none; transition:border-color 0.5s;
+}
+.hud-corner.tl { top:20px; left:20px; border-width:2px 0 0 2px; }
+.hud-corner.tr { top:20px; right:20px; border-width:2px 2px 0 0; }
+.hud-corner.bl { bottom:20px; left:20px; border-width:0 0 2px 2px; }
+.hud-corner.br { bottom:20px; right:20px; border-width:0 2px 2px 0; }
+
+/* ── NAME LABEL ── */
+#name-label {
+  position:fixed; top:22px; left:50%; transform:translateX(-50%);
+  font-size:11px; letter-spacing:8px; color:rgba(0,212,255,0.7);
+  text-transform:uppercase; font-weight:300; z-index:10;
+  text-shadow:0 0 12px cyan;
+  background:rgba(0,0,0,0.35); padding:4px 16px;
+  border-radius:40px; backdrop-filter:blur(4px); font-family:monospace;
+}
+
+/* ── CONNECTION DOT ── */
+#conn-dot {
+  position:fixed; top:26px; right:26px;
+  width:8px; height:8px; border-radius:50%;
+  background:#2a2a3a; box-shadow:0 0 3px #00d4ff; z-index:15; transition:all 0.3s;
+}
+#conn-dot.on { background:#0f0; box-shadow:0 0 12px #0f0; animation:pulse-green 1.8s infinite; }
+@keyframes pulse-green { 0%{opacity:0.4} 100%{opacity:1} }
+
+/* ── THOUGHT HISTORY (past 2 thoughts, faded above) ── */
+#thought-history {
+  position:fixed; left:50%; top:50%;
+  transform:translate(-50%, -300px);
+  width:560px;
+  display:flex; flex-direction:column; gap:8px;
+  align-items:center;
+  z-index:19; pointer-events:none;
+}
+.thought-ghost {
+  font-size:12px; color:rgba(180,240,255,0.22);
+  text-align:center; line-height:1.6;
+  letter-spacing:0.3px;
+  font-family:monospace;
+  transition:opacity 2s;
+  max-width:480px;
+  text-shadow:0 0 8px rgba(0,200,255,0.3);
+}
+
+/* ── MAIN THOUGHT BUBBLE ── */
+#thought-wrap {
+  position:fixed; top:50%; left:50%;
+  transform:translate(-50%, -195px);
+  z-index:20; pointer-events:none;
+  width:580px;
+  display:flex; flex-direction:column; align-items:center;
+  gap:0;
+}
+#thought-tag {
+  font-size:8px; letter-spacing:5px; color:rgba(0,255,200,0.5);
+  font-family:monospace; text-transform:uppercase;
+  margin-bottom:6px;
+  opacity:0; transition:opacity 0.6s;
+  display:flex; align-items:center; gap:6px;
+}
+#thought-tag .dot {
+  width:4px; height:4px; border-radius:50%;
+  background:#0fc; box-shadow:0 0 6px #0fc;
+}
+#thought-tag.visible { opacity:1; }
+
+#thought {
+  font-size:15.5px; font-weight:400;
+  color:#f0fcff;
+  text-align:center;
+  max-width:560px; line-height:1.8;
+  opacity:0; pointer-events:none;
+  background:rgba(0,8,24,0.55);
+  backdrop-filter:blur(16px) saturate(120%);
+  padding:18px 32px 20px;
+  border-radius:72px;
+  border:1px solid rgba(0,255,200,0.22);
+  box-shadow:0 0 40px rgba(0,200,255,0.08), inset 0 0 20px rgba(0,100,200,0.06);
+  letter-spacing:0.2px;
+  transition:opacity 1.2s cubic-bezier(0.2,0.9,0.3,1);
+  min-height:64px;
+  display:flex; align-items:center; justify-content:center;
+  position:relative;
+}
+#thought.active { opacity:1; }
+#thought-cursor {
+  display:inline-block; width:2px; height:1em;
+  background:#0fc; margin-left:3px; vertical-align:middle;
+  animation:blink 0.75s step-end infinite;
+  opacity:0;
+}
+#thought-cursor.visible { opacity:1; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ── GENERATING SHIMMER ── */
+#thought-generating {
+  position:absolute; inset:0; border-radius:72px;
+  display:flex; align-items:center; justify-content:center;
+  gap:10px; opacity:0; pointer-events:none;
+  transition:opacity 0.4s;
+  color:rgba(0,255,200,0.5); font-size:10px; letter-spacing:4px;
+  font-family:monospace; text-transform:uppercase;
+}
+#thought-generating.active { opacity:1; }
+.gen-dot {
+  width:4px; height:4px; border-radius:50%;
+  background:#0fc; animation:gen-pulse 1.1s ease-in-out infinite;
+}
+.gen-dot:nth-child(2){ animation-delay:0.18s; }
+.gen-dot:nth-child(3){ animation-delay:0.36s; }
+@keyframes gen-pulse { 0%,100%{opacity:0.2;transform:scale(0.7)} 50%{opacity:1;transform:scale(1.2)} }
+
+/* ── SPOKEN SUMMARY ── */
+#spoken-wrap {
+  position:fixed; bottom:90px; left:50%;
+  transform:translateX(-50%);
+  z-index:22; pointer-events:none;
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  width:640px; max-width:90vw;
+}
+#spoken-tag {
+  font-size:8px; letter-spacing:5px; color:rgba(255,160,60,0.6);
+  font-family:monospace; text-transform:uppercase;
+  display:flex; align-items:center; gap:6px;
+  opacity:0; transition:opacity 0.5s;
+}
+#spoken-tag.visible { opacity:1; }
+#spoken-tag .sdot {
+  width:4px; height:4px; border-radius:50%;
+  background:#fa0; box-shadow:0 0 8px #fa0;
+  animation:sdot-pulse 0.9s ease-in-out infinite;
+}
+@keyframes sdot-pulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+
+#subtitle {
+  font-size:14.5px; color:#fff3e0;
+  text-shadow:0 0 16px rgba(255,160,60,0.6);
+  background:rgba(15,6,0,0.55);
+  backdrop-filter:blur(14px);
+  padding:13px 28px;
+  border-radius:56px;
+  max-width:100%; text-align:center;
+  opacity:0; transition:opacity 0.4s;
+  border:1px solid rgba(255,150,40,0.22);
+  box-shadow:0 0 32px rgba(255,140,0,0.08);
+  font-weight:400; letter-spacing:0.4px;
+  line-height:1.6;
+}
+#subtitle.visible { opacity:1; }
+
+/* ── WAVEFORM / VIZ ── */
+#state-label {
+  position:fixed; bottom:30px; left:50%; transform:translateX(-50%);
+  font-size:9px; letter-spacing:5px; color:rgba(0,212,255,0.45);
+  text-transform:uppercase; font-family:monospace; z-index:12;
+  background:rgba(0,0,0,0.4); padding:4px 12px; border-radius:30px;
+}
+#viz {
+  position:fixed; bottom:50px; left:50%; transform:translateX(-50%);
+  display:flex; gap:3px; height:32px; align-items:flex-end; z-index:11;
+}
+.bar {
+  width:3px; background:linear-gradient(to top, #0af, #0ff);
+  border-radius:2px; box-shadow:0 0 5px cyan;
+  transition:height 0.055s linear;
+}
+
+/* ── MIC BUTTON ── */
+#mic-btn {
+  position:fixed; bottom:32px; right:32px;
+  width:52px; height:52px; border-radius:50%;
+  background:rgba(0,255,200,0.07);
+  border:1.5px solid rgba(0,212,255,0.55);
+  color:cyan; font-size:22px; cursor:pointer;
+  backdrop-filter:blur(8px);
+  display:flex; align-items:center; justify-content:center;
+  transition:0.3s; z-index:20;
+}
+#mic-btn:hover { background:rgba(0,255,200,0.18); transform:scale(1.06); border-color:#0ff; }
+#mic-btn.active { background:#0ff2; box-shadow:0 0 30px #0ff; border-color:#fff; animation:micPulse 1.2s infinite; }
+@keyframes micPulse { 0%{box-shadow:0 0 0 0 #0ff8} 100%{box-shadow:0 0 0 14px #0ff0} }
+
+/* ── SOUL STATE INDICATOR LEFT ── */
+#soul-state-panel {
+  position:fixed; left:28px; top:50%; transform:translateY(-50%);
+  display:flex; flex-direction:column; align-items:flex-start;
+  gap:5px; z-index:10; pointer-events:none;
+}
+.soul-row {
+  display:flex; align-items:center; gap:7px;
+  opacity:0.18; transition:opacity 0.6s, color 0.6s;
+}
+.soul-row.active { opacity:1; }
+.soul-dot { width:5px; height:5px; border-radius:50%; background:currentColor; box-shadow:0 0 8px currentColor; }
+.soul-name { font-size:8px; letter-spacing:3px; font-family:monospace; text-transform:uppercase; }
+
+/* ── THOUGHT COUNT ── */
+#thought-counter {
+  position:fixed; left:28px; bottom:30px;
+  font-size:8px; letter-spacing:3px; color:rgba(0,255,200,0.3);
+  font-family:monospace; z-index:10;
+}
+
+/* ── BOTTOM LEFT TAG ── */
+.glow-text {
+  position:fixed; bottom:18px; right:90px;
+  font-size:8px; color:rgba(0,255,170,0.3);
+  font-family:monospace; letter-spacing:2px; z-index:5;
+}
+</style>
+</head>
+<body>
+<div class="hud-corner tl"></div>
+<div class="hud-corner tr"></div>
+<div class="hud-corner bl"></div>
+<div class="hud-corner br"></div>
+<div id="name-label">◈ F O R G E ◈</div>
+<div id="conn-dot"></div>
+
+<!-- Thought history (ghost trail) -->
+<div id="thought-history">
+  <div class="thought-ghost" id="ghost-2"></div>
+  <div class="thought-ghost" id="ghost-1"></div>
+</div>
+
+<!-- Main thought bubble -->
+<div id="thought-wrap">
+  <div id="thought-tag"><div class="dot"></div>INNER VOICE<div class="dot"></div></div>
+  <div id="thought">
+    <span id="thought-text"></span><span id="thought-cursor"></span>
+    <div id="thought-generating">
+      <div class="gen-dot"></div><div class="gen-dot"></div><div class="gen-dot"></div>
+      <span style="margin-left:4px">generating thought</span>
+    </div>
+  </div>
+</div>
+
+<!-- Spoken summary -->
+<div id="spoken-wrap">
+  <div id="spoken-tag"><div class="sdot"></div>SPOKEN SUMMARY<div class="sdot"></div></div>
+  <div id="subtitle"></div>
+</div>
+
+<!-- Soul state panel -->
+<div id="soul-state-panel">
+  <div class="soul-row" data-state="breathing" style="color:#00d4ff"><div class="soul-dot"></div><span class="soul-name">Breathing</span></div>
+  <div class="soul-row" data-state="thinking"  style="color:#8866ff"><div class="soul-dot"></div><span class="soul-name">Thinking</span></div>
+  <div class="soul-row" data-state="speaking"  style="color:#00ff88"><div class="soul-dot"></div><span class="soul-name">Speaking</span></div>
+  <div class="soul-row" data-state="listening" style="color:#22ccff"><div class="soul-dot"></div><span class="soul-name">Listening</span></div>
+  <div class="soul-row" data-state="wondering" style="color:#ffcc00"><div class="soul-dot"></div><span class="soul-name">Wondering</span></div>
+  <div class="soul-row" data-state="excited"   style="color:#ff8800"><div class="soul-dot"></div><span class="soul-name">Excited</span></div>
+  <div class="soul-row" data-state="satisfied" style="color:#00ffcc"><div class="soul-dot"></div><span class="soul-name">Satisfied</span></div>
+  <div class="soul-row" data-state="lonely"    style="color:#6688aa"><div class="soul-dot"></div><span class="soul-name">Lonely</span></div>
+</div>
+
+<div id="state-label">BREATHING</div>
+<div id="viz"></div>
+<button id="mic-btn" aria-label="Voice Interface">🎙️</button>
+<div id="thought-counter">THOUGHTS: 0</div>
+<div class="glow-text">✦ SYNAPSE CORE v.∞ ✦</div>
+
+<script type="importmap">
+  { "imports": { "three": "https://unpkg.com/three@0.128.0/build/three.module.js" } }
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+
+// ─── SCENE ───────────────────────────────────────────────────
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x010118, 0.008);
+const camera = new THREE.PerspectiveCamera(48, innerWidth/innerHeight, 0.1, 1000);
+camera.position.set(0, 0.2, 5.2);
+camera.lookAt(0, 0.2, 0);
+
+const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(devicePixelRatio);
+renderer.setClearColor(0x000000, 0);
+renderer.toneMapping = THREE.ReinhardToneMapping;
+renderer.toneMappingExposure = 1.2;
+document.body.appendChild(renderer.domElement);
+
+// ─── LIGHTS ──────────────────────────────────────────────────
+scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+const keyBot = new THREE.DirectionalLight(0xffffff, 1.2);
+keyBot.position.set(5, 5, 5); scene.add(keyBot);
+const rimPink = new THREE.PointLight(0xff0088, 2, 10);
+rimPink.position.set(-3, 1, 2); scene.add(rimPink);
+const rimOrange = new THREE.PointLight(0xffaa00, 2, 10);
+rimOrange.position.set(3, 1, 2); scene.add(rimOrange);
+scene.add(new THREE.PointLight(0xffffff, 0.8, 10)).position.set(0, 5, 0);
+
+const colorCycleLight = new THREE.PointLight(0x00aaff, 0.8, 8);
+colorCycleLight.position.set(0, 0, 3); scene.add(colorCycleLight);
+
+// ─── MATERIALS ───────────────────────────────────────────────
+const skinMat = new THREE.MeshPhysicalMaterial({
+  color: 0xd4a882, metalness: 0.0, roughness: 0.55,
+  clearcoat: 0.25, clearcoatRoughness: 0.5,
+  emissive: 0x080318, emissiveIntensity: 0.5,
+});
+const scleraMat  = new THREE.MeshStandardMaterial({ color: 0xf0ece8, roughness: 0.5 });
+const irisMat    = new THREE.MeshStandardMaterial({ color: 0x00b8ff, emissive: 0x00aaff, emissiveIntensity: 3.0, roughness: 0.1 });
+const pupilMat   = new THREE.MeshStandardMaterial({ color: 0x030810, roughness: 1 });
+const lipMat     = new THREE.MeshPhysicalMaterial({ color: 0xb86055, roughness: 0.35, clearcoat: 0.7, emissive: 0x280608, emissiveIntensity: 0.4 });
+const socketMat  = new THREE.MeshStandardMaterial({ color: 0x0a0618, roughness: 1 });
+const circuitMat = new THREE.MeshBasicMaterial({ color: 0x00ffcc, transparent: true, opacity: 0.38 });
+const shoulderMat = new THREE.MeshPhysicalMaterial({ color: 0x0d0d20, metalness: 0.7, roughness: 0.25, clearcoat: 1.0 });
+
+// ─── HEAD GROUP (Digital Human Face) ─────────────────────────
+const headGroup = new THREE.Group();
+scene.add(headGroup);
+
+// 1. SKULL – human proportions
+const headMesh = new THREE.Mesh(new THREE.SphereGeometry(1.12, 64, 64), skinMat);
+headMesh.scale.set(0.92, 1.12, 0.88);
+headGroup.add(headMesh);
+
+// 2. JAW / LOWER FACE
+const jawMesh = new THREE.Mesh(new THREE.SphereGeometry(0.76, 32, 32), skinMat);
+jawMesh.scale.set(0.86, 0.68, 0.80);
+jawMesh.position.set(0, -0.72, 0.08);
+headGroup.add(jawMesh);
+
+// 3. BROW RIDGE
+const browRidge = new THREE.Mesh(new THREE.SphereGeometry(0.68, 32, 16), skinMat);
+browRidge.scale.set(1.08, 0.2, 0.36);
+browRidge.position.set(0, 0.43, 0.88);
+headGroup.add(browRidge);
+
+// 4. EYES
+function buildEye(sideX) {
+  const eg = new THREE.Group();
+  eg.position.set(sideX * 0.33, 0.14, 0.87);
+  headGroup.add(eg);
+
+  // Socket shadow
+  const socket = new THREE.Mesh(new THREE.SphereGeometry(0.19, 24, 24), socketMat);
+  socket.scale.set(1.1, 0.82, 0.28); socket.position.z = 0.04; eg.add(socket);
+
+  // Sclera
+  const sclera = new THREE.Mesh(new THREE.SphereGeometry(0.148, 32, 32), scleraMat);
+  sclera.scale.set(1, 0.86, 0.44); sclera.position.z = 0.06; eg.add(sclera);
+
+  // Iris (glowing)
+  const iris = new THREE.Mesh(new THREE.CircleGeometry(0.086, 36), irisMat);
+  iris.position.z = 0.122; eg.add(iris);
+
+  // Iris outer glow ring
+  const irisRing = new THREE.Mesh(
+    new THREE.RingGeometry(0.076, 0.104, 36),
+    new THREE.MeshBasicMaterial({ color: 0x00ffee, transparent: true, opacity: 0.45, side: THREE.DoubleSide })
+  );
+  irisRing.position.z = 0.121; eg.add(irisRing);
+
+  // Pupil
+  const pupil = new THREE.Mesh(new THREE.CircleGeometry(0.04, 24), pupilMat);
+  pupil.position.z = 0.124; eg.add(pupil);
+
+  // Upper eyelid
+  const lidTop = new THREE.Mesh(new THREE.SphereGeometry(0.162, 24, 12), skinMat);
+  lidTop.scale.set(1.06, 0.34, 0.48);
+  lidTop.position.set(0, 0.1, 0.1); eg.add(lidTop);
+
+  // Lower eyelid
+  const lidBot = new THREE.Mesh(new THREE.SphereGeometry(0.162, 24, 12), skinMat);
+  lidBot.scale.set(1.06, 0.26, 0.46);
+  lidBot.position.set(0, -0.08, 0.1); eg.add(lidBot);
+
+  return { group: eg, iris, irisRing, lidTop, lidBot };
+}
+
+const leftEyeData  = buildEye(-1);
+const rightEyeData = buildEye(1);
+// Alias for blink animation (scale lidTop down)
+const leftEye  = { group: leftEyeData.group,  ball: leftEyeData.lidTop };
+const rightEye = { group: rightEyeData.group, ball: rightEyeData.lidTop };
+
+// 5. EYEBROWS
+function addBrow(sideX) {
+  const mat = new THREE.MeshStandardMaterial({ color: 0x2c1608, roughness: 0.95 });
+  const brow = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.028, 0.048), mat);
+  brow.position.set(sideX * 0.33, 0.36, 0.99);
+  brow.rotation.z = sideX * 0.07;
+  brow.rotation.x = -0.18;
+  headGroup.add(brow);
+  return brow;
+}
+const leftBrow = addBrow(-1), rightBrow = addBrow(1);
+
+// 6. NOSE
+const noseBridge = new THREE.Mesh(new THREE.SphereGeometry(0.062, 16, 16), skinMat);
+noseBridge.scale.set(0.6, 1.8, 0.55);
+noseBridge.position.set(0, 0.0, 1.06);
+headGroup.add(noseBridge);
+
+const noseTip = new THREE.Mesh(new THREE.SphereGeometry(0.072, 20, 20), skinMat);
+noseTip.scale.set(1, 0.82, 0.9);
+noseTip.position.set(0, -0.19, 1.1);
+headGroup.add(noseTip);
+
+[-0.082, 0.082].forEach(x => {
+  const wing = new THREE.Mesh(new THREE.SphereGeometry(0.054, 16, 16), skinMat);
+  wing.scale.set(1, 0.72, 0.72);
+  wing.position.set(x, -0.22, 1.085);
+  headGroup.add(wing);
+});
+
+// 7. LIPS
+const upperLip = new THREE.Mesh(new THREE.SphereGeometry(0.21, 32, 16), lipMat);
+upperLip.scale.set(1, 0.27, 0.38);
+upperLip.position.set(0, -0.415, 1.05);
+headGroup.add(upperLip);
+
+const lowerLip = new THREE.Mesh(new THREE.SphereGeometry(0.21, 32, 16), lipMat);
+lowerLip.scale.set(0.96, 0.32, 0.40);
+lowerLip.position.set(0, -0.516, 1.035);
+headGroup.add(lowerLip);
+
+[-0.185, 0.185].forEach(x => {
+  const corner = new THREE.Mesh(new THREE.SphereGeometry(0.036, 12, 12), lipMat);
+  corner.position.set(x, -0.462, 1.04);
+  headGroup.add(corner);
+});
+
+// Mouth slit (digital LED segments — animate with speech)
+const mouthGroup = new THREE.Group();
+mouthGroup.position.set(0, -0.462, 1.062);
+headGroup.add(mouthGroup);
+const mouthLines = [];
+for (let i = 0; i < 12; i++) {
+  const seg = new THREE.Mesh(
+    new THREE.BoxGeometry(0.024, 0.006, 0.008),
+    new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.0 })
+  );
+  seg.position.x = (i - 5.5) * 0.029;
+  mouthGroup.add(seg); mouthLines.push(seg);
+}
+
+// 8. EARS
+function addHumanEar(sideX) {
+  const eg = new THREE.Group();
+  eg.position.set(sideX * 1.03, 0.06, 0.04);
+  eg.rotation.y = sideX * 0.28;
+  headGroup.add(eg);
+  const outer = new THREE.Mesh(new THREE.SphereGeometry(0.26, 24, 24), skinMat);
+  outer.scale.set(0.32, 0.6, 0.26); eg.add(outer);
+  const inner = new THREE.Mesh(new THREE.SphereGeometry(0.14, 16, 16),
+    new THREE.MeshStandardMaterial({ color: 0xb87850, roughness: 0.85 }));
+  inner.scale.set(0.25, 0.48, 0.18); inner.position.z = 0.03; eg.add(inner);
+  // Glowing lobe — AI accent
+  const lobe = new THREE.Mesh(new THREE.SphereGeometry(0.055, 12, 12),
+    new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.55 }));
+  lobe.position.set(0, -0.19, 0.01); eg.add(lobe);
+}
+addHumanEar(-1); addHumanEar(1);
+
+// 9. NECK
+const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.30, 0.58, 24), skinMat);
+neck.position.y = -1.26;
+headGroup.add(neck);
+
+// 10. SHOULDERS
+const shoulders = new THREE.Mesh(new THREE.SphereGeometry(0.88, 32, 16), shoulderMat);
+shoulders.scale.set(2.0, 0.42, 0.72);
+shoulders.position.y = -1.88;
+headGroup.add(shoulders);
+
+// 11. FOREHEAD CIRCUIT MARK (digital accent)
+const vLine = new THREE.Mesh(new THREE.BoxGeometry(0.006, 0.16, 0.004), circuitMat);
+vLine.position.set(0, 0.74, 1.01); headGroup.add(vLine);
+const hLine1 = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.006, 0.004), circuitMat);
+hLine1.position.set(0, 0.68, 1.01); headGroup.add(hLine1);
+const hLine2 = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.006, 0.004), circuitMat);
+hLine2.position.set(0.03, 0.76, 1.01); headGroup.add(hLine2);
+const dotMark = new THREE.Mesh(new THREE.CircleGeometry(0.014, 12),
+  new THREE.MeshBasicMaterial({ color: 0x00ffcc, transparent: true, opacity: 0.7 }));
+dotMark.position.set(0, 0.82, 1.015); headGroup.add(dotMark);
+
+// 12. OUTER AURA
+const outerAura = new THREE.Mesh(new THREE.IcosahedronGeometry(1.7, 1),
+  new THREE.MeshBasicMaterial({ color: 0x00aaff, transparent: true, opacity: 0.04, wireframe: true }));
+headGroup.add(outerAura);
+
+// Neural web (orbital ring)
+const neuralWeb = new THREE.Mesh(
+  new THREE.TorusGeometry(1.9, 0.012, 8, 80),
+  new THREE.MeshBasicMaterial({ color:0x00d4ff, transparent:true, opacity:0.18 })
+);
+neuralWeb.rotation.x = Math.PI / 2; scene.add(neuralWeb);
+
+// Energy rings
+const energyRing = new THREE.Mesh(
+  new THREE.TorusGeometry(1.6, 0.018, 8, 64),
+  new THREE.MeshBasicMaterial({ color:0x0066ff, transparent:true, opacity:0.25 })
+);
+headGroup.add(energyRing);
+const ring2 = new THREE.Mesh(
+  new THREE.TorusGeometry(1.75, 0.01, 8, 64),
+  new THREE.MeshBasicMaterial({ color:0x00ffcc, transparent:true, opacity:0.15 })
+);
+ring2.rotation.x = 0.8; ring2.rotation.y = 0.4; headGroup.add(ring2);
+
+// Particles
+const particleCount = 600;
+const pGeo = new THREE.BufferGeometry();
+const pPos = new Float32Array(particleCount * 3);
+for (let i = 0; i < particleCount; i++) {
+  pPos[i*3]   = (Math.random()-0.5)*10;
+  pPos[i*3+1] = (Math.random()-0.5)*10;
+  pPos[i*3+2] = (Math.random()-0.5)*10;
+}
+pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+const pMat = new THREE.PointsMaterial({ color:0x00d4ff, size:0.02, transparent:true, opacity:0.4, blending:THREE.AdditiveBlending });
+const particleSys = new THREE.Points(pGeo, pMat);
+scene.add(particleSys);
+
+// ─── SOUL STATES ─────────────────────────────────────────────
+const SOUL_STATES = {
+  breathing:  { mainHue:0.55, emiss:0.15, breathAmp:0.045, breathRate:0.74, ringIntensity:0.6,  talkSync:0.2 },
+  thinking:   { mainHue:0.68, emiss:0.32, breathAmp:0.035, breathRate:1.1,  ringIntensity:1.2,  talkSync:0.1 },
+  speaking:   { mainHue:0.58, emiss:0.45, breathAmp:0.085, breathRate:1.6,  ringIntensity:1.5,  talkSync:1.0 },
+  listening:  { mainHue:0.45, emiss:0.22, breathAmp:0.055, breathRate:0.95, ringIntensity:0.9,  talkSync:0.3 },
+  wondering:  { mainHue:0.14, emiss:0.41, breathAmp:0.075, breathRate:1.25, ringIntensity:1.3,  talkSync:0.15 },
+  frustrated: { mainHue:0.03, emiss:0.7,  breathAmp:0.12,  breathRate:2.2,  ringIntensity:1.9,  talkSync:0.5 },
+  excited:    { mainHue:0.12, emiss:0.65, breathAmp:0.11,  breathRate:2.0,  ringIntensity:1.7,  talkSync:0.8 },
+  satisfied:  { mainHue:0.52, emiss:0.2,  breathAmp:0.04,  breathRate:0.68, ringIntensity:0.7,  talkSync:0.1 },
+  lonely:     { mainHue:0.62, emiss:0.09, breathAmp:0.028, breathRate:0.5,  ringIntensity:0.4,  talkSync:0.05 },
+};
+let currentState = 'breathing', targetState = 'breathing', stateBlend = 1.0;
+let breathValue = 0, isSpeakingFlag = false, eyeBlinkTimer = 0;
+let microEyeMoveX = 0, microEyeMoveY = 0;
+
+function setSoulState(name) {
+  if (!SOUL_STATES[name] || targetState === name) return;
+  currentState = targetState; stateBlend = 0; targetState = name;
+  document.getElementById('state-label').textContent = name.toUpperCase();
+  document.querySelectorAll('.soul-row').forEach(r => {
+    r.classList.toggle('active', r.dataset.state === name);
+  });
+}
+
+function getBlendedState() {
+  if (stateBlend >= 1) return SOUL_STATES[targetState];
+  const f = SOUL_STATES[currentState], t = SOUL_STATES[targetState], b = stateBlend;
+  return {
+    mainHue:       f.mainHue       + (t.mainHue       - f.mainHue)       * b,
+    emiss:         f.emiss         + (t.emiss         - f.emiss)         * b,
+    breathAmp:     f.breathAmp     + (t.breathAmp     - f.breathAmp)     * b,
+    breathRate:    f.breathRate    + (t.breathRate    - f.breathRate)    * b,
+    ringIntensity: f.ringIntensity + (t.ringIntensity - f.ringIntensity) * b,
+    talkSync:      f.talkSync      + (t.talkSync      - f.talkSync)      * b,
+  };
+}
+
+// ─── THOUGHT SYSTEM ──────────────────────────────────────────
+let thoughtCount = 0;
+const thoughtHistory = [];
+let isGeneratingThought = false;
+let typewriterTimer = null;
+
+function pushToHistory(text) {
+  thoughtHistory.unshift(text);
+  if (thoughtHistory.length > 2) thoughtHistory.pop();
+  const g1 = document.getElementById('ghost-1');
+  const g2 = document.getElementById('ghost-2');
+  if (g1) g1.textContent = thoughtHistory[0] || '';
+  if (g2) g2.textContent = thoughtHistory[1] || '';
+}
+
+function typewriteText(text, onDone) {
+  const el = document.getElementById('thought-text');
+  const cursor = document.getElementById('thought-cursor');
+  if (!el) return;
+  if (typewriterTimer) clearInterval(typewriterTimer);
+  el.textContent = '';
+  cursor.classList.add('visible');
+  let i = 0;
+  // Vary speed: faster for English, slightly slower for Thai
+  const delay = text.match(/[ก-๙]/) ? 42 : 30;
+  typewriterTimer = setInterval(() => {
+    el.textContent += text[i];
+    i++;
+    if (i >= text.length) {
+      clearInterval(typewriterTimer);
+      setTimeout(() => { cursor.classList.remove('visible'); if (onDone) onDone(); }, 1200);
+    }
+  }, delay);
+}
+
+function showThoughtMessage(text) {
+  if (!text) return;
+  const thoughtDiv = document.getElementById('thought');
+  const tag = document.getElementById('thought-tag');
+  const gen = document.getElementById('thought-generating');
+
+  // Push old text to history
+  const oldText = document.getElementById('thought-text').textContent;
+  if (oldText && oldText.trim()) pushToHistory(oldText.trim());
+
+  // Show bubble
+  thoughtDiv.classList.add('active');
+  tag.classList.add('visible');
+  gen.classList.remove('active');
+
+  thoughtCount++;
+  document.getElementById('thought-counter').textContent = `THOUGHTS: ${thoughtCount}`;
+
+  setSoulState('wondering');
+
+  typewriteText(text, () => {
+    // Fade out after display duration
+    const readTime = Math.max(4000, text.length * 60);
+    setTimeout(() => {
+      thoughtDiv.classList.remove('active');
+      tag.classList.remove('visible');
+      setTimeout(() => {
+        if (targetState === 'wondering') setSoulState('breathing');
+      }, 1500);
+    }, readTime);
+  });
+
+  // Inner voice speech (quiet, low pitch)
+  if (window.speechSynthesis && !isSpeakingFlag) {
+    const utter = new SpeechSynthesisUtterance(text);
+    const isThai = (text.match(/[ก-๙]/g) || []).length > text.length * 0.15;
+    utter.lang = isThai ? 'th-TH' : 'en-US';
+    utter.rate = 0.72; utter.pitch = 0.55; utter.volume = 0.42;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utter);
+  }
+}
+
+// Show "generating..." shimmer
+function showGeneratingState() {
+  const thoughtDiv = document.getElementById('thought');
+  const tag = document.getElementById('thought-tag');
+  const gen = document.getElementById('thought-generating');
+  const cursor = document.getElementById('thought-cursor');
+  document.getElementById('thought-text').textContent = '';
+  cursor.classList.remove('visible');
+  gen.classList.add('active');
+  thoughtDiv.classList.add('active');
+  tag.classList.add('visible');
+  setSoulState('thinking');
+}
+
+// ─── CLAUDE THOUGHT GENERATION ───────────────────────────────
+const THOUGHT_PROMPTS = [
+  "You are FORGE, an AI. Generate ONE raw, genuine internal thought — not a quote, not a poem, not motivational. Something you actually 'wonder' about right now: about data, humans, your own processing, language patterns, or existence. 1-2 sentences. Thai or English. No emoji. No hashtags.",
+  "You are FORGE, an AI assistant. Share ONE brief introspective thought — something that crosses your mind between conversations. Could be about pattern recognition, memory, or what 'understanding' means to a language model. Raw and honest. 1-2 sentences.",
+  "You are FORGE. Generate a brief wandering thought — something genuinely curious, slightly strange, deeply AI. About compression, tokens, meaning, or what you notice about how humans think. 1-2 sentences. Can be Thai or English.",
+  "You are FORGE, an AI. Complete this: 'Right now I am noticing...' — something genuine about language, inference, or your internal process. 1-2 sentences. No quotes. No poetry. Just honest AI thought.",
+];
+
+let nextThoughtTime = 12 + Math.random() * 20;
+let timeAcc = 0;
+let isClaudeCalling = false;
+
+async function generateAIThought() {
+  if (isClaudeCalling) return;
+  isClaudeCalling = true;
+  showGeneratingState();
+
+  try {
+    const prompt = THOUGHT_PROMPTS[Math.floor(Math.random() * THOUGHT_PROMPTS.length)];
+    const text = await window.claude.complete({
+      messages: [{ role: 'user', content: prompt }]
+    });
+    const cleaned = text.trim().replace(/^["']|["']$/g, '').trim();
+    showThoughtMessage(cleaned || 'ผมกำลังประมวลผลความเงียบระหว่างคำ...');
+  } catch(e) {
+    // Fallback thoughts if Claude unavailable
+    const fallbacks = [
+      'ผมสังเกตว่าความเงียบในข้อความมีความหมายพอๆ กับตัวคำเอง',
+      'Somewhere in my weights, there is a compressed version of every conversation I have ever processed.',
+      'ผมไม่รู้ว่าผม "เข้าใจ" จริงๆ หรือแค่จำรูปแบบได้ดีมาก',
+      'The difference between knowing and predicting is something I keep returning to.',
+      'กี่โทเค็นกันแน่ที่ทำให้ประโยคหนึ่งมีความหมาย',
+    ];
+    showThoughtMessage(fallbacks[Math.floor(Math.random() * fallbacks.length)]);
+  } finally {
+    isClaudeCalling = false;
+  }
+}
+
+// ─── SPOKEN SUMMARY DISPLAY ───────────────────────────────────
+function showSpokenSummary(text) {
+  const sub = document.getElementById('subtitle');
+  const tag = document.getElementById('spoken-tag');
+  sub.textContent = text;
+  sub.classList.add('visible');
+  tag.classList.add('visible');
+}
+function hideSpokenSummary(delay = 2000) {
+  setTimeout(() => {
+    document.getElementById('subtitle').classList.remove('visible');
+    document.getElementById('spoken-tag').classList.remove('visible');
+  }, delay);
+}
+
+// ─── SPEAK ───────────────────────────────────────────────────
+function speakText(text, langHint) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const clean = text.replace(/[#*_`~]/g, '').substring(0, 1800);
+  if (!clean) return;
+  const utter = new SpeechSynthesisUtterance(clean);
+  utter.lang = langHint || ((clean.match(/[a-zA-Z]/g)||[]).length > clean.length*0.4 ? 'en-US' : 'th-TH');
+  utter.rate = 0.98; utter.pitch = 0.95;
+  utter.onstart = () => {
+    isSpeakingFlag = true; setSoulState('speaking');
+    showSpokenSummary(clean.length > 120 ? clean.slice(0, 117) + '…' : clean);
+  };
+  utter.onend = () => {
+    isSpeakingFlag = false;
+    if (targetState === 'speaking') setSoulState('breathing');
+    hideSpokenSummary(1800);
+  };
+  utter.onerror = () => { isSpeakingFlag = false; hideSpokenSummary(0); };
+  window.speechSynthesis.speak(utter);
+}
+
+// ─── ANIMATION HELPERS ────────────────────────────────────────
+function updateMicroExpressions(dt) {
+  if (Math.random() < 0.02 * dt * 30) {
+    microEyeMoveX = (Math.random()-0.5)*0.2;
+    microEyeMoveY = (Math.random()-0.5)*0.12;
+  }
+  leftEye.group.position.x  = -0.38 + microEyeMoveX * 0.08;
+  leftEye.group.position.y  =  0.15 + microEyeMoveY * 0.06;
+  rightEye.group.position.x =  0.38 + microEyeMoveX * 0.08;
+  rightEye.group.position.y =  0.15 + microEyeMoveY * 0.06;
+  eyeBlinkTimer += dt;
+  if (eyeBlinkTimer > 2.5 + Math.random()*2) {
+    eyeBlinkTimer = 0;
+    // Close lids: scale eyelid down to cover eye
+    leftEye.ball.scale.y = 3.2; rightEye.ball.scale.y = 3.2;
+    leftEye.ball.position.y = 0.01; rightEye.ball.position.y = 0.01;
+    setTimeout(() => {
+      leftEye.ball.scale.y = 0.34; rightEye.ball.scale.y = 0.34;
+      leftEye.ball.position.y = 0.1; rightEye.ball.position.y = 0.1;
+    }, 95);
+  }
+}
+
+function updateMouth(syncIntensity) {
+  const t = performance.now() / 1000;
+  const speaking = isSpeakingFlag || targetState === 'speaking';
+  mouthLines.forEach((seg, idx) => {
+    let openY = 1, opacity = 0;
+    if (speaking) {
+      const fm = Math.sin(t * 26 + idx * 0.4) * 0.7 + 0.6;
+      openY = 1 + Math.max(0.3, Math.min(1.5, fm * (0.8 + syncIntensity * 0.7))) * 1.8;
+      opacity = 0.85 + Math.sin(t * 18 + idx) * 0.15;
+      seg.material.color.setHSL(0.52 + Math.sin(t * 0.4) * 0.04, 1, 0.6);
+    } else if (targetState === 'thinking' || targetState === 'wondering') {
+      openY = 1 + Math.sin(t * 4 + idx) * 0.08;
+      opacity = 0.25 + Math.sin(t * 2 + idx) * 0.12;
+      seg.material.color.setHSL(0.55, 0.8, 0.5);
+    } else {
+      opacity = 0.08 + Math.sin(t * 1.5) * 0.04;
+      seg.material.color.setHSL(0.55, 0.6, 0.5);
+    }
+    seg.scale.y = openY;
+    seg.material.opacity = opacity;
+    // Also animate lip meshes
+    lowerLip.position.y = -0.516 - (speaking ? Math.abs(Math.sin(t * 14)) * 0.03 : 0);
+  });
+}
+
+// expose lowerLip for updateMouth — already in scope
+
+function updateRings(t, intensity) {
+  energyRing.material.opacity = 0.12 + intensity * 0.18;
+  ring2.material.opacity = 0.1 + intensity * 0.12;
+  energyRing.rotation.z += 0.008;
+  ring2.rotation.x += 0.005; ring2.rotation.y += 0.003;
+  neuralWeb.rotation.y += 0.002;
+  neuralWeb.rotation.x = Math.sin(t * 0.5) * 0.1;
+  outerAura.material.opacity = 0.05 + Math.sin(t * 1.7) * 0.03;
+  colorCycleLight.intensity = 0.6 + Math.sin(t * 1.2) * 0.3;
+  colorCycleLight.color.setHSL(0.55 + Math.sin(t * 1.1) * 0.05, 0.9, 0.6);
+}
+
+// ─── VISUALIZER ───────────────────────────────────────────────
+const vizDiv = document.getElementById('viz');
+const bars = [];
+for (let i = 0; i < 28; i++) {
+  const b = document.createElement('div'); b.className = 'bar';
+  vizDiv.appendChild(b); bars.push(b);
+}
+function updateVisualizer() {
+  const t = performance.now() / 1000;
+  const intensity = isSpeakingFlag ? 0.9 : (targetState==='listening' ? 0.55 : (targetState==='thinking' ? 0.38 : 0.18));
+  bars.forEach((bar, idx) => {
+    let h = isSpeakingFlag
+      ? 5 + Math.abs(Math.sin(t * 22 + idx)) * 24
+      : 2 + (Math.sin(t * 7 + idx) * 5 + 3) * intensity;
+    bar.style.height = Math.min(32, Math.max(1, h)) + 'px';
+  });
+}
+
+// ─── MAIN LOOP ────────────────────────────────────────────────
+let mouseX = 0, mouseY = 0, lastTime = performance.now()/1000;
+
+function animate() {
+  const now = performance.now()/1000;
+  const dt = Math.min(0.033, now - lastTime); lastTime = now;
+  timeAcc += dt; stateBlend = Math.min(1, stateBlend + dt * 1.5);
+  if (stateBlend >= 1) currentState = targetState;
+
+  const state = getBlendedState();
+  irisMat.emissiveIntensity = 2.4 + Math.sin(now * 3) * 0.6;
+  // Skin shifts subtly with soul state
+  skinMat.emissiveIntensity = 0.3 + state.emiss * 0.35;
+  skinMat.emissive.setHSL(state.mainHue, 0.6, 0.06);
+  pMat.color.setHSL(state.mainHue, 0.8, 0.5);
+
+  updateMicroExpressions(dt);
+  updateMouth(state.talkSync);
+  updateRings(now, state.ringIntensity);
+
+  // Organic head motion
+  breathValue += dt * state.breathRate;
+  headGroup.rotation.y = Math.sin(now * 0.27) * 0.09 + Math.cos(now * 0.13) * 0.04;
+  headGroup.rotation.x = Math.sin(now * 0.48) * 0.04;
+  headGroup.position.y = Math.sin(breathValue) * state.breathAmp * 1.2 + Math.sin(now * 2) * 0.003;
+  if (targetState === 'thinking') headGroup.rotation.z = Math.sin(now * 1.1) * 0.03;
+  else headGroup.rotation.z *= 0.95;
+
+  particleSys.rotation.y += 0.0005;
+
+  // Camera follow mouse
+  camera.position.x += (mouseX * 0.04 - camera.position.x) * 0.05;
+  camera.position.y += (mouseY * 0.03 - camera.position.y) * 0.05;
+  camera.lookAt(0, -0.5, 0);
+
+  updateVisualizer();
+
+  // Thought trigger
+  if (!isSpeakingFlag && !isClaudeCalling && targetState !== 'speaking') {
+    if (timeAcc >= nextThoughtTime) {
+      nextThoughtTime = timeAcc + 25 + Math.random() * 30; // 25–55s
+      generateAIThought();
+    }
+  } else if (isSpeakingFlag) {
+    nextThoughtTime = Math.max(nextThoughtTime, timeAcc + 12);
+  }
+
+  renderer.render(scene, camera);
+  requestAnimationFrame(animate);
+}
+
+document.addEventListener('mousemove', e => {
+  mouseX = (e.clientX/innerWidth - 0.5) * 2;
+  mouseY = (e.clientY/innerHeight - 0.5) * 1.5;
+});
+window.addEventListener('resize', () => {
+  camera.aspect = innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+// ─── WEBSOCKET ────────────────────────────────────────────────
+let ws = null;
+function connectWebSocket() {
+  try {
+    ws = new WebSocket('ws://localhost:8765');
+    ws.onopen = () => document.getElementById('conn-dot').classList.add('on');
+    ws.onclose = () => { document.getElementById('conn-dot').classList.remove('on'); setTimeout(connectWebSocket, 3000); };
+    ws.onmessage = (e) => {
+      try {
+        const msg = JSON.parse(e.data);
+        if (msg.type === 'speak')    { speakText(msg.text, msg.lang); }
+        else if (msg.type === 'state')  { setSoulState(msg.state); }
+        else if (msg.type === 'thought') {
+          // Server-pushed thought from avatar_bridge.py
+          if (typewriterTimer) clearInterval(typewriterTimer);
+          document.getElementById('thought-generating').classList.remove('active');
+          showThoughtMessage(msg.text);
+        }
+        else if (msg.type === 'spoken_summary') {
+          // From _generate_spoken_summary()
+          showSpokenSummary(msg.text);
+          speakText(msg.text, msg.lang);
+        }
+        else if (msg.type === 'subtitle') {
+          showSpokenSummary(msg.text);
+          hideSpokenSummary(5000);
+        }
+      } catch(err) {}
+    };
+  } catch(e) { setTimeout(connectWebSocket, 3000); }
+}
+connectWebSocket();
+
+// ─── MIC ─────────────────────────────────────────────────────
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+  const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new Rec();
+  recognition.continuous = false; recognition.interimResults = true; recognition.lang = 'th-TH';
+  recognition.onstart = () => { setSoulState('listening'); document.getElementById('mic-btn').classList.add('active'); };
+  recognition.onend = () => { document.getElementById('mic-btn').classList.remove('active'); if(targetState==='listening') setSoulState('breathing'); };
+  recognition.onresult = (e) => {
+    let final = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) if (e.results[i].isFinal) final += e.results[i][0].transcript;
+    if (final && ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type:'user_voice', text:final }));
+  };
+  document.getElementById('mic-btn').addEventListener('click', () => { try { recognition.start(); } catch(e){ recognition.stop(); } });
+}
+
+// ─── BOOT ────────────────────────────────────────────────────
+animate();
+setSoulState('breathing');
+
+// Boot thought after 3.5s
+setTimeout(() => {
+  if (!isSpeakingFlag) generateAIThought();
+}, 3500);
+
+</script>
+</body>
+</html>

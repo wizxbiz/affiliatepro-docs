@@ -190,7 +190,7 @@ flutter:
   assets:
     - .env
     - assets/sounds/wrong.mp3
-    - assets/service-account.json
+    # service-account.json REMOVED — never bundle credentials in app assets
     - assets/animation/robot.json
     - assets/animation/aibot.json
     - assets/animation/splash.json

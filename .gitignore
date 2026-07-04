@@ -112,3 +112,4 @@ migrate_working_dir/
 # Keep important markdown docs
 !ARCHITECTURAL_OVERVIEW.md
 !walkthrough.md
+claude design/*.exe
