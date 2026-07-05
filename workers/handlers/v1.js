@@ -257,13 +257,15 @@ v1Routes.post('/media/presign', requireAuthV1, async (c) => {
 // ── Web Push Subscriptions (optional auth) ───────────────────
 v1Routes.post('/push/subscribe', async (c) => {
   const body = await c.req.json().catch(() => ({}));
-  const { subscription, uid, lineUserId } = body;
+  // Client sends: { data: { subscription, uid } }  OR  { subscription, uid }
+  const payload = body.data || body;
+  const { subscription, uid } = payload;
 
   if (!subscription || !subscription.endpoint) {
     return c.json({ status: 'error', error: { code: 'MISSING_SUBSCRIPTION', message: 'Missing subscription endpoint' } }, 400);
   }
 
-  const userId = uid || lineUserId || null;
+  const userId = uid || null;
   const p256dh = subscription.keys?.p256dh || null;
   const authVal = subscription.keys?.auth || null;
   const id = crypto.randomUUID();
