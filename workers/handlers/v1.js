@@ -224,10 +224,64 @@ v1Routes.get('/users/:id', async (c) => {
   }
 });
 
-// ── Media upload presign (R2) ────────────────────────────────
+// ── Media upload presign (R2) — requireAuthV1 (needs logged-in user) ─
 v1Routes.post('/media/presign', requireAuthV1, async (c) => {
-  const response = await utilityRoutes.request(rewriteRequest(c, '/r2-presigned-url'), undefined, c.env);
-  return normalizeJsonResponse(c, response);
+  const session = c.get('session');
+  const body = await c.req.json().catch(() => ({}));
+  const { folder = 'uploads', filename = 'file', contentType = 'application/octet-stream' } = body;
+
+  if (!folder || !filename || !contentType) {
+    return c.json({ status: 'error', error: { code: 'MISSING_PARAMS', message: 'Missing folder, filename, or contentType' } }, 400);
+  }
+
+  // Validate allowed folders
+  const ALLOWED_FOLDERS = [
+    'community_posts', 'community_posts/thumbs',
+    'posts', 'posts/thumbs',
+    'products', 'products/thumbs',
+    'avatars', 'stories'
+  ];
+  if (!ALLOWED_FOLDERS.some(f => folder === f || folder.startsWith(f + '/'))) {
+    return c.json({ status: 'error', error: { code: 'INVALID_FOLDER', message: 'Upload folder not allowed' } }, 400);
+  }
+
+  try {
+    const response = await utilityRoutes.request(rewriteJsonRequest(c, '/r2-presigned-url', { folder, filename, contentType, lineUserId: session.uid }), undefined, c.env);
+    const result = await normalizeJsonResponse(c, response);
+    return result;
+  } catch (err) {
+    return c.json({ status: 'error', error: { code: 'PRESIGN_FAILED', message: err.message || 'Failed to generate upload URL' } }, 500);
+  }
+});
+
+// ── Web Push Subscriptions (optional auth) ───────────────────
+v1Routes.post('/push/subscribe', async (c) => {
+  const body = await c.req.json().catch(() => ({}));
+  const { subscription, uid, lineUserId } = body;
+
+  if (!subscription || !subscription.endpoint) {
+    return c.json({ status: 'error', error: { code: 'MISSING_SUBSCRIPTION', message: 'Missing subscription endpoint' } }, 400);
+  }
+
+  const userId = uid || lineUserId || null;
+  const p256dh = subscription.keys?.p256dh || null;
+  const authVal = subscription.keys?.auth || null;
+  const id = crypto.randomUUID();
+
+  try {
+    const db = new DB(c.env.DB);
+    await db.savePushSubscription({
+      id,
+      userId,
+      endpoint: subscription.endpoint,
+      p256dh,
+      auth: authVal,
+      createdAt: Date.now(),
+    });
+    return c.json({ data: { success: true } });
+  } catch (err) {
+    return c.json({ status: 'error', error: { code: 'DB_ERROR', message: err.message } }, 500);
+  }
 });
 
 // Fallback proxy to Go Engine for any unhandled /api/v1/* routes

@@ -264,11 +264,43 @@ export class DB {
   }
 
   // ═══════════════════════════════════════════════════════════
+  // WEB PUSH SUBSCRIPTIONS
+  // ═══════════════════════════════════════════════════════════
+
+  async savePushSubscription(sub) {
+    return this.d1.prepare(`
+      INSERT OR REPLACE INTO push_subscriptions (id, user_id, endpoint, p256dh, auth, created_at)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `).bind(sub.id, sub.userId, sub.endpoint, sub.p256dh, sub.auth, sub.createdAt).run();
+  }
+
+  async getUserPushSubscriptions(userId) {
+    return this.d1.prepare('SELECT * FROM push_subscriptions WHERE user_id = ?').bind(userId).all().then(r => r.results);
+  }
+
+  // ═══════════════════════════════════════════════════════════
   // Helpers
   // ═══════════════════════════════════════════════════════════
 
   /** camelCase → snake_case column name */
   _col(name) {
     return name.replace(/[A-Z]/g, c => `_${c.toLowerCase()}`);
+  }
+
+  /** Wrap result with Firestore-compatible toDate()/toMillis() */
+  _wrapDocData(data) {
+    if (!data) return data;
+    const wrapped = { ...data };
+    for (const [key, val] of Object.entries(wrapped)) {
+      if ((key.toLowerCase().endsWith('at') || key.toLowerCase().endsWith('timestamp') || key === 'sentAt') && typeof val === 'number') {
+        wrapped[key] = {
+          toDate: () => new Date(val),
+          toMillis: () => val,
+          seconds: Math.floor(val / 1000),
+          nanoseconds: (val % 1000) * 1e6
+        };
+      }
+    }
+    return wrapped;
   }
 }
