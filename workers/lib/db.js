@@ -268,10 +268,11 @@ export class DB {
   // ═══════════════════════════════════════════════════════════
 
   async savePushSubscription(sub) {
+    // Table schema: id, user_id, endpoint, keys, created_at
     return this.d1.prepare(`
-      INSERT OR REPLACE INTO push_subscriptions (id, user_id, endpoint, p256dh, auth, created_at)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `).bind(sub.id, sub.userId, sub.endpoint, sub.p256dh, sub.auth, sub.createdAt).run();
+      INSERT OR REPLACE INTO push_subscriptions (id, user_id, endpoint, keys, created_at)
+      VALUES (?, ?, ?, ?, ?)
+    `).bind(sub.id, sub.userId, sub.endpoint, JSON.stringify({ p256dh: sub.p256dh, auth: sub.auth }), sub.createdAt).run();
   }
 
   async getUserPushSubscriptions(userId) {
