@@ -129,7 +129,7 @@ if (lineConfig.channelAccessToken && lineConfig.channelSecret) {
 **Location:** [index.js:13](d:\Flutterapp\caculateapp\functions\index.js#L13)
 
 ```javascript
-channelSecret: process.env.LINE_CHANNEL_SECRET || "50872b114ef7974f7ddab5219c0decb6"
+channelSecret: process.env.LINE_CHANNEL_SECRET || "<REDACTED_MESSAGING_SECRET>"
                                                    ↑ SECURITY RISK
 ```
 
@@ -144,7 +144,7 @@ channelSecret: process.env.LINE_CHANNEL_SECRET || "50872b114ef7974f7ddab5219c0de
 ```javascript
 // ควรแก้เป็น:
 channelSecret: process.env.LINE_CHANNEL_SECRET
-// ลบค่า default "50872b114ef7974f7ddab5219c0decb6" ออก
+// ลบค่า default "<REDACTED_MESSAGING_SECRET>" ออก
 ```
 
 ---

@@ -509,8 +509,9 @@ exports.lineLoginCallback = onRequest({
         const { code, redirectUri } = req.body;
         if (!code) return res.status(400).json({ success: false, error: "code is required" });
 
-        const LINE_CHANNEL_ID = "2009159046";
-        const LINE_CHANNEL_SECRET = "13b4ba868f18a0733494a5fe539dcec6";
+        const LINE_CHANNEL_ID = process.env.LINE_LOGIN_CHANNEL_ID || "2009159046";
+        const LINE_CHANNEL_SECRET = process.env.LINE_LOGIN_CHANNEL_SECRET;
+        if (!LINE_CHANNEL_SECRET) return res.status(500).json({ success: false, error: "LINE Login secret not configured" });
 
         // 1. Exchange code for access token
         const tokenParams = new URLSearchParams();

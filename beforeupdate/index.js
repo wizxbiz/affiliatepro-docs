@@ -7376,8 +7376,8 @@ exports.lineLoginCallback = onRequest({
     console.log("🔐 Processing LINE Login callback...");
 
     // LINE Login credentials — Channel: Tuktukfeed Thailand LINE Login (2009159046)
-    const LINE_CHANNEL_ID = "2009159046";
-    const LINE_CHANNEL_SECRET = process.env.LINE_LOGIN_CHANNEL_SECRET || "13b4ba868f18a0733494a5fe539dcec6";
+    const LINE_CHANNEL_ID = process.env.LINE_LOGIN_CHANNEL_ID || "2009159046";
+    const LINE_CHANNEL_SECRET = process.env.LINE_LOGIN_CHANNEL_SECRET;
 
     // Exchange code for access token
     const tokenResponse = await fetch("https://api.line.me/oauth2/v2.1/token", {

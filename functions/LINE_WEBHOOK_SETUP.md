@@ -37,7 +37,7 @@ https://us-central1-appinjproject.cloudfunctions.net/lineWebhook
 ```bash
 # 1. ตั้งค่า Channel Secret
 firebase functions:secrets:set LINE_CHANNEL_SECRET
-# พิมพ์: 50872b114ef7974f7ddab5219c0decb6
+# พิมพ์: <REDACTED_MESSAGING_SECRET>
 
 # 2. ตั้งค่า Channel Access Token
 firebase functions:secrets:set LINE_CHANNEL_ACCESS_TOKEN
@@ -52,7 +52,7 @@ firebase functions:secrets:set LINE_CHANNEL_ACCESS_TOKEN
 
 **Secret 1:**
 - Name: `LINE_CHANNEL_SECRET`
-- Secret value: `50872b114ef7974f7ddab5219c0decb6`
+- Secret value: `<REDACTED_MESSAGING_SECRET>`
 
 **Secret 2:**
 - Name: `LINE_CHANNEL_ACCESS_TOKEN`

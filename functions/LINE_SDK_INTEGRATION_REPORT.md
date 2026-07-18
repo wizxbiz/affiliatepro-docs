@@ -47,14 +47,14 @@ const line = require("@line/bot-sdk");
 ```javascript
 const lineConfig = {
   channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN || "",
-  channelSecret: process.env.LINE_CHANNEL_SECRET || "50872b114ef7974f7ddab5219c0decb6"
+  channelSecret: process.env.LINE_CHANNEL_SECRET || "<REDACTED_MESSAGING_SECRET>"
 };
 ```
 
 #### 🔴 **CRITICAL SECURITY ISSUE**
 
 **ปัญหา:**
-- Channel Secret ถูก hardcode เป็นค่า default: `"50872b114ef7974f7ddab5219c0decb6"`
+- Channel Secret ถูก hardcode เป็นค่า default: `"<REDACTED_MESSAGING_SECRET>"`
 - หาก `process.env.LINE_CHANNEL_SECRET` ไม่ได้ถูกตั้งค่า ระบบจะใช้ค่า hardcode
 - ค่านี้จะถูก commit ลง Git และเข้าถึงได้โดยทุกคนที่มี access ไปยัง repository
 
@@ -121,7 +121,7 @@ const lineClient = new line.Client(lineConfig);
 // ❌ BEFORE (ไม่ปลอดภัย)
 const lineConfig = {
   channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN || "",
-  channelSecret: process.env.LINE_CHANNEL_SECRET || "50872b114ef7974f7ddab5219c0decb6"
+  channelSecret: process.env.LINE_CHANNEL_SECRET || "<REDACTED_MESSAGING_SECRET>"
 };
 
 // ✅ AFTER (ปลอดภัย)
@@ -147,7 +147,7 @@ firebase functions:secrets:set LINE_CHANNEL_ACCESS_TOKEN
 
 # ตั้งค่า Channel Secret
 firebase functions:secrets:set LINE_CHANNEL_SECRET
-# จากนั้นพิมพ์: 50872b114ef7974f7ddab5219c0decb6
+# จากนั้นพิมพ์: <REDACTED_MESSAGING_SECRET>
 ```
 
 **Option B: ผ่าน Firebase Console**
@@ -157,7 +157,7 @@ firebase functions:secrets:set LINE_CHANNEL_SECRET
 3. คลิก **Add Secret**
 4. เพิ่ม:
    - `LINE_CHANNEL_ACCESS_TOKEN` = (ค่าจาก LINE Developers Console)
-   - `LINE_CHANNEL_SECRET` = `50872b114ef7974f7ddab5219c0decb6`
+   - `LINE_CHANNEL_SECRET` = `<REDACTED_MESSAGING_SECRET>`
 
 #### **ขั้นตอนที่ 3: อัปเดต Cloud Function**
 
@@ -326,7 +326,7 @@ await lineClient.linkRichMenuToUser(userId, richMenuId);
 
 ❌ **อย่าทำ:**
 ```javascript
-const secret = "50872b114ef7974f7ddab5219c0decb6"; // Hardcoded
+const secret = "<REDACTED_MESSAGING_SECRET>"; // Hardcoded
 console.log('Secret:', secret); // Log ออกมา
 ```
 
