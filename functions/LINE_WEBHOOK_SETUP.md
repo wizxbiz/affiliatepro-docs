@@ -1,383 +1,198 @@
-# 💬 LINE Webhook Setup Guide
+# 💬 LINE Webhook Setup Guide (Cloudflare Workers)
 
-**Created:** 2025-11-28
-**Status:** ⚠️ Pending Configuration
+**Updated:** 2026-07-13
+**Runtime:** Cloudflare Workers (`tuktukfeed-api`) — ย้ายจาก Firebase Functions แล้ว
+**Handler:** [`workers/handlers/line-webhook.js`](../workers/handlers/line-webhook.js)
+
+> ⚠️ เอกสารเวอร์ชันเก่าอ้างถึง Firebase (`cloudfunctions.net/lineWebhook`, `firebase deploy`)
+> ระบบปัจจุบัน **ไม่ได้ใช้ Firebase แล้ว** โปรดใช้ขั้นตอน Cloudflare ด้านล่างนี้เท่านั้น
 
 ---
 
-## 🎯 LINE Webhook URL
+## 🎯 Webhook URLs
 
-เมื่อ deploy สำเร็จแล้ว URL จะเป็น:
+ระบบรองรับ 2 บอทแยก channel:
 
-```
-https://us-central1-appinjproject.cloudfunctions.net/lineWebhook
-```
+| บอท | Webhook URL | ใช้สำหรับ |
+|-----|-------------|-----------|
+| **TukTuk Feed** | `https://tuktukfeed.com/api/webhook/line-tuktuk` | Marketplace, PIN, ค้นสินค้า, AI |
+| **Injection (WiT365)** | `https://tuktukfeed.com/api/webhook/line` | ผู้ช่วยงานฉีดพลาสติก + AI |
 
-**วิธีใช้:**
-1. เข้า [LINE Developers Console](https://developers.line.biz/console/)
-2. เลือก Channel ของคุณ
-3. ไปที่ **Messaging API** tab
-4. ตั้งค่า **Webhook URL**:
-   ```
-   https://us-central1-appinjproject.cloudfunctions.net/lineWebhook
-   ```
-5. เปิด **Use webhook**: ON
-6. คลิก **Verify** เพื่อทดสอบ
+> เส้นทางสำรอง (mount เดียวกัน): `POST /api/line/webhook` และ `POST /api/line/webhook-tuktuk`
 
 ---
 
 ## ⚙️ Setup Steps
 
-### **Step 1: ตั้งค่า Firebase Secrets**
+### **Step 1: ตั้งค่า Secrets ผ่าน Wrangler**
 
-ต้องตั้งค่า 2 secrets ก่อน deploy:
-
-#### **Option A: ผ่าน Firebase CLI (แนะนำ)**
+Secret เก็บใน Cloudflare (ไม่ commit ลง repo) ตั้งด้วยคำสั่ง:
 
 ```bash
-# 1. ตั้งค่า Channel Secret
-firebase functions:secrets:set LINE_CHANNEL_SECRET
-# พิมพ์: 50872b114ef7974f7ddab5219c0decb6
+cd workers
 
-# 2. ตั้งค่า Channel Access Token
-firebase functions:secrets:set LINE_CHANNEL_ACCESS_TOKEN
-# พิมพ์: (ค่าจาก LINE Developers Console)
+# TukTuk channel
+npx wrangler@3 secret put TUKTUK_CHANNEL_SECRET
+npx wrangler@3 secret put TUKTUK_CHANNEL_ACCESS_TOKEN
+
+# Injection (WiT365) channel
+npx wrangler@3 secret put INJECTION_CHANNEL_SECRET
+npx wrangler@3 secret put INJECTION_CHANNEL_ACCESS_TOKEN
 ```
 
-#### **Option B: ผ่าน Google Cloud Console**
+**ค่า secret หาได้จาก** LINE Developers Console → Channel → Messaging API:
+- `*_CHANNEL_SECRET` = Basic settings → Channel secret
+- `*_CHANNEL_ACCESS_TOKEN` = Messaging API → Channel access token (long-lived)
 
-1. เปิด [Secret Manager](https://console.cloud.google.com/security/secret-manager?project=appinjproject)
-2. คลิก **+ CREATE SECRET**
-3. สร้าง secret ทั้ง 2 ตัว:
+> Handler รองรับ fallback: ถ้าไม่ได้ตั้ง `INJECTION_*` จะลองใช้ `LINE_CHANNEL_SECRET` /
+> `LINE_CHANNEL_ACCESS_TOKEN` แทน (ดู `getLineCredentialCandidates`)
 
-**Secret 1:**
-- Name: `LINE_CHANNEL_SECRET`
-- Secret value: `50872b114ef7974f7ddab5219c0decb6`
+### **Step 2: ตรวจ env vars ที่ไม่ใช่ความลับ** ([`workers/wrangler.toml`](../workers/wrangler.toml))
 
-**Secret 2:**
-- Name: `LINE_CHANNEL_ACCESS_TOKEN`
-- Secret value: (ได้จาก LINE Developers Console → Messaging API → Channel access token)
+```toml
+LINE_CHANNEL_ID = "2009159046"
+LINE_WEBHOOK_VERIFY_DISABLED = "false"           # ต้องเป็น false ใน production
+TUKTUK_LINE_WEBHOOK_VERIFY_DISABLED = "false"
+LINE_WEBHOOK_SIGNATURE_SOFT_FAIL = "false"       # ⬅️ ตั้ง false เมื่อ secret ครบแล้ว
+TUKTUK_LINE_WEBHOOK_SIGNATURE_SOFT_FAIL = "false"
+```
 
----
-
-### **Step 2: Deploy LINE Webhook Function**
+### **Step 3: Deploy**
 
 ```bash
-cd functions
-firebase deploy --only functions:lineWebhook
+cd workers
+npx wrangler@3 deploy
 ```
 
-**Expected Output:**
-```
-✔ functions[lineWebhook(us-central1)] Successful create operation
-```
+### **Step 4: ตั้งค่า LINE Developers Console**
 
----
-
-### **Step 3: ตั้งค่า LINE Developers Console**
-
-#### **3.1 เปิด Messaging API**
-
-1. เข้า [LINE Developers Console](https://developers.line.biz/console/)
-2. เลือก Provider → เลือก Channel
-3. ไปที่ **Messaging API** tab
-4. ใน **Webhook settings**:
-   - Webhook URL: `https://us-central1-appinjproject.cloudfunctions.net/lineWebhook`
+สำหรับ **แต่ละ** channel:
+1. เข้า [LINE Developers Console](https://developers.line.biz/console/) → เลือก Channel
+2. **Messaging API** → Webhook settings:
+   - Webhook URL: ใส่ URL ตามตารางด้านบน (TukTuk / Injection)
    - Use webhook: **ON**
-   - Redelivery: **OFF** (หรือ ON ถ้าต้องการ)
+   - คลิก **Verify** → ควรได้ **Success** ✅
+3. **Basic settings / Messaging API**:
+   - Auto-reply messages: **Disabled**
+   - Greeting messages: **Disabled** (บอทส่ง welcome เองผ่าน follow event)
 
-#### **3.2 ปิด Auto-reply messages**
+---
 
-ไปที่ **Messaging API** → Basic settings:
-- Auto-reply messages: **Disabled**
-- Greeting messages: **Disabled** (หรือตั้งค่าเอง)
+## 🔐 Signature Verification & Soft-Fail
 
-#### **3.3 เปิด Bot ให้ใช้งานได้**
+Handler ตรวจ `X-Line-Signature` ด้วย HMAC-SHA256 เทียบกับ channel secret
 
-ใน **Messaging API** tab:
-- Allow bot to join group chats: **ON** (ถ้าต้องการ)
-- Scan QR code: **ON** (ถ้าต้องการ)
+| ตัวแปร | ค่าแนะนำ | ความหมาย |
+|--------|----------|----------|
+| `*_VERIFY_DISABLED` | `false` | ถ้า `true` = ข้ามการตรวจ signature ทั้งหมด (อันตราย ใช้ debug เท่านั้น) |
+| `*_SIGNATURE_SOFT_FAIL` | `false` | ถ้า `true` = signature ผิดก็ยัง**ประมวลผลต่อ** (แค่ warn) |
+
+> 🔴 **ความปลอดภัย:** `SOFT_FAIL=true` เปิดช่องให้ยิง webhook ปลอมเข้ามาสั่ง PIN/ส่งข้อความได้
+> ควรตั้ง `false` เสมอใน production หลังยืนยันว่า secret ตั้งถูกครบแล้ว
+> ใช้ `true` ชั่วคราวเฉพาะตอน migrate/debug signature เท่านั้น
 
 ---
 
 ## 🧪 Testing
 
-### **Test 1: Webhook Verification**
+### **Test 1: Verify ใน Console**
+คลิก **Verify** ใน Webhook settings → ควรได้ **Success**
+(handler ตอบ `200 OK` ทันทีเมื่อ `events` ว่างเปล่า)
 
-ใน LINE Developers Console → Messaging API → Webhook settings:
-1. คลิก **Verify**
-2. ควรเห็น **Success** ✅
+### **Test 2: เพิ่มเพื่อน → Welcome**
+สแกน QR เพิ่มบอทเป็นเพื่อน → ควรได้ **ข้อความต้อนรับ + quick reply** ทันที
+(follow event → `handleFollowEventsBackground` → `buildWelcomeMessages`)
 
-**ถ้าเจอ Error:**
-- ตรวจสอบว่า deploy สำเร็จแล้ว
-- ตรวจสอบว่า URL ถูกต้อง
-- ดู logs: `firebase functions:log --only lineWebhook`
+### **Test 3: ส่งข้อความ**
 
----
-
-### **Test 2: เพิ่มเพื่อนและส่งข้อความ**
-
-1. สแกน QR Code จาก LINE Developers Console
-2. เพิ่ม Bot เป็นเพื่อน
-3. ควรได้รับข้อความต้อนรับ 👋
-4. ส่งข้อความทดสอบ เช่น "สวัสดี"
-5. Bot ควรตอบกลับด้วย AI
-
-**Expected Flow:**
-```
-User: สวัสดี
-  ↓
-LINE → Webhook → lineWebhook function
-  ↓
-getGeminiResponse (AI processing)
-  ↓
-LINE Bot Reply
-  ↓
-User: [ได้รับคำตอบจาก AI]
-```
+| บอท | ทดสอบพิมพ์ | ผลที่คาดหวัง |
+|-----|-----------|-------------|
+| TukTuk | `รหัส` | Flex Message PIN 6 หลัก + ปุ่มเข้าสู่ระบบ |
+| TukTuk | `ตลาด` | ลิงก์ Marketplace + quick reply |
+| TukTuk | `หา เสื้อ` | Carousel สินค้า |
+| TukTuk | `มีเสื้อสีดำไหม` | คำตอบจาก AI (ข้อความสั้นที่เป็นคำถามก็เข้า AI ได้) |
+| Injection | `เมนู` | เมนู WiT365 + quick reply |
+| Injection | `short shot แก้ยังไง` | ไล่สาเหตุ + วิธีแก้จาก knowledge/AI |
 
 ---
 
-### **Test 3: Query Clarification**
+## 🔍 Monitoring & Debug
 
-ทดสอบว่า Query Clarification Module ทำงานผ่าน LINE:
-
+### **Debug endpoint (post-deploy):**
 ```
-User: เช็คระบบเพื่อพัฒนา
-  ↓
-Bot: คุณต้องการพัฒนาในด้านใดครับ?
-     [A] ลดของเสีย
-     [B] เพิ่มความเร็วการผลิต
-     ... (และอื่นๆ)
-  ↓
-User: A
-  ↓
-Bot: [ประมวลผลด้วย enhanced query และตอบกลับ]
+GET https://tuktukfeed.com/api/line/debug
 ```
+คืนสถานะ token (boolean), ค่า verify/soft-fail และ log ล่าสุดจาก KV:
+`lastWebhookError`, `lastReplyError`, `lastPinFlow`, `lastLineEvent`, `lastTuktukFeature`
 
----
-
-## 📊 Features ของ LINE Webhook
-
-### **1. Message Handling** 💬
-- รับข้อความจากผู้ใช้
-- ส่งผ่าน getGeminiResponse AI
-- ตอบกลับอัตโนมัติ
-- รองรับ Query Clarification Module
-
-### **2. Follow/Unfollow Events** 👋
-- ส่งข้อความต้อนรับเมื่อผู้ใช้เพิ่มเพื่อน
-- Log เมื่อผู้ใช้บล็อก/ลบบอท
-
-### **3. Security** 🔒
-- Signature validation (ป้องกัน unauthorized requests)
-- Firebase Secrets (ข้อมูลลับไม่ hardcode)
-- Error handling ครบถ้วน
-
-### **4. Logging** 📝
-- Log ทุก event type
-- Log execution ID
-- Log user information
-- Error tracking
-
----
-
-## 🔍 Monitoring & Logs
-
-### **View Logs:**
-
+### **Live logs:**
 ```bash
-# ดู logs ทั้งหมด
-firebase functions:log --only lineWebhook
-
-# ดู logs แบบ real-time
-firebase functions:log --only lineWebhook --follow
-
-# ดู logs จาก Firebase Console
-https://console.firebase.google.com/project/appinjproject/functions/logs
-```
-
-### **Log Patterns:**
-
-**Success:**
-```
-💬 LINE WEBHOOK RECEIVED [xxxxxxxx]
-├── Method: POST
-├── Path: /
-└── Headers: [...]
-
-✅ Signature validated
-📨 Processing 1 event(s)
-🎯 Event Type: message
-💬 Message Event [xxxxxxxx]:
-├── Type: text
-├── Text: สวัสดี
-└── Reply Token: ...
-
-🤖 Calling getGeminiResponse...
-✅ AI Response received (250 chars)
-✅ Reply sent successfully
-✅ Webhook processed successfully [xxxxxxxx]
-```
-
-**Error:**
-```
-❌ Invalid signature
-❌ LINE Client not initialized
-❌ Error handling message: ...
+cd workers
+npx wrangler@3 tail
 ```
 
 ---
 
 ## 🔧 Troubleshooting
 
-### **Issue 1: Webhook Verification Failed**
+| อาการ | สาเหตุที่พบบ่อย | วิธีแก้ |
+|------|----------------|--------|
+| Verify failed | ยังไม่ deploy / URL ผิด | `wrangler deploy` + ตรวจ URL ให้ตรงตาราง |
+| `Invalid LINE signature` (401) | secret ไม่ตรง Console | ตั้ง `*_CHANNEL_SECRET` ใหม่ให้ตรง |
+| บอทไม่ตอบ แต่ Verify ผ่าน | ไม่มี access token | ตั้ง `*_CHANNEL_ACCESS_TOKEN` |
+| บอทตอบซ้ำ | LINE redelivery | มี dedup ผ่าน KV (`webhookEventId`) อยู่แล้ว 24h |
+| ตอบช้า/timeout | งานหนักบน request path | handler ใช้ `waitUntil()` ตอบ 200 ก่อนอยู่แล้ว |
 
-**Symptom:**
+ดู error ล่าสุดผ่าน `GET /api/line/debug` → `lastWebhookError` / `lastReplyError`
+
+---
+
+## 📊 Features ปัจจุบัน
+
+**TukTuk bot** (`/api/webhook/line-tuktuk`):
+- ✅ PIN login (สุ่ม 6 หลัก → Flex + save D1)
+- ✅ Feature commands: เมนู / ตลาด / ลงขาย / วิน / ค้นสินค้า / สินค้ายอดฮิต / คลิปยอดนิยม
+- ✅ AI reply + product/video carousel
+- ✅ Welcome message เมื่อ follow
+- ✅ Duplicate dedup (KV)
+
+**Injection bot** (`/api/webhook/line`):
+- ✅ Welcome message เมื่อ follow
+- ✅ เมนู + quick reply
+- ✅ Knowledge base (RAG) → AI fallback (Workers AI → Forge → MaxPlus)
+
+---
+
+## 🏗️ สถาปัตยกรรม (สรุป)
+
 ```
-Webhook URL verification failed
+LINE Platform
+   ↓ POST /api/webhook/line(-tuktuk)
+readVerifiedLineWebhook()   ← verify HMAC-SHA256 signature
+   ↓
+events ว่าง? → 200 OK (Verify request)
+   ↓
+isPinRequestText()? → processPinRequest() [waitUntil] → PIN Flex
+   ↓
+[waitUntil background]
+   ├─ filterDuplicateEvents (KV, TTL 24h)
+   ├─ TukTuk  → follow → feature → AI → fallback
+   └─ Injection → follow → menu → knowledge → AI
 ```
 
-**Solutions:**
-1. ตรวจสอบว่า deploy สำเร็จ:
-   ```bash
-   firebase functions:list
-   ```
-2. ตรวจสอบ URL ว่าถูกต้อง
-3. ดู logs:
-   ```bash
-   firebase functions:log --only lineWebhook
-   ```
+จุดเด่น: ตอบ `200` ให้ LINE ภายใน ~10-50ms แล้วทำงานหนักใน `waitUntil()` ป้องกัน timeout
 
 ---
 
-### **Issue 2: Invalid Signature**
-
-**Symptom:**
-```
-❌ Invalid signature
-```
-
-**Solutions:**
-1. ตรวจสอบว่า `LINE_CHANNEL_SECRET` ถูกต้อง:
-   ```bash
-   firebase functions:secrets:access LINE_CHANNEL_SECRET
-   ```
-2. ตรวจสอบว่า secret ตรงกับค่าใน LINE Developers Console
+## 🔜 Future Enhancements
+- [ ] Rich Menu (แทน text menu)
+- [ ] Chat history ลง D1 ต่อ user
+- [ ] Image/Sticker/Location support
+- [ ] Group chat commands
+- [ ] map credential ตรง channel ID (ลด HMAC loop 3 รอบ)
 
 ---
 
-### **Issue 3: LINE Client Not Initialized**
-
-**Symptom:**
-```
-❌ LINE Client not initialized
-Please set LINE_CHANNEL_ACCESS_TOKEN
-```
-
-**Solutions:**
-1. ตั้งค่า `LINE_CHANNEL_ACCESS_TOKEN`:
-   ```bash
-   firebase functions:secrets:set LINE_CHANNEL_ACCESS_TOKEN
-   ```
-2. Deploy อีกครั้ง:
-   ```bash
-   firebase deploy --only functions:lineWebhook
-   ```
-
----
-
-### **Issue 4: Bot ไม่ตอบกลับ**
-
-**Symptom:**
-- User ส่งข้อความแต่ไม่ได้รับคำตอบ
-
-**Solutions:**
-1. ดู logs เพื่อหา error:
-   ```bash
-   firebase functions:log --only lineWebhook --follow
-   ```
-2. ตรวจสอบว่า Auto-reply messages ปิดแล้ว
-3. ตรวจสอบว่า getGeminiResponse ทำงานปกติ:
-   ```bash
-   firebase functions:log --only getGeminiResponse
-   ```
-
----
-
-## 📋 Current Status
-
-### ✅ **Completed:**
-- [x] สร้าง lineWebhook function
-- [x] เพิ่ม signature validation
-- [x] เชื่อมต่อกับ getGeminiResponse
-- [x] รองรับ follow/unfollow events
-- [x] Error handling
-- [x] Logging system
-
-### ⚠️ **Pending:**
-- [ ] ตั้งค่า Firebase Secrets (LINE_CHANNEL_SECRET, LINE_CHANNEL_ACCESS_TOKEN)
-- [ ] Deploy function
-- [ ] ตั้งค่า LINE Developers Console
-- [ ] ทดสอบการส่ง/รับข้อความ
-- [ ] ทดสอบ Query Clarification ผ่าน LINE
-
-### 🔜 **Future Enhancements:**
-- [ ] เพิ่ม Chat History storage (บันทึก conversation ลง Firestore)
-- [ ] เพิ่ม Rich Menu
-- [ ] เพิ่ม Flex Message สำหรับคำตอบ
-- [ ] เพิ่ม Quick Reply buttons
-- [ ] เพิ่ม Image/Sticker support
-- [ ] เพิ่ม Group chat support
-
----
-
-## 🔗 Useful Links
-
-### **LINE:**
-- [LINE Developers Console](https://developers.line.biz/console/)
-- [Messaging API Documentation](https://developers.line.biz/en/docs/messaging-api/)
-- [Webhook Events Reference](https://developers.line.biz/en/reference/messaging-api/#webhook-event-objects)
-
-### **Firebase:**
-- [Functions Console](https://console.firebase.google.com/project/appinjproject/functions)
-- [Secret Manager](https://console.cloud.google.com/security/secret-manager?project=appinjproject)
-- [Logs](https://console.firebase.google.com/project/appinjproject/functions/logs)
-
-### **Documentation:**
-- [QUERY_CLARIFICATION_MODULE.md](./QUERY_CLARIFICATION_MODULE.md)
-- [LINE_SDK_INTEGRATION_REPORT.md](./LINE_SDK_INTEGRATION_REPORT.md)
-- [DEPLOYMENT_SUCCESS.md](./DEPLOYMENT_SUCCESS.md)
-
----
-
-## 📝 Next Steps
-
-1. **ตั้งค่า Secrets** (ใช้เวลา ~2 นาที):
-   ```bash
-   firebase functions:secrets:set LINE_CHANNEL_SECRET
-   firebase functions:secrets:set LINE_CHANNEL_ACCESS_TOKEN
-   ```
-
-2. **Deploy Function** (ใช้เวลา ~1 นาที):
-   ```bash
-   firebase deploy --only functions:lineWebhook
-   ```
-
-3. **ตั้งค่า LINE Console** (ใช้เวลา ~3 นาที):
-   - เพิ่ม Webhook URL
-   - ปิด Auto-reply
-   - คลิก Verify
-
-4. **ทดสอบ** (ใช้เวลา ~5 นาที):
-   - สแกน QR Code
-   - เพิ่มเพื่อน
-   - ส่งข้อความทดสอบ
-
-**Total Time:** ~11 นาที
-
----
-
-**Created by:** Claude Code AI Assistant
-**Last Updated:** 2025-11-28
-**Status:** ✅ Function ready, ⚠️ Pending secrets configuration
+**Handler:** `workers/handlers/line-webhook.js`
+**Config:** `workers/wrangler.toml`
+**Debug:** `GET /api/line/debug`
