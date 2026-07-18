@@ -11,6 +11,8 @@ service-account*.json
 **/line_config.json
 **/.env
 **/.env.*
+**/.dev.vars
+**/.dev.vars.*
 **/serviceAccount*.json
 **/credentials*.json
 **/firebase-adminsdk*.json
@@ -33,6 +35,9 @@ package-lock.json
 **/package-lock.json
 # Keep nul (it's a dummy file — not a Windows device) in case it exists
 nul
+
+# ── Wrangler / Cloudflare local artifacts ──────────────────────────────────
+**/.wrangler/
 
 # ── Debug / one-off scripts (functions/) ───────────────────────────────────
 functions/check_*.js

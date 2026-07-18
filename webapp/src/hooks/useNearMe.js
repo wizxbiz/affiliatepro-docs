@@ -93,9 +93,13 @@ export function useNearMe() {
     if (cached && Date.now() - cached.timestamp < LOC_MAX_AGE) {
       setLocation(cached)
       const prov = nearestProvince(cached.lat, cached.lng)
-      if (prov) selectProvince(prov)
-      setStatus('ready')
-      return cached
+      if (prov) {
+        selectProvince(prov)
+        setStatus('ready')
+      } else {
+        setStatus('need-province')
+      }
+      return { ...cached, province: prov || null }
     }
 
     if (!navigator.geolocation) {
@@ -119,9 +123,13 @@ export function useNearMe() {
       storage.setJSON(LOC_KEY, loc)
       setLocation(loc)
       const prov = nearestProvince(loc.lat, loc.lng)
-      if (prov) selectProvince(prov)
-      setStatus('ready')
-      return loc
+      if (prov) {
+        selectProvince(prov)
+        setStatus('ready')
+      } else {
+        setStatus('need-province')
+      }
+      return { ...loc, province: prov || null }
     } catch {
       // denied/timeout/unavailable — ไม่ retry ให้ค้าง: เปิด picker ทันที
       setStatus('need-province')

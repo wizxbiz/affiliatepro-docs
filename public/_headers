@@ -19,6 +19,34 @@
 /
   Cache-Control: no-cache, no-store, must-revalidate
 
+# ── /app SPA shell: never cache the HTML shell (extensionless) ─
+# The React shell is served at /app/ and deep routes (/app/profile,
+# /app/seller, …) which have NO .html extension, so the /*.html rule
+# above never matches them. Without this, the shell falls under the
+# global /* rule (no Cache-Control) and Cloudflare's edge caches a
+# stale index.html — pinning old hashed asset refs after a deploy.
+# NOTE: do NOT use /app/*  — Cloudflare MERGES Cache-Control across all
+# matching rules (comma-joined, no specificity), so /app/* would inject
+# no-store into /app/assets/* and kill hashed-bundle caching. List the
+# extensionless shell routes explicitly; assets under /app/assets/ keep
+# their long cache from the /*.js and /*.css rules below.
+/app/
+  Cache-Control: no-cache, no-store, must-revalidate
+/app/login
+  Cache-Control: no-cache, no-store, must-revalidate
+/app/market
+  Cache-Control: no-cache, no-store, must-revalidate
+/app/post
+  Cache-Control: no-cache, no-store, must-revalidate
+/app/profile
+  Cache-Control: no-cache, no-store, must-revalidate
+/app/profile/*
+  Cache-Control: no-cache, no-store, must-revalidate
+/app/seller
+  Cache-Control: no-cache, no-store, must-revalidate
+/app/notifications
+  Cache-Control: no-cache, no-store, must-revalidate
+
 # ── JavaScript: Short cache with revalidation ─────────────────
 /*.js
   Cache-Control: public, max-age=3600, must-revalidate

@@ -1,6 +1,25 @@
 import { useEffect, useState } from 'react'
 import { api } from '../api/client.js'
 
+// ── helpers ────────────────────────────────────────────────────
+function getMediaUrl(mediaUrls) {
+  if (!Array.isArray(mediaUrls) || mediaUrls.length === 0) return ''
+  const first = mediaUrls[0]
+  // D1 API returns objects {url, type}; old path may return plain strings
+  return typeof first === 'string' ? first : (first?.url || '')
+}
+
+function isVideoUrl(url) {
+  return url ? /\.mp4|\/videos\/|youtu/i.test(url) : false
+}
+
+function isVideoEntry(mediaUrls) {
+  if (!Array.isArray(mediaUrls)) return false
+  const first = mediaUrls[0]
+  if (typeof first === 'object') return first?.type === 'video' || isVideoUrl(first?.url || '')
+  return isVideoUrl(first)
+}
+
 export default function OnboardingOverlay({ onClose }) {
   const [activeTab, setActiveTab] = useState('feed') // 'feed' | 'products'
   const [posts, setPosts] = useState([])
@@ -14,13 +33,8 @@ export default function OnboardingOverlay({ onClose }) {
           api.posts.list({ limit: 6 }),
           api.products.list({ limit: 6 })
         ])
-
-        if (postsRes.status === 'fulfilled') {
-          setPosts(postsRes.value.posts || [])
-        }
-        if (productsRes.status === 'fulfilled') {
-          setProducts(productsRes.value.products || [])
-        }
+        if (postsRes.status === 'fulfilled') setPosts(postsRes.value.posts || [])
+        if (productsRes.status === 'fulfilled') setProducts(productsRes.value.products || [])
       } catch (err) {
         console.warn('[OnboardingOverlay] failed to fetch previews:', err)
       } finally {
@@ -30,106 +44,88 @@ export default function OnboardingOverlay({ onClose }) {
     loadTrending()
   }, [])
 
+  // Use ?redirect= to match LoginPage's param name (was ?redirectUrl= — mismatch)
   const handleRedirect = () => {
-    window.location.href = `/app/login?redirectUrl=${encodeURIComponent(window.location.pathname)}`
+    window.location.href = `/app/login?redirect=${encodeURIComponent(window.location.pathname)}`
   }
 
   return (
     <div className="onboarding-backdrop" onClick={onClose}>
       <div className="onboarding-sheet" onClick={(e) => e.stopPropagation()}>
-        
-        {/* Header Block */}
+
         <div className="onboarding-header">
           <div className="onboarding-logo-glow">✨</div>
           <h2>ยินดีต้อนรับสู่ TukTuk Thailand</h2>
           <p>เปิดประสบการณ์ความบันเทิงและสนับสนุนสินค้า OTOP จากคนในชุมชน</p>
         </div>
 
-        {/* Dynamic Tabs */}
         <div className="onboarding-tabs">
-          <button
-            className={activeTab === 'feed' ? 'active' : ''}
-            onClick={() => setActiveTab('feed')}
-          >
+          <button className={activeTab === 'feed' ? 'active' : ''} onClick={() => setActiveTab('feed')}>
             🔥 โพสต์ยอดนิยม
           </button>
-          <button
-            className={activeTab === 'products' ? 'active' : ''}
-            onClick={() => setActiveTab('products')}
-          >
+          <button className={activeTab === 'products' ? 'active' : ''} onClick={() => setActiveTab('products')}>
             🛍️ สินค้าชุมชน
           </button>
         </div>
 
-        {/* Tab Content Preview */}
         <div className="onboarding-content">
           {loading ? (
-            <div className="onboarding-loading">
-              <div className="spinner" />
-            </div>
+            <div className="onboarding-loading"><div className="spinner" /></div>
           ) : activeTab === 'feed' ? (
             <div className="onboarding-grid">
               {posts.map((post) => {
-                const isVideo = post.mediaUrls && post.mediaUrls.find(url => url.endsWith('.mp4') || url.includes('/videos/'))
-                const firstImage = post.mediaUrls && post.mediaUrls[0] || ''
+                const mediaUrl = getMediaUrl(post.mediaUrls)
+                const isVid = isVideoEntry(post.mediaUrls)
                 return (
                   <div key={post.id} className="onboarding-card" onClick={handleRedirect}>
                     <div className="onboarding-card-media">
-                      {isVideo ? (
+                      {isVid ? (
                         <div className="onboarding-video-fallback">🎥 วิดีโอสั้น</div>
-                      ) : firstImage ? (
-                        <img src={firstImage} alt="" className="object-cover w-full h-full" />
+                      ) : mediaUrl ? (
+                        <img src={mediaUrl} alt="" loading="lazy" />
                       ) : (
                         <div className="onboarding-text-fallback">📝 โพสต์</div>
                       )}
-                      <div className="onboarding-card-lock">
-                        <span>🔒 ล็อกอินเพื่อดู</span>
-                      </div>
+                      <div className="onboarding-card-lock"><span>🔒 ล็อกอินเพื่อดู</span></div>
                     </div>
                     <div className="onboarding-card-info">
                       <p className="onboarding-card-author">@{post.authorName || 'TukTuk User'}</p>
-                      <p className="onboarding-card-text line-clamp-1">{post.content}</p>
+                      <p className="onboarding-card-text">{post.content}</p>
                     </div>
                   </div>
                 )
               })}
-              {posts.length === 0 && (
-                <p className="onboarding-empty">ไม่มีคลิปวิดีโอแนะนำในขณะนี้</p>
-              )}
+              {posts.length === 0 && <p className="onboarding-empty">ไม่มีคลิปวิดีโอแนะนำในขณะนี้</p>}
             </div>
           ) : (
             <div className="onboarding-grid">
               {products.map((p) => {
+                // images from D1 can be a JSON string or an array
                 let images = []
-                try { images = typeof p.images === 'string' ? JSON.parse(p.images) : (p.images || []) } catch { /* ignore */ }
-                const imageUrl = images[0] || p.imageUrl || ''
+                try { images = typeof p.images === 'string' ? JSON.parse(p.images) : (p.images || []) } catch { /**/ }
+                const imageUrl = images[0] || p.imageUrl || p.image_url || ''
                 return (
                   <div key={p.id} className="onboarding-card" onClick={handleRedirect}>
                     <div className="onboarding-card-media">
                       {imageUrl ? (
-                        <img src={imageUrl} alt="" className="object-cover w-full h-full" />
+                        <img src={imageUrl} alt="" loading="lazy" />
                       ) : (
                         <div className="onboarding-text-fallback">📦 สินค้า</div>
                       )}
-                      <div className="onboarding-card-lock">
-                        <span>🛍️ สนใจสินค้า</span>
-                      </div>
+                      <div className="onboarding-card-lock"><span>🛍️ สนใจสินค้า</span></div>
                     </div>
                     <div className="onboarding-card-info">
-                      <p className="onboarding-card-title line-clamp-1">{p.title || p.productName}</p>
+                      <p className="onboarding-card-title">{p.title || p.productName}</p>
                       <p className="onboarding-card-price">฿{Number(p.price || 0).toLocaleString('th-TH')}</p>
                     </div>
                   </div>
                 )
               })}
-              {products.length === 0 && (
-                <p className="onboarding-empty">ไม่มีสินค้าแนะนำในขณะนี้</p>
-              )}
+              {products.length === 0 && <p className="onboarding-empty">ไม่มีสินค้าแนะนำในขณะนี้</p>}
             </div>
           )}
         </div>
 
-        {/* CTA Actions */}
         <div className="onboarding-actions">
           <button className="onboarding-btn-primary" onClick={handleRedirect}>
             🟢 เข้าสู่ระบบ / สมัครสมาชิกด้วย LINE

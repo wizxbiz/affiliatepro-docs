@@ -1,8 +1,10 @@
+import { normalizeMediaUrls } from './media-normalizer.js';
+
 /**
  * D1 Database Abstraction Layer
- * แทน Firestore admin.firestore() calls ใน Cloud Functions
+ * เนเธ—เธ Firestore admin.firestore() calls เนเธ Cloud Functions
  *
- * ใช้ Cloudflare D1 (SQLite) สำหรับ queries แทน Firestore
+ * เนเธเน Cloudflare D1 (SQLite) เธชเธณเธซเธฃเธฑเธ queries เนเธ—เธ Firestore
  */
 
 export class DB {
@@ -10,9 +12,9 @@ export class DB {
     this.d1 = d1;
   }
 
-  // ═══════════════════════════════════════════════════════════
+  // โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
   // USERS
-  // ═══════════════════════════════════════════════════════════
+  // โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
   async getUserById(id) {
     return this.d1.prepare('SELECT * FROM users WHERE id = ?').bind(id).first();
@@ -66,9 +68,17 @@ export class DB {
       .bind(...values, id).run();
   }
 
-  // ═══════════════════════════════════════════════════════════
+  async updateSellerVerification(userId, lineOaId) {
+    return this.d1.prepare(`
+      UPDATE users 
+      SET seller_status = 'verified', line_oa_id = ?, updated_at = ?
+      WHERE id = ?
+    `).bind(lineOaId, Date.now(), userId).run();
+  }
+
+  // โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
   // POSTS
-  // ═══════════════════════════════════════════════════════════
+  // โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
   async getPosts({ category, limit = 20, offset = 0 } = {}) {
     if (category && category !== 'all') {
@@ -95,15 +105,28 @@ export class DB {
     `).bind(id).first();
   }
 
-  async createPost(post) {
+  async getPostsByUser(userId, { limit = 30, offset = 0 } = {}) {
     return this.d1.prepare(`
-      INSERT INTO posts (id, user_id, content, media_urls, category, status, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      SELECT p.*, u.display_name, u.picture_url as author_picture
+      FROM posts p LEFT JOIN users u ON p.user_id = u.id
+      WHERE p.user_id = ? AND p.status = 'active'
+      ORDER BY p.created_at DESC LIMIT ? OFFSET ?
+    `).bind(userId, limit, offset).all().then(r => r.results);
+  }
+
+  async createPost(post) {
+    const mediaUrls = normalizeMediaUrls(post.mediaUrls || []);
+    const youtube = mediaUrls.find((item) => item.type === 'youtube');
+    const now = post.createdAt || Date.now();
+    return this.d1.prepare(`
+      INSERT INTO posts (id, user_id, content, media_urls, category, status, youtube_url, video_embed, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(
       post.id, post.userId, post.content,
-      JSON.stringify(post.mediaUrls || []),
-      post.category || 'general', post.status || 'active',
-      post.createdAt || Date.now()
+      JSON.stringify(mediaUrls),
+      post.category || (youtube ? 'video' : 'general'), post.status || 'active',
+      post.youtubeUrl || youtube?.url || '', post.videoEmbed || youtube?.embedUrl || '',
+      now, post.updatedAt || now
     ).run();
   }
 
@@ -112,16 +135,27 @@ export class DB {
       .bind(id, userId).run();
   }
 
+  // Owner-scoped edit. `fields` keys are camelCase; only whitelisted columns
+  // should be passed in by the caller (the route enforces the whitelist).
+  async updatePost(id, userId, fields) {
+    const keys = Object.keys(fields);
+    if (keys.length === 0) return { meta: { changes: 0 } };
+    const sets = keys.map(k => `${this._col(k)} = ?`).join(', ');
+    const values = keys.map(k => fields[k]);
+    return this.d1.prepare(`UPDATE posts SET ${sets}, updated_at = ? WHERE id = ? AND user_id = ?`)
+      .bind(...values, Date.now(), id, userId).run();
+  }
+
   async incrementPostLikes(postId) {
     return this.d1.prepare(`UPDATE posts SET likes_count = likes_count + 1 WHERE id = ?`)
       .bind(postId).run();
   }
 
-  // ═══════════════════════════════════════════════════════════
+  // โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
   // PRODUCTS (Marketplace)
-  // ═══════════════════════════════════════════════════════════
+  // โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
-  async getProducts({ category, limit = 20, offset = 0, search } = {}) {
+  async getProducts({ category, limit = 20, offset = 0, search, province } = {}) {
     let query = `
       SELECT p.*, u.display_name as seller_name, u.picture_url as seller_picture
       FROM products p LEFT JOIN users u ON p.seller_id = u.id
@@ -131,10 +165,74 @@ export class DB {
 
     if (category) { query += ' AND p.category = ?'; binds.push(category); }
     if (search)   { query += " AND (p.title LIKE ? OR p.description LIKE ?)"; binds.push(`%${search}%`, `%${search}%`); }
+    if (province) { query += " AND COALESCE(p.seller_location, '') LIKE ?"; binds.push(`%${province}%`); }
     query += ' ORDER BY p.created_at DESC LIMIT ? OFFSET ?';
     binds.push(limit, offset);
 
     return this.d1.prepare(query).bind(...binds).all().then(r => r.results);
+  }
+
+  async searchProducts(keyword, limit = 8) {
+    const q = `%${String(keyword || '').trim()}%`;
+    return this.d1.prepare(`
+      SELECT p.*, u.display_name as seller_name, u.picture_url as seller_picture
+      FROM products p LEFT JOIN users u ON p.seller_id = u.id
+      WHERE p.status = 'active'
+        AND (
+          p.title LIKE ?
+          OR COALESCE(p.description, '') LIKE ?
+          OR COALESCE(p.category, '') LIKE ?
+        )
+      ORDER BY p.views_count DESC, p.created_at DESC
+      LIMIT ?
+    `).bind(q, q, q, limit).all().then(r => r.results);
+  }
+
+  async getTrendingProducts(limit = 8) {
+    return this.d1.prepare(`
+      SELECT p.*, u.display_name as seller_name, u.picture_url as seller_picture
+      FROM products p LEFT JOIN users u ON p.seller_id = u.id
+      WHERE p.status = 'active'
+      ORDER BY p.views_count DESC, p.created_at DESC
+      LIMIT ?
+    `).bind(limit).all().then(r => r.results);
+  }
+
+  async getTrendingVideos(limit = 8) {
+    return this.d1.prepare(`
+      SELECT p.*, u.display_name as author_name, u.picture_url as author_picture
+      FROM posts p LEFT JOIN users u ON p.user_id = u.id
+      WHERE p.status = 'active'
+        AND COALESCE(p.published, 1) = 1
+        AND (
+          COALESCE(p.media_urls, '') LIKE '%"type":"video"%'
+          OR COALESCE(p.media_urls, '') LIKE '%"type": "video"%'
+          OR COALESCE(p.media_urls, '') LIKE '%"type":"youtube"%'
+          OR COALESCE(p.media_urls, '') LIKE '%"type": "youtube"%'
+          OR COALESCE(p.media_urls, '') LIKE '%.mp4%'
+          OR COALESCE(p.media_urls, '') LIKE '%.webm%'
+          OR COALESCE(p.media_urls, '') LIKE '%youtube.com%'
+          OR COALESCE(p.media_urls, '') LIKE '%youtu.be%'
+          OR COALESCE(p.video_embed, '') != ''
+          OR COALESCE(p.youtube_url, '') != ''
+        )
+      ORDER BY p.views_count DESC, p.likes_count DESC, p.created_at DESC
+      LIMIT ?
+    `).bind(limit).all().then(r => r.results);
+  }
+
+  async incrementProductViews(productId) {
+    return this.d1.prepare(`
+      UPDATE products SET views_count = COALESCE(views_count, 0) + 1
+      WHERE id = ? AND status = 'active'
+    `).bind(productId).run();
+  }
+
+  async incrementPostViews(postId) {
+    return this.d1.prepare(`
+      UPDATE posts SET views_count = COALESCE(views_count, 0) + 1
+      WHERE id = ? AND status = 'active'
+    `).bind(postId).run();
   }
 
   async getProductById(id) {
@@ -143,6 +241,28 @@ export class DB {
       FROM products p LEFT JOIN users u ON p.seller_id = u.id
       WHERE p.id = ?
     `).bind(id).first();
+  }
+
+  async getProductsBySeller(sellerId, limit = 20) {
+    return this.d1.prepare(`
+      SELECT p.*, u.display_name as seller_name, u.picture_url as seller_picture
+      FROM products p LEFT JOIN users u ON p.seller_id = u.id
+      WHERE p.seller_id = ?
+      ORDER BY p.created_at DESC
+      LIMIT ?
+    `).bind(sellerId, limit).all().then(r => r.results);
+  }
+
+  async getSellerStats(sellerId) {
+    return this.d1.prepare(`
+      SELECT
+        COUNT(*) as total,
+        SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active,
+        SUM(CASE WHEN COALESCE(product_stock, 0) <= 0 AND status = 'active' THEN 1 ELSE 0 END) as out_of_stock,
+        COALESCE(SUM(views_count), 0) as total_views
+      FROM products
+      WHERE seller_id = ?
+    `).bind(sellerId).first();
   }
 
   async getRelatedProducts(productId, limit = 4) {
@@ -157,15 +277,39 @@ export class DB {
 
   async createProduct(product) {
     return this.d1.prepare(`
-      INSERT INTO products (id, seller_id, title, description, price, images, category, status, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO products (
+        id, seller_id, title, description, price, images, category, status,
+        seller_phone, seller_line_id, seller_facebook, seller_location,
+        product_unit, product_stock, is_otop, is_organic, video_url,
+        created_at
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(
       product.id, product.sellerId, product.title,
       product.description, product.price,
       typeof product.images === 'string' ? product.images : JSON.stringify(product.images || []),
       product.category || 'general', product.status || 'active',
+      product.sellerPhone || '', product.sellerLineId || '', product.sellerFacebook || '',
+      product.sellerLocation || '', product.productUnit || '', Number(product.productStock || 0),
+      product.isOTOP ? 1 : 0, product.isOrganic ? 1 : 0, product.videoUrl || '',
       product.createdAt || Date.now()
     ).run();
+  }
+
+  async updateProduct(id, sellerId, fields) {
+    const cols = Object.keys(fields);
+    if (cols.length === 0) return { meta: { changes: 0 } };
+    const sets = cols.map(k => `${this._col(k)} = ?`).join(', ');
+    const values = Object.values(fields);
+    return this.d1.prepare(
+      `UPDATE products SET ${sets}, updated_at = ? WHERE id = ? AND seller_id = ?`
+    ).bind(...values, Date.now(), id, sellerId).run();
+  }
+
+  async deleteProduct(id, sellerId) {
+    return this.d1.prepare(
+      `UPDATE products SET status = 'deleted', updated_at = ? WHERE id = ? AND seller_id = ?`
+    ).bind(Date.now(), id, sellerId).run();
   }
 
   async getMarketplaceStats() {
@@ -191,9 +335,9 @@ export class DB {
     ).run();
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // WEB PINs (สำหรับ LINE Login flow)
-  // ═══════════════════════════════════════════════════════════
+  // โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
+  // WEB PINs (เธชเธณเธซเธฃเธฑเธ LINE Login flow)
+  // โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
   async getWebPin(lineUserId) {
     return this.d1.prepare('SELECT * FROM web_pins WHERE line_user_id = ?').bind(lineUserId).first();
@@ -210,9 +354,9 @@ export class DB {
     return this.d1.prepare('DELETE FROM web_pins WHERE line_user_id = ?').bind(lineUserId).run();
   }
 
-  // ═══════════════════════════════════════════════════════════
+  // โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
   // ANALYTICS
-  // ═══════════════════════════════════════════════════════════
+  // โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
   async trackPageView(pv) {
     return this.d1.prepare(`
@@ -244,17 +388,17 @@ export class DB {
     };
   }
 
-  // ═══════════════════════════════════════════════════════════
+  // โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
   // USAGE TRACKING
-  // ═══════════════════════════════════════════════════════════
+  // โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
   async getUserUsage(userId) {
     return this.d1.prepare('SELECT * FROM user_usage WHERE user_id = ?').bind(userId).first();
   }
 
-  // ═══════════════════════════════════════════════════════════
+  // โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
   // FEEDBACK
-  // ═══════════════════════════════════════════════════════════
+  // โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
   async createFeedback(fb) {
     return this.d1.prepare(`
@@ -263,9 +407,54 @@ export class DB {
     `).bind(fb.id, fb.userId, fb.type, fb.message, fb.page, fb.createdAt).run();
   }
 
-  // ═══════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════════════════
+  // NOTIFICATIONS
+  // ══════════════════════════════════════════════════════════════════
+
+  async createNotification({ id, userId, type, title, body, data }) {
+    return this.d1.prepare(`
+      INSERT INTO notifications (id, user_id, type, title, body, is_read, data, created_at)
+      VALUES (?, ?, ?, ?, ?, 0, ?, ?)
+    `).bind(
+      id, userId, type, title || '', body || '',
+      data ? JSON.stringify(data) : null,
+      Date.now()
+    ).run();
+  }
+
+  async getNotifications(userId, { limit = 30 } = {}) {
+    return this.d1.prepare(`
+      SELECT * FROM notifications
+      WHERE user_id = ?
+      ORDER BY created_at DESC
+      LIMIT ?
+    `).bind(userId, limit).all().then(r => r.results);
+  }
+
+  async getUnreadCount(userId) {
+    const row = await this.d1.prepare(`
+      SELECT COUNT(*) as count FROM notifications
+      WHERE user_id = ? AND is_read = 0
+    `).bind(userId).first();
+    return row?.count || 0;
+  }
+
+  // ids=[] or omitted → mark ALL of this user's unread notifications read
+  async markNotificationsRead(userId, ids = []) {
+    if (ids.length > 0) {
+      const placeholders = ids.map(() => '?').join(', ');
+      return this.d1.prepare(
+        `UPDATE notifications SET is_read = 1 WHERE user_id = ? AND id IN (${placeholders})`
+      ).bind(userId, ...ids).run();
+    }
+    return this.d1.prepare(
+      `UPDATE notifications SET is_read = 1 WHERE user_id = ? AND is_read = 0`
+    ).bind(userId).run();
+  }
+
+  // โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
   // WEB PUSH SUBSCRIPTIONS
-  // ═══════════════════════════════════════════════════════════
+  // โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
   async savePushSubscription(sub) {
     // Table schema: id, user_id, endpoint, keys, created_at
@@ -279,11 +468,11 @@ export class DB {
     return this.d1.prepare('SELECT * FROM push_subscriptions WHERE user_id = ?').bind(userId).all().then(r => r.results);
   }
 
-  // ═══════════════════════════════════════════════════════════
+  // โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
   // Helpers
-  // ═══════════════════════════════════════════════════════════
+  // โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
-  /** camelCase → snake_case column name */
+  /** camelCase โ’ snake_case column name */
   _col(name) {
     return name.replace(/[A-Z]/g, c => `_${c.toLowerCase()}`);
   }
