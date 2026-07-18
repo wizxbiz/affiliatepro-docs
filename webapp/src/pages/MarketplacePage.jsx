@@ -224,8 +224,10 @@ function ProductDetail({ product, onClose }) {
         </div>
 
         <div className="product-card-meta product-detail-seller">
-          <span>{sellerName}</span>
-          <span>{timeAgo(product.created_at || product.createdAt)}</span>
+          <span className="product-card-seller">{sellerName}</span>
+          {timeAgo(product.created_at || product.createdAt) && (
+            <span className="product-card-time">{timeAgo(product.created_at || product.createdAt)}</span>
+          )}
         </div>
 
         <div className="product-contact-grid">

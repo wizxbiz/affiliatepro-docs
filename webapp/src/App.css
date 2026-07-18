@@ -529,6 +529,89 @@
 .product-detail { padding: 74px 14px 88px; overflow-y: auto; min-height: 100%; }
 .product-detail img { width: 100%; border-radius: 18px; max-height: 360px; object-fit: cover; }
 .product-seller { color: #c4b5fd; }
+
+/* ── Product detail modal (.modal-sheet.modal-product) ────────── */
+.modal-product {
+  max-width: var(--app-shell-w);   /* match the phone shell (460px), not 560 */
+  max-height: 88svh;
+  overflow-y: auto;                /* override base .modal-sheet overflow:hidden */
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+}
+.product-detail-media { margin-bottom: 12px; }
+.product-detail-media img {
+  width: 100%;
+  max-height: 46svh;
+  object-fit: cover;
+  border-radius: 14px;
+  display: block;
+  background: #111;
+}
+.product-detail-thumbs {
+  display: flex; gap: 8px;
+  overflow-x: auto;
+  margin-top: 8px;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+.product-detail-thumbs img {
+  width: 56px; height: 56px; flex-shrink: 0;
+  object-fit: cover; border-radius: 10px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.15s, border-color 0.15s;
+}
+.product-detail-thumbs img.active { opacity: 1; border-color: #7c3aed; }
+
+.product-detail-price {
+  margin: 4px 0 8px;
+  color: #4ade80; font-weight: 800; font-size: 1.4rem;
+}
+.product-detail-desc {
+  margin: 0 0 12px;
+  color: #d1d5db; font-size: 0.9rem; line-height: 1.55;
+  white-space: pre-wrap; word-break: break-word;
+}
+.product-detail-facts {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-bottom: 12px;
+}
+.product-detail-facts span {
+  font-size: 0.75rem; font-weight: 600;
+  padding: 4px 12px; border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  color: #e5e7eb;
+}
+.product-detail-seller {
+  margin-bottom: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.product-contact-grid {
+  display: flex; flex-wrap: wrap; gap: 10px;
+}
+.product-contact-btn {
+  flex: 1; min-width: 96px;
+  text-align: center; text-decoration: none;
+  padding: 12px 14px; border-radius: 14px;
+  font-size: 0.9rem; font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.15s, opacity 0.15s;
+}
+.product-contact-btn:active { transform: scale(0.97); }
+.product-contact-btn.line { background: #06c755; }
+.product-contact-btn.facebook { background: #1877f2; }
+.product-contact-empty {
+  margin: 4px 0 0;
+  text-align: center;
+  color: rgba(255,255,255,0.45);
+  font-size: 0.82rem;
+}
+
 .btn-primary {
   display: inline-flex; justify-content: center; align-items: center;
   border: 0; border-radius: 999px;
