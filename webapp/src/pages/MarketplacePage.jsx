@@ -4,6 +4,7 @@ import { api, getToken } from '../api/client.js'
 import ProductCard from '../components/ProductCard.jsx'
 import OnboardingOverlay from '../components/OnboardingOverlay.jsx'
 import { parseImages, formatPrice, timeAgo } from '../lib/format.js'
+import { useCart } from '../cart/CartContext.jsx'
 
 const PAGE_SIZE = 20
 
@@ -205,6 +206,9 @@ export default function MarketplacePage() {
 function ProductDetail({ product, onClose }) {
   const images = productImages(product)
   const [imgIndex, setImgIndex] = useState(0)
+  const [qty, setQty] = useState(1)
+  const [viewCount, setViewCount] = useState(Number(firstDefined(product.viewCount, product.views_count, 0) || 0))
+  const { addItem } = useCart()
   const phone = firstDefined(product.sellerPhone, product.seller_phone)
   const lineId = firstDefined(product.sellerLineId, product.seller_line_id)
   const facebook = firstDefined(product.sellerFacebook, product.seller_facebook)
@@ -213,6 +217,12 @@ function ProductDetail({ product, onClose }) {
   const unit = firstDefined(product.productUnit, product.product_unit)
   const sellerName = firstDefined(product.sellerName, product.seller_name, product.display_name, 'ผู้ขาย TukTuk')
   const hasContact = Boolean(phone || lineId || facebook)
+
+  useEffect(() => {
+    api.products.view(product.id)
+      .then((res) => { if (res?.viewCount) setViewCount(res.viewCount) })
+      .catch(() => {/* silent */})
+  }, [product.id])
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
@@ -244,9 +254,19 @@ function ProductDetail({ product, onClose }) {
 
         <div className="product-detail-facts">
           {location && <span>{location}</span>}
-          <span>{stock > 0 ? `พร้อมขาย ${stock.toLocaleString('th-TH')}${unit ? ` ${unit}` : ''}` : 'สอบถามสต็อก'}</span>
+          <span className={stock > 0 ? 'fact-in-stock' : 'fact-out-stock'}>
+            {stock > 0
+              ? `พร้อมขาย ${stock.toLocaleString('th-TH')}${unit ? ` ${unit}` : ''}`
+              : 'สอบถามสต็อก'}
+          </span>
           {(product.isOTOP || product.isOtop || product.is_otop) && <span>OTOP</span>}
           {(product.isOrganic || product.is_organic) && <span>อินทรีย์</span>}
+          {viewCount > 0 && (
+            <span className="fact-views">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="11" height="11" aria-hidden="true"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+              {viewCount.toLocaleString('th-TH')} ครั้ง
+            </span>
+          )}
         </div>
 
         <div className="product-card-meta product-detail-seller">
@@ -254,6 +274,18 @@ function ProductDetail({ product, onClose }) {
           {timeAgo(product.created_at || product.createdAt) && (
             <span className="product-card-time">{timeAgo(product.created_at || product.createdAt)}</span>
           )}
+        </div>
+
+        <div className="product-add-cart-row">
+          <button className="cart-qty-btn" onClick={() => setQty((q) => Math.max(1, q - 1))} aria-label="ลด">−</button>
+          <span className="cart-qty-val">{qty}</span>
+          <button className="cart-qty-btn" onClick={() => setQty((q) => q + 1)} aria-label="เพิ่ม">+</button>
+          <button
+            className="btn-add-cart"
+            onClick={() => { addItem(product, qty); onClose() }}
+          >
+            เพิ่มลงตะกร้า
+          </button>
         </div>
 
         <div className="product-contact-grid">

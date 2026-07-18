@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, NavLink, Link, useLocation, useNavigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './auth/AuthContext.jsx'
 import { NotificationsProvider, useNotifications } from './notifications/NotificationsContext.jsx'
+import { CartProvider, useCart } from './cart/CartContext.jsx'
 import DuPlenFeed from './pages/DuPlenFeed.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import './App.css'
@@ -13,6 +14,7 @@ const PostPage            = lazy(() => import('./pages/PostPage.jsx'))
 const ProfilePage         = lazy(() => import('./pages/ProfilePage.jsx'))
 const SellerDashboardPage   = lazy(() => import('./pages/SellerDashboardPage.jsx'))
 const NotificationsPage     = lazy(() => import('./pages/NotificationsPage.jsx'))
+const CartPage            = lazy(() => import('./pages/CartPage.jsx'))
 
 function PageFallback() {
   return (
@@ -25,6 +27,7 @@ function PageFallback() {
 function Header() {
   const { user, logout } = useAuth()
   const { unread } = useNotifications()
+  const { count: cartCount } = useCart()
   const navigate = useNavigate()
   const location = useLocation()
   const titles = {
@@ -35,6 +38,7 @@ function Header() {
     '/profile': 'โปรไฟล์',
     '/seller': 'แผงร้านค้า',
     '/notifications': 'การแจ้งเตือน',
+    '/cart': 'ตะกร้าสินค้า',
   }
 
   return (
@@ -56,6 +60,18 @@ function Header() {
             )}
           </button>
         )}
+        <button
+          className="header-bell"
+          onClick={() => navigate('/cart')}
+          aria-label={`ตะกร้าสินค้า${cartCount > 0 ? ` (${cartCount})` : ''}`}
+        >
+          <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+            <path d="M17 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-.6-5h11.2c.75 0 1.41-.41 1.75-1.03l3.24-5.88A1 1 0 0 0 19.7 5H5.21L4.27 3H1v2h2l3.6 7.59L5.25 15c-.16.28-.25.61-.25.95C5 17.1 5.9 18 7 18h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63z"/>
+          </svg>
+          {cartCount > 0 && (
+            <span className="header-bell-badge">{cartCount > 99 ? '99+' : cartCount}</span>
+          )}
+        </button>
         {user ? (
           <button className="user-chip" onClick={logout} title="แตะเพื่อออกจากระบบ">
             {user.pictureUrl
@@ -122,25 +138,28 @@ function App() {
     <BrowserRouter basename="/app">
       <AuthProvider>
         <NotificationsProvider>
-          <div className="app-shell">
-            <Header />
-            <main className="app-main">
-              <Suspense fallback={<PageFallback />}>
-                <Routes>
-                  <Route path="/"              element={<DuPlenFeed />} />
-                  <Route path="/login"         element={<LoginPage />} />
-                  <Route path="/market"        element={<MarketplacePage />} />
-                  <Route path="/post"          element={<PostPage />} />
-                  <Route path="/profile"       element={<ProfilePage />} />
-                  <Route path="/profile/:id"   element={<ProfilePage />} />
-                  <Route path="/seller"        element={<SellerDashboardPage />} />
-                  <Route path="/notifications" element={<NotificationsPage />} />
-                  <Route path="*"              element={<DuPlenFeed />} />
-                </Routes>
-              </Suspense>
-            </main>
-            <BottomNav />
-          </div>
+          <CartProvider>
+            <div className="app-shell">
+              <Header />
+              <main className="app-main">
+                <Suspense fallback={<PageFallback />}>
+                  <Routes>
+                    <Route path="/"              element={<DuPlenFeed />} />
+                    <Route path="/login"         element={<LoginPage />} />
+                    <Route path="/market"        element={<MarketplacePage />} />
+                    <Route path="/post"          element={<PostPage />} />
+                    <Route path="/profile"       element={<ProfilePage />} />
+                    <Route path="/profile/:id"   element={<ProfilePage />} />
+                    <Route path="/seller"        element={<SellerDashboardPage />} />
+                    <Route path="/notifications" element={<NotificationsPage />} />
+                    <Route path="/cart"          element={<CartPage />} />
+                    <Route path="*"              element={<DuPlenFeed />} />
+                  </Routes>
+                </Suspense>
+              </main>
+              <BottomNav />
+            </div>
+          </CartProvider>
         </NotificationsProvider>
       </AuthProvider>
     </BrowserRouter>
