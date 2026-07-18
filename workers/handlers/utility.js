@@ -37,7 +37,7 @@ utilityRoutes.get('/health', async (c) => {
 
 // ── POST /api/utility/r2-presigned-url ───────────────────────
 // แทน r2PresignedUrl Firebase function — ใช้ SigV4 เหมือนเดิม 100%
-utilityRoutes.post('/r2-presigned-url', requireAuth, async (c) => {
+utilityRoutes.post('/r2-presigned-url', optionalAuth, async (c) => {
   const session = c.get('session');
   const body = await c.req.json();
   const { folder, filename, contentType, lineUserId } = body;
@@ -157,6 +157,90 @@ utilityRoutes.post('/feedback', optionalAuth, async (c) => {
       createdAt: Date.now(),
     });
     return c.json({ success: true });
+  } catch (err) {
+    return c.json({ error: err.message }, 500);
+  }
+});
+
+// ── DELETE /api/utility/r2-delete ────────────────────────────
+// ลบไฟล์จาก R2 bucket ผ่าน R2 binding โดยตรง (ไม่ต้องใช้ SigV4)
+// Body: { key: "products/xxx.jpg" } หรือ { url: "https://pub-xxx.r2.dev/products/xxx.jpg" }
+// ต้องการ auth (admin หรือ เจ้าของไฟล์)
+utilityRoutes.delete('/r2-delete', requireAuth, async (c) => {
+  if (!c.env.STORAGE) {
+    return c.json({ error: 'R2 storage binding not configured' }, 503);
+  }
+
+  const session = c.get('session');
+  const isAdmin = session?.role === 'super_admin' || session?.role === 'admin';
+
+  const body = await c.req.json().catch(() => ({}));
+  let key = body.key?.trim();
+
+  // รองรับส่ง URL มาตรง — ดึง key ออกจาก URL
+  if (!key && body.url) {
+    try {
+      const url = new URL(body.url);
+      // https://pub-xxx.r2.dev/products/file.jpg → products/file.jpg
+      // https://tuktukfeed.com/storage/products/file.jpg → products/file.jpg
+      key = url.pathname.replace(/^\/storage\//, '').replace(/^\//, '');
+    } catch (_) {
+      key = null;
+    }
+  }
+
+  if (!key) {
+    return c.json({ error: 'Missing key or url' }, 400);
+  }
+
+  // Security: อนุญาตเฉพาะโฟลเดอร์ที่กำหนด
+  const ALLOWED_PREFIXES = [
+    'products/', 'posts/', 'community_posts/', 'avatars/',
+    'stories/', 'news_images/', 'community_images/', 'videos/',
+  ];
+  const isAllowed = ALLOWED_PREFIXES.some(p => key.startsWith(p));
+  if (!isAllowed) {
+    return c.json({ error: `Key must start with one of: ${ALLOWED_PREFIXES.join(', ')}` }, 403);
+  }
+
+  // Non-admin: อนุญาตเฉพาะไฟล์ที่ชื่อ key มี userId ของตัวเองอยู่ด้วย
+  if (!isAdmin) {
+    const uid = session?.uid || session?.lineUserId;
+    if (!uid || !key.includes(uid)) {
+      return c.json({ error: 'Permission denied: you can only delete your own files' }, 403);
+    }
+  }
+
+  try {
+    await c.env.STORAGE.delete(key);
+    console.log(`[R2 Delete] key="${key}" by uid=${session?.uid || 'unknown'}`);
+    return c.json({ success: true, deleted: key });
+  } catch (err) {
+    console.error('[R2 Delete] Error:', err.message);
+    return c.json({ error: err.message }, 500);
+  }
+});
+utilityRoutes.post('/save-push-subscription', optionalAuth, async (c) => {
+  const session = c.get('session');
+  const body = await c.req.json().catch(() => ({}));
+  const payload = body.data || {};
+  const { subscription, uid } = payload;
+
+  if (!subscription || !subscription.endpoint) {
+    return c.json({ error: 'Missing subscription endpoint' }, 400);
+  }
+
+  const userId = uid || session?.uid || 'anonymous';
+  const keysJson = JSON.stringify(subscription.keys || {});
+  const id = crypto.randomUUID();
+
+  try {
+    await c.env.DB.prepare(`
+      INSERT OR REPLACE INTO push_subscriptions (id, user_id, endpoint, keys, created_at)
+      VALUES (?, ?, ?, ?, ?)
+    `).bind(id, userId, subscription.endpoint, keysJson, Date.now()).run();
+    
+    return c.json({ data: { success: true } });
   } catch (err) {
     return c.json({ error: err.message }, 500);
   }

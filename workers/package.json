@@ -13,7 +13,8 @@
     "db:export-firestore": "node scripts/migrate-firestore-to-d1.mjs",
     "kv:create": "wrangler kv:namespace create SESSIONS",
     "kv:create:preview": "wrangler kv:namespace create SESSIONS --preview",
-    "types": "wrangler types"
+    "types": "wrangler types",
+    "line:rich-menu": "node scripts/setup-tuktuk-rich-menu.mjs"
   },
   "dependencies": {
     "hono": "^4.4.0"

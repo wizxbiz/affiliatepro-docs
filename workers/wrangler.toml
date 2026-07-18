@@ -20,6 +20,14 @@ WORKERS_AI_MODEL   = "@cf/openai/gpt-oss-20b"
 MAXPLUS_MODEL      = "gpt-5.4-mini"
 FORGE_GATEWAY_URL = "https://api.forgework.app"
 FORGE_GATEWAY_MODEL = "gpt-5.4-mini"
+TUKTUK_LINE_WEBHOOK_VERIFY_DISABLED = "false"
+TUKTUK_LINE_WEBHOOK_SIGNATURE_SOFT_FAIL = "true"
+LINE_WEBHOOK_SIGNATURE_SOFT_FAIL = "true"
+LINE_WEBHOOK_VERIFY_DISABLED = "false"
+LINE_CHANNEL_ID = "2009159046"
+# LIFF ID for tuktuk-app (/app/) — get from LINE Developers Console → Add LIFF
+# Set to "" to disable LIFF auto-login; set to your real LIFF ID to enable it.
+TUKTUK_APP_LIFF_ID = "2009159046-HPLHyRFm"
 
 # ── R2 Bucket Binding ─────────────────────────────────────────
 # ใช้ bucket เดิม "tuktuk-videos" ที่มีอยู่แล้ว
@@ -46,7 +54,7 @@ id      = "08e8c9ced44843f9a4754e39aab0de4f"
 
 # ── Secrets (ตั้งด้วย: npx wrangler@3 secret put JWT_SECRET) ───
 # JWT_SECRET          — ใช้ออก JWT tokens (สุ่มสตริง 64+ ตัวอักษร)
-# R2_ACCESS_KEY_ID    — R2 access key: c25a407afc0cdf23b985b2410cd75614
+# R2_ACCESS_KEY_ID    — R2 access key (set via: npx wrangler@3 secret put R2_ACCESS_KEY_ID)
 # R2_SECRET_ACCESS_KEY — R2 secret key
 # GEMINI_API_KEY      — Google Gemini API key
 # LINE_CHANNEL_SECRET — LINE Channel Secret
@@ -56,8 +64,3 @@ id      = "08e8c9ced44843f9a4754e39aab0de4f"
 crons = [
   "0 * * * *"     # Run hourly, handle routing (Daily, Premium, Weekly) in code
 ]
-
-# ── Routes (custom domain + workers.dev) ─────────────────────
-# routes = [
-#   { pattern = "tuktukfeed.com/api/*", zone_name = "tuktukfeed.com" }
-# ]

@@ -5,12 +5,19 @@
  * Deploy: workers/middleware/super-admin-security.js
  */
 
+import { verify } from 'hono/jwt';
+
 export class SuperAdminSecurity {
   constructor(env) {
     this.env = env;
-    this.SUPER_ADMIN_IDS = [
-      'Ud9bec6d2ea945cf4330a69cb74ac93cf'
-    ];
+    // [SECURITY FIX C-2] SUPER_ADMIN_IDS can be overridden via env var
+    // Set SUPER_ADMIN_IDS="id1,id2" as a Worker Secret for production
+    const envIds = env.SUPER_ADMIN_IDS
+      ? env.SUPER_ADMIN_IDS.split(',').map(s => s.trim()).filter(Boolean)
+      : [];
+    this.SUPER_ADMIN_IDS = envIds.length > 0
+      ? envIds
+      : ['Ud9bec6d2ea945cf4330a69cb74ac93cf', 'U9b40807cbcc8182928a12e3b6b73330e'];
   }
 
   // Layer 1: JWT Token Verification
@@ -51,17 +58,18 @@ export class SuperAdminSecurity {
     return { authorized, role: user.role };
   }
 
-  // Layer 3: Rate Limiting
+  // Layer 3: Rate Limiting (uses SESSIONS KV — always available)
   async checkRateLimit(userId, ip) {
-    const key = `ratelimit:${userId}:${ip}`;
-    const count = await this.env.CACHE?.get(key);
+    // [SECURITY FIX] Use SESSIONS KV (always available) instead of CACHE
+    const key = `ratelimit:admin:${userId}:${ip}`;
+    const count = await this.env.SESSIONS?.get(key);
 
     if (count && parseInt(count) > 100) {
       return { limited: true, error: 'Too many requests' };
     }
 
     const newCount = count ? parseInt(count) + 1 : 1;
-    await this.env.CACHE?.put(key, newCount.toString(), { expirationTtl: 60 });
+    await this.env.SESSIONS?.put(key, newCount.toString(), { expirationTtl: 60 });
 
     return { limited: false, count: newCount };
   }
@@ -82,15 +90,16 @@ export class SuperAdminSecurity {
   }
 
   // Layer 5: Audit Logging
-  async logAdminAction(userId, action, target, result) {
+  // [SECURITY FIX L-3] Accept ip & userAgent so logs are meaningful
+  async logAdminAction(userId, action, target, result, ip = null, userAgent = null) {
     const log = {
       admin_id: userId,
       action,
       target,
       result,
       timestamp: Date.now(),
-      ip: null, // Set from request
-      user_agent: null
+      ip,
+      user_agent: userAgent,
     };
 
     try {
@@ -131,21 +140,18 @@ export class SuperAdminSecurity {
   }
 
   // JWT Helpers
+  // [SECURITY FIX C-2] Properly verify JWT signature using hono/jwt.
+  // The old code only base64-decoded the payload without checking the signature,
+  // allowing anyone to forge an admin JWT.
   async decodeJWT(token) {
-    // Simplified - use proper JWT library in production
-    try {
-      const [header, payload, signature] = token.split('.');
-      const decoded = JSON.parse(atob(payload));
-
-      // Check expiry
-      if (decoded.exp && decoded.exp < Date.now() / 1000) {
-        throw new Error('Token expired');
-      }
-
-      return decoded;
-    } catch (err) {
-      throw new Error('Invalid JWT');
+    const secret = this.env.JWT_SECRET;
+    if (!secret) {
+      console.error('[SuperAdmin] FATAL: JWT_SECRET env var is not configured');
+      throw new Error('Server misconfiguration');
     }
+    // verify() throws if signature is invalid or token is expired
+    const payload = await verify(token, secret.trim());
+    return payload;
   }
 
   // Main middleware handler

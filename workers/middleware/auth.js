@@ -69,8 +69,13 @@ async function _extractSession(c) {
   if (!token) return null;
 
   try {
-    const secret = (c.env?.[JWT_SECRET_KEY] || 'dev-secret-change-me').trim();
-    const payload = await verify(token, secret);
+    // [SECURITY FIX H-2] No fallback — if JWT_SECRET is unset, treat as unauthenticated
+    const secret = c.env?.[JWT_SECRET_KEY];
+    if (!secret) {
+      console.error('[Auth Middleware] JWT_SECRET is not configured');
+      return null;
+    }
+    const payload = await verify(token, secret.trim());
 
     // Check expiry
     if (payload.exp && Date.now() / 1000 > payload.exp) {

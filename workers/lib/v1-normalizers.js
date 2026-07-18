@@ -1,4 +1,4 @@
-import { normalizeJsonResponse } from './api-response.js';
+﻿import { normalizeJsonResponse } from './api-response.js';
 
 function parseJsonArray(value) {
   if (Array.isArray(value)) return value.filter(Boolean);
@@ -30,12 +30,22 @@ export function normalizeV1Product(product) {
     lineUserId: product.lineUserId || sellerId,
     sellerName: product.sellerName || product.seller_name || 'Seller',
     sellerPictureUrl: product.sellerPictureUrl || product.seller_picture || product.picture_url || '',
-    province: product.province || '',
+    sellerPhone: product.sellerPhone || product.seller_phone || '',
+    sellerLineId: product.sellerLineId || product.seller_line_id || '',
+    sellerFacebook: product.sellerFacebook || product.seller_facebook || '',
+    sellerLocation: product.sellerLocation || product.seller_location || product.province || '',
+    province: product.province || product.sellerLocation || product.seller_location || '',
     provinceCode: product.provinceCode || product.province_code || '',
     category: product.category || 'general',
-    isOtop: Boolean(product.isOtop || product.is_otop),
+    productUnit: product.productUnit || product.product_unit || '',
+    productStock: Number(product.productStock || product.product_stock || 0),
+    isOtop: Boolean(product.isOtop || product.isOTOP || product.is_otop),
+    isOrganic: Boolean(product.isOrganic || product.is_organic),
+    videoUrl: product.videoUrl || product.video_url || '',
     status: product.status || 'active',
     viewCount: Number(product.viewCount || product.views_count || 0),
+    buyScore: Number(product.buyScore || product.buy_score || 0),
+    nearmeReason: product.nearmeReason || product.nearme_reason || '',
     createdAt: product.createdAt || product.created_at || null,
     updatedAt: product.updatedAt || product.updated_at || null,
   };

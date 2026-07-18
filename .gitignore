@@ -11,6 +11,8 @@ service-account*.json
 **/line_config.json
 **/.env
 **/.env.*
+**/.dev.vars
+**/.dev.vars.*
 **/serviceAccount*.json
 **/credentials*.json
 **/firebase-adminsdk*.json
@@ -33,6 +35,12 @@ package-lock.json
 **/package-lock.json
 # Keep nul (it's a dummy file — not a Windows device) in case it exists
 nul
+
+# ── Wrangler / Cloudflare local artifacts ──────────────────────────────────
+**/.wrangler/
+
+# ── Local-only handoff docs (contain live secrets — never commit) ──────────
+AI_PROJECT_HANDOFF_REPORT.md
 
 # ── Debug / one-off scripts (functions/) ───────────────────────────────────
 functions/check_*.js

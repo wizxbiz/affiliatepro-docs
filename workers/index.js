@@ -92,6 +92,8 @@ app.post('/api/r2PresignedUrl',            (c) => utilityRoutes.request(rewriteR
 app.post('/api/marketplaceAIGeneratePost', (c) => marketplaceRoutes.request(rewriteRequest(c, '/ai-generate'), undefined, c.env));
 app.post('/r2PresignedUrl',                (c) => utilityRoutes.request(rewriteRequest(c, '/r2-presigned-url'), undefined, c.env));
 app.post('/marketplaceAIGeneratePost',     (c) => marketplaceRoutes.request(rewriteRequest(c, '/ai-generate'), undefined, c.env));
+// R2 file deletion (replaces TODO comments in frontend)
+app.delete('/api/r2Delete',                (c) => utilityRoutes.request(rewriteRequest(c, '/r2-delete'), undefined, c.env, c.executionCtx));
 
 // ── Firestore Database Compatibility Shim Endpoint (Phase 3) ────
 
@@ -121,6 +123,7 @@ async function handleDbQuery(c) {
   if (collection === 'marketplace_items') tableName = 'products';
   else if (collection === 'community_products') tableName = 'products';
   else if (collection === 'line_users') tableName = 'users';
+  else if (collection === 'seller_profiles') tableName = 'users'; // legacy Flutter collection
   else if (collection === 'ai_post_usage') tableName = 'user_usage';
   let sql = `SELECT * FROM ${tableName}`;
   let binds = [];
@@ -216,6 +219,7 @@ async function handleDbDoc(c) {
   if (collection === 'marketplace_items') tableName = 'products';
   else if (collection === 'community_products') tableName = 'products';
   else if (collection === 'line_users') tableName = 'users';
+  else if (collection === 'seller_profiles') tableName = 'users'; // legacy Flutter collection
   else if (collection === 'ai_post_usage') tableName = 'user_usage';
   if (collection === 'messages' && parentId) {
     tableName = 'chat_messages';
@@ -383,14 +387,22 @@ async function handleDbDoc(c) {
 }
 
 async function ensureRelatedRows(db, tableName, body) {
-  if (tableName !== 'products' || !body.seller_id) return;
-  const existingUser = await db.prepare('SELECT 1 FROM users WHERE id = ?').bind(body.seller_id).first();
+  // Both products (seller_id) and posts (user_id) have a FK → users(id).
+  // Inserting for a guest / not-yet-synced user would fail the FK constraint,
+  // so upsert a minimal user row first.
+  const ownerId = (tableName === 'products' && body.seller_id)
+    ? body.seller_id
+    : (tableName === 'posts' && body.user_id ? body.user_id : null);
+  if (!ownerId) return;
+
+  const existingUser = await db.prepare('SELECT 1 FROM users WHERE id = ?').bind(ownerId).first();
   if (existingUser) return;
 
+  const displayName = tableName === 'products' ? 'ผู้ขาย' : 'สมาชิก';
   await db.prepare(`
     INSERT INTO users (id, line_user_id, display_name, role, seller_status, is_premium, provider, created_at, updated_at)
     VALUES (?, ?, ?, 'user', 'none', 0, 'line', ?, ?)
-  `).bind(body.seller_id, body.seller_id, 'ผู้ขาย', Date.now(), Date.now()).run();
+  `).bind(ownerId, ownerId, displayName, Date.now(), Date.now()).run();
 }
 
 function asJson(value, fallback) {
@@ -432,6 +444,22 @@ function mapDocumentForTable(tableName, body, id, parentId, partial = false) {
     setIfPresent(mapped, 'category', body.category || 'general', !partial || body.category !== undefined);
     setIfPresent(mapped, 'status', body.status || 'active', !partial || body.status !== undefined);
     setIfPresent(mapped, 'views_count', Number(body.viewCount || body.viewsCount || body.views_count || 0), !partial || body.viewCount !== undefined || body.viewsCount !== undefined || body.views_count !== undefined);
+    
+    // Additional seller fields
+    setIfPresent(mapped, 'seller_phone', body.sellerPhone || '', !partial || body.sellerPhone !== undefined);
+    setIfPresent(mapped, 'seller_line_id', body.sellerLineId || '', !partial || body.sellerLineId !== undefined);
+    setIfPresent(mapped, 'seller_facebook', body.sellerFacebook || '', !partial || body.sellerFacebook !== undefined);
+    setIfPresent(mapped, 'seller_location', body.sellerLocation || '', !partial || body.sellerLocation !== undefined);
+    
+    // Additional community fields
+    setIfPresent(mapped, 'product_unit', body.productUnit || '', !partial || body.productUnit !== undefined);
+    setIfPresent(mapped, 'product_stock', Number(body.productStock || 0), !partial || body.productStock !== undefined);
+    setIfPresent(mapped, 'is_otop', body.isOTOP ? 1 : 0, !partial || body.isOTOP !== undefined);
+    setIfPresent(mapped, 'is_organic', body.isOrganic ? 1 : 0, !partial || body.isOrganic !== undefined);
+    
+    // Other fields
+    setIfPresent(mapped, 'video_url', body.videoUrl || '', !partial || body.videoUrl !== undefined);
+
     setIfPresent(mapped, 'created_at', normalizeTimestamp(body.createdAt), !partial || body.createdAt !== undefined);
     setIfPresent(mapped, 'updated_at', normalizeTimestamp(body.updatedAt), !partial || body.updatedAt !== undefined);
     return mapped;
@@ -508,6 +536,33 @@ function mapDocumentForTable(tableName, body, id, parentId, partial = false) {
     setIfPresent(mapped, 'user_id', id, !partial);
     setIfPresent(mapped, 'pinned', asJson(body.pinned, []), !partial || body.pinned !== undefined);
     setIfPresent(mapped, 'archived', asJson(body.archived, []), !partial || body.archived !== undefined);
+    return mapped;
+  }
+
+  if (tableName === 'posts') {
+    const mapped = {};
+    setIfPresent(mapped, 'user_id', body.authorId || body.userId || 'unknown', !partial || body.authorId !== undefined || body.userId !== undefined);
+    setIfPresent(mapped, 'content', body.content || body.text || '', !partial || body.content !== undefined || body.text !== undefined);
+    setIfPresent(mapped, 'media_urls', asJson(body.mediaUrls || body.images || body.media, []), !partial || body.mediaUrls !== undefined || body.images !== undefined || body.media !== undefined);
+    setIfPresent(mapped, 'youtube_url', body.youtubeUrl || '', !partial || body.youtubeUrl !== undefined);
+    setIfPresent(mapped, 'video_embed', body.videoEmbed || '', !partial || body.videoEmbed !== undefined);
+    // NOTE: the posts table has NO `video_url` column — the video URL lives inside
+    // media_urls (as {url, type:'video'}). Setting video_url here crashed every INSERT
+    // with "table posts has no column named video_url". Do not re-add it.
+    setIfPresent(mapped, 'title', body.title || '', !partial || body.title !== undefined);
+    setIfPresent(mapped, 'category', body.category || 'general', !partial || body.category !== undefined);
+    setIfPresent(mapped, 'status', body.status || 'active', !partial || body.status !== undefined);
+    setIfPresent(mapped, 'likes_count', Number(body.likes || 0), !partial || body.likes !== undefined);
+    setIfPresent(mapped, 'comments_count', Number(body.comments || body.commentsCount || 0), !partial || body.comments !== undefined || body.commentsCount !== undefined);
+    setIfPresent(mapped, 'views_count', Number(body.viewCount || body.viewsCount || 0), !partial || body.viewCount !== undefined || body.viewsCount !== undefined);
+    setIfPresent(mapped, 'linked_product_id', body.linkedProductId || '', !partial || body.linkedProductId !== undefined);
+    setIfPresent(mapped, 'product_name', body.productName || '', !partial || body.productName !== undefined);
+    setIfPresent(mapped, 'product_price', Number(body.productPrice || 0), !partial || body.productPrice !== undefined);
+    setIfPresent(mapped, 'product_thumb', body.productThumb || '', !partial || body.productThumb !== undefined);
+    setIfPresent(mapped, 'pinned', body.pinned ? 1 : 0, !partial || body.pinned !== undefined);
+    setIfPresent(mapped, 'published', body.published === false ? 0 : 1, !partial || body.published !== undefined);
+    setIfPresent(mapped, 'created_at', normalizeTimestamp(body.createdAt), !partial || body.createdAt !== undefined);
+    setIfPresent(mapped, 'updated_at', normalizeTimestamp(body.updatedAt), !partial || body.updatedAt !== undefined);
     return mapped;
   }
 
@@ -626,6 +681,48 @@ function mapRowToClient(row, tableName) {
     return {
       pinned,
       archived
+    };
+  }
+  if (tableName === 'posts') {
+    let mediaUrls = [];
+    try { mediaUrls = JSON.parse(row.media_urls || '[]'); } catch(_) {}
+    if (!Array.isArray(mediaUrls)) mediaUrls = [];
+    // There is no video_url column — derive the playable video URL from media_urls.
+    const videoEntry = mediaUrls.find(m => m && typeof m === 'object' && m.type === 'video');
+    const imageEntry = mediaUrls.find(m => m && typeof m === 'object' && m.type === 'image')
+      || (typeof mediaUrls[0] === 'string' ? { url: mediaUrls[0] } : null);
+    return {
+      id: row.id,
+      authorId: row.user_id || row.author_id,
+      userId: row.user_id || row.author_id,
+      // authorName/authorAvatar come from the LEFT JOIN with users in getPosts/getPostById
+      authorName: row.display_name || row.author_name || 'TukTuk Member',
+      authorAvatar: row.author_picture || row.picture_url || '',
+      title: row.title || '',
+      content: row.content,
+      mediaUrls: mediaUrls,
+      images: mediaUrls,
+      media: mediaUrls,
+      imageUrl: imageEntry?.url || '',
+      thumbnailUrl: imageEntry?.url || '',
+      youtubeUrl: row.youtube_url || '',
+      videoEmbed: row.video_embed || '',
+      videoUrl: videoEntry?.url || row.youtube_url || '',
+      category: row.category || 'general',
+      status: row.status || 'active',
+      likes: row.likes_count || 0,
+      comments: row.comments_count || 0,
+      commentsCount: row.comments_count || 0,
+      viewCount: row.views_count || 0,
+      views: row.views_count || 0,
+      linkedProductId: row.linked_product_id || '',
+      productName: row.product_name || '',
+      productPrice: row.product_price || 0,
+      productThumb: row.product_thumb || '',
+      pinned: row.pinned === 1 || row.pinned === true,
+      published: row.published !== 0,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at
     };
   }
   return row;
