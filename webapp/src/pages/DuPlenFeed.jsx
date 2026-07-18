@@ -47,6 +47,7 @@ export default function DuPlenFeed() {
   const nearMe = useNearMe()
   const modeRef = useRef(mode)
   const nearActionRef = useRef(0)
+  const viewedRef = useRef(new Set()) // dedupe view beacons per session
 
   const targetPostId = searchParams.get('post') || searchParams.get('postId')
   const showComments = searchParams.get('comments') === '1'
@@ -109,7 +110,13 @@ export default function DuPlenFeed() {
           provinceName: province.name,
           limit: feedMode === 'near_me' ? 40 : 34,
         })
-        merged = Array.isArray(nearme.items) ? nearme.items : []
+        // /nearme returns products normalized by the Worker (normalizeV1Product),
+        // whose field names differ from what FeedItem reads. Route them through
+        // productToFeedItem so cards get type/productId/ctaUrl/authorAvatar/price/
+        // stock (buyScore + nearmeReason are preserved). Real posts (which carry
+        // `content`) are passed through untouched in case the feed ever mixes them.
+        const rawItems = Array.isArray(nearme.items) ? nearme.items : []
+        merged = rawItems.map((it) => (it && it.content ? it : productToFeedItem(it)))
         nearmeMeta = nearme.meta || null
       } catch (err) {
         console.warn('[DuPlenFeed] Nearme fallback', err)
@@ -188,13 +195,29 @@ export default function DuPlenFeed() {
     load('near_me', prov)
   }
 
+  // Fire-and-forget view beacon, once per item per session.
+  const countView = useCallback((id) => {
+    if (!id || viewedRef.current.has(id)) return
+    viewedRef.current.add(id)
+    const item = items.find((it) => String(it.id) === String(id))
+    if (!item) return
+    if (item.type === 'product') {
+      const productId = item.productId || String(item.id).replace(/^product-/, '')
+      if (productId) api.products.view(productId).catch(() => {})
+    } else {
+      api.posts.view(id).catch(() => {})
+    }
+  }, [items])
+
   useEffect(() => {
     if (state !== 'ready' || !containerRef.current) return
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
-            setActiveId(entry.target.dataset.id)
+            const id = entry.target.dataset.id
+            setActiveId(id)
+            countView(id)
           }
         })
       },
@@ -202,7 +225,7 @@ export default function DuPlenFeed() {
     )
     containerRef.current.querySelectorAll('.feed-item').forEach((el) => observer.observe(el))
     return () => observer.disconnect()
-  }, [state, items])
+  }, [state, items, countView])
 
   return (
     <div className="duplen-wrap">

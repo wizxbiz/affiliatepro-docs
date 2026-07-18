@@ -94,6 +94,7 @@ export const api = {
     create: (product) => request('/products', { method: 'POST', body: product }),
     update: (id, fields) => request(`/products/${id}`, { method: 'PUT', body: fields }),
     remove: (id) => request(`/products/${id}`, { method: 'DELETE' }),
+    view: (id) => request(`/products/${id}/view`, { method: 'POST' }),
   },
   posts: {
     list: ({ category = '', limit = 20, offset = 0 } = {}) =>
