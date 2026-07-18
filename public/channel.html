@@ -1,0 +1,3297 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="description" content="TukTuk Channel - รวมวิดีโอและคอนเทนต์ที่คุณชื่นชอบ">
+    <title>My Channel - TukTuk Thailand</title>
+    <link rel="icon" type="image/png" href="/images/logo.png">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/auth-service.js"></script>
+    <script src="/js/tuktuk-api.js"></script>
+    <link rel="stylesheet" href="css/persistent-ui.css">
+    <link rel="stylesheet" href="css/pc-layout.css">
+    <script src="js/persistent-ui.js"></script>
+    <script src="js/spa-router.js" defer></script>
+
+    <style>
+        /* ========================================
+           DESIGN SYSTEM & VARIABLES
+           ======================================== */
+        :root {
+            --primary: #00D2FF;
+            --primary-dark: #0088CC;
+            --primary-gradient: linear-gradient(135deg, #00D2FF 0%, #0088CC 100%);
+            --secondary: #FF6B2B;
+            --secondary-gradient: linear-gradient(135deg, #FF6B2B 0%, #FF4500 100%);
+            --success: #00E676;
+            --success-gradient: linear-gradient(135deg, #00E676 0%, #00C853 100%);
+            --warning: #FFD600;
+            --warning-gradient: linear-gradient(135deg, #FFD600 0%, #FFB300 100%);
+            --danger: #FF3B3B;
+            --danger-gradient: linear-gradient(135deg, #FF3B3B 0%, #D32F2F 100%);
+            --purple: #8B5CF6;
+            --purple-gradient: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
+            --bg: #0A0E21;
+            --surface: rgba(18, 25, 45, 0.95);
+            --surface-light: rgba(28, 38, 60, 0.95);
+            --card: rgba(22, 30, 50, 0.9);
+            --text: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --border: rgba(0, 210, 255, 0.15);
+            --border-light: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+            --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            --blur: blur(20px);
+            --border-radius-sm: 8px;
+            --border-radius-md: 12px;
+            --border-radius-lg: 20px;
+            --border-radius-xl: 28px;
+            --border-radius-2xl: 36px;
+            --border-radius-full: 9999px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: relative;
+            padding-bottom: 0; /* Changed from 140px to 0 for PC, mobile handled below */
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(0, 210, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255, 107, 43, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* ========================================
+           PREMIUM HEADER
+           ======================================== */
+        .channel-header-wrapper {
+            position: relative;
+            margin-bottom: 30px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        /* Logo image size inside pc-logo */
+        .pc-logo-icon-img {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+        }
+
+        /* PC Top Nav offset — only when nav is visible (standalone mode) */
+        @media (min-width: 992px) {
+            body.pc-standalone {
+                padding-top: 64px;
+            }
+            body.pc-standalone #pcTopNav {
+                display: flex !important;
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .channel-banner {
+            height: 250px;
+            background: var(--primary-gradient);
+            background-size: 200% 200%;
+            animation: gradientMove 15s ease infinite;
+            opacity: 0.8;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .channel-banner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(10, 14, 33, 0.8) 100%);
+        }
+
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .channel-header {
+            margin-top: -100px;
+            padding: 0 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .profile-container {
+            position: relative;
+            z-index: 10;
+        }
+
+        .profile-pic {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 6px solid var(--surface);
+            object-fit: cover;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            transition: var(--transition);
+        }
+
+        .profile-pic:hover {
+            transform: scale(1.05) rotate(3deg);
+            border-color: var(--primary);
+        }
+
+        .verified-badge {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: var(--primary-gradient);
+            color: var(--bg);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid var(--surface);
+            font-size: 1.2rem;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .edit-profile-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: var(--surface);
+            backdrop-filter: var(--blur);
+            color: var(--text);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 11;
+        }
+
+        .edit-profile-btn:hover {
+            background: var(--primary);
+            color: var(--bg);
+            transform: rotate(90deg);
+        }
+
+        .channel-name {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 15px 0 5px;
+            background: linear-gradient(135deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .edit-name-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .edit-name-btn:hover {
+            background: var(--primary);
+            color: var(--bg);
+            transform: scale(1.1);
+        }
+
+        .channel-stats {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-top: 30px;
+            background: var(--surface);
+            backdrop-filter: var(--blur);
+            padding: 25px 50px;
+            border-radius: var(--border-radius-2xl);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-item {
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-weight: 800;
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-secondary);
+        }
+
+        /* ========================================
+           TABS
+           ======================================== */
+        .channel-tabs-container {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--surface);
+            backdrop-filter: var(--blur);
+            border-bottom: 1px solid var(--border);
+            margin: 30px 0;
+        }
+
+        .channel-tabs {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+        }
+
+        .channel-tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            padding: 12px 24px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transition);
+            border-radius: var(--border-radius-full);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .channel-tab-btn i {
+            font-size: 1.2rem;
+        }
+
+        .channel-tab-btn.active {
+            color: var(--primary);
+            background: rgba(0, 210, 255, 0.1);
+        }
+
+        .channel-tab-btn:hover {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ========================================
+           FEED CONTAINER
+           ======================================== */
+        .feed-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .post-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .post-card {
+            aspect-ratio: 9/16;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .post-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary);
+        }
+
+        .post-media {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .post-card:hover .post-media {
+            transform: scale(1.1);
+        }
+
+        .post-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.8) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 15px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .post-card:hover .post-overlay {
+            opacity: 1;
+        }
+
+        .post-stats-overlay {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .post-stats-overlay span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text);
+        }
+
+        /* ========================================
+           USER LIST
+           ======================================== */
+        .user-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .user-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 15px 20px;
+            border-radius: var(--border-radius-lg);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .user-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(10px);
+            border-color: var(--primary);
+        }
+
+        .user-item img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--border);
+        }
+
+        .user-item-info {
+            flex: 1;
+        }
+
+        .user-item-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text);
+        }
+
+        .user-item-sub {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .user-item-btn {
+            background: var(--primary-gradient);
+            color: var(--bg);
+            border: none;
+            padding: 8px 18px;
+            border-radius: var(--border-radius-full);
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .user-item-btn.following {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .user-item-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* ========================================
+           SETTINGS BUTTON
+           ======================================== */
+        .settings-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--surface);
+            backdrop-filter: var(--blur);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .settings-btn:hover {
+            background: var(--primary);
+            color: var(--bg);
+            transform: rotate(90deg);
+        }
+
+        /* ========================================
+           SETTINGS OFF CANVAS
+           ======================================== */
+        .settings-offcanvas {
+            background: var(--surface) !important;
+            backdrop-filter: var(--blur);
+            color: var(--text);
+            border-left: 1px solid var(--border) !important;
+            width: 350px !important;
+        }
+
+        .offcanvas-header {
+            border-bottom: 1px solid var(--border);
+            padding: 25px 20px;
+        }
+
+        .offcanvas-title {
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .btn-close-white {
+            filter: invert(1);
+        }
+
+        .setting-group {
+            margin-bottom: 25px;
+        }
+
+        .setting-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding: 0 10px;
+            font-weight: 700;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 15px;
+            border-radius: var(--border-radius-lg);
+            margin-bottom: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-secondary);
+            text-decoration: none;
+            border: 1px solid transparent;
+        }
+
+        .setting-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--border);
+            color: var(--text);
+            transform: translateX(5px);
+        }
+
+        .setting-item i {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        .setting-item.danger i {
+            background: rgba(255, 59, 59, 0.1);
+            color: var(--danger);
+        }
+
+        .setting-info {
+            flex: 1;
+        }
+
+        .setting-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text);
+        }
+
+        .setting-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Form Switch */
+        .form-switch .form-check-input {
+            width: 50px;
+            height: 25px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: var(--border);
+        }
+
+        .form-switch .form-check-input:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* ========================================
+           VIDEO MODAL
+           ======================================== */
+        .video-modal .modal-content {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+        }
+
+        .close-video-modal {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: var(--surface);
+            backdrop-filter: var(--blur);
+            color: var(--text);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-video-modal:hover {
+            background: var(--danger);
+            transform: rotate(90deg);
+        }
+
+        #modalVideo {
+            width: 100%;
+            border-radius: var(--border-radius-xl);
+        }
+
+        iframe {
+            width: 100%;
+            height: 70vh;
+            border: none;
+        }
+
+        .center-nav-gap {
+            flex: 0 0 70px;
+            pointer-events: none;
+        }
+
+        /* Prevents content blocking on mobile */
+        @media (max-width: 991px) {
+            body {
+                padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px)) !important;
+            }
+
+            .bottom-nav {
+                width: 92%;
+                bottom: calc(15px + env(safe-area-inset-bottom, 0px));
+            }
+        }
+
+        /* ========================================
+           LOADING STATES
+           ======================================== */
+        .loading-spinner {
+            text-align: center;
+            padding: 50px;
+        }
+
+        .loading-spinner .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            color: var(--primary);
+        }
+
+        .loading-spinner p {
+            margin-top: 15px;
+            color: var(--text-secondary);
+        }
+
+        /* ========================================
+           EMPTY STATES
+           ======================================== */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .empty-state .btn {
+            background: var(--primary-gradient);
+            color: var(--bg);
+            padding: 12px 30px;
+            border-radius: var(--border-radius-full);
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .empty-state .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* ========================================
+           TOAST NOTIFICATIONS
+           ======================================== */
+        .toast-container {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            z-index: 9999;
+        }
+
+        .toast-message {
+            background: var(--surface);
+            backdrop-filter: var(--blur);
+            color: var(--text);
+            padding: 15px 25px;
+            border-radius: var(--border-radius-lg);
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideInRight 0.3s ease;
+            border-left: 4px solid var(--primary);
+        }
+
+        .toast-message.success {
+            border-left-color: var(--success);
+        }
+
+        .toast-message.error {
+            border-left-color: var(--danger);
+        }
+
+        .toast-message.info {
+            border-left-color: var(--primary);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* ========================================
+           RESPONSIVE
+           ======================================== */
+        @media (max-width: 768px) {
+            .post-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .channel-stats {
+                gap: 20px;
+                padding: 20px;
+                flex-wrap: wrap;
+            }
+
+            .stat-value {
+                font-size: 1.4rem;
+            }
+
+            .channel-name {
+                font-size: 1.8rem;
+            }
+
+            .profile-pic {
+                width: 120px;
+                height: 120px;
+            }
+
+            .channel-tabs {
+                overflow-x: auto;
+                padding: 15px 10px;
+            }
+
+            .channel-tab-btn {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+                white-space: nowrap;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .post-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .channel-stats {
+                gap: 15px;
+            }
+
+            .stat-value {
+                font-size: 1.2rem;
+            }
+
+            .channel-name {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* ========================================
+           HANDLE DISPLAY
+           ======================================== */
+        .channel-handle {
+            color: var(--primary);
+            font-size: 0.88rem;
+            font-weight: 500;
+            opacity: 0.75;
+            margin-bottom: 6px;
+            letter-spacing: 0.3px;
+        }
+
+        /* ========================================
+           USER ROLE / BIO TEXT
+           ======================================== */
+        .user-role-text {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .user-bio-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            max-width: 400px;
+            margin: 0 auto 15px;
+        }
+
+        /* ========================================
+           OWN-PROFILE ACTION BUTTONS
+           ======================================== */
+        .own-action-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: var(--text);
+            font-family: 'Kanit', sans-serif;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .own-action-btn:hover {
+            background: rgba(0, 210, 255, 0.12);
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .own-action-btn.analytics-btn:hover {
+            color: var(--warning);
+            border-color: var(--warning);
+            background: rgba(255, 214, 0, 0.08);
+        }
+
+        .own-action-btn.wallet-btn:hover {
+            color: #FFD700;
+            border-color: #FFD700;
+            background: rgba(255, 215, 0, 0.08);
+        }
+
+        .own-action-btn.qr-btn:hover {
+            color: var(--success);
+            border-color: var(--success);
+            background: rgba(0, 230, 118, 0.08);
+        }
+
+        /* ========================================
+           COVER IMAGE EDIT OVERLAY
+           ======================================== */
+        .channel-banner {
+            position: relative;
+        }
+
+        .cover-edit-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: var(--transition);
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.38);
+            z-index: 5;
+        }
+
+        .channel-banner:hover .cover-edit-overlay {
+            opacity: 1;
+        }
+
+        .cover-edit-icon {
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(10px);
+            color: white;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            border: 2px solid rgba(255, 255, 255, 0.25);
+        }
+
+        /* ========================================
+           STORY HIGHLIGHTS
+           ======================================== */
+        .story-highlights-section {
+            max-width: 900px;
+            margin: 0 auto 15px;
+            padding: 0 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .story-highlights-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text);
+        }
+
+        .story-highlights-label i {
+            color: var(--warning);
+            font-size: 0.95rem;
+        }
+
+        .story-highlights-row {
+            display: flex;
+            gap: 18px;
+            overflow-x: auto;
+            padding-bottom: 6px;
+            scrollbar-width: none;
+        }
+
+        .story-highlights-row::-webkit-scrollbar {
+            display: none;
+        }
+
+        .story-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 7px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .story-bubble {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 2.5px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.7rem;
+            background: rgba(0, 210, 255, 0.08);
+            transition: var(--transition);
+        }
+
+        .story-bubble:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 22px rgba(0, 210, 255, 0.35);
+            border-color: var(--secondary);
+        }
+
+        .story-item-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-align: center;
+            max-width: 72px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .story-add-btn .story-bubble {
+            border-style: dashed;
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.03);
+            font-size: 1.5rem;
+            color: var(--text-muted);
+        }
+
+        /* ========================================
+           REWARD / MISSION CENTER CARD
+           ======================================== */
+        .reward-card {
+            background: linear-gradient(135deg, rgba(26, 31, 53, 0.97), rgba(10, 14, 33, 0.97));
+            border: 1px solid rgba(255, 215, 0, 0.22);
+            border-radius: var(--border-radius-xl);
+            padding: 16px 20px;
+            max-width: 420px;
+            box-shadow: 0 0 24px rgba(255, 215, 0, 0.06);
+            transition: var(--transition);
+        }
+
+        .reward-card:hover {
+            border-color: rgba(255, 215, 0, 0.45);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.1);
+        }
+
+        .reward-card-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .reward-icon-wrapper {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 215, 0, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFD700;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+            box-shadow: 0 0 16px rgba(255, 215, 0, 0.2);
+        }
+
+        .reward-info {
+            flex: 1;
+            text-align: left;
+        }
+
+        .reward-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text);
+        }
+
+        .reward-desc {
+            font-size: 0.73rem;
+            color: var(--text-muted);
+        }
+
+        .reward-stats {
+            text-align: right;
+        }
+
+        .coin-value {
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: #FFD700;
+        }
+
+        .coin-label {
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Wallet badge in header */
+        .wallet-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: var(--border-radius-full);
+            padding: 4px 14px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #FFD700;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 8px;
+        }
+
+        .wallet-badge:hover {
+            background: rgba(255, 215, 0, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* ========================================
+           QR CODE MODAL
+           ======================================== */
+        .qr-modal .modal-content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius-xl);
+            color: var(--text);
+        }
+
+        .qr-modal .modal-header {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .qr-wrapper {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            padding: 16px;
+            display: inline-block;
+            margin: 0 auto;
+        }
+
+        /* ========================================
+           EDIT PROFILE MODAL
+           ======================================== */
+        .edit-modal .modal-content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius-xl);
+            color: var(--text);
+        }
+
+        .edit-modal .modal-header {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .edit-modal .modal-footer {
+            border-top: 1px solid var(--border);
+        }
+
+        .edit-modal .form-control,
+        .edit-modal .form-control:focus {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: var(--border-radius-md);
+        }
+
+        .edit-modal .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 210, 255, 0.1);
+        }
+
+        .edit-modal .form-control::placeholder {
+            color: var(--text-muted);
+        }
+
+        .edit-modal .form-label {
+            color: var(--text-secondary);
+            font-size: 0.83rem;
+            font-weight: 600;
+        }
+
+        .cover-preview {
+            width: 100%;
+            height: 100px;
+            border-radius: var(--border-radius-md);
+            object-fit: cover;
+            border: 1px solid var(--border);
+            display: none;
+        }
+
+        /* ========================================
+           WALLET MODAL
+           ======================================== */
+        .wallet-modal .modal-content {
+            background: var(--surface);
+            border: 1px solid rgba(255, 215, 0, 0.25);
+            border-radius: var(--border-radius-xl);
+            color: var(--text);
+        }
+
+        .wallet-modal .modal-header {
+            border-bottom: 1px solid rgba(255, 215, 0, 0.15);
+        }
+
+        .wallet-coin-display {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #FFD700;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+        }
+
+        .wallet-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-light);
+            border-radius: var(--border-radius-md);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .wallet-item i {
+            width: 30px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .wallet-item-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .wallet-item-desc {
+            font-size: 0.75rem;
+        }
+
+        .wallet-coins-icon {
+            color: #FFD700;
+        }
+
+        .wallet-mission-btn {
+            color: #000;
+        }
+
+        /* Edit modal — handle @prefix */
+        .edit-handle-prefix {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--primary);
+        }
+
+
+
+
+        @media (min-width: 992px) {
+            .channel-header {
+                max-width: 1200px;
+                margin: -120px auto 0;
+                padding: 0 40px;
+                flex-direction: row;
+                text-align: left;
+                align-items: flex-end;
+                gap: 40px;
+            }
+
+            .profile-pic {
+                width: 180px;
+                height: 180px;
+            }
+
+            .channel-info-main {
+                flex: 1;
+                text-align: left;
+                padding-bottom: 10px;
+            }
+
+            .channel-name {
+                font-size: 3.5rem;
+                justify-content: flex-start;
+                margin-bottom: 5px;
+            }
+
+            .channel-handle {
+                font-size: 1.2rem;
+                margin-bottom: 15px;
+            }
+
+            .channel-stats {
+                margin-top: 25px;
+                justify-content: flex-start;
+                gap: 60px;
+                padding: 25px 45px;
+            }
+
+            .user-bio-text {
+                text-align: left;
+                max-width: 600px;
+            }
+
+            .achievement-list-wrap {
+                justify-content: flex-start !important;
+            }
+        }
+
+        /* creation hub overlay */
+        .creation-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 5, 15, 0.8);
+            backdrop-filter: blur(25px);
+            z-index: 9999990;
+            display: none;
+            flex-direction: column;
+            justify-content: flex-end;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .creation-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .creation-menu-content {
+            background: rgba(10, 14, 33, 0.98);
+            border-radius: 40px 40px 0 0;
+            padding: 40px 25px 110px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.6);
+        }
+    </style>
+    <script src="/js/liff-config.js"></script>
+    <script src="/js/r2-upload.js"></script>
+</head>
+
+<body>
+
+    <!-- ===== PC TOP NAV (standalone only — hidden when embedded in SPA iframe) ===== -->
+    <div class="pc-top-nav" id="pcTopNav">
+        <div class="pc-nav-container">
+            <div class="pc-top-left">
+                <a href="index.html" class="pc-logo" title="TukTuk Thailand" onclick="event.preventDefault();_tnav('index.html')">
+                    <img src="/assets/images/logo.png" class="pc-logo-icon-img" alt="TukTuk logo">
+                    <span>TukTuk</span>
+                </a>
+            </div>
+            <div class="pc-top-center">
+                <div class="pc-nav-icons">
+                    <div class="pc-nav-icon" data-pc-nav="home" title="หน้าหลัก"
+                        onclick="_tnav('index.html')">
+                        <i class="fas fa-home"></i>
+                        <span class="pc-nav-label">หน้าหลัก</span>
+                    </div>
+                    <div class="pc-nav-icon" data-pc-nav="marketplace" title="ตลาดนัด"
+                        onclick="_tnav('marketplace.html')">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span class="pc-nav-label">ตลาดนัด</span>
+                    </div>
+                    <div class="pc-nav-icon active" data-pc-nav="channel" title="โปรไฟล์">
+                        <i class="fas fa-user-circle"></i>
+                        <span class="pc-nav-label">โปรไฟล์</span>
+                    </div>
+                </div>
+            </div>
+            <div class="pc-top-right">
+                <div class="pc-actions">
+                    <div class="pc-icon-btn" onclick="_tnav('messages.html')" title="ข้อความ">
+                        <i class="fas fa-comment-dots"></i>
+                    </div>
+                    <div class="pc-icon-btn"
+                        onclick="typeof WizmobizAuth!=='undefined'?WizmobizAuth.handleShopAccess():_tnav('seller-dashboard.html')"
+                        title="จัดการร้านค้า">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <div class="pc-user-menu" title="โปรไฟล์ของฉัน">
+                        <img src="/assets/images/logo.png" id="channelNavAvatar" class="pc-user-avatar"
+                            alt="avatar" onerror="this.src='/assets/images/logo.png'">
+                        <span class="pc-user-name" id="channelNavName">โปรไฟล์</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ===== END PC TOP NAV ===== -->
+
+    <div class="channel-header-wrapper">
+        <div id="channelBanner" class="channel-banner">
+            <!-- Cover edit overlay — visible on hover for own profile -->
+            <label id="coverEditOverlay" class="cover-edit-overlay" for="coverInput" style="display:none;">
+                <div class="cover-edit-icon"><i class="fas fa-camera"></i></div>
+            </label>
+            <input type="file" id="coverInput" hidden accept="image/*" onchange="handleCoverChange(this)">
+        </div>
+        <button id="settingsBtn" class="settings-btn" style="display: none;" data-bs-toggle="offcanvas"
+            data-bs-target="#settingsMenu">
+            <i class="fas fa-cog"></i>
+        </button>
+        <div class="channel-header">
+            <div class="profile-container">
+                <img id="userAvatar" src="/images/logo.png" class="profile-pic" alt="Profile">
+                <div id="verifiedIcon" class="verified-badge" style="display: none;">
+                    <i class="fas fa-check"></i>
+                </div>
+                <label for="avatarInput" id="editAvatarBtn" class="edit-profile-btn">
+                    <i class="fas fa-camera"></i>
+                </label>
+                <input type="file" id="avatarInput" hidden accept="image/*" onchange="handleAvatarChange(this)">
+            </div>
+
+            <div class="channel-info-main">
+                <h1 class="channel-name">
+                    <span id="userName">...</span>
+                    <button id="editNameBtn" class="edit-name-btn" style="display:none;" onclick="editName()"
+                        title="แก้ไขชื่อ">
+                        <i class="fas fa-pen"></i>
+                    </button>
+                </h1>
+                <p id="channelHandle" class="channel-handle" style="display:none;"></p>
+                <p id="userRole" class="user-role-text">Member</p>
+                <div id="userBio" class="user-bio-text" style="display:none;"></div>
+
+                <!-- Achievement Badges -->
+                <div id="achievementsList"
+                    class="d-flex justify-content-center flex-wrap gap-2 mb-3 achievement-list-wrap"
+                    style="display:none !important;"></div>
+
+                <!-- Own-profile action buttons -->
+                <div id="ownActions" class="d-flex justify-content-center gap-2 mt-2 flex-wrap" style="display:none;">
+                    <button type="button" class="btn btn-sm rounded-pill px-3 own-action-btn"
+                        onclick="openEditProfileModal()" title="แก้ไขโปรไฟล์">
+                        <i class="fas fa-pen me-1"></i>แก้ไข
+                    </button>
+                    <button type="button" class="btn btn-sm rounded-pill px-3 own-action-btn analytics-btn"
+                        onclick="_tnav('seller-dashboard.html')" title="สตูดิโอผู้สร้าง">
+                        <i class="fas fa-chart-bar"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm rounded-pill px-3 own-action-btn wallet-btn"
+                        onclick="showWallet()" title="กระเป๋าเงิน">
+                        <i class="fas fa-coins"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm rounded-pill px-3 own-action-btn qr-btn"
+                        onclick="showQRCode()" title="QR Code">
+                        <i class="fas fa-qrcode"></i>
+                    </button>
+                </div>
+
+                <!-- Other-profile action buttons -->
+                <div id="authorActions" class="mt-2" style="display:none;">
+                    <button id="mainFollowBtn" type="button" class="btn btn-primary rounded-pill px-4 py-2"
+                        onclick="handleMainFollow()">ติดตาม</button>
+                    <button type="button" class="btn btn-info rounded-pill px-3 py-2 ms-2" onclick="openDirectMessage()"
+                        title="ส่งข้อความ" style="background:#38bdf8; border:none; color:#0f172a;">
+                        <i class="fas fa-comment-dots"></i> ข้อความ
+                    </button>
+                    <button type="button" class="btn btn-outline-light rounded-pill px-3 py-2 ms-2"
+                        onclick="shareChannel()">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
+                </div>
+
+                <!-- Mission Center Card (own profile only) -->
+                <div id="rewardCard" class="reward-card mt-3 mx-auto" style="display:none; cursor:pointer;"
+                    onclick="_tnav('mission-center.html')">
+                    <div class="reward-card-content">
+                        <div class="reward-icon-wrapper"><i class="fas fa-star"></i></div>
+                        <div class="reward-info">
+                            <div class="reward-title">ศูนย์รวมภารกิจ &amp; รางวัล</div>
+                            <div class="reward-desc">ทำภารกิจสะสมเหรียญ แลกของรางวัลพิเศษ</div>
+                        </div>
+                        <div class="reward-stats">
+                            <div id="userCoins" class="coin-value">0</div>
+                            <div class="coin-label">คอยน์ของคุณ</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="channel-stats">
+                <div class="stat-item" onclick="switchTab('following')">
+                    <span id="followingCount" class="stat-value">0</span>
+                    <span class="stat-label">กำลังติดตาม</span>
+                </div>
+                <div class="stat-item" onclick="switchTab('followers')">
+                    <span id="followerCount" class="stat-value">0</span>
+                    <span class="stat-label">ผู้ติดตาม</span>
+                </div>
+                <div class="stat-item">
+                    <span id="likeCount" class="stat-value">0</span>
+                    <span class="stat-label">ถูกใจ</span>
+                </div>
+                <div class="stat-item">
+                    <span id="totalViewsHeader" class="stat-value">0</span>
+                    <span class="stat-label">ยอดดู</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Story Highlights (own profile only) -->
+    <div id="storyHighlightsSection" class="story-highlights-section d-none">
+        <div class="story-highlights-label">
+            <i class="fas fa-star"></i> ไฮไลท์
+        </div>
+        <div class="story-highlights-row" id="storyHighlightsRow">
+            <!-- Add button always first -->
+            <div class="story-item story-add-btn" onclick="showToast('กำลังพัฒนาฟีเจอร์นี้', 'info')"
+                title="เพิ่มไฮไลท์">
+                <div class="story-bubble"><i class="fas fa-plus"></i></div>
+                <span class="story-item-label">เพิ่มใหม่</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="channel-tabs-container">
+        <div class="channel-tabs">
+            <button class="channel-tab-btn active" onclick="switchTab('videos')">
+                <i class="fas fa-th"></i> วิดีโอ
+            </button>
+            <button id="productsTabBtn" class="channel-tab-btn" onclick="switchTab('products')" style="display: none;">
+                <i class="fas fa-shopping-bag"></i> สินค้า
+            </button>
+            <button class="channel-tab-btn" onclick="switchTab('following')">
+                <i class="fas fa-user-friends"></i> กำลังติดตาม
+            </button>
+            <button class="channel-tab-btn" onclick="switchTab('followers')">
+                <i class="fas fa-users"></i> ผู้ติดตาม
+            </button>
+            <button class="channel-tab-btn" onclick="switchTab('saved')">
+                <i class="fas fa-bookmark"></i> ที่บันทึกไว้
+            </button>
+        </div>
+    </div>
+
+    <div class="feed-container">
+        <!-- Videos Tab -->
+        <div id="videosTab" class="tab-content active">
+            <div id="postGrid" class="post-grid"></div>
+            <div id="feedLoading" class="loading-spinner">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p>กำลังโหลดวิดีโอของคุณ...</p>
+            </div>
+        </div>
+
+        <!-- Following Tab -->
+        <div id="followingTab" class="tab-content">
+            <div id="followingList" class="user-list"></div>
+        </div>
+
+        <!-- Followers Tab -->
+        <div id="followersTab" class="tab-content">
+            <div id="suggestedSection" class="user-list" style="margin-bottom: 20px;"></div>
+            <div id="followersList" class="user-list"></div>
+        </div>
+
+        <!-- Products Tab -->
+        <div id="productsTab" class="tab-content">
+            <div id="productsGrid" class="row g-3"></div>
+            <div id="productsLoading" class="loading-spinner">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p>กำลังโหลดสินค้า...</p>
+            </div>
+        </div>
+
+        <!-- Saved Tab -->
+        <div id="savedTab" class="tab-content">
+            <div id="savedGrid" class="post-grid"></div>
+            <div id="savedLoading" class="loading-spinner">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p>กำลังโหลดรายการที่บันทึกไว้...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Playback Modal -->
+    <div class="modal fade video-modal" id="videoModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center p-0 position-relative">
+                    <button type="button" class="close-video-modal" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <video id="modalVideo" controls autoplay playsinline loop crossorigin="anonymous"></video>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Menu Offcanvas -->
+    <div class="settings-offcanvas offcanvas offcanvas-end" tabindex="-1" id="settingsMenu">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">การตั้งค่าและการจัดการ</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="setting-group">
+                <div class="setting-label">บัญชีและโปรไฟล์</div>
+                <div class="setting-item" onclick="editName()">
+                    <i class="fas fa-user-edit"></i>
+                    <div class="setting-info">
+                        <div class="setting-title">แก้ไขชื่อ</div>
+                        <div class="setting-desc">เปลี่ยนชื่อที่คุณใช้แสดงในระบบ</div>
+                    </div>
+                </div>
+                <label for="avatarInput" class="setting-item">
+                    <i class="fas fa-camera"></i>
+                    <div class="setting-info">
+                        <div class="setting-title">เปลี่ยนรูปโปรไฟล์</div>
+                        <div class="setting-desc">อัปโหลดรูปภาพใหม่สำหรับช่องคุณ</div>
+                    </div>
+                </label>
+            </div>
+
+            <div id="creatorToolsGroup" class="setting-group" style="display: none;">
+                <div class="setting-label">เครื่องมือครีเอเตอร์</div>
+                <a href="mission-center.html" class="setting-item">
+                    <i class="fas fa-tasks"></i>
+                    <div class="setting-info">
+                        <div class="setting-title">ภารกิจพิเศษ</div>
+                        <div class="setting-desc">ทำภารกิจเพื่อรับรางวัลและแต้ม</div>
+                    </div>
+                </a>
+                <a href="seller-dashboard.html" class="setting-item">
+                    <i class="fas fa-chart-line"></i>
+                    <div class="setting-info">
+                        <div class="setting-title">สตูดิโอผู้สร้าง</div>
+                        <div class="setting-desc">จัดการช่องและวิเคราะห์ข้อมูล</div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="setting-group">
+                <div class="setting-label">ความเป็นส่วนตัว</div>
+                <div class="setting-item">
+                    <i class="fas fa-user-friends"></i>
+                    <div class="setting-info">
+                        <div class="setting-title">แสดงรายชื่อ "กำลังติดตาม"</div>
+                        <div class="setting-desc">อนุญาตให้ผู้อื่นเห็นคนที่คุณติดตาม</div>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="privacyFollowing" checked
+                            onchange="toggleFollowPrivacy('following', this.checked)">
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <i class="fas fa-users"></i>
+                    <div class="setting-info">
+                        <div class="setting-title">แสดงรายชื่อ "ผู้ติดตาม"</div>
+                        <div class="setting-desc">อนุญาตให้ผู้อื่นเห็นคนที่ติดตามคุณ</div>
+                    </div>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="privacyFollowers" checked
+                            onchange="toggleFollowPrivacy('followers', this.checked)">
+                    </div>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <div class="setting-label">ความปลอดภัย</div>
+                <div class="setting-item danger" onclick="handleLogout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <div class="setting-info">
+                        <div class="setting-title">ออกจากระบบ</div>
+                        <div class="setting-desc">ออกจากบัญชีปัจจุบันของคุณ</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <div class="setting-label">ทั่วไป</div>
+                <div class="setting-item" onclick="shareChannel()">
+                    <i class="fas fa-share-alt"></i>
+                    <div class="setting-info">
+                        <div class="setting-title">แชร์ช่องของคุณ</div>
+                        <div class="setting-desc">ให้เพื่อนๆ ติดตามความเคลื่อนไหว</div>
+                    </div>
+                </div>
+                <a href="/" class="setting-item">
+                    <i class="fas fa-home"></i>
+                    <div class="setting-info">
+                        <div class="setting-title">กลับหน้าหลัก</div>
+                        <div class="setting-desc">ไปยังฟีดวิดีโอ TukTuk</div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="text-center mt-5">
+                <img src="/images/logo.png" style="width: 50px; margin-bottom: 10px;">
+                <div style="font-size: 0.8rem; color: var(--text-muted);">TukTuk Thailand v2.0.0</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ─── QR CODE MODAL ──────────────────────────────────────────── -->
+    <div class="modal fade qr-modal" id="qrModal" tabindex="-1" aria-label="QR Code">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content text-center p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="fw-bold fs-5"><i class="fas fa-qrcode me-2 text-primary"></i>QR โปรไฟล์</span>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="ปิด"></button>
+                </div>
+                <div class="qr-wrapper mx-auto mb-3">
+                    <img id="qrCodeImg" src="" alt="QR Code" width="200" height="200">
+                </div>
+                <p class="text-muted small mb-3" id="qrProfileUrl"></p>
+                <button type="button" class="btn btn-outline-primary rounded-pill btn-sm" onclick="copyProfileUrl()">
+                    <i class="fas fa-copy me-1"></i>คัดลอกลิงก์
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── EDIT PROFILE MODAL ────────────────────────────────────── -->
+    <div class="modal fade edit-modal" id="editProfileModal" tabindex="-1" aria-label="แก้ไขโปรไฟล์">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-pen me-2 text-primary"></i>แก้ไขโปรไฟล์</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="ปิด"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <!-- Cover preview -->
+                    <div class="mb-3">
+                        <label class="form-label" for="editCoverPreview">รูปปก</label>
+                        <img id="editCoverPreview" class="cover-preview w-100 mb-2" alt="Cover preview">
+                        <label for="editCoverInput" class="btn btn-sm btn-outline-secondary rounded-pill w-100">
+                            <i class="fas fa-image me-1"></i>เลือกรูปปก
+                        </label>
+                        <input type="file" id="editCoverInput" hidden accept="image/*" onchange="previewCover(this)">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="editDisplayName">ชื่อที่แสดง</label>
+                        <input type="text" id="editDisplayName" class="form-control" placeholder="ชื่อของคุณ"
+                            maxlength="50">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="editHandle">Handle (@username)</label>
+                        <div class="input-group">
+                            <span class="input-group-text edit-handle-prefix">@</span>
+                            <input type="text" id="editHandle" class="form-control" placeholder="yourhandle"
+                                maxlength="30" pattern="[a-zA-Z0-9_]+" title="ตัวอักษร a-z, 0-9, _ เท่านั้น">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="editBio">Bio</label>
+                        <textarea id="editBio" class="form-control" rows="3" placeholder="เล่าเรื่องตัวเองสักหน่อย..."
+                            maxlength="200"></textarea>
+                        <div class="text-end small text-muted mt-1"><span id="bioCharCount">0</span>/200</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">ยกเลิก</button>
+                    <button type="button" class="btn btn-primary rounded-pill px-4" onclick="saveProfile()"
+                        id="saveProfileBtn">
+                        <i class="fas fa-save me-1"></i>บันทึก
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── WALLET MODAL ──────────────────────────────────────────── -->
+    <div class="modal fade wallet-modal" id="walletModal" tabindex="-1" aria-label="กระเป๋าเงิน">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="fw-bold fs-5"><i class="fas fa-coins me-2 wallet-coins-icon"></i>กระเป๋าเงิน</span>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="ปิด"></button>
+                </div>
+                <div class="text-center mb-4">
+                    <div class="wallet-coin-display" id="walletCoinsDisplay">0</div>
+                    <div class="text-muted small">คอยน์ทั้งหมด</div>
+                </div>
+                <div class="wallet-item">
+                    <i class="fas fa-star text-warning"></i>
+                    <div>
+                        <div class="wallet-item-title">สะสมจากภารกิจ</div>
+                        <div class="text-muted wallet-item-desc">ทำภารกิจประจำวันเพื่อรับเพิ่ม</div>
+                    </div>
+                </div>
+                <div class="wallet-item">
+                    <i class="fas fa-heart text-danger"></i>
+                    <div>
+                        <div class="wallet-item-title">ยอดถูกใจโพสต์</div>
+                        <div class="text-muted wallet-item-desc" id="walletLikes">0 ถูกใจ</div>
+                    </div>
+                </div>
+                <div class="wallet-item">
+                    <i class="fas fa-play-circle text-primary"></i>
+                    <div>
+                        <div class="wallet-item-title">ยอดวิวรวม</div>
+                        <div class="text-muted wallet-item-desc" id="walletViews">0 ครั้ง</div>
+                    </div>
+                </div>
+                <a href="mission-center.html"
+                    class="btn btn-warning rounded-pill w-100 mt-3 fw-bold wallet-mission-btn">
+                    <i class="fas fa-star me-2"></i>ไปทำภารกิจ
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <script>
+        // SPA-aware navigation helper — postMessage to parent if inside iframe
+        function _tnav(href) {
+            if (window.self !== window.top) {
+                window.top.postMessage({ type: 'NAVIGATE', href: href }, window.location.origin);
+            } else if (typeof window.navigateToSPA === 'function') {
+                window.navigateToSPA(href);
+            } else {
+                window.location.href = href;
+            }
+        }
+
+        // Detect Iframe / Embedded Mode — hide all navbars (runs once)
+        (function () {
+            const isEmbedded = window.self !== window.top || window.location.search.includes('embedded=true');
+            if (isEmbedded) {
+                document.body.classList.add('embedded-mode');
+                const navStyle = document.createElement('style');
+                navStyle.textContent = `
+                    #bottomNav, .bottom-nav { display: none !important; visibility: hidden !important; height: 0 !important; overflow: hidden !important; pointer-events: none !important; }
+                    #pcTopNav, .pc-top-nav { display: none !important; }
+                    body { padding-bottom: 0 !important; margin-top: 0 !important; }
+                    .center-btn { display: none !important; }
+                `;
+                document.head.appendChild(navStyle);
+            } else if (window.innerWidth >= 992) {
+                // Standalone PC mode — show pcTopNav + adjust body offset
+                document.body.classList.add('pc-standalone');
+                // Pre-fill nav with session data immediately (before Firestore loads)
+                const sess = (typeof WizmobizAuth !== 'undefined') ? WizmobizAuth.getUser() : null;
+                if (sess) {
+                    const navAvatar = document.getElementById('channelNavAvatar');
+                    const navName   = document.getElementById('channelNavName');
+                    if (navAvatar && (sess.pictureUrl || sess.photoURL)) {
+                        navAvatar.src = sess.pictureUrl || sess.photoURL;
+                    }
+                    if (navName && sess.displayName) {
+                        navName.textContent = sess.displayName;
+                    }
+                }
+            }
+        })();
+
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 50
+        });
+
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyBKL6HBLEndDX4LYo7APFNQ0IVICLJtaIE",
+            authDomain: "appinjproject.firebaseapp.com",
+            projectId: "appinjproject",
+            storageBucket: "appinjproject.firebasestorage.app",
+            messagingSenderId: "408718656984",
+            appId: "1:408718656984:web:08bd8f084769d428251ead"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        // Global Variables
+        let currentTargetUserId = null;
+        let currentUserData = null;
+        let isFollowingTarget = false;
+        let myFollowingIds = [];
+        let viewedPosts = new Set();
+
+        // ========================================
+        // TOAST NOTIFICATION
+        // ========================================
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast-message ${type}`;
+            let icon = 'info-circle';
+            if (type === 'success') icon = 'check-circle';
+            if (type === 'error') icon = 'exclamation-circle';
+            toast.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // ========================================
+        // INIT
+        // ========================================
+        // Safe redirect — uses postMessage if inside SPA iframe
+        function safeRedirectToLogin(returnPath) {
+            if (window.self !== window.top) {
+                window.top.postMessage({ type: 'NAVIGATE', href: 'login.html' }, window.location.origin);
+            } else {
+                WizmobizAuth.redirectToLogin(returnPath);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const queryUserId = urlParams.get('userId');
+            const currentUser = WizmobizAuth.getUser();
+
+            if (!currentUser && !queryUserId) {
+                safeRedirectToLogin('/channel.html');
+                return;
+            }
+
+            currentTargetUserId = queryUserId || (currentUser ? (currentUser.uid || currentUser.lineUserId) : null);
+
+            if (!currentTargetUserId) {
+                safeRedirectToLogin('/channel.html');
+                return;
+            }
+
+            // ✅ แสดงข้อมูลจาก session ทันที (ไม่ต้องรอ Firestore)
+            if (!queryUserId && currentUser) {
+                const sessionName = currentUser.displayName || currentUser.name || 'TukTuk User';
+                document.getElementById('userName').textContent = sessionName;
+                const avatarImg = document.getElementById('userAvatar');
+                avatarImg.src = currentUser.pictureUrl || currentUser.photoURL ||
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(sessionName)}&background=00D2FF&color=fff&size=160`;
+                avatarImg.onerror = function() {
+                    this.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(sessionName)}&background=00D2FF&color=fff&size=160`;
+                };
+            }
+
+            if (currentUser) {
+                try {
+                    const myId = currentUser.uid || currentUser.lineUserId;
+                    const myDoc = await db.collection('users').doc(myId).get();
+                    if (myDoc.exists) {
+                        myFollowingIds = myDoc.data().following || [];
+                        updateBottomNavProfile(myDoc.data());
+                    } else {
+                        // Firestore doc ไม่มี — ลอง firebaseUid เป็น fallback
+                        if (currentUser.firebaseUid && currentUser.firebaseUid !== myId) {
+                            const fbDoc = await db.collection('users').doc(currentUser.firebaseUid).get();
+                            if (fbDoc.exists) {
+                                myFollowingIds = fbDoc.data().following || [];
+                                // ใช้ firebaseUid เป็น targetId จริง
+                                if (!queryUserId) currentTargetUserId = currentUser.firebaseUid;
+                                updateBottomNavProfile(fbDoc.data());
+                            } else {
+                                updateBottomNavProfile(currentUser);
+                            }
+                        } else {
+                            updateBottomNavProfile(currentUser);
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error loading user data:', e);
+                }
+            }
+
+            // Show back button if visiting someone else
+            if (queryUserId && currentUser && queryUserId !== (currentUser.uid || currentUser.lineUserId)) {
+                const header = document.querySelector('.channel-header');
+                const backBtn = document.createElement('button');
+                backBtn.className = 'btn text-white position-absolute top-0 start-0 m-3';
+                backBtn.style.zIndex = '100';
+                backBtn.innerHTML = '<i class="fas fa-arrow-left fa-lg"></i>';
+                backBtn.onclick = () => _tnav('index.html');
+                header.style.position = 'relative';
+                header.prepend(backBtn);
+            }
+
+            // Load Profile Data with Real-time Listener
+            db.collection('users').doc(currentTargetUserId).onSnapshot(doc => {
+                if (doc.exists) {
+                    currentUserData = doc.data();
+                    currentUserData.uid = doc.id;
+                    updateProfileUI(currentUserData);
+                } else {
+                    // ลอง firebaseUid หาก lineUserId ไม่เจอใน users collection
+                    const fbUid = currentUser?.firebaseUid;
+                    if (fbUid && fbUid !== currentTargetUserId) {
+                        currentTargetUserId = fbUid;
+                        db.collection('users').doc(fbUid).onSnapshot(d2 => {
+                            if (d2.exists) {
+                                currentUserData = d2.data();
+                                currentUserData.uid = d2.id;
+                                updateProfileUI(currentUserData);
+                            } else {
+                                document.getElementById('userName').textContent =
+                                    currentUser?.displayName || 'TukTuk User';
+                            }
+                        });
+                    } else {
+                        document.getElementById('userName').textContent =
+                            currentUser?.displayName || 'TukTuk User';
+                    }
+                }
+            }, err => {
+                console.error('Snapshot error:', err);
+                if (err.code === 'permission-denied') {
+                    showToast('ไม่มีสิทธิ์เข้าถึงข้อมูล', 'error');
+                }
+            });
+
+            loadUserPosts(currentTargetUserId);
+            checkHasProducts(currentTargetUserId);
+        });
+
+        async function checkHasProducts(userId) {
+            const collections = ['marketplace_items', 'community_products', 'consignment_products'];
+            for (const coll of collections) {
+                try {
+                    const snap = await db.collection(coll).where('sellerId', '==', userId).limit(1).get();
+                    if (!snap.empty) {
+                        document.getElementById('productsTabBtn').style.display = 'block';
+                        return;
+                    }
+                } catch (e) { console.warn('Product check error:', e); }
+            }
+        }
+
+
+        // ========================================
+        // UPDATE PROFILE UI
+        // ========================================
+        function updateProfileUI(user) {
+            const currentUser = WizmobizAuth.getUser();
+            const currentUid = currentUser?.uid || currentUser?.lineUserId;
+            const isOwnProfile = (currentUid === currentTargetUserId);
+
+            // ชื่อ: Firestore → session → fallback
+            const displayName = user.displayName || user.name || user.username
+                || currentUser?.displayName || 'TukTuk User';
+            document.getElementById('userName').textContent = displayName;
+
+            // รูป: Firestore → session → fallback ui-avatars
+            const avatarImg = document.getElementById('userAvatar');
+            const rawPic = user.pictureUrl || user.photoURL || user.picture || user.avatar
+                || currentUser?.pictureUrl || currentUser?.photoURL;
+            const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=00D2FF&color=fff&size=160`;
+            const validPic = rawPic && rawPic !== '' && rawPic !== 'null' && rawPic !== 'undefined';
+            avatarImg.src = validPic ? rawPic : fallbackAvatar;
+            avatarImg.onerror = () => { avatarImg.onerror = null; avatarImg.src = fallbackAvatar; };
+
+            // Sync pcTopNav avatar/name (standalone PC mode)
+            const navAvatar = document.getElementById('channelNavAvatar');
+            const navName   = document.getElementById('channelNavName');
+            if (navAvatar) { navAvatar.src = validPic ? rawPic : fallbackAvatar; }
+            if (navName)   { navName.textContent = displayName; }
+
+            // Last resort: ถ้ายังไม่มีรูป/ชื่อ → ลอง line_users collection
+            if (!validPic || displayName === 'TukTuk User') {
+                const lookupId = user.lineUserId || user.uid || currentTargetUserId;
+                if (lookupId) {
+                    db.collection('line_users').doc(lookupId).get().then(d => {
+                        if (!d.exists) return;
+                        const ld = d.data();
+                        if (!validPic) {
+                            const lp = ld.pictureUrl || ld.picture || ld.photoURL || ld.avatar;
+                            if (lp) {
+                                avatarImg.src = lp;
+                                if (navAvatar) navAvatar.src = lp;
+                            }
+                        }
+                        if (displayName === 'TukTuk User') {
+                            const ln = ld.displayName || ld.name;
+                            if (ln) {
+                                document.getElementById('userName').textContent = ln;
+                                if (navName) navName.textContent = ln;
+                            }
+                        }
+                    }).catch(() => {});
+                }
+            }
+
+            if (document.getElementById('editAvatarBtn')) document.getElementById('editAvatarBtn').style.display = isOwnProfile ? 'flex' : 'none';
+            if (document.getElementById('editNameBtn')) document.getElementById('editNameBtn').style.display = isOwnProfile ? 'flex' : 'none';
+            if (document.getElementById('settingsBtn')) document.getElementById('settingsBtn').style.display = isOwnProfile ? 'flex' : 'none';
+
+            // Handle @username display
+            const handleEl = document.getElementById('channelHandle');
+            if (user.handle) {
+                handleEl.textContent = `@${user.handle}`;
+                handleEl.style.display = 'block';
+            } else {
+                handleEl.style.display = 'none';
+            }
+
+            // Show follow button if NOT own profile
+            const authorActions = document.getElementById('authorActions');
+            if (!isOwnProfile && currentUser) {
+                authorActions.style.display = 'block';
+                isFollowingTarget = myFollowingIds.includes(currentTargetUserId);
+                updateFollowButton();
+            }
+
+            // Show own-profile action row + cover edit + mission card
+            const ownActions = document.getElementById('ownActions');
+            const coverOverlay = document.getElementById('coverEditOverlay');
+            const rewardCard = document.getElementById('rewardCard');
+            if (isOwnProfile) {
+                ownActions.style.display = 'flex';
+                coverOverlay.style.display = 'flex';
+                rewardCard.style.display = 'block';
+                document.getElementById('userCoins').textContent = (user.coins || 0).toLocaleString();
+                if (!document.getElementById('storyHighlightsSection').classList.contains('_loaded')) {
+                    loadStoryHighlights(user);
+                    document.getElementById('storyHighlightsSection').classList.add('_loaded');
+                }
+            } else {
+                ownActions.style.display = 'none';
+                coverOverlay.style.display = 'none';
+                rewardCard.style.display = 'none';
+            }
+
+            // Update Stats
+            document.getElementById('followingCount').textContent = (user.followingCount || user.following?.length || 0).toLocaleString();
+            document.getElementById('followerCount').textContent = (user.followerCount || 0).toLocaleString();
+            document.getElementById('totalViewsHeader').textContent = (user.totalViews || 0).toLocaleString();
+
+            const roleEl = document.getElementById('userRole');
+            if (user.role === 'admin' || user.role === 'super_admin' || user.sellerStatus === 'verified') {
+                document.getElementById('verifiedIcon').style.display = 'flex';
+                roleEl.textContent = user.role === 'admin' ? 'Administrator' : 'Verified Creator';
+            } else {
+                document.getElementById('verifiedIcon').style.display = 'none';
+                roleEl.textContent = 'Member';
+            }
+
+            // Update Bio
+            const bioEl = document.getElementById('userBio');
+            if (user.bio) {
+                bioEl.textContent = user.bio;
+                bioEl.style.display = 'block';
+            } else {
+                bioEl.style.display = 'none';
+            }
+
+            // Update Cover
+            const banner = document.getElementById('channelBanner');
+            if (user.coverUrl) {
+                banner.style.backgroundImage = `url(${user.coverUrl})`;
+                banner.style.backgroundSize = 'cover';
+                banner.style.backgroundPosition = 'center';
+            }
+
+            // Update Achievements (Simulated from ProfileScreen)
+            updateAchievements(user);
+
+            // Update Privacy Switches (if own profile)
+            if (isOwnProfile) {
+                const privacy = user.privacySettings || { following: 'public', followers: 'public' };
+                document.getElementById('privacyFollowing').checked = (privacy.following !== 'private');
+                document.getElementById('privacyFollowers').checked = (privacy.followers !== 'private');
+            }
+        }
+
+        function updateAchievements(user) {
+            const list = document.getElementById('achievementsList');
+            const followerCount = user.followerCount || 0;
+            const likes = user.totalLikes || 0;
+            const postCount = user.postCount || user.totalPosts || 0;
+            const productCount = user.productCount || user.totalProducts || 0;
+            const isPremium = user.isPremium || user.role === 'admin' || user.sellerStatus === 'verified';
+
+            let badges = [];
+            if (isPremium) badges.push({ icon: 'check-circle', label: 'Verified', color: '#00D2FF' });
+            if (followerCount > 10) badges.push({ icon: 'star', label: 'Rising Star', color: '#00E676' });
+            if (postCount > 20) badges.push({ icon: 'crown', label: 'Content King', color: '#FFD700' });
+            if (likes > 50) badges.push({ icon: 'heart', label: 'Super Liked', color: '#FF3B3B' });
+            if (productCount > 5) badges.push({ icon: 'store', label: 'Top Seller', color: '#FF6B2B' });
+
+            if (badges.length > 0) {
+                list.innerHTML = badges.map(b => `
+                    <div class="achievement-badge" style="background: ${b.color}20; border: 1px solid ${b.color}; color: ${b.color}; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; gap: 5px;">
+                        <i class="fas fa-${b.icon}"></i> ${b.label}
+                    </div>
+                `).join('');
+                list.style.setProperty('display', 'flex', 'important');
+            } else {
+                list.style.setProperty('display', 'none', 'important');
+            }
+        }
+
+        // ========================================
+        // FOLLOW FUNCTIONS
+        // ========================================
+        function updateFollowButton() {
+            const btn = document.getElementById('mainFollowBtn');
+            if (!btn) return;
+            if (isFollowingTarget) {
+                btn.textContent = 'กำลังติดตาม';
+                btn.className = 'btn btn-outline-light rounded-pill px-4 py-2';
+            } else {
+                btn.textContent = 'ติดตาม';
+                btn.className = 'btn btn-primary rounded-pill px-4 py-2';
+            }
+        }
+
+        async function handleMainFollow() {
+            const currentUser = WizmobizAuth.getUser();
+            if (!currentUser) {
+                WizmobizAuth.showLoginModal('ติดตามผู้ใช้งาน');
+                return;
+            }
+
+            const myUid = currentUser.uid || currentUser.lineUserId;
+            const targetUid = currentTargetUserId;
+
+            // Optimistic UI
+            isFollowingTarget = !isFollowingTarget;
+            updateFollowButton();
+
+            const countEl = document.getElementById('followerCount');
+            let currentCount = parseInt(countEl.textContent.replace(/,/g, '')) || 0;
+            countEl.textContent = (isFollowingTarget ? currentCount + 1 : Math.max(0, currentCount - 1)).toLocaleString();
+
+            try {
+                const myRef = db.collection('users').doc(myUid);
+                const targetRef = db.collection('users').doc(targetUid);
+
+                if (isFollowingTarget) {
+                    await myRef.set({
+                        following: firebase.firestore.FieldValue.arrayUnion(targetUid),
+                        followingCount: firebase.firestore.FieldValue.increment(1)
+                    }, { merge: true });
+
+                    await targetRef.set({
+                        followerCount: firebase.firestore.FieldValue.increment(1)
+                    }, { merge: true });
+
+                    showToast('ติดตามสำเร็จ', 'success');
+                } else {
+                    await myRef.set({
+                        following: firebase.firestore.FieldValue.arrayRemove(targetUid),
+                        followingCount: firebase.firestore.FieldValue.increment(-1)
+                    }, { merge: true });
+
+                    await targetRef.set({
+                        followerCount: firebase.firestore.FieldValue.increment(-1)
+                    }, { merge: true });
+
+                    showToast('เลิกติดตามแล้ว', 'info');
+                }
+            } catch (e) {
+                console.error('Follow failed:', e);
+                // Revert
+                isFollowingTarget = !isFollowingTarget;
+                updateFollowButton();
+                countEl.textContent = currentCount.toLocaleString();
+                showToast('ไม่สามารถดำเนินการได้', 'error');
+            }
+        }
+
+        async function toggleFollowListItem(btn, targetUid) {
+            const currentUser = WizmobizAuth.getUser();
+            if (!currentUser) {
+                WizmobizAuth.showLoginModal();
+                return;
+            }
+
+            const myUid = currentUser.uid || currentUser.lineUserId;
+            const isFollowing = btn.classList.contains('following');
+
+            // UI update
+            if (isFollowing) {
+                btn.classList.remove('following');
+                btn.innerHTML = '<i class="fas fa-user-plus me-1"></i>ติดตาม';
+            } else {
+                btn.classList.add('following');
+                btn.innerHTML = '<i class="fas fa-check me-1"></i>กำลังติดตาม';
+            }
+
+            try {
+                const myRef = db.collection('users').doc(myUid);
+                const targetRef = db.collection('users').doc(targetUid);
+
+                if (!isFollowing) {
+                    await myRef.update({
+                        following: firebase.firestore.FieldValue.arrayUnion(targetUid),
+                        followingCount: firebase.firestore.FieldValue.increment(1)
+                    });
+                    await targetRef.update({
+                        followerCount: firebase.firestore.FieldValue.increment(1)
+                    });
+                } else {
+                    await myRef.update({
+                        following: firebase.firestore.FieldValue.arrayRemove(targetUid),
+                        followingCount: firebase.firestore.FieldValue.increment(-1)
+                    });
+                    await targetRef.update({
+                        followerCount: firebase.firestore.FieldValue.increment(-1)
+                    });
+                }
+            } catch (e) {
+                console.error(e);
+                showToast('เกิดข้อผิดพลาด', 'error');
+            }
+        }
+
+        // ========================================
+        // PRIVACY SETTINGS
+        // ========================================
+        async function toggleFollowPrivacy(type, isPublic) {
+            const currentUser = WizmobizAuth.getUser();
+            const uid = currentUser?.uid || currentUser?.lineUserId;
+            if (!uid) return;
+
+            try {
+                const value = isPublic ? 'public' : 'private';
+                const updateData = {};
+                updateData[`privacySettings.${type}`] = value;
+
+                await db.collection('users').doc(uid).update(updateData);
+                showToast(`อัปเดตความเป็นส่วนตัวเรียบร้อย`, 'success');
+            } catch (e) {
+                console.error('Privacy update failed:', e);
+                showToast('อัปเดตไม่สำเร็จ', 'error');
+            }
+        }
+
+        // ========================================
+        // TAB SWITCHING
+        // ========================================
+        function switchTab(tabName) {
+            document.querySelectorAll('.channel-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            // Find matching button by onclick attr (safe for both tab-click and stat-click callers)
+            const activeBtn = Array.from(document.querySelectorAll('.channel-tab-btn'))
+                .find(b => (b.getAttribute('onclick') || '').includes(`'${tabName}'`));
+            if (activeBtn) activeBtn.classList.add('active');
+
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${tabName}Tab`).classList.add('active');
+
+            if (tabName === 'following') loadFollowing();
+            if (tabName === 'followers') loadFollowers();
+            if (tabName === 'saved') loadSavedItems();
+            if (tabName === 'products') loadUserProducts(currentTargetUserId);
+        }
+
+        // ========================================
+        // LOAD USER POSTS
+        // ========================================
+        async function loadUserPosts(userId) {
+            const grid = document.getElementById('postGrid');
+            const loading = document.getElementById('feedLoading');
+
+            try {
+                // Build author ID list — include lineUserId fallback if available
+                const authorIds = [userId];
+                const lineId = currentUserData?.lineUserId;
+                if (lineId && lineId !== userId && !authorIds.includes(lineId)) {
+                    authorIds.push(lineId);
+                }
+
+                const snapshot = await db.collection('community_posts')
+                    .where('authorId', 'in', authorIds)
+                    .orderBy('createdAt', 'desc')
+                    .get();
+
+                loading.style.display = 'none';
+
+                if (snapshot.empty) {
+                    grid.innerHTML = `
+                        <div class="empty-state w-100">
+                            <i class="fas fa-photo-video"></i>
+                            <h3>ยังไม่มีวิดีโอ</h3>
+                            <p>มาเริ่มแชร์วิดีโอแรกของคุณกัน</p>
+                            <a href="/" class="btn">สร้างวิดีโอแรก</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let totalLikes = 0;
+                let totalViewsSum = 0;
+                grid.innerHTML = '';
+
+                snapshot.forEach(doc => {
+                    const post = doc.data();
+                    totalLikes += (post.likes || 0);
+                    totalViewsSum += (post.views || 0);
+
+                    const postMedia = post.images && post.images.length > 0 ? post.images[0] : null;
+                    const isLocalVideo = (postMedia && typeof postMedia === 'object' && postMedia.type === 'video') || (typeof postMedia === 'string' && postMedia.endsWith('.mp4'));
+                    const mediaUrl = (postMedia && typeof postMedia === 'object') ? postMedia.url : postMedia;
+                    const isYoutube = !!post.videoEmbed;
+
+                    let mediaHtml = '';
+                    if (isYoutube) {
+                        const ytId = post.videoEmbed.match(/embed\/([^"?]+)/)?.[1];
+                        const thumb = ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : '/images/logo.png';
+                        mediaHtml = `<img class="post-media" src="${thumb}">`;
+                    } else if (isLocalVideo) {
+                        mediaHtml = `<video class="post-media" muted preload="metadata" crossorigin="anonymous"><source src="${mediaUrl}#t=0.5" type="video/mp4"></video>`;
+                    } else if (mediaUrl) {
+                        mediaHtml = `<img class="post-media" src="${mediaUrl}">`;
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = 'post-card';
+                    card.setAttribute('data-aos', 'fade-up');
+                    card.setAttribute('data-aos-delay', (snapshot.docs.indexOf(doc) * 50).toString());
+                    card.innerHTML = `
+                        ${mediaHtml}
+                        <div class="post-overlay">
+                            <div class="post-stats-overlay">
+                                <span><i class="fas fa-play"></i> ${post.views || 0}</span>
+                                <span><i class="fas fa-heart"></i> ${post.likes || 0}</span>
+                            </div>
+                        </div>
+                    `;
+
+                    if (isLocalVideo || isYoutube) {
+                        card.onclick = () => {
+                            playVideoInModal(mediaUrl, isYoutube, post.videoEmbed);
+                            trackView(doc.id, post.authorId);
+                        };
+                    } else {
+                        card.onclick = () => {
+                            window.location.href = `/?postId=${doc.id}`;
+                            trackView(doc.id, post.authorId);
+                        };
+                    }
+
+                    grid.appendChild(card);
+                });
+
+                document.getElementById('likeCount').textContent = totalLikes.toLocaleString();
+                document.getElementById('totalViewsHeader').textContent = totalViewsSum.toLocaleString();
+
+            } catch (error) {
+                console.error('Error loading posts:', error);
+                loading.innerHTML = `<p class="text-danger">ไม่สามารถโหลดข้อมูลได้: ${error.message}</p>`;
+            }
+        }
+
+        // ========================================
+        // LOAD FOLLOWING
+        // ========================================
+        async function loadFollowing() {
+            const list = document.getElementById('followingList');
+            list.innerHTML = '<div class="loading-spinner"><div class="spinner-border text-primary"></div><p>กำลังโหลด...</p></div>';
+
+            try {
+                const userDoc = await db.collection('users').doc(currentTargetUserId).get();
+                if (!userDoc.exists) {
+                    list.innerHTML = '<div class="empty-state"><i class="fas fa-user-slash"></i><p>ไม่พบข้อมูลผู้ใช้งาน</p></div>';
+                    return;
+                }
+
+                const userData = userDoc.data();
+                const currentUser = WizmobizAuth.getUser();
+                const currentUid = currentUser?.uid || currentUser?.lineUserId;
+                const isOwner = (currentUid === currentTargetUserId);
+                const privacy = (userData.privacySettings && userData.privacySettings.following) || 'public';
+
+                if (!isOwner && privacy === 'private') {
+                    list.innerHTML = '<div class="empty-state"><i class="fas fa-lock"></i><p>ผู้ใช้งานตั้งค่ารายการนี้เป็นส่วนตัว</p></div>';
+                    return;
+                }
+
+                const followingIds = userData.following || [];
+
+                if (!followingIds || followingIds.length === 0) {
+                    list.innerHTML = `<div class="empty-state"><i class="fas fa-user-plus"></i><p>${isOwner ? 'คุณ' : 'ผู้ใช้งาน'} ยังไม่ได้ติดตามใคร</p></div>`;
+                    return;
+                }
+
+                const chunks = [];
+                for (let i = 0; i < followingIds.length; i += 10) {
+                    chunks.push(followingIds.slice(i, i + 10));
+                }
+
+                let html = '';
+                for (const chunk of chunks) {
+                    const snap = await db.collection('users').where(firebase.firestore.FieldPath.documentId(), 'in', chunk).get();
+                    snap.forEach(doc => {
+                        html += renderUserItem(doc.id, doc.data());
+                    });
+                }
+
+                list.innerHTML = html || '<div class="empty-state"><p>ไม่พบรายชื่อผู้ใช้</p></div>';
+            } catch (e) {
+                console.error('Load following failed:', e);
+                list.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>เกิดข้อผิดพลาด</p><button class="btn btn-outline-primary btn-sm mt-3" onclick="loadFollowing()">ลองใหม่</button></div>`;
+            }
+        }
+
+        // ========================================
+        // LOAD FOLLOWERS
+        // ========================================
+        async function loadFollowers() {
+            const list = document.getElementById('followersList');
+            list.innerHTML = '<div class="loading-spinner"><div class="spinner-border text-primary"></div><p>กำลังโหลด...</p></div>';
+
+            try {
+                const snap = await db.collection('users')
+                    .where('following', 'array-contains', currentTargetUserId)
+                    .limit(50)
+                    .get();
+
+                if (snap.empty) {
+                    list.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>ยังไม่มีผู้ติดตาม</p></div>';
+                } else {
+                    let html = '';
+                    snap.forEach(doc => {
+                        html += renderUserItem(doc.id, doc.data());
+                    });
+                    list.innerHTML = html;
+                }
+
+                // Load suggestions
+                loadSuggestedFriends();
+            } catch (e) {
+                console.error('Load followers failed:', e);
+                list.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>เกิดข้อผิดพลาด</p><button class="btn btn-outline-primary btn-sm mt-3" onclick="loadFollowers()">ลองใหม่</button></div>`;
+            }
+        }
+
+        // ========================================
+        // LOAD SUGGESTED FRIENDS
+        // ========================================
+        async function loadSuggestedFriends() {
+            const suggestedBox = document.getElementById('suggestedSection');
+            const currentUser = WizmobizAuth.getUser();
+            const myId = currentUser?.uid || currentUser?.lineUserId;
+
+            if (!myId || myId !== currentTargetUserId) return;
+
+            try {
+                const snap = await db.collection('users')
+                    .where('role', 'in', ['verified_creator', 'admin'])
+                    .limit(5)
+                    .get();
+
+                const candidates = [];
+                snap.forEach(doc => {
+                    if (doc.id !== myId && !myFollowingIds.includes(doc.id)) {
+                        candidates.push({ id: doc.id, ...doc.data(), reason: 'Verified Creator' });
+                    }
+                });
+
+                if (candidates.length > 0) {
+                    suggestedBox.innerHTML = `
+                        <div class="setting-label mb-3" style="color: var(--primary);">แนะนำสำหรับคุณ</div>
+                        ${candidates.map(c => renderUserItem(c.id, c, c.reason)).join('')}
+                    `;
+                } else {
+                    suggestedBox.innerHTML = '';
+                }
+            } catch (e) {
+                console.warn('Suggestions error:', e);
+            }
+        }
+
+        // ========================================
+        // RENDER USER ITEM
+        // ========================================
+        function renderUserItem(userId, user, badgeText = null) {
+            const currentUser = WizmobizAuth.getUser();
+            const myId = currentUser?.uid || currentUser?.lineUserId;
+            const isMe = myId === userId;
+            const amIFollowing = myFollowingIds.includes(userId);
+            const displayName = user.displayName || user.name || user.username || 'TukTuk User';
+            const pic = user.pictureUrl || user.photoURL || user.picture || user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=00D2FF&color=fff&size=60`;
+
+            return `
+                <div class="user-item" onclick="window.location.href='channel.html?userId=${userId}'">
+                    <img src="${pic}" alt="${displayName}" onerror="this.src='/images/logo.png'">
+                    <div class="user-item-info">
+                        <div class="user-item-name">
+                            ${escapeHtml(displayName)}
+                            ${user.role === 'admin' ? '<i class="fas fa-check-circle text-primary ms-1" style="font-size: 0.8rem;"></i>' : ''}
+                        </div>
+                        <div class="user-item-sub">
+                            ${badgeText ? `<span class="badge bg-primary-subtle text-primary border border-primary-subtle me-1" style="font-size: 0.6rem;">${badgeText}</span>` : ''}
+                            ${(user.followerCount || 0).toLocaleString()} ผู้ติดตาม
+                        </div>
+                    </div>
+                    ${!isMe ? `
+                        <button class="user-item-btn ${amIFollowing ? 'following' : ''}" onclick="event.stopPropagation(); toggleFollowListItem(this, '${userId}')">
+                            ${amIFollowing ? '<i class="fas fa-check me-1"></i>กำลังติดตาม' : '<i class="fas fa-user-plus me-1"></i>ติดตาม'}
+                        </button>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // ========================================
+        // LOAD USER PRODUCTS
+        // ========================================
+        async function loadUserProducts(userId) {
+            const grid = document.getElementById('productsGrid');
+            const loading = document.getElementById('productsLoading');
+            const tabBtn = document.getElementById('productsTabBtn');
+
+            try {
+                // Fetch from all product collections (Matching ProfileScreen.dart)
+                const collections = ['marketplace_items', 'community_products', 'consignment_products'];
+                const idList = [userId]; // Usually products use sellerId
+
+                let allDocs = [];
+                for (const coll of collections) {
+                    const snap = await db.collection(coll).where('sellerId', '==', userId).get();
+                    snap.forEach(doc => {
+                        const data = doc.data();
+                        data.id = doc.id;
+                        data.collection = coll;
+                        allDocs.push(data);
+                    });
+                }
+
+                loading.style.display = 'none';
+
+                if (allDocs.length > 0) {
+                    tabBtn.style.display = 'block';
+                }
+
+                if (allDocs.length === 0) {
+                    grid.innerHTML = `
+                        <div class="empty-state w-100">
+                            <i class="fas fa-shopping-bag"></i>
+                            <h3>ยังไม่มีสินค้า</h3>
+                            <p>ผู้ใช้นี้ยังไม่ได้ลงขายสินค้า</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = '';
+                allDocs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+                allDocs.forEach(item => {
+                    const col = document.createElement('div');
+                    col.className = 'col-6 col-md-4';
+                    const img = item.images && item.images.length > 0 ? (typeof item.images[0] === 'string' ? item.images[0] : item.images[0].url) : '/images/logo.png';
+
+                    col.innerHTML = `
+                        <div class="product-card post-card" onclick="window.location.href='product.html?id=${item.id}&type=${item.collection}'">
+                            <img class="post-media" src="${img}" alt="${item.name}">
+                            <div class="post-overlay" style="opacity: 1; background: linear-gradient(0deg, rgba(0,0,0,0.8), transparent);">
+                                <div style="font-size: 0.8rem; font-weight: 700; margin-bottom: 2px;">฿${(item.price || 0).toLocaleString()}</div>
+                                <div style="font-size: 0.65rem; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.name || 'ไม่มีชื่อสินค้า'}</div>
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(col);
+                });
+
+            } catch (error) {
+                console.error('Error loading products:', error);
+                loading.innerHTML = `<p class="text-danger">ผิดพลาด: ${error.message}</p>`;
+            }
+        }
+
+        // ========================================
+        // LOAD SAVED ITEMS
+        // ========================================
+        async function loadSavedItems() {
+            const grid = document.getElementById('savedGrid');
+            const loading = document.getElementById('savedLoading');
+            loading.style.display = 'block';
+            grid.innerHTML = '';
+
+            try {
+                const userDoc = await db.collection('users').doc(currentTargetUserId).get();
+                if (!userDoc.exists) {
+                    loading.style.display = 'none';
+                    grid.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>ไม่พบข้อมูลผู้ใช้งาน</p></div>';
+                    return;
+                }
+
+                const savedItems = userDoc.data().savedItems || [];
+                if (savedItems.length === 0) {
+                    loading.style.display = 'none';
+                    grid.innerHTML = '<div class="empty-state"><i class="fas fa-bookmark"></i><p>ยังไม่มีรายการที่บันทึกไว้</p></div>';
+                    return;
+                }
+
+                let html = '';
+                for (const item of savedItems) {
+                    try {
+                        let itemDoc;
+                        if (item.type === 'news') {
+                            itemDoc = await db.collection('news_feed').doc(item.id).get();
+                        } else if (item.type === 'post') {
+                            itemDoc = await db.collection('community_posts').doc(item.id).get();
+                        } else if (item.type === 'product') {
+                            itemDoc = await db.collection('marketplace_items').doc(item.id).get();
+                        }
+
+                        if (itemDoc && itemDoc.exists) {
+                            const data = itemDoc.data();
+                            data.id = itemDoc.id;
+                            data.itemType = item.type;
+                            html += renderSavedCard(data);
+                        }
+                    } catch (err) {
+                        console.warn('Error loading saved item:', err);
+                    }
+                }
+
+                loading.style.display = 'none';
+                grid.innerHTML = html || '<div class="empty-state"><p>รายการที่บันทึกไว้อาจถูกลบไปแล้ว</p></div>';
+            } catch (e) {
+                console.error('Load saved failed:', e);
+                loading.style.display = 'none';
+                grid.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>เกิดข้อผิดพลาด</p></div>';
+            }
+        }
+
+        function renderSavedCard(item) {
+            const title = item.title || item.name || 'ไม่มีหัวข้อ';
+            const media = (item.imageUrl || (item.images && item.images[0]) || '/images/logo.png');
+            const mediaUrl = (typeof media === 'object') ? media.url : media;
+            const typeLabel = item.itemType === 'news' ? 'ข่าว' : (item.itemType === 'post' ? 'โพสต์' : 'สินค้า');
+            const typeColor = item.itemType === 'news' ? 'var(--primary)' : (item.itemType === 'post' ? 'var(--purple)' : 'var(--success)');
+
+            return `
+                <div class="post-card" onclick="openSavedItem('${item.id}', '${item.itemType}')">
+                    <img src="${mediaUrl}" class="post-media" onerror="this.src='/images/logo.png'">
+                    <div class="post-overlay">
+                        <div style="position: absolute; top: 10px; left: 10px;">
+                            <span class="badge" style="background: ${typeColor};">${typeLabel}</span>
+                        </div>
+                        <div class="post-stats-overlay">
+                            <span class="text-truncate">${escapeHtml(title)}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openSavedItem(id, type) {
+            if (type === 'news') {
+                window.location.href = `/?newsId=${id}`;
+            } else if (type === 'post') {
+                window.location.href = `/?postId=${id}`;
+            } else if (type === 'product') {
+                window.location.href = `marketplace.html?productId=${id}`;
+            }
+        }
+
+        // ========================================
+        // VIDEO PLAYBACK
+        // ========================================
+        function playVideoInModal(url, isYoutube, embedHtml) {
+            const modalEl = document.getElementById('videoModal');
+            const videoModal = new bootstrap.Modal(modalEl);
+            const modalVideo = document.getElementById('modalVideo');
+            const modalBody = modalEl.querySelector('.modal-body');
+
+            // Cleanup previous
+            const existingIframe = modalBody.querySelector('iframe');
+            if (existingIframe) existingIframe.remove();
+            modalVideo.style.display = 'none';
+            modalVideo.pause();
+
+            if (isYoutube) {
+                const iframe = document.createElement('iframe');
+                iframe.src = url.includes('embed') ? url : embedHtml?.match(/src="([^"]+)"/)?.[1] || `https://www.youtube.com/embed/${extractYoutubeId(url)}?autoplay=1`;
+                iframe.setAttribute('allow', 'autoplay; fullscreen');
+                modalBody.appendChild(iframe);
+            } else {
+                modalVideo.style.display = 'block';
+                modalVideo.src = url;
+                modalVideo.play();
+            }
+            videoModal.show();
+        }
+
+        function extractYoutubeId(url) {
+            if (!url) return null;
+            const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts|live)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+            return url.match(regex)?.[1];
+        }
+
+        // ========================================
+        // TRACK VIEW
+        // ========================================
+        async function trackView(postId, authorId) {
+            const sessionViewKey = `viewed_${postId}`;
+            if (sessionStorage.getItem(sessionViewKey) || viewedPosts.has(postId)) return;
+
+            viewedPosts.add(postId);
+            sessionStorage.setItem(sessionViewKey, 'true');
+
+            try {
+                await db.collection('community_posts').doc(postId).update({
+                    views: firebase.firestore.FieldValue.increment(1)
+                });
+
+                const header = document.getElementById('totalViewsHeader');
+                if (header) {
+                    const current = parseInt(header.textContent.replace(/,/g, '')) || 0;
+                    header.textContent = (current + 1).toLocaleString();
+                }
+
+                if (authorId && authorId !== 'admin') {
+                    db.collection('users').doc(authorId).update({
+                        totalViews: firebase.firestore.FieldValue.increment(1)
+                    });
+                }
+            } catch (e) {
+                console.warn('View tracking error');
+                viewedPosts.delete(postId);
+            }
+        }
+
+        // ========================================
+        // EDIT FUNCTIONS
+        // ========================================
+        async function editName() {
+            const currentUser = WizmobizAuth.getUser();
+            const uid = currentUser?.uid || currentUser?.lineUserId;
+            if (!uid) return;
+
+            const currentName = document.getElementById('userName').textContent;
+            const newName = prompt('ชื่อใหม่ของคุณ:', currentName);
+            if (!newName || newName.trim() === '' || newName === currentName) return;
+
+            try {
+                await db.collection('users').doc(uid).update({
+                    displayName: newName.trim()
+                });
+                WizmobizAuth.updateSession({ displayName: newName.trim() });
+                document.getElementById('userName').textContent = newName.trim();
+                showToast('เปลี่ยนชื่อสำเร็จ', 'success');
+            } catch (e) {
+                showToast('เปลี่ยนชื่อไม่สำเร็จ', 'error');
+            }
+        }
+
+        async function handleAvatarChange(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const currentUser = WizmobizAuth.getUser();
+            const uid = currentUser?.uid || currentUser?.lineUserId;
+            if (!uid) return;
+
+            const btn = document.getElementById('editAvatarBtn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            try {
+                const url = await uploadToR2(file, 'avatars');
+                if (!url) throw new Error('Upload failed');
+
+                await db.collection('users').doc(uid).update({ pictureUrl: url });
+                WizmobizAuth.updateSession({ pictureUrl: url });
+                document.getElementById('userAvatar').src = url;
+                showToast('อัปโหลดรูปสำเร็จ', 'success');
+            } catch (e) {
+                showToast('อัปโหลดไม่สำเร็จ', 'error');
+            } finally {
+                btn.innerHTML = '<i class="fas fa-camera"></i>';
+            }
+        }
+
+        // ========================================
+        // SHARE FUNCTIONS
+        // ========================================
+        function openDirectMessage() {
+            // Get other user's UID from the page URL or currentUserData
+            const params = new URLSearchParams(location.search);
+            const otherUid = params.get('uid') || currentUserData?.uid || currentUserData?.lineUserId;
+            if (!otherUid) { showToast('ไม่พบข้อมูลผู้ใช้', 'error'); return; }
+            window.location.href = `/messages.html?uid=${otherUid}`;
+        }
+
+        function shareChannel() {
+            const url = window.location.href;
+            if (navigator.share) {
+                navigator.share({
+                    title: `ติดตาม ${currentUserData?.displayName || 'TukTuk Thailand'}`,
+                    url: url
+                });
+            } else {
+                navigator.clipboard.writeText(url);
+                showToast('คัดลอกลิงก์แล้ว', 'success');
+            }
+        }
+
+        // ========================================
+        // LOGOUT
+        // ========================================
+        function handleLogout() {
+            if (confirm('ยืนยันเพื่อออกจากระบบ?')) {
+                WizmobizAuth.logout();
+                showToast('ออกจากระบบสำเร็จ', 'success');
+                setTimeout(() => window.location.href = '/', 1000);
+            }
+        }
+
+        // ========================================
+        // UTILITIES
+        // ========================================
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function updateBottomNavProfile(userData) {
+            const channelBtn = document.querySelector('.bottom-nav-item.active');
+            const name = userData.displayName || userData.name || userData.username || 'ช่องของฉัน';
+            const pic = userData.pictureUrl || userData.photoURL || userData.picture || userData.avatar;
+
+            if (channelBtn) {
+                channelBtn.innerHTML = `
+                    <div style="width: 24px; height: 24px; border-radius: 50%; overflow: hidden; margin-bottom: 2px; border: 2px solid var(--primary);">
+                        <img src="${pic || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(name) + '&background=00D2FF&color=fff&size=24'}" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <span>${escapeHtml(name.split(' ')[0])}</span>
+                `;
+            }
+        }
+
+        // ========================================
+        // STORY HIGHLIGHTS
+        // ========================================
+        function loadStoryHighlights(user) {
+            const section = document.getElementById('storyHighlightsSection');
+            const row = document.getElementById('storyHighlightsRow');
+
+            const highlights = [
+                { emoji: '🛍️', label: 'สินค้า' },
+                { emoji: '📸', label: 'โพสต์' },
+                { emoji: '⭐', label: 'ยอดนิยม' },
+                { emoji: '🎬', label: 'วิดีโอ' },
+            ];
+
+            const addBtn = row.querySelector('.story-add-btn');
+            highlights.forEach(h => {
+                const item = document.createElement('div');
+                item.className = 'story-item';
+                item.innerHTML = `<div class="story-bubble">${h.emoji}</div><span class="story-item-label">${h.label}</span>`;
+                item.onclick = () => showToast('กำลังพัฒนาฟีเจอร์นี้', 'info');
+                row.insertBefore(item, addBtn);
+            });
+
+            section.classList.remove('d-none');
+        }
+
+        // ========================================
+        // QR CODE
+        // ========================================
+        function showQRCode() {
+            const profileUrl = `${window.location.origin}/channel.html?userId=${currentTargetUserId}`;
+            document.getElementById('qrCodeImg').src =
+                `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(profileUrl)}`;
+            document.getElementById('qrProfileUrl').textContent = profileUrl;
+            new bootstrap.Modal(document.getElementById('qrModal')).show();
+        }
+
+        function copyProfileUrl() {
+            const url = document.getElementById('qrProfileUrl').textContent;
+            navigator.clipboard.writeText(url)
+                .then(() => showToast('คัดลอกลิงก์แล้ว', 'success'))
+                .catch(() => showToast('ไม่สามารถคัดลอกได้', 'error'));
+        }
+
+        // ========================================
+        // EDIT PROFILE MODAL
+        // ========================================
+        function openEditProfileModal() {
+            if (!currentUserData) return;
+
+            document.getElementById('editDisplayName').value = currentUserData.displayName || currentUserData.name || '';
+            document.getElementById('editHandle').value = (currentUserData.handle || '').replace(/^@/, '');
+            document.getElementById('editBio').value = currentUserData.bio || '';
+
+            const bioEl = document.getElementById('editBio');
+            const counter = document.getElementById('bioCharCount');
+            counter.textContent = bioEl.value.length;
+            bioEl.oninput = () => { counter.textContent = bioEl.value.length; };
+
+            const preview = document.getElementById('editCoverPreview');
+            if (currentUserData.coverUrl) {
+                preview.src = currentUserData.coverUrl;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+
+            new bootstrap.Modal(document.getElementById('editProfileModal')).show();
+        }
+
+        function previewCover(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const preview = document.getElementById('editCoverPreview');
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = 'block';
+        }
+
+        async function saveProfile() {
+            const currentUser = WizmobizAuth.getUser();
+            const uid = currentUser?.uid || currentUser?.lineUserId;
+            if (!uid) return;
+
+            const btn = document.getElementById('saveProfileBtn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>กำลังบันทึก...';
+            btn.disabled = true;
+
+            try {
+                const displayName = document.getElementById('editDisplayName').value.trim();
+                const handle = document.getElementById('editHandle').value.trim().replace(/^@/, '');
+                const bio = document.getElementById('editBio').value.trim();
+
+                const updateData = { bio };
+                if (displayName) updateData.displayName = displayName;
+                if (handle) updateData.handle = handle;
+
+                // Upload cover if a new one was chosen
+                const coverInput = document.getElementById('editCoverInput');
+                if (coverInput.files && coverInput.files[0]) {
+                    const coverUrl = await uploadToR2(coverInput.files[0], 'covers');
+                    if (coverUrl) updateData.coverUrl = coverUrl;
+                }
+
+                await db.collection('users').doc(uid).update(updateData);
+                if (displayName) WizmobizAuth.updateSession({ displayName });
+
+                bootstrap.Modal.getInstance(document.getElementById('editProfileModal'))?.hide();
+                showToast('บันทึกโปรไฟล์สำเร็จ', 'success');
+            } catch (e) {
+                console.error('saveProfile error:', e);
+                showToast('บันทึกไม่สำเร็จ', 'error');
+            } finally {
+                btn.innerHTML = '<i class="fas fa-save me-1"></i>บันทึก';
+                btn.disabled = false;
+            }
+        }
+
+        // ========================================
+        // COVER CHANGE (banner overlay click)
+        // ========================================
+        async function handleCoverChange(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const currentUser = WizmobizAuth.getUser();
+            const uid = currentUser?.uid || currentUser?.lineUserId;
+            if (!uid) return;
+
+            showToast('กำลังอัปโหลดรูปปก...', 'info');
+            try {
+                const url = await uploadToR2(file, 'covers');
+                if (!url) throw new Error('Upload failed');
+
+                await db.collection('users').doc(uid).update({ coverUrl: url });
+
+                const banner = document.getElementById('channelBanner');
+                banner.style.backgroundImage = `url(${url})`;
+                banner.style.backgroundSize = 'cover';
+                banner.style.backgroundPosition = 'center';
+
+                showToast('อัปโหลดรูปปกสำเร็จ', 'success');
+            } catch (e) {
+                console.error('Cover upload error:', e);
+                showToast('อัปโหลดไม่สำเร็จ', 'error');
+            }
+        }
+
+        // ========================================
+        // WALLET MODAL
+        // ========================================
+        function showWallet() {
+            if (!currentUserData) return;
+
+            const coins = currentUserData.coins || 0;
+            const likes = currentUserData.totalLikes || 0;
+            const views = currentUserData.totalViews || 0;
+
+            document.getElementById('walletCoinsDisplay').textContent = coins.toLocaleString();
+            document.getElementById('walletLikes').textContent = `${likes.toLocaleString()} ถูกใจ`;
+            document.getElementById('walletViews').textContent = `${views.toLocaleString()} ครั้ง`;
+
+            new bootstrap.Modal(document.getElementById('walletModal')).show();
+        }
+
+        // ========================================
+        // TUKTUK HUB
+        // ==========================================
+        // TUKTUK HUB LOGIC
+        // ==========================================
+        window.handleTukTukButtonClick = function () {
+            try {
+                if (typeof WizmobizAuth !== 'undefined' && !WizmobizAuth.isLoggedIn()) {
+                    if (typeof showToast === 'function') showToast('กรุณาเข้าสู่ระบบเพื่อใช้งานส่วนนี้', 'warning');
+                    else if (typeof showNotification === 'function') showNotification('กรุณาเข้าสู่ระบบเพื่อใช้งานส่วนนี้', 'warning');
+                    setTimeout(() => WizmobizAuth.redirectToLogin(), 1500);
+                    return;
+                }
+
+                const overlay = document.getElementById('creationOverlay');
+                const btn = document.getElementById('centerBtn');
+                const nav = document.getElementById('bottomNav');
+
+                if (!overlay) {
+                    _tnav('index.html');
+                    return;
+                }
+
+                const isActive = overlay.classList.contains('active');
+
+                if (isActive) {
+                    closeCreationHub();
+                } else {
+                    overlay.style.display = 'block';
+                    setTimeout(() => {
+                        overlay.classList.add('active');
+                        if (btn) btn.classList.add('active');
+                        if (nav) nav.classList.add('overlay-active');
+                    }, 10);
+                }
+            } catch (e) {
+                console.error('Error in handleTukTukButtonClick:', e);
+            }
+        };
+
+        window.closeCreationHub = function () {
+            const overlay = document.getElementById('creationOverlay');
+            const btn = document.getElementById('centerBtn');
+            const nav = document.getElementById('bottomNav');
+            if (overlay) overlay.classList.remove('active');
+            if (btn) btn.classList.remove('active');
+            if (nav) nav.classList.remove('overlay-active');
+            setTimeout(() => {
+                if (overlay) overlay.style.display = 'none';
+            }, 400);
+        };
+
+        // Expose functions globally
+        window.switchTab = switchTab;
+        window.handleMainFollow = handleMainFollow;
+        window.shareChannel = shareChannel;
+        window.editName = editName;
+        window.handleAvatarChange = handleAvatarChange;
+        window.toggleFollowPrivacy = toggleFollowPrivacy;
+        window.handleLogout = handleLogout;
+        window.toggleFollowListItem = toggleFollowListItem;
+        window.loadFollowing = loadFollowing;
+        window.loadFollowers = loadFollowers;
+        window.loadSavedItems = loadSavedItems;
+        window.showQRCode = showQRCode;
+        window.copyProfileUrl = copyProfileUrl;
+        window.openEditProfileModal = openEditProfileModal;
+        window.previewCover = previewCover;
+        window.saveProfile = saveProfile;
+        window.handleCoverChange = handleCoverChange;
+        window.showWallet = showWallet;
+        window.handleTukTukButtonClick = handleTukTukButtonClick;
+        window.closeCreationHub = closeCreationHub;
+    </script>
+    <!-- Smart Floating Bottom Nav (Mobile) -->
+
+
+    <!-- Script to auto-update profile link image -->
+    <script>
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                try {
+                    const user = localStorage.getItem('user_data') ? JSON.parse(localStorage.getItem('user_data')) : null;
+                    if (user && (user.photoURL || user.pictureUrl)) {
+                        const img = document.getElementById('navProfileImg');
+                        if (img) img.src = user.photoURL || user.pictureUrl;
+                    }
+                } catch (e) { }
+            }, 1000);
+        });
+    </script>
+
+    <!-- Creation Hub Overlay -->
+    <div class="creation-overlay" id="creationOverlay" onclick="closeCreationHub()">
+        <div class="creation-menu-content" onclick="event.stopPropagation()">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
+                <h3
+                    style="font-size:1.4rem; font-weight:800; background:linear-gradient(90deg,var(--primary),#fff); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; margin:0;">
+                    🚀 TukTuk Hub
+                </h3>
+                <div onclick="closeCreationHub()"
+                    style="width:40px;height:40px;background:rgba(255,255,255,0.05);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.2rem;">
+                    &times;</div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                <div onclick="_tnav('index.html')"
+                    style="padding:24px 16px;background:rgba(0,210,255,0.1);border:1px solid rgba(0,210,255,0.25);border-radius:24px;text-align:center;cursor:pointer;">
+                    <i class="fas fa-home"
+                        style="color:var(--primary);font-size:1.8rem;display:block;margin-bottom:8px;"></i>
+                    <span style="color:white;font-weight:700;">หน้าแรก</span>
+                </div>
+                <div onclick="_tnav('marketplace.html')"
+                    style="padding:24px 16px;background:rgba(255,107,43,0.1);border:1px solid rgba(255,107,43,0.25);border-radius:24px;text-align:center;cursor:pointer;">
+                    <i class="fas fa-store"
+                        style="color:var(--secondary);font-size:1.8rem;display:block;margin-bottom:8px;"></i>
+                    <span style="color:white;font-weight:700;">ตลาด</span>
+                </div>
+                <div onclick="_tnav('analytics-dashboard.html')"
+                    style="padding:24px 16px;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);border-radius:24px;text-align:center;cursor:pointer;">
+                    <i class="fas fa-chart-line"
+                        style="color:#6366f1;font-size:1.8rem;display:block;margin-bottom:8px;"></i>
+                    <span style="color:white;font-weight:700;">ข้อมูลเชิงลึก</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="persistent-ui-root"></div>
+</body>
+
+</html>

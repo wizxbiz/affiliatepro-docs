@@ -1,0 +1,25 @@
+{
+  "name": "tuktukfeed-workers",
+  "version": "1.0.0",
+  "description": "Cloudflare Workers API for TukTuk Social Thailand",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:pages": "wrangler pages deploy ../public --project-name=tuktukfeed",
+    "db:create": "wrangler d1 create tuktukfeed-db",
+    "db:migrate": "wrangler d1 execute tuktukfeed-db --file=migrations/001_init.sql",
+    "db:migrate:remote": "wrangler d1 execute tuktukfeed-db --file=migrations/001_init.sql --remote",
+    "db:export-firestore": "node scripts/migrate-firestore-to-d1.mjs",
+    "kv:create": "wrangler kv:namespace create SESSIONS",
+    "kv:create:preview": "wrangler kv:namespace create SESSIONS --preview",
+    "types": "wrangler types"
+  },
+  "dependencies": {
+    "hono": "^4.4.0"
+  },
+  "devDependencies": {
+    "wrangler": "^3.60.0",
+    "firebase-admin": "^13.6.1"
+  }
+}

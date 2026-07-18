@@ -6,6 +6,7 @@
     <title>Advanced Injection Molding Simulation Pro</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -606,13 +607,46 @@
                 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div>
-                        <h3 class="text-lg font-semibold mb-3">🎨 การแสดงผลการจำลอง</h3>
+                        <h3 class="text-lg font-semibold mb-3">🎨 การแสดงผลการจำลอง 2D</h3>
                         <canvas id="simulation-animation" class="w-full h-64 bg-gray-100 rounded-lg simulation-canvas"></canvas>
                     </div>
                     
                     <div>
                         <h3 class="text-lg font-semibold mb-3">📊 กราฟแสดงผลแบบ Real-time</h3>
                         <canvas id="simulation-chart" class="w-full h-64"></canvas>
+                    </div>
+                </div>
+                
+                <!-- 3D Flow Animation Section -->
+                <div class="mt-6">
+                    <h3 class="text-lg font-semibold mb-3 flex items-center gap-2">
+                        <span>🌊</span> 3D Flow Animation
+                        <span class="text-sm font-normal text-gray-500">(ลากเมาส์เพื่อหมุนมุมมอง)</span>
+                    </h3>
+                    <div class="bg-gray-900 rounded-xl overflow-hidden" style="height: 350px;">
+                        <div id="flow-3d-container" class="w-full h-full"></div>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <button id="view-top" class="px-3 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg text-sm transition-all">
+                            มุมบน
+                        </button>
+                        <button id="view-side" class="px-3 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg text-sm transition-all">
+                            มุมข้าง
+                        </button>
+                        <button id="view-front" class="px-3 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg text-sm transition-all">
+                            มุมหน้า
+                        </button>
+                        <button id="view-iso" class="px-3 py-1 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-sm transition-all">
+                            ISO View
+                        </button>
+                        <label class="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-lg text-sm">
+                            <input type="checkbox" id="show-particles" checked class="w-4 h-4">
+                            <span>แสดง Particles</span>
+                        </label>
+                        <label class="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-lg text-sm">
+                            <input type="checkbox" id="show-flow-lines" checked class="w-4 h-4">
+                            <span>แสดง Flow Lines</span>
+                        </label>
                     </div>
                 </div>
                 
@@ -653,8 +687,13 @@
                 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div>
-                        <h3 class="text-lg font-semibold mb-4">⚠️ การทำนายข้อบกพร่อง</h3>
-                        <div id="defect-cards" class="space-y-3">
+                        <h3 class="text-lg font-semibold mb-4">⚠️ การทำนายข้อบกพร่อง (TROUBLESHOOTING_GUIDE)</h3>
+                        <div class="mb-4 flex gap-2 flex-wrap">
+                            <span class="px-2 py-1 bg-red-100 text-red-700 rounded text-xs">สูง: ต้องแก้ไขทันที</span>
+                            <span class="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs">ปานกลาง: ควรแก้ไข</span>
+                            <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">ต่ำ: เฝ้าระวัง</span>
+                        </div>
+                        <div id="defect-cards" class="space-y-3 max-h-96 overflow-y-auto">
                             <!-- Defect cards will be dynamically added here -->
                         </div>
                     </div>
@@ -982,6 +1021,231 @@
                 density: 1.18,
                 shrinkage: "0.2-0.6",
                 viscosity: 0.4
+            }
+        };
+
+        // ========== TROUBLESHOOTING_GUIDE Database ==========
+        // Complete defect troubleshooting data from injection molding knowledge base
+        const TROUBLESHOOTING_GUIDE = {
+            SHORT_SHOT: {
+                name: "Short Shot / ฉีดไม่เต็ม",
+                nameThai: "ฉีดไม่เต็ม",
+                description: "พลาสติกไม่ไหลเต็มแม่พิมพ์ ชิ้นงานไม่สมบูรณ์",
+                possibleCauses: [
+                    { cause: "ความดันฉีดต่ำเกินไป", probability: "สูง" },
+                    { cause: "อุณหภูมิพลาสติกต่ำ", probability: "สูง" },
+                    { cause: "ความเร็วฉีดช้า", probability: "ปานกลาง" },
+                    { cause: "Gate หรือ Runner เล็กเกินไป", probability: "ปานกลาง" },
+                    { cause: "Venting ไม่เพียงพอ", probability: "ปานกลาง" },
+                    { cause: "Shot Size น้อยเกินไป", probability: "ปานกลาง" },
+                    { cause: "วัสดุมีความหนืดสูง", probability: "ต่ำ" }
+                ],
+                solutions: [
+                    "✅ เพิ่มความดันฉีด (Injection Pressure) ทีละ 5-10%",
+                    "✅ เพิ่มอุณหภูมิกระบอก (Barrel Temp) ทีละ 5-10°C",
+                    "✅ เพิ่มความเร็วฉีด (Injection Speed)",
+                    "✅ ตรวจสอบและขยาย Gate/Runner",
+                    "✅ เพิ่ม Venting หรือลดความเร็วช่วงท้าย",
+                    "✅ เพิ่ม Shot Size / Cushion"
+                ],
+                quickFix: "เพิ่มความดันฉีด + เพิ่มอุณหภูมิพลาสติก",
+                preventiveMeasures: ["ตรวจสอบ Shot Size ทุกครั้ง", "ทำ Venting ให้เพียงพอ"],
+                icon: "🔴"
+            },
+            FLASH: {
+                name: "Flash / ครีบ",
+                nameThai: "ครีบ / เนื้อเกิน",
+                description: "พลาสติกไหลล้นออกมาตามแนว Parting Line",
+                possibleCauses: [
+                    { cause: "แรงปิดแม่พิมพ์ไม่เพียงพอ", probability: "สูง" },
+                    { cause: "ความดันฉีดสูงเกินไป", probability: "สูง" },
+                    { cause: "แม่พิมพ์สึกหรอ/บิ่น", probability: "ปานกลาง" },
+                    { cause: "อุณหภูมิพลาสติกสูงเกินไป", probability: "ปานกลาง" },
+                    { cause: "Venting ใหญ่เกินไป", probability: "ต่ำ" }
+                ],
+                solutions: [
+                    "✅ เพิ่มแรงปิดแม่พิมพ์ (Clamping Force)",
+                    "✅ ลดความดันฉีดและความดัน Holding",
+                    "✅ ตรวจสอบและซ่อมแซมแม่พิมพ์",
+                    "✅ ลดอุณหภูมิพลาสติก",
+                    "✅ ปรับ V-P Switchover ให้เร็วขึ้น"
+                ],
+                quickFix: "เพิ่มแรงปิดแม่พิมพ์ + ลดความดัน Holding",
+                preventiveMeasures: ["บำรุงรักษาแม่พิมพ์สม่ำเสมอ", "คำนวณ Clamping Force ให้เพียงพอ"],
+                icon: "🟡"
+            },
+            SINK_MARK: {
+                name: "Sink Mark / รอยยุบ",
+                nameThai: "รอยยุบ / รอยบุ๋ม",
+                description: "รอยยุบบนผิวชิ้นงานบริเวณที่มีความหนา",
+                possibleCauses: [
+                    { cause: "ความดัน Holding ต่ำ", probability: "สูง" },
+                    { cause: "เวลา Holding สั้น", probability: "สูง" },
+                    { cause: "อุณหภูมิแม่พิมพ์สูง", probability: "ปานกลาง" },
+                    { cause: "Gate แข็งตัวเร็วเกินไป", probability: "ปานกลาง" },
+                    { cause: "ความหนาผนังไม่สม่ำเสมอ", probability: "ปานกลาง" },
+                    { cause: "Cooling Time สั้น", probability: "ต่ำ" }
+                ],
+                solutions: [
+                    "✅ เพิ่มความดัน Holding ทีละ 5-10%",
+                    "✅ เพิ่มเวลา Holding",
+                    "✅ ลดอุณหภูมิแม่พิมพ์",
+                    "✅ ขยาย Gate หรือเปลี่ยนตำแหน่ง",
+                    "✅ เพิ่ม Cooling Time"
+                ],
+                quickFix: "เพิ่มความดัน Holding + เพิ่มเวลา Holding",
+                preventiveMeasures: ["ออกแบบความหนาไม่เกิน 4mm", "ใช้ Rib แทนการเพิ่มความหนา"],
+                icon: "🟠"
+            },
+            WARPAGE: {
+                name: "Warpage / บิดงอ",
+                nameThai: "บิดงอ / โก่ง",
+                description: "ชิ้นงานบิดงอหลังถอดจากแม่พิมพ์",
+                possibleCauses: [
+                    { cause: "การหดตัวไม่สม่ำเสมอ", probability: "สูง" },
+                    { cause: "Cooling ไม่สม่ำเสมอ", probability: "สูง" },
+                    { cause: "ถอดชิ้นงานเร็วเกินไป", probability: "ปานกลาง" },
+                    { cause: "ความดัน Holding สูงเกินไป", probability: "ปานกลาง" },
+                    { cause: "Gate ตำแหน่งไม่เหมาะสม", probability: "ต่ำ" }
+                ],
+                solutions: [
+                    "✅ ปรับ Cooling ให้สม่ำเสมอทั้งสองข้าง",
+                    "✅ เพิ่ม Cooling Time",
+                    "✅ ลดอุณหภูมิแม่พิมพ์",
+                    "✅ ลดความดัน Holding",
+                    "✅ ใช้ Jig ช่วยหลังถอดชิ้นงาน"
+                ],
+                quickFix: "ปรับ Cooling ให้สม่ำเสมอ + เพิ่ม Cooling Time",
+                preventiveMeasures: ["ออกแบบความหนาสม่ำเสมอ", "วางตำแหน่ง Cooling Channel ให้ดี"],
+                icon: "🟤"
+            },
+            BURN_MARK: {
+                name: "Burn Mark / รอยไหม้",
+                nameThai: "รอยไหม้ / รอยดำ",
+                description: "รอยดำ/รอยไหม้บนชิ้นงาน มักเกิดปลายทาง Flow",
+                possibleCauses: [
+                    { cause: "Venting ไม่เพียงพอ (อากาศติด)", probability: "สูง" },
+                    { cause: "ความเร็วฉีดเร็วเกินไป", probability: "สูง" },
+                    { cause: "อุณหภูมิพลาสติกสูงเกินไป", probability: "ปานกลาง" },
+                    { cause: "วัสดุค้างในเครื่องนาน", probability: "ปานกลาง" },
+                    { cause: "Screw Speed เร็วเกินไป", probability: "ต่ำ" }
+                ],
+                solutions: [
+                    "✅ เพิ่ม Venting (ลึก 0.02-0.03mm)",
+                    "✅ ลดความเร็วฉีดช่วงท้าย",
+                    "✅ ลดอุณหภูมิพลาสติก",
+                    "✅ ล้างเครื่องด้วย Purging Compound",
+                    "✅ ลดความเร็วสกรู (Screw Speed)"
+                ],
+                quickFix: "ลดความเร็วฉีด + เพิ่ม Venting",
+                preventiveMeasures: ["ทำ Venting ทุกจุด Dead End", "ล้างเครื่องเมื่อเปลี่ยนวัสดุ"],
+                icon: "⚫"
+            },
+            SILVER_STREAK: {
+                name: "Silver Streak / เส้นสีเงิน",
+                nameThai: "เส้นสีเงิน / รอยความชื้น",
+                description: "เส้นสีเงินบนผิวชิ้นงานตามทิศทางการไหล",
+                possibleCauses: [
+                    { cause: "วัสดุมีความชื้น", probability: "สูงมาก" },
+                    { cause: "อุณหภูมิพลาสติกสูงเกินไป (Degradation)", probability: "ปานกลาง" },
+                    { cause: "อากาศติดในพลาสติก", probability: "ปานกลาง" },
+                    { cause: "Back Pressure ต่ำเกินไป", probability: "ต่ำ" }
+                ],
+                solutions: [
+                    "✅ อบวัสดุให้แห้งตามข้อกำหนด",
+                    "✅ ตรวจสอบ Hopper Dryer ทำงานปกติ",
+                    "✅ ลดอุณหภูมิพลาสติก",
+                    "✅ เพิ่ม Back Pressure เล็กน้อย",
+                    "✅ ลดความเร็วสกรู"
+                ],
+                quickFix: "อบวัสดุให้แห้ง + ตรวจสอบ Dryer",
+                preventiveMeasures: ["ใช้ Hopper Dryer เสมอ", "ตรวจสอบความชื้นด้วย Moisture Analyzer"],
+                icon: "⚪"
+            },
+            WELD_LINE: {
+                name: "Weld Line / รอยเชื่อม",
+                nameThai: "รอยเชื่อม / รอยประสาน",
+                description: "เส้นรอยต่อที่พลาสติกไหลมาเจอกัน",
+                possibleCauses: [
+                    { cause: "อุณหภูมิพลาสติกต่ำ", probability: "สูง" },
+                    { cause: "ความเร็วฉีดช้า", probability: "ปานกลาง" },
+                    { cause: "Venting ไม่เพียงพอ", probability: "ปานกลาง" },
+                    { cause: "อุณหภูมิแม่พิมพ์ต่ำ", probability: "ปานกลาง" },
+                    { cause: "ตำแหน่ง Gate ไม่เหมาะสม", probability: "ต่ำ" }
+                ],
+                solutions: [
+                    "✅ เพิ่มอุณหภูมิพลาสติก",
+                    "✅ เพิ่มความเร็วฉีด",
+                    "✅ เพิ่มอุณหภูมิแม่พิมพ์",
+                    "✅ เพิ่ม Venting บริเวณ Weld Line",
+                    "✅ ใช้ Overflow Tab"
+                ],
+                quickFix: "เพิ่มอุณหภูมิพลาสติก + เพิ่มความเร็วฉีด",
+                preventiveMeasures: ["ออกแบบ Gate ให้ Weld Line อยู่จุดที่ไม่สำคัญ"],
+                icon: "🔵"
+            },
+            VOID: {
+                name: "Void / โพรงอากาศ",
+                nameThai: "โพรงอากาศ / ฟองใน",
+                description: "โพรงอากาศภายในชิ้นงาน มักเกิดบริเวณหนา",
+                possibleCauses: [
+                    { cause: "ความดัน Holding ต่ำ", probability: "สูง" },
+                    { cause: "เวลา Holding สั้น", probability: "สูง" },
+                    { cause: "Gate แข็งตัวเร็ว", probability: "ปานกลาง" },
+                    { cause: "ความหนาผนังมากเกินไป", probability: "ปานกลาง" },
+                    { cause: "อุณหภูมิพลาสติกสูง", probability: "ต่ำ" }
+                ],
+                solutions: [
+                    "✅ เพิ่มความดัน Holding",
+                    "✅ เพิ่มเวลา Holding",
+                    "✅ ขยาย Gate",
+                    "✅ ลดอุณหภูมิพลาสติก",
+                    "✅ เพิ่ม Cooling Time"
+                ],
+                quickFix: "เพิ่มความดัน Holding + ขยาย Gate",
+                preventiveMeasures: ["ออกแบบความหนาไม่เกิน 4mm"],
+                icon: "⭕"
+            },
+            JETTING: {
+                name: "Jetting / รอยพ่น",
+                nameThai: "รอยพ่น / เส้นคดเคี้ยว",
+                description: "เส้นคดเคี้ยวบนผิวชิ้นงานบริเวณ Gate",
+                possibleCauses: [
+                    { cause: "Gate เล็กเกินไป", probability: "สูง" },
+                    { cause: "ความเร็วฉีดเร็วเกินไป", probability: "สูง" },
+                    { cause: "พลาสติกไม่ปะทะผนังแม่พิมพ์", probability: "ปานกลาง" }
+                ],
+                solutions: [
+                    "✅ ขยาย Gate",
+                    "✅ ลดความเร็วฉีดช่วงแรก",
+                    "✅ เปลี่ยนทิศทาง Gate ให้ปะทะผนัง",
+                    "✅ เพิ่มอุณหภูมิพลาสติก",
+                    "✅ ใช้ Tab Gate แทน Pin Gate"
+                ],
+                quickFix: "ลดความเร็วฉีดช่วงแรก + ขยาย Gate",
+                preventiveMeasures: ["ออกแบบ Gate ให้พลาสติกปะทะผนัง"],
+                icon: "🌀"
+            },
+            FLOW_MARK: {
+                name: "Flow Mark / รอยไหล",
+                nameThai: "รอยไหล / ลายไม้",
+                description: "ลายเส้นบนผิวชิ้นงานตามทิศทางการไหล",
+                possibleCauses: [
+                    { cause: "อุณหภูมิพลาสติกต่ำ", probability: "สูง" },
+                    { cause: "อุณหภูมิแม่พิมพ์ต่ำ", probability: "สูง" },
+                    { cause: "ความเร็วฉีดไม่เหมาะสม", probability: "ปานกลาง" },
+                    { cause: "Gate เล็ก", probability: "ต่ำ" }
+                ],
+                solutions: [
+                    "✅ เพิ่มอุณหภูมิพลาสติก",
+                    "✅ เพิ่มอุณหภูมิแม่พิมพ์",
+                    "✅ ปรับความเร็วฉีด (ลอง Profile หลายความเร็ว)",
+                    "✅ ขยาย Gate",
+                    "✅ ขัดผิว Cavity ให้มัน"
+                ],
+                quickFix: "เพิ่มอุณหภูมิพลาสติกและแม่พิมพ์",
+                preventiveMeasures: ["ขัดผิวแม่พิมพ์สม่ำเสมอ"],
+                icon: "🌊"
             }
         };
 
@@ -1499,7 +1763,7 @@
             simulationChart.data.labels = [];
             simulationChart.data.datasets.forEach(ds => ds.data = []);
             simulationChart.update();
-            simulationData = { pressure: [], temperature: [], flowRate: [], time: [] };
+            simulationData = { pressure: [], temperature: [], flowRate: [], time: [], viscosity: [], shearRate: [], fillPercentage: [] };
             document.getElementById('simulation-log').innerHTML = '<p class="text-green-600">[เริ่มต้น] ระบบพร้อมสำหรับการจำลอง</p>';
         });
 
@@ -1507,60 +1771,266 @@
             document.getElementById('simulation-log').innerHTML = '<p class="text-green-600">[เริ่มต้น] ระบบพร้อมสำหรับการจำลอง</p>';
         });
 
-        // ========== Defect Prediction Functions ==========
+        // ========== Enhanced Defect Prediction Functions (Using TROUBLESHOOTING_GUIDE) ==========
         function checkDefects() {
             const injectionPressure = parseFloat(document.getElementById('injection-pressure').value) || 0;
             const injectionSpeed = parseFloat(document.getElementById('injection-speed').value) || 0;
             const moldTemp = parseFloat(document.getElementById('mold-temp').value) || 0;
             const nozzleTemp = parseFloat(document.getElementById('nozzle-temp').value) || 0;
+            const holdingPressure = parseFloat(document.getElementById('holding-pressure').value) || 0;
+            const holdingTime = parseFloat(document.getElementById('holding-time').value) || 0;
+            const coolingTime = parseFloat(document.getElementById('cooling-time').value) || 0;
+            const backPressure = parseFloat(document.getElementById('back-pressure').value) || 0;
+            const screwSpeed = parseFloat(document.getElementById('screw-speed').value) || 0;
             const plasticType = document.getElementById('plastic-type').value;
             const recommendations = materialRecommendations[plasticType];
             
             const defects = [];
             
-            // Check for flash
-            if (injectionPressure > parseFloat(recommendations.injectionPressure.split('-')[1])) {
+            // Parse recommended ranges
+            const recPressureMin = parseFloat(recommendations.injectionPressure.split('-')[0]);
+            const recPressureMax = parseFloat(recommendations.injectionPressure.split('-')[1]);
+            const recSpeedMin = parseFloat(recommendations.injectionSpeed.split('-')[0]);
+            const recSpeedMax = parseFloat(recommendations.injectionSpeed.split('-')[1]);
+            const recHoldingMin = parseFloat(recommendations.holdingPressure.split('-')[0]);
+            const recHoldingMax = parseFloat(recommendations.holdingPressure.split('-')[1]);
+            const recMoldTempMin = parseFloat(recommendations.moldTemp.split('-')[0]);
+            const recMoldTempMax = parseFloat(recommendations.moldTemp.split('-')[1]);
+            const recNozzleTempMin = parseFloat(recommendations.nozzleTemp.split('-')[0]);
+            const recNozzleTempMax = parseFloat(recommendations.nozzleTemp.split('-')[1]);
+            
+            // === 1. SHORT SHOT Detection ===
+            if (injectionPressure < recPressureMin * 0.9 || nozzleTemp < recNozzleTempMin || injectionSpeed < recSpeedMin * 0.7) {
+                const guide = TROUBLESHOOTING_GUIDE.SHORT_SHOT;
+                const causes = [];
+                if (injectionPressure < recPressureMin) causes.push(`ความดันฉีด ${injectionPressure} bar (แนะนำ: ${recommendations.injectionPressure})`);
+                if (nozzleTemp < recNozzleTempMin) causes.push(`อุณหภูมิ ${nozzleTemp}°C ต่ำ (แนะนำ: ${recommendations.nozzleTemp})`);
+                if (injectionSpeed < recSpeedMin * 0.7) causes.push(`ความเร็วฉีดช้า ${injectionSpeed} mm/s`);
+                
                 defects.push({
-                    type: 'Flash/Burr',
+                    type: guide.name,
+                    nameThai: guide.nameThai,
                     severity: 'high',
-                    description: 'แรงดันฉีดสูงเกินไป อาจทำให้เกิดครีบ',
-                    solution: 'ลดแรงดันฉีดลง 10-20% หรือตรวจสอบการปิดแม่พิมพ์'
+                    icon: guide.icon,
+                    description: guide.description,
+                    detectedCauses: causes,
+                    possibleCauses: guide.possibleCauses,
+                    solutions: guide.solutions,
+                    quickFix: guide.quickFix,
+                    preventiveMeasures: guide.preventiveMeasures
                 });
             }
             
-            // Check for short shot
-            if (injectionPressure < parseFloat(recommendations.injectionPressure.split('-')[0])) {
+            // === 2. FLASH Detection ===
+            if (injectionPressure > recPressureMax * 1.1 || nozzleTemp > recNozzleTempMax * 1.05) {
+                const guide = TROUBLESHOOTING_GUIDE.FLASH;
+                const causes = [];
+                if (injectionPressure > recPressureMax) causes.push(`ความดันฉีดสูง ${injectionPressure} bar (แนะนำ: ${recommendations.injectionPressure})`);
+                if (nozzleTemp > recNozzleTempMax) causes.push(`อุณหภูมิสูง ${nozzleTemp}°C (แนะนำ: ${recommendations.nozzleTemp})`);
+                
                 defects.push({
-                    type: 'Short Shot',
+                    type: guide.name,
+                    nameThai: guide.nameThai,
                     severity: 'high',
-                    description: 'แรงดันฉีดต่ำเกินไป อาจทำให้ชิ้นงานไม่เต็ม',
-                    solution: 'เพิ่มแรงดันฉีดหรือตรวจสอบอุณหภูมิ'
+                    icon: guide.icon,
+                    description: guide.description,
+                    detectedCauses: causes,
+                    possibleCauses: guide.possibleCauses,
+                    solutions: guide.solutions,
+                    quickFix: guide.quickFix,
+                    preventiveMeasures: guide.preventiveMeasures
                 });
             }
             
-            // Check for burn marks
-            if (injectionSpeed > parseFloat(recommendations.injectionSpeed.split('-')[1])) {
+            // === 3. SINK MARK Detection ===
+            if (holdingPressure < recHoldingMin * 0.85 || holdingTime < 2) {
+                const guide = TROUBLESHOOTING_GUIDE.SINK_MARK;
+                const causes = [];
+                if (holdingPressure < recHoldingMin) causes.push(`ความดัน Holding ต่ำ ${holdingPressure} bar (แนะนำ: ${recommendations.holdingPressure})`);
+                if (holdingTime < 2) causes.push(`เวลา Holding สั้น ${holdingTime}s (แนะนำ: 2-5s)`);
+                
                 defects.push({
-                    type: 'Burn Marks',
+                    type: guide.name,
+                    nameThai: guide.nameThai,
                     severity: 'medium',
-                    description: 'ความเร็วฉีดสูงเกินไป อาจทำให้เกิดรอยไหม้',
-                    solution: 'ลดความเร็วฉีดหรือปรับปรุงการระบายอากาศ'
+                    icon: guide.icon,
+                    description: guide.description,
+                    detectedCauses: causes,
+                    possibleCauses: guide.possibleCauses,
+                    solutions: guide.solutions,
+                    quickFix: guide.quickFix,
+                    preventiveMeasures: guide.preventiveMeasures
                 });
             }
             
-            // Check for sink marks
-            const holdingPressure = parseFloat(document.getElementById('holding-pressure').value) || 0;
-            if (holdingPressure < parseFloat(recommendations.holdingPressure.split('-')[0])) {
+            // === 4. BURN MARK Detection ===
+            if (injectionSpeed > recSpeedMax * 1.2 || nozzleTemp > recNozzleTempMax * 1.1) {
+                const guide = TROUBLESHOOTING_GUIDE.BURN_MARK;
+                const causes = [];
+                if (injectionSpeed > recSpeedMax * 1.2) causes.push(`ความเร็วฉีดเร็ว ${injectionSpeed} mm/s (แนะนำ: ${recommendations.injectionSpeed})`);
+                if (nozzleTemp > recNozzleTempMax * 1.1) causes.push(`อุณหภูมิสูงมาก ${nozzleTemp}°C`);
+                
                 defects.push({
-                    type: 'Sink Marks',
+                    type: guide.name,
+                    nameThai: guide.nameThai,
+                    severity: 'high',
+                    icon: guide.icon,
+                    description: guide.description,
+                    detectedCauses: causes,
+                    possibleCauses: guide.possibleCauses,
+                    solutions: guide.solutions,
+                    quickFix: guide.quickFix,
+                    preventiveMeasures: guide.preventiveMeasures
+                });
+            }
+            
+            // === 5. WARPAGE Detection ===
+            const tempDiff = Math.abs(moldTemp - (recMoldTempMin + recMoldTempMax) / 2);
+            if (coolingTime < 5 || tempDiff > 20 || holdingPressure > recHoldingMax * 1.2) {
+                const guide = TROUBLESHOOTING_GUIDE.WARPAGE;
+                const causes = [];
+                if (coolingTime < 5) causes.push(`Cooling Time สั้น ${coolingTime}s (ควร > 5s)`);
+                if (tempDiff > 20) causes.push(`อุณหภูมิแม่พิมพ์ไม่เหมาะสม`);
+                if (holdingPressure > recHoldingMax * 1.2) causes.push(`ความดัน Holding สูงเกินไป`);
+                
+                defects.push({
+                    type: guide.name,
+                    nameThai: guide.nameThai,
                     severity: 'medium',
-                    description: 'แรงดันย้ำต่ำเกินไป อาจทำให้เกิดรอยยุบ',
-                    solution: 'เพิ่มแรงดันย้ำหรือเวลาย้ำ'
+                    icon: guide.icon,
+                    description: guide.description,
+                    detectedCauses: causes,
+                    possibleCauses: guide.possibleCauses,
+                    solutions: guide.solutions,
+                    quickFix: guide.quickFix,
+                    preventiveMeasures: guide.preventiveMeasures
+                });
+            }
+            
+            // === 6. SILVER STREAK Detection (Moisture related) ===
+            // High risk plastics: PA, PC, POM, PMMA need proper drying
+            const moistureSensitivePlastics = ['PA', 'PC', 'POM', 'PMMA', 'ABS'];
+            if (moistureSensitivePlastics.includes(plasticType) && backPressure < 30) {
+                const guide = TROUBLESHOOTING_GUIDE.SILVER_STREAK;
+                defects.push({
+                    type: guide.name,
+                    nameThai: guide.nameThai,
+                    severity: 'medium',
+                    icon: guide.icon,
+                    description: guide.description,
+                    detectedCauses: [`${plasticType} ต้องอบแห้งก่อนฉีด`, `Back Pressure ต่ำ ${backPressure} bar`],
+                    possibleCauses: guide.possibleCauses,
+                    solutions: guide.solutions,
+                    quickFix: guide.quickFix,
+                    preventiveMeasures: guide.preventiveMeasures
+                });
+            }
+            
+            // === 7. WELD LINE Detection (Multiple gates or complex geometry) ===
+            const cavityCount = parseInt(document.getElementById('cavity-count').value) || 1;
+            if (nozzleTemp < recNozzleTempMin || moldTemp < recMoldTempMin || injectionSpeed < recSpeedMin * 0.8) {
+                const guide = TROUBLESHOOTING_GUIDE.WELD_LINE;
+                const causes = [];
+                if (nozzleTemp < recNozzleTempMin) causes.push(`อุณหภูมิพลาสติกต่ำ`);
+                if (moldTemp < recMoldTempMin) causes.push(`อุณหภูมิแม่พิมพ์ต่ำ ${moldTemp}°C`);
+                if (injectionSpeed < recSpeedMin * 0.8) causes.push(`ความเร็วฉีดช้า`);
+                
+                defects.push({
+                    type: guide.name,
+                    nameThai: guide.nameThai,
+                    severity: 'low',
+                    icon: guide.icon,
+                    description: guide.description,
+                    detectedCauses: causes,
+                    possibleCauses: guide.possibleCauses,
+                    solutions: guide.solutions,
+                    quickFix: guide.quickFix,
+                    preventiveMeasures: guide.preventiveMeasures
+                });
+            }
+            
+            // === 8. VOID Detection ===
+            if (holdingPressure < recHoldingMin * 0.7 || holdingTime < 1.5) {
+                const guide = TROUBLESHOOTING_GUIDE.VOID;
+                const causes = [];
+                if (holdingPressure < recHoldingMin * 0.7) causes.push(`ความดัน Holding ต่ำมาก ${holdingPressure} bar`);
+                if (holdingTime < 1.5) causes.push(`เวลา Holding สั้นมาก ${holdingTime}s`);
+                
+                defects.push({
+                    type: guide.name,
+                    nameThai: guide.nameThai,
+                    severity: 'medium',
+                    icon: guide.icon,
+                    description: guide.description,
+                    detectedCauses: causes,
+                    possibleCauses: guide.possibleCauses,
+                    solutions: guide.solutions,
+                    quickFix: guide.quickFix,
+                    preventiveMeasures: guide.preventiveMeasures
+                });
+            }
+            
+            // === 9. JETTING Detection ===
+            if (injectionSpeed > recSpeedMax * 1.3) {
+                const guide = TROUBLESHOOTING_GUIDE.JETTING;
+                defects.push({
+                    type: guide.name,
+                    nameThai: guide.nameThai,
+                    severity: 'medium',
+                    icon: guide.icon,
+                    description: guide.description,
+                    detectedCauses: [`ความเร็วฉีดสูงมาก ${injectionSpeed} mm/s`],
+                    possibleCauses: guide.possibleCauses,
+                    solutions: guide.solutions,
+                    quickFix: guide.quickFix,
+                    preventiveMeasures: guide.preventiveMeasures
+                });
+            }
+            
+            // === 10. FLOW MARK Detection ===
+            if (nozzleTemp < recNozzleTempMin * 0.95 && moldTemp < recMoldTempMin * 0.9) {
+                const guide = TROUBLESHOOTING_GUIDE.FLOW_MARK;
+                defects.push({
+                    type: guide.name,
+                    nameThai: guide.nameThai,
+                    severity: 'low',
+                    icon: guide.icon,
+                    description: guide.description,
+                    detectedCauses: [`อุณหภูมิพลาสติกต่ำ ${nozzleTemp}°C`, `อุณหภูมิแม่พิมพ์ต่ำ ${moldTemp}°C`],
+                    possibleCauses: guide.possibleCauses,
+                    solutions: guide.solutions,
+                    quickFix: guide.quickFix,
+                    preventiveMeasures: guide.preventiveMeasures
                 });
             }
             
             // Update defect display
             updateDefectDisplay(defects);
+            
+            // Update defect risk indicator
+            updateDefectRiskLevel(defects);
+        }
+        
+        function updateDefectRiskLevel(defects) {
+            const riskElement = document.getElementById('defect-risk');
+            if (!riskElement) return;
+            
+            const highCount = defects.filter(d => d.severity === 'high').length;
+            const mediumCount = defects.filter(d => d.severity === 'medium').length;
+            
+            if (highCount > 0) {
+                riskElement.textContent = 'สูง ⚠️';
+                riskElement.className = 'font-semibold text-red-600';
+            } else if (mediumCount > 0) {
+                riskElement.textContent = 'ปานกลาง';
+                riskElement.className = 'font-semibold text-yellow-600';
+            } else if (defects.length > 0) {
+                riskElement.textContent = 'ต่ำ';
+                riskElement.className = 'font-semibold text-blue-600';
+            } else {
+                riskElement.textContent = 'ต่ำมาก ✓';
+                riskElement.className = 'font-semibold text-green-600';
+            }
         }
 
         function updateDefectDisplay(defects) {
@@ -1568,26 +2038,150 @@
             defectCards.innerHTML = '';
             
             if (defects.length === 0) {
-                defectCards.innerHTML = '<div class="bg-green-50 p-4 rounded-lg"><p class="text-green-700">✅ ไม่พบความเสี่ยงข้อบกพร่องที่สำคัญ</p></div>';
+                defectCards.innerHTML = `
+                    <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-2xl">✅</span>
+                            <span class="font-semibold text-green-700">ไม่พบความเสี่ยงข้อบกพร่องที่สำคัญ</span>
+                        </div>
+                        <p class="text-sm text-green-600">พารามิเตอร์อยู่ในช่วงที่แนะนำ</p>
+                    </div>`;
                 return;
             }
             
-            defects.forEach(defect => {
+            // Sort by severity
+            const severityOrder = { high: 0, medium: 1, low: 2 };
+            defects.sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity]);
+            
+            defects.forEach((defect, index) => {
                 const severityColors = {
-                    high: 'bg-red-50 border-red-200',
-                    medium: 'bg-yellow-50 border-yellow-200',
-                    low: 'bg-blue-50 border-blue-200'
+                    high: 'bg-red-50 border-red-300 hover:border-red-500',
+                    medium: 'bg-yellow-50 border-yellow-300 hover:border-yellow-500',
+                    low: 'bg-blue-50 border-blue-300 hover:border-blue-500'
+                };
+                
+                const severityLabels = {
+                    high: '<span class="px-2 py-0.5 bg-red-200 text-red-800 rounded text-xs font-bold">สูง</span>',
+                    medium: '<span class="px-2 py-0.5 bg-yellow-200 text-yellow-800 rounded text-xs font-bold">ปานกลาง</span>',
+                    low: '<span class="px-2 py-0.5 bg-blue-200 text-blue-800 rounded text-xs font-bold">ต่ำ</span>'
                 };
                 
                 const card = document.createElement('div');
-                card.className = `defect-card ${severityColors[defect.severity]} border p-4 rounded-lg`;
+                card.className = `defect-card ${severityColors[defect.severity]} border-2 p-4 rounded-xl transition-all cursor-pointer`;
+                card.onclick = () => showDefectDetail(defect);
+                
                 card.innerHTML = `
-                    <h4 class="font-semibold mb-2">${defect.type}</h4>
-                    <p class="text-sm text-gray-700 mb-2">${defect.description}</p>
-                    <p class="text-sm font-medium">แนะนำ: ${defect.solution}</p>
+                    <div class="flex items-start justify-between mb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">${defect.icon || '⚠️'}</span>
+                            <div>
+                                <h4 class="font-bold text-gray-800">${defect.nameThai}</h4>
+                                <p class="text-xs text-gray-500">${defect.type}</p>
+                            </div>
+                        </div>
+                        ${severityLabels[defect.severity]}
+                    </div>
+                    <p class="text-sm text-gray-700 mb-3">${defect.description}</p>
+                    
+                    ${defect.detectedCauses && defect.detectedCauses.length > 0 ? `
+                    <div class="mb-3 p-2 bg-white/60 rounded-lg">
+                        <p class="text-xs font-semibold text-gray-600 mb-1">🔍 สาเหตุที่ตรวจพบ:</p>
+                        <ul class="text-xs text-gray-700 space-y-1">
+                            ${defect.detectedCauses.map(c => `<li>• ${c}</li>`).join('')}
+                        </ul>
+                    </div>
+                    ` : ''}
+                    
+                    <div class="p-2 bg-green-100 rounded-lg">
+                        <p class="text-xs font-semibold text-green-800 mb-1">⚡ Quick Fix:</p>
+                        <p class="text-xs text-green-700">${defect.quickFix}</p>
+                    </div>
+                    
+                    <p class="text-xs text-gray-400 mt-2 text-right">คลิกเพื่อดูรายละเอียดเพิ่มเติม →</p>
                 `;
                 defectCards.appendChild(card);
             });
+        }
+        
+        // Show detailed defect information modal
+        function showDefectDetail(defect) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4';
+            modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+            
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+                    <div class="p-6 border-b sticky top-0 bg-white rounded-t-2xl">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <span class="text-4xl">${defect.icon || '⚠️'}</span>
+                                <div>
+                                    <h2 class="text-xl font-bold text-gray-800">${defect.nameThai}</h2>
+                                    <p class="text-sm text-gray-500">${defect.type}</p>
+                                </div>
+                            </div>
+                            <button onclick="this.closest('.fixed').remove()" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6 space-y-6">
+                        <div>
+                            <p class="text-gray-700">${defect.description}</p>
+                        </div>
+                        
+                        ${defect.detectedCauses && defect.detectedCauses.length > 0 ? `
+                        <div class="p-4 bg-red-50 rounded-xl border border-red-200">
+                            <h3 class="font-semibold text-red-800 mb-2">🔍 สาเหตุที่ตรวจพบจากการตั้งค่าปัจจุบัน</h3>
+                            <ul class="space-y-1">
+                                ${defect.detectedCauses.map(c => `<li class="text-red-700">• ${c}</li>`).join('')}
+                            </ul>
+                        </div>
+                        ` : ''}
+                        
+                        <div class="p-4 bg-gray-50 rounded-xl">
+                            <h3 class="font-semibold text-gray-800 mb-3">📋 สาเหตุที่เป็นไปได้ทั้งหมด</h3>
+                            <div class="space-y-2">
+                                ${defect.possibleCauses.map(c => `
+                                    <div class="flex items-center justify-between p-2 bg-white rounded-lg">
+                                        <span class="text-sm text-gray-700">• ${c.cause}</span>
+                                        <span class="text-xs px-2 py-1 rounded ${
+                                            c.probability === 'สูง' || c.probability === 'สูงมาก' ? 'bg-red-100 text-red-700' :
+                                            c.probability === 'ปานกลาง' ? 'bg-yellow-100 text-yellow-700' :
+                                            'bg-blue-100 text-blue-700'
+                                        }">${c.probability}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-green-50 rounded-xl border border-green-200">
+                            <h3 class="font-semibold text-green-800 mb-3">✅ วิธีแก้ไข</h3>
+                            <ul class="space-y-2">
+                                ${defect.solutions.map(s => `<li class="text-green-700">${s}</li>`).join('')}
+                            </ul>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="p-4 bg-blue-50 rounded-xl">
+                                <h3 class="font-semibold text-blue-800 mb-2">⚡ Quick Fix</h3>
+                                <p class="text-blue-700 text-sm">${defect.quickFix}</p>
+                            </div>
+                            <div class="p-4 bg-purple-50 rounded-xl">
+                                <h3 class="font-semibold text-purple-800 mb-2">🛡️ การป้องกัน</h3>
+                                <ul class="text-purple-700 text-sm space-y-1">
+                                    ${defect.preventiveMeasures.map(m => `<li>• ${m}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
         }
 
         // ========== Analysis Functions ==========
@@ -2041,7 +2635,7 @@
             if (confirm('เริ่มการจำลองแบบสมบูรณ์?')) {
                 // Reset simulation
                 simulationProgress = 0;
-                simulationData = { pressure: [], temperature: [], flowRate: [], time: [] };
+                simulationData = { pressure: [], temperature: [], flowRate: [], time: [], viscosity: [], shearRate: [], fillPercentage: [] };
                 
                 // Show simulation section
                 showSection('simulation');
@@ -2109,12 +2703,377 @@
             updateRecommendedValues();
         });
 
+        // ========== 3D Flow Animation System (Three.js) ==========
+        let scene3D, camera3D, renderer3D, controls3D;
+        let moldMesh, plasticFlow, flowParticles = [];
+        let flowLines = [];
+        let is3DInitialized = false;
+        let animationFrame3D;
+        
+        function init3DFlowVisualization() {
+            const container = document.getElementById('flow-3d-container');
+            if (!container || is3DInitialized) return;
+            
+            // Scene setup
+            scene3D = new THREE.Scene();
+            scene3D.background = new THREE.Color(0x1a1a2e);
+            
+            // Camera setup
+            camera3D = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera3D.position.set(150, 100, 150);
+            camera3D.lookAt(0, 0, 0);
+            
+            // Renderer setup
+            renderer3D = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer3D.setSize(container.clientWidth, container.clientHeight);
+            renderer3D.setPixelRatio(window.devicePixelRatio);
+            renderer3D.shadowMap.enabled = true;
+            container.appendChild(renderer3D.domElement);
+            
+            // Lights
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+            scene3D.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(100, 100, 100);
+            directionalLight.castShadow = true;
+            scene3D.add(directionalLight);
+            
+            const pointLight = new THREE.PointLight(0x4fc3f7, 0.5, 200);
+            pointLight.position.set(0, 50, 0);
+            scene3D.add(pointLight);
+            
+            // Grid helper
+            const gridHelper = new THREE.GridHelper(200, 20, 0x444444, 0x333333);
+            scene3D.add(gridHelper);
+            
+            // Axes helper
+            const axesHelper = new THREE.AxesHelper(30);
+            scene3D.add(axesHelper);
+            
+            // Create mold cavity (transparent box)
+            createMoldCavity();
+            
+            // Create flow visualization
+            createFlowVisualization();
+            
+            // Create particles
+            createFlowParticles();
+            
+            // Create flow lines
+            createFlowLines();
+            
+            // Mouse controls for rotation
+            setupMouseControls(container);
+            
+            is3DInitialized = true;
+            animate3D();
+            
+            // Handle resize
+            window.addEventListener('resize', () => {
+                if (container && renderer3D) {
+                    camera3D.aspect = container.clientWidth / container.clientHeight;
+                    camera3D.updateProjectionMatrix();
+                    renderer3D.setSize(container.clientWidth, container.clientHeight);
+                }
+            });
+        }
+        
+        function createMoldCavity() {
+            // Main mold cavity (transparent)
+            const cavityGeometry = new THREE.BoxGeometry(120, 30, 80);
+            const cavityMaterial = new THREE.MeshPhongMaterial({
+                color: 0x4a90d9,
+                transparent: true,
+                opacity: 0.15,
+                side: THREE.DoubleSide
+            });
+            moldMesh = new THREE.Mesh(cavityGeometry, cavityMaterial);
+            moldMesh.position.set(0, 15, 0);
+            scene3D.add(moldMesh);
+            
+            // Wireframe outline
+            const wireframeGeometry = new THREE.EdgesGeometry(cavityGeometry);
+            const wireframeMaterial = new THREE.LineBasicMaterial({ color: 0x64b5f6, linewidth: 2 });
+            const wireframe = new THREE.LineSegments(wireframeGeometry, wireframeMaterial);
+            wireframe.position.copy(moldMesh.position);
+            scene3D.add(wireframe);
+            
+            // Gate (nozzle entry point)
+            const gateGeometry = new THREE.CylinderGeometry(5, 8, 20, 16);
+            const gateMaterial = new THREE.MeshPhongMaterial({ color: 0xff5722, metalness: 0.3 });
+            const gate = new THREE.Mesh(gateGeometry, gateMaterial);
+            gate.position.set(-65, 20, 0);
+            gate.rotation.z = Math.PI / 2;
+            scene3D.add(gate);
+            
+            // Runner system
+            const runnerGeometry = new THREE.CylinderGeometry(3, 3, 30, 8);
+            const runnerMaterial = new THREE.MeshPhongMaterial({ color: 0xffc107 });
+            const runner = new THREE.Mesh(runnerGeometry, runnerMaterial);
+            runner.position.set(-50, 15, 0);
+            runner.rotation.z = Math.PI / 2;
+            scene3D.add(runner);
+        }
+        
+        function createFlowVisualization() {
+            // Plastic flow mesh (will animate during simulation)
+            const flowGeometry = new THREE.BoxGeometry(1, 28, 78);
+            const flowMaterial = new THREE.MeshPhongMaterial({
+                color: 0xff7043,
+                transparent: true,
+                opacity: 0.85,
+                emissive: 0xff5722,
+                emissiveIntensity: 0.2
+            });
+            plasticFlow = new THREE.Mesh(flowGeometry, flowMaterial);
+            plasticFlow.position.set(-59, 15, 0);
+            scene3D.add(plasticFlow);
+            
+            // Temperature gradient texture simulation
+            updateFlowTemperatureGradient(240); // Initial temp
+        }
+        
+        function updateFlowTemperatureGradient(temperature) {
+            if (!plasticFlow) return;
+            
+            // Color based on temperature (cooler = blue, hotter = red/orange)
+            const normalizedTemp = (temperature - 150) / (300 - 150); // Normalize 150-300°C
+            const hue = (1 - normalizedTemp) * 0.6; // Red (0) to Blue (0.6)
+            plasticFlow.material.color.setHSL(hue, 0.8, 0.5);
+            plasticFlow.material.emissive.setHSL(hue, 0.5, 0.3);
+        }
+        
+        function createFlowParticles() {
+            const particleCount = 200;
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+            const sizes = new Float32Array(particleCount);
+            
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] = -60 + Math.random() * 5;
+                positions[i * 3 + 1] = 5 + Math.random() * 20;
+                positions[i * 3 + 2] = -35 + Math.random() * 70;
+                
+                colors[i * 3] = 1.0;     // R
+                colors[i * 3 + 1] = 0.5; // G
+                colors[i * 3 + 2] = 0.2; // B
+                
+                sizes[i] = 1 + Math.random() * 2;
+                
+                flowParticles.push({
+                    index: i,
+                    velocity: 0.5 + Math.random() * 1.5,
+                    originalX: positions[i * 3]
+                });
+            }
+            
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+            
+            const material = new THREE.PointsMaterial({
+                size: 2,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8,
+                sizeAttenuation: true
+            });
+            
+            const particleSystem = new THREE.Points(geometry, material);
+            particleSystem.name = 'flowParticles';
+            scene3D.add(particleSystem);
+        }
+        
+        function createFlowLines() {
+            const lineCount = 15;
+            const lineMaterial = new THREE.LineBasicMaterial({ 
+                color: 0xffeb3b,
+                transparent: true,
+                opacity: 0.6
+            });
+            
+            for (let i = 0; i < lineCount; i++) {
+                const points = [];
+                const startZ = -35 + (70 / lineCount) * i;
+                const startY = 8 + Math.random() * 14;
+                
+                // Create curved flow path using Bezier
+                for (let t = 0; t <= 1; t += 0.05) {
+                    const x = -60 + t * 118;
+                    const y = startY + Math.sin(t * Math.PI) * 3 * (1 - t);
+                    const z = startZ + Math.sin(t * Math.PI * 2) * 2;
+                    points.push(new THREE.Vector3(x, y, z));
+                }
+                
+                const geometry = new THREE.BufferGeometry().setFromPoints(points);
+                const line = new THREE.Line(geometry, lineMaterial);
+                line.name = 'flowLine';
+                flowLines.push(line);
+                scene3D.add(line);
+            }
+        }
+        
+        function setupMouseControls(container) {
+            let isDragging = false;
+            let previousMousePosition = { x: 0, y: 0 };
+            let rotationSpeed = 0.005;
+            let cameraDistance = 200;
+            let cameraTheta = Math.PI / 4;
+            let cameraPhi = Math.PI / 4;
+            
+            container.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+            });
+            
+            container.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                
+                const deltaX = e.clientX - previousMousePosition.x;
+                const deltaY = e.clientY - previousMousePosition.y;
+                
+                cameraTheta -= deltaX * rotationSpeed;
+                cameraPhi = Math.max(0.1, Math.min(Math.PI - 0.1, cameraPhi + deltaY * rotationSpeed));
+                
+                updateCameraPosition();
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+            });
+            
+            container.addEventListener('mouseup', () => isDragging = false);
+            container.addEventListener('mouseleave', () => isDragging = false);
+            
+            container.addEventListener('wheel', (e) => {
+                cameraDistance += e.deltaY * 0.5;
+                cameraDistance = Math.max(100, Math.min(400, cameraDistance));
+                updateCameraPosition();
+                e.preventDefault();
+            });
+            
+            function updateCameraPosition() {
+                camera3D.position.x = cameraDistance * Math.sin(cameraPhi) * Math.cos(cameraTheta);
+                camera3D.position.y = cameraDistance * Math.cos(cameraPhi);
+                camera3D.position.z = cameraDistance * Math.sin(cameraPhi) * Math.sin(cameraTheta);
+                camera3D.lookAt(0, 15, 0);
+            }
+            
+            // View buttons
+            document.getElementById('view-top')?.addEventListener('click', () => {
+                cameraPhi = 0.1;
+                cameraTheta = 0;
+                updateCameraPosition();
+            });
+            
+            document.getElementById('view-side')?.addEventListener('click', () => {
+                cameraPhi = Math.PI / 2;
+                cameraTheta = 0;
+                updateCameraPosition();
+            });
+            
+            document.getElementById('view-front')?.addEventListener('click', () => {
+                cameraPhi = Math.PI / 2;
+                cameraTheta = Math.PI / 2;
+                updateCameraPosition();
+            });
+            
+            document.getElementById('view-iso')?.addEventListener('click', () => {
+                cameraPhi = Math.PI / 4;
+                cameraTheta = Math.PI / 4;
+                updateCameraPosition();
+            });
+        }
+        
+        function update3DFlow(progress) {
+            if (!is3DInitialized || !plasticFlow) return;
+            
+            // Update flow volume based on progress
+            const flowWidth = (progress / 100) * 118;
+            plasticFlow.scale.x = Math.max(0.01, flowWidth);
+            plasticFlow.position.x = -59 + (flowWidth / 2);
+            
+            // Update temperature based on phase
+            let temp;
+            if (progress < 20) {
+                temp = 240 + (progress / 20) * 20; // Heating up
+            } else if (progress < 60) {
+                temp = 260 - ((progress - 20) / 40) * 40; // Cooling during fill
+            } else if (progress < 80) {
+                temp = 220 - ((progress - 60) / 20) * 50; // Holding phase cooling
+            } else {
+                temp = 170 - ((progress - 80) / 20) * 80; // Cooling phase
+            }
+            updateFlowTemperatureGradient(temp);
+            
+            // Update particles
+            const particleSystem = scene3D.getObjectByName('flowParticles');
+            if (particleSystem) {
+                const showParticles = document.getElementById('show-particles')?.checked ?? true;
+                particleSystem.visible = showParticles;
+                
+                if (showParticles) {
+                    const positions = particleSystem.geometry.attributes.position.array;
+                    const colors = particleSystem.geometry.attributes.color.array;
+                    const maxX = -60 + flowWidth;
+                    
+                    flowParticles.forEach((p, i) => {
+                        // Move particles forward
+                        positions[i * 3] += p.velocity * (progress < 80 ? 1 : 0.1);
+                        
+                        // Reset if beyond flow front
+                        if (positions[i * 3] > maxX) {
+                            positions[i * 3] = -60;
+                        }
+                        
+                        // Color based on position (temperature gradient)
+                        const normalizedPos = (positions[i * 3] + 60) / 118;
+                        colors[i * 3] = 1.0 - normalizedPos * 0.5;     // R decreases
+                        colors[i * 3 + 1] = 0.3 + normalizedPos * 0.3; // G increases
+                        colors[i * 3 + 2] = normalizedPos * 0.8;       // B increases
+                    });
+                    
+                    particleSystem.geometry.attributes.position.needsUpdate = true;
+                    particleSystem.geometry.attributes.color.needsUpdate = true;
+                }
+            }
+            
+            // Update flow lines visibility
+            const showFlowLines = document.getElementById('show-flow-lines')?.checked ?? true;
+            flowLines.forEach(line => {
+                line.visible = showFlowLines;
+                if (showFlowLines) {
+                    // Animate flow line opacity based on progress
+                    line.material.opacity = 0.3 + Math.sin(Date.now() * 0.002) * 0.2;
+                }
+            });
+        }
+        
+        function animate3D() {
+            animationFrame3D = requestAnimationFrame(animate3D);
+            
+            // Subtle mold rotation
+            if (moldMesh) {
+                moldMesh.rotation.y += 0.001;
+            }
+            
+            // Update flow based on current simulation progress
+            update3DFlow(simulationProgress);
+            
+            renderer3D.render(scene3D, camera3D);
+        }
+
         // ========== Initialize on Load ==========
         window.addEventListener('load', () => {
             updateRecommendedValues();
             updateCavityInfo();
             updateProfileList();
             drawSimulation();
+            
+            // Initialize 3D Flow Visualization
+            setTimeout(() => {
+                init3DFlowVisualization();
+                console.log('3D Flow Visualization initialized');
+            }, 500);
             
             // Set initial active nav
             document.querySelector('.nav-tab').classList.add('active');
@@ -2130,7 +3089,11 @@
                 });
             });
             
-            console.log('Injection Molding Simulation Pro v2.0 - Ready');
+            // Initial defect check
+            checkDefects();
+            
+            console.log('Injection Molding Simulation Pro v3.0 - Ready');
+            console.log('Features: Enhanced Defect Prediction (TROUBLESHOOTING_GUIDE), 3D Flow Animation');
         });
     </script>
 </body>

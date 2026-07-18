@@ -1,0 +1,384 @@
+/*
+    TukTuk Persistent UI — v2
+    Matches Flutter TukTukFeedScreen bottom nav structure & visual design.
+*/
+
+:root {
+    --tuktuk-red:    #FF0050;
+    --tuktuk-cyan:   #00F2EA;
+    --nav-bg:        rgba(0, 0, 0, 0.3);
+    --nav-border:    rgba(255, 255, 255, 0.10);
+    --nav-inactive:  rgba(255, 255, 255, 0.54);
+    --nav-active:    #ffffff;
+    --nav-height:    70px;
+}
+
+/* ── Root container — never hidden by external rules ────────────────────── */
+#persistent-ui-root {
+    /* Pointer-events managed per child; root must not block touches */
+    pointer-events: none;
+}
+/* Only interactive children get pointer-events — NOT .creation-hub (it manages its own) */
+#persistent-ui-root > *:not(.creation-hub) {
+    pointer-events: auto;
+}
+
+/* ── Hide on PC ── */
+@media (min-width: 992px) {
+    #persistent-ui-root {
+        display: none !important;
+    }
+    body:not(.is-embedded) {
+        padding-bottom: 0 !important;
+    }
+}
+
+/* ── Full-width glassmorphism bar ────────────────────────────────────────── */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: calc(var(--nav-height) + env(safe-area-inset-bottom, 0px));
+    background: var(--nav-bg);
+    backdrop-filter: blur(15px) saturate(200%);
+    -webkit-backdrop-filter: blur(15px) saturate(200%);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-around;
+    padding: 5px 10px env(safe-area-inset-bottom, 10px);
+    z-index: 2147483647 !important; /* MAXIMUM SAFE Z-INDEX FOR WEB */
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.5);
+    /* Force own GPU compositing layer — prevents iOS Safari from dropping
+       the nav during momentum scroll of the feed container */
+    will-change: transform;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+}
+
+.bottom-nav > * {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+
+/* ── Regular nav items ───────────────────────────────────────────────────── */
+.bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    color: var(--nav-inactive);
+    text-decoration: none !important;
+    padding: 8px 12px 0;
+    gap: 4px;
+    flex: 1;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.2s ease;
+}
+
+.bottom-nav-item i {
+    font-size: 1.45rem;
+    transition: font-size 0.2s ease, color 0.2s ease;
+}
+
+.bottom-nav-item span {
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1;
+}
+
+.bottom-nav-item.active {
+    color: var(--nav-active);
+}
+
+.bottom-nav-item.active i {
+    font-size: 1.55rem;
+    color: var(--nav-active);
+}
+
+/* No dot indicator */
+.bottom-nav-item::after { display: none !important; }
+
+/* ── Profile avatar ring ─────────────────────────────────────────────────── */
+.nav-profile-wrapper {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    padding: 1.5px;
+    background: linear-gradient(135deg, var(--tuktuk-red), var(--tuktuk-cyan));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: box-shadow 0.2s ease;
+}
+
+.bottom-nav-item.active .nav-profile-wrapper {
+    box-shadow: 0 0 10px rgba(255, 0, 80, 0.45), 0 0 10px rgba(0, 242, 234, 0.45);
+}
+
+.nav-profile-wrapper img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #000;
+}
+
+/* ── Center Button — TikTok gradient circle (matches Flutter _buildCenterNavItem) */
+.center-btn {
+    position: relative;
+    z-index: 10000013 !important; /* Higher than nav (10000011) */
+    flex: 1 !important;
+    height: 100% !important;
+    background: transparent !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    padding: 5px 0 0 !important;
+    text-decoration: none !important;
+    gap: 0 !important;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Outer gradient ring: #FF0050 → #00F2EA */
+.center-btn-outer {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--tuktuk-red) 0%, var(--tuktuk-cyan) 100%);
+    padding: 2.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+        -4px 0 16px rgba(255,   0,  80, 0.45),
+         4px 0 16px rgba(  0, 242, 234, 0.45);
+    transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+    position: relative;
+}
+
+/* White inner circle */
+.center-btn-white {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    transition: background 0.25s ease;
+}
+
+/* Logo */
+.center-btn .tuktuk-brand-icon {
+    width: 40px !important;
+    height: 40px !important;
+    object-fit: cover;
+    border-radius: 50%;
+    transition: opacity 0.2s ease;
+}
+
+/* ── Active: rotate 45° + red bg + X ────────────────────────────────────── */
+.center-btn.active .center-btn-outer {
+    background: #f43f5e;
+    box-shadow: 0 0 20px rgba(244, 63, 94, 0.6);
+    transform: rotate(45deg);
+}
+
+.center-btn.active .center-btn-white {
+    background: #f43f5e;
+}
+
+.center-btn.active .tuktuk-brand-icon {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.center-btn.active .center-btn-white::before,
+.center-btn.active .center-btn-white::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 2.5px;
+    background: #fff;
+    border-radius: 2px;
+    top: 50%;
+    left: 50%;
+}
+.center-btn.active .center-btn-white::before {
+    transform: translate(-50%, -50%) rotate(0deg);
+}
+.center-btn.active .center-btn-white::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+}
+
+/* ── Overlay-active: dim siblings, raise nav ─────────────────────────────── */
+.bottom-nav.overlay-active .bottom-nav-item:not(.center-btn) {
+    pointer-events: none !important;
+    opacity: 0.15 !important;
+    filter: blur(2px) !important;
+}
+
+.bottom-nav.overlay-active {
+    z-index: 10000003 !important;
+}
+
+/* ── Hub close button ────────────────────────────────────────────────────── */
+.hub-close-btn {
+    position: absolute;
+    top: calc(env(safe-area-inset-top, 0px) + 16px);
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #fff;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10000004;
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    transition: background 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.hub-close-btn:active {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+/* ── Creation overlay ───────────────────────────────────────────────────── */
+.creation-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.55);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    z-index: 10000000;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.creation-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+/* ── Creation hub radial menu ───────────────────────────────────────────── */
+.creation-hub {
+    position: fixed;
+    bottom: calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + 20px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000001;
+    width: 300px;
+    height: 260px;
+    pointer-events: none; /* managed by JS in _openHub/_closeHub */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.creation-item {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none; /* off by default — items are invisible when hub is closed */
+    transform: translate(0, 0) scale(0);
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    text-decoration: none !important;
+    cursor: pointer;
+}
+
+/* Enable item touches only when hub is open */
+.active-overlay ~ .creation-hub .creation-item {
+    pointer-events: auto;
+}
+
+.active-overlay ~ .creation-hub .creation-item:nth-child(1) { transform: translate(-80px,  -90px) scale(0.95); opacity: 1; }
+.active-overlay ~ .creation-hub .creation-item:nth-child(2) { transform: translate(  0px, -130px) scale(1.05); opacity: 1; }
+.active-overlay ~ .creation-hub .creation-item:nth-child(3) { transform: translate( 80px,  -90px) scale(0.95); opacity: 1; }
+.active-overlay ~ .creation-hub .creation-item:nth-child(4) { transform: translate(115px,  -30px) scale(0.85); opacity: 1; }
+.active-overlay ~ .creation-hub .creation-item:nth-child(5) { transform: translate(-115px, -30px) scale(0.85); opacity: 1; }
+
+.creation-circle {
+    width: 60px;
+    height: 60px;
+    background: white;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.creation-item:hover .creation-circle,
+.creation-item:active .creation-circle {
+    transform: translateY(-6px) scale(1.05);
+}
+
+.creation-label {
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+    white-space: nowrap;
+}
+
+.center-hub-title {
+    position: fixed;
+    bottom: calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + 240px);
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    z-index: 10000002;
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    pointer-events: none;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+}
+
+.active-overlay ~ .center-hub-title {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Item colours */
+.item-post      .creation-circle { background: linear-gradient(135deg, #6366f1, #818cf8); color: #fff; }
+.item-video     .creation-circle { background: linear-gradient(135deg, #f43f5e, #fb7185); color: #fff; }
+.item-camera    .creation-circle { background: linear-gradient(135deg, var(--tuktuk-red), var(--tuktuk-cyan)); color: #fff; }
+.item-analytics .creation-circle { background: linear-gradient(135deg, #6366f1, #06b6d4); color: #fff; }
+.item-shop      .creation-circle { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; }
+
+/* ── Body padding — content never hides under nav ───────────────────────── */
+body:not(.is-embedded) {
+    padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+/* ── Embedded / iframe mode ─────────────────────────────────────────────── */
+.is-embedded #persistent-ui-root { display: none !important; }

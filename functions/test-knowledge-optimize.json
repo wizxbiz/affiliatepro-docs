@@ -1,0 +1,382 @@
+{
+  "type": "flex",
+  "altText": "🔧 ปรับปรุงคลังความรู้สำเร็จ",
+  "contents": {
+    "type": "bubble",
+    "size": "mega",
+    "header": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "🔧",
+              "size": "3xl",
+              "flex": 0
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "Knowledge Optimization",
+                  "weight": "bold",
+                  "size": "lg",
+                  "color": "#ffffff"
+                },
+                {
+                  "type": "text",
+                  "text": "✅ เสร็จสมบูรณ์",
+                  "size": "sm",
+                  "color": "#ffffffcc",
+                  "margin": "xs"
+                }
+              ],
+              "margin": "lg"
+            }
+          ]
+        }
+      ],
+      "paddingAll": "20px",
+      "backgroundColor": "#0ea5e9"
+    },
+    "body": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "ก่อนปรับปรุง",
+                  "size": "xs",
+                  "color": "#6b7280",
+                  "align": "center"
+                },
+                {
+                  "type": "text",
+                  "text": "150",
+                  "size": "xl",
+                  "weight": "bold",
+                  "color": "#ef4444",
+                  "align": "center",
+                  "margin": "sm"
+                },
+                {
+                  "type": "text",
+                  "text": "รายการ",
+                  "size": "xs",
+                  "color": "#6b7280",
+                  "align": "center"
+                }
+              ],
+              "flex": 1,
+              "paddingAll": "12px"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "→",
+                  "size": "xxl",
+                  "color": "#0ea5e9",
+                  "align": "center"
+                }
+              ],
+              "flex": 0,
+              "paddingAll": "12px"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "หลังปรับปรุง",
+                  "size": "xs",
+                  "color": "#6b7280",
+                  "align": "center"
+                },
+                {
+                  "type": "text",
+                  "text": "145",
+                  "size": "xl",
+                  "weight": "bold",
+                  "color": "#10b981",
+                  "align": "center",
+                  "margin": "sm"
+                },
+                {
+                  "type": "text",
+                  "text": "รายการ",
+                  "size": "xs",
+                  "color": "#6b7280",
+                  "align": "center"
+                }
+              ],
+              "flex": 1,
+              "paddingAll": "12px"
+            }
+          ],
+          "backgroundColor": "#f9fafb",
+          "cornerRadius": "8px"
+        },
+        {
+          "type": "text",
+          "text": "✨ การปรับปรุง",
+          "weight": "bold",
+          "size": "sm",
+          "color": "#374151",
+          "margin": "lg"
+        },
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "🗑️",
+              "size": "lg",
+              "flex": 0
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "ลบข้อมูลซ้ำ",
+                  "weight": "bold",
+                  "size": "sm",
+                  "color": "#1f2937"
+                },
+                {
+                  "type": "text",
+                  "text": "ตรวจพบและลบความรู้ที่ซ้ำกัน",
+                  "size": "xs",
+                  "color": "#6b7280",
+                  "wrap": true,
+                  "margin": "xs"
+                },
+                {
+                  "type": "text",
+                  "text": "→ ลบ 5 รายการ",
+                  "size": "xs",
+                  "color": "#10b981",
+                  "weight": "bold",
+                  "margin": "xs"
+                }
+              ],
+              "margin": "md"
+            }
+          ],
+          "backgroundColor": "#f0fdf4",
+          "paddingAll": "10px",
+          "cornerRadius": "8px",
+          "margin": "none"
+        },
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "🔄",
+              "size": "lg",
+              "flex": 0
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "อัปเดตดัชนี",
+                  "weight": "bold",
+                  "size": "sm",
+                  "color": "#1f2937"
+                },
+                {
+                  "type": "text",
+                  "text": "สร้างดัชนีใหม่สำหรับการค้นหา",
+                  "size": "xs",
+                  "color": "#6b7280",
+                  "wrap": true,
+                  "margin": "xs"
+                },
+                {
+                  "type": "text",
+                  "text": "→ อัปเดต 145 รายการ",
+                  "size": "xs",
+                  "color": "#10b981",
+                  "weight": "bold",
+                  "margin": "xs"
+                }
+              ],
+              "margin": "md"
+            }
+          ],
+          "backgroundColor": "#ffffff",
+          "paddingAll": "10px",
+          "cornerRadius": "8px",
+          "margin": "sm"
+        },
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "🎯",
+              "size": "lg",
+              "flex": 0
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "ปรับปรุง Embeddings",
+                  "weight": "bold",
+                  "size": "sm",
+                  "color": "#1f2937"
+                },
+                {
+                  "type": "text",
+                  "text": "คำนวณ Semantic Embeddings ใหม่",
+                  "size": "xs",
+                  "color": "#6b7280",
+                  "wrap": true,
+                  "margin": "xs"
+                },
+                {
+                  "type": "text",
+                  "text": "→ 100% เสร็จสมบูรณ์",
+                  "size": "xs",
+                  "color": "#10b981",
+                  "weight": "bold",
+                  "margin": "xs"
+                }
+              ],
+              "margin": "md"
+            }
+          ],
+          "backgroundColor": "#f0fdf4",
+          "paddingAll": "10px",
+          "cornerRadius": "8px",
+          "margin": "sm"
+        },
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "✨",
+              "size": "lg",
+              "flex": 0
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "จัดระเบียบหมวดหมู่",
+                  "weight": "bold",
+                  "size": "sm",
+                  "color": "#1f2937"
+                },
+                {
+                  "type": "text",
+                  "text": "จัดกลุ่มความรู้ตามหมวดหมู่",
+                  "size": "xs",
+                  "color": "#6b7280",
+                  "wrap": true,
+                  "margin": "xs"
+                },
+                {
+                  "type": "text",
+                  "text": "→ 6 หมวดหมู่",
+                  "size": "xs",
+                  "color": "#10b981",
+                  "weight": "bold",
+                  "margin": "xs"
+                }
+              ],
+              "margin": "md"
+            }
+          ],
+          "backgroundColor": "#ffffff",
+          "paddingAll": "10px",
+          "cornerRadius": "8px",
+          "margin": "sm"
+        },
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "⏱️",
+              "size": "sm",
+              "flex": 0
+            },
+            {
+              "type": "text",
+              "text": "ใช้เวลา 3.5 วินาที",
+              "size": "xs",
+              "color": "#6b7280",
+              "margin": "sm"
+            }
+          ],
+          "margin": "md"
+        }
+      ],
+      "paddingAll": "20px"
+    },
+    "footer": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "button",
+          "action": {
+            "type": "message",
+            "label": "🔄 ปรับปรุงอีกครั้ง",
+            "text": "ปรับปรุงคลัง"
+          },
+          "style": "primary",
+          "color": "#0ea5e9",
+          "height": "sm"
+        },
+        {
+          "type": "button",
+          "action": {
+            "type": "message",
+            "label": "📊 ตรวจสอบผล",
+            "text": "verify ความรู้"
+          },
+          "style": "secondary",
+          "height": "sm",
+          "margin": "sm"
+        }
+      ],
+      "paddingAll": "12px"
+    }
+  }
+}

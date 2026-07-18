@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TukTuk Broadcaster Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;800&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --dark: #030712;
+            --glass: rgba(17, 24, 39, 0.7);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background: radial-gradient(circle at top right, #1e1b4b, #030712);
+            color: #f3f4f6;
+            font-family: 'Kanit', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Loading Overlay ─────────────────────────────── */
+        #loadingOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(3, 7, 18, 0.92);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        #loadingOverlay .spinner-border { width: 3rem; height: 3rem; }
+
+        /* ── Toast Container ─────────────────────────────── */
+        #toastContainer {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 9000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-width: 360px;
+        }
+
+        .toast-msg {
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #fff;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        .toast-success { background: rgba(34,197,94,0.85); border: 1px solid #22c55e; }
+        .toast-error   { background: rgba(239,68,68,0.85); border: 1px solid #ef4444; }
+        .toast-info    { background: rgba(99,102,241,0.85); border: 1px solid #6366f1; }
+        .toast-warn    { background: rgba(234,179,8,0.85); border: 1px solid #eab308; color: #111; }
+
+        @keyframes slideIn { from { opacity:0; transform: translateX(30px); } to { opacity:1; transform: translateX(0); } }
+
+        /* ── Glass Card ──────────────────────────────────── */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 1.5rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            margin-bottom: 1.5rem;
+        }
+
+        .nav-brand {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.5rem;
+        }
+
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .status-offline { background: rgba(239,68,68,0.2); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+        .status-online  { background: rgba(34,197,94,0.2); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); box-shadow: 0 0 15px rgba(34,197,94,0.3); animation: glowPulse 2s infinite; }
+
+        @keyframes glowPulse {
+            0%,100% { box-shadow: 0 0 10px rgba(34,197,94,0.3); }
+            50% { box-shadow: 0 0 20px rgba(34,197,94,0.6); }
+        }
+
+        .form-control, .form-select {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            color: #fff;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+        }
+
+        .form-control:focus {
+            background: rgba(255,255,255,0.08);
+            border-color: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 0 4px rgba(99,102,241,0.2);
+        }
+
+        .form-control::placeholder { color: rgba(255,255,255,0.3); }
+
+        .btn-premium {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            color: white;
+            font-weight: 700;
+            border-radius: 12px;
+            padding: 0.8rem 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-premium:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99,102,241,0.4);
+            color: white;
+        }
+
+        .btn-premium:disabled { opacity: 0.45; cursor: not-allowed; }
+
+        .btn-danger-glow {
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            border: none;
+            color: white;
+            font-weight: 700;
+            border-radius: 12px;
+            padding: 0.6rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger-glow:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(239,68,68,0.4);
+            color: white;
+        }
+
+        .headline-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .remove-headline {
+            background: none;
+            border: none;
+            color: #ef4444;
+            font-size: 1.1rem;
+            padding: 0.3rem 0.5rem;
+            border-radius: 8px;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .remove-headline:hover { background: rgba(239,68,68,0.1); }
+
+        /* ── Live Preview ────────────────────────────────── */
+        .live-preview {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid var(--border);
+        }
+
+        .preview-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.4);
+            color: #fff;
+            font-weight: 700;
+            flex-direction: column;
+        }
+
+        .pulsing-dot {
+            width: 14px;
+            height: 14px;
+            background: #ef4444;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.7; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.7; }
+        }
+
+        .sidebar-title {
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: #64748b;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        /* ── Server status pill ──────────────────────────── */
+        .server-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .server-ok   { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
+        .server-down { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+        .server-wait { background: rgba(234,179,8,0.15); color: #eab308; border: 1px solid rgba(234,179,8,0.3); }
+
+        .dot-live { width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: pulse 1.5s infinite; }
+    </style>
+</head>
+
+<body>
+
+<!-- ── Loading Overlay ───────────────────────────────────── -->
+<div id="loadingOverlay">
+    <div class="spinner-border text-primary mb-3" role="status"></div>
+    <p class="text-muted" id="loadingMsg">Connecting to backend...</p>
+</div>
+
+<!-- ── Toast Container ──────────────────────────────────── -->
+<div id="toastContainer"></div>
+
+<!-- ── Navbar ───────────────────────────────────────────── -->
+<nav class="navbar navbar-expand-lg border-bottom border-secondary border-opacity-25 py-3">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand nav-brand" href="#">TUKTUK BROADCASTER</a>
+        <div class="ms-auto d-flex align-items-center gap-3">
+            <span id="serverPill" class="server-pill server-wait">
+                <span class="dot-live"></span> Checking...
+            </span>
+            <div id="liveStatus" class="status-badge status-offline">Offline</div>
+        </div>
+    </div>
+</nav>
+
+<!-- ── Main ─────────────────────────────────────────────── -->
+<div class="container-fluid p-4">
+    <div class="row">
+
+        <!-- Left: Studio Controls -->
+        <div class="col-lg-8">
+            <div class="glass-card">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0"><i class="fas fa-video me-2 text-primary"></i> Broadcast Studio</h4>
+                    <!-- End Session button — shown only when live -->
+                    <div id="sessionActions" style="display:none;">
+                        <button class="btn btn-danger-glow" onclick="endLive()">
+                            <i class="fas fa-stop-circle me-2"></i> End Session
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Setup Form — shown when NOT live -->
+                <div id="setupForm">
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label class="form-label">Stream Title <span class="text-danger">*</span></label>
+                            <input type="text" id="streamTitle" class="form-control"
+                                placeholder="e.g. ข่าวค่ำประจำวันที่ 2 มีนาคม 2569">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Description / Tags</label>
+                            <textarea id="streamDesc" class="form-control" rows="2"
+                                placeholder="Brief info about the stream..."></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Playback URL (HLS)</label>
+                            <input type="url" id="playbackUrl" class="form-control"
+                                value="https://d2q799pvhc99as.cloudfront.net/out/v1/d6871034c449419b88950d885a0344d2/index.m3u8">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">API Key <span class="text-danger">*</span></label>
+                            <input type="password" id="apiKey" class="form-control"
+                                placeholder="Enter broadcaster API key">
+                        </div>
+                        <div class="col-12 mt-2">
+                            <button class="btn btn-premium w-100" id="startBtn" onclick="startLive()">
+                                <i class="fas fa-play-circle me-2"></i> START BROADCASTING
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Stats Row — shown only when live -->
+                <div id="liveStatsRow" class="row mt-4 d-none">
+                    <div class="col-md-4">
+                        <div class="p-3 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-10 text-center">
+                            <div class="sidebar-title m-0">Viewers</div>
+                            <h2 class="mb-0" id="viewerCount">—</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-10 text-center">
+                            <div class="sidebar-title m-0">Duration</div>
+                            <h2 class="mb-0" id="duration">00:00:00</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 rounded-4 bg-white bg-opacity-5 border border-white border-opacity-10 text-center">
+                            <div class="sidebar-title m-0">Session ID</div>
+                            <div class="mb-0 small text-muted" id="sessionIdDisplay" style="word-break:break-all;font-size:0.7rem;">—</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Headline Manager -->
+            <div class="glass-card">
+                <h5 class="mb-2"><i class="fas fa-newspaper me-2 text-primary"></i> Real-time Headline Ticker</h5>
+                <p class="text-muted small mb-3">Headlines sent here appear immediately in the mobile app feed.</p>
+
+                <div id="headlinesList">
+                    <div class="headline-item">
+                        <input type="text" class="form-control headline-input"
+                            aria-label="Headline text"
+                            placeholder="Enter headline text..."
+                            value="ข่าวด่วน: TukTuk Thailand เปิดตัวนวัตกรรมข่าว AI">
+                        <button type="button" class="remove-headline" onclick="removeHeadline(this)" title="Remove">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-3 flex-wrap">
+                    <button type="button" class="btn btn-outline-light btn-sm rounded-pill" onclick="addHeadlineField()">
+                        <i class="fas fa-plus me-1"></i> Add Headline
+                    </button>
+                    <button type="button" class="btn btn-premium btn-sm rounded-pill ms-auto" id="publishHeadlinesBtn"
+                        onclick="updateHeadlines()" disabled title="Start a broadcast session first">
+                        <i class="fas fa-share me-1"></i> PUSH HEADLINES
+                    </button>
+                </div>
+                <p class="text-muted small mt-2 mb-0" id="pushHint">
+                    <i class="fas fa-info-circle me-1"></i> Start a session first to enable headline push
+                </p>
+            </div>
+        </div>
+
+        <!-- Right: Preview & Health -->
+        <div class="col-lg-4">
+            <div class="glass-card">
+                <div class="sidebar-title">Live Preview</div>
+                <div class="live-preview" id="previewContainer">
+                    <div class="preview-overlay">
+                        <i class="fas fa-video-slash fa-3x mb-3 text-secondary"></i>
+                        <span>Offline</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <div class="sidebar-title">System Health</div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="small text-muted">Go Backend</span>
+                    <span id="healthGo" class="text-warning fw-bold small">Checking...</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="small text-muted">Mode</span>
+                    <span id="healthMode" class="text-muted fw-bold small">—</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="small text-muted">Active Sessions</span>
+                    <span id="healthSessions" class="text-muted fw-bold small">—</span>
+                </div>
+                <!-- Wake-up button for Fly.io cold start -->
+                <button type="button" id="wakeBtn" class="btn btn-outline-warning btn-sm w-100 mt-2 rounded-pill d-none"
+                    onclick="wakeUpServer()">
+                    <i class="fas fa-power-off me-2"></i> Wake Up Server
+                </button>
+            </div>
+
+            <div class="glass-card text-center py-4">
+                <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
+                <h5>Official Broadcaster</h5>
+                <p class="small text-muted px-2">Broadcasting as a verified official source. All content is subject to TukTuk broadcasting policies.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/liff-config.js"></script>
+<script>
+// ── Config ──────────────────────────────────────────────────────────────
+const BACKEND_URL = (window.TUKTUK_LIFF?.apiBase || 'https://tuktuk-engine.fly.dev');
+
+// ── State ────────────────────────────────────────────────────────────────
+let currentSessionId = localStorage.getItem('active_live_id');
+let isLive = false;
+let _liveStart = null;
+let _durationTimer = null;
+let _healthTimer = null;
+
+// ── Toast Notification ───────────────────────────────────────────────────
+function toast(msg, type = 'info', duration = 4000) {
+    const el = document.createElement('div');
+    el.className = `toast-msg toast-${type}`;
+    el.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'times-circle' : type === 'warn' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>${msg}`;
+    document.getElementById('toastContainer').appendChild(el);
+    setTimeout(() => el.remove(), duration);
+}
+
+// ── Loading Overlay ──────────────────────────────────────────────────────
+function showLoading(msg) {
+    document.getElementById('loadingMsg').textContent = msg;
+    document.getElementById('loadingOverlay').style.display = 'flex';
+}
+
+function hideLoading() {
+    document.getElementById('loadingOverlay').style.display = 'none';
+}
+
+// ── Validate session from storage against backend ───────────────────────
+async function validateStoredSession(sessionId) {
+    try {
+        const res = await fetch(`${BACKEND_URL}/api/v1/live/${sessionId}/status`, {
+            signal: AbortSignal.timeout(6000)
+        });
+        if (!res.ok) return null;
+        const data = await res.json();
+        return data.status === 'live' ? data : null;
+    } catch {
+        return null;
+    }
+}
+
+// ── Set Live / Offline UI ────────────────────────────────────────────────
+function setLiveState(live, sessionData = null) {
+    isLive = live;
+
+    // Navbar badge
+    const badge = document.getElementById('liveStatus');
+    badge.className = live ? 'status-badge status-online' : 'status-badge status-offline';
+    badge.textContent = live ? '🔴 LIVE' : 'Offline';
+
+    // Setup form ↔ session actions
+    document.getElementById('setupForm').style.display = live ? 'none' : 'block';
+    document.getElementById('sessionActions').style.display = live ? 'block' : 'none';
+    document.getElementById('liveStatsRow').classList.toggle('d-none', !live);
+
+    // Headlines push button
+    const pushBtn = document.getElementById('publishHeadlinesBtn');
+    const pushHint = document.getElementById('pushHint');
+    pushBtn.disabled = !live;
+    pushBtn.title = live ? 'Push headlines to all viewers' : 'Start a broadcast session first';
+    pushHint.style.display = live ? 'none' : 'block';
+
+    // Session ID display
+    if (live && currentSessionId) {
+        document.getElementById('sessionIdDisplay').textContent = currentSessionId;
+    }
+
+    // Preview
+    const preview = document.getElementById('previewContainer');
+    if (live) {
+        preview.innerHTML = `
+            <div class="preview-overlay">
+                <div class="pulsing-dot"></div>
+                <span class="fw-bold">STREAMING LIVE</span>
+                <span class="small text-muted mt-1" id="previewSessionInfo">Session active</span>
+            </div>`;
+    } else {
+        preview.innerHTML = `
+            <div class="preview-overlay">
+                <i class="fas fa-video-slash fa-3x mb-3 text-secondary"></i>
+                <span>Offline</span>
+            </div>`;
+    }
+
+    // Duration timer
+    if (live) {
+        _liveStart = sessionData?.startedAt ? new Date(sessionData.startedAt).getTime() : Date.now();
+        clearInterval(_durationTimer);
+        _durationTimer = setInterval(() => {
+            const s = Math.floor((Date.now() - _liveStart) / 1000);
+            const h = String(Math.floor(s / 3600)).padStart(2, '0');
+            const m = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
+            const sc = String(s % 60).padStart(2, '0');
+            document.getElementById('duration').textContent = `${h}:${m}:${sc}`;
+        }, 1000);
+    } else {
+        clearInterval(_durationTimer);
+        document.getElementById('duration').textContent = '00:00:00';
+    }
+}
+
+// ── Start Live ───────────────────────────────────────────────────────────
+async function startLive() {
+    const title    = document.getElementById('streamTitle').value.trim();
+    const desc     = document.getElementById('streamDesc').value.trim();
+    const url      = document.getElementById('playbackUrl').value.trim();
+    const apiKey   = document.getElementById('apiKey').value.trim();
+
+    if (!title) { toast('กรุณาใส่ Stream Title', 'warn'); return; }
+    if (!apiKey) { toast('กรุณาใส่ API Key', 'warn'); return; }
+
+    const startBtn = document.getElementById('startBtn');
+    startBtn.disabled = true;
+    startBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Starting...';
+
+    const payload = {
+        title,
+        description: desc,
+        playbackUrl: url,
+        status: 'live',
+        broadcaster: { agencyName: 'Official News Agency', isOfficial: true, verifyType: 'news' },
+        headlines: getHeadlines()
+    };
+
+    try {
+        const res = await fetch(`${BACKEND_URL}/api/v1/live/start?apiKey=${encodeURIComponent(apiKey)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            signal: AbortSignal.timeout(10000)
+        });
+
+        const data = await res.json();
+
+        if (data.status === 'live_started' && data.sessionId) {
+            currentSessionId = data.sessionId;
+            localStorage.setItem('active_live_id', currentSessionId);
+            // Store API key for this session
+            sessionStorage.setItem('bc_api_key', apiKey);
+            setLiveState(true);
+            toast('Broadcast started! 🔴', 'success');
+        } else if (res.status === 401) {
+            toast('API Key ไม่ถูกต้อง', 'error');
+        } else {
+            toast('Error: ' + (data.error || 'Failed to start'), 'error');
+        }
+    } catch (e) {
+        if (e.name === 'TimeoutError') {
+            toast('Server timeout — Fly.io อาจกำลัง wake up ลองใหม่อีกครั้ง', 'warn', 6000);
+        } else {
+            toast('Connection error: ' + e.message, 'error');
+        }
+    } finally {
+        startBtn.disabled = false;
+        startBtn.innerHTML = '<i class="fas fa-play-circle me-2"></i> START BROADCASTING';
+    }
+}
+
+// ── End Live ─────────────────────────────────────────────────────────────
+async function endLive() {
+    if (!currentSessionId) return;
+    const apiKey = sessionStorage.getItem('bc_api_key') || document.getElementById('apiKey')?.value || '';
+
+    const confirmed = confirm('End this broadcast session?');
+    if (!confirmed) return;
+
+    try {
+        const res = await fetch(`${BACKEND_URL}/api/v1/live/end/${currentSessionId}?apiKey=${encodeURIComponent(apiKey)}`, {
+            method: 'POST',
+            signal: AbortSignal.timeout(8000)
+        });
+        const data = await res.json();
+
+        if (data.status === 'live_ended' || res.ok) {
+            localStorage.removeItem('active_live_id');
+            sessionStorage.removeItem('bc_api_key');
+            currentSessionId = null;
+            setLiveState(false);
+            toast('Broadcast ended.', 'info');
+        } else {
+            toast('Error ending session: ' + (data.error || res.status), 'error');
+        }
+    } catch (e) {
+        // Force local state reset even if network fails
+        localStorage.removeItem('active_live_id');
+        currentSessionId = null;
+        setLiveState(false);
+        toast('Session ended locally (network error).', 'warn');
+    }
+}
+
+// ── Update Headlines ─────────────────────────────────────────────────────
+async function updateHeadlines() {
+    if (!currentSessionId) { toast('No active session', 'warn'); return; }
+    const apiKey = sessionStorage.getItem('bc_api_key') || '';
+
+    const btn = document.getElementById('publishHeadlinesBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Pushing...';
+
+    try {
+        const res = await fetch(`${BACKEND_URL}/api/v1/live/${currentSessionId}/headline`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ headlines: getHeadlines(), apiKey }),
+            signal: AbortSignal.timeout(8000)
+        });
+        const data = await res.json();
+
+        if (data.status === 'headlines_updated') {
+            toast('Headlines pushed to all viewers! 📢', 'success');
+        } else {
+            toast('Error: ' + (data.error || 'Failed'), 'error');
+        }
+    } catch (e) {
+        toast('Network error: ' + e.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-share me-1"></i> PUSH HEADLINES';
+    }
+}
+
+// ── Headline Helpers ─────────────────────────────────────────────────────
+function getHeadlines() {
+    return Array.from(document.querySelectorAll('.headline-input'))
+        .map(i => i.value.trim()).filter(v => v.length > 0);
+}
+
+function addHeadlineField() {
+    const container = document.getElementById('headlinesList');
+    const div = document.createElement('div');
+    div.className = 'headline-item';
+    div.innerHTML = `
+        <input type="text" class="form-control headline-input" aria-label="Headline text" placeholder="Enter headline text...">
+        <button type="button" class="remove-headline" onclick="removeHeadline(this)" title="Remove">
+            <i class="fas fa-times"></i>
+        </button>`;
+    container.appendChild(div);
+    div.querySelector('input').focus();
+}
+
+function removeHeadline(btn) {
+    const item = btn.closest('.headline-item');
+    if (document.querySelectorAll('.headline-item').length <= 1) {
+        toast('ต้องมีอย่างน้อย 1 headline', 'warn');
+        return;
+    }
+    item.remove();
+}
+
+// ── Health Check ─────────────────────────────────────────────────────────
+async function checkHealth() {
+    try {
+        const res = await fetch(`${BACKEND_URL}/health`, { signal: AbortSignal.timeout(5000) });
+        const data = await res.json();
+
+        document.getElementById('healthGo').textContent = 'Operational ✓';
+        document.getElementById('healthGo').className = 'text-success fw-bold small';
+        document.getElementById('healthMode').textContent = data.mode || '—';
+        document.getElementById('healthMode').className =
+            data.mode === 'Production' ? 'text-success fw-bold small' : 'text-warning fw-bold small';
+
+        // Update server pill
+        const pill = document.getElementById('serverPill');
+        pill.className = 'server-pill server-ok';
+        pill.innerHTML = '<span class="dot-live"></span> Online';
+
+        // Hide wake button
+        document.getElementById('wakeBtn').classList.add('d-none');
+
+    } catch {
+        document.getElementById('healthGo').textContent = 'Unreachable ✗';
+        document.getElementById('healthGo').className = 'text-danger fw-bold small';
+
+        const pill = document.getElementById('serverPill');
+        pill.className = 'server-pill server-down';
+        pill.innerHTML = '<span class="dot-live"></span> Offline';
+
+        // Show wake button
+        document.getElementById('wakeBtn').classList.remove('d-none');
+    }
+
+    // Active sessions count
+    try {
+        const res = await fetch(`${BACKEND_URL}/api/v1/live?limit=30`, { signal: AbortSignal.timeout(5000) });
+        const data = await res.json();
+        const count = (data.liveSessions || []).length;
+        document.getElementById('healthSessions').textContent = `${count} session${count !== 1 ? 's' : ''}`;
+        document.getElementById('healthSessions').className = count > 0 ? 'text-success fw-bold small' : 'text-muted fw-bold small';
+
+        // Update viewer count if live
+        if (isLive && currentSessionId) {
+            const active = (data.liveSessions || []).find(s => s.id === currentSessionId);
+            if (active) {
+                document.getElementById('viewerCount').textContent =
+                    (active.viewerCount || 0).toLocaleString('th-TH');
+            }
+        }
+    } catch { /* silent */ }
+}
+
+// ── Wake Up Server (Fly.io cold start) ──────────────────────────────────
+async function wakeUpServer() {
+    const btn = document.getElementById('wakeBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Waking up...';
+    toast('กำลัง wake up server (Fly.io cold start อาจใช้เวลา 5-10s)', 'info', 8000);
+
+    try {
+        await fetch(`${BACKEND_URL}/health`, { signal: AbortSignal.timeout(15000) });
+        await checkHealth();
+        toast('Server is online! ✅', 'success');
+    } catch {
+        toast('Server ยังไม่ตอบสนอง ลองใหม่อีกครั้ง', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-power-off me-2"></i> Wake Up Server';
+    }
+}
+
+// ── Initialize ───────────────────────────────────────────────────────────
+async function init() {
+    showLoading('Connecting to backend...');
+
+    // 1. Health check (with generous timeout for Fly.io cold start)
+    await checkHealth();
+
+    // 2. Validate stored session against backend before restoring state
+    if (currentSessionId) {
+        document.getElementById('loadingMsg').textContent = 'Checking active session...';
+        const sessionData = await validateStoredSession(currentSessionId);
+
+        if (sessionData) {
+            // Session still alive on backend
+            setLiveState(true, sessionData);
+            toast('Restored active session 🔴', 'info');
+        } else {
+            // Session is dead — clear and show setup form
+            localStorage.removeItem('active_live_id');
+            currentSessionId = null;
+            setLiveState(false);
+            toast('Previous session has ended. Ready to broadcast.', 'info', 5000);
+        }
+    } else {
+        setLiveState(false);
+    }
+
+    hideLoading();
+
+    // 3. Start periodic health check
+    _healthTimer = setInterval(checkHealth, 30000);
+}
+
+// Start
+init();
+</script>
+</body>
+</html>

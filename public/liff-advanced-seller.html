@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>TukTuk - Advanced Big Data Seller Dashboard</title>
+    <!-- LIFF Config (แก้ LIFF ID ที่นี่จุดเดียว) -->
+    <script src="/js/liff-config.js"></script>
+    <!-- LIFF SDK -->
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #0d1117;
+            font-family: 'Kanit', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #c9d1d9;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #1f2937, #111827);
+            padding: 30px 20px;
+            border-bottom: 1px solid #30363d;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .header-title {
+            color: #58a6ff;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 0 15px;
+            margin-bottom: 25px;
+        }
+
+        .metric-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fff;
+            margin: 5px 0;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: #8b949e;
+            text-transform: uppercase;
+        }
+
+        .growth-badge {
+            font-size: 0.75rem;
+            color: #3fb950;
+            background: rgba(63, 185, 80, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .chart-container {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            margin: 0 15px 25px;
+            padding: 15px;
+        }
+
+        .chart-title {
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .trending-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #21262d;
+        }
+
+        .trending-item:last-child {
+            border-bottom: none;
+        }
+
+        .t-name {
+            color: #c9d1d9;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 2px;
+        }
+
+        .t-stats {
+            color: #8b949e;
+            font-size: 0.75rem;
+        }
+
+        .t-conv {
+            color: #58a6ff;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loading" class="text-center mt-5">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2 text-muted">กำลังประมวลผล Big Data...</p>
+    </div>
+
+    <div id="dashboard-content" style="display: none;">
+        <!-- HEADER -->
+        <div class="dashboard-header">
+            <div class="header-title"><i class="fa-solid fa-chart-column me-2"></i> Seller Analytics (Ultra)</div>
+            <div class="text-muted small">Real-time Data Pipeline from TukTuk Go Engine</div>
+            <div class="mt-2 fst-italic fs-6 text-white-50" id="sellerIdDisplay"></div>
+        </div>
+
+        <!-- METRICS -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">ยอดขายวันนี้</div>
+                <div class="metric-value" id="valSalesToday">...</div>
+                <div class="growth-badge" id="valGrowth">...</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">ยอดรวม 7 วัน</div>
+                <div class="metric-value text-warning" id="valSalesWeek">...</div>
+                <div class="growth-badge">Predictive: Strong</div>
+            </div>
+        </div>
+
+        <!-- CHART: DEMAND HEATMAP -->
+        <div class="chart-container">
+            <div class="chart-title"><i class="fa-solid fa-fire text-danger"></i> AI Demand Heatmap (พยากรณ์ออเดอร์)
+            </div>
+            <canvas id="heatmapChart" height="200"></canvas>
+        </div>
+
+        <!-- TRENDING PRODUCTS -->
+        <div class="chart-container">
+            <div class="chart-title"><i class="fa-solid fa-ranking-star text-warning"></i> สินค้ามาแรงของคุณ (Algorithm
+                Pick)</div>
+            <div id="trendingList">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+
+        <div class="text-center mb-4">
+            <a href="liff-live-commerce.html" class="btn btn-primary"
+                style="border-radius:20px; width: 80%; font-weight:bold;">
+                <i class="fa-solid fa-video"></i> เริ่ม Live สดขายของเลย
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = (window.TUKTUK_LIFF?.apiBase || 'https://us-central1-appinjproject.cloudfunctions.net') + '/api/v1';
+
+        async function initLIFF() {
+            const liffId = window.TUKTUK_LIFF?.analytics || "";
+            if (!liffId) {
+                document.getElementById('loading').innerHTML = `
+                  <div style="padding:40px;text-align:center;color:#c9d1d9">
+                    <div style="font-size:3rem;margin-bottom:15px">⚙️</div>
+                    <h5 style="color:#58a6ff">ยังไม่ได้ตั้งค่า LIFF ID</h5>
+                    <p style="font-size:0.85rem">แก้ไข <code style="color:#58a6ff">public/js/liff-config.js</code><br>ใส่ <strong>analytics</strong> LIFF ID</p>
+                  </div>`;
+                return;
+            }
+            try {
+                await liff.init({ liffId, withLoginOnExternalBrowser: true });
+                let sellerId = "demo_seller_123";
+
+                if (liff.isLoggedIn()) {
+                    const profile = await liff.getProfile();
+                    sellerId = profile.userId;
+                    document.getElementById('sellerIdDisplay').innerText = "ร้าน: " + profile.displayName;
+                } else {
+                    document.getElementById('sellerIdDisplay').innerText = "รอการเชื่อมต่อ LINE Account (Demo Mode)";
+                }
+
+                fetchAnalyticsData(sellerId);
+            } catch (e) {
+                console.warn('Sandbox mode running. Connecting to backend without LIFF auth.');
+                document.getElementById('sellerIdDisplay').innerText = "ร้าน: Demo mode";
+                fetchAnalyticsData("demo_seller_123");
+            }
+        }
+
+        async function fetchAnalyticsData(sellerId) {
+            try {
+                const response = await fetch(`${API_BASE}/analytics/seller/${sellerId}`);
+                if (!response.ok) throw new Error("Network response was not ok");
+                const data = await response.json();
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('dashboard-content').style.display = 'block';
+
+                // Populate Metrics
+                document.getElementById('valSalesToday').innerText = `฿${data.metrics.salesToday.toLocaleString()}`;
+                document.getElementById('valSalesWeek').innerText = `฿${data.metrics.salesWeek.toLocaleString()}`;
+                document.getElementById('valGrowth').innerHTML = `<i class="fa-solid fa-arrow-up"></i> ${data.metrics.growthPercent}%`;
+
+                renderTrending(data.trendingProducts);
+                renderHeatmapChart(data.demandHeatmap);
+
+            } catch (err) {
+                console.error("Failed fetching analytics:", err);
+                document.getElementById('loading').innerHTML = '<p class="text-danger">ไม่สามารถดึงข้อมูล Big Data ได้<br><small>กรุณาตรวจสอบ Go Backend</small></p>';
+            }
+        }
+
+        function renderTrending(products) {
+            const container = document.getElementById('trendingList');
+            container.innerHTML = '';
+            products.forEach(p => {
+                container.innerHTML += `
+                    <div class="trending-item">
+                        <div>
+                            <div class="t-name">${p.name}</div>
+                            <div class="t-stats"><i class="fa-solid fa-eye text-white-50"></i> ${p.views.toLocaleString()} views</div>
+                        </div>
+                        <div class="text-end">
+                            <div class="t-conv">${p.conversionRate}%</div>
+                            <div class="t-stats">Conv. Rate</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderHeatmapChart(heatmapData) {
+            const ctx = document.getElementById('heatmapChart').getContext('2d');
+            const labels = heatmapData.map(d => d.time);
+
+            // Map demand Level to a number
+            const dataPts = heatmapData.map(d => {
+                if (d.demandLevel === 'Peak') return 100;
+                if (d.demandLevel === 'High') return 70;
+                return 40;
+            });
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'พยากรณ์ความต้องการ (Demand)',
+                        data: dataPts,
+                        backgroundColor: function (context) {
+                            const val = context.dataset.data[context.dataIndex];
+                            if (val > 80) return '#FF0050'; // Peak
+                            if (val > 50) return '#ff8c00'; // High
+                            return '#06C755'; // Normal
+                        },
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { display: false, max: 120 },
+                        x: {
+                            grid: { color: '#30363d' },
+                            ticks: { color: '#8b949e' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        initLIFF();
+    </script>
+</body>
+
+</html>

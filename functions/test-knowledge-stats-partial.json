@@ -1,0 +1,391 @@
+{
+  "type": "flex",
+  "altText": "🧠 สถิติคลังความรู้",
+  "contents": {
+    "type": "bubble",
+    "size": "mega",
+    "header": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "text",
+          "text": "🧠 คลังสมองเฉพาะถิ่น",
+          "weight": "bold",
+          "size": "xl",
+          "color": "#ffffff"
+        },
+        {
+          "type": "text",
+          "text": "Knowledge Base Statistics",
+          "size": "xs",
+          "color": "#ffffff99",
+          "margin": "xs"
+        }
+      ],
+      "paddingAll": "20px",
+      "backgroundColor": "#8b5cf6"
+    },
+    "body": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "75",
+                  "size": "xxl",
+                  "weight": "bold",
+                  "color": "#8b5cf6"
+                },
+                {
+                  "type": "text",
+                  "text": "ทั้งหมด",
+                  "size": "xs",
+                  "color": "#999999"
+                }
+              ],
+              "flex": 1,
+              "backgroundColor": "#faf5ff",
+              "paddingAll": "15px",
+              "cornerRadius": "8px"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "60",
+                  "size": "xxl",
+                  "weight": "bold",
+                  "color": "#10b981"
+                },
+                {
+                  "type": "text",
+                  "text": "ยืนยันแล้ว",
+                  "size": "xs",
+                  "color": "#999999"
+                }
+              ],
+              "flex": 1,
+              "backgroundColor": "#f0fdf4",
+              "paddingAll": "15px",
+              "cornerRadius": "8px",
+              "margin": "md"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "15",
+                  "size": "xxl",
+                  "weight": "bold",
+                  "color": "#f59e0b"
+                },
+                {
+                  "type": "text",
+                  "text": "รอตรวจสอบ",
+                  "size": "xs",
+                  "color": "#999999"
+                }
+              ],
+              "flex": 1,
+              "backgroundColor": "#fffbeb",
+              "paddingAll": "15px",
+              "cornerRadius": "8px",
+              "margin": "md"
+            }
+          ]
+        },
+        {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "text",
+              "text": "🎯 ความสมบูรณ์",
+              "size": "sm",
+              "weight": "bold",
+              "color": "#333333"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [],
+                  "width": "80%",
+                  "backgroundColor": "#10b981",
+                  "height": "8px",
+                  "cornerRadius": "4px"
+                }
+              ],
+              "backgroundColor": "#e5e7eb",
+              "height": "8px",
+              "cornerRadius": "4px",
+              "margin": "sm"
+            },
+            {
+              "type": "text",
+              "text": "80% ยืนยันแล้ว",
+              "size": "xs",
+              "color": "#666666",
+              "align": "end",
+              "margin": "xs"
+            }
+          ],
+          "margin": "xl"
+        },
+        {
+          "type": "separator",
+          "margin": "xl"
+        },
+        {
+          "type": "text",
+          "text": "📁 แบ่งตามหมวด",
+          "size": "md",
+          "weight": "bold",
+          "color": "#333333",
+          "margin": "xl"
+        },
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "🔧",
+              "size": "xl",
+              "flex": 0
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "วิธีแก้จริง",
+                  "size": "sm",
+                  "color": "#666666",
+                  "weight": "bold"
+                },
+                {
+                  "type": "text",
+                  "text": "40 รายการ",
+                  "size": "xs",
+                  "color": "#999999"
+                }
+              ],
+              "margin": "md"
+            },
+            {
+              "type": "text",
+              "text": "40",
+              "size": "xl",
+              "color": "#3b82f6",
+              "weight": "bold",
+              "align": "end",
+              "flex": 0
+            }
+          ],
+          "margin": "md",
+          "paddingAll": "12px",
+          "backgroundColor": "#f9fafb",
+          "cornerRadius": "8px"
+        },
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "📊",
+              "size": "xl",
+              "flex": 0
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "พารามิเตอร์",
+                  "size": "sm",
+                  "color": "#666666",
+                  "weight": "bold"
+                },
+                {
+                  "type": "text",
+                  "text": "20 รายการ",
+                  "size": "xs",
+                  "color": "#999999"
+                }
+              ],
+              "margin": "md"
+            },
+            {
+              "type": "text",
+              "text": "20",
+              "size": "xl",
+              "color": "#3b82f6",
+              "weight": "bold",
+              "align": "end",
+              "flex": 0
+            }
+          ],
+          "margin": "md",
+          "paddingAll": "12px",
+          "backgroundColor": "#f9fafb",
+          "cornerRadius": "8px"
+        },
+        {
+          "type": "separator",
+          "margin": "xl"
+        },
+        {
+          "type": "text",
+          "text": "🏆 ใช้บ่อยสุด",
+          "size": "md",
+          "weight": "bold",
+          "color": "#333333",
+          "margin": "xl"
+        },
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "🥇",
+              "size": "xl",
+              "flex": 0
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "ไม่มีชื่อ",
+                  "size": "sm",
+                  "color": "#333333",
+                  "weight": "bold",
+                  "wrap": true
+                },
+                {
+                  "type": "text",
+                  "text": "ใช้งาน 10 ครั้ง",
+                  "size": "xs",
+                  "color": "#999999"
+                }
+              ],
+              "margin": "md"
+            }
+          ],
+          "margin": "md",
+          "paddingAll": "10px",
+          "backgroundColor": "#f0f9ff",
+          "cornerRadius": "6px"
+        },
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "🥈",
+              "size": "xl",
+              "flex": 0
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "วิธีแก้ไขรอยไหม้",
+                  "size": "sm",
+                  "color": "#333333",
+                  "weight": "bold",
+                  "wrap": true
+                },
+                {
+                  "type": "text",
+                  "text": "ใช้งาน 8 ครั้ง",
+                  "size": "xs",
+                  "color": "#999999"
+                }
+              ],
+              "margin": "md"
+            }
+          ],
+          "margin": "md",
+          "paddingAll": "10px",
+          "backgroundColor": "#f0f9ff",
+          "cornerRadius": "6px"
+        }
+      ],
+      "paddingAll": "20px"
+    },
+    "footer": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "button",
+              "action": {
+                "type": "message",
+                "label": "🔄 รีเฟรช",
+                "text": "/knowledge"
+              },
+              "style": "primary",
+              "color": "#8b5cf6",
+              "height": "sm",
+              "flex": 1
+            },
+            {
+              "type": "button",
+              "action": {
+                "type": "message",
+                "label": "📚 จัดการ",
+                "text": "/km"
+              },
+              "style": "secondary",
+              "height": "sm",
+              "flex": 1,
+              "margin": "sm"
+            }
+          ]
+        },
+        {
+          "type": "button",
+          "action": {
+            "type": "message",
+            "label": "🏠 กลับ Dashboard",
+            "text": "/super"
+          },
+          "style": "link",
+          "height": "sm",
+          "margin": "sm"
+        }
+      ],
+      "paddingAll": "15px"
+    }
+  }
+}

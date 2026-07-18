@@ -1,0 +1,31 @@
+/* SPA Overlay Z-index Fix & Layout Control */
+
+/* pcTopNav always on top of SPA iframe (z:10000009) and bottom nav (z:10000011) */
+#pcTopNav, .pc-top-nav { z-index: 10000020 !important; }
+
+/* When SPA page is open: hide elements that bleed over the iframe */
+body.spaIframeOpen .creation-hub,
+body.spaIframeOpen .creation-overlay,
+body.spaIframeOpen #creationHubOverlay { display: none !important; }
+
+/* Hide the home-page layout grid (sidebars + feed) when SPA is open.
+   position:sticky sidebars create stacking contexts that paint above
+   the fixed SPA container (z-index:10000010). Hiding them avoids
+   the bleed-through issue entirely. */
+body.spaIframeOpen .pc-layout-container,
+body.spaIframeOpen .promo-banner-section,
+body.spaIframeOpen .admin-fab-container { display: none !important; }
+
+/* Force-hide TukTuk feed and mobile header when SPA iframe is open.
+   JS already sets display:none on #tuktukFeed but this CSS rule is a
+   belt-and-suspenders guard in case any script restores display. */
+body.spaIframeOpen #tuktukFeed { display: none !important; }
+body.spaIframeOpen #mobileHeader { display: none !important; }
+
+/* On mobile pcTopNav is display:none via pc-layout.css (no !important).
+   When SPA is open, ensure it stays hidden on mobile so it cannot
+   overlay the iframe at z-index:10000020. */
+@media (max-width: 991px) {
+    body.spaIframeOpen #pcTopNav,
+    body.spaIframeOpen .pc-top-nav { display: none !important; }
+}

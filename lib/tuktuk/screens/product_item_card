@@ -1,0 +1,260 @@
+import 'package:caculateapp/tuktuk/services/tuktuk_bridge.dart';
+import 'package:flutter/material.dart';
+
+class MyShopScreen extends StatefulWidget {
+  const MyShopScreen({super.key});
+
+  @override
+  State<MyShopScreen> createState() => _MyShopScreenState();
+}
+
+class _MyShopScreenState extends State<MyShopScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<Map<String, dynamic>?>(
+      stream: TukTukBridge().sessionStream,
+      builder: (context, snapshot) {
+        final userData = snapshot.data;
+        return _buildShopBody(userData);
+      },
+    );
+  }
+
+  Widget _buildShopBody(Map<String, dynamic>? userData) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        title: Text(
+          userData?['isSeller'] == true
+              ? 'การจัดการร้านค้า'
+              : 'เปิดร้านค้ากับ TUKTUK',
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.black,
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            _buildShopHeader(userData),
+            _buildStatsRow(userData),
+            _buildQuickActions(),
+            _buildProductListHeader(),
+            _buildEmptyProductState(),
+          ],
+        ),
+      ),
+      floatingActionButton: userData?['isSeller'] == true
+          ? FloatingActionButton.extended(
+              onPressed: () {},
+              backgroundColor: Colors.orange,
+              icon: const Icon(Icons.add_shopping_cart, color: Colors.black),
+              label: const Text('ลงขายสินค้า',
+                  style: TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.bold)),
+            )
+          : null,
+    );
+  }
+
+  Widget _buildShopHeader(Map<String, dynamic>? userData) {
+    final bool isSeller = userData?['isSeller'] == true;
+    return Container(
+      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: isSeller
+              ? [
+                  Colors.orange.withOpacity(0.8),
+                  Colors.deepOrange.withOpacity(0.8)
+                ]
+              : [Colors.grey[800]!, Colors.grey[900]!],
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 35,
+            backgroundColor: Colors.white,
+            child: Icon(isSeller ? Icons.store : Icons.store_outlined,
+                size: 40, color: Colors.orange),
+          ),
+          const SizedBox(width: 20),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  userData?['displayName'] ?? 'ผู้ซื้อทั่วไป',
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  isSeller
+                      ? 'ID: ${userData?['uid'].toString().substring(0, 8)}'
+                      : 'ยังไม่ได้เปิดบัญชีร้านค้า',
+                  style: const TextStyle(color: Colors.white70, fontSize: 13),
+                ),
+              ],
+            ),
+          ),
+          if (isSeller)
+            IconButton(
+              icon: const Icon(Icons.edit, color: Colors.white),
+              onPressed: () {},
+            )
+          else
+            ElevatedButton(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  foregroundColor: Colors.black),
+              child: const Text('สมัคร'),
+            )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatsRow(Map<String, dynamic>? userData) {
+    if (userData == null || userData['uid'] == null)
+      return const SizedBox.shrink();
+
+    return FutureBuilder<Map<String, dynamic>>(
+      future: TukTukBridge().getShopStats(userData['uid']),
+      builder: (context, snapshot) {
+        final stats = snapshot.data;
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: Row(
+            children: [
+              _buildStatBox(
+                  'ยอดคำถาม/สั่งซื้อ',
+                  stats?['totalOrders']?.toString() ?? '0',
+                  Icons.shopping_bag_outlined),
+              const SizedBox(width: 10),
+              _buildStatBox(
+                  'สินค้าทั้งหมด',
+                  stats?['totalProducts']?.toString() ?? '0',
+                  Icons.inventory_2_outlined),
+              const SizedBox(width: 10),
+              _buildStatBox(
+                  userData['isSeller'] == true ? 'ยอดการมองเห็น' : 'รถเข็น',
+                  userData['isSeller'] == true
+                      ? (stats?['totalViews']?.toString() ?? '0')
+                      : '0',
+                  Icons.people_outline),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildStatBox(String label, String value, IconData icon) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: Colors.white10),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: Colors.orange, size: 20),
+            const SizedBox(height: 8),
+            FittedBox(
+              child: Text(value,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold)),
+            ),
+            const SizedBox(height: 2),
+            Text(label,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.white54, fontSize: 10)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickActions() {
+    return Container(
+      margin: const EdgeInsets.all(15),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildActionItem(Icons.qr_code, 'My QR'),
+          _buildActionItem(Icons.analytics_outlined, 'สถิติ'),
+          _buildActionItem(
+              Icons.account_balance_wallet_outlined, 'กระเป๋าเงิน'),
+          _buildActionItem(Icons.campaign_outlined, 'โปรโมชั่น'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionItem(IconData icon, String label) {
+    return Column(
+      children: [
+        Icon(icon, color: Colors.white70),
+        const SizedBox(height: 8),
+        Text(label,
+            style: const TextStyle(color: Colors.white70, fontSize: 11)),
+      ],
+    );
+  }
+
+  Widget _buildProductListHeader() {
+    return const Padding(
+      padding: EdgeInsets.all(20),
+      child: Row(
+        children: [
+          Icon(Icons.list_alt, color: Colors.orange, size: 20),
+          SizedBox(width: 10),
+          Text(
+            'รายการสินค้าของคุณ',
+            style: TextStyle(
+                color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyProductState() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 50),
+      child: Column(
+        children: [
+          Icon(Icons.add_shopping_cart, size: 80, color: Colors.white12),
+          const SizedBox(height: 20),
+          const Text(
+            'ยังไม่มีสินค้าในร้านค้าของคุณ',
+            style: TextStyle(color: Colors.white38),
+          ),
+          const SizedBox(height: 20),
+          OutlinedButton(
+            onPressed: () {},
+            style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: Colors.orange)),
+            child: const Text('เริ่มลงขายสินค้าแรก',
+                style: TextStyle(color: Colors.orange)),
+          )
+        ],
+      ),
+    );
+  }
+}

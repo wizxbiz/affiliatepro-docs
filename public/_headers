@@ -1,0 +1,113 @@
+# =============================================================
+# Cloudflare Pages _headers
+# Cache strategies + Security headers + CORS
+# =============================================================
+
+# ── Global Security Headers ───────────────────────────────────
+/*
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(self)
+
+# ── HTML pages: Never cache (always fresh) ────────────────────
+/*.html
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+
+/
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# ── /app SPA shell: never cache the HTML shell (extensionless) ─
+# The React shell is served at /app/ and deep routes (/app/profile,
+# /app/seller, …) which have NO .html extension, so the /*.html rule
+# above never matches them. Without this, the shell falls under the
+# global /* rule (no Cache-Control) and Cloudflare's edge caches a
+# stale index.html — pinning old hashed asset refs after a deploy.
+# NOTE: do NOT use /app/*  — Cloudflare MERGES Cache-Control across all
+# matching rules (comma-joined, no specificity), so /app/* would inject
+# no-store into /app/assets/* and kill hashed-bundle caching. List the
+# extensionless shell routes explicitly; assets under /app/assets/ keep
+# their long cache from the /*.js and /*.css rules below.
+/app/
+  Cache-Control: no-cache, no-store, must-revalidate
+/app/login
+  Cache-Control: no-cache, no-store, must-revalidate
+/app/market
+  Cache-Control: no-cache, no-store, must-revalidate
+/app/post
+  Cache-Control: no-cache, no-store, must-revalidate
+/app/profile
+  Cache-Control: no-cache, no-store, must-revalidate
+/app/profile/*
+  Cache-Control: no-cache, no-store, must-revalidate
+/app/seller
+  Cache-Control: no-cache, no-store, must-revalidate
+/app/notifications
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# ── JavaScript: Short cache with revalidation ─────────────────
+/*.js
+  Cache-Control: public, max-age=3600, must-revalidate
+
+# ── CSS: Short cache with revalidation ───────────────────────
+/*.css
+  Cache-Control: public, max-age=3600, must-revalidate
+
+# ── Images: Long-lived cache (1 year) ────────────────────────
+/*.jpg
+  Cache-Control: public, max-age=31536000, immutable
+/*.jpeg
+  Cache-Control: public, max-age=31536000, immutable
+/*.png
+  Cache-Control: public, max-age=31536000, immutable
+/*.gif
+  Cache-Control: public, max-age=31536000, immutable
+/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+/*.svg
+  Cache-Control: public, max-age=31536000, immutable
+/*.ico
+  Cache-Control: public, max-age=31536000, immutable
+
+# ── Video/Media ───────────────────────────────────────────────
+/*.mp4
+  Cache-Control: public, max-age=31536000, immutable
+/*.webm
+  Cache-Control: public, max-age=31536000, immutable
+
+# ── Fonts ────────────────────────────────────────────────────
+/*.woff
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+/*.ttf
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+# ── PWA Manifest ─────────────────────────────────────────────
+/manifest.json
+  Cache-Control: public, max-age=86400, must-revalidate
+
+# ── Service Worker: Must always be fresh ─────────────────────
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# ── Sitemap / Robots ─────────────────────────────────────────
+/sitemap.xml
+  Cache-Control: public, max-age=86400
+  Content-Type: application/xml
+
+/robots.txt
+  Cache-Control: public, max-age=86400
+  Content-Type: text/plain
+
+# ── API Endpoints: No Cache ───────────────────────────────────
+/api/*
+  Cache-Control: no-store
+  Access-Control-Allow-Origin: *
+  Access-Control-Allow-Methods: GET, POST, OPTIONS
+  Access-Control-Allow-Headers: Content-Type, Authorization

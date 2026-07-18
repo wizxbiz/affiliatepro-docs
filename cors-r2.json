@@ -1,0 +1,36 @@
+{
+  "rules": [
+    {
+      "allowed": {
+        "origins": ["*"],
+        "methods": ["GET", "HEAD"],
+        "headers": ["Range", "Content-Type", "Authorization"]
+      },
+      "exposeHeaders": [
+        "ETag",
+        "Content-Type",
+        "Content-Length",
+        "Accept-Ranges",
+        "Content-Range"
+      ],
+      "maxAgeSeconds": 86400
+    },
+    {
+      "allowed": {
+        "origins": [
+          "https://appinjproject.web.app",
+          "https://appinjproject.firebaseapp.com",
+          "https://tuktukfeed.com",
+          "https://www.tuktukfeed.com",
+          "http://localhost:5000",
+          "http://localhost:3000",
+          "http://127.0.0.1:5000"
+        ],
+        "methods": ["PUT", "DELETE"],
+        "headers": ["*"]
+      },
+      "exposeHeaders": ["ETag"],
+      "maxAgeSeconds": 3600
+    }
+  ]
+}

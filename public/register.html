@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เปิดร้านค้า - TukTuk Marketplace</title>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="/js/auth.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #00d9ff;
+            --primary-glow: rgba(0,217,255,0.35);
+            --line-green: #06C755;
+            --dark: #000000;
+            --surface: rgba(255,255,255,0.05);
+            --border: rgba(255,255,255,0.1);
+            --text: #ffffff;
+            --text-dim: rgba(255,255,255,0.6);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Kanit',sans-serif; }
+        body {
+            background-color: var(--dark);
+            background-image: radial-gradient(circle at 50% -20%, var(--primary-glow) 0%, transparent 55%);
+            color: var(--text);
+            min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px;
+        }
+
+        .container {
+            max-width:500px; width:100%;
+            background: var(--surface);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 36px 32px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+
+        .header { text-align:center; margin-bottom:28px; }
+        .logo {
+            width:72px; height:72px;
+            background: linear-gradient(135deg,var(--primary),#0066ff);
+            border-radius:18px; display:flex; align-items:center; justify-content:center;
+            margin:0 auto 16px; box-shadow:0 0 24px var(--primary-glow);
+        }
+        .logo i { font-size:2.2rem; color:#fff; }
+        h1 { font-size:1.7rem; font-weight:700; margin-bottom:6px; }
+        .subtitle { font-size:.85rem; color:var(--text-dim); }
+
+        /* Form */
+        .form-group { margin-bottom:18px; }
+        label { display:block; font-size:.82rem; font-weight:500; margin-bottom:7px; color:var(--text-dim); }
+        input,select,textarea {
+            width:100%; background:rgba(255,255,255,0.07); border:1px solid var(--border);
+            border-radius:11px; padding:11px 14px; color:#fff; font-size:.95rem; transition:all .3s;
+        }
+        input:focus,select:focus,textarea:focus {
+            outline:none; border-color:var(--primary);
+            background:rgba(255,255,255,0.1); box-shadow:0 0 10px rgba(0,217,255,0.2);
+        }
+        select option { background:#111; }
+
+        .btn-submit {
+            width:100%; background:linear-gradient(135deg,var(--primary),#0066ff);
+            color:#fff; border:none; padding:15px; border-radius:13px;
+            font-size:1rem; font-weight:700; cursor:pointer; margin-top:8px;
+            display:flex; align-items:center; justify-content:center; gap:10px; transition:all .3s;
+        }
+        .btn-submit:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 10px 25px rgba(0,217,255,0.4); }
+        .btn-submit:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+
+        .btn-line {
+            width:100%; background:var(--line-green); color:#fff; border:none;
+            padding:15px; border-radius:13px; font-size:1rem; font-weight:700;
+            cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px;
+            transition:all .3s; box-shadow:0 6px 18px rgba(6,199,85,0.25);
+        }
+        .btn-line:hover { background:#04a545; transform:translateY(-2px); box-shadow:0 10px 24px rgba(6,199,85,0.35); }
+        .line-logo { width:22px; filter:brightness(0) invert(1); }
+
+        .spinner {
+            width:18px; height:18px; border:3px solid rgba(255,255,255,0.3);
+            border-top-color:#fff; border-radius:50%; animation:spin .8s linear infinite; display:none;
+        }
+        @keyframes spin { to{transform:rotate(360deg)} }
+
+        .alert { padding:13px; border-radius:11px; margin-bottom:18px; font-size:.85rem; display:none; }
+        .alert-error { background:rgba(244,67,54,.1); border:1px solid rgba(244,67,54,.3); color:#ff5252; }
+        .alert-success { background:rgba(76,175,80,.1); border:1px solid rgba(76,175,80,.3); color:#69f0ae; }
+        .alert-info { background:rgba(0,217,255,.08); border:1px solid rgba(0,217,255,.25); color:var(--primary); }
+
+        .consignment-box {
+            background:rgba(0,217,255,0.05); border:1px solid rgba(0,217,255,0.2);
+            border-radius:11px; padding:14px; margin-bottom:18px;
+            display:flex; align-items:center; gap:12px; cursor:pointer; transition:all .3s;
+        }
+        .consignment-box:hover { background:rgba(0,217,255,0.1); }
+        .consignment-box input[type="checkbox"] { width:18px; height:18px; cursor:pointer; flex-shrink:0; }
+        .consignment-text h4 { font-size:.88rem; margin-bottom:2px; }
+        .consignment-text p { font-size:.73rem; color:var(--text-dim); }
+
+        /* ── ACTIVATION SCREEN ── */
+        #activation-screen { display:none; }
+
+        .step-track {
+            display:flex; align-items:flex-start; gap:0;
+            margin-bottom:28px; position:relative;
+        }
+        .step-track::before {
+            content:''; position:absolute; top:18px; left:18px; right:18px; height:2px;
+            background:rgba(255,255,255,0.12); z-index:0;
+        }
+        .step {
+            flex:1; display:flex; flex-direction:column; align-items:center;
+            gap:8px; text-align:center; position:relative; z-index:1;
+        }
+        .step-dot {
+            width:36px; height:36px; border-radius:50%; border:2px solid rgba(255,255,255,0.15);
+            background:rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:center;
+            font-size:.8rem; font-weight:700; transition:all .4s;
+        }
+        .step.done .step-dot { background:var(--line-green); border-color:var(--line-green); color:#fff; }
+        .step.active .step-dot { background:var(--primary); border-color:var(--primary); color:#000; animation:pulse 1.5s infinite; }
+        .step.pending .step-dot { background:rgba(255,255,255,0.07); border-color:rgba(255,255,255,0.2); color:var(--text-dim); }
+        @keyframes pulse {
+            0%,100%{box-shadow:0 0 0 0 rgba(0,217,255,0.5)}
+            50%{box-shadow:0 0 0 8px rgba(0,217,255,0)}
+        }
+        .step-label { font-size:.7rem; color:var(--text-dim); line-height:1.3; }
+        .step.done .step-label,.step.active .step-label { color:var(--text); }
+
+        .info-box {
+            background:rgba(0,217,255,0.07); border:1px solid rgba(0,217,255,0.2);
+            border-radius:14px; padding:18px; margin-bottom:20px;
+        }
+        .info-box h4 { font-size:.95rem; margin-bottom:8px; color:var(--primary); }
+        .info-box p { font-size:.82rem; color:var(--text-dim); line-height:1.6; }
+        .info-box ol { font-size:.82rem; color:var(--text-dim); line-height:1.8; padding-left:18px; }
+
+        /* PIN input */
+        .pin-section { margin-top:22px; }
+        .pin-section h4 { font-size:.9rem; margin-bottom:12px; color:var(--text-dim); text-align:center; }
+        .pin-grid { display:flex; justify-content:center; gap:8px; margin-bottom:14px; }
+        .pin-cell {
+            width:46px; height:54px; background:rgba(255,255,255,0.07);
+            border:2px solid rgba(255,255,255,0.15); border-radius:11px;
+            text-align:center; font-size:1.5rem; font-weight:800; color:#fff;
+            outline:none; transition:all .2s; caret-color:var(--primary);
+        }
+        .pin-cell:focus { border-color:var(--primary); background:rgba(0,217,255,0.1); box-shadow:0 0 12px rgba(0,217,255,0.2); }
+
+        .btn-activate {
+            width:100%; padding:15px; border:none; border-radius:13px;
+            background:#1a1a24; color:#555; font-size:1rem; font-weight:700;
+            cursor:not-allowed; display:flex; align-items:center; justify-content:center; gap:10px; transition:all .3s;
+        }
+        .btn-activate.ready {
+            background:linear-gradient(135deg,#06C755,#04a545); color:#fff; cursor:pointer;
+            box-shadow:0 6px 18px rgba(6,199,85,0.3);
+        }
+        .btn-activate.ready:hover { transform:translateY(-2px); box-shadow:0 10px 24px rgba(6,199,85,0.4); }
+
+        .divider-or {
+            display:flex; align-items:center; gap:12px;
+            margin:18px 0; color:var(--text-dim); font-size:.78rem;
+        }
+        .divider-or::before,.divider-or::after { content:''; flex:1; height:1px; background:var(--border); }
+
+        .link-btn {
+            background:none; border:none; color:var(--primary); font-size:.82rem;
+            cursor:pointer; text-decoration:underline; padding:0;
+        }
+
+        /* ── utility classes replacing inline styles ── */
+        .footer-text {
+            text-align:center; margin-top:18px;
+            font-size:.8rem; color:var(--text-dim);
+        }
+        .footer-text a { color:var(--primary); text-decoration:none; }
+
+        .info-box-green {
+            background:rgba(6,199,85,0.07);
+            border-color:rgba(6,199,85,0.25);
+        }
+        .info-box-green h4 { color:#06C755; }
+
+        .pin-icon {
+            margin:0 auto 16px;
+            width:52px; height:52px;
+            background:linear-gradient(135deg,#8B5CF6,#6366F1);
+            border:none; font-size:1.4rem;
+        }
+        .pin-title { text-align:center; margin-bottom:6px; }
+        .pin-subtitle {
+            text-align:center; font-size:.82rem;
+            color:var(--text-dim); margin-bottom:20px;
+        }
+
+        .hidden { display:none; }
+        .divider-or-top { margin-top:18px; }
+
+        @media(max-width:480px) {
+            .container { padding:28px 18px; border-radius:22px; }
+            .pin-cell { width:40px; height:48px; font-size:1.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════
+     SCREEN 1: REGISTRATION FORM
+     ═══════════════════════════════════ -->
+<div class="container" id="registration-form">
+    <div class="header">
+        <div class="logo"><i class="fas fa-store"></i></div>
+        <h1>เปิดร้านค้าของคุณ</h1>
+        <p class="subtitle">กรอกข้อมูลเบื้องต้นเพื่อเริ่มต้นธุรกิจใน TukTuk</p>
+    </div>
+
+    <div id="error-alert" class="alert alert-error"></div>
+
+    <form id="seller-form">
+        <div class="form-group">
+            <label for="shopName">ชื่อร้านค้า *</label>
+            <input type="text" id="shopName" placeholder="เช่น ร้านเกษตรอินทรีย์ บ้านใหม่" required>
+        </div>
+
+        <div class="form-group">
+            <label for="category">หมวดหมู่สินค้าหลัก *</label>
+            <select id="category" required>
+                <option value="">เลือกหมวดหมู่</option>
+                <option value="agriculture">เกษตรกรรม (พืช/สัตว์/ประมง)</option>
+                <option value="otop_food">อาหาร / อาหารแปรรูป / OTOP</option>
+                <option value="retail_online">ค้าปลีก / พ่อค้าแม่ค้าออนไลน์</option>
+                <option value="secondhand">สินค้ามือสอง / ของใช้แล้ว</option>
+                <option value="electronics">เครื่องใช้ไฟฟ้า / ไอที / มือถือ</option>
+                <option value="services">งานบริการ / ช่าง / ขนส่ง</option>
+                <option value="other">อื่นๆ</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="province">จังหวัดที่ตั้งร้าน *</label>
+            <select id="province" required>
+                <option value="">เลือกจังหวัด</option>
+                <option>กรุงเทพมหานคร</option><option>เชียงใหม่</option><option>เชียงราย</option>
+                <option>นครราชสีมา</option><option>ขอนแก่น</option><option>อุดรธานี</option>
+                <option>อุบลราชธานี</option><option>ชลบุรี</option><option>ระยอง</option>
+                <option>ภูเก็ต</option><option>สงขลา</option><option>สุราษฎร์ธานี</option>
+                <option>นครศรีธรรมราช</option><option>อื่นๆ</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="phone">เบอร์โทรศัพท์ติดต่อ *</label>
+            <input type="tel" id="phone" placeholder="08x-xxx-xxxx" required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">รายละเอียดร้านค้า</label>
+            <textarea id="description" rows="3" placeholder="แนะนำร้านของคุณสั้นๆ ให้ลูกค้าได้รู้จัก..."></textarea>
+        </div>
+
+        <div class="consignment-box" onclick="document.getElementById('consignment').click();">
+            <input type="checkbox" id="consignment" aria-label="สนใจบริการฝากขาย">
+            <div class="consignment-text">
+                <h4>🤝 สนใจบริการฝากขาย (Consignment)</h4>
+                <p>ต้องการให้ทีมงานช่วยดูแลการขาย (ค่าธรรมเนียม 5%)</p>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submit-btn">
+            <span>ต่อไป — เลือกแพ็กเกจ</span>
+            <i class="fas fa-arrow-right"></i>
+            <div class="spinner" id="submit-spinner"></div>
+        </button>
+    </form>
+
+    <p class="footer-text">
+        มีบัญชีอยู่แล้ว? <a href="/login.html">เข้าสู่ระบบ</a>
+    </p>
+</div>
+
+<!-- ═══════════════════════════════════
+     SCREEN 2: ACTIVATION (POST-REGISTER)
+     ═══════════════════════════════════ -->
+<div class="container" id="activation-screen">
+
+    <!-- Step tracker -->
+    <div class="step-track">
+        <div class="step done" id="stepReg">
+            <div class="step-dot">✓</div>
+            <div class="step-label">ลงทะเบียน</div>
+        </div>
+        <div class="step active" id="stepPay">
+            <div class="step-dot">2</div>
+            <div class="step-label">เลือก<br>แพ็กเกจ</div>
+        </div>
+        <div class="step pending" id="stepPin">
+            <div class="step-dot">3</div>
+            <div class="step-label">ใส่ PIN<br>เปิดร้าน</div>
+        </div>
+    </div>
+
+    <div id="act-alert" class="alert"></div>
+
+    <!-- Step 2: pay section (shown first) -->
+    <div id="paySection">
+        <div class="info-box">
+            <h4>🎉 ลงทะเบียนสำเร็จ!</h4>
+            <p>ขั้นตอนต่อไป — เลือกแพ็กเกจเพื่อเปิดร้านและรับรหัสเข้าระบบ</p>
+        </div>
+
+        <div class="info-box info-box-green">
+            <h4>วิธีการ</h4>
+            <ol>
+                <li>กด "เปิด TukTuk LINE OA" ด้านล่าง</li>
+                <li>พิมพ์ <strong>"สมัครเปิดร้าน"</strong> หรือ <strong>"แพ็กเกจ"</strong></li>
+                <li>เลือกแพ็กเกจ → โอนเงิน → ส่งสลิป</li>
+                <li>แอดมินอนุมัติภายใน 24 ชั่วโมง</li>
+                <li>พิมพ์ <strong>"ขอรหัส"</strong> → รับ PIN 6 หลัก</li>
+                <li>กลับมากรอก PIN ด้านล่างเพื่อเปิดร้าน ✅</li>
+            </ol>
+        </div>
+
+        <button type="button" class="btn-line" onclick="openLineOA()">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" alt="LINE" class="line-logo">
+            เปิด TukTuk LINE OA
+        </button>
+
+        <div class="divider-or">หรือถ้ามี PIN แล้ว</div>
+
+        <button type="button" class="link-btn" onclick="showPinSection()">👉 ข้ามไปกรอก PIN เลย</button>
+    </div>
+
+    <!-- Step 3: PIN section (hidden until user taps) -->
+    <div id="pinSection" class="hidden">
+        <div class="step-dot pin-icon">🔑</div>
+        <h3 class="pin-title">ใส่ PIN เพื่อเปิดร้าน</h3>
+        <p class="pin-subtitle">กรอกรหัส 6 หลักจาก TukTuk LINE OA</p>
+
+        <div class="pin-grid" id="pinGrid">
+            <input type="text" class="pin-cell" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-idx="0">
+            <input type="text" class="pin-cell" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-idx="1">
+            <input type="text" class="pin-cell" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-idx="2">
+            <input type="text" class="pin-cell" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-idx="3">
+            <input type="text" class="pin-cell" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-idx="4">
+            <input type="text" class="pin-cell" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-idx="5">
+        </div>
+
+        <button type="button" class="btn-activate" id="btnActivate" disabled onclick="activateWithPin()">
+            <i class="fas fa-store"></i>
+            <span>เปิดร้านเลย!</span>
+            <div class="spinner" id="pin-spinner"></div>
+        </button>
+
+        <div class="divider-or divider-or-top"></div>
+        <button type="button" class="link-btn" onclick="showPaySection()">⬅ กลับขั้นตอนก่อน</button>
+    </div>
+
+</div><!-- end activation-screen -->
+
+<script>
+// ── Firebase init ──────────────────────────────────────────────
+const firebaseConfig = {
+    apiKey: "AIzaSyD92Lw0vd32ce6m4J2nBVBWZRYBy4aDB_s",
+    authDomain: "appinjproject.firebaseapp.com",
+    projectId: "appinjproject",
+    storageBucket: "appinjproject.firebasestorage.app",
+    messagingSenderId: "408718656984",
+    appId: "1:408718656984:web:76e9cc7a89e9b4c9d5a8ab"
+};
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+
+const API_BASE = 'https://us-central1-appinjproject.cloudfunctions.net';
+let currentUid = null;
+
+// ── Auth: support Firebase auth OR LINE login session ─────────
+function getCurrentSession() {
+    // Priority 1: Firebase Auth
+    const fbUser = firebase.auth().currentUser;
+    if (fbUser) return { uid: fbUser.uid, source: 'firebase' };
+    // Priority 2: localStorage session (LINE Login)
+    try {
+        const raw = localStorage.getItem('wizmobiz_session');
+        if (raw) {
+            const s = JSON.parse(raw);
+            if (s && s.uid) return { uid: s.uid, source: 'local', ...s };
+        }
+    } catch (_) {}
+    return null;
+}
+
+firebase.auth().onAuthStateChanged(user => {
+    if (!user) {
+        const session = getCurrentSession();
+        if (!session) {
+            setTimeout(() => {
+                if (!firebase.auth().currentUser && !getCurrentSession()) {
+                    window.location.href = '/login.html?redirectUrl=' + encodeURIComponent(window.location.href);
+                }
+            }, 1800);
+        }
+    }
+});
+
+// ── Registration form ────────────────────────────────────────
+document.getElementById('seller-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const submitBtn = document.getElementById('submit-btn');
+    const spinner = document.getElementById('submit-spinner');
+    const alertEl = document.getElementById('error-alert');
+
+    submitBtn.disabled = true;
+    spinner.style.display = 'block';
+    alertEl.style.display = 'none';
+
+    try {
+        const session = getCurrentSession();
+        if (!session) throw new Error('กรุณาเข้าสู่ระบบก่อนลงทะเบียน');
+        currentUid = session.uid;
+
+        const shopName = document.getElementById('shopName').value.trim();
+        const category = document.getElementById('category').value;
+        const province = document.getElementById('province').value;
+        const phone = document.getElementById('phone').value.trim();
+
+        if (!shopName || !category || !province || !phone) {
+            throw new Error('กรุณากรอกข้อมูลที่จำเป็นให้ครบ');
+        }
+
+        const now = new Date();
+        const shopData = {
+            uid: currentUid,
+            shopName,
+            category,
+            location: province,
+            phone,
+            description: document.getElementById('description').value.trim(),
+            isConsignmentReady: document.getElementById('consignment').checked,
+            sellerStatus: 'pending',
+            tier: 'trial',
+            subscriptionPlan: {
+                tier: 'trial',
+                trialStartDate: now.toISOString(),
+                trialEndDate: new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+                paymentStatus: 'pending',
+            },
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        };
+
+        // Save to seller_profiles
+        await firebase.firestore().collection('seller_profiles').doc(currentUid).set(shopData);
+
+        // Update line_users (for LINE users) and users (for Google users)
+        const updateData = { isSeller: true, shopName, sellerStatus: 'pending', updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
+        await Promise.allSettled([
+            firebase.firestore().collection('line_users').doc(currentUid).set(updateData, { merge: true }),
+            firebase.firestore().collection('users').doc(currentUid).set(updateData, { merge: true }),
+        ]);
+
+        // Update localStorage session
+        if (typeof WizmobizAuth !== 'undefined') {
+            try { WizmobizAuth.updateSession({ isSeller: true, sellerStatus: 'pending' }); } catch (_) {}
+        }
+
+        // Show activation screen
+        document.getElementById('registration-form').style.display = 'none';
+        document.getElementById('activation-screen').style.display = 'block';
+        initPinInputs();
+
+    } catch (err) {
+        alertEl.textContent = err.message;
+        alertEl.style.display = 'block';
+    } finally {
+        submitBtn.disabled = false;
+        spinner.style.display = 'none';
+    }
+});
+
+// ── Activation screen helpers ────────────────────────────────
+function openLineOA() {
+    window.open('https://lin.ee/1YJsw47', '_blank', 'noopener,noreferrer');
+}
+
+function showPinSection() {
+    document.getElementById('paySection').classList.add('hidden');
+    document.getElementById('pinSection').classList.remove('hidden');
+    document.getElementById('stepPin').className = 'step active';
+    document.getElementById('stepPay').className = 'step done';
+    document.getElementById('stepPay').querySelector('.step-dot').textContent = '✓';
+    document.querySelector('#pinGrid .pin-cell[data-idx="0"]').focus();
+}
+
+function showPaySection() {
+    document.getElementById('pinSection').classList.add('hidden');
+    document.getElementById('paySection').classList.remove('hidden');
+    document.getElementById('stepPay').className = 'step active';
+    document.getElementById('stepPin').className = 'step pending';
+}
+
+// ── PIN inputs ───────────────────────────────────────────────
+function initPinInputs() {
+    const cells = Array.from(document.querySelectorAll('#pinGrid .pin-cell'));
+    cells.forEach((cell, idx) => {
+        cell.addEventListener('input', (e) => {
+            const val = e.target.value.replace(/[^0-9]/g,'');
+            e.target.value = val;
+            if (val && idx < cells.length - 1) cells[idx + 1].focus();
+            checkPinReady(cells);
+        });
+        cell.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && !e.target.value && idx > 0) {
+                cells[idx - 1].focus();
+                cells[idx - 1].value = '';
+            }
+        });
+        cell.addEventListener('paste', (e) => {
+            const pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g,'');
+            if (pasted.length >= 6) {
+                cells.forEach((c, i) => { c.value = pasted[i] || ''; });
+                cells[5].focus();
+                checkPinReady(cells);
+                e.preventDefault();
+            }
+        });
+    });
+}
+
+function checkPinReady(cells) {
+    const full = cells.every(c => c.value.length === 1);
+    const btn = document.getElementById('btnActivate');
+    btn.disabled = !full;
+    btn.classList.toggle('ready', full);
+}
+
+// ── PIN verification & shop activation ───────────────────────
+async function activateWithPin() {
+    const cells = Array.from(document.querySelectorAll('#pinGrid .pin-cell'));
+    const pin = cells.map(c => c.value).join('');
+    if (pin.length < 6) return;
+
+    const btn = document.getElementById('btnActivate');
+    const spinner = document.getElementById('pin-spinner');
+    const alertEl = document.getElementById('act-alert');
+
+    btn.disabled = true;
+    spinner.style.display = 'block';
+    alertEl.style.display = 'none';
+
+    try {
+        // Device fingerprint
+        const raw = [navigator.userAgent, screen.width, screen.height].join('|');
+        const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw));
+        const deviceId = Array.from(new Uint8Array(hash)).slice(0,16).map(b => b.toString(16).padStart(2,'0')).join('');
+
+        const resp = await fetch(`${API_BASE}/verifyWebPin`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pin, deviceId }),
+        });
+        const result = await resp.json();
+        if (!result.success) throw new Error(result.error || 'PIN ไม่ถูกต้อง');
+
+        // Save session
+        const session = {
+            ...result.user,
+            loginAt: new Date().toISOString(),
+            sessionToken: result.sessionToken,
+        };
+        localStorage.setItem('wizmobiz_session', JSON.stringify(session));
+
+        // Update seller_profiles to verified (since PIN confirms payment approval)
+        const uid = result.user.uid || result.user.lineUserId || currentUid;
+        if (uid) {
+            await firebase.firestore().collection('seller_profiles').doc(uid).set(
+                { sellerStatus: 'verified', updatedAt: firebase.firestore.FieldValue.serverTimestamp() },
+                { merge: true }
+            );
+        }
+
+        // Update step UI to success
+        document.getElementById('stepPin').className = 'step done';
+        document.getElementById('stepPin').querySelector('.step-dot').textContent = '✓';
+
+        alertEl.className = 'alert alert-success';
+        alertEl.textContent = `✅ ยินดีต้อนรับ ${result.user.displayName || ''}! ร้านค้าของคุณเปิดแล้ว 🎉`;
+        alertEl.style.display = 'block';
+
+        setTimeout(() => { window.location.href = '/seller-dashboard.html'; }, 1800);
+
+    } catch (err) {
+        alertEl.className = 'alert alert-error';
+        alertEl.textContent = '❌ ' + (err.message || 'เกิดข้อผิดพลาด กรุณาลองใหม่');
+        alertEl.style.display = 'block';
+        cells.forEach(c => c.value = '');
+        cells[0].focus();
+        checkPinReady(cells);
+    } finally {
+        btn.disabled = false;
+        spinner.style.display = 'none';
+    }
+}
+</script>
+</body>
+</html>

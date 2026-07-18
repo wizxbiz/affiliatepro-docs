@@ -1,0 +1,849 @@
+openapi: 3.0.3
+info:
+  title: TukTuk REST API Contract
+  description: >
+    Phase 1 REST contract for the TukTuk frontend migration. This contract is
+    the target surface for new SPA/api-client work. Some routes are currently
+    served by the Go Engine, while auth and write routes are served by the
+    Cloudflare Worker. See REST_API_CONTRACT_PHASE1.md for runtime mapping.
+  version: 2.0.0-phase1
+servers:
+  - url: https://v-4-ultra.tuktukfeed.pages.dev
+    description: Cloudflare Pages same-origin API target
+  - url: https://tuktukfeed-api.imtthailand2019.workers.dev
+    description: Cloudflare Worker API gateway
+  - url: https://tuktuk-engine.fly.dev
+    description: Go Engine feed/products source
+  - url: http://localhost:8080
+    description: Local Go Engine development
+tags:
+  - name: Health
+  - name: Feed
+  - name: Products
+  - name: Auth
+  - name: Posts
+paths:
+  /health:
+    get:
+      tags: [Health]
+      summary: Health check
+      responses:
+        "200":
+          description: Service is reachable.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+
+  /api/v1/feed:
+    get:
+      tags: [Feed]
+      summary: Personalized mixed feed
+      description: >
+        Returns posts, news, notifications, and trending tags for the mobile
+        feed and future SPA feed screens. Current provider is the Go Engine.
+      parameters:
+        - name: userId
+          in: query
+          schema:
+            type: string
+            default: guest
+        - name: province
+          in: query
+          schema:
+            type: string
+        - name: mode
+          in: query
+          schema:
+            type: string
+            enum: [all, video, marketplace, news]
+            default: all
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 50
+        - name: afterId
+          in: query
+          schema:
+            type: string
+          description: Cursor for future pagination.
+      responses:
+        "200":
+          description: Feed response.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FeedResponse"
+        "500":
+          $ref: "#/components/responses/Error"
+
+  /api/v1/feed/trending:
+    get:
+      tags: [Feed]
+      summary: Trending feed
+      responses:
+        "200":
+          description: Trending feed response.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FeedResponse"
+        "500":
+          $ref: "#/components/responses/Error"
+
+  /api/v1/products:
+    get:
+      tags: [Products]
+      summary: Marketplace products
+      description: >
+        Returns marketplace products. New clients should normalize legacy Go
+        and Worker shapes into the schema below.
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 40
+            minimum: 1
+            maximum: 100
+        - name: afterId
+          in: query
+          schema:
+            type: string
+          description: Cursor for pagination.
+        - name: province
+          in: query
+          schema:
+            type: string
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Products response.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductsResponse"
+        "500":
+          $ref: "#/components/responses/Error"
+    post:
+      tags: [Products]
+      summary: Create product
+      description: >
+        Creates a product after media upload. The server derives sellerId from
+        the session token. Current provider is the Cloudflare Worker.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProductRequest"
+      responses:
+        "201":
+          description: Product created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateProductResponse"
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+
+  /api/v1/products/{id}:
+    get:
+      tags: [Products]
+      summary: Get product by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Product response.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status, product]
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  product:
+                    $ref: "#/components/schemas/Product"
+        "404":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+
+  /api/v1/auth/session:
+    get:
+      tags: [Auth]
+      summary: Get current session
+      description: Current Worker equivalent is GET /api/auth/me.
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Session response.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionResponse"
+        "401":
+          $ref: "#/components/responses/Error"
+    post:
+      tags: [Auth]
+      summary: Create session
+      description: >
+        Unified target endpoint for LINE profile login, LINE OAuth, web PIN,
+        and phone OTP login. Current Worker implementation is split across
+        /api/auth/line-callback, /api/auth/marketplace-line-auth,
+        /api/auth/verify-pin, and /api/auth/phone/verify-otp.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSessionRequest"
+      responses:
+        "200":
+          description: Session created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateSessionResponse"
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+
+  /api/v1/auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Refresh session token and claims
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Refreshed session.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateSessionResponse"
+        "401":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+
+  /api/v1/auth/logout:
+    post:
+      tags: [Auth]
+      summary: Logout current session
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Logged out.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status:
+                    type: string
+                    example: success
+        "401":
+          $ref: "#/components/responses/Error"
+
+  /api/v1/auth/phone/request-otp:
+    post:
+      tags: [Auth]
+      summary: Request phone OTP
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phone]
+              properties:
+                phone:
+                  type: string
+                  example: "0812345678"
+      responses:
+        "200":
+          description: OTP requested.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                  sandbox:
+                    type: boolean
+        "400":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+
+  /api/v1/posts:
+    post:
+      tags: [Posts]
+      summary: Create post
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Post"
+      responses:
+        "200":
+          description: Post created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+        "401":
+          $ref: "#/components/responses/Error"
+        "500":
+          $ref: "#/components/responses/Error"
+
+  /api/v1/posts/{id}:
+    get:
+      tags: [Posts]
+      summary: Get post by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Post response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  post:
+                    $ref: "#/components/schemas/Post"
+        "404":
+          $ref: "#/components/responses/Error"
+
+  /api/v1/posts/{id}/comments:
+    get:
+      tags: [Posts]
+      summary: Get post comments
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 50
+        - name: afterId
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Comments response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  comments:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Comment"
+        "500":
+          $ref: "#/components/responses/Error"
+
+components:
+  responses:
+    Error:
+      description: Error response.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    LegacyIAMAuth:
+      type: apiKey
+      in: header
+      name: X-IAM-Auth
+      description: Legacy Go Engine auth scheme. Do not use in new frontend code.
+
+  schemas:
+    Meta:
+      type: object
+      properties:
+        requestId:
+          type: string
+        executionTime:
+          type: string
+        nextCursor:
+          type: string
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: UNAUTHORIZED
+            message:
+              type: string
+        meta:
+          $ref: "#/components/schemas/Meta"
+
+    FeedResponse:
+      type: object
+      required: [status, posts, trendingTags]
+      properties:
+        status:
+          type: string
+          example: success
+        posts:
+          type: array
+          items:
+            $ref: "#/components/schemas/Post"
+        news:
+          type: array
+          items:
+            $ref: "#/components/schemas/News"
+        unreadNotifications:
+          type: array
+          items:
+            $ref: "#/components/schemas/Notification"
+        trendingTags:
+          type: array
+          items:
+            type: string
+        executionTime:
+          type: string
+        meta:
+          $ref: "#/components/schemas/Meta"
+
+    ProductsResponse:
+      type: object
+      required: [status, products]
+      properties:
+        status:
+          type: string
+          example: success
+        products:
+          type: array
+          items:
+            $ref: "#/components/schemas/Product"
+        total:
+          type: integer
+        executionTime:
+          type: string
+        meta:
+          $ref: "#/components/schemas/Meta"
+
+    Product:
+      type: object
+      required: [id, productName]
+      properties:
+        id:
+          type: string
+        productName:
+          type: string
+          description: Canonical product display name.
+        title:
+          type: string
+          description: Legacy-compatible title field.
+        description:
+          type: string
+        price:
+          type: number
+        imageUrl:
+          type: string
+          format: uri
+        images:
+          type: array
+          items:
+            type: string
+            format: uri
+        additionalImages:
+          type: array
+          items:
+            type: string
+            format: uri
+        sellerId:
+          type: string
+        lineUserId:
+          type: string
+        sellerName:
+          type: string
+        sellerPictureUrl:
+          type: string
+        province:
+          type: string
+        provinceCode:
+          type: string
+        category:
+          type: string
+        isOtop:
+          type: boolean
+        status:
+          type: string
+          example: active
+        viewCount:
+          type: integer
+        createdAt:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: integer
+              format: int64
+        updatedAt:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: integer
+              format: int64
+
+    CreateProductRequest:
+      type: object
+      required: [productName, description, price]
+      properties:
+        productName:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        images:
+          type: array
+          items:
+            type: string
+            format: uri
+        category:
+          type: string
+        provinceCode:
+          type: string
+
+    CreateProductResponse:
+      type: object
+      required: [status, productId]
+      properties:
+        status:
+          type: string
+          example: success
+        productId:
+          type: string
+
+    Post:
+      type: object
+      properties:
+        id:
+          type: string
+        authorId:
+          type: string
+        authorName:
+          type: string
+        authorAvatar:
+          type: string
+        content:
+          type: string
+        videoUrl:
+          type: string
+        thumbnailUrl:
+          type: string
+        likes:
+          type: integer
+        commentsCount:
+          type: integer
+        category:
+          type: string
+        provinceCode:
+          type: string
+        type:
+          type: string
+          enum: [post, video, image, marketplace]
+        viewCount:
+          type: integer
+        createdAt:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: integer
+              format: int64
+
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+        postId:
+          type: string
+        authorId:
+          type: string
+        authorName:
+          type: string
+        authorAvatar:
+          type: string
+        content:
+          type: string
+        createdAt:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: integer
+              format: int64
+
+    News:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        summary:
+          type: string
+        summaryPoints:
+          type: array
+          items:
+            type: string
+        imageUrl:
+          type: string
+        source:
+          type: string
+        sourceUrl:
+          type: string
+        category:
+          type: string
+        aiInsight:
+          type: string
+        isVerified:
+          type: boolean
+        confidence:
+          type: number
+        createdAt:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: integer
+              format: int64
+
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+        recipientId:
+          type: string
+        title:
+          type: string
+        text:
+          type: string
+        read:
+          type: boolean
+        senderName:
+          type: string
+        senderAvatar:
+          type: string
+        createdAt:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: integer
+              format: int64
+
+    User:
+      type: object
+      properties:
+        uid:
+          type: string
+        id:
+          type: string
+        lineUserId:
+          type: string
+          nullable: true
+        firebaseUid:
+          type: string
+          nullable: true
+        displayName:
+          type: string
+        email:
+          type: string
+          nullable: true
+        pictureUrl:
+          type: string
+        role:
+          type: string
+          example: user
+        sellerStatus:
+          type: string
+          example: none
+        isPremium:
+          type: boolean
+        subscriptionStatus:
+          type: string
+          nullable: true
+        provider:
+          type: string
+          enum: [line, line_oauth, line_pin, phone, phone_otp, google, unknown]
+        phone:
+          type: string
+          nullable: true
+        createdAt:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: integer
+              format: int64
+        updatedAt:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: integer
+              format: int64
+
+    SessionResponse:
+      type: object
+      required: [status, user]
+      properties:
+        status:
+          type: string
+          example: success
+        user:
+          $ref: "#/components/schemas/User"
+
+    CreateSessionRequest:
+      oneOf:
+        - $ref: "#/components/schemas/LineSessionRequest"
+        - $ref: "#/components/schemas/LineOAuthSessionRequest"
+        - $ref: "#/components/schemas/LinePinSessionRequest"
+        - $ref: "#/components/schemas/PhoneOtpSessionRequest"
+
+    LineSessionRequest:
+      type: object
+      required: [provider, lineUserId]
+      properties:
+        provider:
+          type: string
+          enum: [line]
+        lineUserId:
+          type: string
+        displayName:
+          type: string
+        pictureUrl:
+          type: string
+
+    LineOAuthSessionRequest:
+      type: object
+      required: [provider, code]
+      properties:
+        provider:
+          type: string
+          enum: [line_oauth]
+        code:
+          type: string
+        redirectUri:
+          type: string
+          format: uri
+
+    LinePinSessionRequest:
+      type: object
+      required: [provider, pin]
+      properties:
+        provider:
+          type: string
+          enum: [line_pin]
+        pin:
+          type: string
+        lineUserId:
+          type: string
+
+    PhoneOtpSessionRequest:
+      type: object
+      required: [provider, phone, code]
+      properties:
+        provider:
+          type: string
+          enum: [phone_otp]
+        phone:
+          type: string
+        code:
+          type: string
+
+    CreateSessionResponse:
+      type: object
+      required: [status, token, sessionToken, user]
+      properties:
+        status:
+          type: string
+          example: success
+        token:
+          type: string
+        sessionToken:
+          type: string
+        expiresIn:
+          type: integer
+          example: 2592000
+        user:
+          $ref: "#/components/schemas/User"

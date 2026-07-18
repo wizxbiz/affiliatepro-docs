@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - WiTH+ Security</title>
+    <meta name="description" content="Privacy Policy for WiTH+ Security Scanner - นโยบายความเป็นส่วนตัวสำหรับแอป WiTH+">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --secondary: #764ba2;
+            --bg-dark: #1a1a2e;
+            --bg-darker: #16213e;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Prompt', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            padding: 0;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+        }
+
+        /* === HEADER === */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 40px;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .logo span {
+            font-size: 48px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .app-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 15px;
+            backdrop-filter: blur(5px);
+        }
+
+        /* === LANGUAGE SWITCH === */
+        .language-switch {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 30px 40px 10px;
+            background: #f8fafc;
+        }
+
+        .lang-btn {
+            padding: 10px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .lang-btn:not(.active) {
+            background: white;
+            color: var(--text-dark);
+            border-color: #e5e7eb;
+        }
+
+        .lang-btn:not(.active):hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* === CONTENT === */
+        .content {
+            padding: 40px;
+        }
+
+        /* === SUMMARY BOX === */
+        .summary-box {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            padding: 25px;
+            border-radius: 16px;
+            border-left: 5px solid var(--primary);
+            margin-bottom: 35px;
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .summary-box .icon {
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .summary-box p {
+            margin: 0;
+            font-size: 15px;
+            color: var(--text-dark);
+        }
+
+        .summary-box strong {
+            color: var(--primary-dark);
+        }
+
+        /* === SECTIONS === */
+        .section {
+            margin-bottom: 35px;
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2 .num {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 20px 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        h3::before {
+            content: '▸';
+            color: var(--primary);
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: var(--text-light);
+            text-align: justify;
+        }
+
+        ul {
+            margin: 15px 0;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        li {
+            margin-bottom: 10px;
+            padding-left: 28px;
+            position: relative;
+            color: var(--text-light);
+        }
+
+        li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        li.no::before {
+            content: '✗';
+            color: var(--danger);
+        }
+
+        li strong {
+            color: var(--text-dark);
+        }
+
+        /* === HIGHLIGHT BOX === */
+        .highlight {
+            background: #fef3c7;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--warning);
+            margin: 20px 0;
+        }
+
+        .highlight.success {
+            background: #d1fae5;
+            border-color: var(--success);
+        }
+
+        .highlight.info {
+            background: #dbeafe;
+            border-color: var(--primary);
+        }
+
+        /* === DATA CARDS === */
+        .data-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .data-card {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            text-align: center;
+        }
+
+        .data-card .emoji {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .data-card .title {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 14px;
+        }
+
+        .data-card .desc {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        /* === CONTACT BOX === */
+        .contact-box {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 16px;
+            margin-top: 40px;
+        }
+
+        .contact-box h3 {
+            color: white;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .contact-box h3::before {
+            content: '📧';
+            color: white;
+        }
+
+        .contact-box p {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 15px;
+        }
+
+        .contact-box ul {
+            margin: 0;
+        }
+
+        .contact-box li {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .contact-box li::before {
+            color: #fbbf24;
+        }
+
+        .contact-box a {
+            color: #fbbf24;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .contact-box a:hover {
+            text-decoration: underline;
+        }
+
+        /* === FOOTER === */
+        .footer {
+            text-align: center;
+            padding: 30px 40px;
+            background: #f8fafc;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .footer .update-date {
+            color: var(--text-light);
+            font-size: 13px;
+        }
+
+        .footer .version {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-top: 10px;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+
+            .data-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* === ANIMATIONS === */
+        .section {
+            animation: fadeInUp 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        .section:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .section:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .section:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .section:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .section:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    <script src="/js/analytics.js" defer></script>
+</head>
+
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="logo">
+                <img src="/images/logo.png" alt="WiT Logo" style="width: 80px; height: 80px; object-fit: contain;"
+                    onerror="this.onerror=null; this.src='https://placehold.co/100x100?text=WiT';">
+            </div>
+            <h1 id="title">นโยบายความเป็นส่วนตัว</h1>
+            <p class="subtitle" id="subtitle">WiTH+ Security Scanner</p>
+            <span class="app-badge">com.secure.deviceapps</span>
+        </div>
+
+        <!-- LANGUAGE SWITCH -->
+        <div class="language-switch">
+            <a href="?lang=th" class="lang-btn" id="btn-th">🇹🇭 ภาษาไทย</a>
+            <a href="?lang=en" class="lang-btn" id="btn-en">🇺🇸 English</a>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="content">
+            <!-- SUMMARY -->
+            <div class="summary-box">
+                <span class="icon">📌</span>
+                <p id="summary">
+                    <strong>สรุปสั้น:</strong> เราเก็บข้อมูลเพียงเท่าที่จำเป็นสำหรับการสแกนไวรัส
+                    และ <strong>ไม่แชร์ข้อมูลส่วนตัวของคุณ</strong> กับบุคคลที่สาม
+                </p>
+            </div>
+
+            <!-- SECTION 1: DATA COLLECTION -->
+            <div class="section">
+                <h2><span class="num">1</span> <span id="s1-title">ข้อมูลที่เราเก็บรวบรวม</span></h2>
+
+                <h3 id="s1-1-title">ข้อมูลแอปพลิเคชัน</h3>
+                <ul>
+                    <li><strong id="s1-1-a">รายชื่อแอปที่ติดตั้ง:</strong> <span id="s1-1-a-desc">Package names
+                            ของแอปในเครื่องของคุณ เพื่อตรวจสอบกับฐานข้อมูลไวรัส</span></li>
+                    <li><strong id="s1-1-b">ข้อมูลแอป:</strong> <span id="s1-1-b-desc">ชื่อแอป, ขนาด, วันที่ติดตั้ง
+                            (ไม่รวมข้อมูลภายในแอป)</span></li>
+                </ul>
+
+                <h3 id="s1-2-title">ข้อมูลอุปกรณ์</h3>
+                <ul>
+                    <li id="s1-2-a">รุ่นอุปกรณ์และเวอร์ชัน Android (เพื่อการวิเคราะห์ปัญหาเทคนิค)</li>
+                    <li id="s1-2-b">เวอร์ชันแอป WiTH+</li>
+                </ul>
+
+                <h3 id="s1-3-title">ข้อมูลบัญชี (Google Sign-In)</h3>
+                <ul>
+                    <li id="s1-3-a">อีเมล Google (สำหรับการยืนยันตัวตนและการซื้อ Premium)</li>
+                    <li id="s1-3-b">รหัสอุปกรณ์ (Device ID) สำหรับ License Binding</li>
+                </ul>
+            </div>
+
+            <!-- SECTION 2: DATA NOT COLLECTED -->
+            <div class="section">
+                <h2><span class="num">2</span> <span id="s2-title">ข้อมูลที่เราไม่เก็บ</span></h2>
+
+                <div class="highlight success">
+                    <span id="s2-note">เราให้ความสำคัญกับความเป็นส่วนตัวของคุณ และ <strong>ไม่</strong>
+                        เก็บข้อมูลดังนี้:</span>
+                </div>
+
+                <div class="data-cards">
+                    <div class="data-card">
+                        <div class="emoji">👤</div>
+                        <div class="title" id="s2-a">ข้อมูลส่วนบุคคล</div>
+                        <div class="desc" id="s2-a-desc">ชื่อ, ที่อยู่, เบอร์โทร</div>
+                    </div>
+                    <div class="data-card">
+                        <div class="emoji">🔐</div>
+                        <div class="title" id="s2-b">รหัสผ่าน</div>
+                        <div class="desc" id="s2-b-desc">ข้อมูลการเข้าสู่ระบบ</div>
+                    </div>
+                    <div class="data-card">
+                        <div class="emoji">💳</div>
+                        <div class="title" id="s2-c">ข้อมูลการเงิน</div>
+                        <div class="desc" id="s2-c-desc">บัตรเครดิต, บัญชีธนาคาร</div>
+                    </div>
+                    <div class="data-card">
+                        <div class="emoji">📸</div>
+                        <div class="title" id="s2-d">รูปภาพ/วิดีโอ</div>
+                        <div class="desc" id="s2-d-desc">ไฟล์ส่วนตัวทุกประเภท</div>
+                    </div>
+                    <div class="data-card">
+                        <div class="emoji">💬</div>
+                        <div class="title" id="s2-e">ข้อความ/การโทร</div>
+                        <div class="desc" id="s2-e-desc">SMS, ประวัติการโทร</div>
+                    </div>
+                    <div class="data-card">
+                        <div class="emoji">📍</div>
+                        <div class="title" id="s2-f">ตำแหน่ง GPS</div>
+                        <div class="desc" id="s2-f-desc">ไม่ติดตามตำแหน่ง</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 3: DATA USAGE -->
+            <div class="section">
+                <h2><span class="num">3</span> <span id="s3-title">วิธีการใช้ข้อมูล</span></h2>
+                <p id="s3-intro">เราใช้ข้อมูลที่เก็บรวบรวมเพื่อวัตถุประสงค์ดังนี้เท่านั้น:</p>
+                <ul>
+                    <li><strong id="s3-a">สแกนและตรวจจับไวรัส:</strong> <span id="s3-a-desc">เปรียบเทียบ package names
+                            กับฐานข้อมูลมัลแวร์</span></li>
+                    <li><strong id="s3-b">การยืนยัน Premium:</strong> <span id="s3-b-desc">ตรวจสอบสถานะ License ผ่าน
+                            Google Account</span></li>
+                    <li><strong id="s3-c">ปรับปรุงฐานข้อมูล:</strong> <span id="s3-c-desc">เพิ่มรายการไวรัสใหม่จาก
+                            Feedback ผู้ใช้</span></li>
+                    <li><strong id="s3-d">พัฒนาแอป:</strong> <span id="s3-d-desc">แก้ไขบัคและเพิ่มฟีเจอร์ใหม่</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- SECTION 4: DATA SHARING -->
+            <div class="section">
+                <h2><span class="num">4</span> <span id="s4-title">การแชร์ข้อมูล</span></h2>
+
+                <div class="highlight info">
+                    <strong id="s4-note">เราไม่ขาย ไม่แลกเปลี่ยน และไม่แชร์ข้อมูลส่วนบุคคลของคุณกับบุคคลที่สาม</strong>
+                </div>
+
+                <p id="s4-intro">ข้อมูลจะถูกแชร์เฉพาะกรณี:</p>
+                <ul>
+                    <li id="s4-a">เมื่อได้รับความยินยอมจากคุณ</li>
+                    <li id="s4-b">เมื่อกฎหมายบังคับ</li>
+                    <li id="s4-c">เพื่อปกป้องสิทธิ์และความปลอดภัย</li>
+                </ul>
+            </div>
+
+            <!-- SECTION 5: THIRD-PARTY SERVICES -->
+            <div class="section">
+                <h2><span class="num">5</span> <span id="s5-title">บริการของบุคคลที่สาม</span></h2>
+                <p id="s5-intro">แอปใช้บริการต่อไปนี้ที่มีนโยบายความเป็นส่วนตัวของตัวเอง:</p>
+                <ul>
+                    <li><strong>Google Play Services:</strong> <span id="s5-a-desc">สำหรับ In-App Purchase และ Google
+                            Sign-In</span></li>
+                    <li><strong>Firebase:</strong> <span id="s5-b-desc">สำหรับ Authentication และ Realtime
+                            Database</span></li>
+                    <li><strong>GitHub:</strong> <span id="s5-c-desc">สำหรับอัปเดตฐานข้อมูลไวรัส</span></li>
+                </ul>
+            </div>
+
+            <!-- SECTION 6: DATA SECURITY -->
+            <div class="section">
+                <h2><span class="num">6</span> <span id="s6-title">ความปลอดภัยของข้อมูล</span></h2>
+                <p id="s6-intro">เราใช้มาตรการรักษาความปลอดภัยได้แก่:</p>
+                <ul>
+                    <li id="s6-a">การเชื่อมต่อแบบเข้ารหัส (HTTPS/TLS)</li>
+                    <li id="s6-b">Firebase Security Rules</li>
+                    <li id="s6-c">Device Fingerprinting สำหรับ License Protection</li>
+                    <li id="s6-d">ไม่เก็บข้อมูลที่ละเอียดอ่อนบนเซิร์ฟเวอร์</li>
+                </ul>
+            </div>
+
+            <!-- SECTION 7: USER RIGHTS -->
+            <div class="section">
+                <h2><span class="num">7</span> <span id="s7-title">สิทธิ์ของผู้ใช้</span></h2>
+                <p id="s7-intro">คุณมีสิทธิ์ในการ:</p>
+                <ul>
+                    <li><strong id="s7-a">เข้าถึง:</strong> <span id="s7-a-desc">ขอดูข้อมูลที่เราเก็บเกี่ยวกับคุณ</span>
+                    </li>
+                    <li><strong id="s7-b">แก้ไข:</strong> <span id="s7-b-desc">ขอแก้ไขข้อมูลที่ไม่ถูกต้อง</span></li>
+                    <li><strong id="s7-c">ลบ:</strong> <span id="s7-c-desc">ขอให้ลบข้อมูลของคุณ</span></li>
+                    <li><strong id="s7-d">ถอนความยินยอม:</strong> <span
+                            id="s7-d-desc">ถอนการติดตั้งแอปเพื่อหยุดการเก็บข้อมูล</span></li>
+                    <li><strong id="s7-e">โอนย้าย License:</strong> <span id="s7-e-desc">ย้าย Premium ไปอุปกรณ์ใหม่ (1
+                            ครั้ง)</span></li>
+                </ul>
+            </div>
+
+            <!-- SECTION 8: CHILDREN -->
+            <div class="section">
+                <h2><span class="num">8</span> <span id="s8-title">เด็กและผู้เยาว์</span></h2>
+                <p id="s8-desc">แอปนี้ไม่ได้ออกแบบมาสำหรับเด็กอายุต่ำกว่า 13 ปี
+                    และเราไม่เก็บข้อมูลส่วนบุคคลจากเด็กโดยเจตนา</p>
+            </div>
+
+            <!-- SECTION 9: CHANGES -->
+            <div class="section">
+                <h2><span class="num">9</span> <span id="s9-title">การเปลี่ยนแปลงนโยบาย</span></h2>
+                <p id="s9-desc">เราอาจปรับปรุงนโยบายนี้เป็นครั้งคราว การเปลี่ยนแปลงจะถูกประกาศในแอปหรือหน้านี้
+                    การใช้งานแอปต่อไปถือว่าคุณยอมรับนโยบายที่ปรับปรุงแล้ว</p>
+            </div>
+
+            <!-- CONTACT -->
+            <div class="contact-box">
+                <h3 id="contact-title">ติดต่อเรา</h3>
+                <p id="contact-desc">หากมีคำถามเกี่ยวกับนโยบายความเป็นส่วนตัว กรุณาติดต่อ:</p>
+                <ul>
+                    <li>Email: <a href="mailto:imtthailand2019@gmail.com">imtthailand2019@gmail.com</a></li>
+                    <li>Developer: <a href="https://github.com/wizxbiz" target="_blank">github.com/wizxbiz</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <p class="update-date" id="update-date">อัปเดตล่าสุด: 2 มกราคม 2026</p>
+            <span class="version">v1.0.0</span>
+        </div>
+    </div>
+
+    <script>
+        // Language data
+        const translations = {
+            th: {
+                title: 'นโยบายความเป็นส่วนตัว',
+                subtitle: 'WiTH+ Security Scanner',
+                summary: '<strong>สรุปสั้น:</strong> เราเก็บข้อมูลเพียงเท่าที่จำเป็นสำหรับการสแกนไวรัส และ <strong>ไม่แชร์ข้อมูลส่วนตัวของคุณ</strong> กับบุคคลที่สาม',
+                's1-title': 'ข้อมูลที่เราเก็บรวบรวม',
+                's1-1-title': 'ข้อมูลแอปพลิเคชัน',
+                's1-1-a': 'รายชื่อแอปที่ติดตั้ง:',
+                's1-1-a-desc': 'Package names ของแอปในเครื่องของคุณ เพื่อตรวจสอบกับฐานข้อมูลไวรัส',
+                's1-1-b': 'ข้อมูลแอป:',
+                's1-1-b-desc': 'ชื่อแอป, ขนาด, วันที่ติดตั้ง (ไม่รวมข้อมูลภายในแอป)',
+                's1-2-title': 'ข้อมูลอุปกรณ์',
+                's1-2-a': 'รุ่นอุปกรณ์และเวอร์ชัน Android (เพื่อการวิเคราะห์ปัญหาเทคนิค)',
+                's1-2-b': 'เวอร์ชันแอป WiTH+',
+                's1-3-title': 'ข้อมูลบัญชี (Google Sign-In)',
+                's1-3-a': 'อีเมล Google (สำหรับการยืนยันตัวตนและการซื้อ Premium)',
+                's1-3-b': 'รหัสอุปกรณ์ (Device ID) สำหรับ License Binding',
+                's2-title': 'ข้อมูลที่เราไม่เก็บ',
+                's2-note': 'เราให้ความสำคัญกับความเป็นส่วนตัวของคุณ และ <strong>ไม่</strong> เก็บข้อมูลดังนี้:',
+                's2-a': 'ข้อมูลส่วนบุคคล',
+                's2-a-desc': 'ชื่อ, ที่อยู่, เบอร์โทร',
+                's2-b': 'รหัสผ่าน',
+                's2-b-desc': 'ข้อมูลการเข้าสู่ระบบ',
+                's2-c': 'ข้อมูลการเงิน',
+                's2-c-desc': 'บัตรเครดิต, บัญชีธนาคาร',
+                's2-d': 'รูปภาพ/วิดีโอ',
+                's2-d-desc': 'ไฟล์ส่วนตัวทุกประเภท',
+                's2-e': 'ข้อความ/การโทร',
+                's2-e-desc': 'SMS, ประวัติการโทร',
+                's2-f': 'ตำแหน่ง GPS',
+                's2-f-desc': 'ไม่ติดตามตำแหน่ง',
+                's3-title': 'วิธีการใช้ข้อมูล',
+                's3-intro': 'เราใช้ข้อมูลที่เก็บรวบรวมเพื่อวัตถุประสงค์ดังนี้เท่านั้น:',
+                's3-a': 'สแกนและตรวจจับไวรัส:',
+                's3-a-desc': 'เปรียบเทียบ package names กับฐานข้อมูลมัลแวร์',
+                's3-b': 'การยืนยัน Premium:',
+                's3-b-desc': 'ตรวจสอบสถานะ License ผ่าน Google Account',
+                's3-c': 'ปรับปรุงฐานข้อมูล:',
+                's3-c-desc': 'เพิ่มรายการไวรัสใหม่จาก Feedback ผู้ใช้',
+                's3-d': 'พัฒนาแอป:',
+                's3-d-desc': 'แก้ไขบัคและเพิ่มฟีเจอร์ใหม่',
+                's4-title': 'การแชร์ข้อมูล',
+                's4-note': 'เราไม่ขาย ไม่แลกเปลี่ยน และไม่แชร์ข้อมูลส่วนบุคคลของคุณกับบุคคลที่สาม',
+                's4-intro': 'ข้อมูลจะถูกแชร์เฉพาะกรณี:',
+                's4-a': 'เมื่อได้รับความยินยอมจากคุณ',
+                's4-b': 'เมื่อกฎหมายบังคับ',
+                's4-c': 'เพื่อปกป้องสิทธิ์และความปลอดภัย',
+                's5-title': 'บริการของบุคคลที่สาม',
+                's5-intro': 'แอปใช้บริการต่อไปนี้ที่มีนโยบายความเป็นส่วนตัวของตัวเอง:',
+                's5-a-desc': 'สำหรับ In-App Purchase และ Google Sign-In',
+                's5-b-desc': 'สำหรับ Authentication และ Realtime Database',
+                's5-c-desc': 'สำหรับอัปเดตฐานข้อมูลไวรัส',
+                's6-title': 'ความปลอดภัยของข้อมูล',
+                's6-intro': 'เราใช้มาตรการรักษาความปลอดภัยได้แก่:',
+                's6-a': 'การเชื่อมต่อแบบเข้ารหัส (HTTPS/TLS)',
+                's6-b': 'Firebase Security Rules',
+                's6-c': 'Device Fingerprinting สำหรับ License Protection',
+                's6-d': 'ไม่เก็บข้อมูลที่ละเอียดอ่อนบนเซิร์ฟเวอร์',
+                's7-title': 'สิทธิ์ของผู้ใช้',
+                's7-intro': 'คุณมีสิทธิ์ในการ:',
+                's7-a': 'เข้าถึง:',
+                's7-a-desc': 'ขอดูข้อมูลที่เราเก็บเกี่ยวกับคุณ',
+                's7-b': 'แก้ไข:',
+                's7-b-desc': 'ขอแก้ไขข้อมูลที่ไม่ถูกต้อง',
+                's7-c': 'ลบ:',
+                's7-c-desc': 'ขอให้ลบข้อมูลของคุณ',
+                's7-d': 'ถอนความยินยอม:',
+                's7-d-desc': 'ถอนการติดตั้งแอปเพื่อหยุดการเก็บข้อมูล',
+                's7-e': 'โอนย้าย License:',
+                's7-e-desc': 'ย้าย Premium ไปอุปกรณ์ใหม่ (1 ครั้ง)',
+                's8-title': 'เด็กและผู้เยาว์',
+                's8-desc': 'แอปนี้ไม่ได้ออกแบบมาสำหรับเด็กอายุต่ำกว่า 13 ปี และเราไม่เก็บข้อมูลส่วนบุคคลจากเด็กโดยเจตนา',
+                's9-title': 'การเปลี่ยนแปลงนโยบาย',
+                's9-desc': 'เราอาจปรับปรุงนโยบายนี้เป็นครั้งคราว การเปลี่ยนแปลงจะถูกประกาศในแอปหรือหน้านี้ การใช้งานแอปต่อไปถือว่าคุณยอมรับนโยบายที่ปรับปรุงแล้ว',
+                'contact-title': 'ติดต่อเรา',
+                'contact-desc': 'หากมีคำถามเกี่ยวกับนโยบายความเป็นส่วนตัว กรุณาติดต่อ:',
+                'update-date': 'อัปเดตล่าสุด: 2 มกราคม 2026'
+            },
+            en: {
+                title: 'Privacy Policy',
+                subtitle: 'WiTH+ Security Scanner',
+                summary: '<strong>Summary:</strong> We only collect data necessary for virus scanning and <strong>do not share your personal data</strong> with third parties.',
+                's1-title': 'Data We Collect',
+                's1-1-title': 'Application Data',
+                's1-1-a': 'Installed Apps:',
+                's1-1-a-desc': 'Package names of apps on your device to check against virus database',
+                's1-1-b': 'App Info:',
+                's1-1-b-desc': 'App name, size, install date (not including app internal data)',
+                's1-2-title': 'Device Information',
+                's1-2-a': 'Device model and Android version (for technical analysis)',
+                's1-2-b': 'WiTH+ app version',
+                's1-3-title': 'Account Data (Google Sign-In)',
+                's1-3-a': 'Google email (for authentication and Premium purchase)',
+                's1-3-b': 'Device ID for License Binding',
+                's2-title': 'Data We Do NOT Collect',
+                's2-note': 'We value your privacy and do <strong>NOT</strong> collect the following:',
+                's2-a': 'Personal Info',
+                's2-a-desc': 'Name, address, phone',
+                's2-b': 'Passwords',
+                's2-b-desc': 'Login credentials',
+                's2-c': 'Financial Data',
+                's2-c-desc': 'Credit cards, bank accounts',
+                's2-d': 'Photos/Videos',
+                's2-d-desc': 'All personal files',
+                's2-e': 'Messages/Calls',
+                's2-e-desc': 'SMS, call history',
+                's2-f': 'GPS Location',
+                's2-f-desc': 'No location tracking',
+                's3-title': 'How We Use Data',
+                's3-intro': 'We use collected data only for the following purposes:',
+                's3-a': 'Virus Scanning:',
+                's3-a-desc': 'Compare package names with malware database',
+                's3-b': 'Premium Verification:',
+                's3-b-desc': 'Check license status via Google Account',
+                's3-c': 'Database Updates:',
+                's3-c-desc': 'Add new virus entries from user feedback',
+                's3-d': 'App Development:',
+                's3-d-desc': 'Fix bugs and add new features',
+                's4-title': 'Data Sharing',
+                's4-note': 'We do not sell, trade, or share your personal data with third parties',
+                's4-intro': 'Data will only be shared in cases of:',
+                's4-a': 'With your consent',
+                's4-b': 'When required by law',
+                's4-c': 'To protect rights and safety',
+                's5-title': 'Third-Party Services',
+                's5-intro': 'The app uses the following services with their own privacy policies:',
+                's5-a-desc': 'For In-App Purchase and Google Sign-In',
+                's5-b-desc': 'For Authentication and Realtime Database',
+                's5-c-desc': 'For virus database updates',
+                's6-title': 'Data Security',
+                's6-intro': 'We implement security measures including:',
+                's6-a': 'Encrypted connections (HTTPS/TLS)',
+                's6-b': 'Firebase Security Rules',
+                's6-c': 'Device Fingerprinting for License Protection',
+                's6-d': 'No sensitive data stored on servers',
+                's7-title': 'Your Rights',
+                's7-intro': 'You have the right to:',
+                's7-a': 'Access:',
+                's7-a-desc': 'Request to see data we collect about you',
+                's7-b': 'Correction:',
+                's7-b-desc': 'Request to correct inaccurate data',
+                's7-c': 'Deletion:',
+                's7-c-desc': 'Request to delete your data',
+                's7-d': 'Withdraw Consent:',
+                's7-d-desc': 'Uninstall the app to stop data collection',
+                's7-e': 'License Transfer:',
+                's7-e-desc': 'Move Premium to new device (1 time)',
+                's8-title': 'Children',
+                's8-desc': 'This app is not designed for children under 13 years old and we do not intentionally collect personal data from children.',
+                's9-title': 'Policy Changes',
+                's9-desc': 'We may update this policy from time to time. Changes will be announced in the app or on this page. Continued use of the app means you accept the updated policy.',
+                'contact-title': 'Contact Us',
+                'contact-desc': 'If you have questions about privacy policy, please contact:',
+                'update-date': 'Last updated: January 2, 2026'
+            }
+        };
+
+        // Get language from URL
+        function getLang() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('lang') || 'th';
+        }
+
+        // Apply translations
+        function applyTranslations(lang) {
+            const t = translations[lang];
+            if (!t) return;
+
+            // Update HTML lang attribute
+            document.documentElement.lang = lang === 'th' ? 'th' : 'en';
+
+            // Update all elements
+            for (const [id, text] of Object.entries(t)) {
+                const el = document.getElementById(id);
+                if (el) {
+                    if (id === 'summary' || id === 's2-note' || id === 's4-note') {
+                        el.innerHTML = text;
+                    } else {
+                        el.textContent = text;
+                    }
+                }
+            }
+
+            // Update language buttons
+            document.getElementById('btn-th').classList.toggle('active', lang === 'th');
+            document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            applyTranslations(getLang());
+        });
+    </script>
+</body>
+
+</html>

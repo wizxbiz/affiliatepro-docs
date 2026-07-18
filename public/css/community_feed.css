@@ -1,0 +1,314 @@
+/* 🌟 Community Feed Styles - Premium Google-Inspired UI */
+
+:root {
+    --google-blue: #4285F4;
+    --google-red: #EA4335;
+    --google-yellow: #FBBC05;
+    --google-green: #34A853;
+    --community-bg: #0f172a;
+    --card-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.15);
+}
+
+/* Base Layout Adjustments */
+#tuktukFeed.feed-community-mode {
+    scroll-snap-type: none !important;
+    background: var(--community-bg) !important;
+    padding-top: 70px !important;
+    padding-bottom: 120px !important;
+    overflow-y: auto !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#community-feed-content {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 10px;
+    /* Reduced for better proportion */
+}
+
+/* Control Proportions (Card & Media) */
+.community-feed-card {
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
+    aspect-ratio: auto;
+}
+
+.community-post-media {
+    width: 100%;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 15px;
+    background: #000;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.community-post-media img,
+.community-post-media video {
+    max-width: 100%;
+    max-height: 500px;
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain !important;
+    display: block;
+    margin: 0 auto;
+}
+
+
+
+/* Premium Header Integration */
+.community-header {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 15px;
+    position: sticky;
+    top: 0;
+    z-index: 1100;
+}
+
+/* Google-Style Create Post Widget */
+.create-post-wrapper {
+    background: var(--card-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.create-post-wrapper:hover {
+    transform: translateY(-2px);
+    border-color: var(--google-blue);
+    background: rgba(30, 41, 59, 0.9);
+}
+
+.create-post-header-text {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    font-family: 'Outfit', sans-serif;
+}
+
+.create-post-header-text i {
+    background: linear-gradient(135deg, var(--google-blue), var(--google-green));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.smart-input-box {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 30px;
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.smart-input-box:hover {
+    background: rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.smart-input-text {
+    flex: 1;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.95rem;
+}
+
+.google-action-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.google-action-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: scale(1.15);
+}
+
+.google-voice {
+    color: var(--google-red);
+}
+
+.google-image {
+    color: var(--google-blue);
+}
+
+.google-video {
+    color: var(--google-green);
+}
+
+.smart-chips {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.smart-chips::-webkit-scrollbar {
+    display: none;
+}
+
+.smart-chip {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 8px 18px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    color: #e2e8f0;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.smart-chip:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+.smart-chip.active {
+    background: var(--google-blue);
+    border-color: var(--google-blue);
+    color: white;
+    box-shadow: 0 4px 15px rgba(66, 133, 244, 0.3);
+}
+
+.smart-chip.active i,
+.smart-chip.active div {
+    color: white !important;
+}
+
+/* Premium Card Design */
+.community-feed-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 28px;
+    margin-bottom: 25px;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.community-feed-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+.card-author-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    padding: 1px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.category-badge {
+    background: rgba(66, 133, 244, 0.1);
+    color: var(--google-blue);
+    border: 1px solid rgba(66, 133, 244, 0.2);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-weight: 600;
+}
+
+/* Action Styles */
+.post-actions {
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.15);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.action-btn-row {
+    flex: 1;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 500;
+    font-size: 0.9rem;
+    border-radius: 12px;
+    transition: all 0.25s;
+    border: none;
+    background: transparent;
+}
+
+.action-btn-row:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+}
+
+.action-btn-row.liked i {
+    color: var(--google-red);
+}
+
+.action-btn-row.liked span {
+    color: white;
+}
+
+/* Empty & Loader States */
+.empty-community-state {
+    padding: 80px 30px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 30px;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.empty-icon-circle {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, rgba(66, 133, 244, 0.1), rgba(52, 168, 83, 0.1));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 25px;
+    color: var(--google-blue);
+    font-size: 2.5rem;
+}
+
+/* Custom Badges */
+.category-badge {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 600;
+}

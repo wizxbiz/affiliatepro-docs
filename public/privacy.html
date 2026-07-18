@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="นโยบายความเป็นส่วนตัว - TukTuk Thailand & WiTH+ Security">
+    <title>นโยบายความเป็นส่วนตัว | Privacy Policy</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --line-green: #00B900;
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --dark-color: #2D3436;
+            --light-color: #F8F9FA;
+            --with-primary: #667eea;
+            --with-secondary: #764ba2;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Kanit', 'Prompt', sans-serif;
+            background: var(--light-color);
+            color: var(--dark-color);
+            line-height: 1.8;
+        }
+
+        /* === APP SELECTOR === */
+        .app-selector {
+            background: linear-gradient(135deg, var(--dark-color) 0%, #1a1a2e 100%);
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .app-selector h2 {
+            color: white;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+
+        .app-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .app-tab {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 30px;
+            border-radius: 16px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+
+        .app-tab.tuktuk {
+            background: rgba(255, 0, 80, 0.1);
+            color: #FF0050;
+            border-color: rgba(255, 0, 80, 0.2);
+        }
+
+        .app-tab.tuktuk:hover,
+        .app-tab.tuktuk.active {
+            background: #FF0050;
+            color: white;
+            border-color: #FF0050;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 0, 80, 0.3);
+        }
+
+        .app-tab.with-plus {
+            background: rgba(102, 126, 234, 0.15);
+            color: var(--primary-color);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .app-tab.with-plus:hover,
+        .app-tab.with-plus.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-color: var(--primary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .app-tab .icon {
+            font-size: 1.5rem;
+        }
+
+        /* === CONTENT SECTIONS === */
+        .policy-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .policy-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ============================================
+           TUKTUK THAILAND STYLES
+           ============================================ */
+        .tuktuk-content .hero-section {
+            background: linear-gradient(135deg, #FF0050 0%, #00f2ea 100%);
+            padding: 80px 0 50px;
+            color: white;
+            text-align: center;
+        }
+
+        .tuktuk-content .hero-section h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+
+        .content-section {
+            padding: 50px 0;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .content-card h2 {
+            color: #FF0050;
+            font-weight: 700;
+            font-size: 1.4rem;
+            margin: 25px 0 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-color);
+        }
+
+        .content-card h2:first-child {
+            margin-top: 0;
+        }
+
+        .content-card p,
+        .content-card li {
+            color: #555;
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+
+        .content-card ul {
+            padding-left: 20px;
+        }
+
+        .content-card li {
+            margin-bottom: 8px;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(255, 0, 80, 0.1), rgba(0, 242, 234, 0.1));
+            border-left: 4px solid #FF0050;
+            padding: 18px 22px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .highlight-box-danger {
+            border-left: 4px solid #FF0050;
+            background: rgba(255, 0, 80, 0.05);
+            padding: 18px 22px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .highlight-box-success {
+            border-left: 4px solid #00B900;
+            background: rgba(0, 185, 0, 0.05);
+            padding: 18px 22px;
+            border-radius: 10px;
+            margin-top: 12px;
+        }
+
+        .badge-ad {
+            color: white;
+            padding: 1px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+
+        .badge-ad-red { background: #FF0050; }
+        .badge-ad-purple { background: #764ba2; }
+
+        .pdpa-note {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.9rem;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .data-table th {
+            background: var(--light-color);
+            font-weight: 600;
+        }
+
+        .badge-yes {
+            background: #FF0050;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+
+        .badge-no {
+            background: #e0e0e0;
+            color: #666;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+
+        /* ============================================
+           WiTH+ STYLES
+           ============================================ */
+        .with-content .hero-section {
+            background: linear-gradient(135deg, var(--with-primary) 0%, var(--with-secondary) 100%);
+            padding: 80px 0 50px;
+            color: white;
+            text-align: center;
+        }
+
+        .with-content .hero-section h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+
+        .with-content .logo-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .with-content .content-card h2 {
+            color: var(--with-primary);
+        }
+
+        .with-content .highlight-box {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-left-color: var(--with-primary);
+        }
+
+        .with-content .highlight-box.success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.15));
+            border-left-color: #10b981;
+        }
+
+        .with-content .badge-yes {
+            background: var(--with-primary);
+        }
+
+        /* === LANG SWITCH === */
+        .lang-switch {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .lang-btn {
+            padding: 8px 20px;
+            border-radius: 20px;
+            border: 2px solid #ddd;
+            background: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .lang-btn:hover,
+        .lang-btn.active {
+            border-color: var(--with-primary);
+            background: var(--with-primary);
+            color: white;
+        }
+
+        /* === DATA CARDS === */
+        .data-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin: 15px 0;
+        }
+
+        .data-card {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            text-align: center;
+        }
+
+        .data-card .emoji {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .data-card .title {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--dark-color);
+        }
+
+        .data-card .desc {
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        /* === FOOTER === */
+        .footer {
+            background: var(--dark-color);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            margin: 0 12px;
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--line-green);
+        }
+
+        .last-updated {
+            text-align: center;
+            color: #888;
+            margin-top: 25px;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .content-card {
+                padding: 25px 18px;
+            }
+
+            .app-tab {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
+
+            .data-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+    <script src="/js/analytics.js" defer></script>
+</head>
+
+<body>
+    <!-- APP SELECTOR -->
+    <div class="app-selector">
+        <h2>เลือกแอปพลิเคชันเพื่อดูนโยบายความเป็นส่วนตัว</h2>
+        <div class="app-tabs">
+            <div class="app-tab tuktuk active" onclick="showPolicy('tuktuk')">
+                <span class="icon">
+                    <img src="/assets/images/logo.png" alt="TukTuk Logo" style="height: 30px;"
+                        onerror="this.onerror=null; this.src='/images/logo.png';">
+                </span>
+                <span>TukTuk Thailand<br><small style="font-weight:400;font-size:0.75rem">AI & Media</small></span>
+            </div>
+            <div class="app-tab with-plus" onclick="showPolicy('with')">
+                <span class="icon">🛡️</span>
+                <span>WiTH+<br><small style="font-weight:400;font-size:0.75rem">Security Scanner</small></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         WIZMOBIZ PRIVACY POLICY
+         ============================================ -->
+    <div id="tuktuk-policy" class="policy-content tuktuk-content active">
+        <section class="hero-section">
+            <div class="container">
+                <h1>🔒 นโยบายความเป็นส่วนตัว</h1>
+                <p>TukTuk Thailand - AI & Media Platform</p>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <div class="content-card">
+                            <div class="highlight-box">
+                                <strong>🛡️ ความเป็นส่วนตัวของคุณสำคัญ:</strong>
+                                TukTuk Thailand มุ่งมั่นในการปกป้องข้อมูลส่วนบุคคลของผู้ใช้ทุกท่าน
+                            </div>
+
+                            <h2>1. ข้อมูลที่เราเก็บรวบรวม</h2>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ประเภทข้อมูล</th>
+                                        <th>รายละเอียด</th>
+                                        <th>จัดเก็บ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>ข้อมูลจาก LINE</strong></td>
+                                        <td>User ID, Display Name, Profile Picture</td>
+                                        <td><span class="badge-yes">✓</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>พฤติกรรมการรับชม</strong></td>
+                                        <td>ประวัติการดูวิดีโอ, การกดถูกใจ, การติดตาม</td>
+                                        <td><span class="badge-yes">✓</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>ข้อมูลการซื้อขาย</strong></td>
+                                        <td>ประวัติคำสั่งซื้อ, ข้อมูลการจัดส่งสินค้า</td>
+                                        <td><span class="badge-yes">✓</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>ข้อมูลการเงิน</strong></td>
+                                        <td>รายละเอียดบัตรเครดิตหรือข้อมูลธนาคาร</td>
+                                        <td><span class="badge-no">✗</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h2>2. วัตถุประสงค์การใช้ข้อมูล</h2>
+                            <ul>
+                                <li><strong>ให้บริการ:</strong> เพื่อนำเสนอวิดีโอความบันเทิงและสินค้าที่ตรงกับความสนใจ</li>
+                                <li><strong>ตลาดซื้อขาย:</strong> เพื่อประมวลผลคำสั่งซื้อและบริการจัดส่งสินค้า</li>
+                                <li><strong>การเชื่อมต่อ:</strong> เพื่อแจ้งเตือนสถานะการซื้อขายและข่าวสารผ่าน LINE</li>
+                                <li><strong>พัฒนาบริการ:</strong> วิเคราะห์สถิติเพื่อเพิ่มประสิทธิภาพระบบ Feed และ Marketplace</li>
+                                <li><strong>สินค้าแนะนำ:</strong> เพื่อแสดงสินค้าและโฆษณาที่เกี่ยวข้องในหน้ากล่องข้อความ โดยอิงจากประวัติการดูสินค้าและหมวดหมู่ที่คุณสนใจ — <em>ไม่มีการอ่านเนื้อหาข้อความส่วนตัวเพื่อวัตถุประสงค์นี้</em></li>
+                            </ul>
+
+                            <h2>3. สินค้าแนะนำและโฆษณาในกล่องข้อความ</h2>
+                            <div class="highlight-box-danger">
+                                <strong>🔒 ข้อความส่วนตัวของคุณปลอดภัย:</strong>
+                                แอป TukTuk <u>ไม่มีการอ่าน สแกน หรือประมวลผลเนื้อหาข้อความ</u>
+                                เพื่อนำไปใช้ในการแสดงโฆษณาหรือสินค้าแนะนำใด ๆ ทั้งสิ้น
+                            </div>
+
+                            <p><strong>วิธีที่เราแสดงสินค้าแนะนำในกล่องข้อความ:</strong></p>
+                            <ul>
+                                <li>
+                                    <strong>Positional Ads (สุ่มตามตำแหน่ง):</strong>
+                                    การ์ดสินค้าจะถูกแทรกระหว่างรายการสนทนาตามตำแหน่งที่กำหนด เช่น ทุก 5 รายการ
+                                    โดยดึงจากสินค้าที่ร้านค้าซื้อพื้นที่โฆษณา — ไม่เกี่ยวข้องกับเนื้อหาการสนทนา
+                                </li>
+                                <li>
+                                    <strong>Interest-based Recommendations (อิงจากประวัติการใช้งาน):</strong>
+                                    สินค้าแนะนำอาจอิงจากหมวดหมู่สินค้าที่คุณเคยดูหรือซื้อใน Marketplace,
+                                    คะแนนความสนใจ (interest score) ที่บันทึกจากพฤติกรรมการเลื่อนดูสินค้า
+                                    และจังหวัดหรือพื้นที่จากโปรไฟล์ผู้ใช้
+                                </li>
+                                <li>
+                                    <strong>Product Chat Context:</strong>
+                                    ในแท็บ "สินค้า" ซึ่งเป็นพื้นที่สำหรับการสื่อสารเรื่องการซื้อขายโดยเฉพาะ
+                                    อาจมีการแสดงสินค้าที่เกี่ยวข้องกับบทสนทนาปัจจุบัน
+                                    โดยข้อมูลนี้มาจาก metadata ของสินค้า (เช่น ชื่อสินค้า, หมวดหมู่) ไม่ใช่เนื้อหาข้อความ
+                                </li>
+                            </ul>
+
+                            <p><strong>การแสดงผลโฆษณา:</strong>
+                            การ์ดสินค้าแนะนำทุกชิ้นจะมีป้ายกำกับ <span class="badge-ad badge-ad-red">สินค้าแนะนำ</span>
+                            หรือ <span class="badge-ad badge-ad-purple">Sponsored</span>
+                            อย่างชัดเจน เพื่อแยกแยะจากรายการสนทนาทั่วไป</p>
+
+                            <p><strong>การปิดการแสดงสินค้าแนะนำ:</strong>
+                            คุณสามารถปิดการแสดงสินค้าแนะนำในกล่องข้อความได้ที่ <em>การตั้งค่า → ความเป็นส่วนตัว → สินค้าแนะนำในกล่องข้อความ</em>
+                            หรือแจ้งทีมงานผ่านช่องทางการติดต่อในข้อ 8</p>
+
+                            <h2>4. การแบ่งปันข้อมูล</h2>
+                            <div class="highlight-box">
+                                <strong>⛔ เราไม่ขาย:</strong> ข้อมูลส่วนบุคคลของคุณจะไม่ถูกขายให้บุคคลที่สาม
+                            </div>
+                            <p>เราอาจแบ่งปันข้อมูลในกรณีต่อไปนี้เท่านั้น:</p>
+                            <ul>
+                                <li><strong>ผู้ให้บริการโครงสร้างพื้นฐาน:</strong> Google Cloud, Firebase, LINE (เป็น Data Processor ตาม DPA)</li>
+                                <li><strong>ร้านค้าใน Marketplace:</strong> เฉพาะข้อมูลที่จำเป็นสำหรับการดำเนินคำสั่งซื้อ เช่น ชื่อ, ที่อยู่จัดส่ง</li>
+                                <li><strong>ตามกฎหมาย:</strong> เมื่อมีคำสั่งจากหน่วยงานราชการที่มีอำนาจตามกฎหมาย</li>
+                                <li><strong>ความยินยอม:</strong> เมื่อคุณให้ความยินยอมโดยชัดแจ้ง</li>
+                            </ul>
+                            <div class="highlight-box-success">
+                                <strong>✅ ข้อมูลโฆษณา:</strong>
+                                ข้อมูลที่ใช้ในการแสดงสินค้าแนะนำ (interest score, หมวดหมู่, จังหวัด)
+                                ถูกประมวลผลภายในระบบ TukTuk เท่านั้น ไม่ถูกแบ่งปันให้ Ad Network ภายนอก
+                            </div>
+
+                            <h2>5. การรักษาความปลอดภัย</h2>
+                            <ul>
+                                <li>🔐 ข้อมูลถูกเข้ารหัสระหว่างการส่งผ่าน (HTTPS/TLS)</li>
+                                <li>☁️ จัดเก็บบน Firebase Cloud ที่มีมาตรฐาน SOC 2</li>
+                                <li>🛡️ มีการควบคุมการเข้าถึงระดับผู้ใช้ (Firestore Security Rules)</li>
+                                <li>🔒 ข้อความส่วนตัวถูกจัดเก็บด้วย Firestore Security Rules ที่จำกัดการเข้าถึงเฉพาะผู้เกี่ยวข้อง</li>
+                            </ul>
+
+                            <h2>6. ระยะเวลาการเก็บรักษา</h2>
+                            <ul>
+                                <li><strong>ข้อมูลการรับชม / interest score:</strong> ตลอดอายุสมาชิกเพื่อแนะนำเนื้อหา — ลบได้เมื่อร้องขอ</li>
+                                <li><strong>ข้อมูลคำสั่งซื้อ:</strong> จัดเก็บตามระเบียบทางบัญชีและกฎหมายพาณิชย์ (ไม่น้อยกว่า 5 ปี)</li>
+                                <li><strong>ข้อความสนทนา:</strong> จัดเก็บตลอดไปเพื่อประวัติการซื้อขาย — ลบได้ตามคำขอ</li>
+                                <li><strong>Log การใช้งาน:</strong> 1 ปี เพื่อความปลอดภัยของระบบ</li>
+                            </ul>
+
+                            <h2>7. สิทธิ์ของคุณ (PDPA)</h2>
+                            <ul>
+                                <li>✅ <strong>เข้าถึง:</strong> ขอดูข้อมูลที่เราเก็บรวบรวมเกี่ยวกับคุณ รวมถึง interest score</li>
+                                <li>✅ <strong>แก้ไข:</strong> ขอแก้ไขข้อมูลที่ไม่ถูกต้อง</li>
+                                <li>✅ <strong>ลบ:</strong> ขอลบข้อมูลส่วนบุคคล รวมถึงประวัติการดูสินค้าและ interest score</li>
+                                <li>✅ <strong>คัดค้าน:</strong> คัดค้านการใช้ข้อมูลเพื่อการตลาดหรือโฆษณา</li>
+                                <li>✅ <strong>ถอนความยินยอม:</strong> ปิดการแสดงสินค้าแนะนำในกล่องข้อความได้ทุกเมื่อ โดยไปที่ การตั้งค่า → ความเป็นส่วนตัว หรือแจ้งทีมงาน</li>
+                                <li>✅ <strong>โอนย้ายข้อมูล:</strong> ขอรับข้อมูลของคุณในรูปแบบที่อ่านได้ด้วยเครื่อง (Data Portability)</li>
+                            </ul>
+                            <p class="pdpa-note">
+                                คำขอใช้สิทธิ์จะได้รับการตอบกลับภายใน 30 วัน ตามมาตรา 40 พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562
+                            </p>
+
+                            <h2>8. การติดต่อ</h2>
+                            <ul>
+                                <li><strong>LINE:</strong> <a href="https://lin.ee/1YJsw47" target="_blank">@wit_365</a>
+                                </li>
+                                <li><strong>Facebook:</strong> <a href="https://www.facebook.com/wit365/"
+                                        target="_blank">facebook.com/wit365</a></li>
+                                <li><strong>TikTok:</strong> <a href="https://www.tiktok.com/@wit_365"
+                                        target="_blank">@wit_365</a></li>
+                                <li><strong>Email:</strong> <a
+                                        href="mailto:imtthailand2019@gmail.com">imtthailand2019@gmail.com</a></li>
+                                <li><strong>โทร:</strong> +66646242456</li>
+                                <li><strong>ที่อยู่:</strong> 12/3 Moo 1, Sriracha, Chonburi 20230, Thailand</li>
+                            </ul>
+
+                            <p class="last-updated">อัปเดตล่าสุด: 2 มกราคม 2026</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ============================================
+         WiTH+ PRIVACY POLICY
+         ============================================ -->
+    <div id="with-policy" class="policy-content with-content">
+        <!-- Language Switch -->
+        <div class="lang-switch">
+            <button class="lang-btn active" onclick="setWithLang('th')">🇹🇭 ภาษาไทย</button>
+            <button class="lang-btn" onclick="setWithLang('en')">🇺🇸 English</button>
+        </div>
+
+        <section class="hero-section">
+            <div class="container">
+                <div class="logo-icon">🛡️</div>
+                <h1 id="with-title">นโยบายความเป็นส่วนตัว</h1>
+                <p>WiTH+ Security Scanner</p>
+                <small style="opacity:0.8">com.secure.deviceapps</small>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <div class="content-card">
+                            <div class="highlight-box">
+                                <strong>📌 <span id="w-summary-title">สรุปสั้น:</span></strong>
+                                <span id="w-summary">เราเก็บข้อมูลเพียงเท่าที่จำเป็นสำหรับการสแกนไวรัส และ
+                                    <strong>ไม่แชร์ข้อมูลส่วนตัวของคุณ</strong> กับบุคคลที่สาม</span>
+                            </div>
+
+                            <h2>1. <span id="w-s1">ข้อมูลที่เราเก็บรวบรวม</span></h2>
+                            <h4 id="w-s1-1">📱 ข้อมูลแอปพลิเคชัน</h4>
+                            <ul>
+                                <li><strong id="w-s1-1a">รายชื่อแอปที่ติดตั้ง:</strong> <span id="w-s1-1a-d">Package
+                                        names เพื่อตรวจสอบกับฐานข้อมูลไวรัส</span></li>
+                                <li><strong id="w-s1-1b">ข้อมูลแอป:</strong> <span id="w-s1-1b-d">ชื่อแอป, ขนาด,
+                                        วันที่ติดตั้ง</span></li>
+                            </ul>
+                            <h4 id="w-s1-2">📲 ข้อมูลอุปกรณ์</h4>
+                            <ul>
+                                <li id="w-s1-2a">รุ่นอุปกรณ์และเวอร์ชัน Android</li>
+                                <li id="w-s1-2b">เวอร์ชันแอป WiTH+</li>
+                            </ul>
+                            <h4 id="w-s1-3">👤 ข้อมูลบัญชี (Google Sign-In)</h4>
+                            <ul>
+                                <li id="w-s1-3a">อีเมล Google (สำหรับ Premium)</li>
+                                <li id="w-s1-3b">Device ID สำหรับ License Binding</li>
+                            </ul>
+
+                            <h2>2. <span id="w-s2">ข้อมูลที่เราไม่เก็บ</span></h2>
+                            <div class="highlight-box success">
+                                <span id="w-s2-note">เราให้ความสำคัญกับความเป็นส่วนตัวของคุณ และ <strong>ไม่</strong>
+                                    เก็บข้อมูลดังนี้:</span>
+                            </div>
+                            <div class="data-cards">
+                                <div class="data-card">
+                                    <div class="emoji">👤</div>
+                                    <div class="title" id="w-s2-a">ข้อมูลส่วนบุคคล</div>
+                                    <div class="desc">ชื่อ, ที่อยู่, เบอร์</div>
+                                </div>
+                                <div class="data-card">
+                                    <div class="emoji">🔐</div>
+                                    <div class="title" id="w-s2-b">รหัสผ่าน</div>
+                                    <div class="desc">ข้อมูลล็อกอิน</div>
+                                </div>
+                                <div class="data-card">
+                                    <div class="emoji">💳</div>
+                                    <div class="title" id="w-s2-c">ข้อมูลการเงิน</div>
+                                    <div class="desc">บัตรเครดิต</div>
+                                </div>
+                                <div class="data-card">
+                                    <div class="emoji">📸</div>
+                                    <div class="title" id="w-s2-d">รูปภาพ/วิดีโอ</div>
+                                    <div class="desc">ไฟล์ส่วนตัว</div>
+                                </div>
+                                <div class="data-card">
+                                    <div class="emoji">💬</div>
+                                    <div class="title" id="w-s2-e">ข้อความ/โทร</div>
+                                    <div class="desc">SMS, ประวัติโทร</div>
+                                </div>
+                                <div class="data-card">
+                                    <div class="emoji">📍</div>
+                                    <div class="title" id="w-s2-f">ตำแหน่ง GPS</div>
+                                    <div class="desc">ไม่ติดตาม</div>
+                                </div>
+                            </div>
+
+                            <h2>3. <span id="w-s3">วิธีการใช้ข้อมูล</span></h2>
+                            <ul>
+                                <li><strong id="w-s3-a">สแกนไวรัส:</strong> <span
+                                        id="w-s3-a-d">เปรียบเทียบกับฐานข้อมูลมัลแวร์</span></li>
+                                <li><strong id="w-s3-b">ยืนยัน Premium:</strong> <span id="w-s3-b-d">ตรวจสอบ License
+                                        ผ่าน Google Account</span></li>
+                                <li><strong id="w-s3-c">อัปเดตฐานข้อมูล:</strong> <span id="w-s3-c-d">เพิ่มไวรัสใหม่จาก
+                                        Feedback</span></li>
+                                <li><strong id="w-s3-d">พัฒนาแอป:</strong> <span
+                                        id="w-s3-d-d">แก้บัคและเพิ่มฟีเจอร์</span></li>
+                            </ul>
+
+                            <h2>4. <span id="w-s4">การแชร์ข้อมูล</span></h2>
+                            <div class="highlight-box">
+                                <strong id="w-s4-note">⛔ เราไม่ขาย ไม่แลกเปลี่ยน
+                                    และไม่แชร์ข้อมูลส่วนบุคคลกับบุคคลที่สาม</strong>
+                            </div>
+                            <p id="w-s4-intro">ข้อมูลจะถูกแชร์เฉพาะกรณี:</p>
+                            <ul>
+                                <li id="w-s4-a">เมื่อได้รับความยินยอมจากคุณ</li>
+                                <li id="w-s4-b">เมื่อกฎหมายบังคับ</li>
+                                <li id="w-s4-c">เพื่อปกป้องสิทธิ์และความปลอดภัย</li>
+                            </ul>
+
+                            <h2>5. <span id="w-s5">บริการของบุคคลที่สาม</span></h2>
+                            <ul>
+                                <li><strong>Google Play Services:</strong> <span id="w-s5-a">In-App Purchase, Google
+                                        Sign-In</span></li>
+                                <li><strong>Firebase:</strong> <span id="w-s5-b">Authentication, Realtime
+                                        Database</span></li>
+                                <li><strong>GitHub:</strong> <span id="w-s5-c">อัปเดตฐานข้อมูลไวรัส</span></li>
+                            </ul>
+
+                            <h2>6. <span id="w-s6">ความปลอดภัยของข้อมูล</span></h2>
+                            <ul>
+                                <li id="w-s6-a">🔐 การเชื่อมต่อแบบเข้ารหัส (HTTPS/TLS)</li>
+                                <li id="w-s6-b">🛡️ Firebase Security Rules</li>
+                                <li id="w-s6-c">📱 Device Fingerprinting สำหรับ License</li>
+                                <li id="w-s6-d">☁️ ไม่เก็บข้อมูลละเอียดอ่อนบนเซิร์ฟเวอร์</li>
+                            </ul>
+
+                            <h2>7. <span id="w-s7">สิทธิ์ของผู้ใช้</span></h2>
+                            <ul>
+                                <li>✅ <strong id="w-s7-a">เข้าถึง:</strong> <span
+                                        id="w-s7-a-d">ขอดูข้อมูลที่เราเก็บ</span></li>
+                                <li>✅ <strong id="w-s7-b">แก้ไข:</strong> <span
+                                        id="w-s7-b-d">ขอแก้ไขข้อมูลไม่ถูกต้อง</span></li>
+                                <li>✅ <strong id="w-s7-c">ลบ:</strong> <span id="w-s7-c-d">ขอให้ลบข้อมูลของคุณ</span>
+                                </li>
+                                <li>✅ <strong id="w-s7-d">ถอนความยินยอม:</strong> <span
+                                        id="w-s7-d-d">ถอนการติดตั้งแอป</span></li>
+                                <li>✅ <strong id="w-s7-e">โอนย้าย License:</strong> <span id="w-s7-e-d">ย้าย Premium
+                                        ไปอุปกรณ์ใหม่ (1 ครั้ง)</span></li>
+                            </ul>
+
+                            <h2>8. <span id="w-s8">เด็กและผู้เยาว์</span></h2>
+                            <p id="w-s8-d">แอปนี้ไม่ได้ออกแบบสำหรับเด็กอายุต่ำกว่า 13 ปี
+                                และเราไม่เก็บข้อมูลจากเด็กโดยเจตนา</p>
+
+                            <h2>9. <span id="w-s9">การเปลี่ยนแปลงนโยบาย</span></h2>
+                            <p id="w-s9-d">เราอาจปรับปรุงนโยบายนี้เป็นครั้งคราว การเปลี่ยนแปลงจะประกาศในแอปหรือหน้านี้
+                            </p>
+
+                            <h2>10. <span id="w-s10">ติดต่อเรา</span></h2>
+                            <ul>
+                                <li><strong>Email:</strong> <a
+                                        href="mailto:imtthailand2019@gmail.com">imtthailand2019@gmail.com</a></li>
+                                <li><strong>Developer:</strong> <a href="https://github.com/wizxbiz"
+                                        target="_blank">github.com/wizxbiz</a></li>
+                            </ul>
+
+                            <p class="last-updated" id="w-update">อัปเดตล่าสุด: 2 มกราคม 2026</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-links mb-3">
+                <a href="/">หน้าแรก</a>
+                <a href="about">เกี่ยวกับเรา</a>
+                <a href="terms">ข้อกำหนด</a>
+                <a href="privacy">นโยบายความเป็นส่วนตัว</a>
+            </div>
+            <p style="opacity:0.7;margin:0;">© 2026 TukTuk Thailand & WiTH+. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Show policy based on app selection
+        function showPolicy(app) {
+            document.querySelectorAll('.policy-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.app-tab').forEach(el => el.classList.remove('active'));
+
+            if (app === 'tuktuk') {
+                document.getElementById('tuktuk-policy').classList.add('active');
+                document.querySelector('.app-tab.tuktuk').classList.add('active');
+            } else {
+                document.getElementById('with-policy').classList.add('active');
+                document.querySelector('.app-tab.with-plus').classList.add('active');
+            }
+        }
+
+        // WiTH+ Language translations
+        const withLang = {
+            th: {
+                'with-title': 'นโยบายความเป็นส่วนตัว',
+                'w-summary-title': 'สรุปสั้น:',
+                'w-summary': 'เราเก็บข้อมูลเพียงเท่าที่จำเป็นสำหรับการสแกนไวรัส และ <strong>ไม่แชร์ข้อมูลส่วนตัวของคุณ</strong> กับบุคคลที่สาม',
+                'w-s1': 'ข้อมูลที่เราเก็บรวบรวม',
+                'w-s1-1': '📱 ข้อมูลแอปพลิเคชัน',
+                'w-s1-1a': 'รายชื่อแอปที่ติดตั้ง:',
+                'w-s1-1a-d': 'Package names เพื่อตรวจสอบกับฐานข้อมูลไวรัส',
+                'w-s1-1b': 'ข้อมูลแอป:',
+                'w-s1-1b-d': 'ชื่อแอป, ขนาด, วันที่ติดตั้ง',
+                'w-s1-2': '📲 ข้อมูลอุปกรณ์',
+                'w-s1-2a': 'รุ่นอุปกรณ์และเวอร์ชัน Android',
+                'w-s1-2b': 'เวอร์ชันแอป WiTH+',
+                'w-s1-3': '👤 ข้อมูลบัญชี (Google Sign-In)',
+                'w-s1-3a': 'อีเมล Google (สำหรับ Premium)',
+                'w-s1-3b': 'Device ID สำหรับ License Binding',
+                'w-s2': 'ข้อมูลที่เราไม่เก็บ',
+                'w-s2-note': 'เราให้ความสำคัญกับความเป็นส่วนตัวของคุณ และ <strong>ไม่</strong> เก็บข้อมูลดังนี้:',
+                'w-s2-a': 'ข้อมูลส่วนบุคคล', 'w-s2-b': 'รหัสผ่าน', 'w-s2-c': 'ข้อมูลการเงิน',
+                'w-s2-d': 'รูปภาพ/วิดีโอ', 'w-s2-e': 'ข้อความ/โทร', 'w-s2-f': 'ตำแหน่ง GPS',
+                'w-s3': 'วิธีการใช้ข้อมูล',
+                'w-s3-a': 'สแกนไวรัส:', 'w-s3-a-d': 'เปรียบเทียบกับฐานข้อมูลมัลแวร์',
+                'w-s3-b': 'ยืนยัน Premium:', 'w-s3-b-d': 'ตรวจสอบ License ผ่าน Google Account',
+                'w-s3-c': 'อัปเดตฐานข้อมูล:', 'w-s3-c-d': 'เพิ่มไวรัสใหม่จาก Feedback',
+                'w-s3-d': 'พัฒนาแอป:', 'w-s3-d-d': 'แก้บัคและเพิ่มฟีเจอร์',
+                'w-s4': 'การแชร์ข้อมูล',
+                'w-s4-note': '⛔ เราไม่ขาย ไม่แลกเปลี่ยน และไม่แชร์ข้อมูลส่วนบุคคลกับบุคคลที่สาม',
+                'w-s4-intro': 'ข้อมูลจะถูกแชร์เฉพาะกรณี:',
+                'w-s4-a': 'เมื่อได้รับความยินยอมจากคุณ',
+                'w-s4-b': 'เมื่อกฎหมายบังคับ',
+                'w-s4-c': 'เพื่อปกป้องสิทธิ์และความปลอดภัย',
+                'w-s5': 'บริการของบุคคลที่สาม',
+                'w-s5-a': 'In-App Purchase, Google Sign-In',
+                'w-s5-b': 'Authentication, Realtime Database',
+                'w-s5-c': 'อัปเดตฐานข้อมูลไวรัส',
+                'w-s6': 'ความปลอดภัยของข้อมูล',
+                'w-s6-a': '🔐 การเชื่อมต่อแบบเข้ารหัส (HTTPS/TLS)',
+                'w-s6-b': '🛡️ Firebase Security Rules',
+                'w-s6-c': '📱 Device Fingerprinting สำหรับ License',
+                'w-s6-d': '☁️ ไม่เก็บข้อมูลละเอียดอ่อนบนเซิร์ฟเวอร์',
+                'w-s7': 'สิทธิ์ของผู้ใช้',
+                'w-s7-a': 'เข้าถึง:', 'w-s7-a-d': 'ขอดูข้อมูลที่เราเก็บ',
+                'w-s7-b': 'แก้ไข:', 'w-s7-b-d': 'ขอแก้ไขข้อมูลไม่ถูกต้อง',
+                'w-s7-c': 'ลบ:', 'w-s7-c-d': 'ขอให้ลบข้อมูลของคุณ',
+                'w-s7-d': 'ถอนความยินยอม:', 'w-s7-d-d': 'ถอนการติดตั้งแอป',
+                'w-s7-e': 'โอนย้าย License:', 'w-s7-e-d': 'ย้าย Premium ไปอุปกรณ์ใหม่ (1 ครั้ง)',
+                'w-s8': 'เด็กและผู้เยาว์',
+                'w-s8-d': 'แอปนี้ไม่ได้ออกแบบสำหรับเด็กอายุต่ำกว่า 13 ปี และเราไม่เก็บข้อมูลจากเด็กโดยเจตนา',
+                'w-s9': 'การเปลี่ยนแปลงนโยบาย',
+                'w-s9-d': 'เราอาจปรับปรุงนโยบายนี้เป็นครั้งคราว การเปลี่ยนแปลงจะประกาศในแอปหรือหน้านี้',
+                'w-s10': 'ติดต่อเรา',
+                'w-update': 'อัปเดตล่าสุด: 2 มกราคม 2026'
+            },
+            en: {
+                'with-title': 'Privacy Policy',
+                'w-summary-title': 'Summary:',
+                'w-summary': 'We only collect data necessary for virus scanning and <strong>do not share your personal data</strong> with third parties.',
+                'w-s1': 'Data We Collect',
+                'w-s1-1': '📱 Application Data',
+                'w-s1-1a': 'Installed Apps:',
+                'w-s1-1a-d': 'Package names to check against virus database',
+                'w-s1-1b': 'App Info:',
+                'w-s1-1b-d': 'App name, size, install date',
+                'w-s1-2': '📲 Device Information',
+                'w-s1-2a': 'Device model and Android version',
+                'w-s1-2b': 'WiTH+ app version',
+                'w-s1-3': '👤 Account Data (Google Sign-In)',
+                'w-s1-3a': 'Google email (for Premium)',
+                'w-s1-3b': 'Device ID for License Binding',
+                'w-s2': 'Data We Do NOT Collect',
+                'w-s2-note': 'We value your privacy and do <strong>NOT</strong> collect the following:',
+                'w-s2-a': 'Personal Info', 'w-s2-b': 'Passwords', 'w-s2-c': 'Financial Data',
+                'w-s2-d': 'Photos/Videos', 'w-s2-e': 'Messages/Calls', 'w-s2-f': 'GPS Location',
+                'w-s3': 'How We Use Data',
+                'w-s3-a': 'Virus Scanning:', 'w-s3-a-d': 'Compare with malware database',
+                'w-s3-b': 'Premium Verification:', 'w-s3-b-d': 'Check License via Google Account',
+                'w-s3-c': 'Database Updates:', 'w-s3-c-d': 'Add new viruses from Feedback',
+                'w-s3-d': 'App Development:', 'w-s3-d-d': 'Fix bugs and add features',
+                'w-s4': 'Data Sharing',
+                'w-s4-note': '⛔ We do not sell, trade, or share your personal data with third parties',
+                'w-s4-intro': 'Data will only be shared in cases of:',
+                'w-s4-a': 'With your consent',
+                'w-s4-b': 'When required by law',
+                'w-s4-c': 'To protect rights and safety',
+                'w-s5': 'Third-Party Services',
+                'w-s5-a': 'In-App Purchase, Google Sign-In',
+                'w-s5-b': 'Authentication, Realtime Database',
+                'w-s5-c': 'Virus database updates',
+                'w-s6': 'Data Security',
+                'w-s6-a': '🔐 Encrypted connections (HTTPS/TLS)',
+                'w-s6-b': '🛡️ Firebase Security Rules',
+                'w-s6-c': '📱 Device Fingerprinting for License',
+                'w-s6-d': '☁️ No sensitive data stored on servers',
+                'w-s7': 'Your Rights',
+                'w-s7-a': 'Access:', 'w-s7-a-d': 'Request to see data we collect',
+                'w-s7-b': 'Correction:', 'w-s7-b-d': 'Request to correct inaccurate data',
+                'w-s7-c': 'Deletion:', 'w-s7-c-d': 'Request to delete your data',
+                'w-s7-d': 'Withdraw Consent:', 'w-s7-d-d': 'Uninstall the app',
+                'w-s7-e': 'License Transfer:', 'w-s7-e-d': 'Move Premium to new device (1 time)',
+                'w-s8': 'Children',
+                'w-s8-d': 'This app is not designed for children under 13 and we do not intentionally collect data from children.',
+                'w-s9': 'Policy Changes',
+                'w-s9-d': 'We may update this policy from time to time. Changes will be announced in the app or on this page.',
+                'w-s10': 'Contact Us',
+                'w-update': 'Last updated: January 2, 2026'
+            }
+        };
+
+        function setWithLang(lang) {
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const t = withLang[lang];
+            for (const [id, text] of Object.entries(t)) {
+                const el = document.getElementById(id);
+                if (el) {
+                    if (id.includes('summary') || id.includes('note')) {
+                        el.innerHTML = text;
+                    } else {
+                        el.textContent = text;
+                    }
+                }
+            }
+        }
+
+        // Check URL params
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('app') === 'with') {
+            showPolicy('with');
+            if (params.get('lang') === 'en') {
+                setTimeout(() => setWithLang('en'), 100);
+            }
+        }
+    </script>
+</body>
+
+</html>

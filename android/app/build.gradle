@@ -1,0 +1,84 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+    id "com.google.gms.google-services"
+}
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader("UTF-8") { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterVersionCode = localProperties.getProperty("flutter.versionCode", "1").toInteger()
+def flutterVersionName = localProperties.getProperty("flutter.versionName", "1.0")
+
+android {
+    namespace = "com.tuktuk.th"
+    compileSdk 36
+
+    defaultConfig {
+        applicationId "com.tuktuk.th"
+        minSdk 24
+        targetSdk 36
+        versionCode flutterVersionCode
+        versionName flutterVersionName
+        multiDexEnabled true
+    }
+
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+
+    // ย้าย signingConfigs มาก่อน buildTypes
+    signingConfigs {
+        debug {
+            storeFile file("debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+        release {
+            storeFile file("release-key.jks")
+            storePassword "wizx@252922"
+            keyAlias "my-key-alias"
+            keyPassword "wizx@252922"
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release  // ตอนนี้จะหา release signing config เจอแล้ว
+            minifyEnabled false  // ปิดไว้ก่อนเพื่อแก้ปัญหา R8
+            shrinkResources false  // ปิดไว้ก่อน
+            // proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.debug
+            minifyEnabled false
+            shrinkResources false
+        }
+    }
+}
+
+flutter {
+    source = "../.."
+}
+
+dependencies {
+    implementation "com.google.firebase:firebase-auth:23.2.0"
+    implementation "com.google.firebase:firebase-firestore:25.1.0"
+    implementation "com.google.firebase:firebase-appcheck-playintegrity:18.0.0"
+    implementation "com.google.firebase:firebase-appcheck-debug:18.0.0"
+    implementation 'androidx.multidex:multidex:2.0.1'
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.1.4"
+}

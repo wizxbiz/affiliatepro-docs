@@ -1,0 +1,127 @@
+<!-- Smart Floating Bottom Nav (Mobile) -->
+    <nav class="bottom-nav" id="bottomNav">
+        <!-- <div class="ecosystem-badge">TukTuk Ecosystem</div> -->
+        <a href="index.html" class="bottom-nav-item">
+            <i class="fas fa-home"></i>
+            <span>หน้าแรก</span>
+        </a>
+        <a href="marketplace.html" class="bottom-nav-item active">
+            <i class="fas fa-store"></i>
+            <span>ตลาด</span>
+        </a>
+        <a href="javascript:void(0)" onclick="handleTukTukButtonClick()" class="bottom-nav-item center-btn"
+            id="centerBtn">
+            <img src="assets/images/tuktuk.png" class="tuktuk-brand-icon">
+        </a>
+        <a href="javascript:void(0)" onclick="WizmobizAuth.handleShopAccess()" class="bottom-nav-item">
+            <i class="fas fa-store-alt"></i>
+            <span>ร้านของฉัน</span>
+        </a>
+        <a href="javascript:void(0)" onclick="WizmobizAuth.handleProfileClick()" class="bottom-nav-item"
+            id="bottomProfile">
+            <i class="fas fa-user-circle"></i>
+            <span>เข้าสู่ระบบ</span>
+        </a>
+    </nav>
+
+    <!-- Marketplace Hub Overlay (Direct Action Menu for Market) -->
+    <div class="search-overlay" id="marketHubOverlay" onclick="closeMarketHub()">
+        <div class="search-menu-content" onclick="event.stopPropagation()"
+            style="background: rgba(15, 23, 42, 0.98); border-radius: 40px 40px 0 0; padding-bottom: 60px;">
+            <div class="search-overlay-header" style="margin-bottom: 30px;">
+                <div style="display: flex; flex-direction: column;">
+                    <h3
+                        style="background: linear-gradient(90deg, #FF0050, #00f2ea); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; font-size: 1.8rem; margin: 0;">
+                        🚀 Marketplace Actions</h3>
+                    <span style="color: rgba(255,255,255,0.5); font-size: 0.8rem;">เลือกสิ่งที่คุณต้องการทำในตลาด</span>
+                </div>
+                <div class="close-search" onclick="closeMarketHub()"
+                    style="background: rgba(255,255,255,0.1); width: 45px; height: 45px;">&times;</div>
+            </div>
+
+            <div class="market-actions-grid"
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                <!-- Sell Product (Primary Action) -->
+                <div class="search-tag" onclick="quickMarketAction('sell')"
+                    style="padding: 30px 20px; background: linear-gradient(135deg, rgba(255, 0, 80, 0.15), rgba(255, 0, 80, 0.05)); border: 2px solid rgba(255, 0, 80, 0.3); border-radius: 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+                    <div
+                        style="width: 70px; height: 70px; background: linear-gradient(135deg, #FF0050, #ff4d8d); border-radius: 24px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; box-shadow: 0 10px 25px rgba(255, 0, 80, 0.4);">
+                        <i class="fas fa-plus-circle" style="color: white; font-size: 2.2rem;"></i>
+                    </div>
+                    <span style="color: white; font-weight: 800; font-size: 1.1rem;">ลงขายสินค้า</span>
+                    <small
+                        style="color: #ff80ab; font-size: 0.7rem; margin-top: 5px; text-align: center;">โพสต์ขายได้ทันทีด้วย
+                        AI</small>
+                </div>
+
+                <!-- My Shop (Primary Action) -->
+                <div class="search-tag" onclick="quickMarketAction('shop')"
+                    style="padding: 30px 20px; background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(251, 191, 36, 0.05)); border: 2px solid rgba(251, 191, 36, 0.3); border-radius: 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+                    <div
+                        style="width: 70px; height: 70px; background: linear-gradient(135deg, #f59e0b, #fbbf24); border-radius: 24px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);">
+                        <i class="fas fa-store" style="color: white; font-size: 2.2rem;"></i>
+                    </div>
+                    <span style="color: white; font-weight: 800; font-size: 1.1rem;">ร้านค้าของฉัน</span>
+                    <small
+                        style="color: #fcd34d; font-size: 0.7rem; margin-top: 5px; text-align: center;">จัดการคำสั่งซื้อและยอดขาย</small>
+                </div>
+
+                <!-- NEW: Join WIN RIDER (Featured Action) -->
+                <div class="search-tag" onclick="window.location.href='win-service.html#join'"
+                    style="padding: 30px 20px; grid-column: span 2; background: linear-gradient(135deg, rgba(0, 242, 234, 0.15), rgba(0, 242, 234, 0.05)); border: 2px solid var(--primary); border-radius: 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+                    <div style="display: flex; align-items: center; gap: 20px; width: 100%;">
+                        <div
+                            style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary), #00d2ff); border-radius: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0, 242, 234, 0.4); flex-shrink: 0;">
+                            <i class="fas fa-motorcycle" style="color: white; font-size: 1.8rem;"></i>
+                        </div>
+                        <div style="text-align: left;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="color: white; font-weight: 800; font-size: 1.2rem;">อยากเป็น "วิน"
+                                    ขับส่งของ?</span>
+                                <span
+                                    style="background: var(--secondary); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.65rem; font-weight: 800; animation: pulse 1s infinite;">HOT</span>
+                            </div>
+                            <small
+                                style="color: var(--primary); font-size: 0.85rem; display: block; margin-top: 2px;">สมัครวันนี้!
+                                <strong style="color: white; text-decoration: underline;">ใช้บริการฟรี 1
+                                    เดือน</strong></small>
+                        </div>
+                        <i class="fas fa-chevron-right" style="margin-left: auto; color: rgba(255,255,255,0.3);"></i>
+                    </div>
+                </div>
+
+                <!-- Smart Search (Secondary Action) -->
+                <div class="search-tag" onclick="quickMarketAction('search')"
+                    style="padding: 20px; background: rgba(0, 242, 234, 0.05); border: 1px solid rgba(0, 242, 234, 0.2); border-radius: 25px; display: flex; align-items: center; gap: 15px;">
+                    <i class="fas fa-search" style="color: #00f2ea; font-size: 1.4rem;"></i>
+                    <div style="text-align: left;">
+                        <span
+                            style="color: white; font-weight: 600; display: block; font-size: 0.9rem;">ค้นหาอัจฉริยะ</span>
+                        <small style="color: rgba(0, 242, 234, 0.6); font-size: 0.65rem;">หาสินค้าที่โดนใจ</small>
+                    </div>
+                </div>
+
+                <!-- Community (Secondary Action) -->
+                <div class="search-tag" onclick="quickMarketAction('community')"
+                    style="padding: 20px; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 25px; display: flex; align-items: center; gap: 15px;">
+                    <i class="fas fa-users" style="color: #10b981; font-size: 1.4rem;"></i>
+                    <div style="text-align: left;">
+                        <span style="color: white; font-weight: 600; display: block; font-size: 0.9rem;">TukTuk
+                            Life</span>
+                        <small style="color: rgba(16, 185, 129, 0.6); font-size: 0.65rem;">พูดคุยสมาชิกชุมชน</small>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                style="background: linear-gradient(90deg, rgba(112, 225, 255, 0.1), transparent); padding: 15px 25px; border-radius: 20px; display: flex; align-items: center; gap: 15px; border: 1px solid rgba(112, 225, 255, 0.1);">
+                <div
+                    style="width: 40px; height: 40px; background: rgba(112, 225, 255, 0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-lightbulb" style="color: #70e1ff;"></i>
+                </div>
+                <p style="margin: 0; font-size: 0.8rem; color: #70e1ff; line-height: 1.4;">
+                    <strong>โหมดตลาดอัจฉริยะ:</strong> คุณสามารถกดค้างที่ปุ่มตลาดเพื่อค้นหาด่วนได้ทันที!
+                </p>
+            </div>
+        </div>
+    </div>

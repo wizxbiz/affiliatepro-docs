@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TukTuk Thailand | เข้าสู่ระบบ</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Prompt:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="/js/firebase-init.js"></script>
+
+    <!-- LIFF config (provides window.TUKTUK_LIFF.main for in-app login) -->
+    <script src="/js/liff-config.js"></script>
+
+    <style>
+        :root {
+            --primary: #00f2ea;
+            --secondary: #ff0050;
+            --line-green: #06C755;
+            --dark-bg: #0b1120;
+            --surface: rgba(15, 23, 42, 0.9);
+            --border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-dim: #94a3b8;
+            --font-primary: 'Outfit', 'Prompt', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background: var(--dark-bg);
+            background-image:
+                radial-gradient(circle at 0% 0%, rgba(0, 242, 234, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(255, 0, 80, 0.1) 0%, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        /* ── PREMIUM LOGIN CARD ── */
+        .login-container {
+            position: relative;
+            width: 100%;
+            max-width: 440px;
+            z-index: 10;
+        }
+
+        .login-card {
+            background: var(--surface);
+            backdrop-filter: blur(35px);
+            -webkit-backdrop-filter: blur(35px);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 48px 32px 40px;
+            box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.8);
+            position: relative;
+            animation: cardReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+            text-align: center;
+        }
+
+        @keyframes cardReveal {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.92);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* ── CLOSE BUTTON ── */
+        .close-btn {
+            position: absolute;
+            top: 28px;
+            right: 28px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            transform: rotate(90deg);
+        }
+
+        /* ── HEADER ── */
+        .logo {
+            width: 86px;
+            height: 86px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 25px rgba(0, 242, 234, 0.4));
+        }
+
+        .title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 36px;
+        }
+
+        /* ── CONTENT SECTIONS ── */
+        .content-section {
+            display: none;
+            width: 100%;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: sectionIn 0.5s cubic-bezier(0.23, 1, 0.32, 1) both;
+        }
+
+        @keyframes sectionIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── PC VIEW: PINCODE ── */
+        .pin-label {
+            display: block;
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        .pin-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            margin-bottom: 28px;
+        }
+
+        .pin-input {
+            width: 100%;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2.5px solid var(--border);
+            border-radius: 16px;
+            text-align: center;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #fff;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .pin-input:focus {
+            border-color: var(--primary);
+            background: rgba(0, 242, 234, 0.1);
+            box-shadow: 0 0 20px rgba(0, 242, 234, 0.25);
+        }
+
+        .qr-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-top: 32px;
+            text-align: left;
+        }
+
+        .qr-img {
+            width: 90px;
+            border-radius: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .qr-info h4 {
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+            color: #fff;
+        }
+
+        .qr-info p {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+
+        /* ── MOBILE VIEW: LINE ── */
+        .btn-line {
+            width: 100%;
+            padding: 20px;
+            border-radius: 22px;
+            background: var(--line-green);
+            color: #fff;
+            font-size: 1.15rem;
+            font-weight: 700;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 15px 35px rgba(6, 199, 85, 0.35);
+        }
+
+        .btn-line:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 45px rgba(6, 199, 85, 0.45);
+        }
+
+        .line-logo {
+            width: 30px;
+            filter: brightness(0) invert(1);
+        }
+
+        /* ── SHARED ── */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin: 32px 0;
+            color: rgba(255, 255, 255, 0.1);
+            font-size: 0.85rem;
+        }
+
+        .divider:before,
+        .divider:after {
+            content: '';
+            flex: 1;
+            height: 1.5px;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 20px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, var(--primary), #4f46e5);
+            color: #0b1120;
+            font-size: 1.15rem;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 15px 35px rgba(0, 242, 234, 0.25);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none;
+        }
+
+        .btn-switch {
+            width: 100%;
+            padding: 16px;
+            border-radius: 18px;
+            background: transparent;
+            border: 1.5px solid var(--border);
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 12px;
+        }
+
+        .btn-switch:hover {
+            background: rgba(255, 255, 255, 0.04);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .consent-footer {
+            margin-bottom: 28px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .consent-footer input {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary);
+            margin-top: 2px;
+        }
+
+        .consent-footer span {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+
+        .consent-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* ── LOADER ── */
+        .loader-wrap {
+            position: fixed;
+            inset: 0;
+            background: var(--dark-bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            gap: 24px;
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .loader-wrap.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .spinner {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.05);
+            border-top: 4px solid var(--primary);
+            animation: spin 1s infinite linear;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 40px 24px;
+            }
+
+            .title {
+                font-size: 1.8rem;
+            }
+
+            .pin-grid {
+                gap: 6px;
+            }
+
+            .pin-input {
+                height: 52px;
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="loader-wrap" id="globalLoader">
+        <div class="spinner"></div>
+        <div id="loaderText" style="font-weight:600; color:var(--primary);">กำลังเข้าสู่ระบบ...</div>
+    </div>
+
+    <!-- Inline error banner (replaces alert() which is blocked in LINE IAB / iOS) -->
+    <div id="loginErrorBanner" style="
+        display:none; position:fixed; top:20px; left:50%; transform:translateX(-50%);
+        background:rgba(239,68,68,0.95); color:#fff; padding:14px 24px; border-radius:16px;
+        font-family:var(--font-primary); font-size:0.9rem; font-weight:600;
+        z-index:3000; max-width:90vw; text-align:center;
+        box-shadow:0 8px 30px rgba(239,68,68,0.4);
+        animation: sectionIn 0.4s ease both;">
+    </div>
+
+    <div class="login-container">
+        <div class="login-card">
+            <div class="close-btn" onclick="dismissLogin()" title="ข้ามการเข้าสู่ระบบ">
+                <i class="fas fa-times"></i>
+            </div>
+
+            <img src="/assets/images/logo.png" alt="Logo" class="logo" onerror="this.src='/images/logo.png'">
+            <h1 class="title">ยินดีต้อนรับ</h1>
+            <p class="subtitle" id="viewSubtitle">มาสัมผัสประสบการณ์ใหม่จาก TukTuk</p>
+
+            <label class="consent-footer">
+                <input type="checkbox" id="mainConsent" checked>
+                <span>ฉันยอมรับ <a href="/terms.html">ข้อกำหนด</a> และ <a href="/privacy.html">นโยบายความเป็นส่วนตัว</a>
+                    เพื่อใช้งานระบบ</span>
+            </label>
+
+            <!-- Path A: Mobile (LINE Login) -->
+            <div id="pathMobile" class="content-section">
+                <button class="btn-line" onclick="triggerLiffLogin(true)">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" class="line-logo"
+                        alt="LINE">
+                    เข้าสู่ระบบด้วย LINE
+                </button>
+                <div class="divider">หรือระบุกดรหัสผ่าน</div>
+                <button class="btn-switch" onclick="switchPath('pc')">กรอกรหัส PIN 6 หลัก</button>
+            </div>
+
+            <!-- Path B: PC (PINCODE) -->
+            <div id="pathPC" class="content-section">
+                <span class="pin-label">รหัส 6 หลักที่ได้รับจาก LINE OA</span>
+                <div class="pin-grid">
+                    <input type="text" class="pin-input" maxlength="1" inputmode="numeric" data-idx="0">
+                    <input type="text" class="pin-input" maxlength="1" inputmode="numeric" data-idx="1">
+                    <input type="text" class="pin-input" maxlength="1" inputmode="numeric" data-idx="2">
+                    <input type="text" class="pin-input" maxlength="1" inputmode="numeric" data-idx="3">
+                    <input type="text" class="pin-input" maxlength="1" inputmode="numeric" data-idx="4">
+                    <input type="text" class="pin-input" maxlength="1" inputmode="numeric" data-idx="5">
+                </div>
+
+                <button class="btn-submit" id="submitPinBtn" onclick="handlePinSubmit()" disabled>
+                    เข้าสู่ระบบทันที
+                </button>
+
+                <div class="qr-card">
+                    <img src="https://qr-official.line.me/gs/M_396fttas_GW.png?oat_content=qr" class="qr-img" alt="QR">
+                    <div class="qr-info">
+                        <h4>วิธีรับรหัสผ่าน</h4>
+                        <p>สแกน QR เพิ่มเพื่อน TukTuk <br>จากนั้นพิมพ์ว่า <strong>"ขอรหัสผ่าน"</strong></p>
+                    </div>
+                </div>
+
+                <button class="btn-switch" style="margin-top:20px" onclick="triggerLiffLogin()">
+                    <i class="fab fa-line"></i> เข้าสู่ระบบด้วยแอป LINE
+                </button>
+            </div>
+
+            <div style="margin-top:32px; font-size:0.8rem; color:var(--text-dim);">
+                พบปัญหาการใช้งาน? <a href="https://lin.ee/1YJsw47"
+                    style="color:var(--primary); text-decoration:none;">แจ้งเจ้าหน้าที่</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Same-origin: /api/* ถูก proxy ไป Worker ผ่าน _worker.js บน Pages
+        // ยกเว้นตอนเปิดไฟล์ตรงๆ (file://) หรือ localhost ที่ไม่มี proxy ให้ยิงตรง Worker
+        const API_BASE = (location.protocol === 'file:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+            ? 'https://tuktukfeed-api.imtthailand2019.workers.dev'
+            : '';
+        const LINE_CID = '2009159046';
+
+        // Safe Storage Helper to prevent DOMException/SecurityError in Private Browsing / Sandboxed WebView
+        const SafeStorage = {
+            getItem(key) {
+                try { return localStorage.getItem(key); } catch (_) { return window['__fallback_' + key] || null; }
+            },
+            setItem(key, val) {
+                try { localStorage.setItem(key, val); } catch (_) { window['__fallback_' + key] = val; }
+            },
+            removeItem(key) {
+                try { localStorage.removeItem(key); } catch (_) { delete window['__fallback_' + key]; }
+            }
+        };
+        const SafeSessionStorage = {
+            getItem(key) {
+                try { return sessionStorage.getItem(key); } catch (_) { return window['__fallback_sess_' + key] || null; }
+            },
+            setItem(key, val) {
+                try { sessionStorage.setItem(key, val); } catch (_) { window['__fallback_sess_' + key] = val; }
+            },
+            removeItem(key) {
+                try { sessionStorage.removeItem(key); } catch (_) { delete window['__fallback_sess_' + key]; }
+            }
+        };
+
+        // Auto-detect REDIRECT_URI to avoid mismatch on different domains
+        // Standardize: strip .html to match common registered URIs for Clean URLs
+        const cleanPath = window.location.pathname.replace(/\.html$/, '') || '/';
+        const REDIRECT_URI = window.location.origin + cleanPath;
+        
+        console.log('[Login] REDIRECT_URI detected:', REDIRECT_URI);
+
+        const params = new URLSearchParams(window.location.search);
+        // Sanitize redirect target — only allow same-origin relative paths (prevent open redirect)
+        function sanitizeTarget(raw) {
+            if (!raw) return '/';
+            try {
+                const url = new URL(raw, window.location.origin);
+                // Reject external origins
+                if (url.origin !== window.location.origin) return '/';
+                const path = url.pathname + (url.search && url.search !== '?' ? url.search : '');
+                // Reject login loops
+                if (path.includes('/login')) return '/';
+                return path || '/';
+            } catch (_) {
+                // Relative path with no host — keep if it starts with /
+                if (typeof raw === 'string' && raw.startsWith('/') && !raw.includes('/login')) return raw;
+                return '/';
+            }
+        }
+        let target = sanitizeTarget(params.get('redirectUrl'));
+
+        // --- LINE In-App Browser detection ---
+        const isLineIAB = /Line\//i.test(navigator.userAgent);
+
+        // --- State & Init ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            switchPath(isMobile ? 'mobile' : 'pc');
+            setupPinInputs();
+            checkCallbacks();
+
+            if (isLineIAB && !params.get('code')) {
+                // LINE IAB → auto-trigger login flow only if not currently processing a callback
+                SafeSessionStorage.removeItem('_liff_login_triggered');
+                triggerLiffLogin(true);
+            }
+            // External browser → show UI normally, user taps button to login
+        });
+
+        function switchPath(type) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            if (type === 'pc') {
+                document.getElementById('pathPC').classList.add('active');
+                document.getElementById('viewSubtitle').textContent = 'ใส่รหัส 6 หลักเพื่อเข้าใช้งานบน PC';
+            } else {
+                document.getElementById('pathMobile').classList.add('active');
+                document.getElementById('viewSubtitle').textContent = 'ล็อคอินง่ายๆ ผ่านแอป LINE มือถือ';
+            }
+        }
+
+        function dismissLogin() { 
+            const loc = (window.self !== window.top) ? window.top.location : window.location;
+            loc.href = target; 
+        }
+
+        // --- LIFF Full-Flow Login ---
+        // In LINE IAB: auto-redirects to LINE consent screen
+        // In external browser: only processes LIFF callback (?code=); never auto-redirects
+        let _liffInitInProgress = false;
+        async function triggerLiffLogin(forceLogin = false) {
+            if (_liffInitInProgress) return;
+            _liffInitInProgress = true;  // Set guard immediately to prevent double-calls
+
+            const liffId = (window.TUKTUK_LIFF && window.TUKTUK_LIFF.main) || '';
+
+            if (!liffId) {
+                _liffInitInProgress = false;
+                hideLoader();
+                switchPath('pc');
+                return;
+            }
+
+            // Must break out of SPA iframe
+            if (window.self !== window.top && (isLineIAB || forceLogin)) {
+                window.top.location.replace('/login?redirectUrl=' + encodeURIComponent(target));
+                return;
+            }
+
+            if (!forceLogin) {
+                _liffInitInProgress = false;
+                return; // Only trigger if user clicks
+            }
+
+            showLoader('🚀 กำลังเชื่อมต่อ LINE...');
+
+            // Use manual OAuth flow for reliability (avoids LIFF SDK hangs in some IAB versions)
+            triggerLineLogin();
+        }
+
+        // --- LINE Login (external browser OAuth redirect) ---
+        function triggerLineLogin() {
+            const consent = document.getElementById('mainConsent');
+            if (consent && !consent.checked) {
+                _liffInitInProgress = false;
+                hideLoader();
+                showError('กรุณายอมรับเงื่อนไขการใช้งานก่อนเข้าสู่ระบบ');
+                return;
+            }
+
+            const state = 'tl_' + Math.random().toString(36).slice(2, 12);
+            SafeStorage.setItem('tuktuk_line_state', state);
+            // Preserve destination so finishLogin() can redirect there after callback
+            if (target && target !== '/') {
+                SafeStorage.setItem('tuktuk_liff_post_redirect', target);
+            }
+
+            // redirect_uri = /login so LINE sends ?code= back to login.html where checkCallbacks() runs
+            const oauthRedirectUri = window.location.origin + '/login';
+
+            const p = new URLSearchParams({
+                response_type: 'code',
+                client_id: LINE_CID,
+                redirect_uri: oauthRedirectUri,
+                state: state,
+                scope: 'profile openid',
+            });
+
+            const lineUrl = 'https://access.line.me/oauth2/v2.1/authorize?' + p.toString();
+            console.log('[Login] Redirecting via Manual OAuth:', lineUrl);
+            
+            showLoader('🚀 กำลังพาคุณไปที่ LINE (Manual)...');
+            
+            setTimeout(() => {
+                window.location.href = lineUrl;
+            }, 100);
+        }
+
+        async function checkCallbacks() {
+            const code = params.get('code');
+            const state = params.get('state');
+            const saved = SafeStorage.getItem('tuktuk_line_state');
+
+            if (code && state && state === saved) {
+                SafeStorage.removeItem('tuktuk_line_state');
+                // Restore post-login destination saved before the OAuth redirect
+                const savedDest = SafeStorage.getItem('tuktuk_liff_post_redirect');
+                if (savedDest) { SafeStorage.removeItem('tuktuk_liff_post_redirect'); target = savedDest; }
+                try {
+                    window.history.replaceState({}, '', '/login');
+                } catch (_) {
+                    console.warn('[login] history.replaceState failed');
+                }
+                showLoader('🔐 กำลังตรวจสอบความถูกต้อง...');
+
+                try {
+                    // redirectUri must match exactly what was sent to LINE
+                    const callbackUri = window.location.origin + '/login';
+                    const r = await fetch(`${API_BASE}/api/auth/line-callback`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ code, redirectUri: callbackUri }),
+                    });
+                    const d = await r.json();
+                    if (!d.success) throw new Error(d.error);
+                    finishLogin(d.user);
+                } catch (err) {
+                    hideLoader();
+                    showError('เกิดข้อผิดพลาด: ' + err.message);
+                }
+            }
+        }
+
+        // --- Pincode ---
+        function setupPinInputs() {
+            const inputs = document.querySelectorAll('.pin-input');
+            inputs.forEach((box, i) => {
+                box.addEventListener('input', (e) => {
+                    box.value = e.target.value.replace(/[^0-9]/g, '');
+                    if (box.value && i < inputs.length - 1) inputs[i + 1].focus();
+                    checkPinFull();
+                });
+                box.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !box.value && i > 0) {
+                        inputs[i - 1].focus();
+                        inputs[i - 1].value = '';
+                        checkPinFull();
+                    }
+                });
+            });
+        }
+
+        function checkPinFull() {
+            const pin = Array.from(document.querySelectorAll('.pin-input')).map(n => n.value).join('');
+            document.getElementById('submitPinBtn').disabled = pin.length < 6;
+        }
+
+        async function handlePinSubmit() {
+            if (!document.getElementById('mainConsent').checked) return showError('กรุณายอมรับเงื่อนไขการใช้งานก่อน');
+
+            const pin = Array.from(document.querySelectorAll('.pin-input')).map(n => n.value).join('');
+            showLoader('🔑 กำลังรับรองรหัสผ่าน...');
+
+            try {
+                const r = await fetch(`${API_BASE}/api/auth/verify-pin`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pin }),
+                });
+                const d = await r.json();
+                if (d.success && d.user) {
+                    // Sign into Firebase so Firestore rules (request.auth) work
+                    if (d.sessionToken) {
+                        try {
+                            await firebase.auth().signInWithCustomToken(d.sessionToken);
+                        } catch (fbErr) {
+                            console.warn('[login] Firebase signIn skipped:', fbErr.message);
+                        }
+                    }
+                    finishLogin(d.user);
+                } else throw new Error(d.error || 'รหัสไม่ถูกต้อง');
+            } catch (err) {
+                hideLoader();
+                showError('รหัสไม่ถูกต้องหรือหมดอายุแล้ว — ' + err.message);
+            }
+        }
+
+        // --- Finishing ---
+        function finishLogin(user) {
+            const TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+            const now = new Date().toISOString();
+            const session = { ...user, loginAt: now, expiresAt: Date.now() + TTL_MS, provider: 'line' };
+            // Store in both keys so WizmobizAuth and LIFF logic read the same data
+            SafeStorage.setItem('wizmobiz_session', JSON.stringify(session));
+            SafeStorage.setItem('tuktuk_line_session', JSON.stringify(session));
+            // Clear guards
+            SafeSessionStorage.removeItem('_auth_redirect_in_progress');
+            SafeSessionStorage.removeItem('_liff_login_triggered');
+            SafeStorage.removeItem('tuktuk_session_ended');
+            showLoader('✨ เข้าระบบสำเร็จ! ยินดีต้อนรับ...');
+            setTimeout(() => {
+                if (window.self !== window.top) {
+                    // Inside SPA iframe: post NAVIGATE to parent so the SPA opens
+                    // the target page without destroying the entire SPA context.
+                    // The SPA's AUTH_REFRESH postMessage will re-trigger auth check
+                    // on the cached target iframe.
+                    window.top.postMessage({ type: 'NAVIGATE', href: target }, window.location.origin);
+                } else {
+                    window.location.replace(target);
+                }
+            }, 800);
+        }
+
+        function showLoader(txt) {
+            const l = document.getElementById('globalLoader');
+            document.getElementById('loaderText').textContent = txt;
+            l.classList.add('active');
+        }
+        function hideLoader() {
+            document.getElementById('globalLoader').classList.remove('active');
+        }
+        function showError(msg) {
+            const el = document.getElementById('loginErrorBanner');
+            el.textContent = '⚠️ ' + msg;
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 5000);
+        }
+    </script>
+</body>
+
+</html>

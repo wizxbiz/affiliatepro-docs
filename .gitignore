@@ -1,41 +1,77 @@
 .vscode/
 backup_local/
 
-# Sensitive files - DO NOT UPLOAD
-functions/index.js
+# ── Secrets & credentials ───────────────────────────────────────────────────
+# functions/index.js is SAFE to commit — all secrets go through process.env
 functions/*.key
 functions/*.pem
 service-account*.json
 *-credentials.json
+**/config.json
+**/line_config.json
+**/.env
+**/.env.*
+**/.dev.vars
+**/.dev.vars.*
+**/serviceAccount*.json
+**/credentials*.json
+**/firebase-adminsdk*.json
 
-# OS/editor noise
-.DS_Store
-Thumbs.db
-node_modules
+# Google Services (auto-provisioned per build env)
+**/google-services.json
+**/GoogleService-Info.plist
 
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
-.atom/
-.buildlog/
-.history
-.svn/
-migrate_working_dir/
+# ── Firebase local artifacts ────────────────────────────────────────────────
+**/.firebase/
+**/firebase-debug.log
+**/firestore-debug.log
+**/ui-debug.log
+**/database-debug.log
 
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
-.idea/
+# ── Node ───────────────────────────────────────────────────────────────────
+node_modules/
+**/node_modules/
+package-lock.json
+**/package-lock.json
+# Keep nul (it's a dummy file — not a Windows device) in case it exists
+nul
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# ── Wrangler / Cloudflare local artifacts ──────────────────────────────────
+**/.wrangler/
 
-# Flutter/Dart/Pub related
+# ── Debug / one-off scripts (functions/) ───────────────────────────────────
+functions/check_*.js
+functions/debug_*.js
+functions/test_*.js
+functions/test-*.js
+functions/test-*-output.json
+functions/test-*-flex*.json
+functions/find_*.js
+functions/fix_*.js
+functions/list_*.js
+functions/get_latest_*.js
+functions/get_latest_*.json
+functions/set_*.js
+functions/add_*.js
+functions/link_*.js
+functions/manage_users.js
+functions/resave_*.js
+functions/clean_*.js
+functions/quick_*.js
+functions/fast_*.js
+functions/deep_*.js
+functions/diag_*.js
+functions/sanity_*.js
+functions/seed_*.js
+functions/create_pin.js
+functions/missing_classes.js
+functions/instant_update.js
+functions/trigger_ultra_news.js
+functions/update_tuktuk_feed_profile.js
+functions/recent_logs.json
+functions/0
+
+# ── Flutter/Dart build artifacts ───────────────────────────────────────────
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
@@ -44,53 +80,44 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
-
-# Symbolication related
+**/build/
 app.*.symbols
-
-# Obfuscation related
 app.*.map.json
 
-# Android Studio will place build artifacts here
+# ── Android build artifacts ────────────────────────────────────────────────
 /android/app/debug
 /android/app/profile
 /android/app/release
 
-# ======================================
-# 🔒 SECURITY - Added for GitHub upload
-# ======================================
-
-# API Keys & Secrets (CRITICAL!)
-**/config.json
-**/line_config.json
-**/.env
-**/.env.*
-**/serviceAccount*.json
-**/credentials*.json
-**/firebase-adminsdk*.json
-
-# Google Services
-**/google-services.json
-**/GoogleService-Info.plist
-
-# Firebase
-**/.firebase/
-**/firebase-debug.log
-**/firestore-debug.log
-
-# Node modules (reduce size)
-node_modules/
-**/node_modules/
-package-lock.json
-**/package-lock.json
-
-# Build files (not needed in repo)
-build/
-**/build/
-.dart_tool/
-
-# Logs
+# ── OS / editor noise ──────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
 *.log
 deploy*.log
 **/deploy*.log
+*.class
+*.pyc
+*.swp
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+*.iml
+*.ipr
+*.iws
+.idea/
 
+# ── Local-only handoff docs (contain live secrets — never commit) ──────────
+AI_PROJECT_HANDOFF_REPORT.md
+
+# ── Misc generated / temp files ────────────────────────────────────────────
+*.lnk
+*.pdf
+*.txt
+!README.md
+!CLAUDE.md
+# Keep important markdown docs
+!ARCHITECTURAL_OVERVIEW.md
+!walkthrough.md
+claude design/*.exe

@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TukTuk Feed — Hi-Fi Prototype</title>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: #0a0a0f; font-family: 'Kanit', sans-serif; overflow: hidden; }
+#root { height: 100%; }
+
+/* View toggle */
+.view-toggle {
+  position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 4px; background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12); border-radius: 12px;
+  padding: 4px; z-index: 9999; backdrop-filter: blur(20px);
+}
+.view-btn {
+  padding: 7px 18px; border-radius: 8px; border: none;
+  font-family: 'Kanit', sans-serif; font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all 0.2s; color: rgba(255,255,255,0.5);
+  background: transparent;
+}
+.view-btn.active {
+  background: #6366f1; color: #fff;
+  box-shadow: 0 2px 12px rgba(99,102,241,0.4);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 0; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="ios-frame.jsx"></script>
+<script type="text/babel">
+
+// ─── Design tokens ────────────────────────────────────────────
+const T = {
+  bg: '#0f172a',
+  bgDeep: '#080c18',
+  surface: 'rgba(255,255,255,0.05)',
+  surfaceHover: 'rgba(255,255,255,0.08)',
+  border: 'rgba(255,255,255,0.08)',
+  primary: '#6366f1',
+  primaryGlow: 'rgba(99,102,241,0.35)',
+  secondary: '#a855f7',
+  orange: '#f97316',
+  green: '#10b981',
+  yellow: '#facc15',
+  red: '#f43f5e',
+  text: '#f1f5f9',
+  textMuted: 'rgba(255,255,255,0.45)',
+  textFaint: 'rgba(255,255,255,0.2)',
+  kanit: "'Kanit', sans-serif",
+};
+
+// ─── Mock data ────────────────────────────────────────────────
+const FEEDS = [
+  {
+    id: 1, seller: '@สวนมะพร้าวออร์แกนิค', location: 'ราชบุรี',
+    dist: '1.2 กม.', desc: 'มะพร้าวน้ำหอม ส่งตรงจากสวน หวานฉ่ำ 🥥',
+    likes: '1.2K', comments: 89, price: '฿45', unit: '/ลูก',
+    bg: 'linear-gradient(160deg, #0d2b1a 0%, #1a4a2e 40%, #0f3320 100%)',
+    emoji: '🥥', color: '#10b981', rating: 4.9, reviews: 234,
+    tag: 'เกษตร', isLive: false,
+  },
+  {
+    id: 2, seller: '@แม่ค้าส้มตำป้าแดง', location: 'นครราชสีมา',
+    dist: '0.8 กม.', desc: 'ส้มตำไทย ตำสด ๆ รสเด็ด 🌶️ รับออเดอร์วันนี้',
+    likes: '3.4K', comments: 412, price: '฿60', unit: '/จาน',
+    bg: 'linear-gradient(160deg, #2d1a0d 0%, #4a2e1a 40%, #331f0f 100%)',
+    emoji: '🌶️', color: '#f97316', rating: 5.0, reviews: 891,
+    tag: 'อาหาร', isLive: true,
+  },
+  {
+    id: 3, seller: '@ชุดไทยพรีเมี่ยม', location: 'กรุงเทพฯ',
+    dist: '2.1 กม.', desc: 'ผ้าไหมไทยแท้ งานมือ คุณภาพสูง 👗',
+    likes: '892', comments: 67, price: '฿380', unit: '/ชุด',
+    bg: 'linear-gradient(160deg, #1a0d2d 0%, #2e1a4a 40%, #1f0f33 100%)',
+    emoji: '👗', color: '#a855f7', rating: 4.8, reviews: 156,
+    tag: 'แฟชั่น', isLive: false,
+  },
+];
+
+const STORIES = [
+  { id: 1, name: '@มะพร้าว', live: false, color: '#10b981' },
+  { id: 2, name: '@ส้มตำ', live: true, color: '#f97316' },
+  { id: 3, name: '@ผ้าไหม', live: false, color: '#a855f7' },
+  { id: 4, name: '@วินมอ', live: false, color: '#6366f1' },
+  { id: 5, name: '@ตลาด', live: false, color: '#f43f5e' },
+];
+
+// ─── Shared utilities ─────────────────────────────────────────
+function useLocalStorage(key, def) {
+  const [v, setV] = React.useState(() => {
+    try { const s = localStorage.getItem(key); return s ? JSON.parse(s) : def; } catch { return def; }
+  });
+  const set = React.useCallback(x => {
+    setV(x); try { localStorage.setItem(key, JSON.stringify(x)); } catch {}
+  }, [key]);
+  return [v, set];
+}
+
+// ─── VideoBackground ──────────────────────────────────────────
+function VideoBG({ feed, children }) {
+  return (
+    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', inset: 0, background: feed.bg, transition: 'background 0.6s ease' }}/>
+      {/* animated particles */}
+      {[...Array(6)].map((_, i) => (
+        <div key={i} style={{
+          position: 'absolute',
+          width: 60+i*20, height: 60+i*20,
+          borderRadius: '50%',
+          background: `radial-gradient(circle, ${feed.color}22 0%, transparent 70%)`,
+          left: `${[10,60,30,70,20,80][i]}%`,
+          top: `${[20,50,70,30,80,10][i]}%`,
+          animation: `float${i%3} ${4+i}s ease-in-out infinite`,
+          animationDelay: `${i*0.7}s`,
+          pointerEvents: 'none',
+        }}/>
+      ))}
+      <style>{`
+        @keyframes float0 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(10px,-15px) scale(1.1)} }
+        @keyframes float1 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-12px,10px) scale(0.9)} }
+        @keyframes float2 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(8px,12px) scale(1.05)} }
+        @keyframes heartPop { 0%{transform:scale(0) rotate(-20deg);opacity:1} 50%{transform:scale(1.4) rotate(10deg);opacity:1} 100%{transform:scale(1) rotate(0deg);opacity:0} }
+        @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+        @keyframes ripple { 0%{transform:scale(1);opacity:0.6} 100%{transform:scale(2.5);opacity:0} }
+        @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+      `}</style>
+      {/* big emoji center */}
+      <div style={{
+        position: 'absolute', top: '35%', left: '50%',
+        transform: 'translate(-50%,-50%)',
+        fontSize: 120, opacity: 0.08, pointerEvents: 'none',
+        filter: 'blur(2px)',
+      }}>{feed.emoji}</div>
+      {children}
+    </div>
+  );
+}
+
+// ─── HeartAnimation ───────────────────────────────────────────
+function HeartAnim({ onDone }) {
+  React.useEffect(() => { const t = setTimeout(onDone, 900); return () => clearTimeout(t); }, []);
+  return (
+    <div style={{
+      position: 'absolute', top: '40%', left: '50%',
+      transform: 'translate(-50%,-50%)',
+      fontSize: 80, zIndex: 100, pointerEvents: 'none',
+      animation: 'heartPop 0.9s ease forwards',
+    }}>❤️</div>
+  );
+}
+
+// ─── ProductSheet ─────────────────────────────────────────────
+function ProductSheet({ feed, onClose, onOrder }) {
+  const [qty, setQty] = React.useState(1);
+  const [added, setAdded] = React.useState(false);
+
+  const handleOrder = () => {
+    setAdded(true);
+    setTimeout(() => { setAdded(false); onOrder && onOrder(); }, 1500);
+  };
+
+  const priceNum = parseInt(feed.price.replace('฿',''));
+
+  return (
+    <div style={{
+      position: 'absolute', inset: 0, zIndex: 90,
+      background: 'rgba(0,0,0,0.6)',
+      backdropFilter: 'blur(4px)',
+      animation: 'fadeIn 0.2s ease',
+    }} onClick={onClose}>
+      <div style={{
+        position: 'absolute', bottom: 0, left: 0, right: 0,
+        background: 'linear-gradient(180deg, #1a2240 0%, #0f172a 100%)',
+        borderRadius: '24px 24px 0 0',
+        padding: '0 0 34px',
+        animation: 'slideUp 0.35s cubic-bezier(0.34,1.56,0.64,1)',
+        border: '1px solid rgba(255,255,255,0.08)',
+        borderBottom: 'none',
+      }} onClick={e => e.stopPropagation()}>
+        {/* drag handle */}
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 0 8px' }}>
+          <div style={{ width: 40, height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.2)' }}/>
+        </div>
+
+        {/* seller header */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 20px 16px' }}>
+          <div style={{
+            width: 44, height: 44, borderRadius: '50%',
+            background: `linear-gradient(135deg, ${feed.color}, ${T.primary})`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 22, flexShrink: 0,
+          }}>{feed.emoji}</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ color: T.text, fontWeight: 600, fontSize: 15 }}>{feed.seller}</div>
+            <div style={{ color: T.textMuted, fontSize: 12, marginTop: 2 }}>
+              📍 {feed.location} · {feed.dist} &nbsp;·&nbsp; ⭐ {feed.rating} ({feed.reviews} รีวิว)
+            </div>
+          </div>
+          <div style={{
+            padding: '4px 12px', borderRadius: 20,
+            background: 'rgba(99,102,241,0.2)', border: '1px solid rgba(99,102,241,0.4)',
+            color: '#a5b4fc', fontSize: 12, fontWeight: 500,
+          }}>✓ ยืนยัน</div>
+        </div>
+
+        {/* divider */}
+        <div style={{ height: 1, background: T.border, margin: '0 20px 16px' }}/>
+
+        {/* product info */}
+        <div style={{ display: 'flex', gap: 14, padding: '0 20px 16px', alignItems: 'flex-start' }}>
+          <div style={{
+            width: 80, height: 80, borderRadius: 14,
+            background: `linear-gradient(135deg, ${feed.color}33, ${T.primary}22)`,
+            border: `1px solid ${feed.color}44`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 36, flexShrink: 0,
+          }}>{feed.emoji}</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ color: T.text, fontWeight: 600, fontSize: 16, marginBottom: 4 }}>{feed.desc}</div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
+              <span style={{ color: T.yellow, fontWeight: 700, fontSize: 26 }}>{feed.price}</span>
+              <span style={{ color: T.textMuted, fontSize: 13 }}>{feed.unit}</span>
+            </div>
+            {/* tag */}
+            <div style={{
+              display: 'inline-block', marginTop: 6,
+              padding: '2px 10px', borderRadius: 12,
+              background: `${feed.color}22`, border: `1px solid ${feed.color}44`,
+              color: feed.color, fontSize: 11, fontWeight: 500,
+            }}>#{feed.tag}</div>
+          </div>
+        </div>
+
+        {/* qty selector */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px 20px' }}>
+          <span style={{ color: T.textMuted, fontSize: 13 }}>จำนวน</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <button onClick={() => setQty(q => Math.max(1,q-1))} style={{
+              width: 36, height: 36, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.15)',
+              background: 'rgba(255,255,255,0.06)', color: T.text, fontSize: 18,
+              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>−</button>
+            <span style={{ color: T.text, fontWeight: 700, fontSize: 18, minWidth: 24, textAlign: 'center' }}>{qty}</span>
+            <button onClick={() => setQty(q => q+1)} style={{
+              width: 36, height: 36, borderRadius: '50%', border: 'none',
+              background: T.primary, color: '#fff', fontSize: 18,
+              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: `0 4px 14px ${T.primaryGlow}`,
+            }}>+</button>
+          </div>
+          <span style={{ color: T.yellow, fontWeight: 700, fontSize: 18 }}>฿{priceNum * qty}</span>
+        </div>
+
+        {/* actions */}
+        <div style={{ display: 'flex', gap: 10, padding: '0 20px' }}>
+          <button style={{
+            flex: 1, height: 50, borderRadius: 25, border: '1px solid rgba(255,255,255,0.15)',
+            background: 'rgba(255,255,255,0.06)', color: T.text,
+            fontFamily: T.kanit, fontSize: 14, cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+          }}>💬 ถามร้านค้า</button>
+          <button onClick={handleOrder} style={{
+            flex: 2, height: 50, borderRadius: 25, border: 'none',
+            background: added
+              ? `linear-gradient(135deg, ${T.green}, #059669)`
+              : `linear-gradient(135deg, ${T.primary}, ${T.secondary})`,
+            color: '#fff', fontFamily: T.kanit, fontSize: 15, fontWeight: 600,
+            cursor: 'pointer', transition: 'all 0.3s',
+            boxShadow: added ? '0 4px 20px rgba(16,185,129,0.4)' : `0 4px 20px ${T.primaryGlow}`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+          }}>
+            {added ? '✓ เพิ่มแล้ว!' : `🛒 สั่งเลย · ฿${priceNum * qty}`}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── RightActions ─────────────────────────────────────────────
+function RightActions({ feed, liked, onLike, onComment, onShare }) {
+  return (
+    <div style={{
+      position: 'absolute', right: 12, bottom: 160,
+      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20,
+    }}>
+      {/* avatar */}
+      <div style={{ position: 'relative', marginBottom: 4 }}>
+        <div style={{
+          width: 46, height: 46, borderRadius: '50%',
+          background: `linear-gradient(135deg, ${feed.color}, ${T.primary})`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 20, border: '2px solid rgba(255,255,255,0.3)',
+        }}>{feed.emoji}</div>
+        <div style={{
+          position: 'absolute', bottom: -8, left: '50%', transform: 'translateX(-50%)',
+          width: 22, height: 22, borderRadius: '50%', background: T.primary,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 13, border: '2px solid #0f172a',
+        }}>+</div>
+      </div>
+
+      {/* like */}
+      <ActionBtn icon={liked ? '❤️' : '🤍'} label={feed.likes} onClick={onLike}
+        color={liked ? '#f43f5e' : T.textMuted} active={liked}/>
+      {/* comment */}
+      <ActionBtn icon="💬" label={feed.comments} onClick={onComment} color={T.textMuted}/>
+      {/* share */}
+      <ActionBtn icon="↗️" label="แชร์" onClick={onShare} color={T.textMuted}/>
+      {/* sound */}
+      <ActionBtn icon="🔊" label="" onClick={() => {}} color={T.textMuted}/>
+    </div>
+  );
+}
+
+function ActionBtn({ icon, label, onClick, color, active }) {
+  const [press, setPress] = React.useState(false);
+  return (
+    <div onClick={onClick}
+      onMouseDown={() => setPress(true)}
+      onMouseUp={() => setPress(false)}
+      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, cursor: 'pointer',
+        transform: press ? 'scale(0.88)' : active ? 'scale(1.05)' : 'scale(1)',
+        transition: 'transform 0.15s cubic-bezier(0.34,1.56,0.64,1)',
+      }}>
+      <div style={{
+        width: 48, height: 48, borderRadius: '50%',
+        background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(10px)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: 22, border: '1px solid rgba(255,255,255,0.08)',
+        boxShadow: active ? `0 0 16px ${color}66` : 'none',
+        transition: 'all 0.2s',
+      }}>{icon}</div>
+      {label !== '' && <span style={{ color: T.text, fontSize: 11, fontWeight: 500 }}>{label}</span>}
+    </div>
+  );
+}
+
+// ─── BottomInfo ───────────────────────────────────────────────
+function BottomInfo({ feed, onOpenSheet }) {
+  return (
+    <div style={{
+      position: 'absolute', bottom: 72, left: 0, right: 0,
+      padding: '0 16px',
+    }}>
+      {/* seller row */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+        <div style={{
+          width: 36, height: 36, borderRadius: '50%',
+          background: `linear-gradient(135deg, ${feed.color}, ${T.primary})`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 18, flexShrink: 0,
+        }}>{feed.emoji}</div>
+        <div>
+          <div style={{ color: T.text, fontWeight: 600, fontSize: 14 }}>{feed.seller}</div>
+          <div style={{ color: T.textMuted, fontSize: 11 }}>📍 {feed.location} · {feed.dist}</div>
+        </div>
+        {feed.isLive && (
+          <div style={{
+            marginLeft: 'auto',
+            padding: '3px 10px', borderRadius: 20,
+            background: 'rgba(244,63,94,0.9)',
+            color: '#fff', fontSize: 11, fontWeight: 700,
+            animation: 'pulse 1.5s infinite',
+            display: 'flex', alignItems: 'center', gap: 4,
+          }}>
+            <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#fff' }}/>
+            LIVE
+          </div>
+        )}
+      </div>
+      {/* desc */}
+      <p style={{ color: T.text, fontSize: 13, lineHeight: 1.5, marginBottom: 12,
+        textShadow: '0 1px 8px rgba(0,0,0,0.8)' }}>{feed.desc}</p>
+      {/* CTA button */}
+      <button onClick={onOpenSheet} style={{
+        width: '100%', height: 46, borderRadius: 23,
+        background: `linear-gradient(135deg, ${T.primary}cc, ${T.secondary}cc)`,
+        backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(99,102,241,0.5)',
+        color: '#fff', fontFamily: T.kanit, fontSize: 15, fontWeight: 600,
+        cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+        boxShadow: `0 4px 20px ${T.primaryGlow}`,
+        transition: 'all 0.2s',
+      }}>
+        🛒 ดูสินค้า &nbsp;<span style={{ color: T.yellow, fontWeight: 700 }}>{feed.price}</span><span style={{ color: T.textMuted, fontSize: 12 }}>{feed.unit}</span>
+        <span style={{ marginLeft: 'auto', color: T.textMuted, fontSize: 12 }}>↑ เลื่อนขึ้น</span>
+      </button>
+    </div>
+  );
+}
+
+// ─── Stories bar ──────────────────────────────────────────────
+function StoriesBar({ activeStory, setActiveStory }) {
+  return (
+    <div style={{
+      display: 'flex', gap: 14, padding: '4px 16px',
+      overflowX: 'auto', scrollbarWidth: 'none',
+    }}>
+      {STORIES.map(s => (
+        <div key={s.id} onClick={() => setActiveStory(s.id === activeStory ? null : s.id)}
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5,
+            cursor: 'pointer', flexShrink: 0, transition: 'transform 0.2s',
+            transform: activeStory === s.id ? 'scale(1.1)' : 'scale(1)',
+          }}>
+          <div style={{ position: 'relative' }}>
+            <div style={{
+              width: 56, height: 56, borderRadius: '50%', padding: 2,
+              background: s.live
+                ? `linear-gradient(135deg, #f43f5e, #f97316)`
+                : `linear-gradient(135deg, ${s.color}, ${T.primary})`,
+              boxShadow: activeStory === s.id ? `0 0 0 2px #fff, 0 0 16px ${s.color}` : 'none',
+            }}>
+              <div style={{
+                width: '100%', height: '100%', borderRadius: '50%',
+                background: `linear-gradient(135deg, ${s.color}44, ${T.bg})`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 22, border: '2px solid #0f172a',
+              }}>
+                {['🥥','🌶️','👗','🛵','🏪'][s.id-1]}
+              </div>
+            </div>
+            {s.live && (
+              <div style={{
+                position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)',
+                background: '#f43f5e', color: '#fff',
+                fontSize: 8, fontWeight: 700, padding: '1px 5px', borderRadius: 4,
+                border: '1.5px solid #0f172a',
+              }}>LIVE</div>
+            )}
+          </div>
+          <span style={{ color: T.textMuted, fontSize: 10, maxWidth: 56, textAlign: 'center',
+            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── Header ───────────────────────────────────────────────────
+function MobileHeader({ tab, setTab, showStories, setShowStories }) {
+  const tabs = [
+    { id: 'all', label: 'ดูเพลิน', icon: '▶' },
+    { id: 'near', label: 'ใกล้ฉัน', icon: '📍' },
+    { id: 'community', label: 'ชุมชน', icon: '👥' },
+  ];
+  return (
+    <div style={{
+      position: 'absolute', top: 0, left: 0, right: 0, zIndex: 50,
+      background: 'linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 100%)',
+      padding: '0 16px',
+    }}>
+      {/* row 1 */}
+      <div style={{ display: 'flex', alignItems: 'center', height: 52, gap: 12 }}>
+        {/* logo */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{
+            width: 30, height: 30, borderRadius: 8,
+            background: `linear-gradient(135deg, ${T.primary}, ${T.secondary})`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 14, boxShadow: `0 2px 8px ${T.primaryGlow}`,
+          }}>🛺</div>
+          <span style={{ color: '#fff', fontWeight: 700, fontSize: 18, letterSpacing: -0.5 }}>TukTuk</span>
+        </div>
+        {/* tabs */}
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'center', gap: 4 }}>
+          {tabs.map(t => (
+            <button key={t.id} onClick={() => setTab(t.id)} style={{
+              padding: '6px 14px', borderRadius: 20, border: 'none',
+              background: tab === t.id ? 'rgba(99,102,241,0.9)' : 'rgba(255,255,255,0.1)',
+              color: tab === t.id ? '#fff' : 'rgba(255,255,255,0.6)',
+              fontFamily: T.kanit, fontSize: 12, fontWeight: 500, cursor: 'pointer',
+              transition: 'all 0.2s',
+              backdropFilter: 'blur(10px)',
+            }}>{t.label}</button>
+          ))}
+        </div>
+        {/* search */}
+        <button onClick={() => {}} style={{
+          width: 36, height: 36, borderRadius: '50%',
+          background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.15)',
+          color: '#fff', fontSize: 16, cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          backdropFilter: 'blur(10px)',
+        }}>🔍</button>
+      </div>
+      {/* row 2: stories */}
+      <div style={{ paddingBottom: 12 }}>
+        <StoriesBar activeStory={null} setActiveStory={() => {}}/>
+      </div>
+    </div>
+  );
+}
+
+// ─── Bottom Nav ───────────────────────────────────────────────
+function BottomNav({ active, setActive }) {
+  const items = [
+    { id: 'home', icon: '⌂', label: 'หน้าหลัก' },
+    { id: 'market', icon: '🏪', label: 'ตลาด' },
+    { id: 'create', icon: '+', label: '', special: true },
+    { id: 'chat', icon: '💬', label: 'แชท' },
+    { id: 'profile', icon: '👤', label: 'โปรไฟล์' },
+  ];
+  return (
+    <div style={{
+      position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 60,
+      background: 'rgba(10,15,30,0.92)',
+      backdropFilter: 'blur(20px)',
+      borderTop: '1px solid rgba(255,255,255,0.06)',
+      display: 'flex', alignItems: 'center',
+      height: 70, paddingBottom: 8,
+    }}>
+      {items.map(item => (
+        <button key={item.id} onClick={() => setActive(item.id)} style={{
+          flex: 1, height: '100%', border: 'none', background: 'transparent',
+          cursor: 'pointer', display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center', gap: 3,
+        }}>
+          {item.special ? (
+            <div style={{
+              width: 44, height: 30, borderRadius: 15,
+              background: `linear-gradient(135deg, ${T.primary}, ${T.secondary})`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: '#fff', fontSize: 20, fontWeight: 300,
+              boxShadow: `0 4px 14px ${T.primaryGlow}`,
+              transition: 'transform 0.15s',
+            }}>+</div>
+          ) : (
+            <>
+              <span style={{
+                fontSize: 20, transition: 'transform 0.2s',
+                transform: active === item.id ? 'scale(1.15)' : 'scale(1)',
+                filter: active === item.id ? 'none' : 'grayscale(40%)',
+              }}>{item.icon}</span>
+              <span style={{
+                color: active === item.id ? T.primary : T.textFaint,
+                fontSize: 10, fontWeight: active === item.id ? 600 : 400,
+                transition: 'color 0.2s',
+              }}>{item.label}</span>
+              {active === item.id && (
+                <div style={{
+                  position: 'absolute', bottom: 6, width: 4, height: 4,
+                  borderRadius: '50%', background: T.primary,
+                }}/>
+              )}
+            </>
+          )}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ─── MOBILE FEED VIEW ─────────────────────────────────────────
+function MobileFeedView() {
+  const [feedIdx, setFeedIdx] = useLocalStorage('tt_feed_idx', 0);
+  const [tab, setTab] = useLocalStorage('tt_tab', 'all');
+  const [liked, setLiked] = React.useState({});
+  const [showSheet, setShowSheet] = React.useState(false);
+  const [showHeart, setShowHeart] = React.useState(false);
+  const [navActive, setNavActive] = useLocalStorage('tt_nav', 'home');
+  const [lastTap, setLastTap] = React.useState(0);
+
+  const feed = FEEDS[feedIdx % FEEDS.length];
+
+  // swipe support
+  const touchY = React.useRef(null);
+  const onTouchStart = e => { touchY.current = e.touches[0].clientY; };
+  const onTouchEnd = e => {
+    if (touchY.current === null) return;
+    const dy = touchY.current - e.changedTouches[0].clientY;
+    if (Math.abs(dy) > 50) {
+      setFeedIdx(i => (i + (dy > 0 ? 1 : -1) + FEEDS.length) % FEEDS.length);
+      setShowSheet(false);
+    }
+    touchY.current = null;
+  };
+
+  // double-tap like
+  const onDoubleTap = () => {
+    const now = Date.now();
+    if (now - lastTap < 300) {
+      setLiked(l => ({ ...l, [feed.id]: true }));
+      setShowHeart(true);
+    }
+    setLastTap(now);
+  };
+
+  return (
+    <div style={{ height: '100%', position: 'relative', background: '#000', overflow: 'hidden' }}
+      onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} onClick={onDoubleTap}>
+
+      {/* video bg */}
+      <VideoBG feed={feed}>
+        {/* gradient overlays */}
+        <div style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: 'linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 30%, transparent 50%, rgba(0,0,0,0.7) 100%)',
+        }}/>
+
+        {/* double-tap heart */}
+        {showHeart && <HeartAnim onDone={() => setShowHeart(false)}/>}
+
+        {/* header */}
+        <MobileHeader tab={tab} setTab={setTab}/>
+
+        {/* feed index dots */}
+        <div style={{
+          position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)',
+          display: 'flex', flexDirection: 'column', gap: 6,
+        }}>
+          {FEEDS.map((_, i) => (
+            <div key={i} onClick={e => { e.stopPropagation(); setFeedIdx(i); setShowSheet(false); }}
+              style={{
+                width: feedIdx === i ? 4 : 3, height: feedIdx === i ? 20 : 12,
+                borderRadius: 3, background: feedIdx === i ? '#fff' : 'rgba(255,255,255,0.3)',
+                transition: 'all 0.3s', cursor: 'pointer',
+              }}/>
+          ))}
+        </div>
+
+        {/* right actions */}
+        {!showSheet && (
+          <RightActions feed={feed} liked={!!liked[feed.id]}
+            onLike={e => { if(e) e.stopPropagation(); setLiked(l => ({...l, [feed.id]: !l[feed.id]})); }}
+            onComment={e => { if(e) e.stopPropagation(); setShowSheet(true); }}
+            onShare={e => { if(e) e.stopPropagation(); }}
+          />
+        )}
+
+        {/* bottom info */}
+        {!showSheet && <BottomInfo feed={feed} onOpenSheet={() => setShowSheet(true)}/>}
+
+        {/* product sheet */}
+        {showSheet && (
+          <ProductSheet feed={feed} onClose={() => setShowSheet(false)} onOrder={() => setShowSheet(false)}/>
+        )}
+
+        {/* bottom nav */}
+        <BottomNav active={navActive} setActive={setNavActive}/>
+
+        {/* swipe hint */}
+        <div style={{
+          position: 'absolute', top: '50%', left: '50%',
+          transform: 'translate(-50%,-50%)',
+          pointerEvents: 'none', zIndex: 5,
+        }}>
+          <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.15)', fontSize: 11 }}>
+            ↕ เลื่อนเพื่อดูต่อไป
+          </div>
+        </div>
+
+      </VideoBG>
+    </div>
+  );
+}
+
+// ─── DESKTOP VIEW ─────────────────────────────────────────────
+function DesktopFeedView() {
+  const [feedIdx, setFeedIdx] = useLocalStorage('tt_desk_idx', 0);
+  const [liked, setLiked] = React.useState({});
+  const [activePanel, setActivePanel] = React.useState('hot');
+  const [chatMsg, setChatMsg] = React.useState('');
+  const [chats, setChats] = React.useState([
+    { u: '@แม่ค้า', m: 'น่าสนใจมาก 🔥' },
+    { u: '@ผู้ซื้อ', m: 'ส่งได้ไหมคะ?' },
+    { u: '@ร้าน', m: 'ส่งทั่วไทยเลยค่า 📦' },
+  ]);
+
+  const f0 = FEEDS[feedIdx % FEEDS.length];
+  const f1 = FEEDS[(feedIdx + 1) % FEEDS.length];
+
+  const sendChat = () => {
+    if (!chatMsg.trim()) return;
+    setChats(c => [...c, { u: '@คุณ', m: chatMsg }]);
+    setChatMsg('');
+  };
+
+  const navItems = [
+    { id: 'home', icon: '⌂', active: true },
+    { id: 'feed', icon: '▶', active: false },
+    { id: 'near', icon: '📍', active: false },
+    { id: 'market', icon: '🏪', active: false },
+    { id: 'chat', icon: '💬', active: false },
+    { id: 'profile', icon: '👤', active: false },
+  ];
+
+  return (
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: T.bgDeep }}>
+
+      {/* Top Nav */}
+      <div style={{
+        height: 54, display: 'flex', alignItems: 'center', gap: 12,
+        padding: '0 20px',
+        background: 'rgba(15,23,42,0.98)',
+        borderBottom: `1px solid ${T.border}`,
+        backdropFilter: 'blur(20px)',
+        flexShrink: 0, zIndex: 100,
+      }}>
+        {/* logo */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginRight: 8 }}>
+          <div style={{
+            width: 32, height: 32, borderRadius: 9,
+            background: `linear-gradient(135deg, ${T.primary}, ${T.secondary})`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16,
+          }}>🛺</div>
+          <span style={{ color: '#fff', fontWeight: 700, fontSize: 17, letterSpacing: -0.5 }}>TukTuk</span>
+        </div>
+        {/* search */}
+        <div style={{
+          flex: 1, maxWidth: 360,
+          height: 36, borderRadius: 18,
+          background: 'rgba(255,255,255,0.06)', border: `1px solid ${T.border}`,
+          display: 'flex', alignItems: 'center', gap: 8, padding: '0 14px',
+        }}>
+          <span style={{ color: T.textFaint, fontSize: 14 }}>🔍</span>
+          <span style={{ color: T.textFaint, fontSize: 13 }}>ค้นหาทุกอย่าง...</span>
+          <span style={{ marginLeft: 'auto', color: T.textFaint, fontSize: 11,
+            background: 'rgba(255,255,255,0.06)', padding: '1px 6px', borderRadius: 5 }}>⌘K</span>
+        </div>
+        <div style={{ flex: 1 }}/>
+        {/* actions */}
+        {['🔔','💬','🏪'].map((ic, i) => (
+          <button key={i} style={{
+            width: 36, height: 36, borderRadius: 9, border: 'none',
+            background: 'rgba(255,255,255,0.05)', color: '#fff', fontSize: 16,
+            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>{ic}</button>
+        ))}
+        {/* avatar */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 4, cursor: 'pointer' }}>
+          <div style={{
+            width: 32, height: 32, borderRadius: '50%',
+            background: `linear-gradient(135deg, ${T.primary}, ${T.secondary})`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14,
+          }}>👤</div>
+          <span style={{ color: T.textMuted, fontSize: 13 }}>โปรไฟล์ ▾</span>
+        </div>
+      </div>
+
+      {/* Main content */}
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+
+        {/* Left slim nav */}
+        <div style={{
+          width: 62, background: '#080c18',
+          borderRight: `1px solid ${T.border}`,
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+          paddingTop: 12, gap: 4, flexShrink: 0,
+        }}>
+          {navItems.map((n, i) => (
+            <button key={n.id} style={{
+              width: 46, height: 44, borderRadius: 10, border: 'none',
+              background: i === 0 ? 'rgba(99,102,241,0.2)' : 'transparent',
+              color: i === 0 ? T.primary : T.textFaint,
+              fontSize: 18, cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              position: 'relative', transition: 'all 0.15s',
+            }}>
+              {n.icon}
+              {i === 0 && <div style={{
+                position: 'absolute', left: 0, top: 8, bottom: 8,
+                width: 3, borderRadius: 2, background: T.primary,
+              }}/>}
+            </button>
+          ))}
+          {/* create */}
+          <div style={{ flex: 1 }}/>
+          <button style={{
+            width: 40, height: 36, borderRadius: 10, border: 'none',
+            background: `linear-gradient(135deg, ${T.primary}, ${T.secondary})`,
+            color: '#fff', fontSize: 18, cursor: 'pointer', marginBottom: 12,
+            boxShadow: `0 4px 14px ${T.primaryGlow}`,
+          }}>+</button>
+        </div>
+
+        {/* Dual video columns */}
+        <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, background: '#000', overflow: 'hidden' }}>
+          {[f0, f1].map((feed, col) => (
+            <div key={col} style={{
+              position: 'relative', overflow: 'hidden', cursor: 'pointer',
+              background: feed.bg,
+            }} onClick={() => { if(col===0) setFeedIdx(i=>i+1); else setFeedIdx(i=>i+2); }}>
+              {/* BG */}
+              <div style={{ position: 'absolute', inset: 0, background: feed.bg }}/>
+              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span style={{ fontSize: 100, opacity: 0.1, filter: 'blur(1px)' }}>{feed.emoji}</span>
+              </div>
+              {/* gradient */}
+              <div style={{
+                position: 'absolute', inset: 0,
+                background: 'linear-gradient(180deg, rgba(0,0,0,0.3) 0%, transparent 40%, rgba(0,0,0,0.8) 100%)',
+              }}/>
+              {/* live badge */}
+              {feed.isLive && (
+                <div style={{
+                  position: 'absolute', top: 14, left: 14,
+                  padding: '4px 10px', borderRadius: 16,
+                  background: 'rgba(244,63,94,0.9)',
+                  color: '#fff', fontSize: 11, fontWeight: 700,
+                  animation: 'pulse 1.5s infinite',
+                  display: 'flex', alignItems: 'center', gap: 4,
+                }}>
+                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#fff' }}/>
+                  LIVE · 412 ดู
+                </div>
+              )}
+              {/* right actions */}
+              <div style={{
+                position: 'absolute', right: 12, bottom: 100,
+                display: 'flex', flexDirection: 'column', gap: 16,
+              }}>
+                {[['❤️','🤍','likes'], ['💬','💬','comments'], ['↗️','↗️','share']].map(([on,off,k], j) => (
+                  <div key={j} onClick={e => { e.stopPropagation(); if(k==='likes') setLiked(l => ({...l,[feed.id]:!l[feed.id]})); }}
+                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, cursor: 'pointer' }}>
+                    <div style={{
+                      width: 42, height: 42, borderRadius: '50%',
+                      background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(10px)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 18, border: '1px solid rgba(255,255,255,0.1)',
+                    }}>{k === 'likes' && liked[feed.id] ? on : off}</div>
+                    <span style={{ color: T.text, fontSize: 10 }}>{[feed.likes, feed.comments, 'แชร์'][j]}</span>
+                  </div>
+                ))}
+              </div>
+              {/* bottom info */}
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0 14px 14px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                  <div style={{
+                    width: 30, height: 30, borderRadius: '50%',
+                    background: `linear-gradient(135deg, ${feed.color}, ${T.primary})`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14,
+                  }}>{feed.emoji}</div>
+                  <div>
+                    <div style={{ color: '#fff', fontWeight: 600, fontSize: 13 }}>{feed.seller}</div>
+                    <div style={{ color: T.textMuted, fontSize: 11 }}>📍 {feed.dist}</div>
+                  </div>
+                </div>
+                <button style={{
+                  width: '100%', height: 38, borderRadius: 19, border: 'none',
+                  background: col === 0
+                    ? `linear-gradient(135deg, ${T.primary}cc, ${T.secondary}cc)`
+                    : 'rgba(244,63,94,0.85)',
+                  color: '#fff', fontFamily: T.kanit, fontSize: 13, fontWeight: 600,
+                  cursor: 'pointer', backdropFilter: 'blur(10px)',
+                }}>
+                  {col === 0 ? `🛒 ซื้อเลย ${feed.price}` : `🔴 ดู Live สด`}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Right panel */}
+        <div style={{
+          width: 280, background: '#0d1321',
+          borderLeft: `1px solid ${T.border}`,
+          display: 'flex', flexDirection: 'column', flexShrink: 0,
+        }}>
+          {/* tabs */}
+          <div style={{
+            display: 'flex', borderBottom: `1px solid ${T.border}`,
+            padding: '8px 8px 0',
+          }}>
+            {[['hot','🔥 ฮอต'],['near','📍 ใกล้'],['shop','🏪 ร้าน']].map(([id, l]) => (
+              <button key={id} onClick={() => setActivePanel(id)} style={{
+                flex: 1, height: 34, border: 'none', borderRadius: '8px 8px 0 0',
+                background: activePanel === id ? 'rgba(99,102,241,0.2)' : 'transparent',
+                color: activePanel === id ? '#a5b4fc' : T.textFaint,
+                fontFamily: T.kanit, fontSize: 11, fontWeight: 500, cursor: 'pointer',
+                borderBottom: activePanel === id ? `2px solid ${T.primary}` : '2px solid transparent',
+              }}>{l}</button>
+            ))}
+          </div>
+          {/* vendor list */}
+          <div style={{ flex: 1, overflow: 'auto', padding: '8px 0' }}>
+            {FEEDS.map((f, i) => (
+              <div key={i} onClick={() => setFeedIdx(i)}
+                style={{
+                  display: 'flex', gap: 10, padding: '10px 14px', cursor: 'pointer',
+                  background: feedIdx % FEEDS.length === i ? 'rgba(99,102,241,0.1)' : 'transparent',
+                  borderLeft: feedIdx % FEEDS.length === i ? `3px solid ${T.primary}` : '3px solid transparent',
+                  transition: 'all 0.15s',
+                }}>
+                <div style={{
+                  width: 54, height: 54, borderRadius: 10, flexShrink: 0,
+                  background: `linear-gradient(135deg, ${f.color}44, ${T.primary}22)`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28,
+                }}>{f.emoji}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ color: T.text, fontWeight: 600, fontSize: 13, marginBottom: 2 }}>{f.seller}</div>
+                  <div style={{ color: T.textMuted, fontSize: 11 }}>📍 {f.dist}</div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
+                    <span style={{ color: T.yellow, fontWeight: 700, fontSize: 14 }}>{f.price}</span>
+                    <span style={{
+                      padding: '2px 8px', borderRadius: 10, fontSize: 10, fontWeight: 500,
+                      background: `${f.color}22`, color: f.color,
+                    }}>{f.tag}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {/* placeholder rows */}
+            {[...Array(4)].map((_, i) => (
+              <div key={`p${i}`} style={{
+                display: 'flex', gap: 10, padding: '10px 14px',
+              }}>
+                <div style={{
+                  width: 54, height: 54, borderRadius: 10,
+                  background: 'rgba(255,255,255,0.04)',
+                  animation: 'shimmer 1.5s infinite',
+                  backgroundImage: 'linear-gradient(90deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 100%)',
+                  backgroundSize: '200% 100%',
+                }}/>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8, paddingTop: 4 }}>
+                  <div style={{ height: 12, borderRadius: 6, background: 'rgba(255,255,255,0.04)', width: '70%',
+                    animation: 'shimmer 1.5s infinite', backgroundImage: 'linear-gradient(90deg,rgba(255,255,255,0.03) 0%,rgba(255,255,255,0.06) 50%,rgba(255,255,255,0.03) 100%)', backgroundSize: '200% 100%' }}/>
+                  <div style={{ height: 10, borderRadius: 5, background: 'rgba(255,255,255,0.04)', width: '50%',
+                    animation: 'shimmer 1.5s infinite', backgroundImage: 'linear-gradient(90deg,rgba(255,255,255,0.03) 0%,rgba(255,255,255,0.06) 50%,rgba(255,255,255,0.03) 100%)', backgroundSize: '200% 100%' }}/>
+                </div>
+              </div>
+            ))}
+          </div>
+          {/* live chat */}
+          <div style={{
+            borderTop: `1px solid ${T.border}`,
+            padding: '10px 0 0',
+          }}>
+            <div style={{ padding: '0 14px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ color: T.textFaint, fontSize: 11, fontWeight: 600, letterSpacing: 0.5 }}>💬 LIVE CHAT</span>
+              <div style={{ display: 'flex', gap: 4 }}>
+                <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#10b981', animation: 'pulse 1.5s infinite' }}/>
+                <span style={{ color: T.textFaint, fontSize: 10 }}>23 ออนไลน์</span>
+              </div>
+            </div>
+            <div style={{ padding: '0 14px', maxHeight: 90, overflow: 'auto', marginBottom: 8 }}>
+              {chats.map((c, i) => (
+                <div key={i} style={{ marginBottom: 6 }}>
+                  <span style={{ color: T.primary, fontSize: 11, fontWeight: 600 }}>{c.u} </span>
+                  <span style={{ color: T.textMuted, fontSize: 12 }}>{c.m}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: 6, padding: '0 10px 10px' }}>
+              <input value={chatMsg} onChange={e => setChatMsg(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && sendChat()}
+                placeholder="พิมพ์..." style={{
+                  flex: 1, height: 32, borderRadius: 16,
+                  background: 'rgba(255,255,255,0.05)', border: `1px solid ${T.border}`,
+                  color: T.text, fontFamily: T.kanit, fontSize: 12,
+                  padding: '0 12px', outline: 'none',
+                }}/>
+              <button onClick={sendChat} style={{
+                width: 46, height: 32, borderRadius: 16, border: 'none',
+                background: T.primary, color: '#fff',
+                fontFamily: T.kanit, fontSize: 11, fontWeight: 600, cursor: 'pointer',
+              }}>ส่ง</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Root App ─────────────────────────────────────────────────
+function App() {
+  const [view, setView] = useLocalStorage('tt_view', 'mobile');
+
+  return (
+    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: '#0a0a0f' }}>
+      {/* view toggle */}
+      <div className="view-toggle">
+        {[['mobile','📱 Mobile'],['desktop','🖥️ Desktop']].map(([id, l]) => (
+          <button key={id} className={`view-btn ${view===id?'active':''}`} onClick={() => setView(id)}>{l}</button>
+        ))}
+      </div>
+
+      {view === 'mobile' ? (
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '60px 20px 20px' }}>
+          {/* phone shell */}
+          <div style={{
+            width: 390, height: 'min(844px, calc(100vh - 100px))',
+            borderRadius: 48, overflow: 'hidden', position: 'relative',
+            boxShadow: '0 40px 100px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.1), inset 0 0 0 1px rgba(255,255,255,0.05)',
+            flexShrink: 0,
+          }}>
+            {/* dynamic island */}
+            <div style={{
+              position: 'absolute', top: 10, left: '50%', transform: 'translateX(-50%)',
+              width: 120, height: 34, borderRadius: 20, background: '#000', zIndex: 200,
+            }}/>
+            <MobileFeedView/>
+          </div>
+          {/* hint */}
+          <div style={{
+            position: 'absolute', bottom: 24,
+            color: T.textFaint, fontSize: 12, textAlign: 'center', letterSpacing: 0.3,
+          }}>
+            👆 คลิกสองครั้งที่วิดีโอเพื่อกดถูกใจ &nbsp;·&nbsp; ↕ Swipe เพื่อดูวิดีโอต่อไป &nbsp;·&nbsp; 🛒 แตะที่ปุ่มเพื่อดูสินค้า
+          </div>
+        </div>
+      ) : (
+        <div style={{ flex: 1, overflow: 'hidden', paddingTop: 60 }}>
+          <DesktopFeedView/>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App/>);
+</script>
+</body>
+</html>

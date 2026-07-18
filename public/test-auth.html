@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth Test - Google Sign-In</title>
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+            color: white;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+        }
+
+        .test-section {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #00f2ea, #ff0050);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .result {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .success {
+            color: #00ff88;
+        }
+
+        .error {
+            color: #ff4444;
+        }
+
+        .info {
+            color: #00d4ff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔐 Google Sign-In Test</h1>
+        <p>ทดสอบการ Login ด้วย Google และตรวจสอบว่า LINE User ID ถูกใช้เป็น Primary UID</p>
+
+        <div class="test-section">
+            <h3>1. Google Sign-In</h3>
+            <button onclick="testGoogleSignIn()">🔑 Login ด้วย Google</button>
+            <div id="signInResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>2. Session Data</h3>
+            <button onclick="checkSession()">📊 ตรวจสอบ Session</button>
+            <div id="sessionResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>3. Community Posts</h3>
+            <button onclick="checkPosts()">📝 ดึงข้อมูล Posts</button>
+            <div id="postsResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>4. Logout</h3>
+            <button onclick="logout()">🚪 Logout</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+
+    <!-- Firebase Config -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBKL6HBLEndDX4LYo7APFNQ0IVICLJtaIE",
+            authDomain: "appinjproject.firebaseapp.com",
+            databaseURL: "https://appinjproject-default-rtdb.firebaseio.com",
+            projectId: "appinjproject",
+            storageBucket: "appinjproject.firebasestorage.app",
+            messagingSenderId: "408718656984",
+            appId: "1:408718656984:web:08bd8f084769d428251ead",
+            measurementId: "G-7ZM9H01D6E"
+        };
+        firebase.initializeApp(firebaseConfig);
+    </script>
+
+    <!-- Auth.js -->
+    <script src="/js/auth.js"></script>
+
+    <script>
+        async function testGoogleSignIn() {
+            const resultDiv = document.getElementById('signInResult');
+            resultDiv.innerHTML = '<span class="info">⏳ กำลัง Login...</span>';
+
+            try {
+                const result = await WizmobizAuth.signInWithGoogle();
+                if (result.success) {
+                    resultDiv.innerHTML = `<span class="success">✅ Login สำเร็จ!</span>\n\n${JSON.stringify(result.user, null, 2)}`;
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ Login ล้มเหลว: ${result.error}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Error: ${error.message}</span>`;
+            }
+        }
+
+        function checkSession() {
+            const resultDiv = document.getElementById('sessionResult');
+            const session = WizmobizAuth.getSession();
+
+            if (session) {
+                resultDiv.innerHTML = `<span class="success">✅ พบ Session</span>\n\n${JSON.stringify(session, null, 2)}`;
+
+                // Highlight important fields
+                if (session.lineUserId) {
+                    resultDiv.innerHTML += `\n\n<span class="success">🔑 LINE User ID: ${session.lineUserId}</span>`;
+                }
+                if (session.firebaseUid) {
+                    resultDiv.innerHTML += `\n<span class="info">🔐 Firebase UID: ${session.firebaseUid}</span>`;
+                }
+                if (session.uid) {
+                    resultDiv.innerHTML += `\n<span class="success">👤 Primary UID: ${session.uid}</span>`;
+                }
+            } else {
+                resultDiv.innerHTML = '<span class="error">❌ ไม่พบ Session (กรุณา Login ก่อน)</span>';
+            }
+        }
+
+        async function checkPosts() {
+            const resultDiv = document.getElementById('postsResult');
+            const session = WizmobizAuth.getSession();
+
+            if (!session) {
+                resultDiv.innerHTML = '<span class="error">❌ กรุณา Login ก่อน</span>';
+                return;
+            }
+
+            resultDiv.innerHTML = '<span class="info">⏳ กำลังดึงข้อมูล Posts...</span>';
+
+            try {
+                const db = firebase.firestore();
+                const postsQuery = await db.collection('community_posts')
+                    .where('authorId', '==', session.uid)
+                    .limit(5)
+                    .get();
+
+                if (postsQuery.empty) {
+                    resultDiv.innerHTML = `<span class="error">❌ ไม่พบ Posts ของ UID: ${session.uid}</span>`;
+
+                    // Try with lineUserId if different
+                    if (session.lineUserId && session.lineUserId !== session.uid) {
+                        const linePostsQuery = await db.collection('community_posts')
+                            .where('authorId', '==', session.lineUserId)
+                            .limit(5)
+                            .get();
+
+                        if (!linePostsQuery.empty) {
+                            resultDiv.innerHTML += `\n\n<span class="success">✅ พบ ${linePostsQuery.size} Posts ด้วย LINE User ID: ${session.lineUserId}</span>`;
+                            linePostsQuery.forEach(doc => {
+                                const data = doc.data();
+                                resultDiv.innerHTML += `\n\n📝 ${data.content?.substring(0, 50)}...`;
+                            });
+                        }
+                    }
+                } else {
+                    resultDiv.innerHTML = `<span class="success">✅ พบ ${postsQuery.size} Posts</span>\n\n`;
+                    postsQuery.forEach(doc => {
+                        const data = doc.data();
+                        resultDiv.innerHTML += `📝 ${data.content?.substring(0, 50)}...\n`;
+                    });
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Error: ${error.message}</span>`;
+            }
+        }
+
+        function logout() {
+            WizmobizAuth.logout();
+            alert('✅ Logout สำเร็จ');
+            location.reload();
+        }
+    </script>
+</body>
+
+</html>

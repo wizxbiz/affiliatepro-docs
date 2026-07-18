@@ -1,0 +1,40 @@
+<!-- Smart Floating Bottom Nav (Mobile) -->
+    <nav class="bottom-nav" id="bottomNav">
+        <!-- <div class="ecosystem-badge">TukTuk Ecosystem</div> -->
+        <a href="index.html" class="bottom-nav-item">
+            <i class="fas fa-home"></i>
+            <span>หน้าแรก</span>
+        </a>
+        <a href="marketplace.html" class="bottom-nav-item active">
+            <i class="fas fa-store"></i>
+            <span>ตลาด</span>
+        </a>
+        <a href="javascript:void(0)" onclick="handleTukTukButtonClick()" class="bottom-nav-item center-btn"
+            id="centerBtn">
+            <img src="assets/images/tuktuk.png" class="tuktuk-brand-icon">
+        </a>
+        <a href="javascript:void(0)" onclick="WizmobizAuth.handleShopAccess()" class="bottom-nav-item">
+            <i class="fas fa-store-alt"></i>
+            <span>ร้านของฉัน</span>
+        </a>
+        <a href="javascript:void(0)" onclick="WizmobizAuth.handleProfileClick()" class="bottom-nav-item"
+            id="bottomProfile">
+            <i class="fas fa-user-circle"></i>
+            <span>เข้าสู่ระบบ</span>
+        </a>
+    </nav>
+
+    <!-- Marketplace Hub Overlay (Direct Action Menu for Market) -->
+    <div class="search-overlay" id="marketHubOverlay" onclick="closeMarketHub()">
+        <div class="search-menu-content" onclick="event.stopPropagation()"
+            style="background: rgba(15, 23, 42, 0.98); border-radius: 40px 40px 0 0; padding-bottom: 60px;">
+            <div class="search-overlay-header" style="margin-bottom: 30px;">
+                <div style="display: flex; flex-direction: column;">
+                    <h3
+                        style="background: linear-gradient(90deg, #FF0050, #00f2ea); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; font-size: 1.8rem; margin: 0;">
+                        🚀 Marketplace Actions</h3>
+                    <span style="color: rgba(255,255,255,0.5); font-size: 0.8rem;">เลือกสิ่งที่คุณต้องการทำในตลาด</span>
+                </div>
+                <div class="close-search" onclick="closeMarketHub()"
+                    style="background: rgba(255,255,255,0.1); width: 45px; height: 45px;">&times;</div>
+            </div>

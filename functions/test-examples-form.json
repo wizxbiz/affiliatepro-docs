@@ -1,0 +1,290 @@
+{
+  "type": "flex",
+  "altText": "📋 ตัวอย่างการเพิ่มความรู้",
+  "contents": {
+    "type": "carousel",
+    "contents": [
+      {
+        "type": "bubble",
+        "size": "mega",
+        "header": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "text",
+              "text": "📋 ตัวอย่างที่ 1",
+              "weight": "bold",
+              "size": "lg",
+              "color": "#ffffff"
+            },
+            {
+              "type": "text",
+              "text": "ปัญหาพลาสติก",
+              "size": "sm",
+              "color": "#ffffff99"
+            }
+          ],
+          "backgroundColor": "#3b82f6",
+          "paddingAll": "15px"
+        },
+        "body": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "text",
+              "text": "เพิ่มความรู้",
+              "weight": "bold",
+              "color": "#059669",
+              "size": "md"
+            },
+            {
+              "type": "text",
+              "text": "ปัญหา: ABS มีรอยยุบ (Sink Mark)",
+              "size": "sm",
+              "color": "#1f2937",
+              "wrap": true,
+              "margin": "md"
+            },
+            {
+              "type": "text",
+              "text": "วิธีแก้: เพิ่มความดัน Holding 10-20% และเพิ่มเวลา Holding 2-3 วินาที",
+              "size": "sm",
+              "color": "#1f2937",
+              "wrap": true,
+              "margin": "sm"
+            },
+            {
+              "type": "text",
+              "text": "หมวด: วิธีแก้จริง",
+              "size": "sm",
+              "color": "#6b7280",
+              "margin": "md"
+            },
+            {
+              "type": "text",
+              "text": "วัสดุ: ABS",
+              "size": "sm",
+              "color": "#6b7280",
+              "margin": "xs"
+            },
+            {
+              "type": "text",
+              "text": "แท็ก: sink_mark, holding_pressure",
+              "size": "sm",
+              "color": "#6b7280",
+              "margin": "xs"
+            }
+          ],
+          "backgroundColor": "#f9fafb",
+          "cornerRadius": "8px",
+          "paddingAll": "15px",
+          "margin": "md"
+        },
+        "footer": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "button",
+              "action": {
+                "type": "clipboard",
+                "clipboardText": "เพิ่มความรู้\nปัญหา: ABS มีรอยยุบ (Sink Mark)\nวิธีแก้: เพิ่มความดัน Holding 10-20% และเพิ่มเวลา Holding 2-3 วินาที\nหมวด: วิธีแก้จริง\nวัสดุ: ABS\nแท็ก: sink_mark, holding_pressure",
+                "label": "📋 Copy"
+              },
+              "style": "primary",
+              "color": "#10b981"
+            }
+          ],
+          "paddingAll": "15px"
+        }
+      },
+      {
+        "type": "bubble",
+        "size": "mega",
+        "header": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "text",
+              "text": "📋 ตัวอย่างที่ 2",
+              "weight": "bold",
+              "size": "lg",
+              "color": "#ffffff"
+            },
+            {
+              "type": "text",
+              "text": "เกษตรกรรม",
+              "size": "sm",
+              "color": "#ffffff99"
+            }
+          ],
+          "backgroundColor": "#10b981",
+          "paddingAll": "15px"
+        },
+        "body": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "text",
+              "text": "เพิ่มความรู้",
+              "weight": "bold",
+              "color": "#059669",
+              "size": "md"
+            },
+            {
+              "type": "text",
+              "text": "ปัญหา: มะเขือเทศเน่าจากโรคใบจุด",
+              "size": "sm",
+              "color": "#1f2937",
+              "wrap": true,
+              "margin": "md"
+            },
+            {
+              "type": "text",
+              "text": "วิธีแก้: พ่นสาร Mancozeb ทุก 7 วัน ตอนเช้าหรือเย็น ขนาด 40 กรัม/น้ำ 20 ลิตร",
+              "size": "sm",
+              "color": "#1f2937",
+              "wrap": true,
+              "margin": "sm"
+            },
+            {
+              "type": "text",
+              "text": "หมวด: เคล็ดลับ",
+              "size": "sm",
+              "color": "#6b7280",
+              "margin": "md"
+            },
+            {
+              "type": "text",
+              "text": "แท็ก: มะเขือเทศ, โรคพืช, ใบจุด",
+              "size": "sm",
+              "color": "#6b7280",
+              "margin": "xs"
+            }
+          ],
+          "backgroundColor": "#f0fdf4",
+          "cornerRadius": "8px",
+          "paddingAll": "15px",
+          "margin": "md"
+        },
+        "footer": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "button",
+              "action": {
+                "type": "clipboard",
+                "clipboardText": "เพิ่มความรู้\nปัญหา: มะเขือเทศเน่าจากโรคใบจุด\nวิธีแก้: พ่นสาร Mancozeb ทุก 7 วัน ตอนเช้าหรือเย็น ขนาด 40 กรัม/น้ำ 20 ลิตร\nหมวด: เคล็ดลับ\nแท็ก: มะเขือเทศ, โรคพืช, ใบจุด",
+                "label": "📋 Copy"
+              },
+              "style": "primary",
+              "color": "#10b981"
+            }
+          ],
+          "paddingAll": "15px"
+        }
+      },
+      {
+        "type": "bubble",
+        "size": "mega",
+        "header": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "text",
+              "text": "📋 ตัวอย่างที่ 3",
+              "weight": "bold",
+              "size": "lg",
+              "color": "#ffffff"
+            },
+            {
+              "type": "text",
+              "text": "ซัพพลายเออร์",
+              "size": "sm",
+              "color": "#ffffff99"
+            }
+          ],
+          "backgroundColor": "#f59e0b",
+          "paddingAll": "15px"
+        },
+        "body": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "text",
+              "text": "เพิ่มความรู้",
+              "weight": "bold",
+              "color": "#059669",
+              "size": "md"
+            },
+            {
+              "type": "text",
+              "text": "ปัญหา: หาซื้อ ABS ราคาถูก ย่านลาดพร้าว",
+              "size": "sm",
+              "color": "#1f2937",
+              "wrap": true,
+              "margin": "md"
+            },
+            {
+              "type": "text",
+              "text": "วิธีแก้: ร้าน XYZ พลาสติก ราคา 65 บาท/กก. โทร 02-xxx-xxxx ส่งฟรีถ้าซื้อ > 100กก.",
+              "size": "sm",
+              "color": "#1f2937",
+              "wrap": true,
+              "margin": "sm"
+            },
+            {
+              "type": "text",
+              "text": "หมวด: ซัพพลายเออร์",
+              "size": "sm",
+              "color": "#6b7280",
+              "margin": "md"
+            },
+            {
+              "type": "text",
+              "text": "วัสดุ: ABS",
+              "size": "sm",
+              "color": "#6b7280",
+              "margin": "xs"
+            },
+            {
+              "type": "text",
+              "text": "แท็ก: ลาดพร้าว, กรุงเทพ, ราคาถูก",
+              "size": "sm",
+              "color": "#6b7280",
+              "margin": "xs"
+            }
+          ],
+          "backgroundColor": "#fffbeb",
+          "cornerRadius": "8px",
+          "paddingAll": "15px",
+          "margin": "md"
+        },
+        "footer": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "button",
+              "action": {
+                "type": "clipboard",
+                "clipboardText": "เพิ่มความรู้\nปัญหา: หาซื้อ ABS ราคาถูก ย่านลาดพร้าว\nวิธีแก้: ร้าน XYZ พลาสติก ราคา 65 บาท/กก. โทร 02-xxx-xxxx ส่งฟรีถ้าซื้อ > 100กก.\nหมวด: ซัพพลายเออร์\nวัสดุ: ABS\nแท็ก: ลาดพร้าว, กรุงเทพ, ราคาถูก",
+                "label": "📋 Copy"
+              },
+              "style": "primary",
+              "color": "#10b981"
+            }
+          ],
+          "paddingAll": "15px"
+        }
+      }
+    ]
+  }
+}

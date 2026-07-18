@@ -1,0 +1,367 @@
+{
+  "type": "flex",
+  "altText": "📚 ความรู้ทั้งหมด 150 รายการ",
+  "contents": {
+    "type": "bubble",
+    "size": "mega",
+    "header": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "📚",
+              "size": "3xl",
+              "flex": 0
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "Knowledge Base",
+                  "weight": "bold",
+                  "size": "xl",
+                  "color": "#ffffff"
+                },
+                {
+                  "type": "text",
+                  "text": "150 รายการ | 120 ยืนยัน",
+                  "size": "sm",
+                  "color": "#ffffffcc",
+                  "margin": "xs"
+                }
+              ],
+              "margin": "lg"
+            }
+          ]
+        }
+      ],
+      "paddingAll": "20px",
+      "backgroundColor": "#3b82f6"
+    },
+    "body": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "text",
+          "text": "📂 หมวดหมู่ความรู้",
+          "weight": "bold",
+          "size": "md",
+          "color": "#374151"
+        },
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "🔧",
+              "size": "lg",
+              "flex": 0
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "แม่พิมพ์",
+                  "weight": "bold",
+                  "size": "sm",
+                  "color": "#1f2937"
+                },
+                {
+                  "type": "text",
+                  "text": "50 รายการ",
+                  "size": "xs",
+                  "color": "#6b7280",
+                  "margin": "xs"
+                }
+              ],
+              "margin": "md"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "✅",
+                  "size": "lg",
+                  "align": "end"
+                }
+              ],
+              "flex": 0
+            }
+          ],
+          "backgroundColor": "#ffffff",
+          "paddingAll": "12px",
+          "cornerRadius": "8px",
+          "margin": "none",
+          "action": {
+            "type": "message",
+            "label": "แม่พิมพ์",
+            "text": "ดูหมวด แม่พิมพ์"
+          }
+        },
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "⚙️",
+              "size": "lg",
+              "flex": 0
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "เครื่องจักร",
+                  "weight": "bold",
+                  "size": "sm",
+                  "color": "#1f2937"
+                },
+                {
+                  "type": "text",
+                  "text": "30 รายการ",
+                  "size": "xs",
+                  "color": "#6b7280",
+                  "margin": "xs"
+                }
+              ],
+              "margin": "md"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "✅",
+                  "size": "lg",
+                  "align": "end"
+                }
+              ],
+              "flex": 0
+            }
+          ],
+          "backgroundColor": "#f9fafb",
+          "paddingAll": "12px",
+          "cornerRadius": "8px",
+          "margin": "sm",
+          "action": {
+            "type": "message",
+            "label": "เครื่องจักร",
+            "text": "ดูหมวด เครื่องจักร"
+          }
+        },
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "📦",
+              "size": "lg",
+              "flex": 0
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "วัตถุดิบ",
+                  "weight": "bold",
+                  "size": "sm",
+                  "color": "#1f2937"
+                },
+                {
+                  "type": "text",
+                  "text": "25 รายการ",
+                  "size": "xs",
+                  "color": "#6b7280",
+                  "margin": "xs"
+                }
+              ],
+              "margin": "md"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "⏳",
+                  "size": "lg",
+                  "align": "end"
+                }
+              ],
+              "flex": 0
+            }
+          ],
+          "backgroundColor": "#ffffff",
+          "paddingAll": "12px",
+          "cornerRadius": "8px",
+          "margin": "sm",
+          "action": {
+            "type": "message",
+            "label": "วัตถุดิบ",
+            "text": "ดูหมวด วัตถุดิบ"
+          }
+        },
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "🛠️",
+              "size": "lg",
+              "flex": 0
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "เครื่องมือ",
+                  "weight": "bold",
+                  "size": "sm",
+                  "color": "#1f2937"
+                },
+                {
+                  "type": "text",
+                  "text": "20 รายการ",
+                  "size": "xs",
+                  "color": "#6b7280",
+                  "margin": "xs"
+                }
+              ],
+              "margin": "md"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "✅",
+                  "size": "lg",
+                  "align": "end"
+                }
+              ],
+              "flex": 0
+            }
+          ],
+          "backgroundColor": "#f9fafb",
+          "paddingAll": "12px",
+          "cornerRadius": "8px",
+          "margin": "sm",
+          "action": {
+            "type": "message",
+            "label": "เครื่องมือ",
+            "text": "ดูหมวด เครื่องมือ"
+          }
+        },
+        {
+          "type": "box",
+          "layout": "horizontal",
+          "contents": [
+            {
+              "type": "text",
+              "text": "📊",
+              "size": "lg",
+              "flex": 0
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "QC",
+                  "weight": "bold",
+                  "size": "sm",
+                  "color": "#1f2937"
+                },
+                {
+                  "type": "text",
+                  "text": "15 รายการ",
+                  "size": "xs",
+                  "color": "#6b7280",
+                  "margin": "xs"
+                }
+              ],
+              "margin": "md"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "⏳",
+                  "size": "lg",
+                  "align": "end"
+                }
+              ],
+              "flex": 0
+            }
+          ],
+          "backgroundColor": "#ffffff",
+          "paddingAll": "12px",
+          "cornerRadius": "8px",
+          "margin": "sm",
+          "action": {
+            "type": "message",
+            "label": "QC",
+            "text": "ดูหมวด QC"
+          }
+        }
+      ],
+      "paddingAll": "20px"
+    },
+    "footer": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "button",
+          "action": {
+            "type": "message",
+            "label": "🔄 รีเฟรช",
+            "text": "ดูความรู้ทั้งหมด"
+          },
+          "style": "primary",
+          "color": "#3b82f6",
+          "height": "sm"
+        },
+        {
+          "type": "button",
+          "action": {
+            "type": "message",
+            "label": "🔙 กลับเมนู",
+            "text": "/km"
+          },
+          "style": "link",
+          "height": "sm",
+          "margin": "sm"
+        }
+      ],
+      "paddingAll": "12px"
+    }
+  }
+}

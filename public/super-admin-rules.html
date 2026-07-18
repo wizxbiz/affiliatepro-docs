@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TukTuk Super Admin - Rules & Configuration Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+        }
+
+        * {
+            font-family: 'Kanit', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 280px;
+            background: var(--bg-dark);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 30px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            border-left: 3px solid var(--primary);
+        }
+
+        .menu-item i {
+            width: 24px;
+            margin-right: 12px;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 30px;
+        }
+
+        .header {
+            background: var(--bg-card);
+            padding: 20px 30px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .form-control,
+        .form-select {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            border-radius: 8px;
+            padding: 10px 15px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: var(--primary);
+            color: var(--text-primary);
+            box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
+        }
+
+        .form-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-success {
+            background: var(--success);
+            border: none;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            border: none;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            border: none;
+            color: #000;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 20px;
+            border-radius: 12px;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .rule-item {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .rule-item:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner-border {
+            color: var(--primary);
+        }
+
+        .alert {
+            border-radius: 12px;
+            border: none;
+        }
+
+        .table {
+            color: var(--text-primary);
+        }
+
+        .table thead {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .table tbody tr {
+            background: rgba(15, 23, 42, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .table tbody tr:hover {
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--success);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .json-editor {
+            background: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            padding: 15px;
+            border-radius: 8px;
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Aurora Background -->
+    <div class="aurora-bg"></div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h4 class="mb-0"><i class="fas fa-crown text-warning"></i> Super Admin</h4>
+            <small class="text-secondary">TukTuk Control Center</small>
+        </div>
+
+        <div class="sidebar-menu">
+            <div class="menu-item active" data-tab="dashboard">
+                <i class="fas fa-chart-line"></i>
+                <span>Dashboard</span>
+            </div>
+            <div class="menu-item" data-tab="tokenomics">
+                <i class="fas fa-coins"></i>
+                <span>Tokenomics Rules</span>
+            </div>
+            <div class="menu-item" data-tab="missions">
+                <i class="fas fa-tasks"></i>
+                <span>Mission Config</span>
+            </div>
+            <div class="menu-item" data-tab="rewards">
+                <i class="fas fa-gift"></i>
+                <span>Rewards Management</span>
+            </div>
+            <div class="menu-item" data-tab="moderation">
+                <i class="fas fa-shield-alt"></i>
+                <span>Content Moderation</span>
+            </div>
+            <div class="menu-item" data-tab="users">
+                <i class="fas fa-users"></i>
+                <span>User Management</span>
+            </div>
+            <div class="menu-item" data-tab="analytics">
+                <i class="fas fa-chart-bar"></i>
+                <span>Analytics</span>
+            </div>
+            <div class="menu-item" data-tab="settings">
+                <i class="fas fa-cog"></i>
+                <span>System Settings</span>
+            </div>
+            <div class="menu-item" data-tab="logs">
+                <i class="fas fa-file-alt"></i>
+                <span>Activity Logs</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-0">Control Center</h2>
+                    <small class="text-secondary">จัดการกติกาและการตั้งค่าทุกบริบท</small>
+                </div>
+                <div>
+                    <button class="btn btn-success me-2" onclick="saveAllChanges()">
+                        <i class="fas fa-save"></i> บันทึกทั้งหมด
+                    </button>
+                    <button class="btn btn-warning" onclick="resetToDefaults()">
+                        <i class="fas fa-undo"></i> รีเซ็ต
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalUsers">0</div>
+                        <div class="stat-label">ผู้ใช้ทั้งหมด</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                        <div class="stat-value" id="totalCoins">0</div>
+                        <div class="stat-label">เหรียญในระบบ</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                        <div class="stat-value" id="activeMissions">0</div>
+                        <div class="stat-label">ภารกิจที่ใช้งาน</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+                        <div class="stat-value" id="pendingReports">0</div>
+                        <div class="stat-label">รายงานรอตรวจสอบ</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="section-title">
+                    <i class="fas fa-chart-area"></i>
+                    <span>ภาพรวมระบบ</span>
+                </div>
+                <canvas id="systemChart" height="80"></canvas>
+            </div>
+        </div>
+
+        <!-- Tokenomics Rules Tab -->
+        <div id="tokenomics" class="tab-content">
+            <div class="card">
+                <div class="section-title">
+                    <i class="fas fa-coins"></i>
+                    <span>กติกาการให้เหรียญ</span>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> กำหนดจำนวนเหรียญที่ผู้ใช้จะได้รับจากการทำภารกิจต่างๆ
+                </div>
+
+                <div class="config-grid">
+                    <div>
+                        <label class="form-label">ดูวิดีโอครบ (วินาที)</label>
+                        <input type="number" class="form-control" id="videoWatchCoins" value="5">
+                    </div>
+                    <div>
+                        <label class="form-label">สร้างโพสต์</label>
+                        <input type="number" class="form-control" id="postCreationCoins" value="20">
+                    </div>
+                    <div>
+                        <label class="form-label">ปักหมุดสถานที่</label>
+                        <input type="number" class="form-control" id="locationPinCoins" value="50">
+                    </div>
+                    <div>
+                        <label class="form-label">แชร์คอนเทนต์</label>
+                        <input type="number" class="form-control" id="shareCoins" value="10">
+                    </div>
+                    <div>
+                        <label class="form-label">ซื้อสินค้า</label>
+                        <input type="number" class="form-control" id="purchaseCoins" value="100">
+                    </div>
+                    <div>
+                        <label class="form-label">ชวนเพื่อน</label>
+                        <input type="number" class="form-control" id="referralCoins" value="200">
+                    </div>
+                    <div>
+                        <label class="form-label">เข้าสู่ระบบรายวัน</label>
+                        <input type="number" class="form-control" id="dailyLoginCoins" value="10">
+                    </div>
+                    <div>
+                        <label class="form-label">กดไลค์</label>
+                        <input type="number" class="form-control" id="likeCoins" value="1">
+                    </div>
+                    <div>
+                        <label class="form-label">แสดงความคิดเห็น</label>
+                        <input type="number" class="form-control" id="commentCoins" value="3">
+                    </div>
+                    <div>
+                        <label class="form-label">ติดตามผู้ใช้</label>
+                        <input type="number" class="form-control" id="followCoins" value="5">
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <div class="section-title">
+                    <i class="fas fa-fire"></i>
+                    <span>Daily Streak Bonus</span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label">โบนัสทุกกี่วัน</label>
+                        <input type="number" class="form-control" id="streakBonusDays" value="7">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">จำนวนเหรียญโบนัส</label>
+                        <input type="number" class="form-control" id="streakBonusCoins" value="50">
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <div class="section-title">
+                    <i class="fas fa-video"></i>
+                    <span>Video Watch Requirements</span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label">เวลาดูขั้นต่ำ (วินาที)</label>
+                        <input type="number" class="form-control" id="minWatchTime" value="30">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">จำกัดครั้งต่อวัน</label>
+                        <input type="number" class="form-control" id="maxVideoRewardsPerDay" value="50">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Missions Config Tab -->
+        <div id="missions" class="tab-content">
+            <div class="card">
+                <div class="section-title">
+                    <i class="fas fa-tasks"></i>
+                    <span>จัดการภารกิจ</span>
+                </div>
+
+                <button class="btn btn-primary mb-3" onclick="addNewMission()">
+                    <i class="fas fa-plus"></i> เพิ่มภารกิจใหม่
+                </button>
+
+                <div id="missionsList">
+                    <!-- Missions will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Rewards Management Tab -->
+        <div id="rewards" class="tab-content">
+            <div class="card">
+                <div class="section-title">
+                    <i class="fas fa-gift"></i>
+                    <span>จัดการของรางวัล</span>
+                </div>
+
+                <button class="btn btn-primary mb-3" onclick="addNewReward()">
+                    <i class="fas fa-plus"></i> เพิ่มของรางวัลใหม่
+                </button>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>รางวัล</th>
+                                <th>ราคา (เหรียญ)</th>
+                                <th>ระยะเวลา (วัน)</th>
+                                <th>สถานะ</th>
+                                <th>การกระทำ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rewardsList">
+                            <!-- Rewards will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Moderation Tab -->
+        <div id="moderation" class="tab-content">
+            <div class="card">
+                <div class="section-title">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>การกลั่นกรองเนื้อหา</span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label">Auto-Moderation</label>
+                        <label class="switch">
+                            <input type="checkbox" id="autoModeration" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">คำต้องห้าม (คั่นด้วยเครื่องหมายจุลภาค)</label>
+                        <textarea class="form-control" id="bannedWords" rows="3"></textarea>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <div class="section-title">
+                    <i class="fas fa-flag"></i>
+                    <span>รายงานที่รอตรวจสอบ</span>
+                </div>
+
+                <div id="reportsList">
+                    <!-- Reports will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- User Management Tab -->
+        <div id="users" class="tab-content">
+            <div class="card">
+                <div class="section-title">
+                    <i class="fas fa-users"></i>
+                    <span>จัดการผู้ใช้</span>
+                </div>
+
+                <div class="mb-3">
+                    <input type="text" class="form-control" id="userSearch" placeholder="ค้นหาผู้ใช้...">
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>UID</th>
+                                <th>ชื่อ</th>
+                                <th>เหรียญ</th>
+                                <th>สถานะ</th>
+                                <th>การกระทำ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersList">
+                            <!-- Users will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analytics" class="tab-content">
+            <div class="card">
+                <div class="section-title">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>การวิเคราะห์</span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <canvas id="coinsChart"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <canvas id="activityChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Settings Tab -->
+        <div id="settings" class="tab-content">
+            <div class="card">
+                <div class="section-title">
+                    <i class="fas fa-cog"></i>
+                    <span>การตั้งค่าระบบ</span>
+                </div>
+
+                <div class="config-grid">
+                    <div>
+                        <label class="form-label">ชื่อแอป</label>
+                        <input type="text" class="form-control" id="appName" value="TukTuk Thailand">
+                    </div>
+                    <div>
+                        <label class="form-label">เวอร์ชัน</label>
+                        <input type="text" class="form-control" id="appVersion" value="2.0.0">
+                    </div>
+                    <div>
+                        <label class="form-label">Maintenance Mode</label>
+                        <label class="switch">
+                            <input type="checkbox" id="maintenanceMode">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="form-label">Allow New Registrations</label>
+                        <label class="switch">
+                            <input type="checkbox" id="allowRegistrations" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <div class="section-title">
+                    <i class="fas fa-code"></i>
+                    <span>Advanced Configuration (JSON)</span>
+                </div>
+
+                <div class="json-editor" id="jsonEditor" contenteditable="true">
+                    {
+                    "features": {
+                    "chat": true,
+                    "marketplace": true,
+                    "feed": true,
+                    "missions": true
+                    },
+                    "limits": {
+                    "maxPostsPerDay": 10,
+                    "maxCommentsPerDay": 50,
+                    "maxLikesPerDay": 100
+                    }
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Logs Tab -->
+        <div id="logs" class="tab-content">
+            <div class="card">
+                <div class="section-title">
+                    <i class="fas fa-file-alt"></i>
+                    <span>บันทึกกิจกรรม</span>
+                </div>
+
+                <div class="mb-3">
+                    <select class="form-select" id="logFilter">
+                        <option value="all">ทั้งหมด</option>
+                        <option value="user">ผู้ใช้</option>
+                        <option value="admin">ผู้ดูแล</option>
+                        <option value="system">ระบบ</option>
+                    </select>
+                </div>
+
+                <div id="logsList">
+                    <!-- Logs will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDkGP0EqLBaKPErf9pnPXzIvfYQdXNPPYo",
+            authDomain: "imtpattaya.firebaseapp.com",
+            projectId: "imtpattaya",
+            storageBucket: "imtpattaya.firebasestorage.app",
+            messagingSenderId: "121080360073",
+            appId: "1:121080360073:web:5d5f2b1c8e8f8f8f8f8f8f"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Tab Navigation
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function () {
+                // Remove active class from all
+                document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+
+                // Add active class to clicked
+                this.classList.add('active');
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+
+                // Load tab data
+                loadTabData(tabId);
+            });
+        });
+
+        // Load Tab Data
+        function loadTabData(tabId) {
+            switch (tabId) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'tokenomics':
+                    loadTokenomicsRules();
+                    break;
+                case 'missions':
+                    loadMissions();
+                    break;
+                case 'rewards':
+                    loadRewards();
+                    break;
+                case 'moderation':
+                    loadReports();
+                    break;
+                case 'users':
+                    loadUsers();
+                    break;
+                case 'analytics':
+                    loadAnalytics();
+                    break;
+                case 'settings':
+                    loadSettings();
+                    break;
+                case 'logs':
+                    loadLogs();
+                    break;
+            }
+        }
+
+        // Load Dashboard
+        async function loadDashboard() {
+            try {
+                // Total Users
+                const usersSnapshot = await db.collection('users').get();
+                document.getElementById('totalUsers').textContent = usersSnapshot.size;
+
+                // Total Coins
+                let totalCoins = 0;
+                usersSnapshot.forEach(doc => {
+                    totalCoins += doc.data().coins || 0;
+                });
+                document.getElementById('totalCoins').textContent = totalCoins.toLocaleString();
+
+                // Active Missions (placeholder)
+                document.getElementById('activeMissions').textContent = '10';
+
+                // Pending Reports (placeholder)
+                document.getElementById('pendingReports').textContent = '0';
+
+                // Load Chart
+                loadSystemChart();
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        // Load System Chart
+        function loadSystemChart() {
+            const ctx = document.getElementById('systemChart');
+            if (!ctx) return;
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส', 'อา'],
+                    datasets: [{
+                        label: 'ผู้ใช้ใหม่',
+                        data: [12, 19, 3, 5, 2, 3, 7],
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'เหรียญที่แจก',
+                        data: [65, 59, 80, 81, 56, 55, 40],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#f8fafc'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { color: '#94a3b8' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        },
+                        x: {
+                            ticks: { color: '#94a3b8' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load Tokenomics Rules
+        async function loadTokenomicsRules() {
+            try {
+                const doc = await db.collection('system_config').doc('tokenomics').get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    document.getElementById('videoWatchCoins').value = data.videoWatch || 5;
+                    document.getElementById('postCreationCoins').value = data.postCreation || 20;
+                    document.getElementById('locationPinCoins').value = data.locationPin || 50;
+                    document.getElementById('shareCoins').value = data.share || 10;
+                    document.getElementById('purchaseCoins').value = data.purchase || 100;
+                    document.getElementById('referralCoins').value = data.referral || 200;
+                    document.getElementById('dailyLoginCoins').value = data.dailyLogin || 10;
+                    document.getElementById('likeCoins').value = data.like || 1;
+                    document.getElementById('commentCoins').value = data.comment || 3;
+                    document.getElementById('followCoins').value = data.follow || 5;
+                    document.getElementById('streakBonusDays').value = data.streakBonusDays || 7;
+                    document.getElementById('streakBonusCoins').value = data.streakBonusCoins || 50;
+                    document.getElementById('minWatchTime').value = data.minWatchTime || 30;
+                    document.getElementById('maxVideoRewardsPerDay').value = data.maxVideoRewardsPerDay || 50;
+                }
+            } catch (error) {
+                console.error('Error loading tokenomics rules:', error);
+            }
+        }
+
+        // Load Missions
+        async function loadMissions() {
+            const missionsList = document.getElementById('missionsList');
+            missionsList.innerHTML = '<div class="loading"><div class="spinner-border"></div></div>';
+
+            try {
+                const snapshot = await db.collection('missions').get();
+                let html = '';
+
+                snapshot.forEach(doc => {
+                    const mission = doc.data();
+                    html += `
+                        <div class="rule-item">
+                            <div>
+                                <h6 class="mb-1">${mission.title}</h6>
+                                <small class="text-secondary">${mission.description}</small>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-success">${mission.reward} เหรียญ</span>
+                                <label class="switch">
+                                    <input type="checkbox" ${mission.active ? 'checked' : ''} 
+                                           onchange="toggleMission('${doc.id}', this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                                <button class="btn btn-sm btn-danger" onclick="deleteMission('${doc.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                missionsList.innerHTML = html || '<p class="text-secondary">ไม่มีภารกิจ</p>';
+            } catch (error) {
+                console.error('Error loading missions:', error);
+                missionsList.innerHTML = '<div class="alert alert-danger">เกิดข้อผิดพลาด</div>';
+            }
+        }
+
+        // Load Rewards
+        async function loadRewards() {
+            const rewardsList = document.getElementById('rewardsList');
+            rewardsList.innerHTML = '<tr><td colspan="5" class="text-center"><div class="spinner-border"></div></td></tr>';
+
+            try {
+                const snapshot = await db.collection('rewards').get();
+                let html = '';
+
+                snapshot.forEach(doc => {
+                    const reward = doc.data();
+                    html += `
+                        <tr>
+                            <td>${reward.name}</td>
+                            <td>${reward.cost}</td>
+                            <td>${reward.duration || 30}</td>
+                            <td>
+                                <label class="switch">
+                                    <input type="checkbox" ${reward.active ? 'checked' : ''} 
+                                           onchange="toggleReward('${doc.id}', this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="editReward('${doc.id}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteReward('${doc.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                rewardsList.innerHTML = html || '<tr><td colspan="5" class="text-center text-secondary">ไม่มีของรางวัล</td></tr>';
+            } catch (error) {
+                console.error('Error loading rewards:', error);
+            }
+        }
+
+        // Load Users
+        async function loadUsers() {
+            const usersList = document.getElementById('usersList');
+            usersList.innerHTML = '<tr><td colspan="5" class="text-center"><div class="spinner-border"></div></td></tr>';
+
+            try {
+                const snapshot = await db.collection('users').limit(50).get();
+                let html = '';
+
+                snapshot.forEach(doc => {
+                    const user = doc.data();
+                    html += `
+                        <tr>
+                            <td><small>${doc.id}</small></td>
+                            <td>${user.displayName || 'ไม่ระบุ'}</td>
+                            <td>${user.coins || 0}</td>
+                            <td>
+                                <span class="badge ${user.banned ? 'bg-danger' : 'bg-success'}">
+                                    ${user.banned ? 'ถูกแบน' : 'ปกติ'}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-warning" onclick="editUser('${doc.id}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="banUser('${doc.id}')">
+                                    <i class="fas fa-ban"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                usersList.innerHTML = html;
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+
+        // Load Reports
+        async function loadReports() {
+            const reportsList = document.getElementById('reportsList');
+            reportsList.innerHTML = '<div class="loading"><div class="spinner-border"></div></div>';
+
+            try {
+                const snapshot = await db.collection('reports')
+                    .where('status', '==', 'pending')
+                    .limit(20)
+                    .get();
+
+                let html = '';
+
+                snapshot.forEach(doc => {
+                    const report = doc.data();
+                    html += `
+                        <div class="rule-item">
+                            <div>
+                                <h6 class="mb-1">รายงาน: ${report.type}</h6>
+                                <small class="text-secondary">${report.reason}</small>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-success" onclick="approveReport('${doc.id}')">
+                                    <i class="fas fa-check"></i> อนุมัติ
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="rejectReport('${doc.id}')">
+                                    <i class="fas fa-times"></i> ปฏิเสธ
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                reportsList.innerHTML = html || '<p class="text-secondary">ไม่มีรายงานรอตรวจสอบ</p>';
+            } catch (error) {
+                console.error('Error loading reports:', error);
+            }
+        }
+
+        // Load Analytics
+        function loadAnalytics() {
+            // Placeholder for analytics charts
+            console.log('Loading analytics...');
+        }
+
+        // Load Settings
+        async function loadSettings() {
+            try {
+                const doc = await db.collection('system_config').doc('settings').get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    document.getElementById('appName').value = data.appName || 'TukTuk Thailand';
+                    document.getElementById('appVersion').value = data.appVersion || '2.0.0';
+                    document.getElementById('maintenanceMode').checked = data.maintenanceMode || false;
+                    document.getElementById('allowRegistrations').checked = data.allowRegistrations !== false;
+                }
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
+        }
+
+        // Load Logs
+        async function loadLogs() {
+            const logsList = document.getElementById('logsList');
+            logsList.innerHTML = '<div class="loading"><div class="spinner-border"></div></div>';
+
+            try {
+                const snapshot = await db.collection('activity_logs')
+                    .orderBy('timestamp', 'desc')
+                    .limit(50)
+                    .get();
+
+                let html = '';
+
+                snapshot.forEach(doc => {
+                    const log = doc.data();
+                    const timestamp = log.timestamp?.toDate().toLocaleString('th-TH') || 'N/A';
+                    html += `
+                        <div class="rule-item">
+                            <div>
+                                <h6 class="mb-1">${log.action}</h6>
+                                <small class="text-secondary">${log.details || ''} - ${timestamp}</small>
+                            </div>
+                            <span class="badge bg-info">${log.type || 'system'}</span>
+                        </div>
+                    `;
+                });
+
+                logsList.innerHTML = html || '<p class="text-secondary">ไม่มีบันทึก</p>';
+            } catch (error) {
+                console.error('Error loading logs:', error);
+            }
+        }
+
+        // Save All Changes
+        async function saveAllChanges() {
+            try {
+                // Save Tokenomics Rules
+                await db.collection('system_config').doc('tokenomics').set({
+                    videoWatch: parseInt(document.getElementById('videoWatchCoins').value),
+                    postCreation: parseInt(document.getElementById('postCreationCoins').value),
+                    locationPin: parseInt(document.getElementById('locationPinCoins').value),
+                    share: parseInt(document.getElementById('shareCoins').value),
+                    purchase: parseInt(document.getElementById('purchaseCoins').value),
+                    referral: parseInt(document.getElementById('referralCoins').value),
+                    dailyLogin: parseInt(document.getElementById('dailyLoginCoins').value),
+                    like: parseInt(document.getElementById('likeCoins').value),
+                    comment: parseInt(document.getElementById('commentCoins').value),
+                    follow: parseInt(document.getElementById('followCoins').value),
+                    streakBonusDays: parseInt(document.getElementById('streakBonusDays').value),
+                    streakBonusCoins: parseInt(document.getElementById('streakBonusCoins').value),
+                    minWatchTime: parseInt(document.getElementById('minWatchTime').value),
+                    maxVideoRewardsPerDay: parseInt(document.getElementById('maxVideoRewardsPerDay').value),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // Save Settings
+                await db.collection('system_config').doc('settings').set({
+                    appName: document.getElementById('appName').value,
+                    appVersion: document.getElementById('appVersion').value,
+                    maintenanceMode: document.getElementById('maintenanceMode').checked,
+                    allowRegistrations: document.getElementById('allowRegistrations').checked,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // Log activity
+                await db.collection('activity_logs').add({
+                    action: 'บันทึกการตั้งค่า',
+                    type: 'admin',
+                    details: 'อัพเดทการตั้งค่าระบบ',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                alert('✅ บันทึกการเปลี่ยนแปลงสำเร็จ!');
+            } catch (error) {
+                console.error('Error saving changes:', error);
+                alert('❌ เกิดข้อผิดพลาดในการบันทึก');
+            }
+        }
+
+        // Reset to Defaults
+        function resetToDefaults() {
+            if (confirm('คุณต้องการรีเซ็ตการตั้งค่าเป็นค่าเริ่มต้นหรือไม่?')) {
+                document.getElementById('videoWatchCoins').value = 5;
+                document.getElementById('postCreationCoins').value = 20;
+                document.getElementById('locationPinCoins').value = 50;
+                document.getElementById('shareCoins').value = 10;
+                document.getElementById('purchaseCoins').value = 100;
+                document.getElementById('referralCoins').value = 200;
+                document.getElementById('dailyLoginCoins').value = 10;
+                document.getElementById('likeCoins').value = 1;
+                document.getElementById('commentCoins').value = 3;
+                document.getElementById('followCoins').value = 5;
+                document.getElementById('streakBonusDays').value = 7;
+                document.getElementById('streakBonusCoins').value = 50;
+                document.getElementById('minWatchTime').value = 30;
+                document.getElementById('maxVideoRewardsPerDay').value = 50;
+            }
+        }
+
+        // Helper Functions
+        async function toggleMission(id, active) {
+            await db.collection('missions').doc(id).update({ active });
+        }
+
+        async function deleteMission(id) {
+            if (confirm('ลบภารกิจนี้?')) {
+                await db.collection('missions').doc(id).delete();
+                loadMissions();
+            }
+        }
+
+        async function toggleReward(id, active) {
+            await db.collection('rewards').doc(id).update({ active });
+        }
+
+        async function deleteReward(id) {
+            if (confirm('ลบของรางวัลนี้?')) {
+                await db.collection('rewards').doc(id).delete();
+                loadRewards();
+            }
+        }
+
+        function addNewMission() {
+            // Implement modal for adding new mission
+            alert('ฟีเจอร์นี้กำลังพัฒนา');
+        }
+
+        function addNewReward() {
+            // Implement modal for adding new reward
+            alert('ฟีเจอร์นี้กำลังพัฒนา');
+        }
+
+        function editUser(uid) {
+            // Implement user edit modal
+            alert('แก้ไขผู้ใช้: ' + uid);
+        }
+
+        function banUser(uid) {
+            if (confirm('แบนผู้ใช้นี้?')) {
+                db.collection('users').doc(uid).update({ banned: true });
+                loadUsers();
+            }
+        }
+
+        function approveReport(id) {
+            db.collection('reports').doc(id).update({ status: 'approved' });
+            loadReports();
+        }
+
+        function rejectReport(id) {
+            db.collection('reports').doc(id).update({ status: 'rejected' });
+            loadReports();
+        }
+
+        // Initialize
+        loadDashboard();
+    </script>
+</body>
+
+</html>

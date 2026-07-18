@@ -1,0 +1,298 @@
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": []
+    }
+  ],
+  "hosting": [
+    {
+      "target": "tuktukfeed",
+      "public": "public",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "cleanUrls": true,
+      "trailingSlash": false,
+      "redirects": [
+        {
+          "source": "/training/hotrunner",
+          "destination": "/training/hot-runner",
+          "type": 301
+        },
+        {
+          "source": "/training/hotrunner/:path*",
+          "destination": "/training/hot-runner/:path*",
+          "type": 301
+        }
+      ],
+      "headers": [
+        {
+          "source": "/sitemap.xml",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/xml"
+            }
+          ]
+        },
+        {
+          "source": "/robots.txt",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "text/plain"
+            }
+          ]
+        },
+        {
+          "source": "**/*.@(jpg|jpeg|gif|png|svg|webp|ico|mp4|webm)",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "max-age=31536000"
+            }
+          ]
+        }
+      ],
+      "rewrites": [
+        {
+          "source": "/login",
+          "destination": "/login.html"
+        },
+        {
+          "source": "/tuktuk",
+          "destination": "/tuktuk/index.html"
+        },
+        {
+          "source": "/tuktuk/**",
+          "destination": "/tuktuk/index.html"
+        },
+        {
+          "source": "/training/admin_panel",
+          "destination": "/training/admin_panel.html"
+        },
+        {
+          "source": "/training/booktraining",
+          "destination": "/training/booktraining.html"
+        },
+        {
+          "source": "/training/certificate",
+          "destination": "/training/certificate.html"
+        },
+        {
+          "source": "/training/hottraining",
+          "destination": "/training/hottraining.html"
+        },
+        {
+          "source": "/training/index-firebase",
+          "destination": "/training/index-firebase.html"
+        },
+        {
+          "source": "/training",
+          "destination": "/training/index.html"
+        },
+        {
+          "source": "/training/pretest",
+          "destination": "/training/pretest.html"
+        },
+        {
+          "source": "/training/protest",
+          "destination": "/training/protest.html"
+        },
+        {
+          "source": "/training/quiz-firebase",
+          "destination": "/training/quiz-firebase.html"
+        },
+        {
+          "source": "/training/quiz",
+          "destination": "/training/quiz.html"
+        },
+        {
+          "source": "/training/hot-runner/advanced-hot-runner",
+          "destination": "/training/hot-runner/advanced-hot-runner.html"
+        },
+        {
+          "source": "/training/hot-runner/basic-intro",
+          "destination": "/training/hot-runner/basic-intro.html"
+        },
+        {
+          "source": "/training/hot-runner/certificate",
+          "destination": "/training/hot-runner/certificate.html"
+        },
+        {
+          "source": "/training/hot-runner/clamping-force",
+          "destination": "/training/hot-runner/clamping-force.html"
+        },
+        {
+          "source": "/training/hot-runner/clamping-test",
+          "destination": "/training/hot-runner/clamping-test.html"
+        },
+        {
+          "source": "/training/hot-runner/cooling-test",
+          "destination": "/training/hot-runner/cooling-test.html"
+        },
+        {
+          "source": "/training/hot-runner/data-analysis-test",
+          "destination": "/training/hot-runner/data-analysis-test.html"
+        },
+        {
+          "source": "/training/hot-runner/demo-3d",
+          "destination": "/training/hot-runner/demo-3d.html"
+        },
+        {
+          "source": "/training/hot-runner/gate-test",
+          "destination": "/training/hot-runner/gate-test.html"
+        },
+        {
+          "source": "/training/hot-runner/hot-runner-action",
+          "destination": "/training/hot-runner/hot-runner-action.html"
+        },
+        {
+          "source": "/training/hot-runner/hot-runner-learning",
+          "destination": "/training/hot-runner/hot-runner-learning.html"
+        },
+        {
+          "source": "/training/hot-runner",
+          "destination": "/training/hot-runner/index.html"
+        },
+        {
+          "source": "/training/hot-runner/injection-learning",
+          "destination": "/training/hot-runner/injection-learning.html"
+        },
+        {
+          "source": "/training/hot-runner/injection-model",
+          "destination": "/training/hot-runner/injection-model.html"
+        },
+        {
+          "source": "/training/hot-runner/learning-path",
+          "destination": "/training/hot-runner/learning-path.html"
+        },
+        {
+          "source": "/training/hot-runner/pid-test",
+          "destination": "/training/hot-runner/pid-test.html"
+        },
+        {
+          "source": "/training/hot-runner/portal-index",
+          "destination": "/training/hot-runner/portal-index.html"
+        },
+        {
+          "source": "/training/hot-runner/problem",
+          "destination": "/training/hot-runner/problem.html"
+        },
+        {
+          "source": "/training/hot-runner/progress-report",
+          "destination": "/training/hot-runner/progress-report.html"
+        },
+        {
+          "source": "/training/hot-runner/quiz-main",
+          "destination": "/training/hot-runner/quiz-main.html"
+        },
+        {
+          "source": "/training/hot-runner/roi-calculator",
+          "destination": "/training/hot-runner/roi-calculator.html"
+        },
+        {
+          "source": "/training/hot-runner/simulation-3d",
+          "destination": "/training/hot-runner/simulation-3d.html"
+        },
+        {
+          "source": "/training/hot-runner/skill-assessment",
+          "destination": "/training/hot-runner/skill-assessment.html"
+        },
+        {
+          "source": "/training/hot-runner/temperature-control",
+          "destination": "/training/hot-runner/temperature-control.html"
+        },
+        {
+          "source": "/training/hot-runner/thermocouple-kj",
+          "destination": "/training/hot-runner/thermocouple-kj.html"
+        },
+        {
+          "source": "/training/hot-runner/toshiba-v30",
+          "destination": "/training/hot-runner/toshiba-v30.html"
+        },
+        {
+          "source": "/training/hot-runner/training-overview",
+          "destination": "/training/hot-runner/training-overview.html"
+        },
+        {
+          "source": "/training/!(*.@(js|css|png|jpg|jpeg|gif|svg|ico|webp|json|xml|map|woff|woff2|ttf))",
+          "destination": "/training/404.html"
+        },
+        {
+          "source": "/share",
+          "function": "marketplaceShare"
+        },
+        {
+          "source": "/community-share",
+          "function": "communityShare"
+        },
+        {
+          "source": "/api/analytics/trackPageView",
+          "function": "trackPageView"
+        },
+        {
+          "source": "/api/analytics/trackEvent",
+          "function": "trackEvent"
+        },
+        {
+          "source": "/api/analytics/getStats",
+          "function": "getAnalyticsStats"
+        },
+        {
+          "source": "/api/r2PresignedUrl",
+          "function": "r2PresignedUrl"
+        },
+        {
+          "source": "/api/marketplaceAIGeneratePost",
+          "function": "marketplaceAIGeneratePost"
+        },
+        {
+          "source": "/lineLoginCallback",
+          "function": "lineLoginCallback"
+        },
+        {
+          "source": "/verifyWebPin",
+          "function": "verifyWebPin"
+        },
+        {
+          "source": "/checkFreeUsage",
+          "function": "checkFreeUsage"
+        }
+      ]
+    },
+    {
+      "target": "training",
+      "public": "training",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**/!(*.@(js|css|png|jpg|jpeg|gif|svg|ico|webp|json|xml|map|woff|woff2|ttf))",
+          "destination": "/index-firebase.html"
+        }
+      ]
+    }
+  ]
+}

@@ -12,8 +12,8 @@
  * @version 1.0.0
  */
 
-const {getFirestore, FieldValue} = require("firebase-admin/firestore");
-const {getStorage} = require("firebase-admin/storage");
+const { getFirestore, FieldValue } = require("firebase-admin/firestore");
+const { getStorage } = require("firebase-admin/storage");
 
 // Lazy load Gemini to avoid deployment timeout
 let GoogleGenerativeAI = null;
@@ -45,7 +45,7 @@ async function retryWithBackoff(fn, maxRetries = 3, baseDelay = 1000) {
       if (error.statusCode === 429 || (error.statusCode >= 500 && error.statusCode < 600)) {
         const delay = baseDelay * Math.pow(2, i) * (1 + Math.random() * 0.1);
         console.log(`⏳ API Error ${error.statusCode}, waiting ${Math.round(delay)}ms before retry ${i + 1}/${maxRetries}`);
-        
+
         if (i < maxRetries - 1) {
           await new Promise((resolve) => setTimeout(resolve, delay));
           continue;
@@ -64,7 +64,7 @@ const BOT_LINE_ID = "@563eikqn"; // LINE Bot ID for VOOM sharing
 const MARKETPLACE_COLLECTION = "marketplace_items";
 const USER_STATE_COLLECTION = "user_marketplace_states";
 const AI_POST_USAGE_COLLECTION = "ai_post_usage"; // สำหรับนับการใช้ฟรี
-const WEB_BASE_URL = "https://appinjproject.web.app";
+const WEB_BASE_URL = "https://tuktukfeed.com";
 const FREE_AI_POST_LIMIT = 3; // จำกัดการใช้ฟรี 3 ครั้ง
 
 // User States for State Machine
@@ -100,9 +100,9 @@ async function getAIPostUsage(userId) {
   const userRef = db.collection("line_users").doc(userId);
   const userDoc = await userRef.get();
   const userData = userDoc.exists ? userDoc.data() : {};
-  const isPremium = userData.subscriptionStatus === "active" || 
-                    userData.role === "premium" ||
-                    userData.isPremium === true;
+  const isPremium = userData.subscriptionStatus === "active" ||
+    userData.role === "premium" ||
+    userData.isPremium === true;
 
   if (!usageDoc.exists) {
     return { usageCount: 0, isPremium, canUseForFree: true, remaining: FREE_AI_POST_LIMIT };
@@ -123,7 +123,7 @@ async function getAIPostUsage(userId) {
 async function incrementAIPostUsage(userId) {
   const db = getFirestore();
   const usageRef = db.collection(AI_POST_USAGE_COLLECTION).doc(userId);
-  
+
   await usageRef.set({
     count: FieldValue.increment(1),
     lastUsedAt: FieldValue.serverTimestamp(),
@@ -146,7 +146,7 @@ async function getUserMarketplaceState(userId) {
   const stateDoc = await stateRef.get();
 
   if (!stateDoc.exists) {
-    return {state: USER_STATES.IDLE, pendingData: null};
+    return { state: USER_STATES.IDLE, pendingData: null };
   }
 
   return stateDoc.data();
@@ -166,7 +166,7 @@ async function setUserMarketplaceState(userId, state, pendingData = null) {
     state,
     pendingData,
     updatedAt: FieldValue.serverTimestamp(),
-  }, {merge: true});
+  }, { merge: true });
 }
 
 /**
@@ -197,6 +197,7 @@ async function saveProductToMarketplace(productData) {
     ...productData,
     id: itemRef.id,
     status: PRODUCT_STATUS.ACTIVE,
+    productNameLower: (productData.productName || '').toLowerCase(),
     createdAt: FieldValue.serverTimestamp(),
     updatedAt: FieldValue.serverTimestamp(),
     viewCount: 0,
@@ -222,10 +223,10 @@ async function searchProducts(keyword, limit = 10) {
   // Search by productName (contains)
   const itemsRef = db.collection(MARKETPLACE_COLLECTION);
   const querySnapshot = await itemsRef
-      .where("status", "==", PRODUCT_STATUS.ACTIVE)
-      .orderBy("createdAt", "desc")
-      .limit(50) // Get more to filter
-      .get();
+    .where("status", "==", PRODUCT_STATUS.ACTIVE)
+    .orderBy("createdAt", "desc")
+    .limit(50) // Get more to filter
+    .get();
 
   const results = [];
 
@@ -236,8 +237,8 @@ async function searchProducts(keyword, limit = 10) {
 
     // Match by name or tags
     if (productNameLower.includes(keywordLower) ||
-        tags.some((tag) => tag.includes(keywordLower))) {
-      results.push({id: doc.id, ...data});
+      tags.some((tag) => tag.includes(keywordLower))) {
+      results.push({ id: doc.id, ...data });
     }
   });
 
@@ -255,7 +256,7 @@ async function getProductById(productId) {
   const doc = await docRef.get();
 
   if (!doc.exists) return null;
-  return {id: doc.id, ...doc.data()};
+  return { id: doc.id, ...doc.data() };
 }
 
 /**
@@ -266,14 +267,14 @@ async function getProductById(productId) {
 async function getUserProducts(sellerId) {
   const db = getFirestore();
   const querySnapshot = await db.collection(MARKETPLACE_COLLECTION)
-      .where("sellerId", "==", sellerId)
-      .orderBy("createdAt", "desc")
-      .limit(20)
-      .get();
+    .where("sellerId", "==", sellerId)
+    .orderBy("createdAt", "desc")
+    .limit(20)
+    .get();
 
   const products = [];
   querySnapshot.forEach((doc) => {
-    products.push({id: doc.id, ...doc.data()});
+    products.push({ id: doc.id, ...doc.data() });
   });
 
   return products;
@@ -318,7 +319,7 @@ async function generateAIProductPost(imageBuffer, additionalInfo = "") {
   try {
     const GoogleGenerativeAI = getGoogleGenerativeAI();
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({model: "gemini-2.0-flash"});
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     const imagePart = {
       inlineData: {
@@ -383,7 +384,7 @@ ${additionalInfo ? `ข้อมูลเพิ่มเติม: ${additionalI
  * @return {Object} Flex Message
  */
 function createAIPostResultFlex(aiPost, imageUrl, userId = "", usageInfo = {}) {
-  const {productName, suggestedPrice, category, title, description, callToAction, hashtags, emojis} = aiPost;
+  const { productName, suggestedPrice, category, title, description, callToAction, hashtags, emojis } = aiPost;
 
   const hashtagText = hashtags ? hashtags.map((h) => `#${h}`).join(" ") : "";
   const fullPost = `${title}\n\n${description}\n\n${callToAction}\n\n${hashtagText}`;
@@ -402,11 +403,11 @@ function createAIPostResultFlex(aiPost, imageUrl, userId = "", usageInfo = {}) {
     createdAt: new Date().toISOString(),
   })).toString("base64");
 
-  const webUrl = `${WEB_BASE_URL}/marketplace.html?aipost=${encodeURIComponent(postData)}`;
+  const webUrl = `${WEB_BASE_URL}/post-product.html?aipost=${encodeURIComponent(postData)}`;
 
   // แสดงจำนวนครั้งที่เหลือ
-  const usageText = usageInfo.isPremium 
-    ? "👑 Premium: ใช้ได้ไม่จำกัด" 
+  const usageText = usageInfo.isPremium
+    ? "👑 Premium: ใช้ได้ไม่จำกัด"
     : `🎁 ใช้ฟรีคงเหลือ: ${usageInfo.remaining || 0}/${FREE_AI_POST_LIMIT} ครั้ง`;
 
   return {
@@ -426,8 +427,8 @@ function createAIPostResultFlex(aiPost, imageUrl, userId = "", usageInfo = {}) {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: "🤖 AI สร้างโพสต์ให้แล้ว!", weight: "bold", color: "#ffffff", size: "lg"},
-          {type: "text", text: emojis || "✨🛒💫", color: "#ffffffcc", size: "sm", margin: "sm"},
+          { type: "text", text: "🤖 AI สร้างโพสต์ให้แล้ว!", weight: "bold", color: "#ffffff", size: "lg" },
+          { type: "text", text: emojis || "✨🛒💫", color: "#ffffffcc", size: "sm", margin: "sm" },
         ],
         backgroundColor: "#667eea",
         paddingAll: "15px",
@@ -442,7 +443,7 @@ function createAIPostResultFlex(aiPost, imageUrl, userId = "", usageInfo = {}) {
             type: "box",
             layout: "horizontal",
             contents: [
-              {type: "text", text: usageText, size: "xs", color: usageInfo.isPremium ? "#FFD700" : "#4CAF50", align: "center", flex: 1},
+              { type: "text", text: usageText, size: "xs", color: usageInfo.isPremium ? "#FFD700" : "#4CAF50", align: "center", flex: 1 },
             ],
             backgroundColor: usageInfo.isPremium ? "#1a1a2e" : "#E8F5E9",
             paddingAll: "8px",
@@ -454,8 +455,8 @@ function createAIPostResultFlex(aiPost, imageUrl, userId = "", usageInfo = {}) {
             type: "box",
             layout: "horizontal",
             contents: [
-              {type: "text", text: "📦 สินค้า:", weight: "bold", size: "sm", flex: 0, color: "#666666"},
-              {type: "text", text: productName || "ไม่ระบุ", size: "sm", wrap: true, flex: 1, margin: "sm"},
+              { type: "text", text: "📦 สินค้า:", weight: "bold", size: "sm", flex: 0, color: "#666666" },
+              { type: "text", text: productName || "ไม่ระบุ", size: "sm", wrap: true, flex: 1, margin: "sm" },
             ],
             margin: "lg",
           },
@@ -463,27 +464,27 @@ function createAIPostResultFlex(aiPost, imageUrl, userId = "", usageInfo = {}) {
             type: "box",
             layout: "horizontal",
             contents: [
-              {type: "text", text: "💰 ราคาแนะนำ:", weight: "bold", size: "sm", flex: 0, color: "#666666"},
-              {type: "text", text: suggestedPrice || "ไม่ระบุ", size: "sm", color: "#FF5722", flex: 1, margin: "sm"},
+              { type: "text", text: "💰 ราคาแนะนำ:", weight: "bold", size: "sm", flex: 0, color: "#666666" },
+              { type: "text", text: suggestedPrice || "ไม่ระบุ", size: "sm", color: "#FF5722", flex: 1, margin: "sm" },
             ],
           },
           {
             type: "box",
             layout: "horizontal",
             contents: [
-              {type: "text", text: "📁 หมวดหมู่:", weight: "bold", size: "sm", flex: 0, color: "#666666"},
-              {type: "text", text: category || "ทั่วไป", size: "sm", flex: 1, margin: "sm"},
+              { type: "text", text: "📁 หมวดหมู่:", weight: "bold", size: "sm", flex: 0, color: "#666666" },
+              { type: "text", text: category || "ทั่วไป", size: "sm", flex: 1, margin: "sm" },
             ],
           },
-          {type: "separator", margin: "lg"},
+          { type: "separator", margin: "lg" },
           // Generated Post Preview (ย่อ)
-          {type: "text", text: "📝 ตัวอย่างโพสต์:", weight: "bold", size: "sm", margin: "lg", color: "#333333"},
+          { type: "text", text: "📝 ตัวอย่างโพสต์:", weight: "bold", size: "sm", margin: "lg", color: "#333333" },
           {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: title || "", weight: "bold", size: "sm", wrap: true, maxLines: 2},
-              {type: "text", text: description || "", size: "xs", wrap: true, margin: "sm", color: "#444444", maxLines: 3},
+              { type: "text", text: title || "", weight: "bold", size: "sm", wrap: true, maxLines: 2 },
+              { type: "text", text: description || "", size: "xs", wrap: true, margin: "sm", color: "#444444", maxLines: 3 },
             ],
             backgroundColor: "#f5f5f5",
             paddingAll: "10px",
@@ -525,7 +526,7 @@ function createAIPostResultFlex(aiPost, imageUrl, userId = "", usageInfo = {}) {
           {
             type: "button",
             style: "link",
-            action: {type: "message", label: "🔄 สร้างใหม่", text: "/โพสต์"},
+            action: { type: "message", label: "🔄 สร้างใหม่", text: "/โพสต์" },
             height: "sm",
           },
         ],
@@ -542,22 +543,22 @@ function createAIPostResultFlex(aiPost, imageUrl, userId = "", usageInfo = {}) {
  * @param {string} replyToken - Reply token
  */
 async function handleAIPostCommand(context, userId, replyToken) {
-  const {lineClient} = context;
+  const { lineClient } = context;
 
   try {
     // 1. ตรวจสอบการใช้ฟรีก่อน
     const usageInfo = await getAIPostUsage(userId);
-    
+
     // สร้าง URL พร้อม userId สำหรับติดตามการใช้งาน
-    const webUrl = `${WEB_BASE_URL}/marketplace.html?aipost=1&lineUserId=${encodeURIComponent(userId)}`;
-    
+    const webUrl = `${WEB_BASE_URL}/post-product.html?lineUserId=${encodeURIComponent(userId)}`;
+
     // แสดงจำนวนครั้งที่เหลือ
-    const usageText = usageInfo.isPremium 
-      ? "👑 Premium: ใช้ได้ไม่จำกัด" 
-      : usageInfo.canUseForFree 
+    const usageText = usageInfo.isPremium
+      ? "👑 Premium: ใช้ได้ไม่จำกัด"
+      : usageInfo.canUseForFree
         ? `🎁 ใช้ฟรีคงเหลือ: ${usageInfo.remaining}/${FREE_AI_POST_LIMIT} ครั้ง`
         : `🔒 หมดสิทธิ์ใช้ฟรีแล้ว (${FREE_AI_POST_LIMIT}/${FREE_AI_POST_LIMIT})`;
-    
+
     const usageBgColor = usageInfo.isPremium ? "#1a1a2e" : (usageInfo.canUseForFree ? "#E8F5E9" : "#FFEBEE");
     const usageTextColor = usageInfo.isPremium ? "#FFD700" : (usageInfo.canUseForFree ? "#4CAF50" : "#F44336");
 
@@ -576,13 +577,13 @@ async function handleAIPostCommand(context, userId, replyToken) {
               type: "box",
               layout: "horizontal",
               contents: [
-                {type: "text", text: "🤖", size: "xxl"},
+                { type: "text", text: "🤖", size: "xxl" },
                 {
                   type: "box",
                   layout: "vertical",
                   contents: [
-                    {type: "text", text: "AI สร้างโพสต์", weight: "bold", color: "#ffffff", size: "xl"},
-                    {type: "text", text: "วิเคราะห์รูปสินค้าอัตโนมัติ", color: "#ffffffcc", size: "sm"},
+                    { type: "text", text: "AI สร้างโพสต์", weight: "bold", color: "#ffffff", size: "xl" },
+                    { type: "text", text: "วิเคราะห์รูปสินค้าอัตโนมัติ", color: "#ffffffcc", size: "sm" },
                   ],
                   flex: 1,
                   margin: "lg",
@@ -604,7 +605,7 @@ async function handleAIPostCommand(context, userId, replyToken) {
               type: "box",
               layout: "horizontal",
               contents: [
-                {type: "text", text: usageText, size: "sm", color: usageTextColor, align: "center", flex: 1, weight: "bold"},
+                { type: "text", text: usageText, size: "sm", color: usageTextColor, align: "center", flex: 1, weight: "bold" },
               ],
               backgroundColor: usageBgColor,
               paddingAll: "12px",
@@ -616,13 +617,13 @@ async function handleAIPostCommand(context, userId, replyToken) {
               layout: "vertical",
               spacing: "sm",
               contents: [
-                {type: "text", text: "✨ ฟีเจอร์ AI วิเคราะห์รูป", size: "md", weight: "bold", color: "#333333"},
+                { type: "text", text: "✨ ฟีเจอร์ AI วิเคราะห์รูป", size: "md", weight: "bold", color: "#333333" },
                 {
                   type: "box",
                   layout: "horizontal",
                   contents: [
-                    {type: "text", text: "📸", size: "sm"},
-                    {type: "text", text: "อัพโหลดรูปสินค้าจากเครื่อง", size: "sm", color: "#666666", flex: 1, margin: "sm"},
+                    { type: "text", text: "📸", size: "sm" },
+                    { type: "text", text: "อัพโหลดรูปสินค้าจากเครื่อง", size: "sm", color: "#666666", flex: 1, margin: "sm" },
                   ],
                   margin: "md",
                 },
@@ -630,24 +631,24 @@ async function handleAIPostCommand(context, userId, replyToken) {
                   type: "box",
                   layout: "horizontal",
                   contents: [
-                    {type: "text", text: "🎯", size: "sm"},
-                    {type: "text", text: "AI วิเคราะห์และสร้างโพสต์ทันที", size: "sm", color: "#666666", flex: 1, margin: "sm"},
+                    { type: "text", text: "🎯", size: "sm" },
+                    { type: "text", text: "AI วิเคราะห์และสร้างโพสต์ทันที", size: "sm", color: "#666666", flex: 1, margin: "sm" },
                   ],
                 },
                 {
                   type: "box",
                   layout: "horizontal",
                   contents: [
-                    {type: "text", text: "📋", size: "sm"},
-                    {type: "text", text: "คัดลอกข้อความได้เลย", size: "sm", color: "#666666", flex: 1, margin: "sm"},
+                    { type: "text", text: "📋", size: "sm" },
+                    { type: "text", text: "คัดลอกข้อความได้เลย", size: "sm", color: "#666666", flex: 1, margin: "sm" },
                   ],
                 },
                 {
                   type: "box",
                   layout: "horizontal",
                   contents: [
-                    {type: "text", text: "✏️", size: "sm"},
-                    {type: "text", text: "แก้ไขได้ก่อนใช้งาน", size: "sm", color: "#666666", flex: 1, margin: "sm"},
+                    { type: "text", text: "✏️", size: "sm" },
+                    { type: "text", text: "แก้ไขได้ก่อนใช้งาน", size: "sm", color: "#666666", flex: 1, margin: "sm" },
                   ],
                 },
               ],
@@ -658,8 +659,8 @@ async function handleAIPostCommand(context, userId, replyToken) {
               type: "box",
               layout: "vertical",
               contents: [
-                {type: "text", text: "💡 เคล็ดลับ: ถ่ายรูปให้ชัดเจน", size: "xs", color: "#FF9800", align: "center"},
-                {type: "text", text: "แสงสว่างดี เห็นรายละเอียดสินค้า", size: "xs", color: "#FF9800", align: "center"},
+                { type: "text", text: "💡 เคล็ดลับ: ถ่ายรูปให้ชัดเจน", size: "xs", color: "#FF9800", align: "center" },
+                { type: "text", text: "แสงสว่างดี เห็นรายละเอียดสินค้า", size: "xs", color: "#FF9800", align: "center" },
               ],
               backgroundColor: "#FFF3E0",
               paddingAll: "12px",
@@ -689,7 +690,7 @@ async function handleAIPostCommand(context, userId, replyToken) {
               type: "box",
               layout: "horizontal",
               contents: [
-                {type: "text", text: "เปิดใน LINE Browser", size: "xs", color: "#999999", align: "center", flex: 1},
+                { type: "text", text: "เปิดใน LINE Browser", size: "xs", color: "#999999", align: "center", flex: 1 },
               ],
               margin: "sm",
             },
@@ -719,11 +720,11 @@ async function handleAIPostCommand(context, userId, replyToken) {
  * Handle /ดูโพสต์ command - View AI generated posts
  */
 async function handleViewAIPostsCommand(context, userId, replyToken) {
-  const {lineClient} = context;
+  const { lineClient } = context;
 
   try {
     const db = getFirestore();
-    
+
     // Get latest 3 AI posts for this user
     const postsSnapshot = await db.collection("ai_posts")
       .where("userId", "==", userId)
@@ -737,7 +738,7 @@ async function handleViewAIPostsCommand(context, userId, replyToken) {
         text: "❌ ยังไม่มีโพสต์ที่สร้างไว้\n\n💡 ลองใช้คำสั่ง /โพสต์ เพื่อสร้างโพสต์ใหม่",
         quickReply: {
           items: [
-            {type: "action", action: {type: "message", label: "🤖 สร้างโพสต์", text: "/โพสต์"}},
+            { type: "action", action: { type: "message", label: "🤖 สร้างโพสต์", text: "/โพสต์" } },
           ],
         },
       });
@@ -748,7 +749,7 @@ async function handleViewAIPostsCommand(context, userId, replyToken) {
     const bubbles = [];
     for (const doc of postsSnapshot.docs) {
       const post = doc.data();
-      
+
       // Check if it's an error post
       if (post.error) {
         bubbles.push({
@@ -758,9 +759,9 @@ async function handleViewAIPostsCommand(context, userId, replyToken) {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: "❌ เกิดข้อผิดพลาด", weight: "bold", color: "#FF0000", size: "md"},
-              {type: "text", text: post.errorMessage || "ไม่สามารถวิเคราะห์รูปได้", size: "sm", wrap: true, margin: "md"},
-              {type: "text", text: formatTimestamp(post.createdAt), size: "xxs", color: "#999999", margin: "md"},
+              { type: "text", text: "❌ เกิดข้อผิดพลาด", weight: "bold", color: "#FF0000", size: "md" },
+              { type: "text", text: post.errorMessage || "ไม่สามารถวิเคราะห์รูปได้", size: "sm", wrap: true, margin: "md" },
+              { type: "text", text: formatTimestamp(post.createdAt), size: "xxs", color: "#999999", margin: "md" },
             ],
             paddingAll: "15px",
           },
@@ -776,8 +777,8 @@ async function handleViewAIPostsCommand(context, userId, replyToken) {
           type: "box",
           layout: "vertical",
           contents: [
-            {type: "text", text: "🤖 AI สร้างโพสต์", weight: "bold", color: "#ffffff", size: "md", align: "center"},
-            {type: "text", text: `📦 ${post.productName}`, color: "#ffffffcc", size: "sm", align: "center", margin: "sm"},
+            { type: "text", text: "🤖 AI สร้างโพสต์", weight: "bold", color: "#ffffff", size: "md", align: "center" },
+            { type: "text", text: `📦 ${post.productName}`, color: "#ffffffcc", size: "sm", align: "center", margin: "sm" },
           ],
           backgroundColor: "#667eea",
           paddingAll: "12px",
@@ -787,22 +788,22 @@ async function handleViewAIPostsCommand(context, userId, replyToken) {
           layout: "vertical",
           spacing: "md",
           contents: [
-            {type: "text", text: `🎯 ${post.title}`, weight: "bold", size: "md", wrap: true, color: "#333333"},
-            {type: "separator", margin: "md"},
-            {type: "text", text: post.description, size: "sm", wrap: true, color: "#555555", margin: "md"},
-            {type: "separator", margin: "md"},
+            { type: "text", text: `🎯 ${post.title}`, weight: "bold", size: "md", wrap: true, color: "#333333" },
+            { type: "separator", margin: "md" },
+            { type: "text", text: post.description, size: "sm", wrap: true, color: "#555555", margin: "md" },
+            { type: "separator", margin: "md" },
             {
               type: "box",
               layout: "horizontal",
               contents: [
-                {type: "text", text: "💰 ราคาแนะนำ:", size: "sm", color: "#888888", flex: 1},
-                {type: "text", text: post.suggestedPrice || "ไม่ระบุ", size: "sm", weight: "bold", color: "#FF6B6B", align: "end", flex: 1},
+                { type: "text", text: "💰 ราคาแนะนำ:", size: "sm", color: "#888888", flex: 1 },
+                { type: "text", text: post.suggestedPrice || "ไม่ระบุ", size: "sm", weight: "bold", color: "#FF6B6B", align: "end", flex: 1 },
               ],
               margin: "md",
             },
-            {type: "separator", margin: "md"},
-            {type: "text", text: Array.isArray(post.hashtags) ? post.hashtags.map(h => `#${h}`).join(" ") : "#สินค้า", size: "xs", wrap: true, color: "#667eea", margin: "md"},
-            {type: "text", text: formatTimestamp(post.createdAt), size: "xxs", color: "#999999", margin: "md"},
+            { type: "separator", margin: "md" },
+            { type: "text", text: Array.isArray(post.hashtags) ? post.hashtags.map(h => `#${h}`).join(" ") : "#สินค้า", size: "xs", wrap: true, color: "#667eea", margin: "md" },
+            { type: "text", text: formatTimestamp(post.createdAt), size: "xxs", color: "#999999", margin: "md" },
           ],
           paddingAll: "15px",
         },
@@ -837,7 +838,7 @@ async function handleViewAIPostsCommand(context, userId, replyToken) {
       },
       quickReply: {
         items: [
-          {type: "action", action: {type: "message", label: "🤖 สร้างโพสต์ใหม่", text: "/โพสต์"}},
+          { type: "action", action: { type: "message", label: "🤖 สร้างโพสต์ใหม่", text: "/โพสต์" } },
         ],
       },
     });
@@ -874,11 +875,11 @@ function formatTimestamp(timestamp) {
   if (minutes < 60) return `${minutes} นาทีที่แล้ว`;
   if (hours < 24) return `${hours} ชั่วโมงที่แล้ว`;
   if (days < 7) return `${days} วันที่แล้ว`;
-  
-  return date.toLocaleDateString("th-TH", { 
-    year: "numeric", 
-    month: "short", 
-    day: "numeric" 
+
+  return date.toLocaleDateString("th-TH", {
+    year: "numeric",
+    month: "short",
+    day: "numeric"
   });
 }
 
@@ -889,14 +890,14 @@ function formatTimestamp(timestamp) {
  * @param {string} userId - User ID
  */
 async function handleAIPostImage(context, event, userId) {
-  const {lineClient} = context;
+  const { lineClient } = context;
 
   try {
     console.log(`🤖 Processing AI Post for ${userId}`);
 
     // 1. ตรวจสอบการใช้ฟรี
     const usageInfo = await getAIPostUsage(userId);
-    
+
     if (!usageInfo.canUseForFree) {
       // หมดสิทธิ์ใช้ฟรี - แนะนำให้สมัคร Premium
       await lineClient.replyMessage(event.replyToken, {
@@ -909,7 +910,7 @@ async function handleAIPostImage(context, event, userId) {
             type: "box",
             layout: "vertical",
             contents: [
-              {type: "text", text: "🔒 หมดสิทธิ์ใช้ฟรี", weight: "bold", color: "#ffffff", size: "lg", align: "center"},
+              { type: "text", text: "🔒 หมดสิทธิ์ใช้ฟรี", weight: "bold", color: "#ffffff", size: "lg", align: "center" },
             ],
             backgroundColor: "#FF5722",
             paddingAll: "15px",
@@ -919,13 +920,13 @@ async function handleAIPostImage(context, event, userId) {
             layout: "vertical",
             spacing: "md",
             contents: [
-              {type: "text", text: `คุณใช้ฟรีครบ ${FREE_AI_POST_LIMIT} ครั้งแล้ว`, size: "sm", wrap: true, align: "center"},
-              {type: "text", text: "🌟 สมัคร Premium เพื่อใช้ได้ไม่จำกัด!", size: "sm", wrap: true, align: "center", margin: "md", color: "#667eea", weight: "bold"},
-              {type: "separator", margin: "lg"},
-              {type: "text", text: "✨ Premium สิทธิพิเศษ:", size: "xs", color: "#666666", margin: "md"},
-              {type: "text", text: "• AI สร้างโพสต์ไม่จำกัด", size: "xs", color: "#666666"},
-              {type: "text", text: "• ฟีเจอร์ขั้นสูงทั้งหมด", size: "xs", color: "#666666"},
-              {type: "text", text: "• สนับสนุนพิเศษ", size: "xs", color: "#666666"},
+              { type: "text", text: `คุณใช้ฟรีครบ ${FREE_AI_POST_LIMIT} ครั้งแล้ว`, size: "sm", wrap: true, align: "center" },
+              { type: "text", text: "🌟 สมัคร Premium เพื่อใช้ได้ไม่จำกัด!", size: "sm", wrap: true, align: "center", margin: "md", color: "#667eea", weight: "bold" },
+              { type: "separator", margin: "lg" },
+              { type: "text", text: "✨ Premium สิทธิพิเศษ:", size: "xs", color: "#666666", margin: "md" },
+              { type: "text", text: "• AI สร้างโพสต์ไม่จำกัด", size: "xs", color: "#666666" },
+              { type: "text", text: "• ฟีเจอร์ขั้นสูงทั้งหมด", size: "xs", color: "#666666" },
+              { type: "text", text: "• สนับสนุนพิเศษ", size: "xs", color: "#666666" },
             ],
             paddingAll: "15px",
           },
@@ -938,13 +939,13 @@ async function handleAIPostImage(context, event, userId) {
                 type: "button",
                 style: "primary",
                 color: "#667eea",
-                action: {type: "message", label: "💎 สมัคร Premium", text: "/premium"},
+                action: { type: "message", label: "💎 สมัคร Premium", text: "/premium" },
                 height: "sm",
               },
               {
                 type: "button",
                 style: "link",
-                action: {type: "message", label: "📞 ติดต่อแอดมิน", text: "/ติดต่อ"},
+                action: { type: "message", label: "📞 ติดต่อแอดมิน", text: "/ติดต่อ" },
                 height: "sm",
               },
             ],
@@ -952,7 +953,7 @@ async function handleAIPostImage(context, event, userId) {
           },
         },
       });
-      
+
       await clearUserMarketplaceState(userId);
       return true;
     }
@@ -976,10 +977,10 @@ async function handleAIPostImage(context, event, userId) {
       if (!usageInfo.isPremium) {
         await incrementAIPostUsage(userId);
       }
-      
+
       // Get updated usage info for display
       const updatedUsage = await getAIPostUsage(userId);
-      
+
       // 6. Create and send Flex Message with result + web link
       const flexMessage = createAIPostResultFlex(aiResult.data, null, userId, updatedUsage);
       await lineClient.replyMessage(event.replyToken, flexMessage);
@@ -991,7 +992,7 @@ async function handleAIPostImage(context, event, userId) {
         text: "❌ ไม่สามารถวิเคราะห์รูปได้\n\n💡 ลองถ่ายรูปใหม่:\n• แสงสว่างชัดเจน\n• เห็นสินค้าครบ\n• ไม่เบลอ",
         quickReply: {
           items: [
-            {type: "action", action: {type: "message", label: "🔄 ลองใหม่", text: "/โพสต์"}},
+            { type: "action", action: { type: "message", label: "🔄 ลองใหม่", text: "/โพสต์" } },
           ],
         },
       });
@@ -1000,13 +1001,13 @@ async function handleAIPostImage(context, event, userId) {
     return true;
   } catch (error) {
     console.error("❌ Error in handleAIPostImage:", error);
-    
+
     // Clear user state on error
     await clearUserMarketplaceState(userId);
 
     // Handle different error types
     let errorMessage = "❌ ระบบ LINE เกิดข้อผิดพลาด\n\nกรุณาลองใหม่อีกครั้ง หรือติดต่อแอดมิน";
-    
+
     if (error.statusCode === 429) {
       errorMessage = "⚠️ ระบบ LINE มีการใช้งานหนาแน่น\n\nกรุณารอสักครู่แล้วลองใหม่";
     } else if (error.message?.includes("timeout") || error.code === "ETIMEDOUT") {
@@ -1019,7 +1020,7 @@ async function handleAIPostImage(context, event, userId) {
         text: errorMessage,
         quickReply: {
           items: [
-            {type: "action", action: {type: "message", label: "🔄 ลองใหม่", text: "/โพสต์"}},
+            { type: "action", action: { type: "message", label: "🔄 ลองใหม่", text: "/โพสต์" } },
           ],
         },
       });
@@ -1037,12 +1038,12 @@ async function handleAIPostImage(context, event, userId) {
  * @param {Object} context - Context with lineClient
  */
 async function processAIPostTask(taskData, context) {
-  const {lineClient} = context;
-  const {userId, messageId} = taskData;
+  const { lineClient } = context;
+  const { userId, messageId } = taskData;
 
   try {
     console.log(`⚙️ Processing AI Post Task for ${userId}`);
-    
+
     // Get image from LINE
     // Note: Message content is available for a limited time
     const stream = await lineClient.getMessageContent(messageId);
@@ -1092,7 +1093,7 @@ async function processAIPostTask(taskData, context) {
         createdAt: FieldValue.serverTimestamp(),
         viewed: false
       });
-      
+
       console.log(`❌ AI Post generation failed for user ${userId}`);
     }
   } catch (error) {
@@ -1126,7 +1127,7 @@ async function processAIPostTask(taskData, context) {
 async function generateProductTags(productName, imageBuffer = null) {
   try {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({model: "gemini-2.0-flash"});
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     let prompt = `
     สร้าง Tags สำหรับสินค้าชื่อ "${productName}" ในตลาดออนไลน์
@@ -1169,9 +1170,9 @@ async function generateProductTags(productName, imageBuffer = null) {
 
     // Parse tags from response
     const tags = text
-        .split(",")
-        .map((tag) => tag.trim().toLowerCase())
-        .filter((tag) => tag.length > 0 && tag.length < 30);
+      .split(",")
+      .map((tag) => tag.trim().toLowerCase())
+      .filter((tag) => tag.length > 0 && tag.length < 30);
 
     console.log(`🏷️ Generated tags: ${tags.join(", ")}`);
     return tags.slice(0, 10); // Max 10 tags
@@ -1248,7 +1249,7 @@ function parseSellCommand(text) {
       const price = parseFloat(priceStr);
 
       if (productName && !isNaN(price) && price > 0) {
-        return {productName, price};
+        return { productName, price };
       }
     }
   }
@@ -1276,8 +1277,8 @@ function isSellCommand(text) {
   }
 
   return lowerText.startsWith("ขาย") ||
-         lowerText.startsWith("ลงขาย") ||
-         lowerText.startsWith("ขายของ");
+    lowerText.startsWith("ลงขาย") ||
+    lowerText.startsWith("ขายของ");
 }
 
 /**
@@ -1288,7 +1289,7 @@ function isSellCommand(text) {
  * @return {Promise<boolean>} true if handled
  */
 async function handleSellCommand(context, event, userData) {
-  const {lineClient} = context;
+  const { lineClient } = context;
   const userId = event.source.userId;
   const replyToken = event.replyToken;
   const text = event.message.text;
@@ -1301,16 +1302,16 @@ async function handleSellCommand(context, event, userData) {
     await lineClient.replyMessage(replyToken, {
       type: "text",
       text: "❌ รูปแบบไม่ถูกต้อง\n\n" +
-            "📝 **วิธีลงขาย:**\n" +
-            "พิมพ์: ขาย [ชื่อสินค้า] [ราคา]\n\n" +
-            "📌 **ตัวอย่าง:**\n" +
-            "• ขาย ทุเรียนหมอนทอง 500\n" +
-            "• ขาย iPhone 15 Pro 35000\n" +
-            "• ลงขาย รองเท้า Nike 2500",
+        "📝 **วิธีลงขาย:**\n" +
+        "พิมพ์: ขาย [ชื่อสินค้า] [ราคา]\n\n" +
+        "📌 **ตัวอย่าง:**\n" +
+        "• ขาย ทุเรียนหมอนทอง 500\n" +
+        "• ขาย iPhone 15 Pro 35000\n" +
+        "• ลงขาย รองเท้า Nike 2500",
       quickReply: {
         items: [
-          {type: "action", action: {type: "message", label: "🛒 ดูตลาด", text: "ดูตลาด"}},
-          {type: "action", action: {type: "message", label: "📦 สินค้าของฉัน", text: "สินค้าของฉัน"}},
+          { type: "action", action: { type: "message", label: "🛒 ดูตลาด", text: "ดูตลาด" } },
+          { type: "action", action: { type: "message", label: "📦 สินค้าของฉัน", text: "สินค้าของฉัน" } },
         ],
       },
     });
@@ -1341,7 +1342,7 @@ async function handleSellCommand(context, event, userData) {
  * @return {Promise<boolean>} true if handled
  */
 async function handleProductImageUpload(context, event, imageBuffer) {
-  const {lineClient} = context;
+  const { lineClient } = context;
   const userId = event.source.userId;
   const replyToken = event.replyToken;
 
@@ -1421,12 +1422,12 @@ async function handleProductImageUpload(context, event, imageBuffer) {
 function isSearchCommand(text) {
   const lowerText = text.toLowerCase().trim();
   return lowerText.startsWith("หา ") ||
-         lowerText.startsWith("ค้นหา ") ||
-         lowerText.startsWith("ซื้อ ") ||
-         lowerText.startsWith("ต้องการ ") ||
-         lowerText === "ดูตลาด" ||
-         lowerText === "ตลาด" ||
-         lowerText === "marketplace";
+    lowerText.startsWith("ค้นหา ") ||
+    lowerText.startsWith("ซื้อ ") ||
+    lowerText.startsWith("ต้องการ ") ||
+    lowerText === "ดูตลาด" ||
+    lowerText === "ตลาด" ||
+    lowerText === "marketplace";
 }
 
 /**
@@ -1455,7 +1456,7 @@ function parseSearchKeyword(text) {
  * @return {Promise<boolean>} true if handled
  */
 async function handleSearchCommand(context, event) {
-  const {lineClient} = context;
+  const { lineClient } = context;
   const replyToken = event.replyToken;
   const text = event.message.text;
 
@@ -1472,14 +1473,14 @@ async function handleSearchCommand(context, event) {
     // Get recent products
     const db = getFirestore();
     const snapshot = await db.collection(MARKETPLACE_COLLECTION)
-        .where("status", "==", PRODUCT_STATUS.ACTIVE)
-        .orderBy("createdAt", "desc")
-        .limit(10)
-        .get();
+      .where("status", "==", PRODUCT_STATUS.ACTIVE)
+      .orderBy("createdAt", "desc")
+      .limit(10)
+      .get();
 
     products = [];
     snapshot.forEach((doc) => {
-      products.push({id: doc.id, ...doc.data()});
+      products.push({ id: doc.id, ...doc.data() });
     });
   }
 
@@ -1491,8 +1492,8 @@ async function handleSearchCommand(context, event) {
         "📦 ยังไม่มีสินค้าในตลาด\n\nเป็นคนแรกที่ลงขาย!\nพิมพ์: ขาย [ชื่อสินค้า] [ราคา]",
       quickReply: {
         items: [
-          {type: "action", action: {type: "message", label: "🛒 ลงขายสินค้า", text: "ขาย "}},
-          {type: "action", action: {type: "message", label: "📦 สินค้าของฉัน", text: "สินค้าของฉัน"}},
+          { type: "action", action: { type: "message", label: "🛒 ลงขายสินค้า", text: "ขาย " } },
+          { type: "action", action: { type: "message", label: "📦 สินค้าของฉัน", text: "สินค้าของฉัน" } },
         ],
       },
     });
@@ -1514,7 +1515,7 @@ async function handleSearchCommand(context, event) {
  * @return {Promise<boolean>} true if handled
  */
 async function handleMyProductsCommand(context, event) {
-  const {lineClient} = context;
+  const { lineClient } = context;
   const userId = event.source.userId;
   const replyToken = event.replyToken;
 
@@ -1524,13 +1525,13 @@ async function handleMyProductsCommand(context, event) {
     await lineClient.replyMessage(replyToken, {
       type: "text",
       text: "📦 คุณยังไม่มีสินค้าที่ลงขาย\n\n" +
-            "🛒 **เริ่มลงขายสินค้า:**\n" +
-            "พิมพ์: ขาย [ชื่อสินค้า] [ราคา]\n\n" +
-            "📌 ตัวอย่าง: ขาย ทุเรียน 500",
+        "🛒 **เริ่มลงขายสินค้า:**\n" +
+        "พิมพ์: ขาย [ชื่อสินค้า] [ราคา]\n\n" +
+        "📌 ตัวอย่าง: ขาย ทุเรียน 500",
       quickReply: {
         items: [
-          {type: "action", action: {type: "message", label: "🛒 ลงขายสินค้า", text: "ขาย "}},
-          {type: "action", action: {type: "message", label: "🔍 ดูตลาด", text: "ดูตลาด"}},
+          { type: "action", action: { type: "message", label: "🛒 ลงขายสินค้า", text: "ขาย " } },
+          { type: "action", action: { type: "message", label: "🔍 ดูตลาด", text: "ดูตลาด" } },
         ],
       },
     });
@@ -1553,10 +1554,10 @@ async function handleMyProductsCommand(context, event) {
 function isMyProductsCommand(text) {
   const lowerText = text.toLowerCase().trim();
   return lowerText === "สินค้าของฉัน" ||
-         lowerText === "สินค้าที่ลงขาย" ||
-         lowerText === "ของที่ขาย" ||
-         lowerText === "my products" ||
-         lowerText === "/myproducts";
+    lowerText === "สินค้าที่ลงขาย" ||
+    lowerText === "ของที่ขาย" ||
+    lowerText === "my products" ||
+    lowerText === "/myproducts";
 }
 
 // =====================================================
@@ -1577,8 +1578,8 @@ function createWaitingForImageFlex(productName, price) {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: "📸 อัปโหลดรูปสินค้า", weight: "bold", color: "#ffffff", size: "lg"},
-          {type: "text", text: "ขั้นตอนที่ 2 จาก 2", color: "#ffffffcc", size: "xs"},
+          { type: "text", text: "📸 อัปโหลดรูปสินค้า", weight: "bold", color: "#ffffff", size: "lg" },
+          { type: "text", text: "ขั้นตอนที่ 2 จาก 2", color: "#ffffffcc", size: "xs" },
         ],
         backgroundColor: "#2196F3",
         paddingAll: "15px",
@@ -1592,19 +1593,19 @@ function createWaitingForImageFlex(productName, price) {
             type: "box",
             layout: "horizontal",
             contents: [
-              {type: "text", text: "📦", size: "xl"},
+              { type: "text", text: "📦", size: "xl" },
               {
                 type: "box",
                 layout: "vertical",
                 contents: [
-                  {type: "text", text: productName, weight: "bold", size: "md", wrap: true},
-                  {type: "text", text: `฿${price.toLocaleString()}`, color: "#FF5722", size: "lg", weight: "bold"},
+                  { type: "text", text: productName, weight: "bold", size: "md", wrap: true },
+                  { type: "text", text: `฿${price.toLocaleString()}`, color: "#FF5722", size: "lg", weight: "bold" },
                 ],
                 margin: "md",
               },
             ],
           },
-          {type: "separator", margin: "lg"},
+          { type: "separator", margin: "lg" },
           {
             type: "text",
             text: "👆 กรุณาส่งรูปสินค้าเพื่อลงขาย",
@@ -1632,7 +1633,7 @@ function createWaitingForImageFlex(productName, price) {
           {
             type: "button",
             style: "secondary",
-            action: {type: "message", label: "❌ ยกเลิก", text: "ยกเลิกการลงขาย"},
+            action: { type: "message", label: "❌ ยกเลิก", text: "ยกเลิกการลงขาย" },
             height: "sm",
           },
         ],
@@ -1671,11 +1672,11 @@ function createProductConfirmationFlex(product) {
             type: "box",
             layout: "horizontal",
             contents: [
-              {type: "text", text: "✅", size: "xl"},
-              {type: "text", text: "ลงขายสำเร็จ!", weight: "bold", size: "xl", color: "#4CAF50", margin: "sm"},
+              { type: "text", text: "✅", size: "xl" },
+              { type: "text", text: "ลงขายสำเร็จ!", weight: "bold", size: "xl", color: "#4CAF50", margin: "sm" },
             ],
           },
-          {type: "separator", margin: "md"},
+          { type: "separator", margin: "md" },
           {
             type: "box",
             layout: "vertical",
@@ -1686,24 +1687,24 @@ function createProductConfirmationFlex(product) {
                 type: "box",
                 layout: "horizontal",
                 contents: [
-                  {type: "text", text: "📦 สินค้า:", color: "#666666", size: "sm", flex: 3},
-                  {type: "text", text: product.productName, weight: "bold", size: "sm", flex: 7, wrap: true},
+                  { type: "text", text: "📦 สินค้า:", color: "#666666", size: "sm", flex: 3 },
+                  { type: "text", text: product.productName, weight: "bold", size: "sm", flex: 7, wrap: true },
                 ],
               },
               {
                 type: "box",
                 layout: "horizontal",
                 contents: [
-                  {type: "text", text: "💰 ราคา:", color: "#666666", size: "sm", flex: 3},
-                  {type: "text", text: `฿${product.price.toLocaleString()}`, weight: "bold", size: "lg", color: "#FF5722", flex: 7},
+                  { type: "text", text: "💰 ราคา:", color: "#666666", size: "sm", flex: 3 },
+                  { type: "text", text: `฿${product.price.toLocaleString()}`, weight: "bold", size: "lg", color: "#FF5722", flex: 7 },
                 ],
               },
               {
                 type: "box",
                 layout: "horizontal",
                 contents: [
-                  {type: "text", text: "🏷️ Tags:", color: "#666666", size: "sm", flex: 3},
-                  {type: "text", text: product.tags.slice(0, 5).join(", "), size: "xs", color: "#999999", flex: 7, wrap: true},
+                  { type: "text", text: "🏷️ Tags:", color: "#666666", size: "sm", flex: 3 },
+                  { type: "text", text: product.tags.slice(0, 5).join(", "), size: "xs", color: "#999999", flex: 7, wrap: true },
                 ],
               },
             ],
@@ -1720,19 +1721,19 @@ function createProductConfirmationFlex(product) {
             type: "button",
             style: "primary",
             color: "#00C300",
-            action: {type: "uri", label: "📣 แชร์ไป LINE VOOM", uri: shareUrl},
+            action: { type: "uri", label: "📣 แชร์ไป LINE VOOM", uri: shareUrl },
             height: "sm",
           },
           {
             type: "button",
             style: "secondary",
-            action: {type: "uri", label: "🌐 ดูบนเว็บ", uri: webUrl},
+            action: { type: "uri", label: "🌐 ดูบนเว็บ", uri: webUrl },
             height: "sm",
           },
           {
             type: "button",
             style: "secondary",
-            action: {type: "message", label: "📦 สินค้าของฉัน", text: "สินค้าของฉัน"},
+            action: { type: "message", label: "📦 สินค้าของฉัน", text: "สินค้าของฉัน" },
             height: "sm",
           },
         ],
@@ -1764,7 +1765,7 @@ function createProductBubble(product) {
       size: "full",
       aspectRatio: "20:13",
       aspectMode: "cover",
-      action: {type: "uri", uri: webUrl},
+      action: { type: "uri", uri: webUrl },
     },
     body: {
       type: "box",
@@ -1790,8 +1791,8 @@ function createProductBubble(product) {
           type: "box",
           layout: "horizontal",
           contents: [
-            {type: "text", text: "👤", size: "xs"},
-            {type: "text", text: product.sellerName || "ผู้ขาย", size: "xs", color: "#999999", margin: "sm"},
+            { type: "text", text: "👤", size: "xs" },
+            { type: "text", text: product.sellerName || "ผู้ขาย", size: "xs", color: "#999999", margin: "sm" },
           ],
           margin: "md",
         },
@@ -1814,7 +1815,7 @@ function createProductBubble(product) {
         {
           type: "button",
           style: "secondary",
-          action: {type: "uri", label: "🔗 ดูเพิ่ม", uri: webUrl},
+          action: { type: "uri", label: "🔗 ดูเพิ่ม", uri: webUrl },
           height: "sm",
           flex: 1,
         },
@@ -1868,8 +1869,8 @@ function createMyProductsCarouselFlex(products) {
             type: "box",
             layout: "horizontal",
             contents: [
-              {type: "text", text: product.productName, weight: "bold", size: "md", flex: 4, wrap: true},
-              {type: "text", text: `${statusEmoji} ${statusText}`, size: "xs", color: "#666666", align: "end", flex: 2},
+              { type: "text", text: product.productName, weight: "bold", size: "md", flex: 4, wrap: true },
+              { type: "text", text: `${statusEmoji} ${statusText}`, size: "xs", color: "#666666", align: "end", flex: 2 },
             ],
           },
           {
@@ -1884,8 +1885,8 @@ function createMyProductsCarouselFlex(products) {
             layout: "horizontal",
             spacing: "lg",
             contents: [
-              {type: "text", text: `👁️ ${product.viewCount || 0}`, size: "xs", color: "#999999"},
-              {type: "text", text: `💬 ${product.contactCount || 0}`, size: "xs", color: "#999999"},
+              { type: "text", text: `👁️ ${product.viewCount || 0}`, size: "xs", color: "#999999" },
+              { type: "text", text: `💬 ${product.contactCount || 0}`, size: "xs", color: "#999999" },
             ],
             margin: "md",
           },
@@ -1954,13 +1955,13 @@ function createMarketplaceMenuFlex() {
             type: "box",
             layout: "horizontal",
             contents: [
-              {type: "text", text: "🛒", size: "xxl"},
+              { type: "text", text: "🛒", size: "xxl" },
               {
                 type: "box",
                 layout: "vertical",
                 contents: [
-                  {type: "text", text: "WiT Marketplace", weight: "bold", color: "#ffffff", size: "xl"},
-                  {type: "text", text: "ตลาดซื้อขายออนไลน์", color: "#ffffffcc", size: "sm"},
+                  { type: "text", text: "WiT Marketplace", weight: "bold", color: "#ffffff", size: "xl" },
+                  { type: "text", text: "ตลาดซื้อขายออนไลน์", color: "#ffffffcc", size: "sm" },
                 ],
                 margin: "lg",
               },
@@ -1987,26 +1988,26 @@ function createMarketplaceMenuFlex() {
             type: "button",
             style: "primary",
             color: "#4CAF50",
-            action: {type: "message", label: "🛒 ลงขายสินค้า", text: "ขาย "},
+            action: { type: "message", label: "🛒 ลงขายสินค้า", text: "ขาย " },
             height: "sm",
           },
           {
             type: "button",
             style: "primary",
             color: "#2196F3",
-            action: {type: "message", label: "🔍 ค้นหาสินค้า", text: "หา "},
+            action: { type: "message", label: "🔍 ค้นหาสินค้า", text: "หา " },
             height: "sm",
           },
           {
             type: "button",
             style: "secondary",
-            action: {type: "message", label: "📦 สินค้าของฉัน", text: "สินค้าของฉัน"},
+            action: { type: "message", label: "📦 สินค้าของฉัน", text: "สินค้าของฉัน" },
             height: "sm",
           },
           {
             type: "button",
             style: "secondary",
-            action: {type: "message", label: "🏪 ดูตลาดทั้งหมด", text: "ดูตลาด"},
+            action: { type: "message", label: "🏪 ดูตลาดทั้งหมด", text: "ดูตลาด" },
             height: "sm",
           },
         ],
@@ -2045,8 +2046,8 @@ function createSellOptionsFlexMessage() {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: "🛒 ลงขายสินค้า", weight: "bold", color: "#ffffff", size: "xl", align: "center"},
-          {type: "text", text: "เลือกวิธีที่สะดวก", color: "#ffffffcc", size: "sm", align: "center", margin: "sm"},
+          { type: "text", text: "🛒 ลงขายสินค้า", weight: "bold", color: "#ffffff", size: "xl", align: "center" },
+          { type: "text", text: "เลือกวิธีที่สะดวก", color: "#ffffffcc", size: "sm", align: "center", margin: "sm" },
         ],
         backgroundColor: "#4CAF50",
         paddingAll: "20px",
@@ -2062,15 +2063,15 @@ function createSellOptionsFlexMessage() {
             layout: "vertical",
             spacing: "sm",
             contents: [
-              {type: "text", text: "🌐 ลงขายผ่านเว็บ", weight: "bold", size: "md"},
-              {type: "text", text: "✓ อัปโหลดรูปได้หลายรูป", size: "xs", color: "#666666"},
-              {type: "text", text: "✓ กรอกรายละเอียดครบถ้วน", size: "xs", color: "#666666"},
-              {type: "text", text: "✓ ใส่เบอร์โทร, LINE ID ได้", size: "xs", color: "#666666"},
+              { type: "text", text: "🌐 ลงขายผ่านเว็บ", weight: "bold", size: "md" },
+              { type: "text", text: "✓ อัปโหลดรูปได้หลายรูป", size: "xs", color: "#666666" },
+              { type: "text", text: "✓ กรอกรายละเอียดครบถ้วน", size: "xs", color: "#666666" },
+              { type: "text", text: "✓ ใส่เบอร์โทร, LINE ID ได้", size: "xs", color: "#666666" },
               {
                 type: "button",
                 style: "primary",
                 color: "#FF5722",
-                action: {type: "uri", label: "📝 กรอกฟอร์มลงขาย", uri: "https://wizmobiz.com/post-product.html"},
+                action: { type: "uri", label: "📝 กรอกฟอร์มลงขาย", uri: "https://tuktukfeed.com/post-product.html" },
                 height: "sm",
                 margin: "md",
               },
@@ -2080,21 +2081,21 @@ function createSellOptionsFlexMessage() {
             cornerRadius: "10px",
           },
           // Separator
-          {type: "separator", color: "#E0E0E0"},
+          { type: "separator", color: "#E0E0E0" },
           // Option 2: LINE Chat
           {
             type: "box",
             layout: "vertical",
             spacing: "sm",
             contents: [
-              {type: "text", text: "💬 ลงขายผ่าน LINE", weight: "bold", size: "md"},
-              {type: "text", text: "✓ ง่าย รวดเร็ว ไม่ต้องออกจากแอป", size: "xs", color: "#666666"},
-              {type: "text", text: "✓ พิมพ์: ขาย [สินค้า] [ราคา]", size: "xs", color: "#666666"},
-              {type: "text", text: "✓ แล้วส่งรูปสินค้า", size: "xs", color: "#666666"},
+              { type: "text", text: "💬 ลงขายผ่าน LINE", weight: "bold", size: "md" },
+              { type: "text", text: "✓ ง่าย รวดเร็ว ไม่ต้องออกจากแอป", size: "xs", color: "#666666" },
+              { type: "text", text: "✓ พิมพ์: ขาย [สินค้า] [ราคา]", size: "xs", color: "#666666" },
+              { type: "text", text: "✓ แล้วส่งรูปสินค้า", size: "xs", color: "#666666" },
               {
                 type: "button",
                 style: "secondary",
-                action: {type: "message", label: "💬 พิมพ์ขายในแชท", text: "ขาย "},
+                action: { type: "message", label: "💬 พิมพ์ขายในแชท", text: "ขาย " },
                 height: "sm",
                 margin: "md",
               },
@@ -2110,7 +2111,7 @@ function createSellOptionsFlexMessage() {
         type: "box",
         layout: "vertical",
         contents: [
-          {type: "text", text: "📌 ตัวอย่าง: ขาย iPhone 15 35000", size: "xs", color: "#999999", align: "center"},
+          { type: "text", text: "📌 ตัวอย่าง: ขาย iPhone 15 35000", size: "xs", color: "#999999", align: "center" },
         ],
         paddingAll: "10px",
       },
@@ -2129,7 +2130,7 @@ function createSellOptionsFlexMessage() {
  * @return {Promise<boolean>} true if handled
  */
 async function handleMarketplacePostback(context, event) {
-  const {lineClient} = context;
+  const { lineClient } = context;
   const userId = event.source.userId;
   const replyToken = event.replyToken;
   const data = event.postback.data;
@@ -2168,9 +2169,9 @@ async function handleMarketplacePostback(context, event) {
         await lineClient.pushMessage(sellerId, {
           type: "text",
           text: `🔔 **มีคนสนใจสินค้าของคุณ!**\n\n` +
-                `📦 สินค้า: ${product.productName}\n` +
-                `💰 ราคา: ฿${product.price.toLocaleString()}\n\n` +
-                `กรุณาตอบกลับลูกค้าโดยเร็วครับ 🙏`,
+            `📦 สินค้า: ${product.productName}\n` +
+            `💰 ราคา: ฿${product.price.toLocaleString()}\n\n` +
+            `กรุณาตอบกลับลูกค้าโดยเร็วครับ 🙏`,
         });
       } catch (err) {
         console.error("Failed to notify seller:", err);
@@ -2180,9 +2181,9 @@ async function handleMarketplacePostback(context, event) {
       await lineClient.replyMessage(replyToken, {
         type: "text",
         text: `✅ ส่งข้อความถึงผู้ขายแล้ว!\n\n` +
-              `📦 สินค้า: ${product.productName}\n` +
-              `💰 ราคา: ฿${product.price.toLocaleString()}\n\n` +
-              `ผู้ขายจะติดต่อกลับมาเร็วๆ นี้ครับ`,
+          `📦 สินค้า: ${product.productName}\n` +
+          `💰 ราคา: ฿${product.price.toLocaleString()}\n\n` +
+          `ผู้ขายจะติดต่อกลับมาเร็วๆ นี้ครับ`,
       });
 
       return true;
@@ -2205,7 +2206,7 @@ async function handleMarketplacePostback(context, event) {
           "🔄 เปลี่ยนสถานะเป็น \"กำลังขาย\" เรียบร้อย!",
         quickReply: {
           items: [
-            {type: "action", action: {type: "message", label: "📦 สินค้าของฉัน", text: "สินค้าของฉัน"}},
+            { type: "action", action: { type: "message", label: "📦 สินค้าของฉัน", text: "สินค้าของฉัน" } },
           ],
         },
       });
@@ -2223,8 +2224,8 @@ async function handleMarketplacePostback(context, event) {
         text: "🗑️ ลบสินค้าเรียบร้อยแล้ว!",
         quickReply: {
           items: [
-            {type: "action", action: {type: "message", label: "📦 สินค้าของฉัน", text: "สินค้าของฉัน"}},
-            {type: "action", action: {type: "message", label: "🛒 ลงขายใหม่", text: "ขาย "}},
+            { type: "action", action: { type: "message", label: "📦 สินค้าของฉัน", text: "สินค้าของฉัน" } },
+            { type: "action", action: { type: "message", label: "🛒 ลงขายใหม่", text: "ขาย " } },
           ],
         },
       });
@@ -2258,13 +2259,13 @@ function isMarketplaceCommand(text) {
   if (lowerText === "/โพสต์" || lowerText === "/post" || lowerText === "โพสต์") return true;
 
   return isSellCommand(text) ||
-         isSearchCommand(text) ||
-         isMyProductsCommand(text) ||
-         lowerText === "ยกเลิกการลงขาย" ||
-         lowerText === "marketplace" ||
-         lowerText === "/marketplace" ||
-         lowerText === "เมนูตลาด" ||
-         lowerText === "ดูตลาด";
+    isSearchCommand(text) ||
+    isMyProductsCommand(text) ||
+    lowerText === "ยกเลิกการลงขาย" ||
+    lowerText === "marketplace" ||
+    lowerText === "/marketplace" ||
+    lowerText === "เมนูตลาด" ||
+    lowerText === "ดูตลาด";
 }
 
 /**
@@ -2275,7 +2276,7 @@ function isMarketplaceCommand(text) {
  * @return {Promise<boolean>} true if handled
  */
 async function handleMarketplace(context, event, userData) {
-  const {lineClient} = context;
+  const { lineClient } = context;
   const userId = event.source.userId;
   const replyToken = event.replyToken;
 
@@ -2330,8 +2331,8 @@ async function handleMarketplace(context, event, userData) {
       text: "❌ ยกเลิกการลงขายเรียบร้อยแล้ว",
       quickReply: {
         items: [
-          {type: "action", action: {type: "message", label: "🛒 ลงขายใหม่", text: "/ขายสินค้า"}},
-          {type: "action", action: {type: "message", label: "🔍 ดูตลาด", text: "/ตลาด"}},
+          { type: "action", action: { type: "message", label: "🛒 ลงขายใหม่", text: "/ขายสินค้า" } },
+          { type: "action", action: { type: "message", label: "🔍 ดูตลาด", text: "/ตลาด" } },
         ],
       },
     });
@@ -2340,7 +2341,7 @@ async function handleMarketplace(context, event, userData) {
 
   // Show marketplace menu or view market
   if (lowerText === "marketplace" || lowerText === "/marketplace" || lowerText === "เมนูตลาด" ||
-      lowerText === "/ตลาด" || lowerText === "/market" || lowerText === "ดูตลาด") {
+    lowerText === "/ตลาด" || lowerText === "/market" || lowerText === "ดูตลาด") {
     await lineClient.replyMessage(replyToken, createMarketplaceMenuFlex());
     return true;
   }
@@ -2359,7 +2360,7 @@ async function handleMarketplace(context, event, userData) {
 
   // NEW: /หาสินค้า [keyword] or /หา [keyword] or /ค้นหา [keyword]
   if (lowerText.startsWith("/หาสินค้า") || lowerText.startsWith("/หา ") ||
-      lowerText.startsWith("/ค้นหา") || lowerText.startsWith("/search")) {
+    lowerText.startsWith("/ค้นหา") || lowerText.startsWith("/search")) {
     // Extract search keyword
     let keyword = "";
     if (lowerText.startsWith("/หาสินค้า")) keyword = text.substring(9).trim();
@@ -2376,19 +2377,19 @@ async function handleMarketplace(context, event, userData) {
       await lineClient.replyMessage(replyToken, {
         type: "text",
         text: "🔍 **ค้นหาสินค้า**\n\n" +
-              "📝 วิธีใช้:\n" +
-              "• /หา [ชื่อสินค้า]\n" +
-              "• /ค้นหา [ชื่อสินค้า]\n\n" +
-              "📌 ตัวอย่าง:\n" +
-              "• /หา ไอโฟน\n" +
-              "• /ค้นหา รองเท้า\n" +
-              "• /หา กระเป๋า gucci",
+          "📝 วิธีใช้:\n" +
+          "• /หา [ชื่อสินค้า]\n" +
+          "• /ค้นหา [ชื่อสินค้า]\n\n" +
+          "📌 ตัวอย่าง:\n" +
+          "• /หา ไอโฟน\n" +
+          "• /ค้นหา รองเท้า\n" +
+          "• /หา กระเป๋า gucci",
         quickReply: {
           items: [
-            {type: "action", action: {type: "message", label: "📱 หาไอโฟน", text: "/หา ไอโฟน"}},
-            {type: "action", action: {type: "message", label: "👟 หารองเท้า", text: "/หา รองเท้า"}},
-            {type: "action", action: {type: "message", label: "👜 หากระเป๋า", text: "/หา กระเป๋า"}},
-            {type: "action", action: {type: "message", label: "🏠 ของใช้บ้าน", text: "/หา ของใช้"}},
+            { type: "action", action: { type: "message", label: "📱 หาไอโฟน", text: "/หา ไอโฟน" } },
+            { type: "action", action: { type: "message", label: "👟 หารองเท้า", text: "/หา รองเท้า" } },
+            { type: "action", action: { type: "message", label: "👜 หากระเป๋า", text: "/หา กระเป๋า" } },
+            { type: "action", action: { type: "message", label: "🏠 ของใช้บ้าน", text: "/หา ของใช้" } },
           ],
         },
       });
@@ -2474,7 +2475,7 @@ module.exports = {
   USER_STATES,
   PRODUCT_STATUS,
   MARKETPLACE_COLLECTION,
-  
+
   // Background Workers
   processAIPostTask,
 };

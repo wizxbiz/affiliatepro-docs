@@ -5,14 +5,16 @@
  */
 
 // ==================== Configuration ====================
-const CONFIG = {
+// Use window.CONFIG if already defined (for path override), otherwise create new
+const CONFIG = window.CONFIG || {};
+Object.assign(CONFIG, {
     appName: 'Injection Molding Training Portal',
     version: '2.0.0',
-    basePath: '',
-    storagePrefix: 'imtp_',
+    basePath: CONFIG.basePath || '',
+    storagePrefix: CONFIG.storagePrefix || 'imtp_',
     levels: ['basic', 'advanced', 'expert'],
     passingScore: 70
-};
+});
 
 // ==================== Utility Functions ====================
 const Utils = {

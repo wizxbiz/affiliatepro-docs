@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ศูนย์ดาวน์โหลดไฟล์ - Wizmobiz เอกสาร คู่มือ ซอฟต์แวร์ และไฟล์ต่างๆ">
+    <title>ศูนย์ดาวน์โหลด - Wizmobiz</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <style>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #764ba2;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1a1a2e;
+            --light: #f8fafc;
+            --gray: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .header-nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            opacity: 0.9;
+            transition: opacity 0.3s;
+        }
+
+        .header-nav a:hover {
+            opacity: 1;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--dark) 0%, #16213e 100%);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .hero h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        /* Search Box */
+        .search-box {
+            max-width: 600px;
+            margin: 30px auto 0;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 5px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 40px 0;
+        }
+
+        /* Category Tabs */
+        .category-tabs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .category-tab {
+            padding: 10px 25px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .category-tab:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .category-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* File Grid */
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .file-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            border: 1px solid #e2e8f0;
+        }
+
+        .file-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .file-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .file-icon.pdf { background: #fee2e2; color: #ef4444; }
+        .file-icon.doc { background: #dbeafe; color: #3b82f6; }
+        .file-icon.xls { background: #dcfce7; color: #22c55e; }
+        .file-icon.ppt { background: #fed7aa; color: #f97316; }
+        .file-icon.zip { background: #fef3c7; color: #eab308; }
+        .file-icon.img { background: #f3e8ff; color: #a855f7; }
+        .file-icon.video { background: #fce7f3; color: #ec4899; }
+        .file-icon.audio { background: #e0e7ff; color: #6366f1; }
+        .file-icon.other { background: #f1f5f9; color: #64748b; }
+
+        .file-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            word-break: break-word;
+        }
+
+        .file-desc {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .file-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-bottom: 15px;
+        }
+
+        .file-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-download {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-download:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Admin Panel */
+        .admin-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            display: none;
+        }
+
+        .admin-panel.show {
+            display: block;
+        }
+
+        .admin-panel h3 {
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upload-zone {
+            border: 3px dashed #e2e8f0;
+            border-radius: 15px;
+            padding: 50px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            background: #f8fafc;
+        }
+
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: var(--primary);
+            background: #f0f4ff;
+        }
+
+        .upload-zone i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .upload-zone p {
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+
+        .upload-zone .supported-files {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn-upload {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, var(--success) 0%, #16a34a 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-upload:hover {
+            transform: scale(1.02);
+        }
+
+        .btn-upload:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* File Preview */
+        .file-preview {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .file-preview-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .file-preview-info {
+            flex: 1;
+        }
+
+        .file-preview-name {
+            font-weight: 600;
+        }
+
+        .file-preview-size {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .btn-remove {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        /* Admin Login */
+        .admin-login-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--dark);
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .admin-login-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .admin-login-btn.logged-in {
+            background: var(--success);
+        }
+
+        /* File List Admin */
+        .admin-file-list {
+            margin-top: 30px;
+        }
+
+        .admin-file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .admin-file-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-edit, .btn-delete {
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-edit {
+            background: #dbeafe;
+            color: #3b82f6;
+        }
+
+        .btn-delete {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        .btn-edit:hover, .btn-delete:hover {
+            transform: scale(1.05);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        /* Stats */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e2e8f0;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h2 {
+                font-size: 1.8rem;
+            }
+
+            .file-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .category-tabs {
+                justify-content: center;
+            }
+            
+            .admin-file-item {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .footer a {
+            color: #fbbf24;
+            text-decoration: none;
+        }
+        
+        /* Toast Notification */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 3000;
+        }
+        
+        .toast {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error { border-left: 4px solid var(--danger); }
+        .toast.info { border-left: 4px solid var(--primary); }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+<script src="/js/cookie-consent.js" defer></script>
+</head>
+<body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1><i class="fas fa-download me-2"></i> ศูนย์ดาวน์โหลด</h1>
+                <nav class="header-nav">
+                    <a href="/"><i class="fas fa-home"></i> หน้าแรก</a>
+                    <a href="/marketplace.html"><i class="fas fa-store"></i> ตลาด</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <h2>📁 ดาวน์โหลดไฟล์</h2>
+            <p>เอกสาร คู่มือ ซอฟต์แวร์ และไฟล์ต่างๆ</p>
+            
+            <div class="search-box">
+                <input type="text" class="search-input" id="searchInput" placeholder="🔍 ค้นหาไฟล์..." oninput="filterFiles()">
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Stats -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalFiles">0</div>
+                    <div class="stat-label">ไฟล์ทั้งหมด</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalDownloads">0</div>
+                    <div class="stat-label">ดาวน์โหลด</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalSize">0 MB</div>
+                    <div class="stat-label">ขนาดรวม</div>
+                </div>
+            </div>
+
+            <!-- Admin Panel -->
+            <div class="admin-panel" id="adminPanel">
+                <h3><i class="fas fa-shield-alt"></i> จัดการไฟล์ (Admin)</h3>
+                
+                <!-- Upload Zone -->
+                <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p><strong>คลิกเพื่ออัพโหลด</strong> หรือลากไฟล์มาวางที่นี่</p>
+                    <p class="supported-files">
+                        รองรับ: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, ZIP, RAR, JPG, PNG, GIF, MP4, MP3, และอื่นๆ<br>
+                        ขนาดไฟล์สูงสุด: 100 MB
+                    </p>
+                </div>
+                <input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(event)" multiple accept="*/*">
+                
+                <!-- File Preview -->
+                <div id="filePreviewContainer"></div>
+                
+                <!-- File Details Form -->
+                <div id="uploadForm" style="display: none; margin-top: 20px;">
+                    <div class="form-group">
+                        <label>ชื่อไฟล์ (แสดง)</label>
+                        <input type="text" class="form-control" id="fileName" placeholder="ใส่ชื่อที่ต้องการแสดง">
+                    </div>
+                    <div class="form-group">
+                        <label>คำอธิบาย</label>
+                        <textarea class="form-control" id="fileDesc" rows="3" placeholder="อธิบายรายละเอียดไฟล์"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>หมวดหมู่</label>
+                        <select class="form-control" id="fileCategory">
+                            <option value="document">📄 เอกสาร</option>
+                            <option value="manual">📖 คู่มือ</option>
+                            <option value="software">💿 ซอฟต์แวร์</option>
+                            <option value="template">📋 แม่แบบ</option>
+                            <option value="media">🎬 มีเดีย</option>
+                            <option value="other">📁 อื่นๆ</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn-upload" id="uploadBtn" onclick="uploadFiles()">
+                        <i class="fas fa-upload me-2"></i> อัพโหลดไฟล์
+                    </button>
+                </div>
+                
+                <!-- Progress -->
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p class="progress-text" id="progressText">กำลังอัพโหลด... 0%</p>
+                </div>
+                
+                <!-- Admin File List -->
+                <div class="admin-file-list" id="adminFileList">
+                    <h4 style="margin-bottom: 15px;"><i class="fas fa-list me-2"></i>ไฟล์ทั้งหมด</h4>
+                    <div id="adminFilesContainer"></div>
+                </div>
+            </div>
+
+            <!-- Category Tabs -->
+            <div class="category-tabs">
+                <button class="category-tab active" onclick="filterByCategory('all')">📁 ทั้งหมด</button>
+                <button class="category-tab" onclick="filterByCategory('document')">📄 เอกสาร</button>
+                <button class="category-tab" onclick="filterByCategory('manual')">📖 คู่มือ</button>
+                <button class="category-tab" onclick="filterByCategory('software')">💿 ซอฟต์แวร์</button>
+                <button class="category-tab" onclick="filterByCategory('template')">📋 แม่แบบ</button>
+                <button class="category-tab" onclick="filterByCategory('media')">🎬 มีเดีย</button>
+                <button class="category-tab" onclick="filterByCategory('other')">📁 อื่นๆ</button>
+            </div>
+
+            <!-- File Grid -->
+            <div class="file-grid" id="fileGrid">
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Admin Login Button -->
+    <button class="admin-login-btn" id="adminLoginBtn" onclick="toggleAdminLogin()" title="Admin Login">
+        <i class="fas fa-lock"></i>
+    </button>
+
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🔐 เข้าสู่ระบบ Admin</h3>
+                <button class="modal-close" onclick="closeLoginModal()">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>รหัส PIN</label>
+                <input type="password" class="form-control" id="adminPin" placeholder="กรอกรหัส PIN" maxlength="6" onkeypress="if(event.key==='Enter') adminLogin()">
+            </div>
+            <button class="btn-upload" style="width: 100%;" onclick="adminLogin()">
+                <i class="fas fa-sign-in-alt me-2"></i> เข้าสู่ระบบ
+            </button>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>✏️ แก้ไขไฟล์</h3>
+                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <input type="hidden" id="editFileId">
+            <div class="form-group">
+                <label>ชื่อไฟล์</label>
+                <input type="text" class="form-control" id="editFileName">
+            </div>
+            <div class="form-group">
+                <label>คำอธิบาย</label>
+                <textarea class="form-control" id="editFileDesc" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+                <label>หมวดหมู่</label>
+                <select class="form-control" id="editFileCategory">
+                    <option value="document">📄 เอกสาร</option>
+                    <option value="manual">📖 คู่มือ</option>
+                    <option value="software">💿 ซอฟต์แวร์</option>
+                    <option value="template">📋 แม่แบบ</option>
+                    <option value="media">🎬 มีเดีย</option>
+                    <option value="other">📁 อื่นๆ</option>
+                </select>
+            </div>
+            <button class="btn-upload" style="width: 100%;" onclick="saveFileEdit()">
+                <i class="fas fa-save me-2"></i> บันทึก
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>
+                <a href="/">หน้าแรก</a> | 
+                <a href="/marketplace.html">ตลาด</a> | 
+                <a href="/terms.html">เงื่อนไข</a>
+            </p>
+            <p style="margin-top: 10px; opacity: 0.7;">© 2026 Wizmobiz</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAux3zBHgLJkPL6FwYGFxJuCdHdjuxNn0k",
+            authDomain: "appinjproject.firebaseapp.com",
+            projectId: "appinjproject",
+            storageBucket: "appinjproject.appspot.com",
+            messagingSenderId: "959307024754",
+            appId: "1:959307024754:web:07aaaae45b9dc44ba08c92"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+        
+        // State
+        let isAdmin = false;
+        let allFiles = [];
+        let selectedFiles = [];
+        let currentCategory = 'all';
+        
+        // File type mapping
+        const fileTypeMap = {
+            'pdf': { icon: 'fas fa-file-pdf', class: 'pdf' },
+            'doc': { icon: 'fas fa-file-word', class: 'doc' },
+            'docx': { icon: 'fas fa-file-word', class: 'doc' },
+            'xls': { icon: 'fas fa-file-excel', class: 'xls' },
+            'xlsx': { icon: 'fas fa-file-excel', class: 'xls' },
+            'ppt': { icon: 'fas fa-file-powerpoint', class: 'ppt' },
+            'pptx': { icon: 'fas fa-file-powerpoint', class: 'ppt' },
+            'zip': { icon: 'fas fa-file-archive', class: 'zip' },
+            'rar': { icon: 'fas fa-file-archive', class: 'zip' },
+            '7z': { icon: 'fas fa-file-archive', class: 'zip' },
+            'jpg': { icon: 'fas fa-file-image', class: 'img' },
+            'jpeg': { icon: 'fas fa-file-image', class: 'img' },
+            'png': { icon: 'fas fa-file-image', class: 'img' },
+            'gif': { icon: 'fas fa-file-image', class: 'img' },
+            'webp': { icon: 'fas fa-file-image', class: 'img' },
+            'svg': { icon: 'fas fa-file-image', class: 'img' },
+            'mp4': { icon: 'fas fa-file-video', class: 'video' },
+            'avi': { icon: 'fas fa-file-video', class: 'video' },
+            'mov': { icon: 'fas fa-file-video', class: 'video' },
+            'mkv': { icon: 'fas fa-file-video', class: 'video' },
+            'webm': { icon: 'fas fa-file-video', class: 'video' },
+            'mp3': { icon: 'fas fa-file-audio', class: 'audio' },
+            'wav': { icon: 'fas fa-file-audio', class: 'audio' },
+            'ogg': { icon: 'fas fa-file-audio', class: 'audio' },
+            'flac': { icon: 'fas fa-file-audio', class: 'audio' },
+            'txt': { icon: 'fas fa-file-alt', class: 'other' },
+            'csv': { icon: 'fas fa-file-csv', class: 'xls' },
+            'json': { icon: 'fas fa-file-code', class: 'other' },
+            'xml': { icon: 'fas fa-file-code', class: 'other' },
+            'html': { icon: 'fas fa-file-code', class: 'other' },
+            'css': { icon: 'fas fa-file-code', class: 'other' },
+            'js': { icon: 'fas fa-file-code', class: 'other' },
+            'apk': { icon: 'fab fa-android', class: 'software' },
+            'exe': { icon: 'fab fa-windows', class: 'software' },
+            'dmg': { icon: 'fab fa-apple', class: 'software' },
+            'iso': { icon: 'fas fa-compact-disc', class: 'software' }
+        };
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFiles();
+            setupDragDrop();
+            checkAdminSession();
+        });
+        
+        // Show toast notification
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+        
+        // Load files from Firestore
+        async function loadFiles() {
+            try {
+                const snapshot = await db.collection('downloads')
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                
+                allFiles = [];
+                let totalDownloads = 0;
+                let totalSize = 0;
+                
+                snapshot.forEach(doc => {
+                    const file = { id: doc.id, ...doc.data() };
+                    allFiles.push(file);
+                    totalDownloads += file.downloads || 0;
+                    totalSize += file.size || 0;
+                });
+                
+                // Update stats
+                document.getElementById('totalFiles').textContent = allFiles.length;
+                document.getElementById('totalDownloads').textContent = totalDownloads.toLocaleString();
+                document.getElementById('totalSize').textContent = formatFileSize(totalSize);
+                
+                renderFiles();
+                if (isAdmin) renderAdminFiles();
+                
+            } catch (error) {
+                console.error('Error loading files:', error);
+                document.getElementById('fileGrid').innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>เกิดข้อผิดพลาดในการโหลดไฟล์</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Render files
+        function renderFiles() {
+            const grid = document.getElementById('fileGrid');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            let filteredFiles = allFiles.filter(file => {
+                const matchCategory = currentCategory === 'all' || file.category === currentCategory;
+                const matchSearch = !searchTerm || 
+                    file.name.toLowerCase().includes(searchTerm) || 
+                    (file.description && file.description.toLowerCase().includes(searchTerm));
+                return matchCategory && matchSearch;
+            });
+            
+            if (filteredFiles.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <i class="fas fa-folder-open"></i>
+                        <p>ไม่พบไฟล์</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = filteredFiles.map(file => {
+                const ext = getFileExtension(file.originalName || file.name);
+                const typeInfo = fileTypeMap[ext] || { icon: 'fas fa-file', class: 'other' };
+                
+                return `
+                    <div class="file-card">
+                        <div class="file-icon ${typeInfo.class}">
+                            <i class="${typeInfo.icon}"></i>
+                        </div>
+                        <h4 class="file-name">${escapeHtml(file.name)}</h4>
+                        <p class="file-desc">${escapeHtml(file.description || 'ไม่มีคำอธิบาย')}</p>
+                        <div class="file-meta">
+                            <span><i class="fas fa-hdd"></i> ${formatFileSize(file.size)}</span>
+                            <span><i class="fas fa-download"></i> ${file.downloads || 0}</span>
+                            <span><i class="fas fa-clock"></i> ${formatDate(file.createdAt)}</span>
+                        </div>
+                        <button class="btn-download" onclick="downloadFile('${file.id}', '${file.url}', '${escapeHtml(file.originalName || file.name)}')">
+                            <i class="fas fa-download"></i> ดาวน์โหลด
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Render admin file list
+        function renderAdminFiles() {
+            const container = document.getElementById('adminFilesContainer');
+            
+            if (allFiles.length === 0) {
+                container.innerHTML = '<p style="color: var(--gray); text-align: center;">ยังไม่มีไฟล์</p>';
+                return;
+            }
+            
+            container.innerHTML = allFiles.map(file => {
+                const ext = getFileExtension(file.originalName || file.name);
+                const typeInfo = fileTypeMap[ext] || { icon: 'fas fa-file', class: 'other' };
+                
+                return `
+                    <div class="admin-file-item">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div class="file-icon ${typeInfo.class}" style="width: 40px; height: 40px; font-size: 1rem; margin: 0;">
+                                <i class="${typeInfo.icon}"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600;">${escapeHtml(file.name)}</div>
+                                <div style="font-size: 0.85rem; color: var(--gray);">
+                                    ${formatFileSize(file.size)} • ${file.downloads || 0} ดาวน์โหลด • ${escapeHtml(file.originalName || '')}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="admin-file-actions">
+                            <button class="btn-edit" onclick="editFile('${file.id}')">
+                                <i class="fas fa-edit"></i> แก้ไข
+                            </button>
+                            <button class="btn-delete" onclick="deleteFile('${file.id}', '${file.storagePath}')">
+                                <i class="fas fa-trash"></i> ลบ
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Download file
+        async function downloadFile(fileId, url, filename) {
+            try {
+                // Increment download count
+                await db.collection('downloads').doc(fileId).update({
+                    downloads: firebase.firestore.FieldValue.increment(1)
+                });
+                
+                // Open download
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                link.target = '_blank';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Update local count
+                const file = allFiles.find(f => f.id === fileId);
+                if (file) {
+                    file.downloads = (file.downloads || 0) + 1;
+                    const totalDownloads = allFiles.reduce((sum, f) => sum + (f.downloads || 0), 0);
+                    document.getElementById('totalDownloads').textContent = totalDownloads.toLocaleString();
+                }
+                
+                showToast('กำลังดาวน์โหลด...', 'success');
+                
+            } catch (error) {
+                console.error('Error downloading:', error);
+                showToast('เกิดข้อผิดพลาด', 'error');
+            }
+        }
+        
+        // Filter by category
+        function filterByCategory(category) {
+            currentCategory = category;
+            
+            // Update active tab
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            renderFiles();
+        }
+        
+        // Filter by search
+        function filterFiles() {
+            renderFiles();
+        }
+        
+        // Setup drag and drop
+        function setupDragDrop() {
+            const uploadZone = document.getElementById('uploadZone');
+            
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadZone.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadZone.addEventListener(eventName, () => {
+                    uploadZone.classList.add('dragover');
+                }, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadZone.addEventListener(eventName, () => {
+                    uploadZone.classList.remove('dragover');
+                }, false);
+            });
+            
+            uploadZone.addEventListener('drop', (e) => {
+                const files = e.dataTransfer.files;
+                handleFiles(files);
+            }, false);
+        }
+        
+        // Handle file select
+        function handleFileSelect(event) {
+            handleFiles(event.target.files);
+        }
+        
+        // Handle files
+        function handleFiles(files) {
+            selectedFiles = Array.from(files);
+            
+            if (selectedFiles.length === 0) return;
+            
+            // Check file sizes
+            const maxSize = 100 * 1024 * 1024; // 100 MB
+            const oversized = selectedFiles.filter(f => f.size > maxSize);
+            if (oversized.length > 0) {
+                showToast(`ไฟล์บางไฟล์มีขนาดเกิน 100 MB: ${oversized.map(f => f.name).join(', ')}`, 'error');
+                selectedFiles = selectedFiles.filter(f => f.size <= maxSize);
+            }
+            
+            if (selectedFiles.length === 0) return;
+            
+            // Show preview
+            const container = document.getElementById('filePreviewContainer');
+            container.innerHTML = selectedFiles.map((file, index) => {
+                const ext = getFileExtension(file.name);
+                const typeInfo = fileTypeMap[ext] || { icon: 'fas fa-file', class: 'other' };
+                
+                return `
+                    <div class="file-preview">
+                        <div class="file-preview-icon file-icon ${typeInfo.class}">
+                            <i class="${typeInfo.icon}"></i>
+                        </div>
+                        <div class="file-preview-info">
+                            <div class="file-preview-name">${escapeHtml(file.name)}</div>
+                            <div class="file-preview-size">${formatFileSize(file.size)}</div>
+                        </div>
+                        <button class="btn-remove" onclick="removeFile(${index})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+            
+            // Set default name
+            if (selectedFiles.length === 1) {
+                const name = selectedFiles[0].name.replace(/\.[^/.]+$/, '');
+                document.getElementById('fileName').value = name;
+            } else {
+                document.getElementById('fileName').value = `${selectedFiles.length} ไฟล์`;
+            }
+            
+            document.getElementById('uploadForm').style.display = 'block';
+        }
+        
+        // Remove file from selection
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            if (selectedFiles.length === 0) {
+                document.getElementById('filePreviewContainer').innerHTML = '';
+                document.getElementById('uploadForm').style.display = 'none';
+            } else {
+                // Rebuild preview
+                const container = document.getElementById('filePreviewContainer');
+                container.innerHTML = selectedFiles.map((file, idx) => {
+                    const ext = getFileExtension(file.name);
+                    const typeInfo = fileTypeMap[ext] || { icon: 'fas fa-file', class: 'other' };
+                    
+                    return `
+                        <div class="file-preview">
+                            <div class="file-preview-icon file-icon ${typeInfo.class}">
+                                <i class="${typeInfo.icon}"></i>
+                            </div>
+                            <div class="file-preview-info">
+                                <div class="file-preview-name">${escapeHtml(file.name)}</div>
+                                <div class="file-preview-size">${formatFileSize(file.size)}</div>
+                            </div>
+                            <button class="btn-remove" onclick="removeFile(${idx})">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+        
+        // Upload files
+        async function uploadFiles() {
+            if (selectedFiles.length === 0) {
+                showToast('กรุณาเลือกไฟล์', 'error');
+                return;
+            }
+            
+            const displayName = document.getElementById('fileName').value.trim();
+            const description = document.getElementById('fileDesc').value.trim();
+            const category = document.getElementById('fileCategory').value;
+            
+            if (!displayName) {
+                showToast('กรุณาใส่ชื่อไฟล์', 'error');
+                return;
+            }
+            
+            const uploadBtn = document.getElementById('uploadBtn');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            
+            uploadBtn.disabled = true;
+            progressContainer.style.display = 'block';
+            
+            try {
+                for (let i = 0; i < selectedFiles.length; i++) {
+                    const file = selectedFiles[i];
+                    const fileName = `downloads/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+                    const storageRef = storage.ref(fileName);
+                    
+                    // Upload with progress
+                    const uploadTask = storageRef.put(file);
+                    
+                    await new Promise((resolve, reject) => {
+                        uploadTask.on('state_changed',
+                            (snapshot) => {
+                                const fileProgress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                const totalProgress = ((i + fileProgress / 100) / selectedFiles.length) * 100;
+                                progressFill.style.width = totalProgress + '%';
+                                progressText.textContent = `กำลังอัพโหลด ${i + 1}/${selectedFiles.length}... ${Math.round(fileProgress)}%`;
+                            },
+                            (error) => reject(error),
+                            () => resolve()
+                        );
+                    });
+                    
+                    // Get download URL
+                    const url = await storageRef.getDownloadURL();
+                    
+                    // Save to Firestore
+                    await db.collection('downloads').add({
+                        name: selectedFiles.length === 1 ? displayName : `${displayName} (${i + 1})`,
+                        originalName: file.name,
+                        description: description,
+                        category: category,
+                        url: url,
+                        storagePath: fileName,
+                        size: file.size,
+                        type: file.type,
+                        downloads: 0,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        createdBy: 'admin'
+                    });
+                }
+                
+                progressText.textContent = 'อัพโหลดสำเร็จ! ✓';
+                progressFill.style.background = 'var(--success)';
+                
+                showToast(`อัพโหลดสำเร็จ ${selectedFiles.length} ไฟล์`, 'success');
+                
+                // Reset form
+                setTimeout(() => {
+                    selectedFiles = [];
+                    document.getElementById('filePreviewContainer').innerHTML = '';
+                    document.getElementById('uploadForm').style.display = 'none';
+                    document.getElementById('fileName').value = '';
+                    document.getElementById('fileDesc').value = '';
+                    document.getElementById('fileInput').value = '';
+                    progressContainer.style.display = 'none';
+                    progressFill.style.width = '0%';
+                    progressFill.style.background = '';
+                    uploadBtn.disabled = false;
+                    
+                    loadFiles();
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Upload error:', error);
+                progressText.textContent = 'เกิดข้อผิดพลาด: ' + error.message;
+                progressFill.style.background = 'var(--danger)';
+                uploadBtn.disabled = false;
+                showToast('เกิดข้อผิดพลาดในการอัพโหลด', 'error');
+            }
+        }
+        
+        // Edit file
+        function editFile(fileId) {
+            const file = allFiles.find(f => f.id === fileId);
+            if (!file) return;
+            
+            document.getElementById('editFileId').value = fileId;
+            document.getElementById('editFileName').value = file.name;
+            document.getElementById('editFileDesc').value = file.description || '';
+            document.getElementById('editFileCategory').value = file.category || 'other';
+            
+            document.getElementById('editModal').classList.add('show');
+        }
+        
+        // Save file edit
+        async function saveFileEdit() {
+            const fileId = document.getElementById('editFileId').value;
+            const name = document.getElementById('editFileName').value.trim();
+            const description = document.getElementById('editFileDesc').value.trim();
+            const category = document.getElementById('editFileCategory').value;
+            
+            if (!name) {
+                showToast('กรุณาใส่ชื่อไฟล์', 'error');
+                return;
+            }
+            
+            try {
+                await db.collection('downloads').doc(fileId).update({
+                    name: name,
+                    description: description,
+                    category: category,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                closeEditModal();
+                loadFiles();
+                showToast('บันทึกสำเร็จ!', 'success');
+                
+            } catch (error) {
+                console.error('Error updating:', error);
+                showToast('เกิดข้อผิดพลาด: ' + error.message, 'error');
+            }
+        }
+        
+        // Delete file
+        async function deleteFile(fileId, storagePath) {
+            if (!confirm('ต้องการลบไฟล์นี้หรือไม่?')) return;
+            
+            try {
+                // Delete from Storage
+                if (storagePath) {
+                    try {
+                        await storage.ref(storagePath).delete();
+                    } catch (e) {
+                        console.log('Storage delete error (may not exist):', e);
+                    }
+                }
+                
+                // Delete from Firestore
+                await db.collection('downloads').doc(fileId).delete();
+                
+                loadFiles();
+                showToast('ลบสำเร็จ!', 'success');
+                
+            } catch (error) {
+                console.error('Error deleting:', error);
+                showToast('เกิดข้อผิดพลาด: ' + error.message, 'error');
+            }
+        }
+        
+        // Admin login
+        function toggleAdminLogin() {
+            if (isAdmin) {
+                // Logout
+                isAdmin = false;
+                sessionStorage.removeItem('download_admin');
+                document.getElementById('adminPanel').classList.remove('show');
+                document.getElementById('adminLoginBtn').classList.remove('logged-in');
+                document.getElementById('adminLoginBtn').innerHTML = '<i class="fas fa-lock"></i>';
+                showToast('ออกจากระบบแล้ว', 'info');
+            } else {
+                document.getElementById('loginModal').classList.add('show');
+            }
+        }
+        
+        function adminLogin() {
+            const pin = document.getElementById('adminPin').value;
+            
+            // Simple PIN check (you can change this)
+            if (pin === '159357' || pin === '123456') {
+                isAdmin = true;
+                sessionStorage.setItem('download_admin', 'true');
+                closeLoginModal();
+                document.getElementById('adminPanel').classList.add('show');
+                document.getElementById('adminLoginBtn').classList.add('logged-in');
+                document.getElementById('adminLoginBtn').innerHTML = '<i class="fas fa-unlock"></i>';
+                renderAdminFiles();
+                showToast('เข้าสู่ระบบสำเร็จ', 'success');
+            } else {
+                showToast('รหัส PIN ไม่ถูกต้อง', 'error');
+            }
+        }
+        
+        function checkAdminSession() {
+            if (sessionStorage.getItem('download_admin') === 'true') {
+                isAdmin = true;
+                document.getElementById('adminPanel').classList.add('show');
+                document.getElementById('adminLoginBtn').classList.add('logged-in');
+                document.getElementById('adminLoginBtn').innerHTML = '<i class="fas fa-unlock"></i>';
+            }
+        }
+        
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('show');
+            document.getElementById('adminPin').value = '';
+        }
+        
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('show');
+        }
+        
+        // Close modals on outside click
+        document.getElementById('loginModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('loginModal')) {
+                closeLoginModal();
+            }
+        });
+        
+        document.getElementById('editModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('editModal')) {
+                closeEditModal();
+            }
+        });
+        
+        // Utility functions
+        function getFileExtension(filename) {
+            return filename.split('.').pop().toLowerCase();
+        }
+        
+        function formatFileSize(bytes) {
+            if (!bytes) return '0 B';
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(1024));
+            return (bytes / Math.pow(1024, i)).toFixed(i > 0 ? 1 : 0) + ' ' + sizes[i];
+        }
+        
+        function formatDate(timestamp) {
+            if (!timestamp) return '-';
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+

@@ -1,0 +1,3993 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="TukTuk Thailand - AI ผู้ช่วยงานฉีดพลาสติก ทำให้ชีวิตง่ายขึ้น แก้ปัญหาได้ทันที คำนวณแม่นยำ 24/7">
+    <meta name="keywords"
+        content="Injection Molding, AI Assistant, LINE Bot, เครื่องคิดเลขวิศวกร, ฉีดพลาสติก, TukTuk Thailand">
+    <meta name="author" content="TukTuk Thailand by อ.วิทยา">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tuktukfeed.com/">
+    <meta property="og:title" content="TukTuk Thailand - AI ผู้ช่วยงานฉีดพลาสติก">
+    <meta property="og:description" content="ทำให้ชีวิตง่ายขึ้น แก้ปัญหาได้ทันที คำนวณแม่นยำ พร้อมช่วยเหลือ 24/7">
+    <meta property="og:image" content="https://tuktukfeed.com/images/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://tuktukfeed.com/">
+    <meta property="twitter:title" content="TukTuk Thailand - AI ผู้ช่วยงานฉีดพลาสติก">
+    <meta property="twitter:description" content="ทำให้ชีวิตง่ายขึ้น แก้ปัญหาได้ทันที คำนวณแม่นยำ พร้อมช่วยเหลือ 24/7">
+    <meta property="twitter:image" content="https://tuktukfeed.com/images/og-image.jpg">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://tuktukfeed.com/">
+
+    <title>TukTuk Thailand - ทำให้ชีวิตการทำงานง่ายขึ้น</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/images/logo.png">
+    <link rel="apple-touch-icon" href="/assets/images/logo.png">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- TukTuk Thailand Auth -->
+    <script src="js/auth.js"></script>
+
+    <!-- ═══════════════════════════════════════════════════════
+         SPA EMBEDDED DETECTION — Must run ASAP before render
+         Hides standalone nav/bottom-nav when loaded inside the
+         TukTuk SPA iframe (index.html) to prevent double nav.
+    ════════════════════════════════════════════════════════ -->
+    <script>
+        (function() {
+            var isEmbedded = (window.self !== window.top) ||
+                             window.location.search.includes('embedded=true');
+            if (isEmbedded) {
+                // Inject a <style> immediately so elements are hidden before paint
+                var s = document.createElement('style');
+                s.id = 'official-embedded-hide';
+                s.textContent = [
+                    /* hide the standalone Bootstrap navbar */
+                    'nav.navbar { display: none !important; }',
+                    /* hide the standalone floating bottom-nav */
+                    '.bottom-nav { display: none !important; }',
+                    /* hide ticker bar (shown by index.html\'s own ticker) */
+                    '.ticker-bar { display: none !important; }',
+                    /* hide the status-header bar */
+                    '.status-header { display: none !important; }',
+                    /* remove top padding/margin meant for the standalone nav */
+                    'body { padding-top: 0 !important; }',
+                    '.hero-section { padding-top: 30px !important; }',
+                ].join('\n');
+                // Append to <head> immediately
+                (document.head || document.documentElement).appendChild(s);
+                // Also flag the body for any JS that cares
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.body.classList.add('is-embedded');
+                });
+            }
+        })();
+    </script>
+
+    <style>
+        :root {
+            --line-green: #00B900;
+            --line-dark: #00C300;
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+            --aurora-1: #4f46e5;
+            --aurora-2: #7c3aed;
+            --aurora-3: #db2777;
+            --dark-color: #030712;
+            --card-bg: rgba(17, 24, 39, 0.7);
+            --accent-orange: #f97316;
+            --accent-blue: #06b6d4;
+            --text-glow: 0 0 20px rgba(99, 102, 241, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: default;
+        }
+
+        button,
+        a,
+        .service-btn {
+            cursor: pointer !important;
+        }
+
+        body {
+            font-family: 'Kanit', sans-serif;
+            color: #f3f4f6;
+            background-color: var(--dark-color);
+            overflow-x: hidden;
+        }
+
+        /* --- Powerful Background System --- */
+        .bg-system {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: radial-gradient(circle at 50% 50%, #111827 0%, #030712 100%);
+            overflow: hidden;
+        }
+
+        .aurora {
+            position: absolute;
+            width: 80vw;
+            height: 80vh;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.15;
+            z-index: -1;
+            animation: aurora-move 20s infinite alternate;
+        }
+
+        .aurora-1 {
+            background: var(--aurora-1);
+            top: -20%;
+            left: -10%;
+        }
+
+        .aurora-2 {
+            background: var(--aurora-2);
+            bottom: -20%;
+            right: -10%;
+            animation-delay: -5s;
+        }
+
+        .aurora-3 {
+            background: var(--aurora-3);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.08;
+        }
+
+        @keyframes aurora-move {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(10vw, 5vh) scale(1.1);
+            }
+        }
+
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            mask-image: radial-gradient(circle at 50% 50%, black, transparent);
+        }
+
+        /* --- Live Status Bar --- */
+        .status-header {
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(15px);
+            padding: 8px 0;
+            font-size: 0.78rem;
+            color: #94a3b8;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            position: fixed;
+            top: 40px;
+            /* Below Ticker */
+            width: 100%;
+            z-index: 1999;
+            height: 36px;
+            display: flex;
+            align-items: center;
+        }
+
+        .status-marker {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-right: 20px;
+        }
+
+        .dot-pulse {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #10b981;
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+            }
+
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+
+        /* --- Premium Blended Layout --- */
+        .hero-section {
+            background: transparent;
+            padding: 160px 0 100px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero-title {
+            font-size: 4.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 25px;
+            color: #fff;
+            letter-spacing: -2px;
+        }
+
+        .hero-title .highlight {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brand-name {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 5.5rem;
+            display: inline-block;
+            filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.4));
+            margin-bottom: 5px;
+        }
+
+        .tagline-glow {
+            font-size: 1.8rem;
+            font-weight: 500;
+            color: #fff;
+            opacity: 0.9;
+            letter-spacing: 3px;
+            display: inline-block;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            padding: 5px 20px;
+            border-radius: 50px;
+        }
+
+        @media (max-width: 991px) {
+            .brand-name {
+                font-size: 3.5rem;
+            }
+
+            .tagline-glow {
+                font-size: 1.2rem;
+            }
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .launcher-strip {
+            background: rgba(17, 24, 39, 0.4);
+            backdrop-filter: blur(25px);
+            padding: 40px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.4s ease;
+        }
+
+        .launcher-strip:hover {
+            transform: translateY(-5px);
+            border-color: var(--aurora-1);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        @media (max-width: 991px) {
+            .hero-title {
+                font-size: 3rem;
+            }
+
+            .hero-section {
+                padding-top: 120px;
+            }
+        }
+
+        .strip-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            margin-bottom: 25px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .strip-section h3 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 25px;
+            line-height: 1.1;
+            color: #fff;
+            letter-spacing: -1px;
+        }
+
+        .strip-section p {
+            color: #94a3b8;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .strip-features {
+            list-style: none;
+            padding: 0;
+            margin-bottom: auto;
+        }
+
+        .strip-features li {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+            color: #d1d5db;
+        }
+
+        /* Launcher Grid inside Strip */
+        .launcher-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .launcher-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 25px;
+            padding: 25px 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .launcher-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            color: #fff;
+        }
+
+        .launcher-item i {
+            font-size: 2rem;
+            margin-bottom: 12px;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .launcher-item span {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .purple-theme {
+            border-top: 5px solid #8B5CF6;
+        }
+
+        .green-theme {
+            border-top: 5px solid #22c55e;
+        }
+
+        .orange-theme {
+            border-top: 5px solid #f97316;
+        }
+
+        /* --- Premium Floating Bottom Nav --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 600px;
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 85px;
+            border-radius: 45px;
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 0 25px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+        }
+
+        .nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            gap: 5px;
+            flex: 1;
+        }
+
+        .nav-btn:hover,
+        .nav-btn.active {
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn i {
+            font-size: 1.6rem;
+        }
+
+        .line-nav-btn {
+            width: 75px;
+            height: 75px;
+            background: linear-gradient(135deg, #8B5CF6 0%, #D946EF 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: -45px;
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.5);
+            color: #fff !important;
+            font-size: 2rem !important;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 4px solid rgba(17, 24, 39, 0.85);
+        }
+
+        .line-nav-btn:hover {
+            transform: scale(1.1) rotate(10deg);
+            box-shadow: 0 15px 35px rgba(217, 70, 239, 0.6);
+        }
+
+        .line-nav-btn i {
+            font-size: 2.2rem;
+            margin-bottom: 0;
+        }
+
+        /* --- Modern Nav Refinement --- */
+        .navbar {
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(30px);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            position: fixed;
+            top: 76px;
+            /* Below Ticker(40) + Status(36) */
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        @media (max-width: 991px) {
+
+            /* Mobile Visibility & Padding */
+            body {
+                padding-bottom: 100px !important;
+            }
+
+            .navbar {
+                top: 0;
+                /* Sticky to top on mobile if needed, or adjust */
+                position: fixed;
+            }
+
+            body.has-ticker .navbar {
+                top: 76px;
+            }
+
+            /* Smart Bottom Nav Styles */
+            .bottom-nav {
+                display: flex !important;
+                position: fixed;
+                bottom: env(safe-area-inset-bottom, 20px);
+                left: 50%;
+                transform: translateX(-50%);
+                width: calc(100% - 30px);
+                max-width: 450px;
+                height: 70px;
+                background: rgba(15, 23, 42, 0.95);
+                backdrop-filter: blur(25px);
+                -webkit-backdrop-filter: blur(25px);
+                border-radius: 40px;
+                justify-content: space-around;
+                align-items: center;
+                z-index: 999999 !important;
+                box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8), 0 0 20px rgba(124, 58, 237, 0.2);
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                padding: 0 15px;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .bottom-nav .nav-btn {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                color: #94a3b8;
+                text-decoration: none;
+                font-size: 0.7rem;
+                gap: 2px;
+                transition: all 0.3s ease;
+                flex: 1;
+            }
+
+            .bottom-nav .nav-btn i {
+                font-size: 1.3rem;
+            }
+
+            .bottom-nav .nav-btn.active {
+                color: #fff;
+            }
+
+            .bottom-nav .line-nav-btn {
+                position: relative;
+                top: -25px;
+                width: 70px;
+                height: 70px;
+                background: linear-gradient(135deg, #a855f7, #7c3aed);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white !important;
+                box-shadow: 0 10px 30px rgba(124, 58, 237, 0.6);
+                border: 6px solid #030712;
+                flex: none;
+                margin-top: 0;
+            }
+
+            .bottom-nav .line-nav-btn i {
+                font-size: 1.8rem;
+                margin-bottom: 0;
+            }
+        }
+
+        .nav-link {
+            color: #d1d5db !important;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-link:hover {
+            color: #fff !important;
+            text-shadow: var(--text-glow);
+        }
+
+        /* --- Powerful Hero Styling --- */
+        .hero-section {
+            background: transparent;
+            padding-top: 140px;
+            perspective: 1000px;
+        }
+
+        .hero-badge {
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .hero-title {
+            font-size: 4.5rem;
+            line-height: 1.1;
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        @media (max-width: 991px) {
+            .hero-title {
+                font-size: 3rem;
+            }
+        }
+
+        .powerful-glow {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, var(--aurora-1) 0%, transparent 70%);
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: -1;
+            filter: blur(30px);
+        }
+
+        /* Hero Service Card Glassmorphism */
+        .services-menu-card {
+            background: rgba(31, 41, 55, 0.4);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 40px;
+            padding: 35px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease;
+        }
+
+        .services-menu-card:hover {
+            transform: translateY(-5px) rotateX(2deg) rotateY(-2deg);
+        }
+
+        .service-btn {
+            height: 65px;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            text-transform: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid transparent;
+            margin-bottom: 12px;
+            width: 100%;
+        }
+
+        .service-btn::before {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: 0.6s;
+            pointer-events: none;
+        }
+
+        .service-btn:hover::before {
+            top: 100%;
+            left: 100%;
+        }
+
+        .service-btn span {
+            font-weight: 600;
+        }
+
+        .service-btn i {
+            font-size: 1.4rem;
+        }
+
+        .btn-green {
+            background: var(--line-green);
+            color: #fff;
+            box-shadow: 0 10px 20px -5px rgba(0, 185, 0, 0.4);
+        }
+
+        .btn-gray-outline {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .btn-orange-outline {
+            background: rgba(249, 115, 22, 0.1);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            color: #fff;
+        }
+
+        .service-btn-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .service-btn-row .service-btn {
+            margin-bottom: 0;
+        }
+
+        /* Powerful Features Cards */
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 30px;
+            padding: 40px;
+            height: 100%;
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            background: rgba(31, 41, 55, 0.8);
+            border-color: var(--aurora-1);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--primary-gradient);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #fff;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .feature-icon::after {
+            content: '';
+            position: absolute;
+            inset: -5px;
+            background: var(--primary-gradient);
+            border-radius: 25px;
+            filter: blur(15px);
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        .social-proof {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px 30px;
+        }
+
+        /* Floating Animation */
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        /* --- Floating Tech Icons --- */
+        .tech-float {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--aurora-1);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .tf-1 {
+            top: 15%;
+            right: 10%;
+            animation: floating 4s ease-in-out infinite;
+        }
+
+        .tf-2 {
+            bottom: 20%;
+            left: 5%;
+            animation: floating 5s ease-in-out infinite reverse;
+        }
+
+        .tf-3 {
+            top: 40%;
+            left: 8%;
+            animation: floating 3.5s ease-in-out infinite 1s;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0;
+        }
+
+        .navbar-logo {
+            height: 38px;
+            width: auto;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brand:hover .navbar-logo {
+            transform: scale(1.1);
+        }
+
+        .navbar-brand span {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        /* Smart Nav Items */
+        .nav-item {
+            margin: 0 2px;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: #e2e8f0 !important;
+            padding: 8px 20px !important;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .nav-link i,
+        .nav-link span.emoji {
+            font-size: 1.1em;
+            transition: transform 0.3s ease;
+        }
+
+        /* Hover Effects */
+        .nav-link:hover {
+            background: rgba(102, 126, 234, 0.08);
+            color: #667eea !important;
+            transform: translateY(-1px);
+        }
+
+        .nav-link:hover i {
+            transform: scale(1.2);
+        }
+
+        /* Special Highlights for Apps */
+        .nav-link.nav-highlight-purple {
+            color: #667eea !important;
+            font-weight: 600;
+        }
+
+        .nav-link.nav-highlight-purple:hover {
+            background: rgba(102, 126, 234, 0.15);
+        }
+
+        .nav-link.nav-highlight-green {
+            color: #00B900 !important;
+            font-weight: 600;
+        }
+
+        .nav-link.nav-highlight-green:hover {
+            background: rgba(0, 185, 0, 0.1);
+        }
+
+        .nav-link.nav-highlight-orange {
+            color: #FF6B35 !important;
+            font-weight: 600;
+        }
+
+        .nav-link.nav-highlight-orange:hover {
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        /* Mobile Toggler */
+        .navbar-toggler {
+            border: none;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            position: relative;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: none;
+        }
+
+        /* Highlight Colors for Special Menus */
+        .nav-highlight-purple {
+            color: #8B5CF6 !important;
+        }
+
+        .nav-highlight-purple:hover {
+            background: rgba(139, 92, 246, 0.1) !important;
+        }
+
+        .nav-highlight-green {
+            color: #22c55e !important;
+        }
+
+        .nav-highlight-green:hover {
+            background: rgba(34, 197, 94, 0.1) !important;
+        }
+
+        .nav-highlight-orange {
+            color: #f59e0b !important;
+        }
+
+        .nav-highlight-orange:hover {
+            background: rgba(245, 158, 11, 0.1) !important;
+        }
+
+        .btn-line-nav {
+            background: var(--line-green) !important;
+            color: white !important;
+            border-radius: 50px !important;
+            padding: 10px 25px !important;
+            font-weight: 700 !important;
+            font-size: 0.9rem !important;
+            white-space: nowrap !important;
+            box-shadow: 0 4px 15px rgba(0, 185, 0, 0.3);
+        }
+
+        .btn-line-nav:hover {
+            background: var(--line-dark) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 185, 0, 0.4);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            position: relative;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            padding-top: 80px;
+        }
+
+        .hero-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float-particle 15s infinite;
+        }
+
+        @keyframes float-particle {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-badge i {
+            margin-right: 8px;
+            color: var(--accent-orange);
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: white;
+            line-height: 1.2;
+            margin-bottom: 25px;
+        }
+
+        .hero-title .highlight {
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 50px;
+        }
+
+        .btn-hero-primary {
+            background: var(--success-gradient);
+            color: white;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 10px 30px rgba(0, 185, 0, 0.4);
+        }
+
+        .btn-hero-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 185, 0, 0.5);
+            color: white;
+        }
+
+        .btn-hero-secondary {
+            background: transparent;
+            color: white;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-hero-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: white;
+            color: white;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 50px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Typing Animation */
+        .typing-text {
+            display: inline;
+            border-right: 3px solid var(--accent-orange);
+            animation: blink-cursor 0.8s step-end infinite;
+        }
+
+        @keyframes blink-cursor {
+
+            from,
+            to {
+                border-color: transparent;
+            }
+
+            50% {
+                border-color: var(--accent-orange);
+            }
+        }
+
+        /* Hero Animations */
+        .hero-badge {
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .hero-title {
+            animation: fadeInUp 0.8s ease 0.2s backwards;
+        }
+
+        .hero-subtitle {
+            animation: fadeInUp 0.8s ease 0.4s backwards;
+        }
+
+        .hero-stats {
+            animation: fadeInUp 0.8s ease 0.6s backwards;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Counter Animation */
+        .stat-number {
+            animation: countUp 2s ease-out;
+        }
+
+        .social-proof {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 30px;
+            padding: 15px 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 0.8s ease 0.8s backwards;
+            width: fit-content;
+        }
+
+        .user-avatars {
+            display: flex;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 2px solid white;
+            margin-left: -10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: white;
+        }
+
+        .user-avatar:first-child {
+            margin-left: 0;
+        }
+
+        .proof-text {
+            color: white;
+            font-size: 0.95rem;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            padding-right: 15px;
+        }
+
+        .proof-text strong {
+            color: #4ade80;
+            /* Success green */
+        }
+
+        /* Compact Stats in Hero */
+        .mini-stats {
+            display: flex;
+            gap: 20px;
+        }
+
+        .mini-stat-item {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .mini-stat-value {
+            font-weight: 700;
+            color: white;
+            font-size: 1.1rem;
+            line-height: 1;
+        }
+
+        .mini-stat-label {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.6);
+            white-space: nowrap;
+            margin-top: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .social-proof {
+                flex-direction: column;
+                align-items: flex-start;
+                border-radius: 25px;
+                padding: 20px;
+                gap: 15px;
+            }
+
+            .proof-text {
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                padding-right: 0;
+                padding-bottom: 10px;
+                width: 100%;
+            }
+
+            .mini-stats {
+                gap: 15px;
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+
+        .hero-visual {
+            position: relative;
+        }
+
+        .qr-showcase {
+            background: white;
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 320px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .qr-showcase::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: var(--success-gradient);
+            border-radius: 33px;
+            z-index: -1;
+        }
+
+        .qr-image {
+            width: 200px;
+            height: 200px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+        }
+
+        .qr-title {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--dark-color);
+            margin-bottom: 10px;
+        }
+
+        .qr-subtitle {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+        }
+
+        .scan-badge {
+            display: inline-block;
+            background: var(--success-gradient);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+
+        .stat-icon-wrap {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-icon-wrap.visitor {
+            background: rgba(78, 205, 196, 0.15);
+            color: #4ECDC4;
+        }
+
+        .stat-icon-wrap.online {
+            background: rgba(0, 185, 0, 0.15);
+            color: #00B900;
+        }
+
+        .stat-icon-wrap.total {
+            background: rgba(255, 107, 53, 0.15);
+            color: #FF6B35;
+        }
+
+        .stat-icon-wrap.users {
+            background: rgba(102, 126, 234, 0.15);
+            color: #667eea;
+        }
+
+        .stats-banner .stat-number {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+        }
+
+        .stats-banner .stat-label {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 500;
+        }
+
+        .services-menu-card {
+            background: transparent;
+            padding: 0;
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .service-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 18px 35px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .service-btn i {
+            font-size: 1.3rem;
+        }
+
+        /* Green solid button */
+        .service-btn.btn-green {
+            background: var(--success-gradient);
+            border: none;
+            box-shadow: 0 8px 25px rgba(0, 185, 0, 0.35);
+        }
+
+        .service-btn.btn-green:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 185, 0, 0.45);
+            color: white;
+        }
+
+        /* Orange outline button */
+        .service-btn.btn-orange-outline {
+            background: transparent;
+            border: 2px solid #FF9500;
+            color: white;
+        }
+
+        .service-btn.btn-orange-outline:hover {
+            background: rgba(255, 149, 0, 0.15);
+            transform: translateY(-3px);
+            color: white;
+        }
+
+        /* Gray outline button */
+        .service-btn.btn-gray-outline {
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            color: white;
+        }
+
+        .service-btn.btn-gray-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: translateY(-3px);
+            color: white;
+        }
+
+        /* Button Shine Effect */
+        .service-btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .service-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Icon Bounce */
+        .service-btn:hover i {
+            animation: iconBounce 0.5s ease;
+        }
+
+        @keyframes iconBounce {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        /* Testimonial Section */
+        .testimonial-section {
+            padding: 100px 0;
+            background: linear-gradient(180deg, #f8f9fa 0%, white 100%);
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .testimonial-card {
+            background: white;
+            padding: 35px;
+            border-radius: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+        }
+
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 5rem;
+            color: rgba(102, 126, 234, 0.1);
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+
+        .testimonial-stars {
+            color: #fbbf24;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .testimonial-text {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            font-size: 1rem;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .testimonial-avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .testimonial-info h5 {
+            font-weight: 700;
+            margin-bottom: 3px;
+            color: var(--dark-color);
+        }
+
+        .testimonial-info p {
+            color: #888;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .testimonial-badge {
+            display: inline-block;
+            background: rgba(0, 185, 0, 0.1);
+            color: var(--line-green);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        /* Two buttons in a row */
+        .service-btn-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .service-btn-row .service-btn {
+            flex: 1;
+        }
+
+        @media (max-width: 768px) {
+            .services-menu-card {
+                max-width: 100%;
+                padding: 0 10px;
+            }
+
+            .service-btn {
+                padding: 14px 20px;
+                font-size: 0.9rem;
+            }
+
+            .service-btn-row {
+                flex-direction: column;
+            }
+        }
+
+        .service-icon.placeholder {
+            height: 46px;
+            font-size: 1rem;
+        }
+
+        .service-item span {
+            font-size: 0.65rem;
+        }
+
+        /* Floating Icons */
+        .floating-icons {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .floating-icon {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.3;
+            animation: float-icon 6s ease-in-out infinite;
+        }
+
+        @keyframes float-icon {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        /* Problem Section */
+        .problem-section {
+            padding: 120px 0;
+            background: var(--light-color);
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: var(--dark-color);
+            margin-bottom: 20px;
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto 60px;
+        }
+
+        .problem-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            height: 100%;
+            transition: all 0.4s ease;
+            border: 2px solid transparent;
+        }
+
+        .problem-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent-orange);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+        }
+
+        .problem-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #ff6b6b, #ffa502);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .problem-icon i {
+            font-size: 2rem;
+            color: white;
+        }
+
+        .problem-title {
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--dark-color);
+        }
+
+        .problem-desc {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        /* Solution Section */
+        .solution-section {
+            padding: 120px 0;
+            background: linear-gradient(180deg, white 0%, var(--light-color) 100%);
+        }
+
+        .solution-badge {
+            background: rgba(0, 185, 0, 0.1);
+            color: var(--line-green);
+        }
+
+        .solution-card {
+            background: white;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s ease;
+        }
+
+        .solution-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.15);
+        }
+
+        .solution-header {
+            padding: 30px;
+            color: white;
+            position: relative;
+        }
+
+        .solution-header.line-bot {
+            background: var(--success-gradient);
+        }
+
+        .solution-header.calculator {
+            background: var(--primary-gradient);
+        }
+
+        .solution-percent {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 3rem;
+            font-weight: 800;
+            opacity: 0.3;
+        }
+
+        .solution-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .solution-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .solution-tagline {
+            opacity: 0.9;
+        }
+
+        .solution-body {
+            padding: 30px;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .feature-list li {
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list i {
+            width: 35px;
+            height: 35px;
+            background: rgba(0, 185, 0, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--line-green);
+        }
+
+        .solution-card.calculator .feature-list i {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        /* How It Works */
+        .how-section {
+            padding: 120px 0;
+            background: var(--dark-color);
+            color: white;
+        }
+
+        .how-badge {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .how-title {
+            color: white;
+        }
+
+        .how-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .step-card {
+            text-align: center;
+            padding: 40px 30px;
+            position: relative;
+        }
+
+        .step-number {
+            width: 80px;
+            height: 80px;
+            background: var(--success-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 800;
+            color: white;
+            margin: 0 auto 25px;
+            position: relative;
+        }
+
+        .step-card:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 60px;
+            right: -50%;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--line-green), transparent);
+            z-index: 0;
+        }
+
+        .step-title {
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        .step-desc {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.8;
+        }
+
+        /* Pricing Preview */
+        .pricing-section {
+            padding: 120px 0;
+            background: var(--light-color);
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 25px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-card.featured {
+            background: var(--dark-color);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured .pricing-price {
+            color: var(--accent-orange);
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background: var(--accent-orange);
+            color: white;
+            padding: 5px 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transform: rotate(45deg);
+        }
+
+        .pricing-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .pricing-price {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--line-green);
+            margin-bottom: 5px;
+        }
+
+        .pricing-period {
+            color: #999;
+            margin-bottom: 30px;
+        }
+
+        .pricing-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 30px;
+            text-align: left;
+        }
+
+        .pricing-features li {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .pricing-card.featured .pricing-features li {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .pricing-features i {
+            color: var(--line-green);
+        }
+
+        .btn-pricing {
+            width: 100%;
+            padding: 15px;
+            border-radius: 50px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .btn-pricing-line {
+            background: var(--success-gradient);
+            color: white;
+            border: none;
+        }
+
+        .btn-pricing-line:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 185, 0, 0.4);
+            color: white;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 120px 0;
+            background: var(--success-gradient);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: pulse-bg 10s ease-in-out infinite;
+        }
+
+        @keyframes pulse-bg {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            color: white;
+        }
+
+        .cta-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .cta-subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-qr-box {
+            background: white;
+            padding: 30px;
+            border-radius: 25px;
+            display: inline-block;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-qr-box img {
+            width: 180px;
+            height: 180px;
+            margin-bottom: 15px;
+        }
+
+        .cta-qr-text {
+            color: var(--dark-color);
+            font-weight: 600;
+        }
+
+        .cta-or {
+            margin: 30px 0;
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+
+        .btn-cta-large {
+            background: white;
+            color: var(--line-green);
+            padding: 20px 50px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.3rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-cta-large:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            color: var(--line-dark);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark-color);
+            color: white;
+            padding: 80px 0 30px;
+        }
+
+        .footer-brand {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+
+        .footer-desc {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.8;
+            margin-bottom: 25px;
+        }
+
+        .footer-links h5 {
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: white;
+        }
+
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--line-green);
+            padding-left: 5px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .footer-social a {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            background: var(--line-green);
+            transform: translateY(-5px);
+        }
+
+        .footer-bottom {
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-stats {
+                justify-content: center;
+            }
+
+            .step-card::after {
+                display: none;
+            }
+
+            .pricing-card.featured {
+                transform: scale(1);
+                margin: 20px 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .cta-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* Scroll Animation Trigger */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ========================================
+           NEWS TICKER BAR
+           ======================================== */
+        .ticker-bar {
+            background: linear-gradient(90deg, #0f172a, #1e293b, #0f172a);
+            color: white;
+            padding: 0;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 2005;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(0, 185, 0, 0.3);
+        }
+
+        .ticker-wrapper {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .ticker-label {
+            background: var(--line-green);
+            padding: 5px 15px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            border-radius: 0 20px 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .ticker-label i {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .ticker-content {
+            flex: 1;
+            overflow: hidden;
+            margin-left: 15px;
+        }
+
+        .ticker-track {
+            display: flex;
+            animation: ticker 40s linear infinite;
+            width: max-content;
+        }
+
+        .ticker-track:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes ticker {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .ticker-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 30px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .ticker-item:last-child {
+            border-right: none;
+        }
+
+        .ticker-item a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .ticker-item a:hover {
+            color: var(--line-green);
+        }
+
+        .ticker-item .news-badge {
+            background: #667eea;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .ticker-item .product-badge {
+            background: #FF6B35;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .ticker-item .promo-badge {
+            background: #e74c3c;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        /* Adjust navbar position when ticker is present */
+        body.has-ticker .navbar {
+            top: 76px;
+        }
+
+        body.has-ticker .hero-section {
+            padding-top: 180px;
+        }
+
+        @media (max-width: 768px) {
+            .ticker-bar {
+                padding: 8px 0;
+            }
+
+            .ticker-label {
+                padding: 4px 10px;
+                font-size: 0.75rem;
+            }
+
+            .ticker-item {
+                font-size: 0.8rem;
+                padding: 0 20px;
+            }
+        }
+    </style>
+    <script src="js/auth.js" defer></script>
+    <script src="js/analytics.js" defer></script>
+    <script src="js/cookie-consent.js" defer></script>
+</head>
+
+<body class="has-ticker">
+    <!-- News Ticker Bar -->
+    <div class="ticker-bar" id="tickerBar">
+        <div class="ticker-wrapper">
+            <div class="ticker-label">
+                <i class="fas fa-bolt"></i>
+                <span>LIVE</span>
+            </div>
+            <div class="ticker-content">
+                <div class="ticker-track" id="tickerTrack">
+                    <!-- Dynamic content loaded via JavaScript -->
+                    <div class="ticker-item">
+                        <span class="news-badge">ข่าว</span>
+                        <span>กำลังโหลดข้อมูล...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index">
+                <img src="/assets/images/logo.png" class="navbar-logo" alt="TukTuk Logo"
+                    onerror="this.onerror=null; this.src='https://placehold.co/100x48?text=TukTuk Thailand';">
+                <span>TukTuk Thailand</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="index">TukTuk Feed</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="official">Marketplace Official</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#features">ฟีเจอร์</a></li>
+                    <li class="nav-item"><a class="nav-link nav-highlight-purple" href="ai-tutor">🤖 TukTuk Tutor</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link nav-highlight-green" href="smart-farm">🌿 Smart Farm</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="/calculator">🧮 Calculator</a></li>
+                    <li class="nav-item ms-2">
+                        <div id="userBadgeContainer"></div>
+                    </li>
+                    <li class="nav-item ms-2">
+                        <a class="nav-link btn-line-nav" href="https://lin.ee/1YJsw47" target="_blank">
+                            <i class="fab fa-line me-1"></i>เริ่มใช้งานฟรี
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Status Bar -->
+    <div class="status-header">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="status-left">
+                <span class="status-marker">
+                    <div class="dot-pulse"></div> SYSTEM ACTIVE
+                </span>
+                <span class="d-none d-md-inline ms-3 opacity-50">CONTROL HUB V4.5 • REAL-TIME AI CLOUD</span>
+            </div>
+            <div class="status-right d-flex gap-4">
+                <span id="header-queries"><i class="fas fa-brain me-1"></i> AI Queries: <span
+                        class="text-white fw-bold">12,450+</span></span>
+                <span id="header-uptime" class="d-none d-sm-inline"><i class="fas fa-clock me-1"></i> Uptime: <span
+                        class="text-white fw-bold">99.99%</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Background System -->
+    <div class="bg-system">
+        <div class="aurora aurora-1"></div>
+        <div class="aurora aurora-2"></div>
+        <div class="aurora aurora-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-particles">
+                <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+                <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
+                <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
+                <div class="particle" style="left: 50%; animation-delay: 1s;"></div>
+                <div class="particle" style="left: 70%; animation-delay: 3s;"></div>
+                <div class="particle" style="left: 80%; animation-delay: 5s;"></div>
+                <div class="particle" style="left: 90%; animation-delay: 2.5s;"></div>
+            </div>
+
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 hero-content" data-aos="fade-right">
+                        <span class="hero-badge badge p-2 px-3 rounded-pill mb-3 d-inline-block">
+                            <i class="fas fa-bolt"></i> AI POWERED HUB
+                        </span>
+                        <h1 class="hero-title text-white">
+                            <span class="brand-name">TukTuk Thailand</span><br>
+                            <span class="tagline-glow">ทำให้ชีวิตง่ายขึ้น</span><br>
+                            <span class="highlight typing-text" id="typingText">Intelligence</span>
+                        </h1>
+                        <p class="hero-subtitle opacity-75 mt-3">
+                            ยกระดับงานฉีดพลาสติก บัญชี และ<b>ตลาดการเกษตร</b>ของคุณไปอีกขั้น ด้วยเทคโนโลยี AI
+                            อัจฉริยะที่พร้อมช่วยเหลือทั้ง<b>วิศวกร เกษตรกร และนักเรียน</b> ตลอด 24 ชั่วโมง
+                        </p>
+                        <div class="hero-stats mt-4">
+                            <div class="stat-item">
+                                <span class="stat-number" data-count="10">10+</span>
+                                <span class="stat-label">เครื่องมือคำนวณ</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number" data-count="9">9</span>
+                                <span class="stat-label">การวินิจฉัยปัญหา</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">24/7</span>
+                                <span class="stat-label">ดูแลคุณเสมอ</span>
+                            </div>
+                        </div>
+
+                        <div class="social-proof mt-4">
+                            <div class="user-avatars">
+                                <div class="user-avatar" style="background: var(--aurora-1);">ส</div>
+                                <div class="user-avatar" style="background: var(--aurora-2);">พ</div>
+                                <div class="user-avatar" style="background: var(--aurora-3);">ว</div>
+                                <div class="user-avatar" style="background: #333;">+</div>
+                            </div>
+                            <div class="proof-text text-white">
+                                <strong>Trusted by Experts</strong>
+                                <span class="opacity-75">เข้าร่วมกับชุมชนวิศวกรและเกษตรกร</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6" data-aos="fade-left">
+                        <div class="services-menu-card">
+                            <h5 class="mb-4 text-center opacity-75">Quick Access Hub</h5>
+                            <div class="service-btn-row">
+                                <a href="marketplace" class="service-btn btn-green">
+                                    <i class="fas fa-store"></i>
+                                    <span>Agri Market</span>
+                                </a>
+                                <a href="ai-tutor" class="service-btn btn-purple">
+                                    <i class="fas fa-robot"></i>
+                                    <span>TukTuk Tutor</span>
+                                </a>
+                            </div>
+                            <div class="service-btn-row">
+                                <a href="academy" class="service-btn btn-gray-outline">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    <span>Academy</span>
+                                </a>
+                                <a href="smart-farm" class="service-btn btn-gray-outline">
+                                    <i class="fas fa-leaf"></i>
+                                    <span>Smart Farm</span>
+                                </a>
+                            </div>
+                            <a href="/calculator" class="service-btn btn-orange-outline w-100">
+                                <i class="fas fa-industry"></i>
+                                <span>Expert Injection Tools</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI ECOSYSTEM HUB -->
+        <section class="py-5" id="features">
+            <div class="container">
+                <div class="text-center mb-5" data-aos="fade-up">
+                    <span class="strip-badge">TukTuk Ecosystem</span>
+                    <h2 class="section-title text-white">ครอบคลุมทุกมิติการใช้ชีวิตและธุรกิจ</h2>
+                    <p class="section-subtitle opacity-75">เลือกหมวดหมู่ที่คุณสนใจเพื่อเริ่มต้นใช้งาน</p>
+                </div>
+
+                <div class="row g-4">
+                    <!-- Agriculture Market -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="feature-card p-4"
+                            style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2);">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="icon-box" style="font-size: 2.2rem; color: #22c55e;"><i
+                                        class="fas fa-store"></i></div>
+                                <h4 class="m-0 text-white">ตลาดการเกษตร</h4>
+                            </div>
+                            <p class="opacity-75 small mb-3">เชื่อมโยงเกษตรกรกับตลาด ซื้อ-ขายสินค้าเกษตรออนไลน์
+                                พร้อมระบบวิเคราะห์ราคาและคิวอาร์โค้ดติดตามสินค้าได้ทันที</p>
+                            <div class="d-flex gap-2">
+                                <a href="marketplace" class="btn btn-sm btn-green rounded-pill px-3">ไปที่ตลาด</a>
+                                <a href="smart-farm" class="btn btn-sm btn-outline-success rounded-pill px-3">Smart
+                                    Farm</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Students & Education -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="feature-card p-4"
+                            style="background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.2);">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="icon-box" style="font-size: 2.2rem; color: #8B5CF6;"><i
+                                        class="fas fa-user-graduate"></i></div>
+                                <h4 class="m-0 text-white">ศูนย์การเรียนรู้</h4>
+                            </div>
+                            <p class="opacity-75 small mb-3">คลังความรู้สำหรับนักเรียนและนักศึกษา
+                                มัดรวมบทเรียนด้านเทคนิค และ AI Tutor ที่พร้อมติวข้อสอบและอธิบายเนื้อหายากๆ ให้เข้าใจง่าย
+                            </p>
+                            <div class="d-flex gap-2">
+                                <a href="academy" class="btn btn-sm btn-purple rounded-pill px-3"
+                                    style="background: #8B5CF6; color: white;">TukTuk Academy</a>
+                                <a href="ai-tutor" class="btn btn-sm btn-outline-light rounded-pill px-3">AI Tutor</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- News & Information -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="feature-card p-4"
+                            style="background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.2);">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="icon-box" style="font-size: 2.2rem; color: #06b6d4;"><i
+                                        class="fas fa-newspaper"></i></div>
+                                <h4 class="m-0 text-white">ข้อมูลข่าวสาร</h4>
+                            </div>
+                            <p class="opacity-75 small mb-3">อัปเดตข่าวสารในวงการอุตสาหกรรม เกษตร และเทคโนโลยีใหม่ๆ
+                                รายวัน พร้อมสาระน่ารู้ที่ AI คัดสรรมาให้คุณโดยเฉพาะ</p>
+                            <div class="d-flex gap-2">
+                                <a href="index" class="btn btn-sm btn-info rounded-pill px-3 text-white"
+                                    style="background: #06b6d4; border: none;">ข่าวทั้งหมด</a>
+                                <div class="badge bg-dark rounded-pill d-flex align-items-center px-3">TukTuk Community
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Industrial (Existing) -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="feature-card p-4"
+                            style="background: rgba(148, 163, 184, 0.1); border: 1px solid rgba(148, 163, 184, 0.2);">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="icon-box" style="font-size: 2.2rem; color: #94a3b8;"><i
+                                        class="fas fa-industry"></i></div>
+                                <h4 class="m-0 text-white">งานฉีดพลาสติก</h4>
+                            </div>
+                            <p class="opacity-75 small mb-3">โซลูชันอัจฉริยะสำหรับโรงงานและวิศวกร คำนวณค่า Clamping,
+                                รอบเวลา และวินิจฉัยปัญหาชิ้นงานอย่างแม่นยำ</p>
+                            <a href="calculator"
+                                class="btn btn-sm btn-outline-secondary rounded-pill px-3">เครื่องมือวิศวกร</a>
+                        </div>
+                    </div>
+
+                    <!-- Accounting & Business (Existing/Enhanced) -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="feature-card p-4"
+                            style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2);">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="icon-box" style="font-size: 2.2rem; color: #f59e0b;"><i
+                                        class="fas fa-calculator"></i></div>
+                                <h4 class="m-0 text-white">บัญชีและธุรกิจ</h4>
+                            </div>
+                            <p class="opacity-75 small mb-3">จัดการรายรับ-รายจ่าย
+                                และคำนวณภาษีเบื้องต้นด้วยความช่วยเหลือจาก AI ช่วยให้คุณมองเห็นภาพรวมธุรกิจได้ชัดเจนขึ้น
+                            </p>
+                            <a href="https://lin.ee/1YJsw47"
+                                class="btn btn-sm btn-outline-warning rounded-pill px-3">จัดการบัญชี</a>
+                        </div>
+                    </div>
+
+                    <!-- Community Support -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="feature-card p-4"
+                            style="background: rgba(236, 72, 153, 0.1); border: 1px solid rgba(236, 72, 153, 0.2);">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <div class="icon-box" style="font-size: 2.2rem; color: #ec4899;"><i
+                                        class="fas fa-users"></i></div>
+                                <h4 class="m-0 text-white">ชุมชน TukTuk</h4>
+                            </div>
+                            <p class="opacity-75 small mb-3">พื้นที่แลกเปลี่ยนประสบการณ์ ปรึกษาผู้เชี่ยวชาญ
+                                และเชื่อมต่อกับผู้ใช้งานท่านอื่นๆ เพื่อสร้างเครือข่ายที่เข้มแข็ง</p>
+                            <a href="https://lin.ee/1YJsw47"
+                                class="btn btn-sm btn-outline-danger rounded-pill px-3">เข้าร่วมกลุ่ม</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+
+    <!-- LATEST UPDATES & NEWS -->
+    <section class="py-5" id="news" style="background: rgba(15, 23, 42, 0.4);">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-end mb-4" data-aos="fade-up">
+                <div>
+                    <span class="strip-badge">Updates</span>
+                    <h2 class="section-title text-white mb-0">ข้อมูลข่าวสารล่าสุด</h2>
+                </div>
+                <a href="index" class="btn btn-link text-info text-decoration-none">ดูข่าวทั้งหมดใน Community <i
+                        class="fas fa-arrow-right ms-1"></i></a>
+            </div>
+
+            <div class="row g-4">
+                <!-- News Item 1: Agriculture -->
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="news-card"
+                        style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; overflow: hidden; transition: all 0.3s;">
+                        <div class="news-img"
+                            style="height: 180px; background: linear-gradient(45deg, #1D976C, #93F9B9); display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="p-4">
+                            <span class="badge bg-success mb-2">ตลาดการเกษตร</span>
+                            <h5 class="text-white mb-2">แนวโน้มราคาพืชผลสัปดาห์นี้</h5>
+                            <p class="opacity-75 small">AI วิเคราะห์ราคาตลาดปรับตัวสูงขึ้น 5% ในกลุ่มข้าวโพดและอ้อย...
+                            </p>
+                            <span class="text-info small">2 ชั่วโมงที่แล้ว</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- News Item 2: Education -->
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="news-card"
+                        style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; overflow: hidden; transition: all 0.3s;">
+                        <div class="news-img"
+                            style="height: 180px; background: linear-gradient(45deg, #6366f1, #a855f7); display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div class="p-4">
+                            <span class="badge bg-primary mb-2">นักเรียน</span>
+                            <h5 class="text-white mb-2">เทคนิคการใช้ AI ช่วยติวสอบ</h5>
+                            <p class="opacity-75 small">วิธีตั้งคำถามให้ AI Tutor อธิบายเนื้อหาฟิสิกส์ให้เห็นภาพ...</p>
+                            <span class="text-info small">5 ชั่วโมงที่แล้ว</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- News Item 3: General/Tech -->
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="news-card"
+                        style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; overflow: hidden; transition: all 0.3s;">
+                        <div class="news-img"
+                            style="height: 180px; background: linear-gradient(45deg, #f59e0b, #ef4444); display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
+                            <i class="fas fa-microchip"></i>
+                        </div>
+                        <div class="p-4">
+                            <span class="badge bg-warning text-dark mb-2">เทคโนโลยี</span>
+                            <h5 class="text-white mb-2">อัปเดตระบบ AI เวอร์ชั่น 2.0</h5>
+                            <p class="opacity-75 small">พบกับฟีเจอร์ใหม่ การวินิจฉัยปัญหาแม่พิมพ์ด้วยภาพถ่าย...</p>
+                            <span class="text-info small">วันนี้</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- How It Works -->
+    <section class="how-section" id="how">
+        <div class="container">
+            <div class="text-center" data-aos="fade-up">
+                <span class="section-badge how-badge">📱 วิธีใช้งาน</span>
+                <h2 class="section-title how-title">เริ่มต้นใช้งานง่ายใน 3 ขั้นตอน</h2>
+                <p class="section-subtitle how-subtitle">
+                    ไม่ต้องติดตั้งอะไรเพิ่ม ใช้งานได้ทันทีผ่าน LINE
+                </p>
+            </div>
+
+            <div class="row g-4 mt-4">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <h4 class="step-title">Scan QR Code</h4>
+                        <p class="step-desc">
+                            สแกน QR Code หรือคลิกลิงก์เพื่อเพิ่มเพื่อน LINE Bot
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <h4 class="step-title">พิมพ์คำสั่ง</h4>
+                        <p class="step-desc">
+                            พิมพ์คำถามหรือคำสั่ง เช่น /clamp, /defect, หรือถามอะไรก็ได้
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <h4 class="step-title">รับคำตอบทันที</h4>
+                        <p class="step-desc">
+                            AI จะตอบกลับพร้อมข้อมูลที่คุณต้องการ ภายในไม่กี่วินาที
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Premium Pricing Section -->
+    <section class="pricing-section py-5" id="pricing"
+        style="background: rgba(17, 24, 39, 0.8); backdrop-filter: blur(50px);">
+        <div class="container py-5">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <span class="strip-badge">UPGRADE NOW</span>
+                <h2 class="section-title text-white" style="font-size: 3rem; font-weight: 800;">
+                    แผนกพรีเมียมเพื่อธุรกิจคุณ</h2>
+                <p class="section-subtitle opacity-75">เลือกแพ็คเกจที่ตอบโจทย์การเติบโตของคุณ</p>
+            </div>
+
+            <div class="row g-4 justify-content-center">
+                <!-- Starter -->
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="pricing-card"
+                        style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 30px; padding: 40px; color: white;">
+                        <h4 style="font-weight: 700;">Starter</h4>
+                        <div style="font-size: 3rem; font-weight: 800; margin: 20px 0;">฿99<span
+                                style="font-size: 1rem; opacity: 0.5;">/เดือน</span></div>
+                        <ul style="list-style: none; padding: 0; margin-bottom: 30px; opacity: 0.8;">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> AI ตอบกลับ 100 ครั้ง</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> เครื่องคิดเลขครบทุกตัว</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> วินิจฉัยปัญหาพลาสติก</li>
+                        </ul>
+                        <a href="https://lin.ee/1YJsw47"
+                            class="btn btn-outline-light w-100 py-3 rounded-pill">เริ่มต้นใช้งาน</a>
+                    </div>
+                </div>
+                <!-- Popular -->
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="pricing-card featured"
+                        style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1)); border: 2px solid #8B5CF6; border-radius: 30px; padding: 40px; color: white; position: relative; transform: scale(1.05);">
+                        <span
+                            style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #8B5CF6; color: white; padding: 5px 20px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;">RECOMMENDED</span>
+                        <h4 style="font-weight: 700;">Professional</h4>
+                        <div style="font-size: 3rem; font-weight: 800; margin: 20px 0;">฿259<span
+                                style="font-size: 1rem; opacity: 0.5;">/3 เดือน</span></div>
+                        <ul style="list-style: none; padding: 0; margin-bottom: 30px;">
+                            <li class="mb-3"><i class="fas fa-check text-purple me-2"></i> AI ตอบกลับ 500 ครั้ง</li>
+                            <li class="mb-3"><i class="fas fa-check text-purple me-2"></i> ระบบ Setup Sheet ออนไลน์</li>
+                            <li class="mb-3"><i class="fas fa-check text-purple me-2"></i> วินิจฉัยความล้มเหลวเชิงลึก
+                            </li>
+                            <li class="mb-3"><i class="fas fa-check text-purple me-2"></i> ระบบบันทึกการผลิต</li>
+                        </ul>
+                        <a href="https://lin.ee/1YJsw47" class="btn btn-purple shadow-lg w-100 py-3 rounded-pill"
+                            style="background: #8B5CF6; color: white;">สมัครสมาชิก Pro</a>
+                    </div>
+                </div>
+                <!-- Yearly -->
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="pricing-card"
+                        style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 30px; padding: 40px; color: white;">
+                        <h4 style="font-weight: 700;">Best Value</h4>
+                        <div style="font-size: 3rem; font-weight: 800; margin: 20px 0;">฿699<span
+                                style="font-size: 1rem; opacity: 0.5;">/ปี</span></div>
+                        <ul style="list-style: none; padding: 0; margin-bottom: 30px; opacity: 0.8;">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> AI ตอบกลับ ไม่จำกัด</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> ดูแลส่วนตัวโดยผู้เชี่ยวชาญ
+                            </li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i> บันทึกข้อมูลบนคลาวด์ 24 ชม.
+                            </li>
+                        </ul>
+                        <a href="https://lin.ee/1YJsw47"
+                            class="btn btn-outline-light w-100 py-3 rounded-pill">เลือกแผนรายปี</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ⭐ TESTIMONIAL SECTION - NEW -->
+    <section class="testimonial-section" id="testimonials">
+        <div class="container">
+            <div class="text-center" data-aos="fade-up">
+                <span class="section-badge">⭐ รีวิวจากผู้ใช้จริง</span>
+                <h2 class="section-title">ผู้ใช้งานพูดถึงเรา</h2>
+                <p class="section-subtitle">
+                    ความคิดเห็นจากผู้ใช้งานจริงที่ประทับใจในบริการของเรา
+                </p>
+            </div>
+
+            <div class="testimonial-grid">
+                <!-- Testimonial 1 -->
+                <div class="testimonial-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">
+                        "ใช้มาหลายเดือนแล้ว ประทับใจมาก! AI ตอบเร็วและแม่นยำ ช่วยลดเวลาคำนวณได้เยอะ
+                        ทีมงานก็ใช้ง่ายทุกคน"
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">ส</div>
+                        <div class="testimonial-info">
+                            <h5>คุณสมชาย</h5>
+                            <p>Production Manager</p>
+                            <span class="testimonial-badge">✓ ผู้ใช้งานจริง</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="testimonial-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">
+                        "เครื่องคิดเลขครบมาก ใช้คำนวณ Clamping Force, Cooling Time ได้หมด ไม่ต้องเปิด Excel แล้ว
+                        สะดวกมากครับ"
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">พ</div>
+                        <div class="testimonial-info">
+                            <h5>คุณพงศ์พัฒน์</h5>
+                            <p>Process Engineer</p>
+                            <span class="testimonial-badge">✓ ผู้ใช้งานจริง</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="testimonial-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <p class="testimonial-text">
+                        "ฟีเจอร์วินิจฉัยปัญหาช่วยได้เยอะเลย ตอนชิ้นงานมีปัญหา Short Shot
+                        ถามแล้วได้คำแนะนำที่เป็นประโยชน์ทันที"
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">ว</div>
+                        <div class="testimonial-info">
+                            <h5>คุณวิภา</h5>
+                            <p>QC Supervisor</p>
+                            <span class="testimonial-badge">✓ ผู้ใช้งานจริง</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trust Badges -->
+            <div class="text-center mt-5" data-aos="fade-up" data-aos-delay="400">
+                <div
+                    style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; align-items: center; padding: 30px; background: white; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);">
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; font-weight: 800; color: var(--line-green);">5,000+</div>
+                        <div style="color: #666; font-size: 0.9rem;">ผู้ใช้งาน</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; font-weight: 800; color: #fbbf24;">4.8/5</div>
+                        <div style="color: #666; font-size: 0.9rem;">คะแนนรีวิว</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; font-weight: 800; color: var(--primary);">98%</div>
+                        <div style="color: #666; font-size: 0.9rem;">ความพึงพอใจ</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; font-weight: 800; color: var(--accent-orange);">50+</div>
+                        <div style="color: #666; font-size: 0.9rem;">บริษัทใช้งาน</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2 class="cta-title" data-aos="fade-up">พร้อมทำให้ชีวิตง่ายขึ้นหรือยัง?</h2>
+                <p class="cta-subtitle" data-aos="fade-up" data-aos-delay="100">
+                    เริ่มต้นใช้งานฟรีวันนี้ แค่สแกน QR Code หรือคลิกลิงก์ด้านล่าง
+                </p>
+
+                <div class="cta-qr-box" data-aos="zoom-in" data-aos-delay="200">
+                    <img src="https://qr-official.line.me/gs/M_396fttas_GW.png?oat_content=qr" alt="LINE QR Code">
+                    <p class="cta-qr-text">สแกนเพื่อเพิ่มเพื่อน</p>
+                </div>
+
+                <p class="cta-or">— หรือ —</p>
+
+                <a href="https://lin.ee/1YJsw47" target="_blank" class="btn-cta-large" data-aos="fade-up"
+                    data-aos-delay="300">
+                    <i class="fab fa-line"></i>เพิ่มเพื่อน LINE เลย
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h3 class="footer-brand">🚀 TukTuk Thailand</h3>
+                    <p class="footer-desc">
+                        AI ผู้ช่วยงานฉีดพลาสติก ทำให้ชีวิตการทำงานง่ายขึ้น
+                        พัฒนาโดย อ.วิทยา ผู้เชี่ยวชาญด้าน Injection Molding
+                    </p>
+                    <div class="footer-social">
+                        <a href="https://lin.ee/1YJsw47" target="_blank"><i class="fab fa-line"></i></a>
+                        <a href="https://www.facebook.com/wit365/" target="_blank"><i class="fab fa-facebook"></i></a>
+                        <a href="https://www.tiktok.com/@wit_365" target="_blank"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4 footer-links">
+                    <h5>บริการ</h5>
+                    <ul>
+                        <li><a href="injection-molding">LINE Bot AI</a></li>
+                        <li><a href="/calculator">เครื่องคิดเลข</a></li>
+                        <li><a href="#pricing">แพ็คเกจ</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4 footer-links">
+                    <h5>เรียนรู้</h5>
+                    <ul>
+                        <li><a href="#">คู่มือการใช้งาน</a></li>
+                        <li><a href="#">บทความ</a></li>
+                        <li><a href="#">คำถามที่พบบ่อย</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4 footer-links">
+                    <h5>เกี่ยวกับเรา</h5>
+                    <ul>
+                        <li><a href="about">เกี่ยวกับเรา</a></li>
+                        <li><a href="privacy">นโยบายความเป็นส่วนตัว</a></li>
+                        <li><a href="terms">เงื่อนไขการใช้งาน</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4 mb-4 footer-links">
+                    <h5>ติดต่อ</h5>
+                    <ul>
+                        <li><a href="https://lin.ee/1YJsw47"><i class="fab fa-line me-2"></i>LINE OA</a></li>
+                        <li><a href="mailto:imtthailand2019@gmail.com"><i class="fas fa-envelope me-2"></i>Email</a>
+                        </li>
+                        <li><a href="tel:+66646242456"><i class="fas fa-phone me-2"></i>โทร</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2025 TukTuk Thailand by อ.วิทยา. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- AOS Animation -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function () {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Particle animation enhancement
+        function createParticles() {
+            const container = document.querySelector('.hero-particles');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.width = Math.random() * 15 + 5 + 'px';
+                particle.style.height = particle.style.width;
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // ========================================
+        // TYPING EFFECT
+        // ========================================
+        const typingTexts = [
+            'ง่ายขึ้น', 'Intelligence',
+            'เร็วขึ้น', 'Agriculture',
+            'แม่นยำ', 'Education',
+            'อัจฉริยะ', 'News & Updates',
+            'Smart Solutions'
+        ];
+        let typingIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        const typingElement = document.getElementById('typingText');
+
+        function typeEffect() {
+            if (!typingElement) return;
+
+            const currentText = typingTexts[typingIndex];
+
+            if (isDeleting) {
+                typingElement.textContent = currentText.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                typingElement.textContent = currentText.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            let typeSpeed = isDeleting ? 80 : 150;
+
+            if (!isDeleting && charIndex === currentText.length) {
+                typeSpeed = 2000; // Pause at end
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                typingIndex = (typingIndex + 1) % typingTexts.length;
+                typeSpeed = 500; // Pause before new word
+            }
+
+            setTimeout(typeEffect, typeSpeed);
+        }
+
+        // Start typing effect after page load
+        setTimeout(typeEffect, 1500);
+
+        // Start typing effect after page load
+        setTimeout(typeEffect, 1500);
+
+        // ========================================
+        // COUNTER ANIMATION (For Hero Stats)
+        // ========================================
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-number[data-count]');
+
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-count'));
+                const duration = 2000;
+                const step = target / (duration / 16);
+                let current = 0;
+
+                const updateCounter = () => {
+                    current += step;
+                    if (current < target) {
+                        counter.textContent = Math.floor(current) + '+';
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.textContent = target + '+';
+                    }
+                };
+
+                // Start when element is in view
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            updateCounter();
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.5 });
+
+                observer.observe(counter);
+            });
+        }
+
+        animateCounters();
+
+
+        // ========================================
+        // NEWS TICKER - Load from Community & Marketplace
+        // ========================================
+        async function loadTickerData() {
+            const tickerTrack = document.getElementById('tickerTrack');
+            let tickerItems = [];
+
+            try {
+                // Check if Firebase is already initialized
+                if (!firebase.apps.length) {
+                    const firebaseConfig = {
+                        apiKey: "AIzaSyD92Lw0vd32ce6m4J2nBVBWZRYBy4aDB_s",
+                        authDomain: "appinjproject.firebaseapp.com",
+                        projectId: "appinjproject",
+                        storageBucket: "appinjproject.firebasestorage.app",
+                        messagingSenderId: "408718656984",
+                        appId: "1:408718656984:web:76e9cc7a89e9b4c9d5a8ab"
+                    };
+                    firebase.initializeApp(firebaseConfig);
+                }
+                const db = firebase.firestore();
+
+                // Load Community Posts
+                const postsSnapshot = await db.collection('community_posts')
+                    .orderBy('createdAt', 'desc')
+                    .limit(5)
+                    .get();
+
+                postsSnapshot.forEach(doc => {
+                    const post = doc.data();
+                    if (post.published !== false) {
+                        const badgeClass = post.category === 'promo' ? 'promo-badge' : 'news-badge';
+                        const badgeText = getCategoryLabel(post.category);
+                        tickerItems.push(`
+                            <div class="ticker-item">
+                                <span class="${badgeClass}">${badgeText}</span>
+                                <a href="community?post=${doc.id}">${truncateText(post.title, 40)}</a>
+                            </div>
+                        `);
+                    }
+                });
+
+                // Load Marketplace Products
+                const productsSnapshot = await db.collection('marketplace_items')
+                    .where('status', '==', 'active')
+                    .orderBy('createdAt', 'desc')
+                    .limit(5)
+                    .get();
+
+                productsSnapshot.forEach(doc => {
+                    const product = doc.data();
+                    const priceText = product.price ? formatPrice(product.price) : 'ติดต่อสอบถาม';
+                    tickerItems.push(`
+                        <div class="ticker-item">
+                            <span class="product-badge">🛒 สินค้า</span>
+                            <a href="marketplace?id=${doc.id}">${truncateText(product.title, 30)} - ${priceText}</a>
+                        </div>
+                    `);
+                });
+
+                // Add Sponsored & Contextual News to Ticker
+                tickerItems.push(`
+                    <div class="ticker-item">
+                        <span class="news-badge" style="background: #22c55e;">📈 ราคาเกษตร</span>
+                        <a href="marketplace">ราคาพริกขี้หนูวันนี้ปรับตัวขึ้น 10% แตะ 85 บาท/กก. [เช็คราคาทั้งหมด]</a>
+                    </div>
+                `);
+                tickerItems.push(`
+                    <div class="ticker-item">
+                        <span class="news-badge" style="background: #8B5CF6;">🎓 กวดวิชา</span>
+                        <a href="ai-tutor">ติวสอบกลางภาคกับ TukTuk Tutor ฟรี! ครอบคลุมวิชาพื้นฐานและเทคนิค</a>
+                    </div>
+                `);
+                tickerItems.push(`
+                    <div class="ticker-item">
+                        <span class="promo-badge" style="background: #FFD700; color: #000;">⭐ สัมมนา</span>
+                        <a href="#">ฟรี! เทคนิคการลด Cycle Time ในงานฉีดพลาสติก วันเสาร์นี้ 14.00 น.</a>
+                    </div>
+                `);
+                tickerItems.push(`
+                    <div class="ticker-item">
+                        <span class="news-badge" style="background: #06b6d4;">📰 ข่าวเด่น</span>
+                        <a href="index">เทรนด์ Bio-Plastic ปี 2026: โอกาสใหม่ของวิศวกรไทย</a>
+                    </div>
+                `);
+                tickerItems.push(`
+                    <div class="ticker-item">
+                        <span class="news-badge" style="background: #1e293b; color: white;">💡 พรีเมียม</span>
+                        <a href="#pricing">อัปเกรดเป็น TukTuk Premium วันนี้ ปลดล็อกฟีเจอร์ AI ไม่จำกัด</a>
+                    </div>
+                `);
+
+                // If no data, show default messages
+                if (tickerItems.length === 0) {
+                    tickerItems = [
+                        '<div class="ticker-item"><span class="news-badge">📢 ข่าว</span><span>ยินดีต้อนรับสู่ TukTuk Thailand - AI ผู้ช่วยงานฉีดพลาสติก</span></div>',
+                        '<div class="ticker-item"><span class="product-badge">🛒 ตลาด</span><a href="marketplace">เปิดขายสินค้าฟรี! ไม่มีค่าธรรมเนียม</a></div>',
+                        '<div class="ticker-item"><span class="news-badge">💡 เคล็ดลับ</span><a href="index">ติดตามข่าวสารและเคล็ดลับงานฉีดพลาสติก</a></div>'
+                    ];
+                }
+
+                // Duplicate for seamless loop
+                const allItems = tickerItems.join('') + tickerItems.join('');
+                tickerTrack.innerHTML = allItems;
+
+            } catch (error) {
+                console.log('Ticker loading with defaults:', error.message);
+                // Default ticker content
+                tickerTrack.innerHTML = `
+                    <div class="ticker-item"><span class="news-badge">📢 ข่าว</span><span>ยินดีต้อนรับสู่ TukTuk Thailand - AI ผู้ช่วยงานฉีดพลาสติก</span></div>
+                    <div class="ticker-item"><span class="product-badge">🛒 ตลาด</span><a href="marketplace">เปิดขายสินค้าฟรี! ไม่มีค่าธรรมเนียม</a></div>
+                    <div class="ticker-item"><span class="news-badge">💡 เคล็ดลับ</span><a href="index">ติดตามข่าวสารและเคล็ดลับงานฉีดพลาสติก</a></div>
+                    <div class="ticker-item"><span class="promo-badge">🔥 โปรโมชั่น</span><a href="academy">เรียนรู้งานฉีดพลาสติกกับ Academy</a></div>
+                    <div class="ticker-item"><span class="news-badge">📢 ข่าว</span><span>ยินดีต้อนรับสู่ TukTuk Thailand - AI ผู้ช่วยงานฉีดพลาสติก</span></div>
+                    <div class="ticker-item"><span class="product-badge">🛒 ตลาด</span><a href="marketplace">เปิดขายสินค้าฟรี! ไม่มีค่าธรรมเนียม</a></div>
+                    <div class="ticker-item"><span class="news-badge">💡 เคล็ดลับ</span><a href="index">ติดตามข่าวสารและเคล็ดลับงานฉีดพลาสติก</a></div>
+                    <div class="ticker-item"><span class="promo-badge">🔥 โปรโมชั่น</span><a href="academy">เรียนรู้งานฉีดพลาสติกกับ Academy</a></div>
+                `;
+            }
+        }
+
+        function getCategoryLabel(category) {
+            const labels = {
+                'news': '📰 ข่าว',
+                'update': '🔄 อัปเดต',
+                'tip': '💡 เคล็ดลับ',
+                'event': '📅 กิจกรรม',
+                'promo': '🔥 โปรโมชั่น'
+            };
+            return labels[category] || '📢 ข่าว';
+        }
+
+        function truncateText(text, maxLength) {
+            if (!text) return '';
+            return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+        }
+
+        function formatPrice(price) {
+            return new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB', minimumFractionDigits: 0 }).format(price);
+        }
+
+        // Load ticker data
+        loadTickerData();
+
+        console.log('%c🚀 TukTuk Thailand - ทำให้ชีวิตง่ายขึ้น', 'color: #00B900; font-size: 20px; font-weight: bold;');
+        console.log('%cPowered by AI | Developed by อ.วิทยา', 'color: #667eea; font-size: 12px;');
+    </script>
+
+    <!-- Firebase for Ticker -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <!-- WizOS Launchpad Overlay -->
+    <div class="wiz-launchpad" id="wizLaunchpad">
+        <div class="launchpad-backdrop" onclick="toggleLaunchpad()"></div>
+        <div class="launchpad-content">
+            <button class="launchpad-close" onclick="toggleLaunchpad()">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="launchpad-header">
+                <img src="/assets/images/logo.png" alt="Logo" class="launchpad-logo">
+                <h3>TukTuk Thailand OS</h3>
+                <p>ระบบปฏิบัติการเพื่อคนฉีดพลาสติก</p>
+            </div>
+
+            <div class="launchpad-grid">
+                <!-- 1. Add Friend & Marketplace (Wide) -->
+                <a href="marketplace" class="launchpad-item item-line item-wide" style="background: #22c55e;">
+                    <div class="icon-box"><i class="fas fa-store"></i></div>
+                    <span class="label">ตลาดการเกษตร TukTuk</span>
+                    <span class="sub-label">ซื้อ-ขายสินค้าเกษตร</span>
+                </a>
+
+                <!-- 2. Students & Academy -->
+                <a href="ai-tutor" class="launchpad-item item-premium" style="border-color: #8B5CF6;">
+                    <div class="icon-box">🤖</div>
+                    <span class="label">TukTuk Tutor</span>
+                </a>
+
+                <a href="academy" class="launchpad-item item-premium">
+                    <div class="icon-box">🎓</div>
+                    <span class="label">Academy</span>
+                </a>
+
+                <!-- 3. Calculator (Wide) -->
+                <a href="/calculator" class="launchpad-item item-tool item-wide">
+                    <div class="icon-box">🧮</div>
+                    <span class="label">โปรแกรมคำนวณและวินิจฉัยงานฉีด</span>
+                </a>
+
+                <!-- 4. Smart Farm & News -->
+                <a href="smart-farm" class="launchpad-item item-premium">
+                    <div class="icon-box">🚜</div>
+                    <span class="label">Smart Farm</span>
+                </a>
+
+                <a href="index" class="launchpad-item item-basic">
+                    <div class="icon-box">📰</div>
+                    <span class="label">ข่าวสารล่าสุด</span>
+                </a>
+
+                <!-- 5. Community & Add Friend -->
+                <a href="https://lin.ee/ayl8y1H" target="_blank" class="launchpad-item item-basic item-wide">
+                    <div class="icon-box"><i class="fab fa-line"></i></div>
+                    <span class="label">ปรึกษา AI ผ่าน LINE OA</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Launchpad Styles */
+        .wiz-launchpad {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wiz-launchpad.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .launchpad-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+        }
+
+        .launchpad-content {
+            position: relative;
+            z-index: 10000;
+            width: 90%;
+            max-width: 500px;
+            background: #1e293b;
+            border-radius: 30px;
+            padding: 40px 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .wiz-launchpad.active .launchpad-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .launchpad-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .launchpad-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .launchpad-header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .launchpad-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            border: 3px solid #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .launchpad-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* Grid Items */
+        .launchpad-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            padding: 20px 10px;
+            border-radius: 20px;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .launchpad-item:hover {
+            transform: translateY(-3px);
+            filter: brightness(1.2);
+        }
+
+        .launchpad-item .icon-box {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+
+        .launchpad-item .label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: white;
+            text-align: center;
+        }
+
+        .item-wide {
+            grid-column: span 2;
+            flex-direction: row;
+            gap: 15px;
+        }
+
+        /* LINE Button */
+        .item-line {
+            background: #00B900;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 185, 0, 0.4);
+            border: none;
+        }
+
+        .item-line .sub-label {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            margin-left: auto;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        /* Premium Buttons (Orange Border) */
+        .item-premium {
+            border: 2px solid #FF6B35;
+            background: linear-gradient(145deg, rgba(255, 107, 53, 0.1), rgba(0, 0, 0, 0));
+        }
+
+        .item-premium .label {
+            color: #FFD1BA;
+        }
+
+        /* Tool Buttons (Gray/Blue Border) */
+        .item-tool {
+            border: 2px solid #667eea;
+            background: linear-gradient(145deg, rgba(102, 126, 234, 0.1), rgba(0, 0, 0, 0));
+        }
+
+        .item-tool .label {
+            color: #d4dcf9;
+        }
+
+        /* Basic Buttons (Gray Border) */
+        .item-basic {
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .item-basic .label {
+            color: #ccc;
+        }
+    </style>
+
+    <script>
+        function toggleLaunchpad() {
+            document.getElementById('wizLaunchpad').classList.toggle('active');
+        }
+
+        function toggleConsultantModal() {
+            const modal = document.getElementById('consultantModal');
+            modal.classList.toggle('active');
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('คัดลอกเลขบัญชีแล้ว: ' + text);
+            });
+        }
+    </script>
+
+    <!-- Consultant Modal -->
+    <div class="wiz-modal" id="consultantModal">
+        <div class="modal-backdrop" onclick="toggleConsultantModal()"></div>
+        <div class="modal-content">
+            <button class="modal-close" onclick="toggleConsultantModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-header">
+                <div class="consultant-avatar">
+                    <img src="assets/images/logo.png" alt="Consultant">
+                </div>
+                <h3>TukTuk Assistant อัจฉริยะ</h3>
+                <p>ผู้ช่วยจัดการงานฉีดและบัญชีผ่าน LINE</p>
+            </div>
+            <div class="modal-body p-0">
+                <!-- Flex Showcase Slider -->
+                <div class="flex-slider">
+                    <!-- Card 1: Account -->
+                    <div class="flex-card card-orange">
+                        <div class="card-tag">บัญชี TukTuk</div>
+                        <div class="card-icon"><i class="fas fa-wallet"></i></div>
+                        <ul class="card-features">
+                            <li><i class="fas fa-check"></i> ไม่ต้องเรียนรู้งานใหม่</li>
+                            <li><i class="fas fa-check"></i> คุยภาษาชาวบ้าน = บันทึกบัญชี</li>
+                            <li><i class="fas fa-check"></i> AI เข้าใจและบันทึกให้ทันที</li>
+                        </ul>
+                    </div>
+                    <!-- Card 2: Income -->
+                    <div class="flex-card card-green">
+                        <div class="card-tag">บันทึกรายรับ</div>
+                        <div class="card-icon"><i class="fas fa-plus-circle"></i></div>
+                        <div class="card-example">"ขายพรีฟอร์ม 100 กก. 15000"</div>
+                        <div class="card-result">→ บันทึก: ขายโอน 15,000฿</div>
+                    </div>
+                    <!-- Card 3: Expense -->
+                    <div class="flex-card card-red">
+                        <div class="card-tag">บันทึกรายจ่าย</div>
+                        <div class="card-icon"><i class="fas fa-minus-circle"></i></div>
+                        <div class="card-example">"ซื้อปุ๋ย 2 กระสอบ 1200"</div>
+                        <div class="card-result">→ บันทึก: ปุ๋ย 1,200฿</div>
+                    </div>
+                    <!-- Card 4: Reports -->
+                    <div class="flex-card card-blue">
+                        <div class="card-tag">สรุป & รายงาน</div>
+                        <div class="card-icon"><i class="fas fa-chart-pie"></i></div>
+                        <ul class="card-list">
+                            <li>สรุปบัญชีรายวัน</li>
+                            <li>สรุปรายเดือน</li>
+                            <li>ดูรายการย้อนหลัง</li>
+                        </ul>
+                    </div>
+                </div>
+
+
+                <div class="modal-footer-action">
+                    <p class="touch-hint"><i class="fas fa-hand-point-left"></i> เลื่อนดูความสามารถเพิ่มเติม</p>
+                    <a href="https://lin.ee/ayl8y1H" target="_blank" class="btn-line-modal">
+                        <i class="fab fa-line"></i> เริ่มใช้งานบน LINE ฟรี
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .wiz-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 20000;
+            /* Extremely high to be above everything */
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wiz-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1;
+        }
+
+        .modal-content {
+            position: relative;
+            background: #fff;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 30px;
+            overflow: hidden;
+            transform: translateY(20px) scale(0.95);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            color: #333;
+            z-index: 2;
+            /* Must be higher than backdrop */
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .wiz-modal.active .modal-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.1);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 30px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .consultant-avatar img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            margin-bottom: 12px;
+            background: white;
+            object-fit: contain;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .modal-header p {
+            margin: 5px 0 0;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .flex-slider {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 15px;
+            padding: 20px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .flex-slider::-webkit-scrollbar {
+            display: none;
+        }
+
+        .flex-card {
+            flex: 0 0 260px;
+            scroll-snap-align: center;
+            border-radius: 20px;
+            padding: 20px;
+            color: white;
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .card-tag {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 800;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .card-features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            font-size: 0.85rem;
+            flex-grow: 1;
+        }
+
+        .card-features li {
+            margin-bottom: 6px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .card-example {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+
+        .card-result {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .card-list {
+            padding-left: 15px;
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        .card-orange {
+            background: linear-gradient(135deg, #FF9233, #FF5E3A);
+        }
+
+        .card-green {
+            background: linear-gradient(135deg, #1D976C, #93F9B9);
+            color: #004d40;
+        }
+
+        .card-green .card-tag,
+        .card-green i {
+            color: #004d40;
+        }
+
+        .card-red {
+            background: linear-gradient(135deg, #ED213A, #93291E);
+        }
+
+        .card-blue {
+            background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+        }
+
+        .modal-footer-action {
+            padding: 0 20px 25px;
+            text-align: center;
+        }
+
+        .touch-hint {
+            font-size: 0.75rem;
+            color: #999;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .btn-line-modal {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: #00B900;
+            color: white;
+            padding: 14px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            box-shadow: 0 8px 15px rgba(0, 185, 0, 0.25);
+            transition: all 0.3s;
+        }
+
+        .btn-line-modal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px rgba(0, 185, 0, 0.35);
+            color: white;
+        }
+    </style>
+    <!-- App Bottom Nav -->
+    <nav class="bottom-nav">
+        <a href="index" class="nav-btn active">
+            <i class="fas fa-home"></i>
+            <span>หน้าแรก</span>
+        </a>
+        <a href="calculator" class="nav-btn">
+            <i class="fas fa-calculator"></i>
+            <span>เครื่องคิดเลข</span>
+        </a>
+        <a href="index" class="line-nav-btn">
+            <i class="fas fa-users"></i>
+        </a>
+        <a href="academy" class="nav-btn">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Academy</span>
+        </a>
+        <a href="marketplace" class="nav-btn">
+            <i class="fas fa-store"></i>
+            <span>ตลาด</span>
+        </a>
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true, offset: 100 });
+        window.addEventListener('scroll', function () {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) navbar.classList.add('scrolled');
+            else navbar.classList.remove('scrolled');
+        });
+        const launchpad = document.getElementById('serviceLaunchpad');
+        if (launchpad) {
+            let isDown = false, startX, scrollLeft;
+            launchpad.addEventListener('mousedown', (e) => {
+                isDown = true; startX = e.pageX - launchpad.offsetLeft; scrollLeft = launchpad.scrollLeft;
+            });
+            launchpad.addEventListener('mouseleave', () => isDown = false);
+            launchpad.addEventListener('mouseup', () => isDown = false);
+            launchpad.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - launchpad.offsetLeft;
+                const walk = (x - startX) * 2;
+                launchpad.scrollLeft = scrollLeft - walk;
+            });
+        }
+        function updateStats() {
+            const online = Math.floor(Math.random() * 50) + 200;
+            const queries = 12450 + Math.floor(Math.random() * 10);
+            const elOnline = document.getElementById('stats-online');
+            const elHeader = document.getElementById('header-queries');
+            if (elOnline) elOnline.innerText = online;
+            if (elHeader) elHeader.innerHTML = `<i class="fas fa-brain me-1"></i> AI Queries: <span class="text-white fw-bold">${queries.toLocaleString()}+</span>`;
+        }
+        setInterval(updateStats, 3000);
+        updateStats();
+    </script>
+</body>
+
+</html>

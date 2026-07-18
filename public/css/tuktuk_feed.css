@@ -1,0 +1,2316 @@
+/* TUKTUK FEED ENHANCEMENTS - High Specificity & Desktop Centering */
+
+/* Global Dark Theme ONLY for Feed Mode */
+body.feed-mode-active {
+  background-color: #000 !important;
+}
+
+/* ── Body padding reset (FIX 1 — PRIMARY, ALL DEVICES) ─────────────────────
+   persistent-ui.css adds padding-bottom:70px to body:not(.is-embedded) so the
+   bottom nav has reserved space.  That padding zone still exists in feed mode
+   and iOS/Android route touches there into the body scroll context instead of
+   #tuktukFeed → bottom ~70px dead zone on ALL devices.
+   Solution: zero-out the padding in feed mode; the nav (z-index:11000) overlays
+   the feed directly and handles its own touches. */
+body.feed-mode-active:not(.is-embedded) {
+  padding-bottom: 0 !important;
+}
+
+/* ── overflow:clip (FIX 2) ───────────────────────────────────────────────────
+   overflow:clip does NOT create a scroll container (unlike overflow:hidden).
+   • html:has()      — Chrome 105+, Safari 16+  (native :has support)
+   • html.feed-mode-active — Chrome 90-104 fallback: JS adds the class to
+     documentElement because :has() isn't available there yet.
+   • @supports not (overflow:clip) block below handles iOS 15 / old Android. */
+@supports (overflow: clip) {
+  html.feed-mode-active,
+  html:has(body.feed-mode-active) {
+    overflow: clip !important;
+  }
+  body.feed-mode-active {
+    overflow: clip !important;
+  }
+}
+
+/* ── iOS 15 / Android Chrome <90 fallback (FIX 3) ───────────────────────────
+   overflow:clip not supported → use overflow:visible so html/body stop acting
+   as scroll containers.  The visible content is still clipped by
+   .main-app-container{overflow:hidden} and #tuktukFeed{position:fixed;inset:0},
+   so no layout bleed occurs.  Safe only in feed mode (body class guard). */
+@supports not (overflow: clip) {
+  html.feed-mode-active,
+  body.feed-mode-active {
+    overflow: visible !important;
+  }
+}
+
+/* ── FIX 5: Body-Level Touch Blocker Guard ─────────────────────────────────
+   Problem: Bootstrap, mobile-drawer, and other overlays append elements directly
+   to <body> — OUTSIDE .main-app-container — so our existing Fix 4 rule
+   (.main-app-container *) cannot reach them.
+
+   These body-direct children can have high z-indexes and block swipe even
+   when visually hidden (opacity:0 but still pointer-events:auto):
+
+     • .modal-backdrop     z:10100 — Bootstrap, appended to <body>
+     • .mobile-drawer-overlay z:? — mobile drawer shade
+     • .province-picker-overlay — location picker (always on top)
+     • .creation-overlay / .creation-hub — Creator studio overlay (#creationHubOverlay)
+
+   Fix pattern: on mobile in feed mode, ensure ALL <body>-level overlays that
+   are NOT actively shown (missing .show / .active / .open) are pointer-events:none.
+   ───────────────────────────────────────────────────────────────────────────── */
+@media (max-width: 991px) {
+
+  /* 1. Bootstrap .modal-backdrop — blocks entire screen at z:10100.
+        :not(.show) covers normal closed state.
+        Even with .show Bootstrap fades it out over 150ms — keep pointer-events:none
+        until the element is completely gone from DOM. */
+  body.feed-mode-active .modal-backdrop {
+    pointer-events: none !important;
+  }
+
+  /* EXCEPTION: active backdrop when a modal is actually visible —
+     pointer-events:auto so user can tap outside to close */
+  body.feed-mode-active .modal.show ~ .modal-backdrop,
+  body.feed-mode-active .modal-backdrop.show:has(~ .modal.show) {
+    pointer-events: auto !important;
+  }
+
+  /* 2. Mobile Drawer Overlay — blocks full screen behind drawer */
+  body.feed-mode-active .mobile-drawer-overlay:not(.active),
+  body.feed-mode-active #mobileDrawerOverlay:not(.active) {
+    pointer-events: none !important;
+    display: none !important;
+  }
+
+  /* 3. Province picker, push-notification banner, any fixed overlay
+        that auto-inserts into <body> and is NOT actively shown */
+  body.feed-mode-active .province-picker-overlay:not([style*="opacity: 1"]):not([style*="opacity:1"]) {
+    pointer-events: none !important;
+  }
+
+  /* 4. Creation Hub overlay (appended inside body, outside .main-app-container) */
+  body.feed-mode-active #creationHubOverlay:not(.active):not(.show),
+  body.feed-mode-active .creation-overlay:not(.active):not(.show) {
+    pointer-events: none !important;
+  }
+
+  /* 5. SPA iframe container — only interactive when SPA page is loaded */
+  body.feed-mode-active #spaIframeContainer:not(.active):not([style*="display: block"]) {
+    pointer-events: none !important;
+  }
+
+  /* 6. Promo-banner — layered element outside container on some pages */
+  body.feed-mode-active .promo-banner-section {
+    pointer-events: none !important;
+  }
+
+  /* 7. Sheet/bottom-sheet overlays from marketplace/messages SPA pages
+        appended to body when not open */
+  body.feed-mode-active .sheet-overlay:not(.open),
+  body.feed-mode-active #sheetOverlay:not(.open) {
+    pointer-events: none !important;
+  }
+}
+
+/* ── FIX 4 (preserved): Silence main-app-container children in feed mode ───
+   Mobile header is visible on screens ≤991px. The container and ALL its
+   descendants get pointer-events:none so nothing inside .main-app-container
+   accidentally intercepts touch events that should reach #tuktukFeed (z:9900). */
+@media (max-width: 991px) {
+  body.feed-mode-active .main-app-container,
+  body.feed-mode-active .main-app-container * {
+    pointer-events: none !important;
+  }
+}
+/* Bottom nav — visible in feed mode (matches TikTok UX: nav overlays bottom of feed).
+   Root cause of the old dead-zone was body padding-bottom:70px, now fixed above (Fix 1).
+   Nav sits at z-index:11000 above feed (9900) — touches on nav go to nav items,
+   touches above nav go to feed.  No translateY needed. */
+
+/* Header stays fully interactive in feed mode */
+body.feed-mode-active #mobileHeader,
+body.feed-mode-active #mobileHeader * {
+  pointer-events: auto !important;
+}
+
+/* FEED CONTAINER — CSS scroll-snap (native browser scroll, no JS touch handlers)
+   Use inset:0 instead of height:100dvh so iOS calculates the full-screen hit area correctly. */
+.tuktuk-feed-container {
+  position: fixed !important;
+  inset: 0 !important;           /* top/right/bottom/left = 0 — full viewport, correct iOS hit area */
+  background: #000;
+  overflow-y: scroll !important;
+  scroll-snap-type: y mandatory !important;
+  scroll-behavior: auto !important;  /* override index-core.css "scroll-behavior:smooth" which conflicts with snap on iOS */
+  overscroll-behavior-y: contain;
+  scrollbar-width: none;
+  z-index: 9900 !important;
+  touch-action: pan-y;           /* let browser fast-path native vertical scroll; prevents iOS back/forward gesture */
+  will-change: scroll-position;  /* correct GPU hint for scroll (not transform) */
+}
+.tuktuk-feed-container::-webkit-scrollbar { display: none; }
+
+/* DESKTOP MODE: Center the feed like a mobile app */
+@media (min-width: 768px) {
+  .tuktuk-feed-container {
+    width: 100% !important;
+    max-width: 480px !important;
+    /* Mobile width */
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    border-left: 1px solid #222;
+    border-right: 1px solid #222;
+  }
+
+  /* Also center the top nav on desktop */
+  .tab-nav-container {
+    width: 100% !important;
+    max-width: 480px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+  }
+
+  /* Ensure bottom nav is centered relative to screen */
+}
+
+/* 💻 Unified Desktop Centering for Bottom Nav (Matches Feed Width) */
+@media (min-width: 481px) {
+
+  #bottomNav,
+  .bottom-navbar,
+  .nav-bar {
+    width: 100% !important;
+    max-width: 480px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    border-radius: 20px 20px 0 0 !important;
+    /* Optional: Rounded top corners */
+    bottom: 0 !important;
+    position: fixed !important;
+    z-index: 10000 !important;
+    /* Ensure it's on top */
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5) !important;
+  }
+}
+
+/* Video Item — scroll-snap child */
+.tuktuk-video-item {
+  width: 100%;
+  height: 100vh !important;
+  height: 100dvh !important;      /* dvh = dynamic viewport height — tracks browser chrome show/hide */
+  scroll-snap-align: start !important;
+  scroll-snap-stop: normal !important;  /* "normal" with mandatory type still snaps, but allows natural
+                                           momentum in both directions. "always" forces extra resistance
+                                           when scrolling back (up) on iOS, making it feel sluggish. */
+  position: relative !important;
+  overflow: hidden !important;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+/* Video Player Object Fit & Performance */
+.tuktuk-video-player, 
+.feed-video,
+.tuktuk-slide-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background-color: #000;
+  will-change: transform;
+  transform: translateZ(0); /* Force GPU */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.feed-image,
+.tuktuk-slide-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: opacity;
+  transition: opacity 0.5s ease;
+}
+
+/* Loading Animations */
+.feed-loading-placeholder {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+video:playing + .feed-loading-placeholder {
+    opacity: 0;
+}
+
+/* TOP NAV OVERLAY */
+/* removed legacy tab-nav-container styles to prevent overlap with #mobileHeader */
+
+.tuktuk-choice-badge i {
+  color: #fbbf24;
+  font-size: 0.8rem;
+}
+
+.tuktuk-choice-badge span {
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Compact Audio Toggle */
+.top-audio-toggle {
+  width: 36px;
+  height: 36px;
+  background: rgba(0, 0, 0, 0.6) !important;
+  -webkit-backdrop-filter: blur(15px);
+  backdrop-filter: blur(15px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.top-audio-toggle i {
+  font-size: 1rem;
+}
+
+.top-audio-toggle:active {
+  transform: scale(0.9);
+}
+
+/* Refined Tab Nav */
+/* removed legacy tab-nav buttons to prevent overlap */
+
+/* RIGHT SIDEBAR ACTIONS */
+.right-sidebar {
+  position: absolute;
+  right: 6px; /* Slightly closer to edge */
+  bottom: 85px; /* Tighter spacing from bottom */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px; /* Reduced gap further for "compact" look */
+  z-index: 1000;
+  padding: 8px 4px; /* More vertical padding, less horizontal */
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border-radius: 20px; /* More rounded like the app */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  /* Sidebar buttons are interactive but vertical swipe still scrolls */
+  touch-action: pan-y;
+}
+
+.right-sidebar.actions-hidden {
+  transform: translateX(80px); /* Slide out to the right */
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Feed actions container */
+.feed-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  touch-action: pan-y; /* Tap = action, vertical swipe = scroll feed */
+}
+
+.action-btn:hover {
+  transform: scale(1.1);
+}
+
+.action-btn:active {
+  transform: scale(0.9);
+}
+
+.action-icon-wrapper {
+  width: 24px;
+  /* Reduced by 40% */
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.action-btn:hover .action-icon-wrapper {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.action-icon {
+  font-size: 0.9rem;
+  /* Reduced by 40% */
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.action-text {
+  font-size: 0.5rem;
+  /* Adjusted for readability */
+  font-weight: 700;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  opacity: 0.9;
+}
+
+/* Heart Pop Effect */
+.heart-active {
+  color: #FF0050 !important;
+  animation: heartPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes heartPop {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.4);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes rotateDisc {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 📰 NEW: NEWS GLASS CARD UI */
+.news-bg-blur {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(50px) brightness(0.3);
+  transform: scale(1.2);
+  z-index: -1;
+}
+
+.news-dark-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.8) 100%);
+  z-index: 0;
+}
+
+.news-glass-card {
+  position: absolute;
+  bottom: 135px;
+  /* Space for lifted bottom nav */
+  left: 15px;
+  /* Slightly tighter margins for mobile */
+  right: 70px;
+  /* Leave space for right sidebar actions */
+  background: rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  /* Slightly smaller radius */
+  padding: 16px;
+  /* Compact padding */
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  z-index: 10;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  max-width: 100%;
+  /* Prevent overflow */
+}
+
+/* Mobile font adjustments */
+@media (max-width: 480px) {
+  .news-headline {
+    font-size: 1.1rem !important;
+    /* Smaller headline */
+    margin-bottom: 8px !important;
+  }
+
+  .news-glass-card {
+    padding: 14px !important;
+    bottom: 130px !important;
+  }
+
+  .news-summary-point {
+    font-size: 0.85rem !important;
+    margin-bottom: 5px !important;
+  }
+
+  .news-action-btn {
+    padding: 10px !important;
+    font-size: 0.85rem !important;
+    margin-top: 8px !important;
+  }
+}
+
+.news-trending-badge {
+  display: inline-block;
+  background: linear-gradient(90deg, #FF0050, #ff8a00);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 50px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 0 15px rgba(255, 0, 80, 0.4);
+}
+
+.news-source-time {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.news-headline {
+  color: white;
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin-bottom: 15px;
+  font-family: 'Outfit', sans-serif;
+}
+
+.news-summary-point {
+  display: flex;
+  gap: 12px;
+  color: #eee;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+.news-action-btn {
+  width: 100%;
+  background: white;
+  color: black;
+  border: none;
+  padding: 14px;
+  border-radius: 16px;
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.news-action-btn:active {
+  transform: scale(0.96);
+  background: #ffc107;
+}
+
+/* 📱 MODAL BOTTOM SHEET (Mobile Style) */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  z-index: 20000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s;
+}
+
+.modal-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.news-detail-modal {
+  position: fixed;
+  bottom: -100%;
+  left: 0;
+  right: 0;
+  background: #111;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 30px 30px 0 0;
+  z-index: 20001;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.news-detail-modal.active {
+  bottom: 0;
+}
+
+.modal-drag-handle {
+  width: 40px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  margin: 12px auto;
+}
+
+.modal-content-scroll {
+  overflow-y: auto;
+  padding: 0 25px 30px;
+  flex: 1;
+}
+
+@media (min-width: 768px) {
+  .news-detail-modal {
+    max-width: 480px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+.news-trending-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #FF0050, #ff8a00);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 50px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 10px rgba(255, 0, 80, 0.3);
+  animation: pulseGlow 2s infinite;
+}
+
+@keyframes pulseGlow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 5px rgba(255, 0, 80, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 15px rgba(255, 0, 80, 0.6);
+  }
+}
+
+/* AVATAR */
+.avatar-wrapper {
+  position: relative;
+  margin-bottom: 15px;
+  cursor: pointer;
+}
+
+.avatar-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.avatar-wrapper:hover .avatar-img {
+  transform: rotate(360deg);
+}
+
+.follow-plus-badge {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 22px;
+  height: 22px;
+  background: #FF0050;
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  border: 1px solid white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* INFO OVERLAY */
+.tuktuk-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%) !important;
+  padding-bottom: 135px !important;
+  /* Space for lifted bottom nav */
+  /* Space for bottom nav */
+  pointer-events: none;
+  z-index: 10;
+}
+
+.tuktuk-info {
+  pointer-events: auto;
+  padding-left: 15px;
+  padding-right: 80px;
+  /* Avoid overlapping sidebar */
+  color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tuktuk-author {
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.video-desc {
+  font-size: 1rem;
+  line-height: 1.3;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* MUSIC ANIMATION */
+.tuktuk-music {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.tuktuk-music i {
+  animation: music-bounce 1s infinite alternate;
+}
+
+@keyframes music-bounce {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-3px);
+  }
+}
+
+.music-marquee {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 150px;
+  position: relative;
+}
+
+.music-marquee span {
+  display: inline-block;
+  padding-left: 100%;
+  animation: marquee 8s linear infinite;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translate(0, 0);
+  }
+
+  100% {
+    transform: translate(-100%, 0);
+  }
+}
+
+/* SPINNING DISC */
+.spinning-record {
+  width: 50px;
+  height: 50px;
+  background: #000;
+  border-radius: 50%;
+  border: 10px solid #222;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: spin 3s linear infinite;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  margin-top: 15px;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* HEART POP ANIMATION (Premium Overlays) */
+.heart-pop-animation {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #FF0050;
+  font-size: 100px;
+  pointer-events: none;
+  z-index: 1000;
+  animation: heartPop 0.8s ease-out forwards;
+  filter: drop-shadow(0 0 20px rgba(255, 0, 80, 0.5));
+}
+
+@keyframes heartPop {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0) rotate(-30deg); }
+  15% { opacity: 1; transform: translate(-50%, -50%) scale(1.2) rotate(-15deg); }
+  30% { transform: translate(-50%, -50%) scale(0.9) rotate(-15deg); }
+  45% { transform: translate(-50%, -50%) scale(1.1) rotate(-15deg); }
+  80% { opacity: 1; transform: translate(-50%, -150%) scale(1.1) rotate(0deg); }
+  100% { opacity: 0; transform: translate(-50%, -200%) scale(1) rotate(0deg); }
+}
+
+/* 🔄 ROTATING MUSIC DISC */
+.tuktuk-music-disc {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #333, #000);
+  border-radius: 50%;
+  border: 4px solid #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 15px;
+  position: relative;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+.tuktuk-music-disc::after {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ff9800 0%, #ff5722 100%);
+  opacity: 0.8;
+}
+
+.tuktuk-music-disc.spinning {
+  animation: disc-spin 3s linear infinite;
+}
+
+@keyframes disc-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 📊 SLIM PROGRESS BAR */
+.tuktuk-progress-bar {
+  position: absolute;
+  bottom: 0px; /* Right above the bottom dock */
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  z-index: 100;
+}
+
+.tuktuk-progress-fill {
+  height: 100%;
+  background: #fff;
+  width: 0%;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+/* 🏷️ TUKTUK CHOICE BADGE */
+.tuktuk-choice-tag {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 6px 12px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.tuktuk-choice-tag .dot {
+  width: 8px;
+  height: 8px;
+  background: #4ade80;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #4ade80;
+}
+
+/* 👤 ENHANCED AUTHOR BOX */
+.author-stats-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 2px;
+}
+
+.online-status {
+  color: #00f2ea;
+  font-weight: 800;
+  font-size: 10px;
+}
+
+.author-name-verified {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.author-name-verified span {
+  font-weight: 700;
+  font-size: 15px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.author-name-verified i {
+  color: #ff9800;
+  font-size: 14px;
+}
+
+/* 🎵 MARQUEE MUSIC */
+.music-marquee-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  overflow: hidden;
+  max-width: 200px;
+}
+
+.music-marquee-container i {
+  color: #fff;
+  font-size: 14px;
+}
+
+.music-scroller {
+  white-space: nowrap;
+  animation: marquee-text 10s linear infinite;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+}
+
+@keyframes marquee-text {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+/* LOADING */
+.loading-spinner {
+  color: white;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 🔖 NEWS GLASS CARD UI - Premium App Feel */
+.news-bg-blur {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(60px) brightness(0.4);
+  transform: scale(1.1);
+  z-index: 1;
+}
+
+.news-dark-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom,
+      rgba(0, 0, 0, 0.1) 0%,
+      rgba(0, 0, 0, 0.4) 40%,
+      rgba(0, 0, 0, 0.85) 100%);
+  z-index: 2;
+}
+
+.news-glass-card {
+  position: absolute;
+  bottom: 120px;
+  /* Space for bottom nav */
+  left: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(25px);
+  backdrop-filter: blur(25px);
+  border-radius: 30px;
+  padding: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  z-index: 50;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
+  animation: fadeInUpCard 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes fadeInUpCard {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.news-trending-badge {
+  display: inline-block;
+  background: linear-gradient(90deg, #FF0050, #ff8a00);
+  color: white;
+  padding: 5px 12px;
+  border-radius: 50px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 5px 15px rgba(255, 0, 80, 0.4);
+  text-transform: uppercase;
+}
+
+.news-source-time {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.news-headline {
+  color: white;
+  font-size: 1.4rem;
+  /* Adjusted for better fit */
+  font-weight: 800;
+  line-height: 1.3;
+  margin-bottom: 15px;
+  font-family: 'Outfit', sans-serif;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.news-summary-point {
+  display: flex;
+  gap: 12px;
+  color: #f1f1f1;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  font-weight: 400;
+}
+
+.news-summary-point i {
+  color: #FFD700;
+  margin-top: 4px;
+  font-size: 0.9rem;
+}
+
+.news-action-btn {
+  width: 100%;
+  background: white;
+  color: black;
+  border: none;
+  padding: 14px;
+  border-radius: 18px;
+  font-weight: 800;
+  font-size: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-top: 10px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.news-action-btn:active {
+  transform: scale(0.96);
+  background: #e9ecef;
+}
+
+/* 📱 MODAL BOTTOM SHEET (Luxury Glass) */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  z-index: 20000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s ease;
+}
+
+.modal-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.news-detail-modal {
+  position: fixed;
+  bottom: -100%;
+  left: 0;
+  right: 0;
+  background: rgba(15, 23, 42, 0.95);
+  -webkit-backdrop-filter: blur(30px);
+  backdrop-filter: blur(30px);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 40px 40px 0 0;
+  z-index: 20001;
+  transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.6);
+}
+
+.news-detail-modal.active {
+  bottom: 0;
+}
+
+.modal-drag-handle {
+  width: 50px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+  margin: 15px auto;
+}
+
+.modal-content-scroll {
+  overflow-y: auto;
+  padding: 10px 30px 50px;
+  flex: 1;
+  scrollbar-width: none;
+}
+
+.modal-content-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* 💻 Desktop/Tablet - Center Modal like the Feed */
+@media (min-width: 481px) {
+  .news-detail-modal {
+    max-width: 480px;
+    left: 50%;
+    right: auto;
+    /* Override default right:0 */
+    transform: translateX(-50%);
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
+    border-left: 1px solid rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   🌍 NEAR ME - POWERFUL RESPONSIVE GRID (Pro Max)
+   Support: iPhone SE -> Ultra Wide Monitors
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Toggle Class for Grid Mode */
+#tuktukFeed.feed-grid-mode {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  padding: 80px 15px 120px 15px !important;
+  scroll-snap-type: none !important;
+  /* Disable snap for grid */
+}
+
+/* 📱 Mobile (Default) - Single Column */
+@media (max-width: 480px) {
+  #tuktukFeed.feed-grid-mode {
+    display: block;
+    padding-top: 80px !important;
+  }
+
+  .feed-grid-mode .tuktuk-grid-card {
+    margin-bottom: 20px;
+  }
+}
+
+/* � Desktop/Tablet - Constrained Mobile View (Same as other tabs) */
+@media (min-width: 481px) {
+  #tuktukFeed.feed-grid-mode {
+    /* Enforce Mobile App Width */
+    width: 100% !important;
+    max-width: 480px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+
+    /* Grid Layout inside the 480px container */
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    /* 2 Columns for denser view */
+    gap: 15px;
+    padding: 100px 15px 120px 15px !important;
+
+    height: 100vh !important;
+    height: 100dvh !important;
+    overflow-y: scroll !important;
+    border-left: 1px solid #222;
+    border-right: 1px solid #222;
+  }
+}
+
+/* 🃏 NEAR ME GRID CARD UI */
+.tuktuk-grid-card {
+  background: rgba(30, 30, 30, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.tuktuk-grid-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.3);
+  z-index: 10;
+}
+
+.grid-card-image-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/5;
+  /* Portrait orientation for feed feel */
+  overflow: hidden;
+}
+
+.grid-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.tuktuk-grid-card:hover .grid-card-img {
+  transform: scale(1.1);
+}
+
+.grid-distance-badge {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: rgba(0, 0, 0, 0.6);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  color: #4ade80;
+  /* Green for near */
+  padding: 6px 12px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid rgba(74, 222, 128, 0.3);
+}
+
+.grid-card-content {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.grid-card-title {
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.grid-card-desc {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 15px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+}
+
+.grid-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.grid-card-author {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.grid-author-img {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #444;
+}
+
+.grid-action-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.grid-action-btn:hover {
+  background: white;
+  color: black;
+}
+
+/* ══════════════════════════════════════════
+   📱 TukTuk Slide Overlay (renderTukTukSlides)
+   Matches Flutter VerticalFeedView structure
+   ══════════════════════════════════════════ */
+
+.tuktuk-slide-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.15) 0%,
+    transparent 25%,
+    transparent 52%,
+    rgba(0,0,0,0.65) 82%,
+    rgba(0,0,0,0.92) 100%
+  );
+  z-index: 1;
+  pointer-events: none; /* Let swipe pass through to #tuktukFeed scroll */
+  touch-action: none;   /* No inputs needed on gradient */
+}
+
+/* ── CRITICAL SWIPE FIX ──────────────────────────────────────────────────────
+   .tuktuk-slide-info and .product-card-strip are absolute-positioned overlays
+   that cover the bottom 30-40% of every slide.  Because they are children of
+   .tuktuk-video-item (not of #tuktukFeed) the browser routes touchstart to
+   them instead of to the scroll container — swallowing the swipe gesture.
+
+   Solution:
+   • Make the CONTAINER pointer-events:none so touches fall through to the feed.
+   • Re-enable pointer-events:auto only on the interactive CHILDREN (buttons,
+     price tag, author link…) — those still need to receive taps.
+   • Add touch-action:pan-y on every interactive child so the OS fast-path
+     vertical-scroll handler still fires even when the element receives the event.
+   ─────────────────────────────────────────────────────────────────────────── */
+.tuktuk-slide-info {
+  position: absolute;
+  bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+  left: 16px;
+  right: 76px;
+  z-index: 2;
+  color: #fff;
+  /* Pass-through: container itself absorbs no touches */
+  pointer-events: none;
+  touch-action: pan-y;
+}
+
+/* Re-enable taps on interactive children only */
+.tuktuk-slide-info .tuktuk-slide-author,
+.tuktuk-slide-info .tuktuk-slide-price {
+  pointer-events: auto;
+  touch-action: pan-y; /* Allow vertical scroll-through while tapping */
+}
+
+.tuktuk-slide-author {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+  cursor: pointer;
+}
+
+.tuktuk-slide-title {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-bottom: 6px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  /* Tappable to open comments; touch-action:pan-y lets vertical swipes pass to scroll container */
+  pointer-events: auto;
+  touch-action: pan-y;
+  cursor: pointer;
+}
+
+.tuktuk-slide-desc {
+  font-size: 0.83rem;
+  color: rgba(255,255,255,0.78);
+  line-height: 1.4;
+  margin-bottom: 10px;
+  pointer-events: none; /* description is read-only */
+}
+
+.tuktuk-slide-price {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #16a34a; /* Green — matches the ฿850 badge seen in screenshot */
+  color: #fff;
+  padding: 7px 16px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 15px rgba(22,163,74,0.45);
+  cursor: pointer;
+  transition: transform 0.15s;
+  pointer-events: auto;
+  touch-action: pan-y; /* Tap = navigate, vertical swipe = scroll feed */
+}
+
+.tuktuk-slide-price:active {
+  transform: scale(0.95);
+}
+
+.tuktuk-slide-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0,0,0,0.45);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  padding: 2px 8px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #22d3ee;
+  flex-shrink: 0;
+}
+
+/* Slide video — autoplay handled by IntersectionObserver */
+.tuktuk-slide-video {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* ================================================
+   SPECIALIZED FEED CARDS (Idea Lab, Riders, Sellers)
+   ================================================ */
+
+/* IDEA LAB CARD */
+.idea-lab-card {
+    background: #000;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+.idea-lab-gradient-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.45) 0%, rgba(0,0,0,1) 80%);
+    animation: brainGlow 4s infinite alternate;
+}
+
+.idea-lab-content {
+    position: relative;
+    z-index: 5;
+    padding: 30px;
+    max-width: 350px;
+}
+
+.brain-icon-wrapper {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 30px;
+}
+
+.brain-icon-wrapper svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.8));
+    animation: brainFloat 3s ease-in-out infinite;
+}
+
+.brain-pulse {
+    position: absolute;
+    inset: -10px;
+    background: rgba(139, 92, 246, 0.2);
+    border-radius: 50%;
+    filter: blur(20px);
+    animation: brainPulse 2s infinite;
+}
+
+.idea-lab-title {
+    color: white;
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, #fff, #a78bfa);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.idea-lab-desc {
+    color: rgba(255,255,255,0.7);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.idea-lab-cta {
+    background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+    transition: 0.3s;
+}
+
+.idea-lab-cta:active { transform: scale(0.95); }
+
+/* RIDER PROFILE CARD */
+.rider-profile-card {
+    background: #111;
+    display: flex !important;
+}
+
+.rider-bg-blur {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: blur(40px) brightness(0.4);
+}
+
+.rider-card-content {
+    position: relative;
+    z-index: 5;
+    padding: 40px;
+    width: 100%;
+    text-align: center;
+}
+
+.rider-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 4px solid #10B981;
+    margin-bottom: 20px;
+    object-fit: cover;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.rider-status-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.rider-status-badge.online { background: #10B981; color: white; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); }
+.rider-status-badge.offline { background: #64748b; color: white; }
+
+.rider-name { color: white; font-size: 1.8rem; font-weight: 800; margin-bottom: 10px; }
+.rider-stats { display: flex; justify-content: center; gap: 20px; color: rgba(255,255,255,0.6); margin-bottom: 40px; font-weight: 600; }
+.rider-stats span i { color: #FBBF24; margin-right: 5px; }
+
+.rider-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.call-rider-btn, .chat-rider-btn {
+    padding: 15px;
+    border-radius: 16px;
+    border: none;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: 0.2s;
+}
+
+.call-rider-btn { background: white; color: black; }
+.chat-rider-btn { background: #10B981; color: white; }
+
+/* FEATURED SELLER CARD */
+.featured-seller-card {
+    background: #000;
+    display: flex !important;
+}
+
+.featured-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.7);
+}
+
+.featured-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.95) 100%);
+}
+
+.featured-banner {
+    position: absolute;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, #FF6B35, #FF3D71);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-weight: 800;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 10px 20px rgba(255, 107, 53, 0.4);
+    z-index: 10;
+}
+
+.featured-content {
+    position: absolute;
+    bottom: 130px;
+    left: 20px;
+    right: 80px;
+    z-index: 10;
+}
+
+.featured-shop-tag {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 8px;
+    display: inline-block;
+    margin-bottom: 12px;
+    font-size: 0.8rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.featured-product-title {
+    color: white;
+    font-size: 1.8rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 15px;
+}
+
+.featured-price-tag {
+    background: linear-gradient(135deg, #00C853, #69F0AE);
+    color: white;
+    padding: 6px 15px;
+    border-radius: 10px;
+    font-weight: 800;
+    font-size: 1.2rem;
+    display: inline-block;
+    margin-bottom: 25px;
+}
+
+.featured-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.featured-buy-btn {
+    flex: 1;
+    background: white;
+    color: black;
+    border: none;
+    padding: 15px;
+    border-radius: 18px;
+    font-weight: 800;
+    font-size: 1rem;
+    transition: 0.2s;
+}
+
+.featured-profile-btn {
+    width: 60px;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: 1.5px solid rgba(255,255,255,0.3);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    backdrop-filter: blur(10px);
+}
+
+/* RIDER JOB CARD */
+.rider-job-card {
+    background: #0f172a;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.job-status-indicator {
+    position: absolute;
+    top: 60px;
+    left: 20px;
+    background: #ef4444;
+    color: white;
+    padding: 6px 15px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    animation: pulse 1.5s infinite;
+}
+
+.job-card-content {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px;
+    padding: 25px;
+    width: 90%;
+    max-width: 350px;
+}
+
+.job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.job-type-icon { font-size: 1.5rem; color: #10B981; }
+.job-price { font-size: 1.8rem; font-weight: 800; color: white; }
+
+.job-location {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.loc-point { display: flex; align-items: center; gap: 10px; font-size: 0.95rem; color: white; }
+.loc-point.start i { color: #3B82F6; }
+.loc-point.end i { color: #EF4444; }
+.loc-line { width: 2px; height: 20px; background: rgba(255,255,255,0.1); margin-left: 7px; }
+
+.job-distance-info { color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-bottom: 25px; }
+
+.accept-job-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #10B981, #059669);
+    color: white;
+    border: none;
+    padding: 18px;
+    border-radius: 16px;
+    font-weight: 800;
+    font-size: 1.1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+@keyframes brainGlow {
+    from { filter: brightness(1) saturate(1); }
+    to { filter: brightness(1.3) saturate(1.5); }
+}
+
+@keyframes brainFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+@keyframes brainPulse {
+    0% { transform: scale(1); opacity: 0.5; }
+    100% { transform: scale(1.8); opacity: 0; }
+}
+
+/* HEART POP ANIMATION */
+.heart-pop-animation {
+    color: #FF0050;
+    font-size: 80px;
+    z-index: 99999;
+    pointer-events: none;
+    animation: heartPopEffect 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    transform: translate(-50%, -50%) scale(0);
+}
+
+@keyframes heartPopEffect {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+    30% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+    50% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    100% { transform: translate(-50%, -100%) scale(1.2); opacity: 0; }
+}
+
+/* PLAY/PAUSE FEEDBACK */
+.play-pause-feedback {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+    pointer-events: none;
+    opacity: 0;
+    transition: all 0.4s ease;
+    z-index: 1000;
+}
+
+/* 📑 ACTION SHEET (BOTTOM SHEET STYLE) */
+.action-sheet-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: flex-end;
+}
+
+.action-sheet-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.action-sheet-container {
+    width: 100%;
+    background: #1a1a1a;
+    border-radius: 20px 20px 0 0;
+    padding: 20px 16px 40px;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.action-sheet-overlay.active .action-sheet-container {
+    transform: translateY(0);
+}
+
+.action-sheet-handle {
+    width: 40px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+}
+
+.action-sheet-title {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.8rem;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.action-sheet-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.action-sheet-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    color: white;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.action-sheet-item:active {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(0.98);
+}
+
+.action-sheet-item i {
+    width: 20px;
+    text-align: center;
+    font-size: 1.15rem;
+    opacity: 0.8;
+}
+
+.action-sheet-item.cancel {
+    margin-top: 10px;
+    background: rgba(255, 0, 80, 0.1);
+    color: #ff0050;
+    justify-content: center;
+}
+
+@media (min-width: 481px) {
+    .action-sheet-overlay {
+        justify-content: center;
+    }
+    .action-sheet-container {
+        max-width: 480px;
+    }
+}
+
+/* ═══════════════════════════════════════════════════
+   📦 Bootstrap Modal Override — Feed Context
+   Bootstrap default modal z-index: 1055 / backdrop: 1040
+   Feed z-index: 9900 → modal would be hidden behind feed.
+   Override to sit above feed (9900) but below nav (11000).
+   ═══════════════════════════════════════════════════ */
+#commentModal,
+#quickPostModal {
+    z-index: 10200 !important;
+}
+
+/* Backdrop sits between feed and modal */
+.modal-backdrop {
+    z-index: 10100 !important;
+}
+
+/* ══════════════════════════════════════════
+   📱 Right Sidebar — TikTok-style Balanced
+   ไม่บดบังวิดีโอ แต่กดได้ง่ายบนมือถือ
+   ══════════════════════════════════════════ */
+.right-sidebar {
+    right: 8px !important;
+    bottom: 88px !important;
+    gap: 8px !important;
+    padding: 10px 6px !important;
+}
+
+.action-icon-wrapper {
+    width: 45px !important;
+    height: 45px !important;
+    margin-bottom: 2px !important;
+    background: rgba(0, 0, 0, 0.35) !important;
+    border-radius: 50% !important;
+    border: 1px solid rgba(255,255,255,0.15) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.action-icon {
+    font-size: 1.0rem !important;
+}
+
+.action-text {
+    font-size: 0.6rem !important;
+    letter-spacing: 0px;
+    font-weight: 700;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+}
+
+/* action-btn spacing */
+.right-sidebar .action-btn {
+    gap: 2px !important;
+    padding: 3px 0 !important;
+    min-width: 45px !important;
+}
+
+/* ════════════════════════════════════════════════════
+   🛍️ Product Card Strip — 8-second timer + CTA
+   Matches Flutter _buildProductCard (8s auto-advance)
+   ════════════════════════════════════════════════════ */
+.product-card-strip {
+    position: absolute;
+    bottom: 80px;
+    left: 0;
+    right: 55px; /* leave space for sidebar */
+    z-index: 10;
+    padding: 0 12px 8px;
+    /* Container is non-interactive — only the button inside is */
+    pointer-events: none;
+    touch-action: pan-y;
+}
+
+.product-timer-track {
+    width: 100%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+
+.product-timer-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #FF0050, #facc15);
+    border-radius: 2px;
+    transition: width 0.1s linear;
+}
+
+.product-strip-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    pointer-events: none; /* inner also non-interactive */
+}
+
+.product-strip-seller {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.72rem;
+    font-weight: 500;
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+    pointer-events: none; /* seller label is display-only */
+}
+
+.product-strip-seller i {
+    color: #facc15;
+    margin-right: 3px;
+}
+
+.product-strip-btn {
+    background: linear-gradient(135deg, #FF0050, #ff6b35);
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(255, 0, 80, 0.4);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+    /* Re-enable taps on this specific button (parent has pointer-events:none) */
+    pointer-events: auto;
+    touch-action: pan-y; /* Tap = navigate, vertical swipe = passed to scroll container */
+}
+
+.product-strip-btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 6px rgba(255, 0, 80, 0.3);
+}
+
+.product-strip-btn i {
+    font-size: 0.65rem;
+    margin-left: 2px;
+}
+
+/* ════════════════════════════════════════════════════
+   🛍️ PRODUCT PANEL — pro bottom overlay
+   ════════════════════════════════════════════════════ */
+.slide-product-panel {
+    position: absolute;
+    bottom: calc(75px + env(safe-area-inset-bottom, 0px)); /* Lifted to clear bottom nav */
+    left: 0;
+    right: 55px; /* Leave room for right sidebar */
+    z-index: 3;
+    padding: 16px 12px 12px; /* Slightly reduced bottom padding */
+    pointer-events: none;
+    touch-action: pan-y;
+}
+.slide-product-panel > * { pointer-events: auto; touch-action: pan-y; }
+
+/* ════════════════════════════════════════════════════
+   📰 NEWS PANEL — pro bottom overlay
+   ════════════════════════════════════════════════════ */
+.slide-news-panel {
+    position: absolute;
+    bottom: calc(75px + env(safe-area-inset-bottom, 0px)); /* Lifted to clear bottom nav */
+    left: 0;
+    right: 55px;
+    z-index: 3;
+    padding: 16px 12px 12px;
+    pointer-events: none;
+    touch-action: pan-y;
+}
+.slide-news-panel > * { pointer-events: auto; touch-action: pan-y; }
+
+/* 📝 POST DETAIL VIEW */
+.post-detail-view {
+    padding: 24px 20px 20px;
+    border-bottom: 2px solid rgba(255,255,255,0.06);
+}
+.post-detail-title { color:#fff; font-size:1.4rem; font-weight:800; line-height:1.35; margin-bottom:15px; }
+.post-detail-desc { color:rgba(255,255,255,0.9); font-size:1.05rem; line-height:1.7; white-space:pre-wrap; word-break:break-word; }
+
+/* ────── Product Timer Bar ────── */
+.product-timer-track { width: 100%; height: 3px; background: rgba(255, 255, 255, 0.1); overflow: hidden; }
+.product-timer-bar { width: 0%; height: 100%; background: #facc15; transition: width 0.1s linear; }
+
+/* ════════════════════════════════════════════════════
+   🔘 CTA BUTTONS — shared style
+   ════════════════════════════════════════════════════ */
+.slide-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    border-radius: 24px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 10px 20px;
+    cursor: pointer;
+    pointer-events: auto;
+    touch-action: pan-y;
+    transition: transform 0.15s, box-shadow 0.15s;
+    -webkit-tap-highlight-color: transparent;
+}
+.slide-cta-btn:active { transform: scale(0.95); }
+
+.slide-cta-product {
+    background: linear-gradient(135deg, #FF0050, #ff6b35);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(255, 0, 80, 0.45);
+}
+.slide-cta-news {
+    background: rgba(16, 185, 129, 0.18);
+    color: #34d399; /* brighter green for better contrast */
+    border: 1.5px solid rgba(16, 185, 129, 0.5);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+}
+.slide-cta-news:active { background: rgba(16, 185, 129, 0.35); }
+
+/* ════════════════════════════════════════════════════
+   🪟 GLASS CARD — frosted panel wrapper
+   ════════════════════════════════════════════════════ */
+.slide-glass-card {
+    background: rgba(0, 0, 0, 0.65); /* slightly darker for better text legibility */
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 24px;
+    padding: 18px 16px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.08);
+    pointer-events: auto;
+    touch-action: pan-y;
+}
+
+/* ════════════════════════════════════════════════════
+   🔲 FULL-WIDTH CTA — stretches across card
+   ════════════════════════════════════════════════════ */
+.slide-full-cta {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: none;
+    border-radius: 16px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    padding: 14px 20px;
+    cursor: pointer;
+    pointer-events: auto;
+    touch-action: pan-y;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+    letter-spacing: 0.3px;
+}
+.slide-full-cta:active {
+    transform: scale(0.97);
+    opacity: 0.88;
+}
+.slide-full-cta.slide-cta-product {
+    background: linear-gradient(135deg, #FF0050 0%, #ff6b35 100%);
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(255, 0, 80, 0.40);
+}
+.slide-full-cta.slide-cta-news {
+    background: linear-gradient(135deg, rgba(16,185,129,0.18) 0%, rgba(5,150,105,0.18) 100%);
+    color: #34d399;
+    border: 1.5px solid rgba(16, 185, 129, 0.45);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+}
+.slide-full-cta.slide-cta-news:active { background: rgba(16, 185, 129, 0.32); }
+
+/* ════════════════════════════════════════════════════
+   🌀 Feed Loading States — orange spinner (Flutter style)
+   ════════════════════════════════════════════════════ */
+.feed-loading-spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    z-index: 9950;
+    pointer-events: none;
+}
+
+.feed-spinner-ring {
+    width: 48px;
+    height: 48px;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-top-color: #FF6D00; /* Orange — matches Flutter CircularProgressIndicator */
+    border-radius: 50%;
+    will-change: transform; /* Force GPU compositing layer — prevents Paint trigger in @keyframes */
+    animation: feedSpinRotate 0.8s linear infinite;
+}
+
+.feed-spinner-text {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+@keyframes feedSpinRotate {
+    to { transform: rotate(360deg); }
+}
+
+/* Pagination spinner (small, at bottom of feed) */
+.feed-pagination-spinner {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    scroll-snap-align: none !important;
+}
+
+.feed-pagination-spinner .feed-spinner-ring {
+    width: 28px;
+    height: 28px;
+    border-width: 3px;
+}
+
+/* Feed error state */
+.feed-error-state {
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    color: rgba(255, 255, 255, 0.6);
+    scroll-snap-align: start;
+}
+
+.feed-error-state i {
+    font-size: 3rem;
+    color: rgba(255, 80, 80, 0.7);
+}
+
+.feed-error-retry-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border-radius: 24px;
+    padding: 10px 28px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.feed-error-retry-btn:active {
+    background: rgba(255, 255, 255, 0.2);
+}

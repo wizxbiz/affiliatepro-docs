@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>ห้องคุยแชท — TukTuk Thailand</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/persistent-ui.css">
+  <style>
+    :root {
+      --bg:        #0a0f1e;
+      --surface:   #111827;
+      --surface2:  #1e293b;
+      --border:    rgba(255,255,255,0.07);
+      --text:      #f1f5f9;
+      --text-dim:  #64748b;
+      --text-sub:  #94a3b8;
+      --blue:      #3b82f6;
+      --blue-dark: #1d4ed8;
+      --cyan:      #22d3ee;
+      --green:     #22c55e;
+      --red:       #ef4444;
+      --purple:    #a855f7;
+      --safe-t: env(safe-area-inset-top, 0px);
+      --safe-b: env(safe-area-inset-bottom, 0px);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { 
+      height: 100%; overflow: hidden; 
+      background: var(--bg); color: var(--text); 
+      font-family: 'Kanit', 'Outfit', sans-serif;
+      position: relative;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background: radial-gradient(circle at 50% -20%, rgba(59,130,246,0.1) 0%, transparent 50%),
+                  radial-gradient(circle at 0% 100%, rgba(168,85,247,0.08) 0%, transparent 40%);
+      pointer-events: none; z-index: -1;
+    }
+
+    /* ══ App shell ══════════════════════════════════════════════════ */
+    #app { display: flex; flex-direction: column; height: 100%; }
+    #loginWrap { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 16px; padding: 32px; text-align: center; }
+    #mainWrap  { display: none; flex-direction: column; height: 100%; overflow: hidden; }
+
+    /* ══ Top bar ════════════════════════════════════════════════════ */
+    .topbar {
+      background: rgba(10,15,30,0.96);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: calc(var(--safe-t) + 10px) 14px 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      min-height: calc(var(--safe-t) + 56px);
+      position: relative;
+      z-index: 100;
+    }
+    .topbar-btn {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      color: var(--text-sub);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; cursor: pointer; flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .topbar-btn:active { transform: scale(0.88); background: rgba(255,255,255,0.12); }
+    .topbar-title {
+      flex: 1; font-size: 1.05rem; font-weight: 700;
+      background: linear-gradient(120deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .unread-pill {
+      background: var(--red); color: #fff;
+      border-radius: 99px; font-size: 0.72rem;
+      padding: 2px 8px; font-weight: 700;
+    }
+    .new-chat-btn {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      border: none; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; cursor: pointer; flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(59,130,246,0.35);
+      transition: all 0.2s;
+    }
+    .new-chat-btn:active { transform: scale(0.88); }
+
+    /* ══ Layout split ════════════════════════════════════════════════ */
+    .layout {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ══ Sidebar ════════════════════════════════════════════════════ */
+    .sidebar {
+      width: 340px; min-width: 340px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform;
+    }
+    @media (max-width: 767px) {
+      .sidebar {
+        position: absolute;
+        inset: 0;
+        width: 100%; min-width: 100%;
+        z-index: 20;
+      }
+      .sidebar.slide-out { transform: translateX(-100%); }
+      .chat-panel { position: absolute; inset: 0; z-index: 10; }
+      .chat-panel.slide-out { transform: translateX(100%); }
+    }
+    .chat-panel {
+      flex: 1;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform;
+    }
+
+    /* ── Sidebar header ── */
+    .sb-head { padding: 16px 16px 0; }
+    .sb-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .tab-row { display: flex; gap: 0; margin-bottom: 12px; background: rgba(255,255,255,0.04); border-radius: 12px; padding: 4px; }
+    .tab-btn {
+      flex: 1; padding: 8px 10px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text-dim);
+      font-family: 'Kanit', sans-serif;
+      font-size: 0.82rem;
+      cursor: pointer; transition: all 0.2s;
+      position: relative;
+    }
+    .tab-btn.active {
+      background: var(--surface2);
+      color: var(--text);
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .tab-badge {
+      position: absolute; top: -6px; right: -6px;
+      background: var(--red); color: #fff;
+      border-radius: 99px; font-size: 0.68rem;
+      padding: 1px 5px; min-width: 16px;
+      border: 1.5px solid var(--bg);
+    }
+    .search-wrap { position: relative; margin-bottom: 4px; }
+    .search-wrap input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 9px 12px 9px 36px;
+      color: var(--text);
+      font-family: 'Kanit', sans-serif;
+      font-size: 0.88rem;
+      transition: border-color 0.2s;
+    }
+    .search-wrap input:focus { outline: none; border-color: var(--blue); background: rgba(59,130,246,0.05); }
+    .search-wrap .si { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); }
+
+    .pin-icon { color: var(--text-dim); font-size: 10px; margin-left: 4px; }
+
+    /* ── Conv list ── */
+    .conv-list { 
+      flex: 1; overflow-y: auto; padding: 6px 0; 
+      padding-bottom: 80px; /* Space for bottom nav */
+    }
+    .conv-list::-webkit-scrollbar { width: 3px; }
+    .conv-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+
+    .conv-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: background 0.15s;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .conv-item::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px; border-radius: 0 2px 2px 0;
+      background: transparent; transition: background 0.2s;
+    }
+    .conv-item:hover { background: rgba(255,255,255,0.03); }
+    .conv-item.active { background: rgba(59,130,246,0.08); }
+    .conv-item.active::before { background: var(--blue); }
+
+    .av-wrap { position: relative; flex-shrink: 0; }
+    .av {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: linear-gradient(135deg, #1e40af, #7c3aed);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 1.05rem; color: #fff;
+      overflow: hidden; flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .av img { width: 100%; height: 100%; object-fit: cover; }
+    .online-dot {
+      position: absolute; bottom: 2px; right: 2px;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--green);
+      border: 2px solid var(--surface);
+    }
+
+    .conv-info { flex: 1; min-width: 0; }
+    .conv-name { font-weight: 600; font-size: 0.93rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .conv-sub  { font-size: 0.78rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 3px; }
+    .prod-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 0.72rem;
+      background: rgba(14,165,233,0.12);
+      color: #38bdf8;
+      border-radius: 6px; padding: 2px 6px; margin-top: 3px;
+      max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .conv-meta { text-align: right; flex-shrink: 0; }
+    .conv-time { font-size: 0.72rem; color: var(--text-dim); }
+    .unread-dot {
+      background: var(--blue); color: #fff;
+      border-radius: 99px; font-size: 0.7rem;
+      padding: 2px 7px; margin-top: 5px;
+      display: inline-block; font-weight: 700;
+      min-width: 20px; text-align: center;
+    }
+
+    .empty-state { text-align: center; padding: 48px 24px; color: var(--text-dim); }
+    .empty-state i { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.4; }
+    .empty-state p { font-size: 0.9rem; }
+
+    /* ══ Chat panel ══════════════════════════════════════════════════ */
+    .chat-welcome {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      color: var(--text-dim); gap: 12px;
+      background: radial-gradient(circle at 50% 40%, rgba(59,130,246,0.04) 0%, transparent 60%);
+    }
+    .chat-welcome .wlc-icon {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(168,85,247,0.12));
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; margin-bottom: 4px;
+    }
+    .chat-welcome h5 { color: var(--text-sub); font-weight: 600; }
+    .chat-welcome p  { font-size: 0.85rem; color: var(--text-dim); }
+
+    /* ── Chat header ── */
+    .chat-head {
+      background: rgba(17,24,39,0.96);
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 14px;
+      display: flex; align-items: center; gap: 10px;
+      flex-shrink: 0; min-height: 60px;
+    }
+    .chat-head .back-btn {
+      display: none;
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+      color: var(--text-sub); align-items: center; justify-content: center;
+      font-size: 15px; cursor: pointer; flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    @media (max-width: 767px) { .chat-head .back-btn { display: flex; } }
+    .chat-head .back-btn:active { transform: scale(0.88); }
+    .ch-av {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, #1e40af, #7c3aed);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.95rem; color: #fff;
+      overflow: hidden; flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .ch-av img { width: 100%; height: 100%; object-fit: cover; }
+    .ch-info { flex: 1; min-width: 0; }
+    .ch-name { font-weight: 700; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ch-status { font-size: 0.75rem; color: var(--text-dim); margin-top: 1px; }
+    .ch-status.online { color: var(--green); }
+    .ch-actions { display: flex; gap: 6px; }
+    .ch-btn {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      color: var(--text-sub); display: flex; align-items: center; justify-content: center;
+      font-size: 14px; cursor: pointer; transition: all 0.2s;
+    }
+    .ch-btn:active { transform: scale(0.88); background: rgba(255,255,255,0.1); }
+
+    /* Accept banner */
+    .accept-banner {
+      background: linear-gradient(135deg, #1e3a8a, #1d4ed8);
+      padding: 10px 16px; display: flex; align-items: center; gap: 12px;
+      font-size: 0.85rem; flex-shrink: 0;
+    }
+    .accept-btn {
+      background: #fff; color: #1d4ed8; border: none;
+      border-radius: 10px; padding: 6px 16px;
+      font-family: 'Kanit', sans-serif; font-weight: 700;
+      font-size: 0.82rem; cursor: pointer; flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .accept-btn:active { transform: scale(0.94); }
+
+    /* Product strip */
+    .prod-strip {
+      background: rgba(14,165,233,0.07);
+      border-bottom: 1px solid rgba(14,165,233,0.15);
+      padding: 10px 16px; display: flex; align-items: center; gap: 12px;
+      flex-shrink: 0; cursor: pointer;
+    }
+    .prod-strip img { width: 42px; height: 42px; border-radius: 10px; object-fit: cover; flex-shrink: 0; }
+    .prod-strip-name { font-weight: 600; font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .prod-strip-price { font-size: 0.78rem; color: var(--cyan); margin-top: 1px; }
+
+    /* ── Messages ── */
+    .msgs-area {
+      flex: 1; overflow-y: auto;
+      padding: 12px 14px;
+      display: flex; flex-direction: column; gap: 4px;
+      scroll-behavior: smooth;
+    }
+    .msgs-area::-webkit-scrollbar { width: 3px; }
+    .msgs-area::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.07); border-radius: 2px; }
+
+    .date-sep {
+      text-align: center; font-size: 0.72rem; color: var(--text-dim);
+      margin: 10px 0 6px; display: flex; align-items: center; gap: 8px;
+    }
+    .date-sep::before, .date-sep::after { content:''; flex:1; height:1px; background: var(--border); }
+
+    .msg-row { display: flex; align-items: flex-end; gap: 7px; }
+    .msg-row.mine { flex-direction: row-reverse; }
+    .msg-row + .msg-row { margin-top: 2px; }
+    .msg-row.mine + .msg-row.mine .msg-avatar { visibility: hidden; }
+
+    .msg-avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: linear-gradient(135deg, #1e40af, #7c3aed);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem; font-weight: 700; color: #fff;
+      overflow: hidden; flex-shrink: 0; align-self: flex-end;
+    }
+    .msg-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+    .msg-col { display: flex; flex-direction: column; max-width: 70%; }
+    .msg-row.mine .msg-col { align-items: flex-end; }
+
+    .msg-bubble {
+      background: var(--surface2);
+      border-radius: 18px 18px 18px 4px;
+      padding: 9px 13px;
+      font-size: 0.9rem; line-height: 1.45;
+      word-break: break-word;
+      white-space: pre-wrap;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      position: relative;
+    }
+    .msg-row.mine .msg-bubble {
+      background: linear-gradient(135deg, #1d4ed8, #2563eb);
+      border-radius: 18px 18px 4px 18px;
+      box-shadow: 0 4px 12px rgba(29,78,216,0.35);
+    }
+    .msg-bubble img { max-width: 100%; border-radius: 10px; display: block; }
+
+    .msg-meta {
+      font-size: 0.67rem; color: var(--text-dim);
+      margin-top: 3px; display: flex; align-items: center; gap: 4px;
+    }
+    .msg-row.mine .msg-meta { justify-content: flex-end; }
+    .msg-read { color: var(--cyan); }
+
+    /* Typing */
+    .typing-wrap { padding: 0 14px 6px; min-height: 30px; flex-shrink: 0; }
+    .typing-row { display: flex; align-items: center; gap: 8px; }
+    .typing-av {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: linear-gradient(135deg, #1e40af, #7c3aed);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem; color: #fff; flex-shrink: 0;
+    }
+    .typing-bubble {
+      background: var(--surface2);
+      border-radius: 14px 14px 14px 4px;
+      padding: 8px 12px; display: flex; gap: 4px; align-items: center;
+    }
+    .t-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--text-dim); animation: tdot 1.2s infinite;
+    }
+    .t-dot:nth-child(2) { animation-delay: 0.2s; }
+    .t-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes tdot { 0%,60%,100%{ transform:translateY(0); opacity:0.5; } 30%{ transform:translateY(-5px); opacity:1; } }
+
+    /* ── Input ── */
+    .input-bar {
+      background: rgba(17,24,39,0.97);
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border);
+      padding: 10px 12px;
+      padding-bottom: calc(80px + var(--safe-b)); /* Extra space for Global Nav */
+      display: flex; align-items: flex-end; gap: 8px;
+      flex-shrink: 0;
+    }
+    .input-wrap {
+      flex: 1; background: rgba(255,255,255,0.05);
+      border: 1.5px solid var(--border);
+      border-radius: 22px;
+      display: flex; align-items: flex-end;
+      transition: border-color 0.2s;
+    }
+    .input-wrap:focus-within { border-color: var(--blue); background: rgba(59,130,246,0.05); }
+    .input-wrap textarea {
+      flex: 1; background: transparent; border: none;
+      padding: 10px 14px; color: var(--text);
+      font-family: 'Kanit', sans-serif; font-size: 0.93rem;
+      resize: none; max-height: 120px;
+      line-height: 1.4; overflow-y: auto;
+    }
+    .input-wrap textarea:focus { outline: none; }
+    .input-wrap textarea::placeholder { color: var(--text-dim); }
+    .attach-btn {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: transparent; border: none; color: var(--text-dim);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; cursor: pointer; flex-shrink: 0;
+      align-self: flex-end; margin-bottom: 4px; padding: 0;
+      transition: color 0.2s;
+    }
+    .attach-btn:active { color: var(--blue); }
+    .send-btn {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      border: none; color: #fff; font-size: 15px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(59,130,246,0.4);
+      transition: all 0.2s; align-self: flex-end;
+    }
+    .send-btn:active { transform: scale(0.88); box-shadow: none; }
+    .send-btn:disabled { background: var(--surface2); box-shadow: none; color: var(--text-dim); cursor: not-allowed; }
+
+    /* Quick replies */
+    .quick-replies {
+      display: flex; gap: 6px; overflow-x: auto; padding: 0 12px 8px;
+      flex-shrink: 0; scrollbar-width: none;
+    }
+    .quick-replies::-webkit-scrollbar { display: none; }
+    .qr-chip {
+      background: rgba(59,130,246,0.1);
+      border: 1px solid rgba(59,130,246,0.25);
+      border-radius: 99px; padding: 6px 14px;
+      font-size: 0.8rem; color: #93c5fd;
+      white-space: nowrap; cursor: pointer;
+      font-family: 'Kanit', sans-serif;
+      transition: all 0.2s; flex-shrink: 0;
+    }
+    .qr-chip:active { background: rgba(59,130,246,0.25); transform: scale(0.94); }
+
+    /* ══ Scroll-to-bottom FAB ════════════════════════════════════════ */
+    #scrollFab {
+      position: absolute; bottom: 80px; right: 14px;
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text-sub); display: none; align-items: center;
+      justify-content: center; font-size: 14px; cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      z-index: 50; transition: all 0.2s;
+    }
+
+    /* ══ Login prompt ═══════════════════════════════════════════════ */
+    .lp-icon { font-size: 3rem; color: var(--text-dim); margin-bottom: 8px; }
+    .lp-title { font-size: 1.1rem; font-weight: 700; }
+    .lp-sub { font-size: 0.88rem; color: var(--text-dim); }
+    .lp-btn {
+      margin-top: 8px; background: linear-gradient(135deg, var(--blue), var(--purple));
+      color: #fff; border: none; border-radius: 14px;
+      padding: 12px 32px; font-size: 0.95rem;
+      font-family: 'Kanit', sans-serif; font-weight: 700;
+      cursor: pointer; box-shadow: 0 8px 24px rgba(59,130,246,0.35);
+    }
+    .home-btn {
+      background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+      color: var(--text-sub); border-radius: 12px;
+      padding: 10px 24px; font-size: 0.88rem;
+      font-family: 'Kanit', sans-serif;
+      cursor: pointer;
+    }
+
+    /* ══ Optimistic message ═════════════════════════════════════════ */
+    .msg-bubble.optimistic { opacity: 0.7; }
+
+    /* ══ Transition overlay (mobile swipe) ══════════════════════════ */
+    #swipeOverlay {
+      display: none; position: absolute; inset: 0;
+      background: rgba(0,0,0,0); z-index: 30;
+      touch-action: none;
+    }
+
+    /* ══ Pin / Archive indicators ════════════════════════════════════ */
+    .conv-item.pinned { background: rgba(59,130,246,0.04); }
+    .conv-item.pinned::before { background: rgba(59,130,246,0.4); }
+    .pinned-sep {
+      padding: 6px 16px 2px;
+      font-size: 0.7rem; color: var(--text-dim);
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+
+    /* ══ Context menu (bottom sheet) ════════════════════════════════ */
+    .sheet-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+    .sheet-overlay.open { display: block; }
+    .sheet-panel {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--surface);
+      border-radius: 20px 20px 0 0;
+      border-top: 1px solid var(--border);
+      padding: 0 0 calc(16px + var(--safe-b));
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+      z-index: 1001; max-height: 80vh; overflow-y: auto;
+    }
+    .sheet-overlay.open .sheet-panel { transform: translateY(0); }
+    .sheet-handle {
+      width: 36px; height: 4px; border-radius: 2px;
+      background: rgba(255,255,255,0.12);
+      margin: 10px auto 14px;
+    }
+    .sheet-header {
+      padding: 0 16px 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sheet-av {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg, #1e40af, #7c3aed);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 1.1rem; color: #fff; overflow: hidden;
+    }
+    .sheet-av img { width: 100%; height: 100%; object-fit: cover; }
+    .sheet-name { font-weight: 700; font-size: 0.95rem; }
+    .sheet-sub  { font-size: 0.78rem; color: var(--text-dim); margin-top: 2px; }
+    .sheet-action {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 20px; cursor: pointer; transition: background 0.15s;
+    }
+    .sheet-action:active { background: rgba(255,255,255,0.04); }
+    .sheet-action i {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; flex-shrink: 0;
+    }
+    .sheet-action span { font-size: 0.92rem; }
+    .sheet-action.danger span { color: var(--red); }
+    .sheet-action.danger i  { background: rgba(239,68,68,0.12); color: var(--red); }
+
+    /* Settings Modal (Flutter style) */
+    .settings-overlay-wrap {
+      display: none; position: fixed; inset: 0; z-index: 2000;
+    }
+    .settings-overlay-wrap.open { display: block; }
+    .settings-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); }
+    .settings-modal {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: var(--surface);
+      border-radius: 30px 30px 0 0;
+      padding: 24px 20px calc(24px + var(--safe-b));
+      transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+    }
+    .settings-overlay-wrap.open .settings-modal { transform: translateY(0); }
+    .settings-head { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+    .settings-head span { font-size: 1.2rem; font-weight: 700; flex: 1; }
+    .settings-close { background: rgba(255,255,255,0.06); border: none; color: var(--text-sub); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .settings-label { font-size: 0.9rem; font-weight: 600; color: var(--text-dim); margin-bottom: 12px; }
+    .theme-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 24px; }
+    .theme-dot {
+      height: 48px; border-radius: 12px; border: 2px solid var(--border);
+      cursor: pointer; transition: all 0.2s; position: relative;
+    }
+    .theme-dot.active { border-color: var(--blue); background: rgba(59,130,246,0.1); }
+    .theme-dot::after {
+      content: ''; position: absolute; inset: 6px; border-radius: 8px;
+    }
+    .mode-dark::after   { background: #0f172a; }
+    .mode-light::after  { background: #ffffff; }
+    .mode-sunset::after { background: #f97316; }
+    .mode-ocean::after  { background: #0891B2; }
+    .mode-forest::after { background: #059669; }
+
+    .settings-divider { height: 1px; background: var(--border); margin: 16px 0; }
+    .settings-option {
+      display: flex; align-items: center; gap: 16px; padding: 14px 0;
+      cursor: pointer; transition: opacity 0.2s;
+    }
+    .settings-option:active { opacity: 0.6; }
+    .settings-option i { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.04); display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--blue); }
+    .settings-option.danger i { background: rgba(239,68,68,0.1); color: var(--red); }
+    .settings-option span { font-weight: 500; font-size: 1rem; }
+
+    /* Promo Slider */
+    .promo-carousel { padding: 8px 16px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--border); }
+    .promo-carousel::-webkit-scrollbar { display: none; }
+    .promo-inner { display: flex; gap: 12px; }
+    .promo-card {
+      min-width: 260px; height: 100px;
+      border-radius: 20px; padding: 16px;
+      background: var(--surface2); border: 1px solid var(--border);
+      display: flex; flex-direction: column; justify-content: center;
+      cursor: pointer; position: relative; overflow: hidden;
+      transition: transform 0.2s;
+    }
+    .promo-card:active { transform: scale(0.97); }
+    .promo-card.special { background: linear-gradient(135deg, var(--blue), var(--purple)); border: none; color: #fff; }
+    .promo-name { font-weight: 800; font-size: 0.95rem; margin-bottom: 2px; }
+    .promo-shop { font-size: 0.72rem; opacity: 0.7; }
+    .promo-footer { margin-top: auto; display: flex; justify-content: space-between; align-items: center; }
+    .promo-action, .promo-price { font-size: 0.75rem; font-weight: 800; letter-spacing: 0.05em; }
+
+    .online-status {
+      display: inline-flex; align-items: center; gap: 4px;
+      color: var(--green); font-size: 0.72rem; font-weight: 600;
+      margin-top: 4px;
+    }
+    .online-status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+
+    .topbar-actions { display: flex; gap: 8px; }
+
+    /* ══ Theme variants ══════════════════════════════════════════════ */
+    body.theme-light {
+      --bg: #f1f5f9; --surface: #ffffff; --surface2: #e2e8f0;
+      --border: rgba(0,0,0,0.09); --text: #0f172a;
+      --text-dim: #64748b; --text-sub: #475569;
+    }
+    body.theme-sunset {
+      --bg: #1c0a00; --surface: #2c1007; --surface2: #3d1a0a;
+      --border: rgba(255,150,50,0.1); --text: #fef3c7;
+      --text-dim: #92400e; --text-sub: #d97706;
+    }
+    body.theme-ocean {
+      --bg: #020f1c; --surface: #041728; --surface2: #082232;
+      --border: rgba(14,165,233,0.1); --text: #e0f2fe;
+      --text-dim: #0369a1; --text-sub: #0ea5e9;
+    }
+    body.theme-forest {
+      --bg: #071a0e; --surface: #0d2417; --surface2: #14352a;
+      --border: rgba(34,197,94,0.1); --text: #dcfce7;
+      --text-dim: #15803d; --text-sub: #4ade80;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Login prompt -->
+  <div id="loginWrap" style="display:none;">
+    <div class="lp-icon"><i class="fas fa-comment-dots"></i></div>
+    <div class="lp-title">ข้อความ</div>
+    <div class="lp-sub">กรุณาเข้าสู่ระบบเพื่อดูและส่งข้อความ</div>
+    <button class="lp-btn" onclick="location.href='/login?redirectUrl=%2Fmessages'">เข้าสู่ระบบ</button>
+    <button class="home-btn" onclick="_goHome()"><i class="fas fa-home"></i> กลับหน้าหลัก</button>
+  </div>
+
+    <!-- Main Wrap -->
+    <div class="main-wrap" id="mainWrap" style="display:none;">
+      <header class="topbar">
+        <div class="topbar-title">ข้อความ</div>
+        <div id="totalBadge" class="unread-pill" style="display:none;">0</div>
+        <div class="topbar-actions">
+          <button class="topbar-btn" onclick="_newChatSheet()" title="ค้นหาเพื่อน">
+            <i class="fas fa-person-add"></i>
+          </button>
+          <button class="topbar-btn" onclick="_openSettings()" title="ตั้งค่า">
+            <i class="fas fa-tune"></i>
+          </button>
+        </div>
+      </header>
+
+      <div class="layout">
+        <aside class="sidebar" id="sidebar">
+          <div class="sb-head">
+            <div class="search-wrap">
+              <button class="topbar-btn" onclick="_goHome(true)" style="margin-right:8px;background:transparent;border:none;color:var(--text);"><i class="fas fa-home"></i></button>
+              <i class="fas fa-search si" style="color:var(--blue);"></i>
+              <input type="text" id="searchInput" placeholder="ค้นหาการสนทนาหรือสินค้า..." oninput="_onSearch()">
+            </div>
+            
+            <div class="tab-row">
+              <button class="tab-btn active" id="tabDM" onclick="switchTab('dm')">
+                การสนทนา
+                <span class="tab-badge" id="dmBadge" style="display:none;"></span>
+              </button>
+              <button class="tab-btn" id="tabProd" onclick="switchTab('product')">
+                สินค้า
+                <span class="tab-badge" id="prodBadge" style="display:none;"></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="conv-list" id="convList">
+            <div style="text-align:center;padding:40px;color:var(--text-dim);"><i class="fas fa-spinner fa-spin"></i> กำลังโหลด...</div>
+          </div>
+        </aside>
+
+        <!-- Chat Panel -->
+        <main class="chat-panel slide-out" id="chatPanel">
+          <div class="chat-welcome" id="chatWelcome">
+            <div class="wlc-icon"><i class="fas fa-comment-dots"></i></div>
+            <h5>เลือกการสนทนา</h5>
+            <p>เพื่อเริ่มส่งข้อความ</p>
+          </div>
+
+          <div class="active-chat" id="activeChat" style="display:none;flex-direction:column;height:100%;">
+            <header class="chat-head">
+              <div class="back-btn" onclick="_goHome()"><i class="fas fa-arrow-left"></i></div>
+              <div class="ch-av" id="chAv"></div>
+              <div class="ch-info">
+                <div class="ch-name" id="chName"></div>
+                <div class="ch-status" id="chStatus">ออฟไลน์</div>
+              </div>
+              <div class="ch-actions">
+                <div class="ch-btn" onclick="_shareChat()"><i class="fas fa-share-alt"></i></div>
+                <div class="ch-btn" onclick="_chatMenu()"><i class="fas fa-ellipsis-v"></i></div>
+              </div>
+            </header>
+
+            <div class="accept-banner" id="acceptBanner" style="display:none;">
+              <span style="flex:1;color:#fff;">ระบุตัวตน: ส่งคำขอเป็นเพื่อนเพื่อเริ่มแชท...</span>
+              <button class="accept-btn" id="doAcceptBtn" onclick="doAccept()">รับเป็นเพื่อน</button>
+            </div>
+
+            <div class="prod-strip" id="prodStrip" style="display:none;" onclick="_openProduct()">
+              <img id="prodImg" src="">
+              <div style="flex:1;min-width:0;">
+                <div class="prod-strip-name" id="prodName"></div>
+                <div class="prod-strip-price" id="prodPrice"></div>
+              </div>
+              <i class="fas fa-chevron-right" style="color:var(--text-dim);font-size:12px;"></i>
+            </div>
+
+            <div class="msgs-area" id="msgsArea"></div>
+
+            <div class="typing-wrap" id="typingWrap"></div>
+
+            <div class="quick-replies" id="quickReplies" style="display:none;">
+              <div class="qr-chip" onclick="_useQR('ยังมีสินค้าอยู่ไหมครับ?')">ยังมีสินค้าอยู่ไหม?</div>
+              <div class="qr-chip" onclick="_useQR('ลดได้อีกไหมครับ?')">ลดได้อีกไหม?</div>
+              <div class="qr-chip" onclick="_useQR('ขอดูรูปเพิ่มเติมหน่อยครับ')">ขอดูรูปเพิ่ม</div>
+              <div class="qr-chip" onclick="_useQR('ขอโลเคชั่นหน่อยครับ')">ขอโลเคชั่น</div>
+            </div>
+
+            <footer class="input-bar">
+              <div class="input-wrap">
+                <button class="attach-btn" onclick="_attachFile()"><i class="fas fa-image"></i></button>
+                <textarea id="msgInput" placeholder="พิมพ์ข้อความ..." oninput="autoResize(this); onTyping()" rows="1"></textarea>
+              </div>
+              <button class="send-btn" id="sendBtn" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
+            </footer>
+          </div>
+          <div class="scroll-fab" id="scrollFab" onclick="_scrollBottom()"><i class="fas fa-chevron-down"></i></div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Context Menu Sheet -->
+    <div class="sheet-overlay" id="sheetOverlay" onclick="_closeSheet(event)">
+      <div class="sheet-panel">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+          <div class="sheet-av" id="sheetAv"></div>
+          <div class="sheet-info">
+            <div class="sheet-name" id="sheetName"></div>
+            <div class="sheet-sub" id="sheetSub">ตัวเลือก</div>
+          </div>
+        </div>
+        <div id="sheetActions"></div>
+      </div>
+    </div>
+
+    <!-- Settings Overlay -->
+    <div class="settings-overlay-wrap" id="settingsPanel">
+      <div class="settings-backdrop" onclick="_closeSettings()"></div>
+      <div class="settings-modal">
+        <div class="settings-head">
+          <i class="fas fa-palette" style="color:var(--blue);"></i>
+          <span>ปรับแต่งหน้าตา</span>
+          <button class="settings-close" onclick="_closeSettings()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="settings-body">
+          <p class="settings-label">โหมดสี</p>
+          <div class="theme-grid">
+            <div class="theme-dot mode-dark" data-t="dark" onclick="_applyTheme('dark')" title="มืด"></div>
+            <div class="theme-dot mode-light" data-t="light" onclick="_applyTheme('light')" title="สว่าง"></div>
+            <div class="theme-dot mode-sunset" data-t="sunset" onclick="_applyTheme('sunset')" title="พระอาทิตย์"></div>
+            <div class="theme-dot mode-ocean" data-t="ocean" onclick="_applyTheme('ocean')" title="มหาสมุทร"></div>
+            <div class="theme-dot mode-forest" data-t="forest" onclick="_applyTheme('forest')" title="ป่าไม้"></div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-option" onclick="_viewArchived()">
+            <i class="fas fa-archive"></i>
+            <span>บทสนทนาที่ถูกเก็บถาวร</span>
+          </div>
+          <div class="settings-option" onclick="_clearCache()">
+            <i class="fas fa-broom"></i>
+            <span>ล้างแคชโปรไฟล์</span>
+          </div>
+          <div class="settings-option danger" onclick="_logoutChat()">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>ออกจากระบบ</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<script src="js/firebase-init.js"></script>
+<script src="js/liff-config.js"></script>
+<script src="js/persistent-ui.js"></script>
+<script src="js/spa-router.js"></script>
+<script src="js/chat-web.js"></script>
+
+<script>
+// ── State ────────────────────────────────────────────────────────────────────
+let _sess = null, _tab = 'dm';
+let _allDM = [], _allProd = [];
+let _activeId = null, _activeCol = null, _activeOther = null;
+let _unsubMsgs = null, _unsubOnline = null, _unsubTyping = null;
+let _profileCache = {};
+let _chatSettings = { pinned: [], archived: [] };
+let _currentProd = null;
+let _isMobile = () => window.innerWidth < 768;
+
+// ── Navigation ───────────────────────────────────────────────────────────────
+function _goHome(force = false) {
+  // If we are mobile and looking at a chat, show sidebar first (unless forced)
+  if (_isMobile() && _activeId && !force) {
+    showSidebar();
+    return;
+  }
+
+  // If inside SPA iframe, let parent handle it or try to go back in parent context
+  if (window.self !== window.top || window.location.search.includes('embedded=true')) {
+    // If forced, or history is very short, tell parent to navigate home
+    if (force || history.length <= 1) {
+      try {
+        window.top.postMessage({ type: 'NAVIGATE', href: 'index.html' }, '*');
+      } catch (e) {
+        location.href = '/';
+      }
+      return;
+    }
+    
+    // Regular back within the iframe history (for mobile swipe-back compatibility)
+    history.back();
+    return;
+  }
+
+  // Regular standalone navigation
+  if (force || history.length <= 1) {
+    location.href = '/';
+  } else {
+    history.back();
+  }
+}
+
+// Handle hardware back button / browser back on mobile
+window.addEventListener('popstate', e => {
+  if (_isMobile() && _activeId) {
+    e.preventDefault();
+    showSidebar();
+  }
+});
+
+// ── Auth init ────────────────────────────────────────────────────────────────
+const _syncAuthCheck = () => {
+  // Check all possible session keys to maximize persistence across different app parts
+  const raw = localStorage.getItem('wizmobiz_session') || 
+              localStorage.getItem('tuktuk_line_session') ||
+              localStorage.getItem('tuktuk_session') ||
+              localStorage.getItem('user_data');
+  if (!raw) return null;
+  try {
+    const s = JSON.parse(raw);
+    const uid = s.uid || s.lineUserId || s.firebaseUid;
+    if (uid) return {
+      uid,
+      displayName: s.displayName || s.name || 'ผู้ใช้',
+      photoURL: s.photoURL || s.pictureUrl || ''
+    };
+  } catch(_) {}
+  return null;
+};
+
+// Start with cached session if available
+_sess = _syncAuthCheck();
+if (_sess) {
+  document.getElementById('loginWrap').style.display = 'none';
+  document.getElementById('mainWrap').style.display = 'flex';
+  TukTukChat.setOnline(_sess.uid);
+  _startListeners();
+  _handleDeepLink();
+  _initTheme();
+} else {
+  // Fallback: if no cache, wait for Firebase but show loader or keep both hidden
+  // We don't show loginWrap yet, wait for onAuthStateChanged to confirm "null" user
+}
+
+firebase.auth().onAuthStateChanged(async (user) => {
+  if (user) {
+    const newUser = {
+      uid: user.uid,
+      displayName: user.displayName || 'ผู้ใช้',
+      photoURL: user.photoURL || ''
+    };
+    
+    // Update if different or first time
+    if (!_sess || _sess.uid !== newUser.uid) {
+      _sess = newUser;
+      document.getElementById('loginWrap').style.display = 'none';
+      document.getElementById('mainWrap').style.display = 'flex';
+      TukTukChat.setOnline(_sess.uid);
+      _startListeners();
+      _handleDeepLink();
+      _initTheme();
+    }
+  } else {
+    // No Firebase user
+    if (!_sess) {
+      document.getElementById('loginWrap').style.display = 'flex';
+      document.getElementById('mainWrap').style.display = 'none';
+    }
+  }
+});
+
+// ── SPA re-auth: parent sends AUTH_REFRESH when switching back to this iframe ─
+window.addEventListener('message', (e) => {
+  if (e.data && e.data.type === 'AUTH_REFRESH') {
+    if (!_sess) {
+      const refreshed = _syncAuthCheck();
+      if (refreshed) {
+        _sess = refreshed;
+        document.getElementById('loginWrap').style.display = 'none';
+        document.getElementById('mainWrap').style.display = 'flex';
+        TukTukChat.setOnline(_sess.uid);
+        _startListeners();
+        _handleDeepLink();
+        _initTheme();
+      }
+    }
+  }
+});
+
+// ── Listeners ────────────────────────────────────────────────────────────────
+function _startListeners() {
+  const uid = _sess.uid;
+
+  TukTukChat.listenConversations(uid, convs => {
+    _allDM = convs;
+    if (_tab === 'dm') renderList();
+    _updateBadge('dm');
+  });
+
+  TukTukChat.listenProductChats(uid, chats => {
+    _allProd = chats;
+    if (_tab === 'product') renderList();
+    _updateBadge('product');
+  });
+
+  TukTukChat.listenTotalUnread(uid, n => {
+    const el = document.getElementById('totalBadge');
+    if (n > 0) { el.textContent = n > 99 ? '99+' : n; el.style.display = 'inline'; }
+    else el.style.display = 'none';
+    // Sync App Badge
+    if (window.TukTukNotify) window.TukTukNotify.setBadge(n);
+  });
+
+  TukTukChat.listenChatSettings(uid, settings => {
+    _chatSettings = settings;
+    renderList();
+  });
+}
+
+// ── Deep link ─────────────────────────────────────────────────────────────────
+function _handleDeepLink() {
+  const p = new URLSearchParams(location.search);
+  const convId = p.get('id') || p.get('convId');
+  const uid2   = p.get('uid') || p.get('userId');
+  const col    = p.get('type') === 'product' ? TukTukChat.PROD : TukTukChat.CONV;
+  if (convId) {
+    openChat(convId, col);
+  } else if (uid2 && uid2 !== _sess.uid) {
+    TukTukChat.getOrCreateConversation(_sess.uid, uid2).then(cid => openChat(cid, TukTukChat.CONV));
+  }
+}
+
+// ── Tab switch ────────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  _tab = tab;
+  document.getElementById('tabDM').classList.toggle('active', tab === 'dm');
+  document.getElementById('tabProd').classList.toggle('active', tab !== 'dm');
+  renderList();
+}
+function _setTab(t) { switchTab(t); }
+
+function _onSearch() { 
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  renderList(q); 
+}
+function filterConvs(q) { renderList(q.toLowerCase()); }
+
+// ── Badge ─────────────────────────────────────────────────────────────────────
+function _updateBadge(type) {
+  const uid = _sess?.uid;
+  if (type === 'dm') {
+    const n = _allDM.reduce((s, c) => s + (c[`unreadCount_${uid}`] || 0), 0);
+    const el = document.getElementById('dmBadge');
+    if (n > 0) { el.textContent = n; el.style.display = 'inline'; } else el.style.display = 'none';
+  } else {
+    const n = _allProd.reduce((s, c) => s + (c.buyerId === uid ? c.unreadCountBuyer : c.unreadCountSeller || 0), 0);
+    const el = document.getElementById('prodBadge');
+    if (n > 0) { el.textContent = n; el.style.display = 'inline'; } else el.style.display = 'none';
+  }
+}
+
+// ── Render list ───────────────────────────────────────────────────────────────
+async function renderList(q = '') {
+  if (!_sess) return;
+  const uid  = _sess.uid;
+  const list = _tab === 'dm' ? _allDM : _allProd;
+  const box  = document.getElementById('convList');
+
+  if (!list.length) {
+    box.innerHTML = `<div class="empty-state">
+      <div style="font-size:2rem;opacity:0.2;margin-bottom:12px;"><i class="fas fa-comment-slash"></i></div>
+      <p style="font-weight:600;">ยังไม่มีบทสนทนา</p>
+      <p style="font-size:0.8rem;opacity:0.6;margin-top:4px;">เริ่มแชทจากหน้าโพรไฟล์หรือสินค้า</p>
+    </div>`;
+    return;
+  }
+
+  const items = await Promise.all(list.map(async conv => {
+    let otherUid, name, avatar, prod = null;
+    if (_tab === 'dm') {
+      otherUid = (conv.participants || []).find(p => p !== uid) || '';
+      const pr = await _profile(otherUid);
+      name   = pr?.displayName || pr?.name || otherUid.slice(0,8);
+      avatar = pr?.photoURL || pr?.pictureUrl || '';
+    } else {
+      const isBuyer = conv.buyerId === uid;
+      otherUid = isBuyer ? (conv.sellerId || conv.lineUserId) : conv.buyerId;
+      const pr = await _profile(otherUid);
+      name   = pr?.displayName || pr?.name || otherUid.slice(0,8);
+      avatar = pr?.photoURL || pr?.pictureUrl || '';
+      prod   = conv.productName ? { name: conv.productName, img: conv.productImageUrl } : null;
+    }
+    
+    if (q && !name.toLowerCase().includes(q) && !(conv.lastMessage||'').toLowerCase().includes(q)) return null;
+    
+    const unread = _tab === 'dm'
+      ? (conv[`unreadCount_${uid}`] || 0)
+      : (conv.buyerId === uid ? conv.unreadCountBuyer : conv.unreadCountSeller) || 0;
+    const lastAt = conv.lastMessageAt?.toDate?.() || null;
+    const col = _tab === 'dm' ? TukTukChat.CONV : TukTukChat.PROD;
+    return { conv, otherUid, name, avatar, prod, unread, lastAt, col };
+  }));
+
+  const rows = items.filter(Boolean);
+  if (!rows.length && q) {
+    box.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i><p style="margin-top:8px;">ไม่พบบทสนทนาที่ค้นหา</p></div>`;
+    return;
+  }
+
+  // Sort: Pinned first, then by time
+  rows.sort((a, b) => {
+    const aPinned = (_chatSettings.pinned || []).includes(a.conv.id);
+    const bPinned = (_chatSettings.pinned || []).includes(b.conv.id);
+    if (aPinned && !bPinned) return -1;
+    if (!aPinned && bPinned) return 1;
+    const at = a.lastAt?.getTime() || 0;
+    const bt = b.lastAt?.getTime() || 0;
+    return bt - at;
+  });
+
+  box.innerHTML = rows.map(({ conv, otherUid, name, avatar, prod, unread, lastAt, col }) => {
+    const letter  = (name||'?')[0].toUpperCase();
+    const isActive = _activeId === conv.id;
+    const timeStr  = lastAt ? _fmtTime(lastAt) : '';
+    const preview  = (conv.lastMessage||'').slice(0,60);
+    const mine     = conv.lastSenderId === _sess.uid;
+    const isPinned = (_chatSettings.pinned || []).includes(conv.id);
+    const isArchived = (_chatSettings.archived || []).includes(conv.id);
+
+    if (isArchived && !_viewingArchived) return ''; 
+
+    return `<div class="conv-item ${isActive?'active':''} ${isPinned?'pinned':''}" 
+                 onclick="openChat('${conv.id}','${col}')" 
+                 oncontextmenu="event.preventDefault(); _showConvMenu('${conv.id}', '${col}')"
+                 onmousedown="_startLongPress(event, '${conv.id}', '${col}')"
+                 ontouchstart="_startLongPress(event, '${conv.id}', '${col}')"
+                 onmouseup="_cancelLongPress()" onmouseleave="_cancelLongPress()"
+                 ontouchend="_cancelLongPress()">
+      <div class="av-wrap">
+        <div class="av" id="av_${conv.id}">
+          ${avatar ? `<img src="${escHtml(avatar)}" onerror="this.parentNode.innerHTML='${letter}'">` : letter}
+        </div>
+        <div class="online-dot" id="dot_${conv.id}" style="display:none;"></div>
+      </div>
+      <div class="conv-info">
+        <div class="conv-name">
+          ${escHtml(name)}
+          ${isPinned ? '<i class="fas fa-thumbtack pin-icon" style="color:var(--blue);font-size:0.75rem;"></i>' : ''}
+        </div>
+        ${prod ? `<div class="prod-chip"><i class="fas fa-shopping-bag"></i> ${escHtml(prod.name)}</div>` : ''}
+        <div class="conv-sub">${mine?'<i class="fas fa-check" style="color:var(--cyan);font-size:0.7rem;margin-right:2px;"></i>':''}${escHtml(preview)||'เริ่มแชทเลย...'}</div>
+      </div>
+      <div class="conv-meta">
+        <div class="conv-time">${timeStr}</div>
+        ${unread > 0 ? `<div class="unread-dot">${unread}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  // Online Listeners
+  rows.forEach(({ conv, otherUid }) => {
+    TukTukChat.listenOnlineStatus(otherUid, online => {
+      const d = document.getElementById(`dot_${conv.id}`);
+      if (d) d.style.display = online ? 'block' : 'none';
+    });
+  });
+}
+
+// ── Long Press Logic ──────────────────────────────────────────────────────────
+let _lpTimer = null;
+function _startLongPress(e, cid, col) {
+  _cancelLongPress();
+  _lpTimer = setTimeout(() => {
+    if (window.navigator.vibrate) window.navigator.vibrate(40);
+    _showConvMenu(cid, col);
+  }, 700);
+}
+function _cancelLongPress() { clearTimeout(_lpTimer); }
+
+let _viewingArchived = false;
+function _viewArchived() {
+  _viewingArchived = true;
+  _closeSettings();
+  alert('กำลังดูข้อความที่เก็บถาวร');
+  renderList();
+}
+
+// ── Open chat ─────────────────────────────────────────────────────────────────
+async function openChat(convId, col) {
+  if (_unsubMsgs)   _unsubMsgs();
+  if (_unsubOnline) _unsubOnline();
+  if (_unsubTyping) _unsubTyping();
+
+  _activeId  = convId;
+  _activeCol = col;
+
+  document.getElementById('chatWelcome').style.display = 'none';
+  document.getElementById('activeChat').style.display  = 'flex';
+  document.getElementById('msgsArea').innerHTML =
+    '<div style="text-align:center;padding:40px;color:var(--text-dim);">กำลังโหลด...</div>';
+
+  // Mobile: slide chat in
+  if (_isMobile()) {
+    history.pushState({ chat: convId }, '');
+    document.getElementById('sidebar').classList.add('slide-out');
+    document.getElementById('chatPanel').classList.remove('slide-out');
+  }
+
+  // Quick replies for product chat
+  document.getElementById('quickReplies').style.display = col === TukTukChat.PROD ? 'flex' : 'none';
+
+  const snap = await db.collection(col).doc(convId).get();
+  const conv = { id: snap.id, ...snap.data() };
+  const uid  = _sess.uid;
+  let otherUid, name, avatar;
+
+  if (col === TukTukChat.CONV) {
+    otherUid = (conv.participants||[]).find(p => p !== uid) || '';
+    const pr = await _profile(otherUid);
+    name   = pr?.displayName || pr?.name || 'ผู้ใช้';
+    avatar = pr?.photoURL || pr?.pictureUrl || '';
+    const banner = document.getElementById('acceptBanner');
+    const bannerText = banner.querySelector('span');
+    const bannerBtn = document.getElementById('doAcceptBtn');
+
+    if (col === TukTukChat.CONV && conv.status === 'pending') {
+      banner.style.display = 'flex';
+      if (conv.requestBy !== uid) {
+        bannerText.textContent = 'คำขอเป็นเพื่อน: ส่งคำขอเริ่มสนทนากับคุณ';
+        bannerBtn.style.display = 'block';
+      } else {
+        bannerText.textContent = 'รอ ' + name + ' ตอบรับคำขอเป็นเพื่อนของคุณ...';
+        bannerBtn.style.display = 'none';
+      }
+    } else {
+      banner.style.display = 'none';
+    }
+    document.getElementById('prodStrip').style.display = 'none';
+    _currentProd = null;
+  } else {
+    const isBuyer = conv.buyerId === uid;
+    otherUid = isBuyer ? (conv.sellerId||conv.lineUserId) : conv.buyerId;
+    const pr = await _profile(otherUid);
+    name   = pr?.displayName || pr?.name || 'ผู้ใช้';
+    avatar = pr?.photoURL || pr?.pictureUrl || '';
+    document.getElementById('acceptBanner').style.display = 'none';
+    _currentProd = conv.productId || null;
+    if (conv.productName) {
+      document.getElementById('prodStrip').style.display = 'flex';
+      document.getElementById('prodName').textContent  = conv.productName;
+      document.getElementById('prodPrice').textContent = conv.price ? `฿${Number(conv.price).toLocaleString()}` : '';
+      const img = document.getElementById('prodImg');
+      if (conv.productImageUrl) { img.src = conv.productImageUrl; img.style.display = ''; }
+      else img.style.display = 'none';
+    } else {
+      document.getElementById('prodStrip').style.display = 'none';
+    }
+  }
+
+  _activeOther = otherUid;
+
+  // Header UI mapping
+  document.getElementById('chName').textContent = name;
+  const letter = (name||'?')[0].toUpperCase();
+  const chAv = document.getElementById('chAv');
+  if (avatar) {
+    chAv.innerHTML = `<img src="${escHtml(avatar)}" onerror="this.innerHTML='${letter}'">`;
+  } else {
+    chAv.innerHTML = letter;
+  }
+
+  // Online status
+  _unsubOnline = TukTukChat.listenOnlineStatus(otherUid, online => {
+    const s = document.getElementById('chStatus');
+    if (!s) return;
+    s.textContent = online ? 'ออนไลน์' : 'ออฟไลน์';
+    s.classList.toggle('online', online);
+  });
+
+  // Typing indicator
+  _unsubTyping = db.collection(col).doc(convId).onSnapshot(snap => {
+    const typing = snap.data()?.typing || {};
+    const wrap = document.getElementById('typingWrap');
+    if (typing[otherUid]) {
+      wrap.innerHTML = `
+        <div class="typing-row">
+          <div class="typing-av">${avatar ? `<img src="${escHtml(avatar)}" onerror="this.parentNode.innerHTML='${letter}'">` : letter}</div>
+          <div class="typing-bubble">
+            <div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div>
+          </div>
+        </div>`;
+    } else {
+      wrap.innerHTML = '';
+    }
+  });
+
+  // Messages
+  _unsubMsgs = TukTukChat.listenMessages(convId, col, msgs => {
+    renderMsgs(msgs);
+    TukTukChat.markAsRead(convId, col, uid);
+  });
+
+  renderList();
+  document.getElementById('msgInput').focus();
+}
+
+// ── Render messages ───────────────────────────────────────────────────────────
+function renderMsgs(msgs) {
+  const area = document.getElementById('msgsArea');
+  const uid  = _sess.uid;
+  const fab  = document.getElementById('scrollFab');
+
+  if (!msgs.length) {
+    area.innerHTML = `<div class="empty-state" style="flex:1;justify-content:center;">
+      <i class="fas fa-comments"></i>
+      <p style="margin-top:8px;">เริ่มบทสนทนาแรก!</p>
+    </div>`;
+    return;
+  }
+
+  let html = '', lastDate = '', prevSender = '';
+  msgs.forEach((msg, i) => {
+    const mine  = msg.senderId === uid;
+    const ts    = msg.timestamp?.toDate?.() || msg.sentAt?.toDate?.() || new Date();
+    const date  = ts.toLocaleDateString('th-TH', { day:'numeric', month:'long', year:'numeric' });
+    const time  = ts.toLocaleTimeString('th-TH', { hour:'2-digit', minute:'2-digit' });
+    const letter= (msg.senderName||msg.senderId||'?')[0].toUpperCase();
+    const isRead= msg.status === 'read';
+    const sameSndr = msg.senderId === prevSender;
+
+    if (date !== lastDate) {
+      html += `<div class="date-sep">${date}</div>`;
+      lastDate = date; prevSender = '';
+    }
+
+    const showAv = !mine && !sameSndr;
+    const isImg  = !!msg.imageUrl;
+    html += `<div class="msg-row ${mine?'mine':''}" ${sameSndr&&!mine?'style="margin-top:1px;"':''}>
+      ${!mine ? `<div class="msg-avatar" style="visibility:${showAv?'visible':'hidden'};">
+        ${msg.senderAvatar ? `<img src="${escHtml(msg.senderAvatar)}" onerror="this.style.display='none';">${letter}` : letter}
+      </div>` : ''}
+      <div class="msg-col">
+        <div class="msg-bubble">
+          ${isImg ? `<img src="${msg.imageUrl}" onclick="window.open('${msg.imageUrl}')" style="cursor:zoom-in;margin-bottom:4px;">` : ''}
+          ${_linkify(escHtml(msg.text||''))}
+        </div>
+        <div class="msg-meta">
+          <span>${time}</span>
+          ${mine ? `<span class="${isRead?'msg-read':''}">${isRead?'✓✓':'✓'}</span>` : ''}
+        </div>
+      </div>
+    </div>`;
+    prevSender = msg.senderId;
+  });
+
+  const isNearBottom = area.scrollHeight - area.scrollTop - area.clientHeight < 150;
+  area.innerHTML = html;
+  
+  if (isNearBottom) {
+     setTimeout(() => { area.scrollTop = area.scrollHeight; fab.style.display = 'none'; }, 50);
+  } else {
+     fab.style.display = 'flex';
+  }
+}
+
+// ── Send ──────────────────────────────────────────────────────────────────────
+async function sendMsg() {
+  const inp  = document.getElementById('msgInput');
+  const text = inp.value.trim();
+  if (!text || !_activeId) return;
+
+  inp.value = ''; autoResize(inp);
+  document.getElementById('sendBtn').disabled = true;
+  document.getElementById('quickReplies').style.display = 'none';
+
+  // Optimistic
+  const area  = document.getElementById('msgsArea');
+  const optId = `opt_${Date.now()}`;
+  const optEl = document.createElement('div');
+  optEl.id    = optId;
+  optEl.className = 'msg-row mine';
+  optEl.innerHTML = `<div class="msg-col">
+    <div class="msg-bubble optimistic">${escHtml(text)}</div>
+    <div class="msg-meta"><span>กำลังส่ง...</span></div>
+  </div>`;
+  area.appendChild(optEl);
+  area.scrollTop = area.scrollHeight;
+
+  try {
+    await TukTukChat.sendMessage(_activeId, _activeCol, text, _sess);
+    TukTukChat.setTyping(_activeId, _activeCol, _sess.uid, false);
+    optEl.remove();
+  } catch (e) {
+    inp.value = text;
+    optEl.querySelector('.msg-bubble').style.background = 'var(--red)';
+    optEl.querySelector('.msg-meta').textContent = 'ส่งไม่ได้ แตะเพื่อลองใหม่';
+    optEl.style.cursor = 'pointer';
+    optEl.onclick = () => { optEl.remove(); inp.value = text; sendMsg(); };
+  } finally {
+    document.getElementById('sendBtn').disabled = false;
+    inp.focus();
+  }
+}
+
+// ── Accept Logic (Friend Request) ──────────────────────────────────────────────
+async function doAccept() {
+  if (!_activeId) return;
+  const btn = document.getElementById('doAcceptBtn');
+  const banner = document.getElementById('acceptBanner');
+  
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  
+  try {
+    await TukTukChat.acceptConversation(_activeId);
+    banner.style.display = 'none';
+    const name = document.getElementById('chName').textContent || 'เพื่อน';
+    alert('ยินดีด้วย! คุณและ ' + name + ' เป็นเพื่อนกันแล้ว');
+    renderList();
+  } catch (e) {
+    alert('เกิดข้อผิดพลาด: ' + e.message);
+    btn.disabled = false;
+    btn.innerHTML = 'รับเป็นเพื่อน';
+  }
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+async function _profile(uid) {
+  if (!uid) return null;
+  if (_profileCache[uid]) return _profileCache[uid];
+  try {
+    const p = await TukTukChat.getUserProfile(uid);
+    if (p) _profileCache[uid] = p;
+    return p;
+  } catch (e) { return null; }
+}
+
+function _linkify(text) {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  return text.replace(urlRegex, url => `<a href="${url}" target="_blank" style="color:var(--cyan);text-decoration:underline;">${url}</a>`);
+}
+
+function _fmtTime(date) {
+  if (!date) return '';
+  const now = new Date();
+  const diff = now - date;
+  if (diff < 60000) return 'เมื่อครู่';
+  if (diff < 3600000) return Math.floor(diff / 60000) + ' นาทีที่แล้ว';
+  if (now.toDateString() === date.toDateString()) {
+    return date.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+  }
+  return date.toLocaleDateString('th-TH', { day: 'numeric', month: 'short' });
+}
+
+function escHtml(s) {
+  if (!s) return '';
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function showSidebar() {
+  document.getElementById('sidebar').classList.remove('slide-out');
+  document.getElementById('chatPanel').classList.add('slide-out');
+  _activeId = null;
+  renderList();
+}
+
+function hideSidebar() {
+  document.getElementById('sidebar').classList.add('slide-out');
+  document.getElementById('chatPanel').classList.remove('slide-out');
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+}
+
+let _typingTimer;
+function onTyping() {
+  if (!_activeId) return;
+  TukTukChat.handleTypingInput?.(_activeId, _activeCol, _sess.uid);
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+// ── Settings & Themes ────────────────────────────────────────────────────────
+function _openSettings() { 
+  document.getElementById('settingsPanel').classList.add('open');
+}
+function _closeSettings() { 
+  document.getElementById('settingsPanel').classList.remove('open');
+}
+
+function _applyTheme(t) {
+  const b = document.body;
+  const themes = ['light', 'sunset', 'ocean', 'forest'];
+  themes.forEach(th => b.classList.remove(`theme-${th}`));
+  if (t !== 'dark') b.classList.add(`theme-${t}`);
+  localStorage.setItem('tuktuk_chat_theme', t);
+  
+  // Highlight dot
+  document.querySelectorAll('.theme-dot').forEach(d => {
+    d.classList.toggle('active', d.getAttribute('data-t') === t);
+  });
+}
+
+function _initTheme() {
+  const t = localStorage.getItem('tuktuk_chat_theme') || 'dark';
+  _applyTheme(t);
+}
+
+// ── Context Menu (Bottom Sheet) ─────────────────────────────────────────────
+async function _showConvMenu(cid, col) {
+  const conv = (_tab === 'dm' ? _allDM : _allProd).find(c => c.id === cid);
+  if (!conv) return;
+
+  const uid = _sess.uid;
+  const overlay = document.getElementById('sheetOverlay');
+  const act = document.getElementById('sheetActions');
+  const isPinned = (_chatSettings.pinned || []).includes(cid);
+  const isArchived = (_chatSettings.archived || []).includes(cid);
+
+  const pr = await _profile(col === TukTukChat.CONV ? (conv.participants||[]).find(p=>p!==uid) : (conv.buyerId===uid?conv.sellerId:conv.buyerId));
+  const name = pr?.displayName || 'การสนทนา';
+  const av = pr?.photoURL || '';
+
+  document.getElementById('sheetName').textContent = name;
+  document.getElementById('sheetSub').textContent = col === TukTukChat.PROD ? 'รายการสินค้า' : 'ข้อความส่วนตัว';
+  document.getElementById('sheetAv').innerHTML = av ? `<img src="${escHtml(av)}">` : name[0];
+
+  act.innerHTML = `
+    <div class="sheet-action" onclick="_togglePin('${cid}')">
+      <i class="fas fa-thumbtack"></i>
+      <span>${isPinned ? 'เลิกปักหมุด' : 'ปักหมุดไว้บนสุด'}</span>
+    </div>
+    <div class="sheet-action" onclick="_toggleArchive('${cid}')">
+      <i class="fas fa-archive"></i>
+      <span>${isArchived ? 'ยกเลิกการเก็บถาวร' : 'เก็บถาวร'}</span>
+    </div>
+    <div class="sheet-action danger" onclick="_deleteConv('${cid}','${col}')">
+      <i class="fas fa-trash-alt"></i>
+      <span>ลบการสนทนา</span>
+    </div>
+  `;
+  overlay.classList.add('open');
+}
+
+function _closeSheet(e) {
+  if (e && e.target.id !== 'sheetOverlay') return;
+  document.getElementById('sheetOverlay').classList.remove('open');
+}
+
+async function _togglePin(cid) {
+  const pinned = _chatSettings.pinned || [];
+  const idx = pinned.indexOf(cid);
+  if (idx > -1) pinned.splice(idx, 1); else pinned.push(cid);
+  await TukTukChat.updateChatSettings(_sess.uid, { pinned });
+  document.getElementById('sheetOverlay').classList.remove('open');
+}
+
+async function _toggleArchive(cid) {
+  const archived = _chatSettings.archived || [];
+  const idx = archived.indexOf(cid);
+  if (idx > -1) archived.splice(idx, 1); else archived.push(cid);
+  await TukTukChat.updateChatSettings(_sess.uid, { archived });
+  document.getElementById('sheetOverlay').classList.remove('open');
+}
+
+async function _deleteConv(cid, col) {
+  if (!confirm('ยืนยันการลบการสนทนานี้? ข้อมูลทั้งหมดจะหายไป')) return;
+  await TukTukChat.deleteConversation(cid, col);
+  document.getElementById('sheetOverlay').classList.remove('open');
+  if (_activeId === cid) showSidebar();
+}
+
+// ── Sending & File Upload ──────────────────────────────────────────────────
+async function _attachFile() {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = async () => {
+    const file = inp.files[0];
+    if (!file) return;
+    
+    const btn = document.querySelector('.attach-btn');
+    const oldIcon = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    btn.disabled = true;
+
+    try {
+      const res = await TukTukChat.uploadFile(file);
+      if (res && res.url) {
+        await TukTukChat.sendMessage(_activeId, _activeCol, '', _sess, res);
+      }
+    } catch (e) {
+      alert('อัปโหลดล้มเหลว: ' + e.message);
+    } finally {
+      btn.innerHTML = oldIcon;
+      btn.disabled = false;
+    }
+  };
+  inp.click();
+}
+
+// ── Misc & Helpers ─────────────────────────────────────────────────────────
+function _newChatSheet() {
+  alert('ฟีเจอร์เริ่มแชทใหม่กำลังจะมาเร็วๆ นี้');
+}
+
+function _openProduct() {
+  if (_currentProd) window.location.href = `/product.html?id=${_currentProd}`;
+}
+
+function _shareChat() {
+  const url = window.location.origin + window.location.pathname + '?id=' + _activeId + '&type=' + (_activeCol === TukTukChat.PROD ? 'product' : 'direct');
+  if (navigator.share) {
+    navigator.share({ title: 'TukTuk Chat', url });
+  } else {
+    prompt('คัดลอกลิงก์แชท:', url);
+  }
+}
+
+function _chatMenu() {
+  if (_activeId) _showConvMenu(_activeId, _activeCol);
+}
+
+function _clearCache() {
+  _profileCache = {};
+  localStorage.removeItem('tuktuk_profiles');
+  _closeSettings();
+  alert('ล้างแคชเรียบร้อย');
+  renderList();
+}
+
+function _logoutChat() {
+  if (confirm('ยืนยันการออกจากระบบ?')) {
+    firebase.auth().signOut().then(() => location.reload());
+  }
+}
+
+function _useQR(text) {
+  const inp = document.getElementById('msgInput');
+  inp.value = text;
+  autoResize(inp);
+  inp.focus();
+}
+
+// ── Keyboard height handling (Visual Viewport API) ────────────────────────────
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', () => {
+    const wrap = document.getElementById('mainWrap');
+    if (wrap) wrap.style.height = window.visualViewport.height + 'px';
+  });
+}
+</script>
+</body>
+</html>

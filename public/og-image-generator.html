@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OG Image Generator - Wizmobiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* OG Image Template - 1200x630 standard */
+        .og-image {
+            width: 1200px;
+            height: 630px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            position: relative;
+            font-family: 'Kanit', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .og-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.3) 0%, transparent 50%);
+        }
+
+        .og-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 60px;
+        }
+
+        .og-logo {
+            width: 120px;
+            height: 120px;
+            background: white;
+            border-radius: 30px;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .og-title {
+            font-size: 72px;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .og-title .highlight {
+            background: linear-gradient(135deg, #FF6B35, #4ECDC4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .og-subtitle {
+            font-size: 32px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 40px;
+            font-weight: 500;
+        }
+
+        .og-features {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .og-feature {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 15px 30px;
+            border-radius: 50px;
+            color: white;
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .og-badge {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #00B900, #06C755);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .og-url {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 24px;
+            font-weight: 500;
+        }
+
+        /* Instructions */
+        .instructions {
+            padding: 40px;
+            max-width: 800px;
+            margin: 40px auto;
+            background: #f5f5f5;
+            border-radius: 20px;
+        }
+
+        .instructions h2 {
+            margin-bottom: 20px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            line-height: 2;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- OG Image Template -->
+    <div class="og-image" id="ogImage">
+        <div class="og-pattern"></div>
+        <div class="og-badge">🤖 AI Powered</div>
+        <div class="og-content">
+            <div class="og-logo">🏭</div>
+            <h1 class="og-title">Wiz<span class="highlight">mobiz</span></h1>
+            <p class="og-subtitle">AI ผู้ช่วยงานฉีดพลาสติก & ตลาดซื้อขาย</p>
+            <div class="og-features">
+                <div class="og-feature">🧮 20+ เครื่องมือคำนวณ</div>
+                <div class="og-feature">🛒 Marketplace</div>
+                <div class="og-feature">📚 E-Learning</div>
+            </div>
+        </div>
+        <div class="og-url">tuktukfeed.com</div>
+    </div>
+
+    <div class="instructions">
+        <h2>📸 วิธีสร้าง og-image.jpg</h2>
+        <ol>
+            <li>เปิดหน้านี้ใน Browser (Chrome แนะนำ)</li>
+            <li>กด F12 เปิด DevTools</li>
+            <li>กดปุ่ม ... (More) > Run command > พิมพ์ "screenshot"</li>
+            <li>เลือก "Capture node screenshot"</li>
+            <li>คลิกที่กล่องสีน้ำเงินด้านบน</li>
+            <li>บันทึกเป็น og-image.jpg ใน folder images/</li>
+        </ol>
+        <p style="margin-top: 20px; color: #666;">
+            หรือใช้เครื่องมือ online เช่น <a href="https://htmlcsstoimage.com" target="_blank">htmlcsstoimage.com</a>
+        </p>
+    </div>
+</body>
+
+</html>

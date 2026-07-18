@@ -1,0 +1,438 @@
+/**
+ * Super Admin Security UI Styles
+ * Enhanced security components
+ *
+ * Deploy: public/css/super-admin-security.css
+ */
+
+/* ══════════════════════════════════════════════════════════
+   SESSION TIMEOUT WARNING
+   ══════════════════════════════════════════════════════════ */
+
+.timeout-warning {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.timeout-warning-content {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+  color: white;
+  max-width: 400px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.timeout-warning-content i {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  animation: pulse 2s infinite;
+}
+
+.timeout-warning-content h4 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.timeout-warning-content p {
+  margin-bottom: 20px;
+  opacity: 0.95;
+}
+
+.timeout-warning-content button {
+  background: white;
+  color: #667eea;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.timeout-warning-content button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   CONFIRM ACTION MODAL
+   ══════════════════════════════════════════════════════════ */
+
+.confirm-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.confirm-modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  text-align: center;
+  max-width: 400px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border-top: 4px solid #f59e0b;
+}
+
+.confirm-modal-content.danger {
+  border-top-color: #ef4444;
+}
+
+.confirm-modal-content.danger i {
+  color: #ef4444;
+}
+
+.confirm-modal-content i {
+  font-size: 3rem;
+  color: #f59e0b;
+  margin-bottom: 15px;
+}
+
+.confirm-modal-content h4 {
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+  color: #1f2937;
+}
+
+.confirm-modal-content p {
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+
+.confirm-modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.confirm-modal-actions button {
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-cancel {
+  background: #e5e7eb;
+  color: #1f2937;
+}
+
+.btn-cancel:hover {
+  background: #d1d5db;
+}
+
+.btn-confirm {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-confirm:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* ══════════════════════════════════════════════════════════
+   TOAST NOTIFICATIONS
+   ══════════════════════════════════════════════════════════ */
+
+.admin-toast {
+  position: fixed;
+  bottom: -100px;
+  right: 20px;
+  background: white;
+  padding: 16px 24px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  z-index: 9998;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  border-left: 4px solid #3b82f6;
+  min-width: 250px;
+  font-weight: 500;
+}
+
+.admin-toast.show {
+  bottom: 20px;
+}
+
+.admin-toast.success {
+  border-left-color: #10b981;
+  color: #065f46;
+}
+
+.admin-toast.error {
+  border-left-color: #ef4444;
+  color: #991b1b;
+}
+
+.admin-toast.warning {
+  border-left-color: #f59e0b;
+  color: #92400e;
+}
+
+.admin-toast.info {
+  border-left-color: #3b82f6;
+  color: #1e40af;
+}
+
+/* ══════════════════════════════════════════════════════════
+   LOADING SPINNER
+   ══════════════════════════════════════════════════════════ */
+
+#admin-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  z-index: 9997;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.admin-loading-content {
+  text-align: center;
+}
+
+.admin-loading-content .spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid #e5e7eb;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 20px;
+}
+
+.admin-loading-content p {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ══════════════════════════════════════════════════════════
+   SECURITY BADGE
+   ══════════════════════════════════════════════════════════ */
+
+.security-badge {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.security-badge i {
+  font-size: 1rem;
+}
+
+.security-badge.warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.security-badge.danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  animation: pulse 2s infinite;
+}
+
+/* ══════════════════════════════════════════════════════════
+   AUDIT LOG TABLE
+   ══════════════════════════════════════════════════════════ */
+
+.audit-log-table {
+  width: 100%;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.audit-log-table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.audit-log-table th {
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.audit-log-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.875rem;
+}
+
+.audit-log-table tr:hover {
+  background: #f9fafb;
+}
+
+.audit-log-action {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.audit-log-action.success {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.audit-log-action.error {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.audit-log-action.forbidden {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* ══════════════════════════════════════════════════════════
+   DANGER ZONE
+   ══════════════════════════════════════════════════════════ */
+
+.danger-zone {
+  background: #fef2f2;
+  border: 2px solid #fecaca;
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 32px;
+}
+
+.danger-zone h4 {
+  color: #991b1b;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.danger-zone p {
+  color: #7f1d1d;
+  margin-bottom: 16px;
+  font-size: 0.875rem;
+}
+
+.danger-zone button {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.danger-zone button:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .timeout-warning-content,
+  .confirm-modal-content {
+    margin: 0 20px;
+    padding: 24px;
+  }
+
+  .admin-toast {
+    right: 10px;
+    left: 10px;
+    min-width: auto;
+  }
+
+  .security-badge {
+    bottom: 10px;
+    left: 10px;
+    font-size: 0.7rem;
+  }
+
+  .audit-log-table {
+    font-size: 0.75rem;
+  }
+
+  .audit-log-table th,
+  .audit-log-table td {
+    padding: 8px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   ANIMATIONS
+   ══════════════════════════════════════════════════════════ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

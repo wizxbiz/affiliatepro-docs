@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <meta name="description" content="TukTuk Thailand - แพลตฟอร์มวิดีโอสั้น Shoppable แห่งแรกของไทยโดย TukTuk Thailand">
+    <meta name="theme-color" content="#0e0a07" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f97316" media="(prefers-color-scheme: light)">
+
+    <!-- ✅ Apple Touch Icon — ต้องเป็น <link rel> ไม่ใช่ <meta> -->
+    <link rel="apple-touch-icon" href="assets/images/icon-192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/icon-192.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="assets/images/icon-192.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="assets/images/icon-192.png">
+
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TukTuk">
+    <!-- UI Settings -->
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-TapHighlightColor" content="no">
+
+    <!-- Open Graph — LINE / Facebook share preview -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="TukTuk Social Thailand">
+    <meta property="og:title" content="TukTuk Social Thailand — วิดีโอสั้น ซื้อขาย ชุมชน">
+    <meta property="og:description"
+        content="แพลตฟอร์มวิดีโอสั้น Shoppable ซื้อขายสินค้า ฟีดชุมชน และเรียกวินมอเตอร์ไซค์ แห่งแรกของไทย">
+    <meta property="og:image" content="https://appinjproject.web.app/assets/images/logo.png">
+    <meta property="og:image:width" content="512">
+    <meta property="og:image:height" content="512">
+    <meta property="og:url" content="https://appinjproject.web.app/">
+    <meta property="og:locale" content="th_TH">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="TukTuk Social Thailand">
+    <meta name="twitter:description" content="แพลตฟอร์มวิดีโอสั้น Shoppable แห่งแรกของไทย">
+    <meta name="twitter:image" content="https://appinjproject.web.app/assets/images/logo.png">
+
+    <link rel="manifest" href="manifest.json">
+    <title>TukTuk Social Thailand | Community & Shopping</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/tuktuk_feed.css">
+    <link rel="stylesheet" href="css/community_feed.css">
+    <link rel="stylesheet" href="css/tab-nav.css">
+    <link rel="stylesheet" href="css/mobile-header.css">
+    <link rel="stylesheet" href="css/mobile-drawer.css">
+    <link rel="stylesheet" href="css/new-styles.css">
+    <link rel="stylesheet" href="css/chat-panel.css">
+    <link rel="stylesheet" href="css/pull-to-refresh.css">
+    <link rel="stylesheet" href="css/premium-v3.css">
+
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- External Libraries & SDKs -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js" defer></script>
+
+    <!-- Persistence UI & Standard Logic -->
+    <link rel="stylesheet" href="css/persistent-ui.css">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <!-- CryptoJS removed: R2 signing now done server-side via r2PresignedUrl Cloud Function -->
+
+    <!-- TukTuk Local Cache Manager -->
+    <script src="js/tuktuk_cache.js"></script>
+    <!-- AI Telemetry Tracking -->
+    <script src="js/tuktuk_telemetry.js"></script>
+
+    <!-- Separate Modules -->
+    <link rel="stylesheet" href="css/index-vars.css">
+    <link rel="stylesheet" href="css/index-animations.css">
+    <link rel="stylesheet" href="css/index-core.css">
+    <link rel="stylesheet" href="css/overlays-premium.css">
+    <link rel="stylesheet" href="css/index-components.css">
+    <link rel="stylesheet" href="css/index-pc-layout.css">
+    <link rel="stylesheet" href="css/pc-layout.css">
+    <link rel="stylesheet" href="css/creator-studio.css">
+    <link rel="stylesheet" href="css/admin-fab.css">
+    <link rel="stylesheet" href="css/spa-router.css">
+    <!-- PC Feed Dark Theme Fix + Comments Modal (v20260423) -->
+    <link rel="stylesheet" href="css/pc-feed-fix.css?v=20260423e">
+    <!-- 🌟 Glass Ultra — Premium Glassmorphism (โหลดสุดท้าย) -->
+    <link rel="stylesheet" href="css/glass-ultra.css?v=20260701f">
+
+    <!-- Styles formerly embedded here have been migrated to css/pc-layout.css to optimize page-load and specificity cascade -->
+
+
+    <!-- LIFF Config (must load before auth) -->
+    <script src="js/liff-config.js"></script>
+    <!-- PC User Menu Module (loaded once below with version tag) -->
+    <!-- Core Engine & Firebase -->
+    <script src="js/firebase-init.js" defer></script>
+    <script src="js/auth.js" defer></script>
+    <!-- LIFF silent auto-login for LINE app users -->
+    <script src="js/liff-auto-login.js" defer></script>
+    <script src="js/core-utils.js" defer></script>
+    <script src="js/admin-controller.js" defer></script>
+    <script src="js/chat-web.js" defer></script>
+
+    <!-- Content Engines -->
+    <script src="js/ui-helpers.js" defer></script>
+    <script src="js/ad-system.js" defer></script>
+    <script src="js/interleaved-engine.js" defer></script>
+    <script src="js/gallery-engine.js" defer></script>
+    <script src="js/news-feed.js" defer></script>
+    <script src="js/tuktuk-engine.js" defer></script>
+    <script src="js/creator-engine.js" defer></script>
+    <script src="js/persistent-ui.js" defer></script>
+    <script src="js/api-client.js?v=20260701h" defer></script>
+    <script src="js/feed-renderer.js?v=20260701g" defer></script>
+    <script src="js/pc-feed-engine.js?v=20260423g" defer></script>
+    <script src="js/main-feed-engine.js?v=20260423g" defer></script>
+
+    <!-- Lifecycle, UX & Routing -->
+    <script src="js/pwa-manager.js" defer></script>
+    <script src="js/spa-router.js?v=3"></script>
+    <script src="js/pwa-lifecycle.js" defer></script>
+    <script src="js/chat-panel.js" defer></script>
+    <script src="js/pwa-install.js" defer></script>
+    <script src="js/push-notifications.js" defer></script>
+    <script src="js/new-scripts.js" defer></script>
+
+    <!-- PC Navigation & Menus -->
+    <script src="js/pc-user-menu.js?v=20260423g" defer></script>
+
+    <!-- PC Comments System + App Init (v20260423g) -->
+    <script src="js/pc-comments.js?v=20260423g" defer></script>
+    <!-- PC Premium Enhancements -->
+    <script src="js/pc-premium-v4.js" defer></script>
+    <!-- Final App Initialization -->
+    <script src="js/app-init.js?v=20260701g" defer></script>
+</head>
+
+<body>
+    <!-- ========================================
+             GREETING OVERLAY (Matching App)
+             ======================================== -->
+    <!-- ========================================
+             PREMIUM WELCOME SPLASH (Match splash_screen.dart)
+             ======================================== -->
+    <div id="welcomeSplash" class="welcome-splash" style="background: var(--c-bg); overflow: hidden;">
+        <div class="splash-glow" style="position: absolute; top: 50%; left: 50%; width: 300px; height: 300px; background: var(--c-primary); filter: blur(120px); opacity: 0.2; transform: translate(-50%, -50%);"></div>
+        <div class="splash-content" style="z-index: 2;">
+            <div class="splash-logo-container" style="margin-bottom: 24px;">
+                <img src="assets/images/logo.png" class="splash-logo" 
+                     style="width: 120px; height: 120px; filter: drop-shadow(0 0 20px rgba(255, 107, 53, 0.4));">
+            </div>
+            <h1 class="splash-title text-gradient-v3" style="font-size: 3.5rem; letter-spacing: -2px; margin: 0;">TUKTUK</h1>
+            <p class="splash-subtitle" style="color: var(--c-text-dim); font-weight: 500; font-size: 1.1rem; margin-top: 8px;">NEXT-GEN THAI SOCIAL</p>
+            
+            <div class="splash-loader-v3" style="margin-top: 40px; display: flex; gap: 8px; justify-content: center;">
+                <div class="dot" style="width: 10px; height: 10px; border-radius: 50%; background: var(--c-primary); animation: pulse 1.5s infinite;"></div>
+                <div class="dot" style="width: 10px; height: 10px; border-radius: 50%; background: var(--c-primary); animation: pulse 1.5s infinite 0.2s;"></div>
+                <div class="dot" style="width: 10px; height: 10px; border-radius: 50%; background: var(--c-primary); animation: pulse 1.5s infinite 0.4s;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+             LAUNCH HUB OVERLAY (Matching App)
+             ======================================== -->
+    <div id="launchHubOverlay" class="launch-hub-overlay">
+        <img src="assets/images/logo.png" class="launch-logo">
+        <div class="launch-status">กำลังเตรียมห้องส่งสตูดิโอ...</div>
+        <div class="launch-progress">
+            <div class="launch-progress-bar" id="launchProgressBar"></div>
+        </div>
+    </div>
+
+    <!-- MAIN APP STRUCTURE (Matching Flutter) -->
+
+
+
+
+
+    <!-- Pull to Refresh — Taxi + dual status lines -->
+    <div id="pullToRefresh" class="pull-to-refresh">
+        <i class="fas fa-taxi ptr-taxi"></i>
+        <div class="ptr-lines">
+            <div class="ptr-line"></div>
+            <div class="ptr-line ptr-line-2"></div>
+        </div>
+    </div>
+
+
+
+    <!-- Smart Floating Bottom Nav (Responsive: Mobile + Desktop Dock) -->
+    <!-- 10/10 Creation Hub -->
+    <!-- Persistent UI Container (Injected via JS) -->
+    <div id="persistent-ui-root"></div>
+
+    <!-- Script to auto-update profile link image -->
+    <script src="js/index-ui-init.js" defer></script>
+
+    <!-- PC Profile Dropdown Controller: handled by js/pc-user-menu.js (loaded in <head>) -->
+
+    <!-- Unified Hub Panel (Notifs + Messages) -->
+    <div id="notificationPanel" class="notification-panel hub-panel">
+        <!-- Header with Tabs -->
+        <div class="hub-header">
+            <div class="hub-tabs">
+                <button class="hub-tab active" onclick="switchHubTab('notifs')" id="hubTabNotifs">
+                    <i class="fas fa-bell"></i> แจ้งเตือน
+                </button>
+                <button class="hub-tab" onclick="switchHubTab('messages')" id="hubTabMessages">
+                    <i class="fas fa-comment-dots"></i> ข้อความ
+                </button>
+            </div>
+            <button class="notif-close-btn" onclick="toggleNotifications()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Notification Content Area -->
+        <div id="hubContentNotifs" class="hub-tab-content">
+            <div class="notif-header-info">
+                <small id="notifSubtitle">กำลังโหลด...</small>
+            </div>
+            <div class="notification-list" id="notificationList">
+                <!-- Populated via initNotifications -->
+            </div>
+            <div class="notif-footer">
+                <button class="notif-clear-btn" onclick="markAllNotificationsRead()">
+                    <i class="fas fa-check-double"></i> อ่านแล้วทั้งหมด
+                </button>
+            </div>
+        </div>
+
+        <!-- Chat/Message Content Area -->
+        <div id="hubContentMessages" class="hub-tab-content" style="display:none;">
+            <div class="notif-header-info">
+                <small id="chatSubtitle">ข้อความล่าสุดของคุณ</small>
+            </div>
+            <div class="notification-list" id="chatHubList">
+                <div class="text-center py-5" style="color:rgba(255,255,255,0.3);">
+                    <i class="fas fa-comments" style="font-size:2rem; margin-bottom:15px; opacity:0.3;"></i>
+                    <p style="font-size:0.8rem;">ยังไม่มีบทสนทนา</p>
+                </div>
+            </div>
+            <div class="notif-footer">
+                <button class="notif-clear-btn"
+                    onclick="if(typeof openInChat==='function'){openInChat();if(typeof toggleNotifications==='function')toggleNotifications();}else{window.location.href='messages.html';}">
+                    <i class="fas fa-comment-dots"></i> เปิดแชท
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- ══════════════════════════════════════════
+         📱 MOBILE HEADER BAR V4 (Linked Structure)
+         ══════════════════════════════════════════ -->
+
+    <div id="mobileHeader" class="mh-v3-glass">
+        <!-- Row 1: Logo + Tabs + Actions -->
+        <div class="mh-top-row">
+            <div class="mh-left">
+                <button class="mh-icon-btn menu-btn" title="เมนู" onclick="toggleMobileDrawer()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <div class="mh-tabs">
+                <button class="mh-tab mh-tab-v3 active" data-cat="all" onclick="switchCategoryMobile('all', this)">
+                    <i class="fas fa-play-circle"></i>
+                    <span>ดูเพลิน</span>
+                </button>
+                <button class="mh-tab mh-tab-v3" data-cat="near_me" onclick="switchCategoryMobile('near_me', this)">
+                    <i class="fas fa-location-arrow"></i>
+                    <span>ใกล้ฉัน</span>
+                </button>
+                <button class="mh-tab mh-tab-v3" data-cat="community" onclick="switchCategoryMobile('community', this)">
+                    <i class="fas fa-users"></i>
+                    <span>อาชีพ</span>
+                </button>
+            </div>
+
+            <div class="mh-right">
+                <button class="mh-icon-btn search-btn" onclick="openUnifiedSearch()" title="ค้นหา">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Row 2: Notification & Mute Pill -->
+        <div class="mh-pill-row">
+            <div class="mh-pill" id="mhPill" onclick="toggleMhPill(event)">
+                <!-- Notification Element -->
+                <div class="mh-pill-notif" id="mhPillNotif" onclick="handleMhNotifClick(event)">
+                    <div style="position: relative;">
+                        <i class="fas fa-bell"></i>
+                        <span id="mhPillNotifBadge" class="mh-pill-badge" style="display:none;">0</span>
+                    </div>
+                    <span class="mh-pill-label" id="mhPillNotifLabel">แจ้งเตือน</span>
+                </div>
+                <!-- Mute Element -->
+                <div class="mh-pill-mute" id="mhPillMute" onclick="handleMhMuteClick(event)">
+                    <i class="fas fa-volume-up" id="mhPillMuteIcon"></i>
+                    <span class="mh-pill-label" id="mhPillMuteLabel">เปิดเสียง</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="js/mobile-header.js?v=20260701g"></script>
+
+    <div class="main-app-container">
+        <!-- Stories Bar (Mobile) -->
+        <div class="stories-container-v3 d-lg-none" id="mobileStoriesBar">
+             <!-- Add Story Item -->
+             <div class="story-item-v3" onclick="openPostModal()">
+                 <div class="story-ring-v3 is-seen" style="background: rgba(255,255,255,0.08); border: 1.5px dashed rgba(255,255,255,0.25); display: flex; align-items: center; justify-content: center; color: var(--tt-p); font-size: 22px;">
+                     +
+                 </div>
+                 <span class="story-name-v3">ลงสตอรี่</span>
+             </div>
+             <!-- Stories populated by JS via buildMobileStoriesBar() -->
+        </div>
+        <!-- Promotion Banner Section -->
+        <section class="promo-banner-section" id="promoBannerSection">
+            <div class="promo-banner-wrapper">
+                <div class="promo-slider" id="promoSlider">
+                    <!-- Slides will be injected here -->
+                </div>
+                <button class="promo-nav prev" onclick="prevPromoSlide()">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="promo-nav next" onclick="nextPromoSlide()">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <div class="promo-dots" id="promoDots">
+                <!-- Dots will be injected here -->
+            </div>
+        </section>
+
+        <!-- Legacy tab nav removed — replaced by #pcTopNav (desktop) + #mobileHeader (mobile) -->
+        <!-- Hidden badge anchors kept for JS badge-sync null-guards -->
+        <div style="display:none;" aria-hidden="true">
+            <span id="pillBadge"></span>
+            <span id="pillBadgeExp"></span>
+            <span id="pillChatBadge"></span>
+            <span id="pillChatBadgeExp"></span>
+        </div>
+
+        <!-- ── PC FACEBOOK-LIKE LAYOUT ── -->
+        <!-- PC Top Navbar -->
+        <div class="pc-top-nav" id="pcTopNav">
+            <div class="pc-nav-container">
+                <div class="pc-top-left">
+                    <a href="index.html" class="pc-logo" title="TukTuk Thailand">
+                        <img src="assets/images/logo.png" style="width: 32px; height: 32px; border-radius: 8px;">
+                        <span>TukTuk</span>
+                    </a>
+                    <div class="pc-search-container" id="pcSearchContainer">
+                        <i class="fas fa-search pc-search-icon"></i>
+                        <input type="text" class="pc-search-input" id="pcSearchInput" placeholder="ค้นหาโพสต์..."
+                            onfocus="this.parentElement.classList.add('focused')"
+                            onblur="this.parentElement.classList.remove('focused')">
+                        <span class="pc-search-shortcut">/</span>
+                        <div class="pc-search-suggestions" id="pcSearchSuggestions"></div>
+                    </div>
+                </div>
+                <div class="pc-top-center">
+                    <div class="pc-nav-icons">
+                        <div class="pc-nav-icon active" data-pc-nav="home" title="หน้าหลัก"
+                            onclick="if(window.navigateToSPA){window.navigateToSPA('index.html'); setTimeout(()=>{if(window.pcInit) window.pcInit();}, 100);}else{setPCNav('home',this);syncPCMenu('all');if(window.pcInit) window.pcInit();}">
+                            <i class="fas fa-home"></i>
+                            <span class="pc-nav-label">หน้าหลัก</span>
+                        </div>
+                        <div class="pc-nav-icon" data-pc-nav="near_me" title="ใกล้ฉัน"
+                            onclick="setPCNav('near_me',this); syncPCMenu('near_me', document.querySelector('.pc-menu-card[data-pc-category=near_me]')); if(window.pcSwitchToVideoFeed){ window.pcSwitchToVideoFeed('near_me', true); }">
+                            <i class="fas fa-location-arrow"></i>
+                            <span class="pc-nav-label">ใกล้ฉัน</span>
+                        </div>
+                        <div class="pc-nav-icon" data-pc-nav="marketplace" title="ตลาดนัด"
+                            onclick="window.navigateToSPA ? window.navigateToSPA('marketplace.html') : (window.location.href='marketplace.html')">
+                            <i class="fas fa-shopping-bag"></i>
+                            <span class="pc-nav-label">ตลาดนัด</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pc-top-right">
+                    <div class="pc-actions">
+                        <div class="pc-icon-btn" onclick="toggleNotifications()" title="การแจ้งเตือน">
+                            <i class="fas fa-bell"></i>
+                            <span class="pc-icon-badge" id="pcNotifBadge" style="display:none;">0</span>
+                        </div>
+                        <div class="pc-icon-btn"
+                            onclick="if(typeof openInChat==='function'){openInChat()}else{window.navigateToSPA?window.navigateToSPA('messages.html'):(window.location.href='messages.html')}"
+                            title="ข้อความ">
+                            <i class="fas fa-comment-dots"></i>
+                            <span class="pc-icon-badge" id="pcMsgBadge" style="display:none;">0</span>
+                        </div>
+                        <div class="pc-icon-btn"
+                            onclick="typeof WizmobizAuth!=='undefined' ? WizmobizAuth.handleShopAccess() : (window.navigateToSPA ? window.navigateToSPA('seller-dashboard.html') : (window.location.href='seller-dashboard.html'))"
+                            title="จัดการร้านค้า">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <div class="pc-user-menu" id="pcUserMenuTrigger" onclick="PCUserMenu.toggle(event)"
+                            title="โปรไฟล์">
+                            <img src="assets/images/logo.png" id="pcTopProfileImg" class="pc-user-avatar">
+                            <span class="pc-user-name" id="pcTopNavigatorName">โปรไฟล์</span>
+                            <i class="fas fa-chevron-down pc-user-chevron" id="pcUserChevron"></i>
+
+                            <!-- Dropdown -->
+                            <div class="pc-user-dropdown" id="pcUserDropdown">
+                                <!-- User header -->
+                                <div class="pud-header">
+                                    <img src="assets/images/logo.png" id="pudAvatar" class="pud-avatar">
+                                    <div class="pud-info">
+                                        <div class="pud-name" id="pudName">โปรไฟล์</div>
+                                        <div class="pud-tier" id="pudTier">สมาชิก TukTuk</div>
+                                    </div>
+                                </div>
+
+                                <div class="pud-divider"></div>
+
+                                <!-- Group 1: Account -->
+                                <div class="pud-group-label">บัญชีของฉัน</div>
+                                <a class="pud-item" onclick="PCUserMenu.go('channel.html')">
+                                    <span class="pud-icon pud-icon-profile"><i class="fas fa-user-circle"></i></span>
+                                    <span>โปรไฟล์ของฉัน</span>
+                                </a>
+                                <a class="pud-item" onclick="PCUserMenu.go('seller-dashboard.html')">
+                                    <span class="pud-icon pud-icon-shop"><i class="fas fa-store"></i></span>
+                                    <span>ร้านค้าของฉัน</span>
+                                </a>
+                                <a class="pud-item" onclick="PCUserMenu.go('marketplace.html?tab=orders')">
+                                    <span class="pud-icon pud-icon-orders"><i class="fas fa-box"></i></span>
+                                    <span>ประวัติคำสั่งซื้อ</span>
+                                </a>
+                                <a class="pud-item" id="pudWalletItem"
+                                    onclick="PCUserMenu.go('seller-dashboard.html?tab=wallet')">
+                                    <span class="pud-icon pud-icon-wallet"><i class="fas fa-wallet"></i></span>
+                                    <div style="flex:1">
+                                        <div>กระเป๋าเงิน</div>
+                                        <div class="pud-balance" id="pudBalance">฿ —</div>
+                                    </div>
+                                </a>
+
+                                <div class="pud-divider"></div>
+
+                                <!-- Group 2: Create & Engage -->
+                                <div class="pud-group-label">สร้างคอนเทนต์</div>
+                                <a class="pud-item" onclick="PCUserMenu.createPost()">
+                                    <span class="pud-icon pud-icon-post"><i class="fas fa-edit"></i></span>
+                                    <span>สร้างโพสต์ใหม่</span>
+                                </a>
+                                <a class="pud-item" onclick="PCUserMenu.go('analytics-dashboard.html')">
+                                    <span class="pud-icon pud-icon-analytics"><i class="fas fa-chart-line"></i></span>
+                                    <span>ข้อมูลเชิงลึก</span>
+                                </a>
+
+                                <div class="pud-divider"></div>
+
+                                <!-- Group 3: Settings & System -->
+                                <div class="pud-group-label">ระบบ</div>
+                                <a class="pud-item" onclick="PCUserMenu.toggleTheme()">
+                                    <span class="pud-icon pud-icon-theme"><i class="fas fa-moon"
+                                            id="pudThemeIcon"></i></span>
+                                    <span id="pudThemeLabel">โหมดกลางคืน</span>
+                                    <span class="pud-toggle" id="pudThemeToggle"></span>
+                                </a>
+                                <a class="pud-item" onclick="PCUserMenu.go('win-service.html')">
+                                    <span class="pud-icon pud-icon-win"><i class="fas fa-motorcycle"></i></span>
+                                    <span>เรียกวินมอเตอร์ไซค์</span>
+                                </a>
+                                <a class="pud-item" onclick="PCUserMenu.go('help.html')">
+                                    <span class="pud-icon pud-icon-help"><i class="fas fa-headset"></i></span>
+                                    <span>ช่วยเหลือ</span>
+                                </a>
+                                <a class="pud-item pud-item-danger" onclick="PCUserMenu.logout()">
+                                    <span class="pud-icon pud-icon-logout"><i class="fas fa-sign-out-alt"></i></span>
+                                    <span>ออกจากระบบ</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PC & Mobile Main Content Wrapper -->
+        <div class="pc-layout-container">
+            <!-- Dashboard Left Sidebar (PC) -->
+            <aside class="pc-sidebar pc-sidebar-left">
+                <!-- User Profile Card -->
+                <!-- User Profile Card -->
+                <div class="pc-sidebar-card pc-profile-card"
+                    style="cursor: pointer; display: flex; align-items: center; gap: 16px;"
+                    onclick="window.navigateToSPA ? window.navigateToSPA('channel.html') : (window.location.href='channel.html')">
+                    <div class="pc-profile-avatar-wrapper">
+                        <img src="assets/images/logo.png" id="pcProfileImg" class="pc-menu-icon"
+                            style="width: 54px; height: 54px; border-radius: 50%; object-fit: cover; border: 2.5px solid var(--color-primary-400); box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);">
+                        <div class="pc-profile-status-dot"></div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; overflow: hidden;">
+                        <span id="pcProfileName"
+                            style="font-weight: 800; color: white; font-size: 1.05rem; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; letter-spacing: -0.2px;">โปรไฟล์ของคุณ</span>
+                        <div style="display: flex; align-items: center; gap: 6px; margin-top: 2px;">
+                            <span id="pcProfileBadgeText" class="badge"
+                                style="background: linear-gradient(135deg, var(--color-primary-500), var(--color-secondary-500)); font-size: 0.65rem; padding: 3px 8px; border-radius: 6px; box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);">สมาชิก</span>
+                            <span id="pcProfileUsername"
+                                style="font-size: 0.75rem; color: var(--color-primary-300);">@tuktuk</span>
+                        </div>
+                    </div>
+                    <div style="margin-left: auto; color: var(--color-gray-500); font-size: 0.8rem;">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+
+                <!-- Main Navigation Cards -->
+                <div class="pc-sidebar-card" style="padding: 8px;">
+                    <div class="pc-menu-grid">
+                        <a href="javascript:void(0)" class="pc-menu-card active" data-pc-category="all"
+                            onclick="syncPCMenu('all', this); if(window.pcSwitchToVideoFeed){ window.pcSwitchToVideoFeed('all'); } if(window.navigateToSPA){ window.navigateToSPA('index.html'); }">
+                            <div class="pc-menu-card-icon" style="color: #a855f7;"><i class="fas fa-play-circle"></i>
+                            </div>
+                            <span>ดูเพลิน</span>
+                        </a>
+                        <a href="javascript:void(0)" class="pc-menu-card" data-pc-category="near_me"
+                            onclick="syncPCMenu('near_me', this); if(window.pcSwitchToVideoFeed){ window.pcSwitchToVideoFeed('near_me'); } if(window.navigateToSPA){ window.navigateToSPA('index.html'); }">
+                            <div class="pc-menu-card-icon" style="color: #06b6d4;"><i class="fas fa-location-arrow"></i>
+                            </div>
+                            <span>ใกล้ฉัน</span>
+                        </a>
+                        <a href="javascript:void(0)" class="pc-menu-card" data-pc-category="community"
+                            onclick="syncPCMenu('community', this); if(window.pcSwitchToVideoFeed){ window.pcSwitchToVideoFeed('community'); } if(window.navigateToSPA){ window.navigateToSPA('index.html'); }">
+                            <div class="pc-menu-card-icon" style="color: #ec4899;"><i class="fas fa-users"></i></div>
+                            <span>คอมมูนิตี้</span>
+                        </a>
+                        <a href="marketplace.html" class="pc-menu-card">
+                            <div class="pc-menu-card-icon" style="color: #facc15;"><i class="fas fa-store"></i></div>
+                            <span>ตลาดนัด</span>
+                        </a>
+                        <a href="javascript:void(0)" class="pc-menu-card"
+                            onclick="if(typeof openInChat==='function')openInChat()">
+                            <div class="pc-menu-card-icon" style="color: #10b981;"><i class="fas fa-comment-dots"></i>
+                            </div>
+                            <span>ข้อความ</span>
+                        </a>
+                        <a href="seller-dashboard.html" class="pc-menu-card">
+                            <div class="pc-menu-card-icon" style="color: #fb923c;"><i class="fas fa-chart-line"></i>
+                            </div>
+                            <span>จัดการร้าน</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="pc-sidebar-section-title">
+                    <i class="fas fa-link"></i> ทางลัดของคุณ
+                </div>
+
+                <!-- Shortcuts Grid -->
+                <div class="pc-sidebar-card" style="padding: 8px;">
+                    <div class="pc-menu-grid">
+                        <a href="community.html" class="pc-menu-card"
+                            style="grid-column: span 2; flex-direction: row; justify-content: flex-start; padding: 12px 16px; gap: 16px;">
+                            <div class="pc-menu-card-icon"
+                                style="color: #6366f1; width: 36px; height: 36px; font-size: 1.1rem; background: rgba(99, 102, 241, 0.1);">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            <span style="font-size: 0.85rem; text-align: left; color: #e2e8f0;">หางาน/ประกาศงาน</span>
+                        </a>
+                        <a href="bookmarks.html" class="pc-menu-card">
+                            <div class="pc-menu-card-icon" style="color: #f43f5e; background: rgba(244, 63, 94, 0.1);">
+                                <i class="fas fa-bookmark"></i>
+                            </div>
+                            <span>บันทึกไว้</span>
+                        </a>
+                        <a href="orders.html" class="pc-menu-card">
+                            <div class="pc-menu-card-icon" style="color: #0ea5e9; background: rgba(14, 165, 233, 0.1);">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <span>การสั่งซื้อ</span>
+                        </a>
+                        <a href="marketplace.html?tab=deals" class="pc-menu-card">
+                            <div class="pc-menu-card-icon" style="color: #eab308; background: rgba(234, 179, 8, 0.1);">
+                                <i class="fas fa-ticket-alt"></i>
+                            </div>
+                            <span>ส่วนลด</span>
+                        </a>
+                        <a href="help.html" class="pc-menu-card">
+                            <div class="pc-menu-card-icon" style="color: #10b981; background: rgba(16, 185, 129, 0.1);">
+                                <i class="fas fa-headset"></i>
+                            </div>
+                            <span>ช่วยเหลือ</span>
+                        </a>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Dynamic Feed (Center) -->
+            <main class="main-content">
+                <!-- PC Social Feed Content (Only visible on Desktop) -->
+                <div id="pcSocialContent" style="display: none; max-width: 680px; margin: 0 auto; padding-top: 20px;">
+                    <!-- PC Stories Bar (Premium Hi-Fi style) -->
+                    <div class="stories-container-v3 d-none d-lg-flex" id="pcStoriesBar" style="margin-bottom: 12px; border-radius: 16px; border: 1px solid var(--tt-border); background: var(--tt-card);">
+                        <!-- Add My Story -->
+                        <div class="story-item-v3" onclick="openPostModal()" style="cursor:pointer;">
+                            <div class="story-ring-v3 is-seen" style="background: rgba(255,255,255,0.06); border: 1.5px dashed rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; color: var(--tt-p); font-size: 22px; width: 58px; height: 58px; border-radius: 50%;">
+                                +
+                            </div>
+                            <span class="story-name-v3">สตอรี่ของคุณ</span>
+                        </div>
+                        <!-- PC Stories populated by buildPCStoriesBar() -->
+                    </div>
+
+                    <!-- Create Post Box -->
+                    <div class="pc-create-post-card">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                            <img src="assets/images/logo.png" class="pc-create-avatar" id="pcCreateAvatar">
+                            <div class="pc-create-input-fake" id="pcCreateInputPlaceholder" onclick="openPostModal()">
+                                คุณมีไอเดียอะไรอยู่ ?</div>
+                        </div>
+                        <div class="pc-create-actions">
+                            <div class="pc-create-action-btn photo" onclick="openPostModal()">
+                                <i class="fas fa-images"></i>
+                                <span>รูปภาพ/วิดีโอ</span>
+                            </div>
+                            <div class="pc-create-action-btn live" onclick="openPostModal()">
+                                <i class="fas fa-video"></i>
+                                <span>ไลฟ์สด</span>
+                            </div>
+                            <div class="pc-create-action-btn feeling" onclick="openPostModal()">
+                                <i class="far fa-smile"></i>
+                                <span>ความรู้สึก</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Standard Content Feed (Grid/List) -->
+                <div id="standardFeed" class="standard-feed-container" style="display:none;">
+                    <div id="postsContainer" style="max-width: 680px; margin: 0 auto; padding: 20px 0;"></div>
+                </div>
+            </main>
+
+            <!-- Dashboard Right Sidebar (PC) -->
+            <aside class="pc-sidebar pc-sidebar-right" id="pcRightSidebar">
+
+                <!-- Trending Sellers Card -->
+                <div class="pc-sidebar-card">
+                    <div class="pc-sidebar-card-title">
+                        <span>🔥 ร้านค้ายอดนิยม</span>
+                        <a href="marketplace.html">ดูทั้งหมด</a>
+                    </div>
+                    <div id="pcTrendingSellers">
+                        <!-- injected by pcLoadTrendingSellers() -->
+                        <div class="pc-skeleton">
+                            <div class="pc-skeleton-line" style="width:70%"></div>
+                            <div class="pc-skeleton-line" style="width:50%"></div>
+                        </div>
+                        <div class="pc-skeleton">
+                            <div class="pc-skeleton-line" style="width:65%"></div>
+                            <div class="pc-skeleton-line" style="width:45%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sponsor / Promo Card -->
+                <div class="pc-sidebar-card" id="pcSponsorCard" style="cursor:pointer"
+                    onclick="(pcSponsorUrl ? window.location.href=pcSponsorUrl : window.location.href='marketplace.html')">
+                    <div class="pc-sidebar-card-title">
+                        <span>📣 ผู้สนับสนุน</span>
+                        <a href="marketplace.html" onclick="event.stopPropagation()">สร้างโฆษณา</a>
+                    </div>
+                    <div id="pcSponsorContent">
+                        <div
+                            style="border-radius:10px;overflow:hidden;margin-bottom:8px;background:linear-gradient(135deg,#1e3a5f,#0f2744);height:110px;display:flex;align-items:center;justify-content:center;">
+                            <i class="fas fa-store" style="font-size:2.5rem;color:rgba(99,102,241,0.4);"></i>
+                        </div>
+                        <div style="font-weight:600;font-size:0.88rem;color:#e4e6eb;margin-bottom:2px;">TukTuk
+                            Marketplace</div>
+                        <div style="font-size:0.78rem;color:#b0b3b8;">เปิดร้านค้า รับลูกค้าใหม่ทุกวัน</div>
+                    </div>
+                </div>
+
+                <!-- Online Contacts -->
+                <div class="pc-sidebar-card">
+                    <div class="pc-sidebar-card-title">
+                        <span>👥 ผู้ติดต่อ</span>
+                        <a href="messages.html">ดูทั้งหมด</a>
+                    </div>
+                    <div id="pcContactList">
+                        <!-- injected by pcLoadContacts() -->
+                        <div class="pc-skeleton">
+                            <div class="pc-skeleton-line" style="width:60%"></div>
+                        </div>
+                        <div class="pc-skeleton">
+                            <div class="pc-skeleton-line" style="width:55%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Suggested Users (Who to Follow) -->
+                <div class="pc-sidebar-card">
+                    <div class="pc-sidebar-card-title">
+                        <span>✨ แนะนำให้ติดตาม</span>
+                        <a href="community.html">ดูทั้งหมด</a>
+                    </div>
+                    <div id="pcSuggestedUsers">
+                        <!-- injected by pcLoadSuggestedUsers() -->
+                        <div class="pc-skeleton">
+                            <div class="pc-skeleton-line" style="width:70%"></div>
+                        </div>
+                        <div class="pc-skeleton">
+                            <div class="pc-skeleton-line" style="width:60%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Latest News Card -->
+                <div class="pc-sidebar-card">
+                    <div class="pc-sidebar-card-title">
+                        <span>📰 ข่าวสาร</span>
+                        <a href="community.html">ดูทั้งหมด</a>
+                    </div>
+                    <div id="pcNewsSection">
+                        <div class="pc-skeleton">
+                            <div class="pc-skeleton-line" style="width:90%"></div>
+                            <div class="pc-skeleton-line" style="width:60%;height:10px;"></div>
+                        </div>
+                        <div class="pc-skeleton">
+                            <div class="pc-skeleton-line" style="width:80%"></div>
+                            <div class="pc-skeleton-line" style="width:50%;height:10px;"></div>
+                        </div>
+                        <div class="pc-skeleton">
+                            <div class="pc-skeleton-line" style="width:85%"></div>
+                            <div class="pc-skeleton-line" style="width:55%;height:10px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommended Products Grid -->
+                <div class="pc-sidebar-card">
+                    <div class="pc-sidebar-card-title">
+                        <span>🛒 สินค้าแนะนำ</span>
+                        <a href="marketplace.html">ดูทั้งหมด</a>
+                    </div>
+                    <div id="pcRecommendedProducts">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                            <div class="pc-skeleton" style="height:100px;border-radius:10px;"></div>
+                            <div class="pc-skeleton" style="height:100px;border-radius:10px;"></div>
+                            <div class="pc-skeleton" style="height:100px;border-radius:10px;"></div>
+                            <div class="pc-skeleton" style="height:100px;border-radius:10px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer links -->
+                <div style="padding:8px 4px;font-size:0.72rem;color:#b0b3b8;line-height:1.8;">
+                    <a href="privacy.html"
+                        style="color:#b0b3b8;text-decoration:none;margin-right:8px;">นโยบายความเป็นส่วนตัว</a>
+                    <a href="terms.html"
+                        style="color:#b0b3b8;text-decoration:none;margin-right:8px;">เงื่อนไขการใช้งาน</a>
+                    <a href="about.html" style="color:#b0b3b8;text-decoration:none;">เกี่ยวกับเรา</a>
+                    <div style="margin-top:6px;">© 2026 TukTuk Thailand</div>
+                </div>
+            </aside>
+        </div> <!-- Close pc-layout-container -->
+
+    </div> <!-- Close main-app-container -->
+
+    <!-- ── PC LIVE CHAT GLOBAL PANEL (Hi-Fi Desktop Style) ── -->
+    <div id="pcLiveChatPanel" class="pc-live-chat-panel d-none" style="position:fixed; right:0; top:64px; bottom:0; width:280px; z-index:50; border-left: 1px solid var(--tt-border);">
+        <div class="pc-live-chat-header">
+            <div class="pc-live-chat-online-dot"></div>
+            <span>💬 LIVE CHAT</span>
+            <span style="margin-left:auto; color: var(--tt-g); font-size: 10px;" id="pcLiveChatOnlineCount">23 ออนไลน์</span>
+        </div>
+        <div class="pc-live-chat-messages" id="pcLiveChatMessages">
+            <div class="pc-chat-msg"><span class="username">@แม่ค้า</span> <span class="text">น่าสนใจมาก 🔥</span></div>
+            <div class="pc-chat-msg"><span class="username">@ผู้ซื้อ</span> <span class="text">ส่งได้ไหมคะ?</span></div>
+            <div class="pc-chat-msg"><span class="username">@ร้าน</span> <span class="text">ส่งทั่วไทยเลยค่า 📦</span></div>
+        </div>
+        <div class="pc-live-chat-input-row">
+            <input class="pc-live-chat-input" id="pcLiveChatInput" placeholder="พิมพ์ข้อความ..." onkeydown="if(event.key==='Enter')window._pcSendChat&&window._pcSendChat()">
+            <button class="pc-live-chat-send" onclick="window._pcSendChat&&window._pcSendChat()">ส่ง</button>
+        </div>
+    </div>
+
+
+    <!-- ADMIN FAB & MENU -->
+    <div class="admin-fab-container" id="adminFab" style="display: none;">
+        <button class="fab-main" onclick="toggleAdminMenu()" title="แอดมิน">
+            <i class="fas fa-gear"></i>
+        </button>
+        <div class="fab-menu" id="adminFabMenu">
+            <button onclick="openPostModal()">
+                <span>โพสต์ข่าวสาร</span>
+                <i class="fas fa-plus"></i>
+            </button>
+            <button onclick="openAdManager()">
+                <span>จัดการโฆษณา</span>
+                <i class="fas fa-ad"></i>
+            </button>
+        </div>
+    </div>
+
+
+
+    <!-- AD MANAGEMENT MODAL -->
+    <div class="modal fade" id="adManagerModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content custom-modal">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title"><i class="fas fa-ad me-2"></i>จัดการโฆษณา</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="ad-manager-layout">
+                        <!-- Sidebar -->
+                        <div class="ad-manager-sidebar">
+                            <button class="ad-nav-btn active" onclick="showAdTab('list')">
+                                <i class="fas fa-list"></i> รายการโฆษณา
+                            </button>
+                            <button class="ad-nav-btn" onclick="showAdTab('form'); resetAdForm();">
+                                <i class="fas fa-plus-circle"></i> สร้างใหม่
+                            </button>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="ad-manager-content">
+                            <!-- List View -->
+                            <div id="adListView" class="ad-view active">
+                                <div class="ad-list-container" id="adListContainer">
+                                    <div class="text-center py-5">
+                                        <div class="spinner-border text-light"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Form View -->
+                            <div id="adFormView" class="ad-view">
+                                <form id="adForm" onsubmit="handleSaveAd(event)">
+                                    <input type="hidden" id="editAdId">
+
+                                    <div class="mb-3">
+                                        <label>หัวข้อโฆษณา</label>
+                                        <input type="text" class="form-control" id="adTitle" required>
+                                    </div>
+
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-6">
+                                            <label>ประเภท</label>
+                                            <select class="form-select" id="adType">
+                                                <option value="banner">Banner (Slider)</option>
+                                                <option value="card">Card (Feed)</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-6">
+                                            <label>ลำดับ</label>
+                                            <input type="number" class="form-control" id="adOrder" value="0">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label>รูปภาพ URL</label>
+                                        <div class="input-group">
+                                            <input type="url" class="form-control" id="adImageUrl"
+                                                placeholder="https://..." required onchange="previewAdImage()">
+                                            <button class="btn btn-outline-secondary" type="button"
+                                                onclick="previewAdImage()">ดูรูป</button>
+                                        </div>
+                                        <img id="adImagePreview" src="" class="mt-2 rounded w-100"
+                                            style="height: 120px; object-fit: cover; display: none;">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label>ลิงก์ปลายทาง</label>
+                                        <input type="url" class="form-control" id="adTargetUrl"
+                                            placeholder="https://...">
+                                    </div>
+
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-6">
+                                            <label>เริ่ม</label>
+                                            <input type="date" class="form-control" id="adStartDate">
+                                        </div>
+                                        <div class="col-6">
+                                            <label>สิ้นสุด</label>
+                                            <input type="date" class="form-control" id="adEndDate">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-check form-switch mb-4">
+                                        <input class="form-check-input" type="checkbox" id="adIsActive" checked>
+                                        <label class="form-check-label">เปิดใช้งานทันที</label>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary w-100 py-2">บันทึกโฆษณา</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Create/Edit Post Modal -->
+    <div class="modal fade" id="postModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-blob blob-1"></div>
+                <div class="modal-blob blob-2"></div>
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">สตูดิโอสร้างสรรค์ระดับโปร</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body p-3">
+                    <form id="postForm">
+                        <input type="hidden" id="postId">
+
+                        <!-- CREATE ZONE 1: CONCEPT -->
+                        <div class="creator-section">
+                            <div class="section-tag">01 - นิยาม & แนวคิด</div>
+
+                            <div class="mb-4">
+                                <input type="hidden" id="postCategory" name="category" required>
+                                <input type="hidden" id="postImages" name="images">
+                                <input type="hidden" id="postVideoUrl" name="videoUrl">
+                                <div class="category-nodes">
+                                    <div class="node-card" onclick="selectPostCategory('news', this)">
+                                        <i class="fas fa-newspaper"></i> <span>ข่าวสาร</span>
+                                    </div>
+                                    <div class="node-card" onclick="selectPostCategory('video', this)">
+                                        <i class="fas fa-play-circle"></i> <span>วีดีโอ</span>
+                                    </div>
+                                    <div class="node-card" onclick="selectPostCategory('update', this)">
+                                        <i class="fas fa-bolt"></i> <span>อัปเดต</span>
+                                    </div>
+                                    <div class="node-card" onclick="selectPostCategory('tip', this)">
+                                        <i class="fas fa-lightbulb"></i> <span>เคล็ดลับ</span>
+                                    </div>
+                                    <div class="node-card" onclick="selectPostCategory('event', this)">
+                                        <i class="fas fa-calendar-star"></i> <span>กิจกรรม</span>
+                                    </div>
+                                    <div class="node-card" onclick="selectPostCategory('promo', this)">
+                                        <i class="fas fa-rocket"></i> <span>โปรโมชั่น</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <input type="text" class="form-control cyber-field" id="postTitle"
+                                    placeholder="ใส่หัวข้อที่ทำให้คนหยุดนิ้ว..." required>
+                            </div>
+                        </div>
+
+                        <!-- CREATE ZONE 2: CONTENT & AI -->
+                        <div class="creator-section">
+                            <div class="section-tag">02 - ศูนย์กลางไอเดีย</div>
+
+                            <div class="editor-zone">
+                                <div id="editor-container"></div>
+                            </div>
+                            <input type="hidden" id="postContent" required>
+
+                            <div class="mt-2 p-2 rounded-3 border border-warning border-opacity-10 bg-warning bg-opacity-5"
+                                style="font-size: 0.7rem; color: #fbbf24;">
+                                <i class="fas fa-info-circle me-1"></i> <b>กฏการใช้งาน:</b> ห้ามใช้คำหยาบคาย
+                                ห้ามเกี่ยวข้องกับสิ่งผิดกฏหมาย เพื่อความน่าเชื่อถือของข้อมูล
+                            </div>
+
+                            <div class="mt-4">
+                                <button type="button" class="ai-studio-btn w-100" id="aiAssistantBtn"
+                                    onclick="toggleAiOptions()">
+                                    <i class="fas fa-sparkles"></i>
+                                    <span>พลังขับเคลื่อน AI อัจฉริยะ</span>
+                                </button>
+
+                                <div class="ai-options mt-3" id="aiOptions"
+                                    style="display:none; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                                    <button type="button" class="ai-option-btn-pro"
+                                        onclick="aiAssist('summarize')">สรุป</button>
+                                    <button type="button" class="ai-option-btn-pro"
+                                        onclick="aiAssist('expand')">ขยายความ</button>
+                                    <button type="button" class="ai-option-btn-pro"
+                                        onclick="aiAssist('engaging')">น่าสนใจ</button>
+                                    <button type="button" class="ai-option-btn-pro"
+                                        onclick="aiAssist('professional')">ทางการ</button>
+                                    <button type="button" class="ai-option-btn-pro"
+                                        onclick="aiAssist('friendly')">เป็นกันเอง</button>
+                                    <button type="button" class="ai-option-btn-pro"
+                                        onclick="aiAssist('emoji')">เพิ่มอิโมจิ</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CREATE ZONE 3: MEDIA -->
+                        <div class="creator-section">
+                            <div class="section-tag">03 - ห้องเครื่องมัลติมีเดีย</div>
+
+                            <div class="multi-upload-area"
+                                style="background: rgba(0,0,0,0.2); border: 2px dashed rgba(255,255,255,0.1); border-radius: 24px; padding: 30px; text-align: center;">
+                                <input type="file" id="postMediaFiles" accept="image/*,video/*" multiple
+                                    style="display:none" onchange="handleMultiMediaUpload(this)">
+                                <div id="uploadedMediaGrid" class="d-flex flex-wrap gap-3 justify-content-center">
+                                    <div class="add-btn-cyber"
+                                        onclick="document.getElementById('postMediaFiles').click()">
+                                        <i class="fas fa-plus"></i>
+                                        <span>เพิ่มไฟล์</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="upload-progress mt-3" id="uploadProgress" style="display: none;">
+                                <div class="progress"
+                                    style="height: 8px; border-radius: 10px; background: rgba(255,255,255,0.05);">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-info"
+                                        id="progressBar" style="width: 0%"></div>
+                                </div>
+                                <small class="text-info mt-2 d-block fw-bold" style="letter-spacing: 1px;">UPLOADING
+                                    TO
+                                    CLOUD STRATA...</small>
+                            </div>
+
+                            <div class="video-url-input mt-4 p-4 rounded-4"
+                                style="background: rgba(99, 102, 241, 0.05); border: 1px solid rgba(255,255,255,0.05);">
+                                <label class="fw-bold mb-3 d-block"
+                                    style="color: #818cf8; font-size: 0.75rem; letter-spacing: 1px;">
+                                    <i class="fas fa-satellite-dish me-2"></i> สถานีวิดีโอ (Link)
+                                </label>
+                                <input type="url" class="form-control cyber-field" id="postYoutubeUrl"
+                                    placeholder="วางลิงก์ TikTok / Reels / YouTube..."
+                                    onchange="previewVideoLink(this.value)">
+
+                                <label class="fw-bold mb-3 d-block mt-4"
+                                    style="color: #c084fc; font-size: 0.75rem; letter-spacing: 1px;">
+                                    <i class="fas fa-plug me-2"></i> เชื่อมต่อผลิตภัณฑ์
+                                </label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control cyber-field" id="linkedProductId"
+                                        placeholder="ระบุรหัสสินค้า (Product ID)...">
+                                    <button class="btn btn-outline-primary px-4" type="button"
+                                        onclick="verifyLinkedProduct()"
+                                        style="border-radius: 0 18px 18px 0; border: 1px solid rgba(99,102,241,0.3);">ตรวจจับ</button>
+                                </div>
+                                <div id="linkedProductPreview" class="mt-3" style="display: none;"></div>
+
+                                <div id="videoPreviewArea" class="mt-3 rounded-4 overflow-hidden shadow-lg"
+                                    style="display: none; aspect-ratio: 9/16; max-height: 400px; margin: 0 auto; background: #000; border: 1px solid rgba(255,255,255,0.1);">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CREATE ZONE: LOCATION (Optional) -->
+                        <div class="creator-section">
+                            <div class="section-tag">
+                                <span><i class="fas fa-map-marker-alt"></i> 03.5 - พิกัดสถานที่</span>
+                                <span class="small opacity-40 ms-auto">เลือกใส่ได้ตามใจ</span>
+                            </div>
+                            <div class="location-input-group">
+                                <input type="text" class="form-control cyber-field" id="postLocation"
+                                    placeholder="ระบุชื่อสถานที่ หรือ จุดเช็คอิน...">
+                                <button type="button" class="location-btn-mini" onclick="getCurrentLocation(event)">
+                                    <i class="fas fa-location-arrow"></i>
+                                </button>
+                                <input type="hidden" id="postCoordinates">
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Deployment Settings -->
+                        <div class="creator-section">
+                            <div class="section-tag">04 - ศูนย์ควบคุมการเผยแพร่</div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <div class="form-check form-switch custom-switch-pro">
+                                        <input class="form-check-input" type="checkbox" id="postPinned">
+                                        <label class="form-check-label ms-3" for="postPinned">
+                                            <span class="d-block fw-bold text-white">ปักหมุดไว้บนสุด</span>
+                                            <span class="small opacity-40">แสดงผลเด่นบนโปรไฟล์ของคุณ</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <div class="form-check form-switch custom-switch-pro">
+                                        <input class="form-check-input" type="checkbox" id="postPublished" checked>
+                                        <label class="form-check-label ms-3" for="postPublished">
+                                            <span class="d-block fw-bold text-white">ส่งสารถึงเครือข่าย</span>
+                                            <span class="small opacity-40">เผยแพร่สู่สายตาชาวโลกทันที</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="section-tag mb-3" style="font-size: 0.6rem;"><i
+                                            class="fas fa-shield-alt"></i> ระดับการเข้าใช้งาน</label>
+                                    <select class="form-select cyber-field" id="postPrivacy">
+                                        <option value="public" selected>🌐 สาธารณะแบบสากล</option>
+                                        <option value="private">🔒 เข้ารหัสแบบส่วนตัว</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer-pro">
+                            <button type="button" class="btn btn-link text-white text-decoration-none opacity-50"
+                                data-bs-dismiss="modal">ออกจากห้องส่ง</button>
+                            <button type="submit" class="btn-launch">ปล่อยของเลย! <i
+                                    class="fas fa-rocket ms-2"></i></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirm Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center p-4">
+                    <div
+                        style="width: 80px; height: 80px; background: linear-gradient(135deg, #ffebee, #ffcdd2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                        <i class="fas fa-trash-alt text-danger" style="font-size: 2rem;"></i>
+                    </div>
+                    <h5 class="fw-bold">ลบโพสต์นี้?</h5>
+                    <p class="text-muted">การดำเนินการนี้ไม่สามารถย้อนกลับได้</p>
+                    <div class="d-flex gap-2 justify-content-center mt-4">
+                        <button class="btn btn-secondary px-4" data-bs-dismiss="modal">ยกเลิก</button>
+                        <button class="btn btn-danger px-4" id="confirmDeleteBtn">ลบเลย</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comment Modal (Bottom Sheet) -->
+    <div class="modal fade comment-modal" id="commentModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="comment-header">
+                    <span id="commentCountTitle">ความคิดเห็น (0)</span>
+                    <button type="button" class="btn-close position-absolute end-0 top-0 m-3" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="comment-input-area">
+                    <input type="text" class="comment-input" id="commentInput" placeholder="เพิ่มความคิดเห็น...">
+                    <button class="comment-send-btn" id="sendCommentBtn" onclick="submitComment()">ส่ง</button>
+                </div>
+                <div class="comment-list" id="commentList">
+                    <!-- Comments injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!--TukTuk Core Services-->
+    <script src="js/auth-service.js" defer></script>
+    <script src="js/tuktuk-api.js" defer></script>
+
+    <script src="js/community_feed_integration.js?v=20260701h" defer></script>
+    <script src="js/tuktuk_feed_logic.js?v=20260701h" defer></script>
+
+
+    <!-- PC LAYOUT V3 — External CSS (loaded in <head>) -->
+
+    <!-- ═══════════════════════════════════════════════════════════
+         PC LAYOUT V2 — JavaScript Engine
+         ═══════════════════════════════════════════════════════════ -->
+
+    <!-- ══════════════════════════════════════════════════════════
+         IN-PAGE CHAT PANEL
+         Slide-in drawer: conversation list → message thread
+         Uses TukTukChat from /js/chat-web.js (already loaded)
+    ═══════════════════════════════════════════════════════════ -->
+
+    <!-- Panel HTML -->
+    <div id="inChatOverlay" onclick="closeInChat()">
+    </div>
+    <div id="inChatPanel" aria-label="ข้อความ" role="dialog">
+
+        <!-- ── Conversation List View ── -->
+        <div id="icListView">
+            <div class="ic-header">
+                <span class="ic-title"><i class="fas fa-comment-dots"></i>
+                    ข้อความ</span>
+                <button class="ic-close-btn" onclick="closeInChat()" title="ปิด">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="ic-search-row">
+                <input id="icSearchInput" class="ic-search" type="search" placeholder="ค้นหาบทสนทนา..."
+                    oninput="icFilterConvs(this.value)" />
+            </div>
+            <div id="icConvList" class="ic-conv-list">
+                <div class="ic-empty-state" id="icListEmpty" style="display:none;">
+                    <i class="fas fa-comment-slash" style="font-size:36px;opacity:.3;"></i>
+                    <p>ยังไม่มีบทสนทนา</p>
+                    <small>เริ่มแชทได้จากหน้าตลาดนัดหรือโปรไฟล์ผู้ใช้</small>
+                </div>
+                <div class="ic-loader" id="icListLoader">
+                    <div class="ic-skeleton-row">
+                    </div>
+                    <div class="ic-skeleton-row">
+                    </div>
+                    <div class="ic-skeleton-row">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Thread View ── -->
+        <div id="icThreadView" style="display:none;">
+            <div class="ic-header ic-thread-header">
+                <button class="ic-back-btn" onclick="icBackToList()" title="กลับ">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div class="ic-thread-info">
+                    <div class="ic-thread-avatar" id="icThreadAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <div class="ic-thread-name" id="icThreadName">
+                            ผู้ใช้
+                        </div>
+                        <div class="ic-thread-status" id="icThreadStatus">
+                            กำลังโหลด...</div>
+                    </div>
+                </div>
+                <button class="ic-close-btn" onclick="closeInChat()" title="ปิด">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="icMessages" class="ic-messages-area">
+            </div>
+            <div id="icTypingBar" class="ic-typing-bar" style="display:none;">
+                <span class="ic-typing-dot"></span><span class="ic-typing-dot"></span><span
+                    class="ic-typing-dot"></span>
+                <span style="font-size:12px;opacity:.6;margin-left:6px;">กำลังพิมพ์...</span>
+            </div>
+            <div class="ic-input-row">
+                <input type="file" id="icFileInput" accept="image/*" style="display:none;"
+                    onchange="icHandleFileUpload(this)" />
+                <button class="ic-action-btn-mini" onclick="document.getElementById('icFileInput').click()"
+                    title="ส่งรูปภาพ">
+                    <i class="fas fa-image"></i>
+                </button>
+                <input id="icMsgInput" class="ic-msg-input" type="text" placeholder="พิมพ์ข้อความ..."
+                    onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();icSend();}"
+                    oninput="icOnType()" />
+                <button class="ic-send-btn" id="icSendBtn" onclick="icSend()" title="ส่ง">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+            <div id="icUploadProgress"
+                style="display:none; height:2px; background:#6366f1; width:0; transition:width .3s;">
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating chat button (mobile) -->
+    <button id="mobileOpenChat" class="ic-fab" onclick="openInChat()" title="ข้อความ" aria-label="เปิดข้อความ">
+        <i class="fas fa-comment-dots"></i>
+        <span class="ic-fab-badge" id="icFabBadge" style="display:none;">0</span>
+    </button>
+
+    <!-- In-page Chat Panel — CSS already loaded in <head> (css/chat-panel.css) -->
+
+
+    <!-- 📲 PWA Install System — handled by js/pwa-install.js (loaded in <head>) -->
+
+    <!-- Mobile Drawer (Side Menu) -->
+    <div id="mobileDrawerOverlay" class="mobile-drawer-overlay" onclick="toggleMobileDrawer()"></div>
+    <div id="mobileDrawer" class="mobile-drawer drawer-glass">
+
+        <!-- Header: User profile or login prompt -->
+        <div class="drawer-header">
+            <button class="drawer-close-btn" onclick="toggleMobileDrawer()" title="ปิด">
+                <i class="fas fa-times"></i>
+            </button>
+            <!-- Logged-in state -->
+            <div class="drawer-user" id="drawerUserSection" onclick="drawerGo('channel.html')" style="cursor:pointer;">
+                <img src="assets/images/logo.png" class="drawer-avatar" id="drawerAvatar">
+                <div class="drawer-user-info">
+                    <span id="drawerUserName">TukTuk User</span>
+                    <small id="drawerUserTier">สมาชิก TukTuk</small>
+                </div>
+            </div>
+            <!-- Notification row -->
+            <div class="drawer-header-row">
+                <div class="drawer-notif-chip" id="drawerNotifChip" onclick="drawerGoNotif()">
+                    <i class="fas fa-bell"></i>
+                    <span id="drawerNotifLabel">แจ้งเตือน</span>
+                    <span class="drawer-badge" id="drawerNotifBadge" style="display:none;">0</span>
+                </div>
+                <div class="drawer-theme-chip" id="drawerThemeChip" onclick="drawerToggleTheme()">
+                    <i class="fas fa-moon" id="drawerThemeIcon"></i>
+                    <span id="drawerThemeLabel">กลางคืน</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="drawer-content">
+
+            <!-- Section: Feed Tabs -->
+            <div class="drawer-section-title">ฟีด</div>
+            <a href="#" class="drawer-item" onclick="drawerSwitchTab('all');return false;">
+                <i class="fas fa-home" style="color:#f97316;"></i>
+                <span>หน้าหลัก</span>
+            </a>
+            <a href="#" class="drawer-item" onclick="drawerSwitchTab('all');return false;">
+                <i class="fas fa-play-circle" style="color:#f59e0b;"></i>
+                <span>ดูเพลิน</span>
+            </a>
+            <a href="#" class="drawer-item" onclick="drawerSwitchTab('near_me');return false;">
+                <i class="fas fa-location-arrow" style="color:#14b8a6;"></i>
+                <span>ใกล้ฉัน</span>
+            </a>
+            <a href="#" class="drawer-item" onclick="drawerSwitchTab('community');return false;">
+                <i class="fas fa-users" style="color:#ec4899;"></i>
+                <span>อาชีพ / คอมมูนิตี้</span>
+            </a>
+            <a href="marketplace.html" class="drawer-item" onclick="toggleMobileDrawer()">
+                <i class="fas fa-shopping-bag" style="color:#22c55e;"></i>
+                <span>ตลาดนัด</span>
+            </a>
+
+            <!-- Section: Account -->
+            <div class="drawer-section-title">บัญชีของฉัน</div>
+            <a href="#" class="drawer-item" onclick="drawerGo('channel.html');return false;">
+                <i class="fas fa-user-circle" style="color:#818cf8;"></i>
+                <span>โปรไฟล์ของฉัน</span>
+            </a>
+            <a href="#" class="drawer-item" onclick="drawerGo('seller-dashboard.html');return false;">
+                <i class="fas fa-store" style="color:#fb923c;"></i>
+                <span>ร้านค้าของฉัน</span>
+            </a>
+            <a href="#" class="drawer-item" onclick="drawerGo('marketplace.html?tab=orders');return false;">
+                <i class="fas fa-box" style="color:#a78bfa;"></i>
+                <span>ประวัติคำสั่งซื้อ</span>
+            </a>
+            <a href="#" class="drawer-item" onclick="drawerGo('seller-dashboard.html?tab=wallet');return false;">
+                <i class="fas fa-wallet" style="color:#4ade80;"></i>
+                <div style="flex:1;">
+                    <div>กระเป๋าเงิน</div>
+                    <div class="drawer-balance" id="drawerBalance">฿ —</div>
+                </div>
+            </a>
+
+            <!-- Section: Create -->
+            <div class="drawer-section-title">สร้าง</div>
+            <a href="#" class="drawer-item" onclick="drawerCreatePost();return false;">
+                <i class="fas fa-edit" style="color:#38bdf8;"></i>
+                <span>สร้างโพสต์ใหม่</span>
+            </a>
+            <a href="#" class="drawer-item" onclick="drawerGo('win-service.html');return false;">
+                <i class="fas fa-motorcycle" style="color:#f97316;"></i>
+                <span>เรียกวินมอเตอร์ไซค์</span>
+            </a>
+            <a href="#" class="drawer-item" onclick="drawerGo('win-rider-register.html');return false;">
+                <i class="fas fa-id-card" style="color:#22c55e;"></i>
+                <span>สมัครเป็นวินไรเดอร์</span>
+            </a>
+
+            <!-- Section: System -->
+            <div class="drawer-section-title">ระบบ</div>
+            <a href="help.html" class="drawer-item" onclick="toggleMobileDrawer()">
+                <i class="fas fa-headset" style="color:#10b981;"></i>
+                <span>ช่วยเหลือ</span>
+            </a>
+            <a href="#" class="drawer-item" onclick="drawerClearCache();return false;">
+                <i class="fas fa-sync-alt" style="color:#38bdf8;" id="drawerRefreshIcon"></i>
+                <div style="flex:1;">
+                    <div>รีเฟรชฟีด</div>
+                    <div style="font-size:11px;color:rgba(255,255,255,0.4);">ล้างแคชและโหลดโพสต์ใหม่</div>
+                </div>
+            </a>
+            <a href="#" class="drawer-item drawer-item-logout" id="drawerLogoutBtn"
+                onclick="drawerLogout();return false;">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>ออกจากระบบ</span>
+            </a>
+        </div>
+
+        <div class="drawer-footer">
+            <a href="/tos.html" class="drawer-footer-link">ข้อกำหนดการใช้งาน</a>
+            <a href="/privacy.html" class="drawer-footer-link">นโยบายความเป็นส่วนตัว</a>
+            <div style="font-size:10px;color:#71717a;margin-top:10px;opacity:0.5;">TukTuk Version 4.0.0</div>
+        </div>
+    </div>
+
+    <!-- 🔔 SW Message Handler: route NOTIF_CLICK to correct page / panel -->
+    <!-- TikTok-style feed — direct child of <body> so no ancestor overflow:hidden blocks iOS touch events -->
+    <div id="tuktukFeed" class="tuktuk-feed-container" style="display:none"></div>
+    <div id="tuktukFeedNearMe" class="tuktuk-feed-container" style="display:none"></div>
+    <div id="tuktukFeedCommunity" class="tuktuk-feed-container" style="display:none"></div>
+
+    <!-- Video embed + missing helpers (not in creator-engine.js) -->
+    <script>
+    function extractYoutubeId(url) {
+        if (!url) return null;
+        const m = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts|live)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+        return m ? m[1] : null;
+    }
+    function previewVideoLink(url) {
+        const pa = document.getElementById('videoPreviewArea');
+        if (!pa) return;
+        const embed = parseVideoEmbed(url);
+        if (embed) { pa.innerHTML = embed; pa.style.display = 'block'; pa.style.aspectRatio = (url.includes('youtube') || url.includes('youtu.be')) ? '16/9' : '9/16'; }
+        else { pa.style.display = 'none'; }
+    }
+    function parseVideoEmbed(url) {
+        if (!url) return '';
+        url = url.trim();
+        if (url.startsWith('//')) url = 'https:' + url;
+        const ytId = extractYoutubeId(url);
+        if (ytId) {
+            const origin = window.location.origin !== 'null' ? encodeURIComponent(window.location.origin) : '';
+            return `<iframe src="https://www.youtube.com/embed/${ytId}?playsinline=1&enablejsapi=1&rel=0&modestbranding=1${origin ? '&origin=' + origin : ''}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+        }
+        const tt = url.match(/tiktok\.com\/(?:.*\/video\/|.*v=)(\d+)/) || url.match(/tiktok\.com\/(?:t|v)\/([\w\d]+)/) || url.match(/(?:vm|vt)\.tiktok\.com\/([\w\d]+)/);
+        if (tt) return `<iframe src="https://www.tiktok.com/player/v1/${tt[1]}?music_info=1&description=1" allow="autoplay; fullscreen" style="width:100%;height:100%;" allowfullscreen></iframe>`;
+        if (url.includes('facebook.com') || url.includes('fb.watch'))
+            return `<iframe src="https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=0&width=500" style="border:none;overflow:hidden;width:100%;height:100%;" scrolling="no" frameborder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>`;
+        if (url.match(/\.(mp4|webm|mov|ogg)$/i))
+            return `<video controls playsinline preload="metadata" style="width:100%;height:100%;object-fit:contain;"><source src="${url}" type="video/mp4"></video>`;
+        return '';
+    }
+    function removeYoutubeVideo() {
+        const el = document.getElementById('postYoutubeUrl'); if (el) el.value = '';
+        const pa = document.getElementById('videoPreviewArea'); if (pa) { pa.style.display = 'none'; pa.innerHTML = ''; }
+        window.uploadedYoutubeUrl = '';
+    }
+    </script>
+
+    <!-- PC Premium Enhancements linked via external script in head -->
+
+</body>
+
+</html>
