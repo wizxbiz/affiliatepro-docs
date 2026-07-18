@@ -22,20 +22,25 @@ async function _restoreFirebaseAuth() {
         if (!userId) return;
 
         // Request a fresh custom token from the server
-        const API_BASE = 'https://us-central1-appinjproject.cloudfunctions.net';
-        const resp = await fetch(`${API_BASE}/refreshWebSession`, {
+        const token = localStorage.getItem('tuktuk_token') || session.token || session.sessionToken;
+        if (!token) return;
+
+        const resp = await fetch(`/api/v1/auth/refresh`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId }),
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
         });
         if (!resp.ok) return;
         const data = await resp.json();
-        if (data.sessionToken) {
-            await firebase.auth().signInWithCustomToken(data.sessionToken);
-            console.log('[app-init] Firebase Auth restored for', userId);
+        if (data.token || data.sessionToken) {
+            // Keep token in localStorage sync
+            localStorage.setItem('tuktuk_token', data.token || data.sessionToken);
+            console.log('[app-init] Session refreshed successfully');
         }
     } catch (e) {
-        console.warn('[app-init] Firebase Auth restore skipped:', e.message);
+        console.warn('[app-init] Session refresh skipped:', e.message);
     }
 }
 
@@ -1166,7 +1171,7 @@ if ('serviceWorker' in navigator) {
             ).join('');
             mediaHtml = `<div class="pc4-media-grid ${gridClass}">${cells}</div>`;
         } else if (primaryImg) {
-            mediaHtml = `<div class="pc4-media single" onclick="window.location.href='channel.html?userId=${aid}'"><img src="${primaryImg}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>`;
+            mediaHtml = `<div class="pc4-media single" onclick="if(window.viewPostDetails){window.viewPostDetails('${post.id}');}"><img src="${primaryImg}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>`;
         }
 
         const likedCls = isLiked ? 'liked' : '';
@@ -1219,7 +1224,7 @@ if ('serviceWorker' in navigator) {
                     <i class="fas fa-share-alt"></i> แชร์
                 </button>
                 <button class="pc4-action-btn primary"
-                        onclick="event.stopPropagation();window.location.href='channel.html?postId=${post.id}'">
+                        onclick="event.stopPropagation();if(window.viewPostDetails){window.viewPostDetails('${post.id}');}">
                     อ่านต่อ <i class="fas fa-chevron-right" style="font-size:9px;"></i>
                 </button>
             </div>
@@ -1249,7 +1254,7 @@ if ('serviceWorker' in navigator) {
 
     /* ── Share post ──────────────────────────────────────── */
     window.pcSharePost = function (postId, title) {
-        const url = `${location.origin}${location.pathname}?postId=${postId}`;
+        const url = `${location.origin}/community-share?id=${postId}`;
         if (navigator.share) {
             navigator.share({ title: title || 'TukTuk โพสต์', url }).catch(() => { });
         } else {
@@ -1276,47 +1281,9 @@ if ('serviceWorker' in navigator) {
 
     /* ── Stories from Firestore ──────────────────────────── */
     async function pcLoadStories() {
-        const bar = document.getElementById('pcStoriesBar');
-        if (!bar || !window.db) return;
-
-        // Add Story button
-        let html = `<div class="pc-story-add-btn" onclick="openPostModal ? openPostModal() : null">
-                <div class="pc-story-add-btn-plus"><i class="fas fa-plus"></i></div>
-                <div class="pc-story-add-label">เพิ่มเรื่องราว</div>
-            </div>`;
-
-        try {
-            const snap = await window.db.collection('posts')
-                .where('published', '==', true)
-                .orderBy('createdAt', 'desc')
-                .limit(15)
-                .get();
-
-            const withImg = snap.docs
-                .map(d => ({ id: d.id, ...d.data() }))
-                .filter(p => {
-                    const imgs = p.images || (p.imageUrl ? [p.imageUrl] : []);
-                    return imgs.length > 0;
-                })
-                .slice(0, 6);
-
-            withImg.forEach(post => {
-                const imgs = post.images || (post.imageUrl ? [post.imageUrl] : []);
-                const img = typeof imgs[0] === 'object' ? imgs[0].url : imgs[0];
-                const avatar = post.authorPhotoURL || post.authorAvatar || 'assets/images/logo.png';
-                const name = (post.authorName || 'ผู้ใช้').substring(0, 12);
-                html += `<div class="pc-story-card"
-                        onclick="window.location.href='channel.html?postId=${post.id}'"
-                        title="${esc(post.title || name)}">
-                        <img src="${img}" onerror="this.src='assets/images/logo.png'" loading="lazy">
-                        <div class="pc-story-overlay"></div>
-                        <img src="${avatar}" class="pc-story-avatar" onerror="this.src='assets/images/logo.png'">
-                        <div class="pc-story-name">${esc(name)}</div>
-                    </div>`;
-            });
-        } catch (e) { console.warn('pcLoadStories:', e); }
-
-        bar.innerHTML = html;
+        if (typeof window.loadPremiumStories === 'function') {
+            await window.loadPremiumStories();
+        }
     }
 
     /* ── Trending sellers from Firestore ─────────────────── */
@@ -1518,7 +1485,7 @@ if ('serviceWorker' in navigator) {
                 const time = pcFmt(p.createdAt);
                 const imgs = p.images || (p.imageUrl ? [p.imageUrl] : []);
                 const img = imgs.length ? (typeof imgs[0] === 'object' ? imgs[0].url : imgs[0]) : null;
-                return `<div class="pc-news-item" onclick="window.location.href='channel.html?postId=${d.id}'" style="display:flex;gap:10px;align-items:center;padding:8px 0;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);">
+                return `<div class="pc-news-item" onclick="if(window.viewPostDetails){window.viewPostDetails('${d.id}');}" style="display:flex;gap:10px;align-items:center;padding:8px 0;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);">
                     ${img ? `<img src="${img}" style="width:52px;height:52px;border-radius:8px;object-fit:cover;flex-shrink:0;" onerror="this.style.display='none'" loading="lazy">` : ''}
                     <div style="overflow:hidden;">
                         <div style="font-size:0.83rem;color:#e4e6eb;font-family:Kanit,sans-serif;line-height:1.3;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;">${title}</div>
@@ -1621,7 +1588,7 @@ if ('serviceWorker' in navigator) {
         // 4. Sync profile avatar + name + badge from localStorage
         const av = (window.getUserAvatar && window.getUserAvatar()) || 'assets/images/logo.png';
         const nm = window.currentUserName || 'โปรไฟล์ของคุณ';
-        ['pcTopProfileImg', 'pcProfileImg', 'pcCreateAvatar'].forEach(id => {
+        ['pcTopProfileImg', 'pcProfileImg', 'pcCreateAvatar', 'mobileCreateFeedAvatar'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.src = av;
         });
@@ -1656,6 +1623,11 @@ if ('serviceWorker' in navigator) {
     function waitForFirebaseAndInit(tries) {
         if (tries <= 0) return;
         if (window.db) {
+            // Load stories for both PC and Mobile layout once database is ready
+            if (typeof window.loadPremiumStories === 'function') {
+                window.loadPremiumStories();
+            }
+
             const urlParams = new URLSearchParams(window.location.search);
             const targetPostId = urlParams.get('post') || urlParams.get('postId') || urlParams.get('id');
             const forceExplore = urlParams.get('category') === 'all' || urlParams.get('cat') === 'all';

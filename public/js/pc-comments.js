@@ -107,62 +107,31 @@
         _activePostId = null;
     };
 
-    /* ─── Load Comments (real-time) ───────────────────────────── */
+    /* ─── Load Comments (Worker D1 API — single source of truth) ── */
     function _loadComments(postId) {
         const list = document.getElementById('pcCommentsList');
         if (!list) return;
 
-        if (!window.db) {
-            list.innerHTML = `<div class="pc-comment-empty"><i class="fas fa-exclamation-circle"></i>ไม่สามารถเชื่อมต่อฐานข้อมูลได้</div>`;
-            return;
-        }
-
-        try {
-            _commentsUnsub = window.db
-                .collection('posts')
-                .doc(postId)
-                .collection('comments')
-                .orderBy('createdAt', 'asc')
-                .limit(50)
-                .onSnapshot(
-                    function (snap) { _renderComments(snap, list); },
-                    function (err) {
-                        console.warn('[comments] onSnapshot error:', err);
-                        // Fallback: load from top-level comments collection
-                        _loadCommentsFromTopLevel(postId, list);
-                    }
-                );
-        } catch (e) {
-            console.warn('[comments] load error:', e);
-            _loadCommentsFromTopLevel(postId, list);
-        }
-    }
-
-    function _loadCommentsFromTopLevel(postId, list) {
-        if (!window.db) return;
-        window.db.collection('comments')
-            .where('postId', '==', postId)
-            .orderBy('createdAt', 'asc')
-            .limit(50)
-            .get()
-            .then(snap => _renderComments(snap, list))
-            .catch(() => {
-                list.innerHTML = `<div class="pc-comment-empty"><i class="fas fa-comment-slash"></i>ยังไม่มีความเห็น เป็นคนแรก!</div>`;
+        fetch(`/api/v1/posts/${postId}/comments?limit=50`)
+            .then(res => res.json())
+            .then(data => _renderComments(Array.isArray(data.comments) ? data.comments : [], list))
+            .catch(err => {
+                console.warn('[comments] load error:', err);
+                list.innerHTML = `<div class="pc-comment-empty"><i class="fas fa-comment-slash"></i>ไม่สามารถโหลดความเห็นได้</div>`;
             });
     }
 
-    function _renderComments(snap, list) {
+    function _renderComments(comments, list) {
         if (!list) return;
-        if (snap.empty) {
+        if (!comments || comments.length === 0) {
             list.innerHTML = `<div class="pc-comment-empty"><i class="fas fa-comment-dots"></i>ยังไม่มีความเห็น เป็นคนแรก!</div>`;
             return;
         }
 
         list.innerHTML = '';
-        snap.docs.forEach(doc => {
-            const c = doc.data();
-            const avatar = c.authorAvatar || c.authorPhotoURL || 'assets/images/logo.png';
-            const name   = _esc(c.authorName || 'ผู้ใช้');
+        comments.forEach(c => {
+            const avatar = c.authorAvatar || c.userAvatar || c.authorPhotoURL || 'assets/images/logo.png';
+            const name   = _esc(c.authorName || c.userName || 'ผู้ใช้');
             const text   = _esc(c.text || c.content || c.comment || '');
             const time   = _fmtTime(c.createdAt);
 
@@ -208,27 +177,21 @@
         sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
         try {
-            const commentData = {
-                text,
-                postId: _activePostId,
-                authorId: uid,
-                authorName: window.currentUserName || user?.displayName || user?.name || 'ผู้ใช้',
-                authorAvatar: user?.pictureUrl || user?.photoURL || 'assets/images/logo.png',
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            };
+            const token = localStorage.getItem('tuktuk_token') || localStorage.getItem('tuktuk_jwt');
+            const headers = { 'Content-Type': 'application/json' };
+            if (token) headers['Authorization'] = `Bearer ${token}`;
 
-            // Write to subcollection (preferred) and top-level
-            await window.db
-                .collection('posts')
-                .doc(_activePostId)
-                .collection('comments')
-                .add(commentData);
-
-            // Increment comment count on post doc
-            await window.db.collection('posts').doc(_activePostId).update({
-                commentsCount: firebase.firestore.FieldValue.increment(1),
-                commentCount:  firebase.firestore.FieldValue.increment(1),
-            }).catch(() => {}); // ignore if field missing
+            const res = await fetch(`/api/v1/posts/${_activePostId}/comments`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({
+                    text,
+                    authorId: uid,
+                    authorName: window.currentUserName || user?.displayName || user?.name || 'ผู้ใช้',
+                    authorAvatar: user?.pictureUrl || user?.photoURL || 'assets/images/logo.png',
+                }),
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
             // Update count display on card
             const card = document.getElementById(`ppc-${_activePostId}`);
@@ -243,6 +206,9 @@
 
             textarea.value = '';
             textarea.style.height = 'auto';
+
+            // Reload comments so the new one shows immediately
+            _loadComments(_activePostId);
 
             if (typeof showToast === 'function') showToast('✅ ส่งความเห็นแล้ว!', 'success');
 
@@ -274,7 +240,7 @@
 
     /* ─── sharePost ───────────────────────────────────────────── */
     window.sharePost = window.sharePost || function (postId, title) {
-        const url = `${location.origin}${location.pathname}?postId=${postId}`;
+        const url = `${location.origin}/community-share?id=${postId}`;
         if (navigator.share) {
             navigator.share({ title: title || 'TukTuk โพสต์', url }).catch(() => {});
         } else {
@@ -296,7 +262,11 @@
 
     function _fmtTime(ts) {
         if (!ts) return '';
-        const d    = ts.toDate ? ts.toDate() : new Date(ts);
+        let d;
+        if (ts.seconds) d = new Date(ts.seconds * 1000);   // D1 API: { seconds }
+        else if (ts.toDate) d = ts.toDate();                // Firestore Timestamp
+        else d = new Date(ts);                              // epoch / ISO string
+        if (isNaN(d)) return '';
         const diff = Math.floor((Date.now() - d) / 1000);
         if (diff < 60)    return 'เพิ่งโพสต์';
         if (diff < 3600)  return Math.floor(diff / 60) + ' นาทีที่แล้ว';

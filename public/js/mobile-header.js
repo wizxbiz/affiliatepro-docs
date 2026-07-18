@@ -45,6 +45,16 @@ document.addEventListener('DOMContentLoaded', function() {
 function switchCategoryMobile(category, element) {
     const isSameTab = currentMobileCategory === category;
     
+    // Reset stories bar collapse state and reset feed scrolls on tab change
+    const mb = document.getElementById('mobileStoriesBar');
+    if (mb) {
+        mb.classList.remove('collapsed');
+    }
+    ['tuktukFeed', 'tuktukFeedNearMe', 'tuktukFeedCommunity'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.scrollTop = 0;
+    });
+
     if (isSameTab) {
         // Special: Near Me tap when already active opens province picker
         if (category === 'near_me') {
@@ -559,7 +569,7 @@ function _nudgeEdge(dir) {
 function _showSwipeIndicator(cat) {
     // Read the label directly from the tab's <span> to always match the real UI
     const tabSpan = document.querySelector(`.mh-tab[data-cat="${cat}"] span`);
-    const fallbacks = { all: 'ดูเพลิน', near_me: 'ใกล้ฉัน', community: 'อาชีพ' };
+    const fallbacks = { all: 'ดูเพลิน', near_me: 'ใกล้บ้าน', community: 'อาชีพ' };
     const tabLabel = tabSpan?.textContent?.trim() || fallbacks[cat] || cat;
     let ind = document.getElementById('swipeTabIndicator');
     if (!ind) {
@@ -943,6 +953,32 @@ function initMobileHeader() {
 
     // Init feed tap/long-press gestures
     _initFeedGestures();
+
+    // Scroll listeners to auto-collapse/expand stories bar on vertical feeds
+    const handleMobileScroll = (e) => {
+        const scrollTop = e.target.scrollTop;
+        const mb = document.getElementById('mobileStoriesBar');
+        if (!mb) return;
+        
+        // Don't auto-collapse on Community tab
+        if (currentMobileCategory === 'community') {
+            mb.classList.remove('collapsed');
+            return;
+        }
+
+        if (scrollTop > 45) {
+            mb.classList.add('collapsed');
+        } else {
+            mb.classList.remove('collapsed');
+        }
+    };
+
+    ['tuktukFeed', 'tuktukFeedNearMe'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('scroll', handleMobileScroll, { passive: true });
+        }
+    });
 
     // Add window functions for external calls
     window.updateMhNotifBadge   = updateMhNotifBadge;

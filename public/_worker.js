@@ -9,6 +9,15 @@ const API_PATHS = new Set([
   '/checkFreeUsage',
   '/r2PresignedUrl',
   '/marketplaceAIGeneratePost',
+  '/fetchExternalProduct',
+  '/getUserData',
+  '/useTrialCredit',
+  '/saveCalculation',
+  '/getCalculationHistory',
+  '/sendCalculationToLine',
+  '/generatePDF',
+  '/vision-analysis',
+  '/educationAI',
 ]);
 
 function shouldProxyToWorker(pathname) {
@@ -24,7 +33,9 @@ function spaRewritePath(pathname) {
   if (pathname.startsWith('/marketplace/')) return '/marketplace.html';
   if (pathname.startsWith('/seller-dashboard/')) return '/seller-dashboard.html';
   if (pathname.startsWith('/win-service/')) return '/win-service.html';
-  if (pathname.startsWith('/tuktuk/')) return '/tuktuk/index.html';
+  if (pathname.startsWith('/tuktuk/') && pathname !== '/tuktuk/' && !/\.[a-z0-9]+$/i.test(pathname)) {
+    return '/tuktuk/';
+  }
   if (pathname.startsWith('/training/hot-runner/')) return '/training/hot-runner/index.html';
   return pathname;
 }
@@ -53,6 +64,10 @@ async function proxyToWorker(request) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.pathname === '/tuktuk') {
+      return Response.redirect(new URL('/tuktuk/', url), 301);
+    }
+
 
     if (url.pathname === '/training/hotrunner') {
       return Response.redirect(new URL('/training/hot-runner', url), 301);

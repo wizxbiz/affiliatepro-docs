@@ -17,9 +17,8 @@
 
   const VAPID_PUBLIC = 'BB1PIY55wKXv37de8hWFkxxyE3SMRu1PXOBwYPVY1dA5Tz5O7n9FHPpQDihraJ_G7qjnLVF6EiPGxI3XsU5m--Q';
   
-  // 🔥 ALWAYS point Push logic to Firebase Cloud Functions (Node), NOT the Go Engine (Fly.io)
-  // The Go Engine does not handle Web Push subscriptions yet.
-  const CF_BASE = 'https://us-central1-appinjproject.cloudfunctions.net';
+  // Point Push logic to Cloudflare Workers D1 subscription endpoint
+  const CF_BASE = '/api/v1/push';
 
   // ── VAPID key helper ────────────────────────────────────────────────────────
   function _urlBase64ToUint8Array(base64String) {
@@ -112,7 +111,7 @@
           uid
         }
       };
-      const resp = await fetch(`${CF_BASE}/saveWebPushSubscription`, {
+      const resp = await fetch(`${CF_BASE}/subscribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -246,7 +245,9 @@
   // ── Share button helper ─────────────────────────────────────────────────────
   // Attach to any element: <button onclick="TukTukNotify.shareProduct(product)">แชร์</button>
   function shareProduct(product) {
-    const url = `${location.origin}/product.html?id=${product.id || product.productId}`;
+    const id = product.id || product.productId;
+    // URL for OG Tag preview handler
+    const url = `${location.origin}/share?id=${id}`;
     const name = product.productName || product.name || 'สินค้า';
     const price = product.price ? ` ฿${product.price.toLocaleString()}` : '';
     return share({
@@ -257,7 +258,9 @@
   }
 
   function sharePost(post) {
-    const url = `${location.origin}/?post=${post.id || post.postId}`;
+    const id = post.id || post.postId;
+    // URL for OG Tag preview handler
+    const url = `${location.origin}/community-share?id=${id}`;
     const text = post.description || post.caption || post.text || '';
     return share({
       title: 'TukTuk Thailand',

@@ -544,7 +544,24 @@
             setupPinInputs();
             checkCallbacks();
 
-            if (isLineIAB && !params.get('code')) {
+            const urlPin = params.get('pin');
+            const mode = params.get('mode');
+
+            if (mode === 'line_verify') {
+                // Auto-trigger LINE Login for verification links
+                SafeSessionStorage.removeItem('_liff_login_triggered');
+                showLoader('🔄 กำลังเชื่อมต่อเพื่อยืนยัน LINE...');
+                setTimeout(() => triggerLiffLogin(true), 500);
+            } else if (urlPin && urlPin.length === 6) {
+                // Auto-populate PIN inputs
+                const inputs = document.querySelectorAll('.pin-input');
+                for (let i = 0; i < 6; i++) {
+                    if (inputs[i]) inputs[i].value = urlPin[i];
+                }
+                checkPinFull();
+                // Auto-submit the PIN
+                handlePinSubmit();
+            } else if (isLineIAB && !params.get('code')) {
                 // LINE IAB → auto-trigger login flow only if not currently processing a callback
                 SafeSessionStorage.removeItem('_liff_login_triggered');
                 triggerLiffLogin(true);
@@ -667,7 +684,7 @@
                     });
                     const d = await r.json();
                     if (!d.success) throw new Error(d.error);
-                    finishLogin(d.user);
+                    finishLogin(d.user, d.token);
                 } catch (err) {
                     hideLoader();
                     showError('เกิดข้อผิดพลาด: ' + err.message);
@@ -721,7 +738,7 @@
                             console.warn('[login] Firebase signIn skipped:', fbErr.message);
                         }
                     }
-                    finishLogin(d.user);
+                    finishLogin(d.user, d.token);
                 } else throw new Error(d.error || 'รหัสไม่ถูกต้อง');
             } catch (err) {
                 hideLoader();
@@ -730,13 +747,17 @@
         }
 
         // --- Finishing ---
-        function finishLogin(user) {
+        function finishLogin(user, token) {
             const TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
             const now = new Date().toISOString();
-            const session = { ...user, loginAt: now, expiresAt: Date.now() + TTL_MS, provider: 'line' };
+            const session = { ...user, loginAt: now, expiresAt: Date.now() + TTL_MS, provider: 'line', token: token || user?.token };
             // Store in both keys so WizmobizAuth and LIFF logic read the same data
             SafeStorage.setItem('wizmobiz_session', JSON.stringify(session));
             SafeStorage.setItem('tuktuk_line_session', JSON.stringify(session));
+            if (token) {
+                SafeStorage.setItem('tuktuk_jwt', token);
+                SafeStorage.setItem('tuktuk_token', token);
+            }
             // Clear guards
             SafeSessionStorage.removeItem('_auth_redirect_in_progress');
             SafeSessionStorage.removeItem('_liff_login_triggered');

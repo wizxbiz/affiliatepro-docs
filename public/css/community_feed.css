@@ -11,10 +11,10 @@
 }
 
 /* Base Layout Adjustments */
-#tuktukFeed.feed-community-mode {
+.tuktuk-feed-container.feed-community-mode {
     scroll-snap-type: none !important;
     background: var(--community-bg) !important;
-    padding-top: 70px !important;
+    padding-top: calc(52px + 80px + env(safe-area-inset-top, 10px)) !important;
     padding-bottom: 120px !important;
     overflow-y: auto !important;
     display: flex;

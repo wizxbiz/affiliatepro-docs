@@ -20,25 +20,25 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-glow: rgba(99, 102, 241, 0.4);
-            --primary-dark: #4f46e5;
-            --secondary: #8b5cf6;
+            --primary: #00f2ea;
+            --primary-glow: rgba(0, 242, 234, 0.4);
+            --primary-dark: #00b4b0;
+            --secondary: #ff0050;
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
-            --info: #06b6d4;
-            --bg-dark: #020617;
-            --bg-sidebar: #0f172a;
-            --bg-card: rgba(15, 23, 42, 0.6);
-            --bg-shade: rgba(2, 6, 23, 0.4);
+            --info: #00f2ea;
+            --bg-dark: #080b16;
+            --bg-sidebar: #05070e;
+            --bg-card: rgba(17, 22, 38, 0.7);
+            --bg-shade: rgba(5, 7, 14, 0.5);
             --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --text-muted: #64748b;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --border-glow: rgba(99, 102, 241, 0.2);
-            --terminal-bg: #000000;
-            --shadow-premium: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+            --text-secondary: #8a9bb8;
+            --text-muted: #5e6f8a;
+            --border-color: rgba(255, 255, 255, 0.06);
+            --border-glow: rgba(0, 242, 234, 0.2);
+            --terminal-bg: #03050a;
+            --shadow-premium: 0 15px 40px -10px rgba(0, 0, 0, 0.6);
         }
 
         * {
@@ -7124,6 +7124,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/js/cloudflare-client.js"></script>
+    <script src="/js/auth.js"></script>
 
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -7159,7 +7160,8 @@
 
         // Super Admin LINE User IDs
         const SUPER_ADMIN_IDS = [
-            'Ud9bec6d2ea945cf4330a69cb74ac93cf'
+            'Ud9bec6d2ea945cf4330a69cb74ac93cf',
+            'U9b40807cbcc8182928a12e3b6b73330e'
         ];
 
         // ===== Utility Functions =====
@@ -7181,34 +7183,59 @@
                 'info': 'fas fa-info-circle'
             }[type] || 'fas fa-info-circle';
 
+            const accent = {
+                'success': '#10b981',
+                'error': '#ef4444',
+                'warning': '#f59e0b',
+                'info': '#6366f1'
+            }[type] || '#6366f1';
+
             const alert = document.createElement('div');
-            alert.className = `alert - toast ${alertClass} text - white`;
+            alert.className = `alert-toast ${alertClass} text-white`;
+            alert.setAttribute('role', 'status');
+            alert.setAttribute('aria-live', 'polite');
             alert.style.cssText = `
-                padding: 15px 20px;
-                border - radius: 12px;
-                margin - bottom: 10px;
+                position: relative;
+                padding: 14px 16px;
+                border-radius: 14px;
+                margin-bottom: 12px;
                 display: flex;
-                align - items: center;
+                align-items: flex-start;
                 gap: 12px;
-                animation: slideIn 0.3s ease;
-                box - shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-                min - width: 300px;
-                `;
+                animation: toastSlideIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+                width: 360px;
+                max-width: calc(100vw - 40px);
+                background: rgba(20, 22, 32, 0.92);
+                backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-left: 4px solid ${accent};
+                overflow: hidden;
+            `;
             alert.innerHTML = `
-                    < i class="${icon}" ></i >
-                <span style="flex: 1;">${message}</span>
-                <button onclick="this.parentElement.remove()" style="background: none; border: none; color: white; cursor: pointer; opacity: 0.8;">
+                <div style="flex-shrink: 0; width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: ${accent}1f; color: ${accent};">
+                    <i class="${icon}" style="font-size: 1.05rem;"></i>
+                </div>
+                <div style="flex: 1; min-width: 0; padding-top: 6px; font-size: 0.9rem; line-height: 1.45; color: #f1f5f9; word-break: break-word;">${message}</div>
+                <button aria-label="ปิด" onclick="this.closest('.alert-toast').remove()" style="flex-shrink: 0; background: none; border: none; color: rgba(255,255,255,0.55); cursor: pointer; padding: 4px; margin: -2px -2px 0 0; border-radius: 6px; transition: color 0.15s, background 0.15s;" onmouseover="this.style.color='#fff';this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.color='rgba(255,255,255,0.55)';this.style.background='none'">
                     <i class="fas fa-times"></i>
                 </button>
-                `;
+                <div class="alert-toast-progress" style="position: absolute; bottom: 0; left: 0; height: 3px; width: 100%; background: ${accent}; transform-origin: left; animation: toastProgress 4s linear forwards;"></div>
+            `;
 
             alertContainer.appendChild(alert);
 
             // Auto remove after 4 seconds
-            setTimeout(() => {
-                alert.style.animation = 'fadeOut 0.3s ease';
+            const timer = setTimeout(() => {
+                alert.style.animation = 'toastFadeOut 0.3s ease forwards';
                 setTimeout(() => alert.remove(), 300);
             }, 4000);
+            // Pause the countdown while hovering, so users can read longer messages
+            alert.addEventListener('mouseenter', () => {
+                clearTimeout(timer);
+                const bar = alert.querySelector('.alert-toast-progress');
+                if (bar) bar.style.animationPlayState = 'paused';
+            });
         }
 
         function createAlertContainer() {
@@ -7216,24 +7243,35 @@
             container.id = 'alertContainer';
             container.style.cssText = `
                 position: fixed;
-                top: 100px;
+                top: 90px;
                 right: 20px;
-                z - index: 99999;
-                `;
+                z-index: 99999;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+                pointer-events: none;
+            `;
+            // Toasts themselves stay clickable even though the container ignores pointer events
+            container.addEventListener('click', (e) => { e.stopPropagation(); });
             document.body.appendChild(container);
 
             // Add animation styles
             const style = document.createElement('style');
             style.textContent = `
-                @keyframes slideIn {
-                    from { transform: translateX(100 %); opacity: 0; }
-                    to { transform: translateX(0); opacity: 1; }
+                #alertContainer .alert-toast { pointer-events: auto; }
+                @keyframes toastSlideIn {
+                    from { transform: translateX(120%); opacity: 0; }
+                    to   { transform: translateX(0); opacity: 1; }
                 }
-                @keyframes fadeOut {
-                    from { opacity: 1; }
-                    to { opacity: 0; transform: translateY(-10px); }
+                @keyframes toastFadeOut {
+                    from { opacity: 1; transform: translateX(0); }
+                    to   { opacity: 0; transform: translateX(120%); }
                 }
-                `;
+                @keyframes toastProgress {
+                    from { transform: scaleX(1); }
+                    to   { transform: scaleX(0); }
+                }
+            `;
             document.head.appendChild(style);
 
             return container;
@@ -7299,36 +7337,36 @@
 
         function showLoginModal() {
             document.getElementById('loadingOverlay').innerHTML = `
-                    < div class="text-center" style = "background: var(--bg-card); padding: 40px; border-radius: 20px; max-width: 420px; border: 1px solid var(--border-color);" >
-                    <i class="fas fa-shield-alt" style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;"></i>
-                    <h4 class="mb-2">🔐 Super Admin Login</h4>
+                <div class="text-center" style="background: rgba(17, 22, 38, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); padding: 48px 36px; border-radius: 28px; max-width: 420px; width: 90%; border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5); animation: cardReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;">
+                    <i class="fas fa-shield-alt" style="font-size: 3.5rem; color: var(--primary); margin-bottom: 24px; filter: drop-shadow(0 0 15px var(--primary-glow));"></i>
+                    <h4 class="mb-4 text-white fw-bold tracking-tight">🔐 Super Admin Login</h4>
 
-                    <button onclick="signInWithGoogle()" class="btn w-100 mb-3" style="border: 1px solid #dadce0; background:#fff; color:#3c4043; font-weight:500;">
+                    <button onclick="signInWithGoogle()" class="btn w-100 mb-3" style="border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(255, 255, 255, 0.03); color: var(--text-primary); font-weight: 600; border-radius: 14px; padding: 12px; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(255, 255, 255, 0.08)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.03)';">
                         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="height:18px; margin-right:8px; vertical-align:middle;">
                         Sign in with Google
                     </button>
 
                     <div class="d-flex align-items-center mb-3">
-                        <hr style="flex:1; margin:0;"><span class="px-2 text-secondary small">หรือ</span><hr style="flex:1; margin:0;">
+                        <hr style="flex:1; margin:0; border-color: rgba(255,255,255,0.1);"><span class="px-3 text-secondary small">หรือ</span><hr style="flex:1; margin:0; border-color: rgba(255,255,255,0.1);">
                     </div>
 
-                    <p class="text-secondary mb-3">กรอก PIN 6 หลักจาก LINE OA</p>
+                    <p class="text-secondary mb-3 small">กรอก PIN 6 หลักจาก LINE OA</p>
 
-                    <div class="d-flex justify-content-center gap-2 mb-3">
-                        ${[1, 2, 3, 4, 5, 6].map(i => `<input type="text" maxlength="1" class="pin-input pin-digit" data-index="${i}">`).join('')}
+                    <div class="d-flex justify-content-center gap-2 mb-4">
+                        ${[1, 2, 3, 4, 5, 6].map(i => `<input type="text" maxlength="1" class="pin-input pin-digit" data-index="${i - 1}">`).join('')}
                     </div>
 
-                    <div id="loginError" class="text-danger mb-3" style="display: none;"></div>
+                    <div id="loginError" class="text-danger mb-3 small" style="display: none; background: rgba(239, 68, 68, 0.1); padding: 8px; border-radius: 8px; border: 1px solid rgba(239, 68, 68, 0.2);"></div>
 
-                    <button onclick="verifyPIN()" class="btn btn-primary w-100 mb-3">
+                    <button onclick="verifyPIN()" class="btn w-100 mb-3" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border: none; color: #05070e; font-weight: 800; border-radius: 14px; padding: 14px; box-shadow: 0 8px 20px rgba(0, 242, 234, 0.25); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 30px rgba(0, 242, 234, 0.35)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 8px 20px rgba(0, 242, 234, 0.25)';">
                         <i class="fas fa-unlock me-2"></i> เข้าสู่ระบบ
                     </button>
 
-                    <a href="https://lin.ee/ayl8y1H" target="_blank" class="btn btn-success w-100 mb-3">
+                    <a href="https://lin.ee/ayl8y1H" target="_blank" class="btn w-100 mb-3" style="background: #06C755; border: none; color: #fff; font-weight: 700; border-radius: 14px; padding: 12px; box-shadow: 0 8px 20px rgba(6, 199, 85, 0.2); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 30px rgba(6, 199, 85, 0.3)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 8px 20px rgba(6, 199, 85, 0.2)';">
                         <i class="fab fa-line me-2"></i> เพิ่มเพื่อน LINE OA
                     </a>
 
-                    <p class="text-secondary small mb-0">พิมพ์ <strong>"ขอรหัสผ่าน"</strong> ใน LINE OA</p>
+                    <p class="text-secondary small mb-0" style="opacity: 0.8;">พิมพ์ <strong>"ขอรหัสผ่าน"</strong> ใน LINE OA เพื่อรับรหัสเข้าใช้งาน</p>
                 </div>
                 `;
 
@@ -7773,7 +7811,7 @@
                 line.style.borderLeft = `2px solid ${log.color} `;
                 line.style.paddingLeft = '8px';
                 line.innerHTML = `
-                    < span class="terminal-timestamp" > [${time}]</span >
+                    <span class="terminal-timestamp">[${time}]</span>
                     <span class="terminal-tag" style="color: ${log.color}">[${log.tag}]</span>
                     <span class="terminal-msg">${log.msg}</span>
                 `;
@@ -7877,7 +7915,7 @@
         async function loadTrafficData() {
             try {
                 const days = document.getElementById('trafficPeriod')?.value || 7;
-                const response = await fetch(`https://us-central1-appinjproject.cloudfunctions.net/getAnalyticsStats?days=${days}`);
+                const response = await fetch(`/api/analytics/getStats?days=${days}`);
                 const result = await response.json();
 
                 if (result.success && result.data) {
@@ -8850,13 +8888,16 @@
                         </td>
                         <td>
                             <div class="btn-group">
-                                <button class="btn btn-sm btn-outline-warning" onclick="togglePinGeneralPost('community_posts', '${post.id}', ${!post.pinned})" title="Toggle Pin">
+                                <button class="btn btn-sm btn-outline-warning" onclick="togglePinGeneralPost('posts', '${post.id}', ${!post.pinned})" title="Toggle Pin">
                                     <i class="fas fa-thumbtack ${post.pinned ? 'text-warning' : ''}"></i>
                                 </button>
-                                <button class="btn btn-sm btn-outline-primary" onclick="editGeneralPost('community_posts', '${post.id}')" title="Edit Post">
+                                <button class="btn btn-sm btn-outline-primary" onclick="editGeneralPost('posts', '${post.id}')" title="Edit Post">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn btn-sm btn-outline-danger" onclick="deleteGeneralPost('community_posts', '${post.id}')" title="Delete">
+                                <button class="btn btn-sm ${post.published === false ? 'btn-danger' : 'btn-outline-danger'}" onclick="toggleBlockGeneralPost('posts', '${post.id}', ${post.published === false})" title="Block/Unblock Post">
+                                    <i class="fas ${post.published === false ? 'fa-lock' : 'fa-ban'}"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteGeneralPost('posts', '${post.id}')" title="Delete">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -9355,7 +9396,7 @@
                                 <button class="btn btn-sm btn-outline-light" onclick="window.open('community.html?postId=${post.id}', '_blank')">
                                     <i class="fas fa-external-link-alt"></i>
                                 </button>
-                                <button class="btn btn-sm btn-outline-danger" onclick="deleteGeneralPost('community_posts', '${post.id}')">
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteGeneralPost('posts', '${post.id}')">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -9455,6 +9496,20 @@
             }
         }
 
+        async function toggleBlockGeneralPost(collection, postId, currentlyBlocked) {
+            if (!confirm(currentlyBlocked ? 'ต้องการปลดบล็อกโพสต์นี้หรือไม่?' : 'ต้องการปิดกั้น (บล็อก) โพสต์นี้หรือไม่?')) return;
+            try {
+                await db.collection(collection).doc(postId).update({ published: currentlyBlocked });
+                showAlert(currentlyBlocked ? '✅ ปลดบล็อกสำเร็จ' : '🚫 ปิดกั้นโพสต์สำเร็จ', 'success');
+                if (collection === 'posts' || collection === 'community_posts') {
+                    loadCommunityPosts();
+                    loadStandardPosts();
+                }
+            } catch (error) {
+                showAlert('❌ Error: ' + error.message, 'error');
+            }
+        }
+
         async function deleteGeneralPost(collection, postId) {
             if (!confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบโพสต์นี้จากคอลเลกชัน ${collection}?`)) return;
 
@@ -9487,7 +9542,7 @@
 
         async function deleteCommunityPost(postId) {
             // Deprecated - call deleteGeneralPost directly
-            deleteGeneralPost('community_posts', postId);
+            deleteGeneralPost('posts', postId);
         }
 
         let selectedProductIds = new Set();
@@ -9553,6 +9608,9 @@
                                     <i class="fas fa-check"></i>
                                 </button>
                                 ` : ''}
+                                <button class="btn btn-sm ${product.status === 'suspended' ? 'btn-danger' : 'btn-outline-warning'}" onclick="suspendProduct('${product.id}', '${product.status === 'suspended'}')" title="Block/Unblock">
+                                    <i class="fas ${product.status === 'suspended' ? 'fa-lock' : 'fa-ban'}"></i>
+                                </button>
                                 <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct('${product.id}')" title="ลบ">
                                     <i class="fas fa-trash"></i>
                                 </button>
@@ -9997,11 +10055,14 @@
                     // ✅ ลบรูปภาพจาก R2 (ถ้ามี)
                     if (product?.imageUrl) {
                         try {
-                            // R2 URLs จะเป็น pub-xxx.r2.dev หรือ custom domain
                             if (product.imageUrl.includes('r2.dev') || product.imageUrl.includes('tuktukfeed')) {
                                 console.log('🗑️ Deleting R2 image:', product.imageUrl);
-                                // TODO: เรียก Workers API เพื่อลบไฟล์จาก R2
-                                // await window.cfApi.deleteFile(product.imageUrl);
+                                const token = localStorage.getItem('tuktuk_session_token') || localStorage.getItem('tuktuk_jwt');
+                                await fetch('/api/r2Delete', {
+                                    method: 'DELETE',
+                                    headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+                                    body: JSON.stringify({ url: product.imageUrl }),
+                                }).catch(e => console.warn('R2 delete skipped:', e.message));
                             }
                         } catch (imgError) {
                             console.log('Image delete skipped:', imgError);
@@ -10014,7 +10075,12 @@
                             if (imgUrl.includes('r2.dev') || imgUrl.includes('tuktukfeed')) {
                                 try {
                                     console.log('🗑️ Deleting R2 image:', imgUrl);
-                                    // await window.cfApi.deleteFile(imgUrl);
+                                    const token = localStorage.getItem('tuktuk_session_token') || localStorage.getItem('tuktuk_jwt');
+                                    await fetch('/api/r2Delete', {
+                                        method: 'DELETE',
+                                        headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+                                        body: JSON.stringify({ url: imgUrl }),
+                                    }).catch(e => console.warn('R2 delete skipped:', e.message));
                                 } catch (e) { }
                             }
                         }
@@ -13617,19 +13683,18 @@ ${COMPANY_INFO.name}`;
         }
 
         // ========== Cloudflare R2 Upload Service (Server-Side SigV4) ==========
-        // Credentials are NOT stored here — signing is done by the Cloud Function.
-        const R2_PRESIGN_URL = 'https://us-central1-appinjproject.cloudfunctions.net/r2PresignedUrl';
+        // Credentials are NOT stored here — signing is done by the Cloudflare Worker.
+        const R2_PRESIGN_URL = '/api/v1/media/presign';
 
         async function uploadToR2(file, folder = 'posts', onProgress = null) {
             const contentType = file.type || 'video/mp4';
             const safeFilename = file.name.replace(/\s+/g, '_');
 
-            // Super Admin uses Firebase auth — always get ID token
+            // Super Admin uses JWT token auth
             let authHeaders = {};
             try {
-                const fbUser = firebase.auth().currentUser;
-                if (fbUser) {
-                    const token = await fbUser.getIdToken();
+                const token = localStorage.getItem('tuktuk_token');
+                if (token) {
                     authHeaders['Authorization'] = `Bearer ${token}`;
                 }
             } catch (_) { }
@@ -13947,7 +14012,7 @@ ${COMPANY_INFO.name}`;
                 const chEl = document.getElementById('settingsChannelId');
                 const whEl = document.getElementById('settingsWebhookUrl');
                 if (chEl) chEl.textContent = d.channelId || 'ไม่พบ';
-                if (whEl) whEl.textContent = d.webhookUrl || 'https://us-central1-appinjproject.cloudfunctions.net/tukTukWebhook';
+                if (whEl) whEl.textContent = d.webhookUrl || '/api/line/webhook';
             } catch (e) {
                 const el = document.getElementById('settingsChannelId');
                 if (el) el.textContent = 'Error: ' + e.message;

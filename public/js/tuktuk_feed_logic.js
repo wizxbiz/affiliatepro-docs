@@ -753,9 +753,32 @@ function normalizeFeedItem(item, type, location) {
     let youtubeUrl = null;
     let thumbnailUrl = null;
     
-    if (item.images && Array.isArray(item.images) && item.images.length > 0) {
+    let mediaList = item.mediaUrls || item.media || item.images;
+    if (typeof mediaList === 'string') {
+        try { mediaList = JSON.parse(mediaList); } catch (e) { mediaList = []; }
+    }
+    
+    // Handle double-stringified arrays or objects (e.g. from Go Engine)
+    if (Array.isArray(mediaList)) {
+        mediaList = mediaList.map(m => {
+            if (typeof m === 'string' && (m.startsWith('{') || m.startsWith('['))) {
+                try { 
+                    const parsed = JSON.parse(m);
+                    if (Array.isArray(parsed) && parsed.length === 1) return parsed[0];
+                    return parsed;
+                } catch (e) { return m; }
+            }
+            return m;
+        });
+    }
+
+    if (mediaList && !Array.isArray(mediaList) && typeof mediaList === 'object') {
+        mediaList = [mediaList];
+    }
+    
+    if (mediaList && Array.isArray(mediaList) && mediaList.length > 0) {
         // Find video
-        const videoEntry = item.images.find(m => {
+        const videoEntry = mediaList.find(m => {
             if (typeof m === 'object' && m.type === 'video') return true;
             if (typeof m === 'object' && m.type === 'youtube') return true;
             const url = (typeof m === 'string' ? m : m.url || '').toLowerCase();
@@ -771,10 +794,11 @@ function normalizeFeedItem(item, type, location) {
         }
         
         // Find image
-        const imageEntry = item.images.find(m => {
+        const imageEntry = mediaList.find(m => {
             if (typeof m === 'object' && m.type === 'video') return false;
+            if (typeof m === 'object' && m.type === 'youtube') return false;
             const url = (typeof m === 'string' ? m : m.url || '').toLowerCase();
-            return !url.endsWith('.mp4') && !url.endsWith('.mov') && !url.endsWith('.webm');
+            return !url.endsWith('.mp4') && !url.endsWith('.mov') && !url.endsWith('.webm') && !url.includes('youtube.com') && !url.includes('youtu.be');
         });
         
         if (imageEntry) {
@@ -2523,7 +2547,7 @@ window.switchCategory = initTukTukFeed;
 // Consolidated to ui-helpers.js
 
     window.copyLink = function(postId) {
-        const url = `${window.location.origin}${window.location.pathname}?post=${postId}`;
+        const url = `${window.location.origin}/community-share?id=${postId}`;
         navigator.clipboard.writeText(url).then(() => {
             showFeedToast('คัดลอกลิงก์แล้ว!', 'success');
         });
@@ -2723,11 +2747,29 @@ window.viewPostDetails = function(postId) {
         return;
     }
 
-    const container = document.getElementById('commentList');
-    if (!container) return;
+    // Ensure the comment modal + its list container exist (re-inject if missing)
+    let container = document.getElementById('commentList');
+    if (!container && typeof window.injectCommunityModals === 'function') {
+        window.injectCommunityModals();
+        container = document.getElementById('commentList');
+    }
+    if (!container) {
+        // No modal available — fall back to the standard comment opener
+        if (typeof openComments === 'function') openComments(postId);
+        return;
+    }
 
-    // Show modal
+    // Ensure a Bootstrap modal instance exists, then show it
+    if (!window.commentModal) {
+        const modalEl = document.getElementById('commentModal');
+        if (modalEl && typeof bootstrap !== 'undefined') {
+            window.commentModal = new bootstrap.Modal(modalEl);
+        }
+    }
     if (window.commentModal) window.commentModal.show();
+
+    // Track active post so submitComment() posts to the right thread
+    window.currentCommentPostId = postId;
 
     // Inject full content at the top
     const isNews = item.type === 'news';
@@ -2761,28 +2803,22 @@ window.viewPostDetails = function(postId) {
 
     container.innerHTML = detailHtml;
 
-    // Fetch comments but don't clear the container
+    // Fetch comments from the Worker D1 API (single source of truth)
     const commentsLimit = 20;
-    const collection = isNews ? 'news_feed' : 'community_posts';
-    db.collection(collection).doc(postId)
-        .collection('comments')
-        .orderBy('createdAt', 'desc')
-        .limit(commentsLimit)
-        .get()
-        .then(snapshot => {
+    fetch(`/api/v1/posts/${postId}/comments?limit=${commentsLimit}`)
+        .then(res => res.json())
+        .then(data => {
             const placeholder = document.getElementById('loadingCommentsPlaceholder');
             if (placeholder) placeholder.remove();
 
-            const comments = [];
-            snapshot.forEach(doc => comments.push({ id: doc.id, ...doc.data() }));
+            const comments = Array.isArray(data.comments) ? data.comments : [];
 
             const titleEl = document.getElementById('commentCountTitle');
-            const isNews = item.type === 'news';
             if (titleEl) {
                 if (isNews) {
                     titleEl.textContent = `รายละเอียดข่าว (${comments.length} ความคิดเห็น)`;
                 } else {
-                    titleEl.textContent = `ความคิดเห็น (${comments.length}${snapshot.size >= commentsLimit ? '+' : ''})`;
+                    titleEl.textContent = `ความคิดเห็น (${comments.length}${comments.length >= commentsLimit ? '+' : ''})`;
                 }
             }
 
@@ -2796,17 +2832,23 @@ window.viewPostDetails = function(postId) {
             }
 
             comments.forEach(c => {
-                const time = c.createdAt ? new Date(c.createdAt.toDate()).toLocaleString('th-TH') : 'เมื่อสักครู่';
+                // D1 API returns createdAt as { seconds } (see workers/handlers/v1.js)
+                const ts = c.createdAt && c.createdAt.seconds
+                    ? new Date(c.createdAt.seconds * 1000)
+                    : (c.createdAt ? new Date(c.createdAt) : null);
+                const time = ts && !isNaN(ts) ? ts.toLocaleString('th-TH') : 'เมื่อสักครู่';
+                const authorName = c.authorName || c.userName || 'ผู้ใช้งาน';
+                const authorAvatar = c.authorAvatar || c.userAvatar || 'assets/images/logo.png';
                 const commentEl = document.createElement('div');
                 commentEl.className = 'comment-item';
                 commentEl.innerHTML = `
-                    <img src="${c.userAvatar || 'assets/images/logo.png'}" class="comment-avatar" onerror="this.src='assets/images/logo.png'">
+                    <img src="${authorAvatar}" class="comment-avatar" onerror="this.src='assets/images/logo.png'">
                     <div class="comment-body">
                         <div class="comment-user">
-                            ${escapeHtml(c.userName || 'ผู้ใช้งาน')}
-                            <span class="comment-reply-btn" onclick="replyTo('${escapeHtml(c.userName)}')">ตอบกลับ</span>
+                            ${escapeHtml(authorName)}
+                            <span class="comment-reply-btn" onclick="replyTo('${escapeHtml(authorName)}')">ตอบกลับ</span>
                         </div>
-                        <div class="comment-text">${escapeHtml(c.text)}</div>
+                        <div class="comment-text">${escapeHtml(c.text || '')}</div>
                         <div class="comment-time">${time}</div>
                     </div>
                 `;
@@ -2896,32 +2938,44 @@ window.likePost = async function(postId) {
         if (span) span.textContent = Math.max(0, prevCount - 1).toLocaleString();
     }
 
-    // Backend update with rollback on failure
-    if (typeof db !== 'undefined') {
-        const collection = btn.dataset.origin || 'community_posts';
-        const delta = wasLiked ? -1 : 1;
-        try {
-            await db.collection(collection).doc(postId).update({
-                likes: firebase.firestore.FieldValue.increment(delta)
-            });
+    // Backend update via D1 like-toggle endpoint (rollback on failure).
+    // Posts live in the `posts` table; likes are tracked in `post_likes`.
+    // The old Firestore-shim path targeted a non-existent `community_posts`
+    // table and always 500'd, so the like visibly reverted.
+    try {
+        const user = typeof WizmobizAuth !== 'undefined' ? WizmobizAuth.getUser() : null;
+        const token = (() => { try { return localStorage.getItem('tuktuk_token'); } catch (_) { return null; } })();
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
 
-            // Track in user_likes if authenticated
-            const user = typeof WizmobizAuth !== 'undefined' ? WizmobizAuth.getUser() : null;
-            if (user) {
-                const arrayOp = !wasLiked
-                    ? firebase.firestore.FieldValue.arrayUnion(postId)
-                    : firebase.firestore.FieldValue.arrayRemove(postId);
-                db.collection('user_likes').doc(user.uid).set({
-                    postIds: arrayOp,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                }, { merge: true }).catch(() => {});
+        const res = await fetch(`/api/v1/posts/${postId}/like`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ userId: user?.uid || user?.lineUserId || null })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || data.status !== 'success') {
+            throw new Error(data?.error?.message || `HTTP ${res.status}`);
+        }
+
+        // Reconcile UI with the authoritative server count/state
+        if (typeof data.likes === 'number' && span) span.textContent = data.likes.toLocaleString();
+        if (typeof data.liked === 'boolean') {
+            btn.classList.toggle('liked', data.liked);
+            if (icon) {
+                icon.classList.toggle('fas', data.liked);
+                icon.classList.toggle('far', !data.liked);
+                icon.style.color = data.liked ? '#ff0050' : '';
             }
-        } catch (err) {
-            // Rollback on failure
-            btn.classList.toggle('liked');
-            if (icon) icon.style.color = wasLiked ? '#ff0050' : '';
-            if (span) span.textContent = prevCount.toLocaleString();
-            showFeedToast('เกิดข้อผิดพลาด ลองใหม่', 'error');
+        }
+    } catch (err) {
+        // Rollback optimistic UI on failure
+        btn.classList.toggle('liked');
+        if (icon) icon.style.color = wasLiked ? '#ff0050' : '';
+        if (span) span.textContent = prevCount.toLocaleString();
+        if (typeof showFeedToast === 'function') {
+            const needLogin = /401|เข้าสู่ระบบ/.test(String(err.message));
+            showFeedToast(needLogin ? '🔒 กรุณาเข้าสู่ระบบก่อนกดถูกใจ' : 'เกิดข้อผิดพลาด ลองใหม่', needLogin ? 'warning' : 'error');
         }
     }
 };

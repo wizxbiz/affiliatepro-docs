@@ -242,7 +242,7 @@
             }
         }
     </style>
-    <script src="/js/analytics.js" defer></script>
+    <script src="/js/analytics.js?v=20260707b" defer></script>
 </head>
 
 <body>
@@ -589,7 +589,7 @@
 
             try {
                 const deviceId = await generateDeviceFingerprint();
-                const response = await fetch('https://us-central1-appinjproject.cloudfunctions.net/verifyWebPin', {
+                const response = await fetch('/verifyWebPin', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ pin, deviceId })

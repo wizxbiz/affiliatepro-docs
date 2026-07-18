@@ -913,7 +913,7 @@ window.openComments = window.openComments || function (postId) {
 };
 
 window.sharePost = function (postId) {
-  const url = `${window.location.origin}/post.html?id=${postId}`;
+  const url = `${window.location.origin}/community-share?id=${postId}`;
   if (navigator.share) {
     navigator.share({
       title: 'แชร์โพสต์จาก TukTuk',

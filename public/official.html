@@ -2421,7 +2421,7 @@
         }
     </style>
     <script src="js/auth.js" defer></script>
-    <script src="js/analytics.js" defer></script>
+    <script src="js/analytics.js?v=20260707b" defer></script>
     <script src="js/cookie-consent.js" defer></script>
 </head>
 
@@ -3374,9 +3374,10 @@
         console.log('%cPowered by AI | Developed by อ.วิทยา', 'color: #667eea; font-size: 12px;');
     </script>
 
-    <!-- Firebase for Ticker -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <!-- Override Firebase with Cloudflare Client shim -->
+    <script src="js/cloudflare-client.js?v=20260707"></script>
     <!-- WizOS Launchpad Overlay -->
     <div class="wiz-launchpad" id="wizLaunchpad">
         <div class="launchpad-backdrop" onclick="toggleLaunchpad()"></div>

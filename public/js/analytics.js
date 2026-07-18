@@ -1,7 +1,12 @@
-console.log('📊 analytics.js script loaded');
+// Singleton guard: ป้องกัน analytics.js ถูกโหลดซ้ำหลายครั้ง
+if (window.__tuktukAnalyticsLoaded) {
+    console.log('[Tuktuk Analytics] Already loaded, skipping duplicate instance.');
+} else {
+window.__tuktukAnalyticsLoaded = true;
 
 (function () {
     'use strict';
+
 
     // =====================================================
     // 📌 CONFIGURATION
@@ -11,11 +16,11 @@ console.log('📊 analytics.js script loaded');
         // Google Analytics 4 Measurement ID (เปลี่ยนเป็น ID ของคุณ)
         GA4_ID: 'G-PK2GQ4HERC',
 
-        // Direct Cloud Run URLs (Firebase Gen 2)
+        // Cloudflare Workers API endpoints
         TRACKING_URLS: {
-            pageView: 'https://trackpageview-47mhcx3iqq-uc.a.run.app/',
-            event: 'https://trackevent-47mhcx3iqq-uc.a.run.app/',
-            stats: 'https://getanalyticsstats-47mhcx3iqq-uc.a.run.app/'
+            pageView: '/api/analytics/trackPageView',
+            event: '/api/analytics/trackEvent',
+            stats: '/api/analytics/getStats'
         },
 
         // Enable/Disable tracking
@@ -234,6 +239,17 @@ console.log('📊 analytics.js script loaded');
             try {
                 log('Fetching visitor stats...');
                 const response = await fetch(`${CONFIG.TRACKING_URLS.stats}?days=1`);
+
+                // If permanently unauthorized, clear the interval to stop spam
+                if (response.status === 401 || response.status === 403) {
+                    console.warn('[Tuktuk Analytics] getStats returned', response.status, '— stopping poll.');
+                    if (window._tuktukStatsInterval) {
+                        clearInterval(window._tuktukStatsInterval);
+                        window._tuktukStatsInterval = null;
+                    }
+                    return;
+                }
+
                 const result = await response.json();
 
                 if (result.success && result.data && result.data.summary) {
@@ -285,7 +301,7 @@ console.log('📊 analytics.js script loaded');
         // Initialize stats if banner or mini-stats exists
         if (document.querySelector('.stats-banner') || document.querySelector('.mini-stats')) {
             setTimeout(window.tuktukFetchVisitorStats, 1000);
-            setInterval(window.tuktukFetchVisitorStats, 120000); // 2 mins
+            window._tuktukStatsInterval = setInterval(window.tuktukFetchVisitorStats, 120000); // 2 mins
         }
 
         log('Tuktuk Analytics initialized');
@@ -299,3 +315,5 @@ console.log('📊 analytics.js script loaded');
     }
 
 })();
+
+} // end singleton guard

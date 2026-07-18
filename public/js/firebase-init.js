@@ -13,30 +13,22 @@ if (typeof window.firebaseConfig === 'undefined') {
     };
 }
 
-// Guard: Firebase App SDK must be loaded before this script
-if (typeof firebase === 'undefined') {
-    console.warn('[Cloudflare Migration] Firebase SDK missing. Fetching cloudflare-client.js synchronously...');
-    try {
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', '/js/cloudflare-client.js', false); // synchronous request
-        xhr.send(null);
-        if (xhr.status === 200) {
-            const script = document.createElement('script');
-            script.text = xhr.responseText;
-            document.head.appendChild(script);
-            console.log('✅ Cloudflare Client fallback injected successfully');
-        } else {
-            throw new Error(`HTTP ${xhr.status}`);
-        }
-    } catch (e) {
-        console.error('[Cloudflare Migration] CRITICAL: Failed to load Cloudflare Client fallback:', e);
-        throw new Error(`Firebase initialization blocked: Firebase SDK missing and Cloudflare fallback failed: ${e.message}`);
+// Cloudflare Migration: Unconditionally load cloudflare-client.js to override Firebase SDK and route all database/auth calls to Workers
+console.log('[Cloudflare Migration] Injecting cloudflare-client.js to override Firebase SDK...');
+try {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', '/js/cloudflare-client.js?v=20260713a', false); // synchronous request
+    xhr.send(null);
+    if (xhr.status === 200) {
+        const script = document.createElement('script');
+        script.text = xhr.responseText;
+        document.head.appendChild(script);
+        console.log('✅ Cloudflare Client shim injected successfully');
+    } else {
+        throw new Error(`HTTP ${xhr.status}`);
     }
-}
-
-// Initialize Firebase if not already initialized
-if (!firebase.apps.length) {
-    firebase.initializeApp(window.firebaseConfig);
+} catch (e) {
+    console.error('[Cloudflare Migration] CRITICAL: Failed to load Cloudflare Client:', e);
 }
 
 // Expose Services to window for global access (Conditional)

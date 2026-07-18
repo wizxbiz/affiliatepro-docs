@@ -9,12 +9,15 @@
 
 # ── 2. SPA Wildcard Routing (200 Rewrite) ──────────────────────
 # Note: Clean URLs like /marketplace, /login, /seller-dashboard
-# are handled NATIVELY by Cloudflare Pages.
-# We only map wildcards here to support client-side sub-routing.
+# are handled NATIVELY by Cloudflare Pages (/marketplace serves
+# marketplace.html automatically). DO NOT add a bare "/marketplace
+# -> /marketplace.html 200" rule: Pages redirects /marketplace.html
+# back to /marketplace (308), causing an infinite loop.
+# Only wildcard sub-routes are mapped here for client-side routing.
 /marketplace/*                 /marketplace.html               200
 /seller-dashboard/*            /seller-dashboard.html          200
 /win-service/*                 /win-service.html               200
-/tuktuk/*                      /tuktuk/index.html              200
+/login/*                       /login.html                     200
 /training/hot-runner/*         /training/hot-runner/index.html 200
 
 # ── 3. API endpoints → Cloudflare Workers ─────────────────────
@@ -22,6 +25,16 @@
 /share                         https://tuktukfeed-api.imtthailand2019.workers.dev/share          200
 /community-share               https://tuktukfeed-api.imtthailand2019.workers.dev/community-share 200
 /lineLoginCallback             https://tuktukfeed-api.imtthailand2019.workers.dev/lineLoginCallback 200
+/marketplaceLineAuth           https://tuktukfeed-api.imtthailand2019.workers.dev/marketplaceLineAuth 200
 /verifyWebPin                  https://tuktukfeed-api.imtthailand2019.workers.dev/verifyWebPin   200
 /checkFreeUsage                https://tuktukfeed-api.imtthailand2019.workers.dev/checkFreeUsage 200
+/fetchExternalProduct          https://tuktukfeed-api.imtthailand2019.workers.dev/fetchExternalProduct 200
+/getUserData                   https://tuktukfeed-api.imtthailand2019.workers.dev/getUserData 200
+/useTrialCredit                https://tuktukfeed-api.imtthailand2019.workers.dev/useTrialCredit 200
+/saveCalculation               https://tuktukfeed-api.imtthailand2019.workers.dev/saveCalculation 200
+/getCalculationHistory         https://tuktukfeed-api.imtthailand2019.workers.dev/getCalculationHistory 200
+/sendCalculationToLine         https://tuktukfeed-api.imtthailand2019.workers.dev/sendCalculationToLine 200
+/generatePDF                   https://tuktukfeed-api.imtthailand2019.workers.dev/generatePDF 200
+/vision-analysis               https://tuktukfeed-api.imtthailand2019.workers.dev/vision-analysis 200
+/educationAI                   https://tuktukfeed-api.imtthailand2019.workers.dev/educationAI 200
 /api/*                         https://tuktukfeed-api.imtthailand2019.workers.dev/api/:splat     200

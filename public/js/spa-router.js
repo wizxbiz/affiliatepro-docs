@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
             iframeContainer.style.display = 'none';
             document.body.classList.remove('spaIframeOpen');
             updateIframeContainerLayout();
-            document.title = "TukTuk - หน้าหลัก";
+            document.title = "TukTuk - ดูเพลิน";
             syncNavUI('index.html');
             // Sync pcTopNav active state back to home
             document.querySelectorAll('.pc-nav-icon').forEach(el => el.classList.remove('active'));

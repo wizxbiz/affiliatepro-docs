@@ -19,17 +19,51 @@
     ? 'https://tuktukfeed-api.imtthailand2019.workers.dev'
     : '';
 
+  function _readSession(key) {
+    try { return JSON.parse(localStorage.getItem(key) || '{}'); }
+    catch { return {}; }
+  }
+
+  function _isUsableToken(token) {
+    if (!token || typeof token !== 'string') return false;
+    const parts = token.split('.');
+    if (parts.length !== 3) return true;
+    try {
+      const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+      return !payload.exp || payload.exp > Math.floor(Date.now() / 1000) + 5;
+    } catch {
+      return true;
+    }
+  }
+
   // ── Internal: get JWT token จาก session ───────────────────
   function _getToken() {
-    try {
-      const wizSession = JSON.parse(localStorage.getItem('wizmobiz_session') || '{}');
-      const witSession = JSON.parse(localStorage.getItem('wit_line_session') || '{}');
-      return localStorage.getItem('tuktuk_jwt') ||
-             wizSession.token ||
-             witSession.token ||
-             witSession.sessionToken ||
-             null;
-    } catch { return null; }
+    const wizSession = _readSession('wizmobiz_session');
+    const lineSession = _readSession('tuktuk_line_session');
+    const witSession = _readSession('wit_line_session');
+    const candidates = [
+      // Session refresh updates tuktuk_token, so it must take precedence over
+      // the older tuktuk_jwt alias.
+      localStorage.getItem('tuktuk_token'),
+      localStorage.getItem('tuktuk_jwt'),
+      wizSession.sessionToken,
+      wizSession.token,
+      lineSession.sessionToken,
+      lineSession.token,
+      witSession.sessionToken,
+      witSession.token,
+    ];
+    return candidates.find(_isUsableToken) || null;
+  }
+
+  class CloudflareApiError extends Error {
+    constructor(message, status, path, payload) {
+      super(message);
+      this.name = 'CloudflareApiError';
+      this.status = status;
+      this.path = path;
+      this.payload = payload;
+    }
   }
 
   // ── Internal: fetch wrapper ────────────────────────────────
@@ -47,8 +81,11 @@
     });
 
     if (!res.ok) {
-      const err = await res.json().catch(() => ({ error: res.statusText }));
-      throw new Error(err.error || `HTTP ${res.status}`);
+      const payload = await res.json().catch(() => ({ error: res.statusText }));
+      const apiMessage = typeof payload.error === 'string'
+        ? payload.error
+        : payload.error?.message || payload.message;
+      throw new CloudflareApiError(apiMessage || `HTTP ${res.status}`, res.status, path, payload);
     }
     return res.json();
   }
@@ -67,6 +104,7 @@
       });
       if (data.token) {
         localStorage.setItem('tuktuk_jwt', data.token);
+        localStorage.setItem('tuktuk_token', data.token);
         // Sync กับ WizmobizAuth session format
         if (data.user) {
           const session = {
@@ -94,6 +132,7 @@
       });
       if (data.token) {
         localStorage.setItem('tuktuk_jwt', data.token);
+        localStorage.setItem('tuktuk_token', data.token);
         if (data.user) {
           localStorage.setItem('wizmobiz_session', JSON.stringify({
             ...data.user, loginAt: new Date().toISOString(), token: data.token,
@@ -103,13 +142,14 @@
       return data;
     },
 
-    async lineCallback(lineUserId, displayName, pictureUrl) {
+    async lineCallback(lineUserId, displayName, pictureUrl, accessToken = null) {
       const data = await _fetch('/api/auth/line-callback', {
         method: 'POST',
-        body: JSON.stringify({ lineUserId, displayName, pictureUrl }),
+        body: JSON.stringify({ lineUserId, displayName, pictureUrl, accessToken }),
       });
       if (data.token) {
         localStorage.setItem('tuktuk_jwt', data.token);
+        localStorage.setItem('tuktuk_token', data.token);
         if (data.user) {
           localStorage.setItem('wizmobiz_session', JSON.stringify({
             ...data.user, loginAt: new Date().toISOString(), token: data.token,
@@ -126,6 +166,7 @@
       });
       if (data.token) {
         localStorage.setItem('tuktuk_jwt', data.token);
+        localStorage.setItem('tuktuk_token', data.token);
         if (data.user) {
           localStorage.setItem('wizmobiz_session', JSON.stringify({
             ...data.user, loginAt: new Date().toISOString(), token: data.token,
@@ -142,6 +183,7 @@
     async logout() {
       try { await _fetch('/api/auth/logout', { method: 'POST' }); } catch {}
       localStorage.removeItem('tuktuk_jwt');
+      localStorage.removeItem('tuktuk_token');
     },
 
     async checkFreeUsage() {
@@ -279,33 +321,54 @@
     return wrapped;
   }
 
+  function _serializeQueryValue(value) {
+    if (value instanceof Date) return value.getTime();
+    if (value && typeof value.toMillis === 'function') return value.toMillis();
+    if (value && typeof value.seconds === 'number') {
+      return (value.seconds * 1000) + Math.floor((value.nanoseconds || 0) / 1000000);
+    }
+    if (typeof value === 'boolean') return value ? 1 : 0;
+    return value;
+  }
+
+  function _snapshotFingerprint(snap) {
+    if (Array.isArray(snap?.docs)) {
+      return JSON.stringify(snap.docs.map(doc => ({ id: doc.id, data: doc.data() })));
+    }
+    return JSON.stringify({ id: snap?.id, exists: snap?.exists, data: snap?.data?.() });
+  }
+
   // ── Polling-based onSnapshot helper ──
-  function _onSnapshot(queryOrDoc, callback) {
+  function _onSnapshot(queryOrDoc, callback, onError) {
     let active = true;
     let lastJson = '';
+    let timer = null;
+
+    const stop = () => {
+      active = false;
+      if (timer) clearInterval(timer);
+    };
     
     const poll = async () => {
       if (!active) return;
       try {
         const snap = await queryOrDoc.get();
         if (!active) return;
-        const currentJson = JSON.stringify(snap);
+        const currentJson = _snapshotFingerprint(snap);
         if (currentJson !== lastJson) {
           lastJson = currentJson;
           callback(snap);
         }
       } catch (err) {
-        console.warn('[Snapshot Poll Error]', err);
+        if (typeof onError === 'function') onError(err);
+        else console.warn('[Snapshot Poll Error]', err);
+        if ([401, 403, 404].includes(err?.status)) stop();
       }
     };
     
-    poll();
-    const timer = setInterval(poll, 3000); // Poll every 3 seconds
-    
-    return () => {
-      active = false;
-      clearInterval(timer);
-    };
+    void poll();
+    timer = setInterval(poll, 3000); // Poll every 3 seconds
+    return stop;
   }
 
   // ══════════════════════════════════════════════════════════
@@ -353,7 +416,10 @@
       this.parentPath = parentPath;
     }
     doc(id) { 
-      return new CloudflareDoc(this.name, id || crypto.randomUUID(), this.parentPath); 
+      const generatedId = id || (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function' 
+        ? crypto.randomUUID() 
+        : Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15));
+      return new CloudflareDoc(this.name, generatedId, this.parentPath); 
     }
     async add(data) {
       const ref = this.doc();
@@ -372,16 +438,19 @@
     async get() {
       const fullPath = this.parentPath ? `${this.parentPath}/${this.name}` : this.name;
       const data = await _fetch(`/api/db/${fullPath}`);
-      return {
-        docs: (data.results || []).map(d => {
+      const docs = (data.results || []).map(d => {
           const wrapped = _wrapDocData(d);
-          return { id: d.id, data: () => wrapped, exists: true };
-        }),
-        empty: !(data.results?.length),
+          return { id: d.id, data: () => wrapped, exists: true, ref: this.doc(d.id) };
+        });
+      return {
+        docs,
+        size: docs.length,
+        empty: docs.length === 0,
+        forEach: callback => docs.forEach(callback),
       };
     }
     onSnapshot(callback, onError) {
-      return _onSnapshot(this, callback);
+      return _onSnapshot(this, callback, onError);
     }
   }
 
@@ -404,9 +473,12 @@
       try {
         const data = await _fetch(`/api/db/${fullPath}`);
         const wrapped = _wrapDocData(data.result);
-        return { id: this.id, data: () => wrapped, exists: !!data.result };
-      } catch {
-        return { id: this.id, data: () => null, exists: false };
+        return { id: this.id, data: () => wrapped, exists: !!data.result, ref: this };
+      } catch (err) {
+        if (err?.status === 404) {
+          return { id: this.id, data: () => null, exists: false, ref: this };
+        }
+        throw err;
       }
     }
     async set(data, options = {}) {
@@ -434,7 +506,7 @@
       return _fetch(`/api/db/${fullPath}`, { method: 'DELETE' });
     }
     onSnapshot(callback, onError) {
-      return _onSnapshot(this, callback);
+      return _onSnapshot(this, callback, onError);
     }
   }
 
@@ -460,22 +532,25 @@
     }
     async get() {
       const params = new URLSearchParams();
-      this.filters.forEach(f => params.append('filter', `${f.field}:${f.op}:${f.value}`));
+      this.filters.forEach(f => params.append('filter', `${f.field}:${f.op}:${_serializeQueryValue(f.value)}`));
       this.orders.forEach(o => params.append('order', `${o.field}:${o.dir}`));
       if (this.limitN) params.set('limit', this.limitN);
 
       const fullPath = this.parentPath ? `${this.parentPath}/${this.collection}` : this.collection;
       const data = await _fetch(`/api/db/${fullPath}?${params}`);
-      return {
-        docs: (data.results || []).map(d => {
+      const docs = (data.results || []).map(d => {
           const wrapped = _wrapDocData(d);
-          return { id: d.id, data: () => wrapped, exists: true };
-        }),
-        empty: !(data.results?.length),
+          return { id: d.id, data: () => wrapped, exists: true, ref: new CloudflareDoc(this.collection, d.id, this.parentPath) };
+        });
+      return {
+        docs,
+        size: docs.length,
+        empty: docs.length === 0,
+        forEach: callback => docs.forEach(callback),
       };
     }
     onSnapshot(callback, onError) {
-      return _onSnapshot(this, callback);
+      return _onSnapshot(this, callback, onError);
     }
   }
 
@@ -533,6 +608,12 @@
         });
       }
       throw new Error('Google Identity Services not loaded');
+    },
+
+    async signInWithCustomToken(token) {
+      console.log('[Cloudflare Shim] signInWithCustomToken called (no-op)');
+      const session = window.WizmobizAuth?.getSession?.();
+      return { user: session ? { uid: session.uid, displayName: session.displayName } : null };
     },
 
     async signOut() {

@@ -127,29 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    const stories = [
-        { name: 'เพิ่มเรื่องราว', img: 'assets/images/logo.png', avatar: 'assets/images/logo.png', isAdd: true },
-        { name: 'แอนดรูว์ ชัยชนะ', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200', avatar: 'https://i.pravatar.cc/150?u=1' },
-        { name: 'สุรีย์รัตน์ มีเงิน', img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200', avatar: 'https://i.pravatar.cc/150?u=2' },
-        { name: 'สมเกียรติ พัฒนา', img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200', avatar: 'https://i.pravatar.cc/150?u=3' },
-        { name: 'วิลาวัลย์ สุขใจ', img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=200', avatar: 'https://i.pravatar.cc/150?u=4' }
-    ];
-    const storiesBar = document.getElementById('pcStoriesBar');
-    if (storiesBar) {
-        storiesBar.innerHTML = stories.map(s => `
-            <div class="pc-story-card" onclick="${s.isAdd ? 'openPostModal()' : ''}">
-                <img src="${s.img}">
-                <div class="pc-story-overlay"></div>
-                ${s.isAdd ?
-                `<div style="position: absolute; bottom: 35px; left: 50%; transform: translateX(-50%); background: #2e89ff; width: 32px; height: 32px; border-radius: 50%; border: 4px solid #242526; display: flex; align-items: center; justify-content: center; color: white;">
-                        <i class="fas fa-plus"></i>
-                    </div>` :
-                `<img src="${s.avatar}" class="pc-story-avatar">`
-            }
-                <div class="pc-story-name">${s.name}</div>
-            </div>
-        `).join('');
-    }
+    // pcStoriesBar is populated by pc-premium-v4.js / app-init.js from Firestore.
 
     const contacts = [
         { name: 'แอนดรูว์ ชัยชนะ', img: 'https://i.pravatar.cc/150?u=1' },

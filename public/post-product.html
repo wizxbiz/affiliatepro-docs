@@ -61,25 +61,27 @@
             return PROFANITY_LIST.some(word => lowerText.includes(word));
         }
 
-        const R2_PRESIGN_URL = '/api/r2PresignedUrl';
+        const R2_PRESIGN_URL = '/api/v1/media/presign';
 
         async function uploadToR2(file, folder = 'posts', onProgress = null) {
             const contentType = file.type || 'image/jpeg';
             const safeFilename = file.name.replace(/\s+/g, '_');
 
-            // Auth: Firebase token preferred, LINE UID as fallback
+            // Auth: JWT token preferred, LINE UID as fallback
             let authHeaders = {};
             let lineUserId = null;
             try {
-                const fbUser = firebase.auth().currentUser;
-                if (fbUser) {
-                    const token = await fbUser.getIdToken();
+                const token = localStorage.getItem('tuktuk_token');
+                if (token) {
                     authHeaders['Authorization'] = `Bearer ${token}`;
                 }
             } catch (_) { }
             if (!authHeaders['Authorization']) {
                 const session = typeof WizmobizAuth !== 'undefined' ? WizmobizAuth.getSession() : null;
                 lineUserId = session?.lineUserId || session?.uid || null;
+                if (session?.token || session?.sessionToken) {
+                    authHeaders['Authorization'] = `Bearer ${session.token || session.sessionToken}`;
+                }
             }
 
             // Step 1: Get pre-signed URL from Cloud Function
@@ -1698,7 +1700,7 @@
             }
         }
     </style>
-    <script src="/js/analytics.js" defer></script>
+    <script src="/js/analytics.js?v=20260707b" defer></script>
 </head>
 
 <body>
@@ -2033,19 +2035,20 @@
                                 maxlength="500"></textarea>
                         </div>
 
-                        <!-- Video Link (NEW) -->
+                        <!-- Product video -->
                         <div class="mb-4">
-                            <label class="form-label">
-                                <i class="fas fa-video"></i> วิดีโอรีวิว (ลิ้งก์ YouTube/TikTok)
+                            <label class="form-label" for="productVideoUrl">
+                                <i class="fas fa-video"></i> วิดีโอแนะนำสินค้า (ลิงก์ YouTube/TikTok)
                             </label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light"><i
                                         class="fab fa-youtube text-danger"></i></span>
                                 <input type="url" class="form-control" id="productVideoUrl"
-                                    placeholder="วางลิ้งก์วิดีโอรีวิวสินค้าที่นี่ (ถ้ามี)">
+                                    inputmode="url" autocomplete="url" aria-describedby="productVideoUrlHelp"
+                                    placeholder="https://www.youtube.com/watch?v=...">
                             </div>
-                            <small class="text-muted mt-1 d-block">
-                                <i class="fas fa-info-circle"></i> แปะลิงก์ YouTube เพื่อให้ลูกค้าเห็นการใช้งานจริง
+                            <small class="text-muted mt-1 d-block" id="productVideoUrlHelp">
+                                <i class="fas fa-info-circle"></i> รองรับ YouTube, YouTube Shorts และ TikTok
                             </small>
                         </div>
 

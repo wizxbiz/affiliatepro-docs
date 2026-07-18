@@ -262,7 +262,7 @@
 
         grid.innerHTML = posts.map(p => {
           const img = getImg(p);
-          return `<div class="post-card" onclick="window.location.href='channel.html?postId=${p.id}'">
+          return `<div class="post-card" onclick="if(window.viewPostDetails){window.viewPostDetails('${p.id}');}">
             <div class="post-card-img">
               ${img ? `<img src="${esc(img)}" onerror="this.parentElement.innerHTML='<i class=\\"fas fa-image\\"></i>'" loading="lazy">` : '<i class="fas fa-file-alt"></i>'}
             </div>
@@ -327,7 +327,7 @@
 
         list.innerHTML = posts.map(p => {
           const img = getImg(p);
-          return `<div class="liked-card" onclick="window.location.href='channel.html?postId=${p.id}'">
+          return `<div class="liked-card" onclick="if(window.viewPostDetails){window.viewPostDetails('${p.id}');}">
             <div class="liked-card-img">
               ${img ? `<img src="${esc(img)}" onerror="this.parentElement.innerHTML='<i class=\\"fas fa-image\\"></i>'" loading="lazy">` : '<i class="fas fa-file-alt"></i>'}
             </div>

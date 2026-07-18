@@ -1,24 +1,36 @@
-importScripts('https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js');
+// Legacy Firebase Messaging service worker kept as a compatibility shim.
+// New notifications use /js/push-notifications.js and /api/v1/push/subscribe.
 
-firebase.initializeApp({
-    apiKey: "AIzaSyBKL6HBLEndDX4LYo7APFNQ0IVICLJtaIE",
-    authDomain: "appinjproject.firebaseapp.com",
-    projectId: "appinjproject",
-    storageBucket: "appinjproject.firebasestorage.app",
-    messagingSenderId: "408718656984",
-    appId: "1:408718656984:web:08bd8f084769d428251ead"
-});
+self.addEventListener('push', (event) => {
+  let payload = {};
+  try {
+    payload = event.data ? event.data.json() : {};
+  } catch (_) {
+    payload = { title: 'TukTukFeed', body: event.data ? event.data.text() : '' };
+  }
 
-const messaging = firebase.messaging();
-
-messaging.onBackgroundMessage((payload) => {
-  console.log('[firebase-messaging-sw.js] Received background message ', payload);
-  const notificationTitle = payload.notification.title;
-  const notificationOptions = {
-    body: payload.notification.body,
-    icon: '/assets/images/icon-192.png'
+  const notification = payload.notification || payload;
+  const title = notification.title || 'TukTukFeed';
+  const options = {
+    body: notification.body || '',
+    icon: notification.icon || '/assets/images/icon-192.png',
+    badge: notification.badge || '/assets/images/icon-192.png',
+    data: notification.data || payload.data || {},
   };
 
-  self.registration.showNotification(notificationTitle, notificationOptions);
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const targetUrl = event.notification.data?.url || '/';
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if ('focus' in client) return client.focus();
+      }
+      if (clients.openWindow) return clients.openWindow(targetUrl);
+      return undefined;
+    })
+  );
 });

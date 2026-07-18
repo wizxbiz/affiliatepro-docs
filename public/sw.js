@@ -3,7 +3,7 @@
  * Strategy: Cache-first for static assets, Network-first for HTML/API
  */
 
-const CACHE_VERSION = 'v35';
+const CACHE_VERSION = 'v40';
 const CACHE_NAME = 'tuktuk-cache-' + CACHE_VERSION;
 const STATIC_CACHE = 'tuktuk-static-' + CACHE_VERSION;
 const OFFLINE_URL = '/offline.html';
@@ -46,20 +46,20 @@ const PRECACHE_URLS = [
 
 // ── Install: pre-cache static assets ──────────────────────────────────────
 self.addEventListener('install', event => {
-    console.log('[SW v34] Installing...');
+    console.log(`[SW ${CACHE_VERSION}] Installing...`);
     event.waitUntil(
         Promise.all([
             caches.open(STATIC_CACHE).then(cache => {
                 return Promise.allSettled(
                     STATIC_URLS.map(url => cache.add(url).catch(e => {
-                        console.warn('[SW v34] Static pre-cache skip:', url, e.message);
+                        console.warn(`[SW ${CACHE_VERSION}] Static pre-cache skip:`, url, e.message);
                     }))
                 );
             }),
             caches.open(CACHE_NAME).then(cache => {
                 return Promise.allSettled(
                     PRECACHE_URLS.map(url => cache.add(url).catch(e => {
-                        console.warn('[SW v34] Page pre-cache skip:', url, e.message);
+                        console.warn(`[SW ${CACHE_VERSION}] Page pre-cache skip:`, url, e.message);
                     }))
                 );
             })
@@ -69,19 +69,19 @@ self.addEventListener('install', event => {
 
 // ── Activate: clear old caches ─────────────────────────────────────────────
 self.addEventListener('activate', event => {
-    console.log('[SW v34] Activating...');
+    console.log(`[SW ${CACHE_VERSION}] Activating...`);
     event.waitUntil(
         caches.keys().then(cacheNames => {
             return Promise.all(
                 cacheNames
                     .filter(name => name !== CACHE_NAME && name !== STATIC_CACHE)
                     .map(name => {
-                        console.log('[SW v34] Deleting old cache:', name);
+                        console.log(`[SW ${CACHE_VERSION}] Deleting old cache:`, name);
                         return caches.delete(name);
                     })
             );
         }).then(() => {
-            console.log('[SW v34] Claiming clients');
+            console.log(`[SW ${CACHE_VERSION}] Claiming clients`);
             return self.clients.claim();
         })
     );

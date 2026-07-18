@@ -240,8 +240,8 @@ async function _ensureFirebaseAuth() {
         const session = JSON.parse(raw);
         const userId = session.lineUserId || session.uid;
         if (!userId) return false;
-        const API_BASE = 'https://us-central1-appinjproject.cloudfunctions.net';
-        const resp = await fetch(`${API_BASE}/refreshWebSession`, {
+        const API_BASE = '';
+        const resp = await fetch(`${API_BASE}/api/auth/refresh`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId }),

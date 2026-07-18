@@ -46,4 +46,4 @@ window.TUKTUK_LIFF = {
  *
  * ใส่ค่า VAPID key ด้านล่างเพื่อเปิด push notification บนเว็บ seller-dashboard.html
  */
-window.FIREBASE_VAPID_KEY = "BDsZBxU7OWZwzFKcEtVcllugq1Hdx10tiCqcSEYO3pR50t58xwzBZan_nvmrwh42qk6bXgwFDqEf-_Vk5500e0Q";
+window.FIREBASE_VAPID_KEY = "";

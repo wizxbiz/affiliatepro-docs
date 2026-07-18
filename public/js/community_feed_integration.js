@@ -835,9 +835,7 @@ function injectCommunityModals() {
                             <button class="btn btn-dark rounded-circle" style="width: 45px; height: 45px;" onclick="startVoiceInputForPost()">
                                 <i class="fas fa-microphone text-danger"></i>
                             </button>
-                            <button class="btn btn-dark rounded-circle" style="width: 45px; height: 45px;" onclick="tryAiAssist()">
-                                <i class="fas fa-magic text-warning"></i>
-                            </button>
+                            <!-- AI assist button removed: backend service unavailable -->
                         </div>
                         <button class="btn btn-primary rounded-pill px-5 py-2 fw-bold shadow-lg" onclick="submitQuickPost()">เผยแพร่</button>
                     </div>
@@ -952,7 +950,7 @@ async function submitQuickPost() {
             // Use R2 for uploads instead of Firebase Storage
             if (typeof uploadToR2 === 'function') {
                 showToast('🚀 กำลังอัปโหลดสื่อไปที่ R2...', 'info');
-                imageUrl = await uploadToR2(file, 'community', (pct) => {
+                imageUrl = await uploadToR2(file, 'community_posts', (pct) => {
                     // Optional: update progress UI if available
                     console.log(`Upload progress: ${pct}%`);
                 });
@@ -980,7 +978,7 @@ async function submitQuickPost() {
             likes: 0,
             commentsCount: 0,
             category: 'general',
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            createdAt: { seconds: Math.floor(Date.now() / 1000), nanoseconds: 0 }
         });
 
         window.quickPostModal.hide();
@@ -1005,23 +1003,23 @@ function likeCommunityPost(btn, postId) {
         btn.classList.remove('liked', 'animate__pulse');
         btn.querySelector('i').className = 'far fa-thumbs-up';
         currentCount = Math.max(0, currentCount - 1);
-        db.collection('posts').doc(postId).update({ likes: firebase.firestore.FieldValue.increment(-1) });
+        db.collection('posts').doc(postId).update({ likes: currentCount }).catch(() => {});
     } else {
         localStorage.setItem('tuktuk_liked_posts', JSON.stringify([...likes, postId]));
         btn.classList.add('liked', 'animate__pulse');
         btn.querySelector('i').className = 'fas fa-thumbs-up';
         currentCount++;
-        db.collection('posts').doc(postId).update({ likes: firebase.firestore.FieldValue.increment(1) });
+        db.collection('posts').doc(postId).update({ likes: currentCount }).catch(() => {});
     }
     countEl.textContent = currentCount;
 }
 
 function shareCommunityPost(postId, text) {
-    const url = `${location.origin}/?post=${postId}`;
+    const url = `${location.origin}/community-share?id=${postId}`;
     // Track share count (fire & forget)
     if (window.db) {
         window.db.collection('posts').doc(postId).update({
-            shareCount: firebase.firestore.FieldValue.increment(1)
+            shareCount: (parseInt(document.querySelector(`[data-post-id="${postId}"] .share-count`)?.textContent || 0) + 1) || 1
         }).catch(() => {});
     }
     if (window.TukTukNotify && window.TukTukNotify.sharePost) {
@@ -1127,29 +1125,33 @@ window.openComments = function(postId) {
 
     if (window.commentModal) window.commentModal.show();
 
-    if (window.commentsUnsubscribe) window.commentsUnsubscribe();
-    window.commentsUnsubscribe = db.collection('posts').doc(postId).collection('comments')
-        .orderBy('createdAt', 'desc')
-        .onSnapshot(snap => {
+    if (window.commentsUnsubscribe) { window.commentsUnsubscribe(); window.commentsUnsubscribe = null; }
+
+    // Load comments from Worker API (D1)
+    async function loadCommentsFromApi() {
+        try {
+            const res = await fetch(`/api/v1/posts/${postId}/comments?limit=50`);
+            const data = await res.json();
             const list = document.getElementById('commentList');
             const badge = document.getElementById('commentCountTitle');
+
+            if (!list) return;
+
+            const comments = data.comments || [];
             if (badge) {
-                // Handle different label formats
-                if (badge.tagName === 'SPAN') badge.textContent = snap.size;
-                else badge.textContent = `ความคิดเห็น (${snap.size})`;
+                badge.textContent = comments.length;
             }
 
-            if (snap.empty) {
+            if (comments.length === 0) {
                 list.innerHTML = `<div class="text-center text-white-50 py-5"><i class="far fa-comment-dots fa-3x mb-3"></i><p>ยังไม่มีความคิดเห็น มาฉลองกันเลย!</p></div>`;
                 return;
             }
 
             let html = '';
-            snap.forEach(doc => {
-                const c = doc.data();
+            comments.forEach(c => {
                 html += `
                     <div class="d-flex gap-3 mb-4 animate__animated animate__fadeIn">
-                        <img src="${c.authorAvatar}" class="rounded-circle border border-secondary" width="35" height="35" style="object-fit:cover;">
+                        <img src="${c.authorAvatar || 'assets/images/logo.png'}" class="rounded-circle border border-secondary" width="35" height="35" style="object-fit:cover;" onerror="this.src='assets/images/logo.png'">
                         <div class="flex-grow-1">
                             <div class="bg-dark bg-opacity-25 rounded-4 p-3 border border-secondary border-opacity-10">
                                 <div class="d-flex justify-content-between">
@@ -1163,7 +1165,14 @@ window.openComments = function(postId) {
                 `;
             });
             list.innerHTML = html;
-        });
+        } catch (err) {
+            console.error('Failed to load comments:', err);
+            const list = document.getElementById('commentList');
+            if (list) list.innerHTML = `<div class="text-center text-white-50 py-5">ไม่สามารถโหลดความคิดเห็นได้</div>`;
+        }
+    }
+
+    loadCommentsFromApi();
 }
 
 async function submitComment() {
@@ -1178,17 +1187,43 @@ async function submitComment() {
     }
 
     const user = getUser();
-    if (!user) return WizmobizAuth.showLoginModal();
+    if (!user) {
+        if (typeof WizmobizAuth !== 'undefined') WizmobizAuth.showLoginModal();
+        return;
+    }
 
     input.value = '';
-    await db.collection('posts').doc(window.currentCommentPostId).collection('comments').add({
-        text,
-        authorId: user.uid || user.lineUserId,
-        authorName: getUserDisplayName(),
-        authorAvatar: getUserAvatar(),
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    db.collection('posts').doc(window.currentCommentPostId).update({ commentsCount: firebase.firestore.FieldValue.increment(1) });
+    try {
+        const token = localStorage.getItem('tuktuk_token') || localStorage.getItem('tuktuk_jwt');
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        const res = await fetch(`/api/v1/posts/${window.currentCommentPostId}/comments`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({
+                text,
+                authorId: user.uid || user.lineUserId,
+                authorName: getUserDisplayName(),
+                authorAvatar: getUserAvatar(),
+            })
+        });
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        // Reload comments after successful submit
+        if (typeof loadCommentsFromApi === 'function') {
+            loadCommentsFromApi();
+        } else {
+            // Fallback: close and reopen
+            window.openComments(window.currentCommentPostId);
+        }
+        showToast('💬 ส่งความคิดเห็นแล้ว!', 'success');
+    } catch (err) {
+        console.error('Comment submit error:', err);
+        showToast('❌ ส่งความคิดเห็นไม่สำเร็จ', 'error');
+        input.value = text; // restore input on failure
+    }
 }
 
 // Ensure functions are globally accessible and override older versions

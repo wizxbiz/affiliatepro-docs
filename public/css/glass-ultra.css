@@ -29,10 +29,10 @@
 
     /* Override white sidebar cards */
     .pc-sidebar-card {
-        background: rgba(12,17,34,0.72) !important;
+        background: var(--theme-card) !important;
         backdrop-filter: blur(20px) saturate(160%) !important;
         -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
-        border: 1px solid rgba(255,255,255,0.08) !important;
+        border: 1px solid var(--theme-border) !important;
         border-radius: 18px !important;
         box-shadow: 0 8px 32px rgba(0,0,0,0.35),
                     inset 0 1px 0 rgba(255,255,255,0.05) !important;
@@ -108,6 +108,20 @@
 
 /* ── Design Tokens เพิ่มเติม ── */
 :root {
+    /* 60-40-10 Theme System */
+    --theme-page:        #090e1a;
+    --theme-nav:         rgba(9, 13, 22, 0.9);
+    --theme-card:        rgba(51, 65, 85, 0.5);
+    --theme-card-strong: rgba(71, 85, 105, 0.65);
+    --theme-border:      rgba(255, 255, 255, 0.15);
+    --theme-text:        #f8fafc;
+    --theme-muted:       #cbd5e1;
+    --theme-accent-rgb:  0, 172, 193; /* Softer, less glowing teal-cyan */
+    --theme-accent:      rgb(var(--theme-accent-rgb));
+    --theme-accent-soft: rgba(var(--theme-accent-rgb), 0.12);
+    --theme-accent-glow: rgba(var(--theme-accent-rgb), 0.4);
+    --theme-alert:       #ff0050;
+
     /* Glassmorphism Advanced */
     --glass-1:        rgba(255, 255, 255, 0.04);
     --glass-2:        rgba(255, 255, 255, 0.07);
@@ -142,11 +156,11 @@
    GLOBAL — Body & Ambient Background
    ═══════════════════════════════════════════════════════════════ */
 body {
-    background-color: #080c18 !important;
+    background-color: var(--theme-page) !important;
     background-image:
-        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(99,102,241,0.08) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 50% at 80% 90%, rgba(168,85,247,0.06) 0%, transparent 55%),
-        radial-gradient(ellipse 50% 40% at 50% 50%, rgba(6,182,212,0.03) 0%, transparent 70%) !important;
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(99,102,241,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 90%, rgba(168,85,247,0.08) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 40% at 50% 50%, rgba(0,242,234,0.03) 0%, transparent 70%) !important;
     background-attachment: fixed !important;
     min-height: 100vh;
 }
@@ -159,10 +173,10 @@ body {
     /* ── PC Top Navigation Bar ── */
     #pcTopNav,
     .pc-top-nav {
-        background: rgba(6, 9, 20, 0.88) !important;
+        background: var(--theme-nav) !important;
         backdrop-filter: var(--blur-xl) !important;
         -webkit-backdrop-filter: var(--blur-xl) !important;
-        border-bottom: 1px solid rgba(99,102,241,0.15) !important;
+        border-bottom: 1px solid var(--theme-border) !important;
         box-shadow:
             0 1px 0 rgba(255,255,255,0.04),
             0 4px 24px rgba(0,0,0,0.4),
@@ -203,20 +217,20 @@ body {
     #pcLeftSidebar,
     .pc-left-sidebar,
     .pc-sidebar-left {
-        background: rgba(8,12,24,0.50) !important;
+        background: rgba(9, 13, 22, 0.45) !important;
         backdrop-filter: var(--blur-md) !important;
         -webkit-backdrop-filter: var(--blur-md) !important;
-        border-right: 1px solid rgba(255,255,255,0.06) !important;
+        border-right: 1px solid var(--theme-border) !important;
         border-radius: 0 20px 20px 0 !important;
     }
 
     /* Sidebar menu cards */
     .pc-sidebar-card,
     .pc-menu-card {
-        background: var(--glass-1) !important;
+        background: var(--theme-card) !important;
         backdrop-filter: blur(16px) !important;
         -webkit-backdrop-filter: blur(16px) !important;
-        border: 1px solid rgba(255,255,255,0.07) !important;
+        border: 1px solid var(--theme-border) !important;
         border-radius: 18px !important;
         box-shadow: var(--shadow-glass) !important;
         transition: all 0.35s cubic-bezier(0.16,1,0.3,1) !important;
@@ -257,10 +271,10 @@ body {
     #pcRightSidebar,
     .pc-right-sidebar,
     .pc-sidebar-right {
-        background: rgba(8,12,24,0.50) !important;
+        background: rgba(9, 13, 22, 0.45) !important;
         backdrop-filter: var(--blur-md) !important;
         -webkit-backdrop-filter: var(--blur-md) !important;
-        border-left: 1px solid rgba(255,255,255,0.06) !important;
+        border-left: 1px solid var(--theme-border) !important;
         border-radius: 20px 0 0 20px !important;
     }
 
@@ -282,10 +296,10 @@ body {
        POST CARDS — Ultra Premium Glass
     ──────────────────────────────────────────────────────────────── */
     .pc4-card {
-        background: rgba(14,19,36,0.72) !important;
+        background: var(--theme-card) !important;
         backdrop-filter: var(--blur-md) !important;
         -webkit-backdrop-filter: var(--blur-md) !important;
-        border: 1px solid rgba(255,255,255,0.08) !important;
+        border: 1px solid var(--theme-border) !important;
         border-radius: 24px !important;
         margin-bottom: 20px !important;
         overflow: hidden !important;
@@ -302,8 +316,8 @@ body {
         height: 1px;
         background: linear-gradient(90deg,
             transparent 0%,
-            rgba(99,102,241,0.5) 30%,
-            rgba(168,85,247,0.5) 60%,
+            rgba(var(--theme-accent-rgb), 0.5) 30%,
+            rgba(99, 102, 241, 0.5) 60%,
             transparent 100%);
         pointer-events: none;
         z-index: 2;
@@ -323,13 +337,13 @@ body {
 
     .pc4-card:hover {
         transform: translateY(-5px) !important;
-        border-color: rgba(99,102,241,0.35) !important;
+        border-color: rgba(var(--theme-accent-rgb), 0.35) !important;
         box-shadow:
             0 24px 60px rgba(0,0,0,0.55),
             0 8px 24px rgba(0,0,0,0.3),
-            0 0 0 1px rgba(99,102,241,0.12),
+            0 0 0 1px rgba(var(--theme-accent-rgb), 0.12),
             inset 0 1px 0 rgba(255,255,255,0.08) !important;
-        background: rgba(17,24,40,0.85) !important;
+        background: var(--theme-card-strong) !important;
     }
 
     .pc4-card:hover::before {
@@ -344,8 +358,8 @@ body {
     .pc4-avatar {
         width: 46px !important;
         height: 46px !important;
-        border: 2px solid rgba(99,102,241,0.50) !important;
-        box-shadow: 0 0 12px rgba(99,102,241,0.25), 0 0 0 4px rgba(99,102,241,0.07) !important;
+        border: 2px solid rgba(var(--theme-accent-rgb), 0.50) !important;
+        box-shadow: 0 0 12px rgba(var(--theme-accent-rgb), 0.25), 0 0 0 4px rgba(var(--theme-accent-rgb), 0.07) !important;
     }
 
     .pc4-author {
@@ -420,19 +434,19 @@ body {
     .pc4-action-btn:hover::before { opacity: 1; }
 
     .pc4-action-btn.liked {
-        background: rgba(99,102,241,0.15) !important;
-        color: #a5b4fc !important;
+        background: var(--theme-accent-soft) !important;
+        color: #67e8f9 !important;
     }
     .pc4-action-btn.liked i {
-        filter: drop-shadow(0 0 8px rgba(99,102,241,0.7)) !important;
+        filter: drop-shadow(0 0 8px var(--theme-accent-glow)) !important;
     }
 
     /* Create Post Card */
     .pc-create-post-card {
-        background: rgba(14,19,36,0.60) !important;
+        background: var(--theme-card) !important;
         backdrop-filter: var(--blur-md) !important;
         -webkit-backdrop-filter: var(--blur-md) !important;
-        border: 1px solid rgba(255,255,255,0.08) !important;
+        border: 1px solid var(--theme-border) !important;
         border-radius: 22px !important;
         margin-bottom: 18px !important;
         box-shadow: var(--shadow-glass) !important;
@@ -446,31 +460,31 @@ body {
     }
 
     .pc-create-input-fake:hover {
-        background: rgba(99,102,241,0.06) !important;
-        border-color: rgba(99,102,241,0.30) !important;
+        background: var(--theme-accent-soft) !important;
+        border-color: rgba(var(--theme-accent-rgb), 0.30) !important;
     }
 
     /* New Posts Banner */
     .pc4-new-banner {
-        background: linear-gradient(135deg, #6366f1, #a855f7) !important;
-        box-shadow: 0 6px 24px rgba(99,102,241,0.45), var(--glow-primary) !important;
+        background: linear-gradient(135deg, var(--theme-accent), #6366f1) !important;
+        box-shadow: 0 6px 24px rgba(var(--theme-accent-rgb), 0.45), var(--glow-primary) !important;
         letter-spacing: 0.3px !important;
     }
 
     /* Skeleton */
     .pc4-skeleton-card {
-        background: rgba(14,19,36,0.60) !important;
+        background: var(--theme-card) !important;
         backdrop-filter: blur(8px) !important;
-        border: 1px solid rgba(255,255,255,0.05) !important;
+        border: 1px solid var(--theme-border) !important;
         border-radius: 22px !important;
     }
 
     /* Stories Bar */
     #pcStoriesBar.stories-container-v3 {
-        background: rgba(14,19,36,0.65) !important;
+        background: var(--theme-card) !important;
         backdrop-filter: var(--blur-md) !important;
         -webkit-backdrop-filter: var(--blur-md) !important;
-        border: 1px solid rgba(255,255,255,0.07) !important;
+        border: 1px solid var(--theme-border) !important;
         border-radius: 20px !important;
         margin-bottom: 16px !important;
         box-shadow: var(--shadow-glass) !important;
@@ -478,20 +492,20 @@ body {
 
     /* Post Context Menu */
     .pc4-post-menu {
-        background: rgba(10,14,28,0.97) !important;
+        background: var(--theme-card-strong) !important;
         backdrop-filter: var(--blur-lg) !important;
         -webkit-backdrop-filter: var(--blur-lg) !important;
-        border: 1px solid rgba(255,255,255,0.10) !important;
+        border: 1px solid var(--theme-border) !important;
         border-radius: 18px !important;
         box-shadow: 0 20px 60px rgba(0,0,0,0.7), var(--glow-primary) !important;
     }
 
     /* Comments Panel */
     .pc-comments-panel {
-        background: rgba(10,15,30,0.97) !important;
+        background: var(--theme-card-strong) !important;
         backdrop-filter: var(--blur-xl) !important;
         -webkit-backdrop-filter: var(--blur-xl) !important;
-        border: 1px solid rgba(255,255,255,0.10) !important;
+        border: 1px solid var(--theme-border) !important;
         border-radius: 28px 28px 0 0 !important;
         box-shadow: 0 -24px 80px rgba(0,0,0,0.7) !important;
     }
@@ -581,45 +595,45 @@ body {
 
     /* Notification pill */
     .mh-pill {
-        background: rgba(8,12,24,0.88) !important;
-        border: 1px solid rgba(255,255,255,0.14) !important;
+        background: var(--theme-card-strong) !important;
+        border: 1px solid var(--theme-border) !important;
         backdrop-filter: blur(28px) saturate(180%) !important;
         -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
         box-shadow: 0 8px 28px rgba(0,0,0,0.55),
-                    inset 0 1px 0 rgba(255,255,255,0.06) !important;
+                    inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
     }
 
     .mh-pill.expanded {
-        background: rgba(8,12,24,0.97) !important;
-        border-color: rgba(99,102,241,0.35) !important;
+        background: var(--theme-card-strong) !important;
+        border-color: rgba(var(--theme-accent-rgb), 0.35) !important;
         box-shadow: 0 8px 28px rgba(0,0,0,0.55),
-                    0 0 20px rgba(99,102,241,0.12) !important;
+                    0 0 20px rgba(var(--theme-accent-rgb), 0.12) !important;
     }
 
     /* Province picker */
     .province-picker-modal {
-        background: rgba(10,15,30,0.97) !important;
+        background: var(--theme-card-strong) !important;
         backdrop-filter: var(--blur-xl) !important;
         -webkit-backdrop-filter: var(--blur-xl) !important;
-        border-top: 1px solid rgba(99,102,241,0.30) !important;
+        border-top: 1px solid var(--theme-border) !important;
         box-shadow: 0 -20px 60px rgba(0,0,0,0.7) !important;
     }
 
     .picker-header {
-        background: rgba(10,15,30,0.97) !important;
-        border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+        background: var(--theme-card-strong) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
     }
 
     /* ── Bottom Navigation — Ultra Glass ── */
     .bottom-nav {
-        background: rgba(5,8,20,0.75) !important;
+        background: var(--theme-nav) !important;
         backdrop-filter: blur(28px) saturate(200%) !important;
         -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
-        border-top: 1px solid rgba(255,255,255,0.08) !important;
+        border-top: 1px solid var(--theme-border) !important;
         box-shadow:
             0 -8px 32px rgba(0,0,0,0.50),
-            0 -1px 0 rgba(255,255,255,0.04),
-            inset 0 1px 0 rgba(255,255,255,0.04) !important;
+            0 -1px 0 rgba(255, 255, 255, 0.04),
+            inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
     }
 
     /* Active nav item glow */
@@ -628,7 +642,7 @@ body {
     }
 
     .bottom-nav-item.active i {
-        filter: drop-shadow(0 0 6px rgba(99,102,241,0.6));
+        filter: drop-shadow(0 0 6px rgba(var(--theme-accent-rgb), 0.6));
     }
 
     /* Center create button */
@@ -642,26 +656,26 @@ body {
     /* ── Mobile Drawer — Ultra Glass ── */
     .mobile-drawer,
     #mobileDrawer {
-        background: rgba(6,9,20,0.96) !important;
+        background: var(--theme-card-strong) !important;
         backdrop-filter: var(--blur-xl) !important;
         -webkit-backdrop-filter: var(--blur-xl) !important;
-        border-right: 1px solid rgba(255,255,255,0.08) !important;
+        border-right: 1px solid var(--theme-border) !important;
         box-shadow: 8px 0 40px rgba(0,0,0,0.6) !important;
     }
 
     /* ── Feed Speed Menu ── */
     .feed-speed-menu {
-        background: rgba(6,9,20,0.92) !important;
+        background: var(--theme-card-strong) !important;
         backdrop-filter: var(--blur-lg) !important;
         -webkit-backdrop-filter: var(--blur-lg) !important;
-        border-color: rgba(255,255,255,0.14) !important;
+        border-color: var(--theme-border) !important;
         box-shadow: 0 12px 40px rgba(0,0,0,0.65) !important;
     }
 
     .fsm-btn.active {
-        background: rgba(99,102,241,0.22) !important;
-        border-color: rgba(99,102,241,0.60) !important;
-        box-shadow: 0 0 16px rgba(99,102,241,0.30) !important;
+        background: var(--theme-accent-soft) !important;
+        border-color: rgba(var(--theme-accent-rgb), 0.60) !important;
+        box-shadow: 0 0 16px rgba(var(--theme-accent-rgb), 0.30) !important;
     }
 
     /* ── TikTok Feed Cards ── */
@@ -684,7 +698,7 @@ body {
     .feed-action-btn:active,
     .action-btn-circle:active {
         transform: scale(0.88) !important;
-        background: rgba(99,102,241,0.30) !important;
+        background: var(--theme-accent-soft) !important;
     }
 
     /* Creator Hub overlay */
@@ -704,10 +718,10 @@ body {
    ════════════════════════════════════════════════════════════════════════ */
 @media (min-width: 992px) {
     .pc-user-dropdown {
-        background: rgba(7,10,24,0.97) !important;
+        background: var(--theme-card-strong) !important;
         backdrop-filter: blur(40px) saturate(200%) !important;
         -webkit-backdrop-filter: blur(40px) saturate(200%) !important;
-        border: 1px solid rgba(99,102,241,0.20) !important;
+        border: 1px solid var(--theme-border) !important;
         border-radius: 20px !important;
         box-shadow:
             0 24px 64px rgba(0,0,0,0.75),
@@ -732,14 +746,14 @@ body {
 
     /* Dropdown header */
     .pud-header {
-        background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(168,85,247,0.08)) !important;
+        background: linear-gradient(135deg, var(--theme-accent-soft), rgba(99, 102, 241, 0.08)) !important;
         border-bottom: 1px solid rgba(255,255,255,0.07) !important;
         padding: 18px 16px 16px !important;
     }
 
     .pud-avatar {
-        border: 2px solid rgba(99,102,241,0.55) !important;
-        box-shadow: 0 0 12px rgba(99,102,241,0.30) !important;
+        border: 2px solid rgba(var(--theme-accent-rgb), 0.55) !important;
+        box-shadow: 0 0 12px var(--theme-accent-glow) !important;
     }
 
     .pud-name { color: #f1f5f9 !important; font-weight: 700 !important; }
@@ -769,8 +783,8 @@ body {
     }
 
     .pud-item:hover {
-        background: rgba(99,102,241,0.12) !important;
-        color: #fff !important;
+        background: var(--theme-accent-soft) !important;
+        color: var(--theme-text) !important;
         transform: translateX(3px) !important;
     }
 

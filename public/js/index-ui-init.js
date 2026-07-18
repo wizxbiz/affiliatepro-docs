@@ -130,7 +130,7 @@ window.addEventListener('load', () => {
                 : 'linear-gradient(135deg,#6366f1,#4f46e5)';
 
             // Avatar
-            ['navProfileImg', 'pcProfileImg', 'pcTopProfileImg', 'pcCreateAvatar', 'drawerAvatar'].forEach(id => {
+            ['navProfileImg', 'pcProfileImg', 'pcTopProfileImg', 'pcCreateAvatar', 'mobileCreateFeedAvatar', 'drawerAvatar'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.src = avatar;
             });
@@ -217,7 +217,7 @@ function syncPCMenu(category, element) {
     // Sync Top Nav Icons
     document.querySelectorAll('.pc-nav-icon').forEach(icon => {
         const title = icon.getAttribute('title');
-        if ((category === 'all' && title === 'หน้าหลัก') || (category === 'community' && title === 'คอมมูนิตี้')) {
+        if ((category === 'all' && title === 'ดูเพลิน') || (category === 'community' && title === 'คอมมูนิตี้')) {
             icon.classList.add('active');
         } else {
             icon.classList.remove('active');

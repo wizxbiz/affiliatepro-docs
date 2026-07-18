@@ -33,10 +33,12 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+    <!-- Override Firebase with Cloudflare Client shim -->
+    <script src="js/cloudflare-client.js?v=20260707"></script>
 
     <!-- Analytics SDK -->
-    <script src="js/analytics.js"></script>
-    <script src="js/auth.js"></script>
+    <script src="js/analytics.js?v=20260707b"></script>
+    <script src="js/auth.js?v=20260707"></script>
 
     <!-- Persistence UI & Standard Logic -->
     <link rel="stylesheet" href="css/persistent-ui.css">
@@ -3865,7 +3867,7 @@
     </style>
 
 
-    <script src="/js/analytics.js" defer></script>
+    <script src="/js/analytics.js?v=20260707b" defer></script>
     <script src="/js/cookie-consent.js" defer></script>
     <script src="/js/liff-config.js"></script>
     <script src="/js/r2-upload.js"></script>

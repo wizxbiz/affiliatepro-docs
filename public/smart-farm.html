@@ -24,7 +24,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="/js/analytics.js"></script>
+    <script src="/js/analytics.js?v=20260707b"></script>
     <style>
         :root {
             --green-primary: #22c55e;
@@ -6190,7 +6190,7 @@
             addMessage('🤔 กำลังคิด...', 'ai', 'typing');
 
             try {
-                const response = await fetch('https://us-central1-appinjproject.cloudfunctions.net/educationAI', {
+                const response = await fetch('/api/calculator/education-ai', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

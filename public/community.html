@@ -16,10 +16,10 @@
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <link rel="stylesheet" href="css/persistent-ui.css">
     <!-- 🌟 Glass Ultra — Premium Glassmorphism -->
-    <link rel="stylesheet" href="css/glass-ultra.css?v=20260424">
+    <link rel="stylesheet" href="css/glass-ultra.css?v=20260713calm">
     <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
-    <script src="js/auth.js" defer></script>
+    <script src="js/auth.js?v=20260707" defer></script>
 
     <style>
         :root {
@@ -2551,8 +2551,7 @@
                 <div class="smart-chip" onclick="openPostModal()"><i class="fas fa-pen"></i> เขียนโพสต์</div>
                 <div class="smart-chip" onclick="openPostModal()"><i class="fas fa-video"></i> วิดีโอสั้น</div>
                 <div class="smart-chip" onclick="openPostModal()"><i class="fas fa-poll"></i> โพลสำรวจ</div>
-                <div class="smart-chip" onclick="openPostModal(); setTimeout(() => toggleAiOptions(), 500);"><i
-                        class="fas fa-magic text-warning"></i> ให้ AI ช่วยคิด</div>
+                <!-- AI Assist chip removed: backend service unavailable -->
             </div>
         </div>
 
@@ -3023,45 +3022,6 @@
                                 <div id="editor-container"></div>
                             </div>
                             <input type="hidden" id="postContent" required>
-
-                            <!-- AI Assistant Section -->
-                            <div class="ai-assist-container">
-                                <button type="button" class="ai-assistant-btn w-100 py-3" id="aiAssistantBtn"
-                                    onclick="toggleAiOptions()"
-                                    style="display: flex !important; justify-content: center; align-items: center; gap: 10px; color: white; border: none; font-weight: 600; cursor: pointer;">
-                                    <i class="fas fa-magic" style="font-size: 1.2rem;"></i>
-                                    <span>✨ ใช้ AI ช่วยเขียน/ปรับแต่งเนื้อหา</span>
-                                </button>
-                                <div class="ai-options" id="aiOptions" style="display: none;">
-                                    <button type="button" class="ai-option-btn" onclick="aiAssist('summarize')">
-                                        <i class="fas fa-compress-alt"></i><span>สรุปให้กระชับ</span>
-                                    </button>
-                                    <button type="button" class="ai-option-btn" onclick="aiAssist('expand')">
-                                        <i class="fas fa-expand-alt"></i><span>ขยายความ</span>
-                                    </button>
-                                    <button type="button" class="ai-option-btn" onclick="aiAssist('engaging')">
-                                        <i class="fas fa-fire"></i><span>ทำให้น่าสนใจ</span>
-                                    </button>
-                                    <button type="button" class="ai-option-btn" onclick="aiAssist('professional')">
-                                        <i class="fas fa-briefcase"></i><span>แบบมืออาชีพ</span>
-                                    </button>
-                                    <button type="button" class="ai-option-btn" onclick="aiAssist('friendly')">
-                                        <i class="fas fa-smile"></i><span>เป็นกันเอง</span>
-                                    </button>
-                                    <button type="button" class="ai-option-btn" onclick="aiAssist('check')">
-                                        <i class="fas fa-spell-check"></i><span>เรียบเรียงใหม่</span>
-                                    </button>
-                                    <button type="button" class="ai-option-btn" onclick="aiAssist('seo')">
-                                        <i class="fas fa-search"></i><span>เพิ่ม SEO/Hashtag</span>
-                                    </button>
-                                    <button type="button" class="ai-option-btn" onclick="aiAssist('emoji')">
-                                        <i class="fas fa-smile-beam"></i><span>เพิ่ม Emoji</span>
-                                    </button>
-                                    <button type="button" class="ai-option-btn" onclick="aiAssist('headline')">
-                                        <i class="fas fa-heading"></i><span>สร้างหัวข้อ</span>
-                                    </button>
-                                </div>
-                            </div>
                         </div>
 
                         <div class="mb-4">
@@ -3178,6 +3138,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    <!-- Override Firebase with Cloudflare Client shim -->
+    <script src="js/cloudflare-client.js?v=20260707"></script>
     <script>
         // Initialize AOS
         AOS.init({
@@ -3260,7 +3222,8 @@
                 const adminRole = localStorage.getItem('wit_admin_role');
 
                 // Get Current User ID
-                const lineUserId = localStorage.getItem('lineUserId') || sessionStorage.getItem('lineUserId');
+                const userObj = typeof WizmobizAuth !== 'undefined' ? WizmobizAuth.getUser() : null;
+                const lineUserId = userObj?.uid || localStorage.getItem('lineUserId') || sessionStorage.getItem('lineUserId');
 
                 // Allow Roles & Whitelisted IDs (Your ID included)
                 if (adminRole === 'super_admin' || adminRole === 'admin' ||
@@ -3541,6 +3504,12 @@
                 updateStats(allPostsData);
 
                 renderStandardFeed(batchPosts, append);
+
+                // If it's the initial load, handle deep-linking
+                if (!append && !window.hasHandledDeepLink) {
+                    window.hasHandledDeepLink = true;
+                    if (typeof handleDeepLink === 'function') handleDeepLink();
+                }
 
                 // Add scroll listener for infinite scroll if not already added
                 setupInfiniteScroll();
@@ -3883,6 +3852,10 @@
                                         <i class="fas fa-heart"></i>
                                         <span>${post.likes || 0}</span>
                                     </div>
+                                    <div class="reel-action" onclick="openComments('${post.id}')">
+                                        <i class="fas fa-comment-dots"></i>
+                                        <span>${post.commentsCount || post.comments_count || 0}</span>
+                                    </div>
                                     <div class="reel-action" onclick="sharePost('${post.id}', '${escapeHtml(post.title)}')">
                                         <i class="fas fa-share-alt"></i>
                                         <span>แชร์</span>
@@ -4051,6 +4024,10 @@
                         <button class="action-btn" onclick="likePost('${post.id}')">
                             <i class="far fa-heart"></i>
                             <span>${post.likes || 0}</span>
+                        </button>
+                        <button class="action-btn" onclick="openComments('${post.id}')">
+                            <i class="far fa-comment-dots"></i>
+                            <span>${post.commentsCount || post.comments_count || 0}</span>
                         </button>
                         <button class="action-btn" onclick="sharePost('${post.id}', '${escapeHtml(post.title)}')">
                             <i class="fas fa-share-alt"></i>
@@ -4420,11 +4397,15 @@
         // Toggle AI Options visibility
         function toggleAiOptions() {
             const options = document.getElementById('aiOptions');
-            options.style.display = options.style.display === 'none' ? 'grid' : 'none';
+            if (options) options.style.display = 'none';
         }
 
         // AI Assist function - calls Cloud Function
         async function aiAssist(mode) {
+            if (typeof showToast === 'function') {
+                showToast('ปิดระบบ AI Assist แล้ว', 'info');
+            }
+            return { success: false, disabled: true, mode };
             const btn = document.getElementById('aiAssistantBtn');
             const titleEl = document.getElementById('postTitle');
             const categoryEl = document.getElementById('postCategory');
@@ -4507,11 +4488,12 @@
 
         // Call AI Content Assist Cloud Function
         async function callAiContentAssist(mode, title, content, category) {
+            return { success: false, disabled: true, mode, title, content, category };
             // Remove HTML tags for AI processing to avoid confusion, but keep line breaks if possible
             const cleanContent = content.replace(/<[^>]*>/g, '\n').replace(/\n\n+/g, '\n').trim();
 
             // Cloud Function URL (Cloud Run)
-            const API_URL = 'https://aicontentassist-47mhcx3iqq-uc.a.run.app';
+            const API_URL = '/api/marketplace/ai-assist';
 
             const response = await fetch(API_URL, {
                 method: 'POST',
@@ -5162,11 +5144,7 @@
                 alert('กรุณาเข้าสู่ระบบก่อนสร้างกลุ่ม');
                 return;
             }
-            // Check for Shop membership (sellerStatus verified or similar)
-            if (user.sellerStatus !== 'verified' && !isAdmin) {
-                alert('ขออภัย เฉพาะสมาชิกร้านค้าเท่านั้นที่สามารถสร้างกลุ่มได้');
-                return;
-            }
+            // Note: Seller verification check removed per user request for less redundancy
             document.getElementById('groupForm').reset();
             groupModal.show();
         }
@@ -5337,6 +5315,215 @@
 
             // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // =========================================================================
+        // COMMENTS SYSTEM & DEEP LINK HANDLING (Cloudflare D1 Worker Integration)
+        // =========================================================================
+
+        function injectCommunityModals() {
+            if (!document.getElementById('commentModal')) {
+                const commentModalHtml = `
+                <div class="modal fade" id="commentModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-bottom modal-dialog-scrollable" style="margin-bottom: 0; margin-top: auto; max-width: 500px; margin-left: auto; margin-right: auto;">
+                        <div class="modal-content rounded-top-4 border-0" style="background: #111116; color: white; box-shadow: 0 -10px 40px rgba(0,0,0,0.8);">
+                            <div class="modal-header border-0 pb-0 px-4 pt-4">
+                                <div class="w-100 text-center position-relative">
+                                    <div style="width: 40px; height: 4px; background: rgba(255,255,255,0.15); border-radius: 2px; margin: 0 auto 15px;"></div>
+                                    <h5 class="modal-title fw-bold" style="font-size: 1.05rem;"><i class="fas fa-comments me-2 text-primary"></i>ความคิดเห็น <span id="commentCountTitle" class="badge bg-primary rounded-pill ms-2" style="font-size: 0.7em;">0</span></h5>
+                                    <button type="button" class="btn-close btn-close-white position-absolute end-0 top-0" data-bs-dismiss="modal" aria-label="Close" style="font-size: 0.8rem; padding: 10px;"></button>
+                                </div>
+                            </div>
+                            <div class="modal-body p-0" style="max-height: 50vh; overflow-y: auto;">
+                                <div id="commentList" class="p-4" style="min-height: 200px;"></div>
+                            </div>
+                            <div class="modal-footer border-top border-secondary border-opacity-25 p-3" style="background: #0d0d12;">
+                                <div class="d-flex w-100 align-items-center gap-3">
+                                    <img src="${getUserAvatar()}" id="commentUserAvatar" class="rounded-circle border border-secondary" width="36" height="36" style="object-fit:cover;" onerror="this.src='assets/images/logo.png'">
+                                    <div class="input-group flex-nowrap" style="position: relative; display: flex; align-items: center; width: 100%;">
+                                        <input type="text" id="commentInput" class="form-control rounded-pill text-white px-3" placeholder="เขียนความคิดเห็น..." onkeypress="if(event.key==='Enter') submitComment()" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding-right: 48px; color: #fff;">
+                                        <button class="btn btn-primary rounded-circle p-0 shadow-sm" type="button" onclick="submitComment()" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; position: absolute; right: 5px; z-index: 10; border: 0; background: #7c3aed;">
+                                            <i class="fas fa-arrow-up" style="font-size: 0.8rem;"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+                document.body.insertAdjacentHTML('beforeend', commentModalHtml);
+            }
+            
+            const modalEl = document.getElementById('commentModal');
+            if (modalEl && !window.commentModal) {
+                window.commentModal = new bootstrap.Modal(modalEl);
+            }
+        }
+
+        function getUser() {
+            if (typeof WizmobizAuth !== 'undefined' && WizmobizAuth.isLoggedIn()) return WizmobizAuth.getUser();
+            if (window.firebase && firebase.auth().currentUser) return firebase.auth().currentUser;
+            return null;
+        }
+
+        function getUserAvatar() {
+            const u = getUser();
+            return u?.pictureUrl || u?.photoURL || 'assets/images/logo.png';
+        }
+
+        function getUserDisplayName() {
+            const u = getUser();
+            return u?.displayName || u?.name || 'Guest User';
+        }
+
+        window.openComments = function(postId) {
+            let commentsListElement = document.getElementById('commentList');
+            if (!commentsListElement) {
+                injectCommunityModals();
+                commentsListElement = document.getElementById('commentList');
+            }
+            if (!commentsListElement) {
+                console.error('Failed to initialize comments modal.');
+                return;
+            }
+
+            window.currentCommentPostId = postId;
+            commentsListElement.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary"></div></div>';
+
+            if (!window.commentModal) {
+                const modalEl = document.getElementById('commentModal');
+                if (modalEl) window.commentModal = new bootstrap.Modal(modalEl);
+            }
+            if (window.commentModal) window.commentModal.show();
+
+            // Update user avatar in footer when modal opens
+            const userAvatarImg = document.getElementById('commentUserAvatar');
+            if (userAvatarImg) {
+                userAvatarImg.src = getUserAvatar();
+            }
+
+            loadCommentsFromApi();
+
+            async function loadCommentsFromApi() {
+                try {
+                    const res = await fetch(`/api/v1/posts/${postId}/comments?limit=50`);
+                    const data = await res.json();
+                    const list = document.getElementById('commentList');
+                    const badge = document.getElementById('commentCountTitle');
+
+                    if (!list) return;
+
+                    const comments = data.comments || [];
+                    if (badge) {
+                        badge.textContent = comments.length;
+                    }
+
+                    if (comments.length === 0) {
+                        list.innerHTML = `<div class="text-center text-white-50 py-5"><i class="far fa-comment-dots fa-3x mb-3"></i><p>ยังไม่มีความคิดเห็น</p><p style="font-size: 0.8rem; color: #444;">ร่วมแสดงความคิดเห็นเป็นคนแรก!</p></div>`;
+                        return;
+                    }
+
+                    let html = '';
+                    comments.forEach(c => {
+                        let timeString = '';
+                        if (c.createdAt) {
+                            const ts = c.createdAt.seconds ? c.createdAt.seconds * 1000 : Number(c.createdAt);
+                            if (ts) {
+                                const diff = Date.now() - ts;
+                                const mins = Math.floor(diff / 60000);
+                                if (mins < 1) timeString = 'เมื่อสักครู่';
+                                else if (mins < 60) timeString = `${mins} นาทีที่แล้ว`;
+                                else {
+                                    const hours = Math.floor(mins / 60);
+                                    if (hours < 24) timeString = `${hours} ชม.ที่แล้ว`;
+                                    else timeString = new Date(ts).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' });
+                                }
+                            }
+                        }
+                        html += `
+                            <div class="d-flex gap-3 mb-4 animate__animated animate__fadeIn">
+                                <img src="${c.authorAvatar || 'assets/images/logo.png'}" class="rounded-circle border border-secondary" width="35" height="35" style="object-fit:cover;" onerror="this.src='assets/images/logo.png'">
+                                <div class="flex-grow-1">
+                                    <div class="rounded-4 p-3 border border-secondary border-opacity-10" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="fw-bold text-white small">${escapeHtml(c.authorName || c.userName || 'ผู้ใช้ TukTuk')}</span>
+                                            <span class="text-white-50" style="font-size:0.65rem;">${timeString}</span>
+                                        </div>
+                                        <div class="text-light mt-1" style="font-size: 0.88rem; line-height: 1.4; word-break: break-word;">${escapeHtml(c.text)}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    list.innerHTML = html;
+                } catch (err) {
+                    console.error('Failed to load comments:', err);
+                    const list = document.getElementById('commentList');
+                    if (list) list.innerHTML = `<div class="text-center text-white-50 py-5">ไม่สามารถโหลดความคิดเห็นได้</div>`;
+                }
+            }
+        };
+
+        window.submitComment = async function() {
+            const input = document.getElementById('commentInput');
+            const text = input.value.trim();
+            if (!text || !window.currentCommentPostId) return;
+
+            const user = getUser();
+            if (!user) {
+                if (typeof WizmobizAuth !== 'undefined') WizmobizAuth.showLoginModal();
+                else alert('กรุณาเข้าสู่ระบบก่อนแสดงความคิดเห็น');
+                return;
+            }
+
+            input.value = '';
+            try {
+                const token = localStorage.getItem('tuktuk_token') || localStorage.getItem('tuktuk_jwt');
+                const headers = { 'Content-Type': 'application/json' };
+                if (token) headers['Authorization'] = `Bearer ${token}`;
+
+                const res = await fetch(`/api/v1/posts/${window.currentCommentPostId}/comments`, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({
+                        text,
+                        authorId: user.uid || user.lineUserId,
+                        authorName: getUserDisplayName(),
+                        authorAvatar: getUserAvatar(),
+                    })
+                });
+
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+                window.openComments(window.currentCommentPostId);
+                showToast('💬 ส่งความคิดเห็นแล้ว!', 'success');
+            } catch (err) {
+                console.error('Comment submit error:', err);
+                showToast('❌ ส่งความคิดเห็นไม่สำเร็จ', 'error');
+                input.value = text;
+            }
+        };
+
+        // Deep Link query param detection and auto-open comments/scroll
+        function handleDeepLink() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetPostId = urlParams.get('post') || urlParams.get('postId') || urlParams.get('id');
+            if (targetPostId) {
+                console.log('[Community] Handling deep link for post:', targetPostId);
+                setTimeout(() => {
+                    const el = document.getElementById(`card-${targetPostId}`);
+                    if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        console.log('[Community] Scrolled to target:', targetPostId);
+                        // Open comments modal
+                        if (typeof openComments === 'function') {
+                            openComments(targetPostId);
+                        }
+                    } else {
+                        console.warn('[Community] Target post card not found in DOM');
+                    }
+                }, 800);
+            }
         }
     </script>
     <script src="js/persistent-ui.js"></script>

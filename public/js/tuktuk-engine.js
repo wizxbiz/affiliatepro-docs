@@ -1017,7 +1017,8 @@ function sharePost(postId, title) {
     triggerHaptic(20);
     TukTukEngine.metrics.shares++;
     
-    const url = `${window.location.origin}${window.location.pathname}?post=${postId}`;
+    // URL for OG Tag preview handler
+    const url = `${window.location.origin}/community-share?id=${postId}`;
     
     if (typeof window.TukTukNotify !== 'undefined' && window.TukTukNotify.sharePost) {
         window.TukTukNotify.sharePost({ id: postId, text: title });

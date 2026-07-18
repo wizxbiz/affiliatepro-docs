@@ -22,7 +22,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
 
     <!-- Analytics SDK -->
-    <script src="/js/analytics.js"></script>
+    <script src="/js/analytics.js?v=20260707b"></script>
     <!-- Auth: WizmobizAuth session helper -->
     <script src="/js/auth.js"></script>
 
@@ -826,13 +826,24 @@
             overflow: hidden;
         }
 
-        .video-container iframe {
+        .video-container iframe,
+        .video-container video {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             border: none;
+            display: block;
+            background: #000;
+        }
+
+        .video-container.is-tiktok {
+            padding-bottom: 0;
+            height: auto;
+            aspect-ratio: 9 / 16;
+            max-width: 405px;
+            margin: 0 auto;
         }
 
         /* ========================================
@@ -2952,7 +2963,7 @@
         }
     </style>
 
-    <script src="/js/analytics.js" defer></script>
+    <script src="/js/analytics.js?v=20260707b" defer></script>
     <script src="/js/cookie-consent.js" defer></script>
 </head>
 
@@ -3494,25 +3505,61 @@
             return div.innerHTML;
         }
 
-        // Helper: Get YouTube Embed URL
-        function getYoutubeEmbedUrl(url) {
+        // Build an embed only for known video providers; never iframe an arbitrary stored URL.
+        function getProductVideo(url) {
             if (!url) return null;
 
-            let videoId = '';
-            const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
-            const shortsRegex = /\/shorts\/([^\/\?]+)/;
+            try {
+                const parsed = new URL(String(url).trim());
+                if (!['http:', 'https:'].includes(parsed.protocol)) return null;
 
-            const match = url.match(youtubeRegex);
-            const shortsMatch = url.match(shortsRegex);
+                const host = parsed.hostname.toLowerCase().replace(/^www\./, '');
+                let videoId = '';
 
-            if (shortsMatch && shortsMatch[1]) {
-                videoId = shortsMatch[1];
-            } else if (match && match[1]) {
-                videoId = match[1];
-            }
+                if (host === 'youtu.be') {
+                    videoId = parsed.pathname.split('/').filter(Boolean)[0] || '';
+                } else if (host === 'youtube.com' || host === 'm.youtube.com') {
+                    videoId = parsed.searchParams.get('v') || '';
+                    if (!videoId) {
+                        const pathMatch = parsed.pathname.match(/^\/(?:shorts|embed|live)\/([A-Za-z0-9_-]{11})(?:\/|$)/);
+                        videoId = pathMatch?.[1] || '';
+                    }
+                }
 
-            if (videoId) {
-                return `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`;
+                if (/^[A-Za-z0-9_-]{11}$/.test(videoId)) {
+                    return {
+                        type: 'iframe',
+                        provider: 'YouTube',
+                        iconClass: 'fab fa-youtube text-danger',
+                        url: `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1`,
+                        containerClass: ''
+                    };
+                }
+
+                if (host === 'tiktok.com' || host.endsWith('.tiktok.com')) {
+                    const tiktokMatch = parsed.pathname.match(/\/video\/(\d+)/);
+                    if (tiktokMatch?.[1]) {
+                        return {
+                            type: 'iframe',
+                            provider: 'TikTok',
+                            iconClass: 'fab fa-tiktok',
+                            url: `https://www.tiktok.com/player/v1/${tiktokMatch[1]}?autoplay=0&loop=0`,
+                            containerClass: 'is-tiktok'
+                        };
+                    }
+                }
+
+                if (/\.(?:mp4|webm|ogg|mov)$/i.test(parsed.pathname)) {
+                    return {
+                        type: 'video',
+                        provider: 'วิดีโอแนะนำสินค้า',
+                        iconClass: 'fas fa-circle-play',
+                        url: parsed.href,
+                        containerClass: ''
+                    };
+                }
+            } catch (_) {
+                return null;
             }
 
             return null;
@@ -4269,10 +4316,11 @@
         // ========================================
         function checkOwnership(product) {
             const deviceId = localStorage.getItem('deviceId');
-            const lineUserId = sessionStorage.getItem('lineUserId');
+            const session = _getSession();
+            const activeLineUserId = session?.lineUserId || session?.uid;
 
             const isOwner = (product.deviceId && product.deviceId === deviceId) ||
-                (product.lineUserId && product.lineUserId === lineUserId);
+                (product.lineUserId && activeLineUserId && product.lineUserId === activeLineUserId);
 
             if (isOwner) {
                 const editBtnHtml = `
@@ -4984,6 +5032,15 @@
             currentProductObj = product;
             currentProductId = product.id;
 
+            const rawProductStock = product.productStock ?? product.stock;
+            const parsedProductStock = Number(rawProductStock);
+            const hasProductStock = rawProductStock !== undefined && rawProductStock !== null &&
+                rawProductStock !== '' && Number.isFinite(parsedProductStock);
+            const productStock = hasProductStock ? Math.max(0, parsedProductStock) : null;
+            const productUnit = escapeHtml(String(product.productUnit || product.unit || 'ชิ้น'));
+            const sellerLocation = escapeHtml(String(product.sellerLocation || ''));
+            const productVideo = getProductVideo(product.videoUrl);
+
             const mainContent = document.getElementById('main-content');
             const chatId = product.sellerLineId || '';
             const cleanChatId = chatId.startsWith('@') ? chatId.substring(1) : chatId;
@@ -5070,11 +5127,11 @@
                             <div class="product-price-section">
                                 <span class="product-price">
                                     ฿${formatPrice(product.price)}
-                                    <small>/${product.unit || 'ชิ้น'}</small>
+                                    <small>/${productUnit}</small>
                                 </span>
                                 <span class="stock-badge ${product.status === 'active' ? 'in-stock' : 'out-of-stock'}">
                                     <i class="fas ${product.status === 'active' ? 'fa-check-circle' : 'fa-times-circle'}"></i>
-                                    ${product.status === 'active' ? (product.stock ? 'เหลือ ' + product.stock + ' ' + (product.unit || 'ชิ้น') : 'มีสินค้า') : 'สินค้าหมด'}
+                                    ${product.status === 'active' ? (hasProductStock ? 'เหลือ ' + formatPrice(productStock) + ' ' + productUnit : 'มีสินค้า') : 'สินค้าหมด'}
                                 </span>
                             </div>
                             
@@ -5092,10 +5149,10 @@
                                 </div>
                             ` : ''}
                             
-                            ${product.sellerLocation ? `
+                            ${sellerLocation ? `
                                 <div class="location-badge">
                                     <i class="fas fa-map-marker-alt"></i>
-                                    ${product.sellerLocation}
+                                    ${sellerLocation}
                                 </div>
                             ` : ''}
                             
@@ -5135,15 +5192,22 @@
                                 </div>
                             ` : ''}
 
-                            ${product.videoUrl && getYoutubeEmbedUrl(product.videoUrl) ? `
+                            ${productVideo ? `
                                 <div class="video-review-section">
                                     <div class="video-title">
-                                        <i class="fab fa-youtube text-danger"></i> วิดีโอรีวิวสินค้า
+                                        <i class="${productVideo.iconClass}"></i> ${productVideo.provider}
                                     </div>
-                                    <div class="video-container">
-                                        <iframe src="${getYoutubeEmbedUrl(product.videoUrl)}" 
-                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                                allowfullscreen></iframe>
+                                    <div class="video-container ${productVideo.containerClass}">
+                                        ${productVideo.type === 'video' ? `
+                                            <video src="${productVideo.url}" controls playsinline preload="metadata"></video>
+                                        ` : `
+                                            <iframe src="${productVideo.url}"
+                                                    title="${productVideo.provider}"
+                                                    loading="lazy"
+                                                    referrerpolicy="strict-origin-when-cross-origin"
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                                                    allowfullscreen></iframe>
+                                        `}
                                     </div>
                                 </div>
                             ` : ''}
@@ -5174,7 +5238,7 @@
                                     <label>จำนวน:</label>
                                     <div class="quantity-control">
                                         <button onclick="adjustQty(-1)"><i class="fas fa-minus"></i></button>
-                                        <input type="number" id="qtyInput" value="1" min="1" max="${product.stock || 99}">
+                                        <input type="number" id="qtyInput" value="1" min="1" max="${hasProductStock ? Math.max(1, productStock) : 99}">
                                         <button onclick="adjustQty(1)"><i class="fas fa-plus"></i></button>
                                     </div>
                                 </div>
@@ -5290,7 +5354,7 @@
             mobileBar.innerHTML = `
                 <div class="mobile-price">
                     <span class="price">฿${formatPrice(product.price)}</span>
-                    <span class="unit">/${product.unit || 'ชิ้น'}</span>
+                    <span class="unit">/${productUnit}</span>
                 </div>
                 <button type="button" class="btn-mobile-chat" onclick="openTukTukChat(); incrementContact('${product.id}');" style="flex: 2;">
                     <i class="fas fa-comment-dots"></i>
@@ -5359,6 +5423,21 @@
                 }
 
                 const product = { id: doc.id, collection: productCollection, ...doc.data() };
+                
+                if (typeof product.imageUrl === 'string' && (product.imageUrl.startsWith('[') || product.imageUrl.startsWith('{'))) {
+                    try {
+                        const parsed = JSON.parse(product.imageUrl);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            product.imageUrl = typeof parsed[0] === 'object' ? parsed[0].url : parsed[0];
+                        } else if (parsed && parsed.url) {
+                            product.imageUrl = parsed.url;
+                        }
+                    } catch(e) {}
+                }
+                if (typeof product.images === 'string' && product.images.startsWith('[')) {
+                    try { product.images = JSON.parse(product.images); } catch(e) {}
+                }
+
 
                 const sellerId = product.sellerId || product.lineUserId;
                 if (sellerId) {

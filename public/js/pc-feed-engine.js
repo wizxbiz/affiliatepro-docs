@@ -184,7 +184,7 @@
             : [p.imageUrl].filter(Boolean);
 
         if (urls.length === 1) {
-            return `<div class="pc4-media single" onclick="window.location.href='channel.html?postId=${_esc(p.id)}'">
+            return `<div class="pc4-media single" onclick="if(window.viewPostDetails) { window.viewPostDetails('${_esc(p.id)}'); } else { window.location.href='product.html?id=${_esc(p.id)}'; }">
                         <img src="${urls[0]}" loading="lazy" onerror="this.closest('.pc4-media').style.display='none'">
                     </div>`;
         }
@@ -276,14 +276,14 @@
                     <i class="${liIcon} fa-thumbs-up"></i> ถูกใจ
                 </button>
                 <button class="pc4-action-btn"
-                        onclick="event.stopPropagation();if(window.openComments)window.openComments('${p.id}');else window.location.href='channel.html?postId=${p.id}'">
+                        onclick="event.stopPropagation();if(window.openComments){window.openComments('${p.id}');}else if(window.viewPostDetails){window.viewPostDetails('${p.id}');}">
                     <i class="far fa-comment-dots"></i> ความเห็น
                 </button>
                 <button class="pc4-action-btn"
                         onclick="event.stopPropagation();if(window.sharePost)window.sharePost('${p.id}')">
                     <i class="fas fa-share-alt"></i> แชร์
                 </button>
-                <button class="pc4-action-btn primary" onclick="window.location.href='channel.html?postId=${p.id}'">
+                <button class="pc4-action-btn primary" onclick="${p.type === 'product' ? `window.location.href='product.html?id=${p.id}'` : `if(window.viewPostDetails){window.viewPostDetails('${p.id}');}`}">
                     ${p.type === 'product' ? 'ซื้อเลย' : 'อ่านต่อ'} <i class="fas fa-chevron-right" style="font-size:9px;"></i>
                 </button>
             </div>
@@ -473,43 +473,9 @@
 
     /* ─── Stories from Firestore ─────────────────────────────── */
     window.pcLoadStories = async function () {
-        const bar = document.getElementById('pcStoriesBar');
-        if (!bar || !window.db) return;
-        try {
-            const snap = await window.db.collection('posts')
-                .where('published', '==', true)
-                .orderBy('createdAt', 'desc')
-                .limit(15)
-                .get();
-
-            const seen = new Set();
-            const users = [];
-            snap.docs.forEach(doc => {
-                const d = doc.data();
-                if (d.authorId && !seen.has(d.authorId) && users.length < 8) {
-                    seen.add(d.authorId);
-                    users.push({ id: d.authorId, avatar: d.authorAvatar || d.authorPhotoURL || 'assets/images/logo.png', name: (d.authorName || 'ผู้ใช้').substring(0, 10), postId: doc.id });
-                }
-            });
-            if (!users.length) return;
-
-            bar.querySelectorAll('.story-item-v3.seed').forEach(el => el.remove());
-            users.forEach(u => {
-                const el = document.createElement('div');
-                el.className = 'story-item-v3';
-                el.innerHTML = `
-                    <div style="position:relative;">
-                        <div class="story-ring-v3 is-unread">
-                            <img class="story-inner-v3" src="${_esc(u.avatar)}" onerror="this.src='assets/images/logo.png'"
-                                 style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
-                        </div>
-                    </div>
-                    <span class="story-name-v3">${_esc(u.name)}</span>
-                `;
-                el.onclick = () => { window.location.href = `channel.html?postId=${u.postId}`; };
-                bar.appendChild(el);
-            });
-        } catch (e) { console.warn('[pcEngine] stories:', e); }
+        if (typeof window.loadPremiumStories === 'function') {
+            await window.loadPremiumStories();
+        }
     };
 
     /* ─── Sidebar: Trending Sellers ─────────────────────────── */

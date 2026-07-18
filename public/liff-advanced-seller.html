@@ -177,7 +177,7 @@
     </div>
 
     <script>
-        const API_BASE = (window.TUKTUK_LIFF?.apiBase || 'https://us-central1-appinjproject.cloudfunctions.net') + '/api/v1';
+        const API_BASE = ((window.TUKTUK_LIFF?.apiBase || '').replace(/\/+$/, '')) + '/api/v1';
 
         async function initLIFF() {
             const liffId = window.TUKTUK_LIFF?.analytics || "";

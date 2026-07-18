@@ -6,8 +6,8 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
     <meta name="description" content="TukTuk Thailand - แพลตฟอร์มวิดีโอสั้น Shoppable แห่งแรกของไทยโดย TukTuk Thailand">
-    <meta name="theme-color" content="#0e0a07" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#f97316" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: light)">
 
     <!-- ✅ Apple Touch Icon — ต้องเป็น <link rel> ไม่ใช่ <meta> -->
     <link rel="apple-touch-icon" href="assets/images/icon-192.png">
@@ -92,19 +92,505 @@
     <!-- PC Feed Dark Theme Fix + Comments Modal (v20260423) -->
     <link rel="stylesheet" href="css/pc-feed-fix.css?v=20260423e">
     <!-- 🌟 Glass Ultra — Premium Glassmorphism (โหลดสุดท้าย) -->
-    <link rel="stylesheet" href="css/glass-ultra.css?v=20260701f">
+    <link rel="stylesheet" href="css/glass-ultra.css?v=20260713calm">
+
+    <style id="adjusted-palette-60-40-10">
+        :root {
+            color-scheme: dark;
+
+            /* 60%: page and structural backgrounds */
+            --theme-page: #0f172a;
+            --theme-nav: #090d16;
+
+            /* 40%: readable glass surfaces */
+            --theme-card: rgba(30, 41, 59, 0.65);
+            --theme-card-strong: rgba(30, 41, 59, 0.82);
+            --theme-border: rgba(255, 255, 255, 0.12);
+            --theme-text: #f8fafc;
+            --theme-muted: #94a3b8;
+
+            /* 10%: focused actions and status highlights */
+            --theme-accent: #00f2ea;
+            --theme-accent-soft: rgba(0, 242, 234, 0.12);
+            --theme-accent-glow: rgba(0, 242, 234, 0.4);
+            --theme-alert: #ff0050;
+            --theme-alert-soft: rgba(255, 0, 80, 0.14);
+
+            /* Existing token aliases */
+            --primary: var(--theme-accent);
+            --secondary: var(--theme-alert);
+            --primary-glow: var(--theme-accent-glow);
+            --secondary-glow: rgba(255, 0, 80, 0.3);
+            --primary-gradient: linear-gradient(135deg, #00f2ea 0%, #67e8f9 100%);
+            --bg-deep: var(--theme-nav);
+            --bg-mid: var(--theme-page);
+            --bg-card: #1e293b;
+            --surface: var(--theme-card);
+            --surface-2: rgba(51, 65, 85, 0.72);
+            --border: var(--theme-border);
+            --border-2: rgba(255, 255, 255, 0.18);
+            --text: var(--theme-text);
+            --text-muted: var(--theme-muted);
+            --text-faint: rgba(148, 163, 184, 0.5);
+            --cyan: var(--theme-accent);
+            --red: var(--theme-alert);
+            --red-glow: rgba(255, 0, 80, 0.3);
+            --danger-color: var(--theme-alert);
+            --glass-bg: var(--theme-card);
+            --glass-border: var(--theme-border);
+
+            --tt-bg: var(--theme-page);
+            --tt-deep: var(--theme-nav);
+            --tt-card: var(--theme-card);
+            --tt-border: var(--theme-border);
+            --tt-border2: rgba(255, 255, 255, 0.18);
+            --tt-p: var(--theme-accent);
+            --tt-pg: var(--theme-accent-glow);
+            --tt-s: var(--theme-alert);
+            --tt-sg: rgba(255, 0, 80, 0.28);
+            --tt-r: var(--theme-alert);
+            --tt-o: var(--theme-accent);
+            --tt-t: var(--theme-text);
+            --tt-tm: var(--theme-muted);
+            --c-primary: var(--theme-accent);
+            --c-secondary: var(--theme-alert);
+            --c-accent: var(--theme-alert);
+            --c-bg: var(--theme-page);
+            --c-card: var(--theme-card);
+            --c-border: var(--theme-border);
+            --c-text: var(--theme-text);
+            --c-text-dim: var(--theme-muted);
+
+            --color-primary: var(--theme-accent);
+            --color-primary-300: #67e8f9;
+            --color-primary-400: #22d3ee;
+            --color-primary-500: var(--theme-accent);
+            --color-primary-bg: var(--theme-accent-soft);
+            --color-secondary: var(--theme-alert);
+            --color-secondary-500: var(--theme-alert);
+            --color-bg: var(--theme-page);
+            --color-surface: var(--theme-card);
+            --color-surface-2: rgba(51, 65, 85, 0.72);
+            --color-surface-3: rgba(71, 85, 105, 0.58);
+            --color-border: var(--theme-border);
+            --color-border-hover: rgba(0, 242, 234, 0.45);
+            --color-divider: rgba(255, 255, 255, 0.08);
+            --color-text-primary: var(--theme-text);
+            --color-text-secondary: #cbd5e1;
+            --color-text-tertiary: var(--theme-muted);
+            --color-text-muted: var(--theme-muted);
+            --color-text-on-surface: var(--theme-text);
+            --color-error: var(--theme-alert);
+
+            --community-bg: var(--theme-page);
+            --card-bg: var(--theme-card);
+            --nav-bg: rgba(9, 13, 22, 0.9);
+            --tuktuk-cyan: var(--theme-accent);
+            --tuktuk-red: var(--theme-alert);
+
+            --glass-1: var(--theme-card);
+            --glass-2: rgba(51, 65, 85, 0.72);
+            --glass-3: rgba(71, 85, 105, 0.72);
+            --glass-dark-1: rgba(9, 13, 22, 0.72);
+            --glass-dark-2: rgba(9, 13, 22, 0.88);
+            --glass-dark-3: rgba(9, 13, 22, 0.96);
+            --blur-md: blur(20px) saturate(140%);
+            --blur-lg: blur(24px) saturate(150%);
+            --blur-xl: blur(28px) saturate(160%);
+            --shadow-glass:
+                inset 0 1px 0 rgba(255, 255, 255, 0.08),
+                0 12px 30px rgba(2, 6, 23, 0.3),
+                0 30px 70px rgba(2, 6, 23, 0.16);
+            --shadow-hover:
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                0 18px 42px rgba(2, 6, 23, 0.34),
+                0 0 24px rgba(0, 242, 234, 0.08);
+        }
+
+        html {
+            background: var(--theme-page);
+        }
+
+        body,
+        body.pc-mode {
+            background-color: var(--theme-page) !important;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(0, 242, 234, 0.08) 0, transparent 50%) !important;
+            background-attachment: fixed !important;
+            color: var(--theme-text) !important;
+        }
+
+        body.pc-mode .main-app-container,
+        body.pc-mode .main-content,
+        .pc-layout-container,
+        .standard-feed-container {
+            background: transparent !important;
+        }
+
+        ::selection {
+            color: var(--theme-nav);
+            background: var(--theme-accent);
+        }
+
+        /* Structural navigation */
+        #pcTopNav,
+        .pc-top-nav,
+        #mobileHeader,
+        .mh-v3-glass,
+        #bottomNav,
+        .bottom-nav,
+        .mobile-drawer,
+        .notification-panel {
+            background: rgba(9, 13, 22, 0.9) !important;
+            -webkit-backdrop-filter: blur(20px) saturate(140%) !important;
+            backdrop-filter: blur(20px) saturate(140%) !important;
+            border-color: var(--theme-border) !important;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.07),
+                0 12px 34px rgba(2, 6, 23, 0.34) !important;
+        }
+
+        .pc-sidebar-left,
+        .pc-sidebar-right,
+        .pc-sidebar {
+            background: rgba(9, 13, 22, 0.42) !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+        }
+
+        /* Primary glass surfaces */
+        .pc-sidebar-card,
+        .pc4-card,
+        .pc-create-post-card,
+        .pc4-skeleton-card,
+        #pcStoriesBar.stories-container-v3,
+        .mobile-create-post-card,
+        .community-feed-card,
+        .create-post-wrapper,
+        .glass-card,
+        .slide-glass-card,
+        .pc-user-dropdown,
+        .pc4-post-menu,
+        .pc-comments-panel,
+        .hub-panel,
+        .modal-content,
+        .bottom-sheet,
+        .product-sheet-inner-v3 {
+            background: var(--theme-card) !important;
+            -webkit-backdrop-filter: blur(20px) saturate(140%) !important;
+            backdrop-filter: blur(20px) saturate(140%) !important;
+            border: 1px solid var(--theme-border) !important;
+            border-radius: 8px !important;
+            box-shadow: var(--shadow-glass) !important;
+        }
+
+        .pc4-card::after,
+        .pc-sidebar-card::before {
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(0, 242, 234, 0.48),
+                transparent
+            ) !important;
+        }
+
+        .pc4-card:hover,
+        .pc-sidebar-card:hover,
+        .community-feed-card:hover {
+            background: var(--theme-card-strong) !important;
+            border-color: rgba(0, 242, 234, 0.34) !important;
+            box-shadow: var(--shadow-hover) !important;
+            transform: translateY(-2px) !important;
+        }
+
+        /* Menu rows stay quiet inside their parent glass card. */
+        .pc-menu-card {
+            background: rgba(255, 255, 255, 0.025) !important;
+            border: 1px solid transparent !important;
+            border-radius: 6px !important;
+            box-shadow: none !important;
+            color: #cbd5e1 !important;
+        }
+
+        .pc-menu-card:hover,
+        .pc-menu-card.active {
+            background: var(--theme-accent-soft) !important;
+            border-color: rgba(0, 242, 234, 0.34) !important;
+            color: var(--theme-text) !important;
+            box-shadow: inset 3px 0 0 var(--theme-accent) !important;
+        }
+
+        /* Inputs and readable hierarchy */
+        .pc-search-container,
+        .pc-create-input-fake,
+        .mobile-create-input-fake,
+        .glass-input {
+            background: rgba(15, 23, 42, 0.7) !important;
+            border: 1px solid var(--theme-border) !important;
+            color: var(--theme-text) !important;
+        }
+
+        .pc-search-input,
+        .glass-input,
+        .comment-input,
+        .chat-input {
+            color: var(--theme-text) !important;
+        }
+
+        .pc-search-input::placeholder,
+        .glass-input::placeholder,
+        .comment-input::placeholder,
+        .chat-input::placeholder {
+            color: var(--theme-muted) !important;
+            opacity: 1;
+        }
+
+        .pc-search-container:focus-within,
+        .glass-input:focus {
+            background: rgba(0, 242, 234, 0.06) !important;
+            border-color: rgba(0, 242, 234, 0.55) !important;
+            box-shadow: 0 0 0 3px rgba(0, 242, 234, 0.12) !important;
+        }
+
+        .pc4-author,
+        .pc4-title,
+        .pc-sidebar-card-title,
+        .pc-sidebar-card-title span,
+        .pud-name,
+        .hub-header,
+        .story-name-v3 {
+            color: var(--theme-text) !important;
+        }
+
+        .pc4-author {
+            background: none !important;
+            -webkit-text-fill-color: var(--theme-text) !important;
+        }
+
+        .pc4-content,
+        .pc4-meta,
+        .pc4-stats,
+        .pc-sidebar-section-title,
+        .pud-tier,
+        .notif-header-info,
+        .community-post-content {
+            color: var(--theme-muted) !important;
+        }
+
+        .pc-sidebar-card-title a,
+        .pc-profile-card #pcProfileUsername,
+        .pud-balance {
+            color: var(--theme-accent) !important;
+        }
+
+        /* Cyan is reserved for active navigation and primary commands. */
+        .pc-nav-icon.active,
+        .mh-tab.active,
+        .mh-tab-v3.active,
+        .bottom-nav-item.active,
+        .hub-tab.active,
+        .pc4-action-btn.liked {
+            color: var(--theme-accent) !important;
+            border-color: var(--theme-accent) !important;
+        }
+
+        .pc-nav-icon.active i,
+        .mh-tab.active i,
+        .mh-tab-v3.active i,
+        .bottom-nav-item.active i,
+        .pc4-action-btn.liked i {
+            color: var(--theme-accent) !important;
+            filter: drop-shadow(0 0 8px var(--theme-accent-glow)) !important;
+        }
+
+        .pc4-action-btn.liked,
+        .hub-tab.active {
+            background: var(--theme-accent-soft) !important;
+        }
+
+        .pc4-new-banner,
+        .btn-premium,
+        .pc-live-chat-send,
+        .sheet-order-btn-v3 {
+            background: var(--theme-accent) !important;
+            color: #042f2e !important;
+            border-color: transparent !important;
+            box-shadow: 0 8px 24px rgba(0, 242, 234, 0.2) !important;
+        }
+
+        /* Pink is reserved for urgency, unread counts and live states. */
+        .pc-icon-badge,
+        .mh-pill-badge,
+        .notification-badge,
+        .live-badge,
+        .news-category-badge {
+            background: var(--theme-alert) !important;
+            color: #fff !important;
+            border-color: rgba(255, 255, 255, 0.72) !important;
+            box-shadow: 0 0 16px rgba(255, 0, 80, 0.3) !important;
+        }
+
+        :where(button, a, input, textarea, select, [tabindex]):focus-visible {
+            outline: 2px solid var(--theme-accent) !important;
+            outline-offset: 3px;
+        }
+
+        .splash-title,
+        .pc-logo span,
+        .pc-nav-label {
+            letter-spacing: 0 !important;
+        }
+
+        @media (max-width: 991px) {
+            body {
+                background-attachment: scroll !important;
+            }
+
+            #mobileHeader {
+                border-bottom: 1px solid var(--theme-border) !important;
+            }
+
+            #bottomNav,
+            .bottom-nav {
+                border-top: 1px solid var(--theme-border) !important;
+            }
+
+            .stories-container-v3 {
+                background: rgba(15, 23, 42, 0.7) !important;
+                border-color: var(--theme-border) !important;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .pc4-card,
+            .pc-sidebar-card,
+            .community-feed-card,
+            .pc-menu-card {
+                transition: none !important;
+            }
+        }
+        /* PWA install UI is injected after page load, so it needs explicit theme overrides. */
+        #pwaBackdrop.show {
+            background: rgba(2, 6, 23, 0.72) !important;
+        }
+
+        #pwaSheet,
+        #pwaTooltip {
+            background: var(--theme-card-strong) !important;
+            -webkit-backdrop-filter: blur(20px) saturate(140%) !important;
+            backdrop-filter: blur(20px) saturate(140%) !important;
+            border: 1px solid var(--theme-border) !important;
+            color: var(--theme-text) !important;
+            box-shadow: var(--shadow-hover) !important;
+        }
+
+        #pwaSheet {
+            border-radius: 8px 8px 0 0 !important;
+            border-bottom: 0 !important;
+        }
+
+        #pwaParticleCanvas {
+            display: none !important;
+        }
+
+        .pwa-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .pwa-app-icon {
+            border: 1px solid rgba(0, 242, 234, 0.36) !important;
+            border-radius: 8px !important;
+            box-shadow: 0 0 16px rgba(0, 242, 234, 0.16) !important;
+        }
+
+        .pwa-app-name,
+        .pwa-slide-title,
+        .pwa-settings-title,
+        .pwa-success-title,
+        .pwa-switch-label {
+            color: var(--theme-text) !important;
+        }
+
+        .pwa-app-desc,
+        .pwa-slide-sub,
+        .pwa-success-sub {
+            color: var(--theme-muted) !important;
+            opacity: 1 !important;
+        }
+
+        .pwa-carousel-wrap {
+            background: rgba(15, 23, 42, 0.52) !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+            border-radius: 0 !important;
+        }
+
+        .pwa-slide,
+        .pwa-step {
+            background: transparent !important;
+            color: var(--theme-text) !important;
+            border-radius: 0 !important;
+        }
+
+        .pwa-install-btn,
+        .pwa-success-done {
+            background: var(--theme-accent) !important;
+            color: #042f2e !important;
+            border: 0 !important;
+            border-radius: 8px !important;
+            box-shadow: 0 8px 24px rgba(0, 242, 234, 0.2) !important;
+        }
+
+        .pwa-settings-btn,
+        .pwa-theme-chip,
+        .pwa-layout-chip {
+            background: rgba(15, 23, 42, 0.72) !important;
+            color: var(--theme-text) !important;
+            border: 1px solid var(--theme-border) !important;
+            border-radius: 8px !important;
+        }
+
+        .pwa-close-btn {
+            color: var(--theme-muted) !important;
+        }
+
+        .pwa-handle {
+            background: var(--theme-muted) !important;
+        }
+
+        .pwa-dot {
+            background: var(--theme-accent) !important;
+        }
+
+        .pc-menu-card-icon {
+            color: var(--theme-accent) !important;
+            background: var(--theme-accent-soft) !important;
+        }
+
+        .pc-profile-card #pcProfileImg {
+            border-color: var(--theme-accent) !important;
+            box-shadow: 0 0 18px rgba(0, 242, 234, 0.2) !important;
+        }
+
+        @media (min-width: 480px) {
+            #pwaSheet {
+                border-radius: 8px !important;
+                border-bottom: 1px solid var(--theme-border) !important;
+            }
+        }
+    </style>
 
     <!-- Styles formerly embedded here have been migrated to css/pc-layout.css to optimize page-load and specificity cascade -->
 
 
     <!-- LIFF Config (must load before auth) -->
-    <script src="js/liff-config.js"></script>
+    <script src="js/liff-config.js?v=20260707b"></script>
     <!-- PC User Menu Module (loaded once below with version tag) -->
     <!-- Core Engine & Firebase -->
-    <script src="js/firebase-init.js" defer></script>
-    <script src="js/auth.js" defer></script>
+    <script src="js/firebase-init.js?v=20260713a" defer></script>
+    <script src="js/auth.js?v=20260707" defer></script>
     <!-- LIFF silent auto-login for LINE app users -->
-    <script src="js/liff-auto-login.js" defer></script>
+    <script src="js/liff-auto-login.js?v=20260707" defer></script>
     <script src="js/core-utils.js" defer></script>
     <script src="js/admin-controller.js" defer></script>
     <script src="js/chat-web.js" defer></script>
@@ -116,10 +602,10 @@
     <script src="js/gallery-engine.js" defer></script>
     <script src="js/news-feed.js" defer></script>
     <script src="js/tuktuk-engine.js" defer></script>
-    <script src="js/creator-engine.js" defer></script>
+    <script src="js/creator-engine.js?v=20260707" defer></script>
     <script src="js/persistent-ui.js" defer></script>
     <script src="js/api-client.js?v=20260701h" defer></script>
-    <script src="js/feed-renderer.js?v=20260701g" defer></script>
+    <script src="js/feed-renderer.js?v=20260707" defer></script>
     <script src="js/pc-feed-engine.js?v=20260423g" defer></script>
     <script src="js/main-feed-engine.js?v=20260423g" defer></script>
 
@@ -129,7 +615,7 @@
     <script src="js/pwa-lifecycle.js" defer></script>
     <script src="js/chat-panel.js" defer></script>
     <script src="js/pwa-install.js" defer></script>
-    <script src="js/push-notifications.js" defer></script>
+    <script src="js/push-notifications.js?v=20260707b" defer></script>
     <script src="js/new-scripts.js" defer></script>
 
     <!-- PC Navigation & Menus -->
@@ -280,7 +766,7 @@
                 </button>
                 <button class="mh-tab mh-tab-v3" data-cat="near_me" onclick="switchCategoryMobile('near_me', this)">
                     <i class="fas fa-location-arrow"></i>
-                    <span>ใกล้ฉัน</span>
+                    <span>ใกล้บ้าน</span>
                 </button>
                 <button class="mh-tab mh-tab-v3" data-cat="community" onclick="switchCategoryMobile('community', this)">
                     <i class="fas fa-users"></i>
@@ -319,18 +805,19 @@
 
     <script src="js/mobile-header.js?v=20260701g"></script>
 
-    <div class="main-app-container">
-        <!-- Stories Bar (Mobile) -->
-        <div class="stories-container-v3 d-lg-none" id="mobileStoriesBar">
-             <!-- Add Story Item -->
-             <div class="story-item-v3" onclick="openPostModal()">
-                 <div class="story-ring-v3 is-seen" style="background: rgba(255,255,255,0.08); border: 1.5px dashed rgba(255,255,255,0.25); display: flex; align-items: center; justify-content: center; color: var(--tt-p); font-size: 22px;">
-                     +
-                 </div>
-                 <span class="story-name-v3">ลงสตอรี่</span>
+    <!-- Stories Bar (Mobile) -->
+    <div class="stories-container-v3 d-lg-none" id="mobileStoriesBar">
+         <!-- Add Story Item -->
+         <div class="story-item-v3 add-story-btn" onclick="openPostModal()">
+             <div class="story-ring-v3 is-seen" style="background: rgba(255,255,255,0.08); border: 1.5px dashed rgba(255,255,255,0.25); display: flex; align-items: center; justify-content: center; color: var(--tt-p); font-size: 22px;">
+                 +
              </div>
-             <!-- Stories populated by JS via buildMobileStoriesBar() -->
-        </div>
+             <span class="story-name-v3">ลงสตอรี่</span>
+         </div>
+         <!-- Stories populated by JS via buildMobileStoriesBar() -->
+    </div>
+
+    <div class="main-app-container">
         <!-- Promotion Banner Section -->
         <section class="promo-banner-section" id="promoBannerSection">
             <div class="promo-banner-wrapper">
@@ -378,15 +865,15 @@
                 </div>
                 <div class="pc-top-center">
                     <div class="pc-nav-icons">
-                        <div class="pc-nav-icon active" data-pc-nav="home" title="หน้าหลัก"
+                        <div class="pc-nav-icon active" data-pc-nav="home" title="ดูเพลิน"
                             onclick="if(window.navigateToSPA){window.navigateToSPA('index.html'); setTimeout(()=>{if(window.pcInit) window.pcInit();}, 100);}else{setPCNav('home',this);syncPCMenu('all');if(window.pcInit) window.pcInit();}">
                             <i class="fas fa-home"></i>
-                            <span class="pc-nav-label">หน้าหลัก</span>
+                            <span class="pc-nav-label">ดูเพลิน</span>
                         </div>
-                        <div class="pc-nav-icon" data-pc-nav="near_me" title="ใกล้ฉัน"
+                        <div class="pc-nav-icon" data-pc-nav="near_me" title="ใกล้บ้าน"
                             onclick="setPCNav('near_me',this); syncPCMenu('near_me', document.querySelector('.pc-menu-card[data-pc-category=near_me]')); if(window.pcSwitchToVideoFeed){ window.pcSwitchToVideoFeed('near_me', true); }">
                             <i class="fas fa-location-arrow"></i>
-                            <span class="pc-nav-label">ใกล้ฉัน</span>
+                            <span class="pc-nav-label">ใกล้บ้าน</span>
                         </div>
                         <div class="pc-nav-icon" data-pc-nav="marketplace" title="ตลาดนัด"
                             onclick="window.navigateToSPA ? window.navigateToSPA('marketplace.html') : (window.location.href='marketplace.html')">
@@ -538,7 +1025,7 @@
                             onclick="syncPCMenu('near_me', this); if(window.pcSwitchToVideoFeed){ window.pcSwitchToVideoFeed('near_me'); } if(window.navigateToSPA){ window.navigateToSPA('index.html'); }">
                             <div class="pc-menu-card-icon" style="color: #06b6d4;"><i class="fas fa-location-arrow"></i>
                             </div>
-                            <span>ใกล้ฉัน</span>
+                            <span>ใกล้บ้าน</span>
                         </a>
                         <a href="javascript:void(0)" class="pc-menu-card" data-pc-category="community"
                             onclick="syncPCMenu('community', this); if(window.pcSwitchToVideoFeed){ window.pcSwitchToVideoFeed('community'); } if(window.navigateToSPA){ window.navigateToSPA('index.html'); }">
@@ -648,7 +1135,18 @@
 
                 <!-- Standard Content Feed (Grid/List) -->
                 <div id="standardFeed" class="standard-feed-container" style="display:none;">
-                    <div id="postsContainer" style="max-width: 680px; margin: 0 auto; padding: 20px 0;"></div>
+                    <!-- Mobile Create Post Box -->
+                    <div class="mobile-create-post-card d-lg-none" style="background: var(--surface, #1e1e1e); padding: 12px 15px; border-radius: 12px; margin: 15px 15px 5px 15px; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 12px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2);" onclick="if(typeof openPostModal === 'function') openPostModal(); else if(typeof window.openPostModal === 'function') window.openPostModal();">
+                        <img src="assets/images/logo.png" id="mobileCreateFeedAvatar" class="mobile-create-avatar" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover;">
+                        <div class="mobile-create-input-fake" style="flex: 1; background: rgba(255,255,255,0.05); padding: 10px 15px; border-radius: 20px; color: var(--gray, #9ca3af); font-size: 0.85rem;">
+                            คุณมีไอเดียอะไรอยู่ ?
+                        </div>
+                        <div style="color: #6366f1; font-size: 1.2rem; display: flex; gap: 10px;">
+                            <i class="fas fa-image"></i>
+                        </div>
+                    </div>
+
+                    <div id="postsContainer" style="max-width: 680px; margin: 0 auto; padding: 10px 0 20px 0;"></div>
                 </div>
             </main>
 
@@ -968,7 +1466,7 @@
                             </div>
                         </div>
 
-                        <!-- CREATE ZONE 2: CONTENT & AI -->
+                        <!-- CREATE ZONE 2: CONTENT -->
                         <div class="creator-section">
                             <div class="section-tag">02 - ศูนย์กลางไอเดีย</div>
 
@@ -981,30 +1479,6 @@
                                 style="font-size: 0.7rem; color: #fbbf24;">
                                 <i class="fas fa-info-circle me-1"></i> <b>กฏการใช้งาน:</b> ห้ามใช้คำหยาบคาย
                                 ห้ามเกี่ยวข้องกับสิ่งผิดกฏหมาย เพื่อความน่าเชื่อถือของข้อมูล
-                            </div>
-
-                            <div class="mt-4">
-                                <button type="button" class="ai-studio-btn w-100" id="aiAssistantBtn"
-                                    onclick="toggleAiOptions()">
-                                    <i class="fas fa-sparkles"></i>
-                                    <span>พลังขับเคลื่อน AI อัจฉริยะ</span>
-                                </button>
-
-                                <div class="ai-options mt-3" id="aiOptions"
-                                    style="display:none; grid-template-columns: repeat(3, 1fr); gap: 10px;">
-                                    <button type="button" class="ai-option-btn-pro"
-                                        onclick="aiAssist('summarize')">สรุป</button>
-                                    <button type="button" class="ai-option-btn-pro"
-                                        onclick="aiAssist('expand')">ขยายความ</button>
-                                    <button type="button" class="ai-option-btn-pro"
-                                        onclick="aiAssist('engaging')">น่าสนใจ</button>
-                                    <button type="button" class="ai-option-btn-pro"
-                                        onclick="aiAssist('professional')">ทางการ</button>
-                                    <button type="button" class="ai-option-btn-pro"
-                                        onclick="aiAssist('friendly')">เป็นกันเอง</button>
-                                    <button type="button" class="ai-option-btn-pro"
-                                        onclick="aiAssist('emoji')">เพิ่มอิโมจิ</button>
-                                </div>
                             </div>
                         </div>
 
@@ -1322,7 +1796,7 @@
             <div class="drawer-section-title">ฟีด</div>
             <a href="#" class="drawer-item" onclick="drawerSwitchTab('all');return false;">
                 <i class="fas fa-home" style="color:#f97316;"></i>
-                <span>หน้าหลัก</span>
+                <span>ดูเพลิน</span>
             </a>
             <a href="#" class="drawer-item" onclick="drawerSwitchTab('all');return false;">
                 <i class="fas fa-play-circle" style="color:#f59e0b;"></i>

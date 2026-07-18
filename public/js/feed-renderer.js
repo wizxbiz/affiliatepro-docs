@@ -33,12 +33,12 @@ const FEED_RENDERER_CONFIG = {
     ENABLE_OFFLINE_QUEUE: true,
     ENABLE_CACHE: true,
     ENABLE_VERIFICATION: true,
-    ENABLE_AI_ASSISTANT: true,
+    ENABLE_AI_ASSISTANT: false,
     
     // URLs
     // ✅ ใช้ Cloudflare Workers API แทน Cloud Function
-    R2_PRESIGN_URL: '/api/utility/r2-presigned-url',
-    AI_ASSIST_URL: 'https://aicontentassist-47mhcx3iqq-uc.a.run.app',
+    R2_PRESIGN_URL: '/api/v1/media/presign',
+    AI_ASSIST_URL: '/api/marketplace/ai-assist',
     GO_ENGINE_URL: window.location.origin.includes('localhost') 
         ? 'http://localhost:8080' 
         : (window.TUKTUK_LIFF?.apiBase || 'https://tuktuk-engine.fly.dev'),
@@ -73,8 +73,24 @@ window.FeedRenderer = window.FeedRenderer || {
     
     // State
     currentCategory: 'all',
-    currentUserId: null,
-    currentLineUserId: null,
+    _currentUserId: null,
+    _currentLineUserId: null,
+    get currentUserId() {
+        if (this._currentUserId) return this._currentUserId;
+        const user = typeof WizmobizAuth !== 'undefined' ? WizmobizAuth.getUser() : null;
+        return user?.uid || null;
+    },
+    set currentUserId(val) {
+        this._currentUserId = val;
+    },
+    get currentLineUserId() {
+        if (this._currentLineUserId) return this._currentLineUserId;
+        const user = typeof WizmobizAuth !== 'undefined' ? WizmobizAuth.getUser() : null;
+        return user?.lineUserId || null;
+    },
+    set currentLineUserId(val) {
+        this._currentLineUserId = val;
+    },
     userLikedIds: [],
     userFollowingIds: [],
     isAdmin: false,
@@ -3303,31 +3319,66 @@ function updateHeartUI(postId, liked) {
  * Share post
  */
 function sharePost(postId, title) {
-    triggerHaptic(20);
-    FeedRenderer.metrics.shares++;
+    try { triggerHaptic(20); } catch (_) {}
+    if (FeedRenderer?.metrics) FeedRenderer.metrics.shares++;
 
-    const url = `${location.origin}/?post=${postId}`;
+    // A shared link resolves via /community-share?id= → redirects to the post.
+    const url = `${location.origin}/community-share?id=${postId}`;
+    const shareData = {
+        title: title || 'TukTuk Thailand',
+        text: `${title || 'ดูโพสต์นี้บน TukTuk'} - TukTuk Community`,
+        url
+    };
 
-    // Track share count in Firestore (fire & forget)
-    if (window.db) {
-        window.db.collection(FEED_RENDERER_CONFIG.COLLECTIONS.POSTS).doc(postId).update({
-            shareCount: firebase.firestore.FieldValue.increment(1)
+    // Track share via D1 endpoint (fire & forget — no Firestore shim, which
+    // silently failed because `posts` has no share_count column).
+    try {
+        fetch(`/api/v1/posts/${postId}/view`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reason: 'share' })
         }).catch(() => {});
-    }
+    } catch (_) {}
 
-    if (navigator.share) {
-        navigator.share({
-            title: title || 'TukTuk Thailand',
-            text: `${title || ''} - TukTuk Community`,
-            url: url
-        }).catch(() => {});
-    } else {
-        navigator.clipboard.writeText(url).then(() => {
-            showToast('📋 คัดลอกลิงก์แล้ว!', 'success');
-        }).catch(() => {
-            showToast('ไม่สามารถแชร์ได้', 'error');
+    // 1) Native share sheet (mobile). Guard with canShare where available —
+    //    some in-app browsers (LINE/LIFF) expose navigator.share but reject.
+    const canNative = typeof navigator !== 'undefined' && navigator.share &&
+        (!navigator.canShare || navigator.canShare(shareData));
+    if (canNative) {
+        navigator.share(shareData).catch((err) => {
+            // AbortError = user closed the sheet (not a failure). Otherwise fall back to copy.
+            if (err && err.name !== 'AbortError') copyShareLink(url);
         });
+        return;
     }
+
+    // 2) Clipboard fallback (desktop / webviews without share)
+    copyShareLink(url);
+}
+
+// Copy a link with layered fallbacks so it never dead-ends in a webview.
+function copyShareLink(url) {
+    const done = () => { try { showToast('📋 คัดลอกลิงก์แล้ว!', 'success'); } catch (_) { alert('ลิงก์: ' + url); } };
+    if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(url).then(done).catch(() => legacyCopy(url, done));
+    } else {
+        legacyCopy(url, done);
+    }
+}
+
+function legacyCopy(text, onOk) {
+    try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;';
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        if (ok) { onOk(); return; }
+    } catch (_) {}
+    // Last resort: show the link so the user can copy manually
+    try { window.prompt('คัดลอกลิงก์นี้เพื่อแชร์:', text); } catch (_) { alert('ลิงก์: ' + text); }
 }
 
 // ================================================
@@ -3741,9 +3792,8 @@ async function uploadToR2(file, folder = 'posts', onProgress = null) {
     let lineUserId = null;
     
     try {
-        const fbUser = firebase.auth().currentUser;
-        if (fbUser) {
-            const token = await fbUser.getIdToken();
+        const token = localStorage.getItem('tuktuk_token');
+        if (token) {
             authHeaders['Authorization'] = `Bearer ${token}`;
         }
     } catch (_) {}
@@ -3751,6 +3801,9 @@ async function uploadToR2(file, folder = 'posts', onProgress = null) {
     if (!authHeaders['Authorization']) {
         const session = typeof WizmobizAuth !== 'undefined' ? WizmobizAuth.getSession() : null;
         lineUserId = session?.lineUserId || session?.uid || null;
+        if (session?.token || session?.sessionToken) {
+            authHeaders['Authorization'] = `Bearer ${session.token || session.sessionToken}`;
+        }
     }
     
     const cfRes = await fetch(FEED_RENDERER_CONFIG.R2_PRESIGN_URL, {
@@ -4114,18 +4167,19 @@ let quill;
  */
 function toggleAiOptions() {
     const options = document.getElementById('aiOptions');
-    options.style.display = options.style.display === 'none' ? 'grid' : 'none';
+    if (options) options.style.display = 'none';
 }
 
 /**
  * AI assist
  */
 async function aiAssist(mode) {
-    if (!FEED_RENDERER_CONFIG.ENABLE_AI_ASSISTANT) {
-        alert('AI Assistant is disabled');
-        return;
+    if (typeof showToast === 'function') {
+        showToast('ปิดระบบ AI Assist แล้ว', 'info');
     }
-    
+    return { success: false, disabled: true, mode };
+
+    /* Legacy implementation kept unreachable to avoid breaking old cached inline handlers.
     const btn = document.getElementById('aiAssistantBtn');
     const titleEl = document.getElementById('postTitle');
     const categoryEl = document.getElementById('postCategory');
@@ -4180,12 +4234,14 @@ async function aiAssist(mode) {
         btn.innerHTML = originalBtnText;
         btn.disabled = false;
     }
+    */
 }
 
 /**
  * Call AI Content Assist
  */
 async function callAiContentAssist(mode, title, content, category) {
+    return { success: false, disabled: true, mode, title, content, category };
     const cleanContent = content.replace(/<[^>]*>/g, '\n').replace(/\n\n+/g, '\n').trim();
     
     const response = await fetch(FEED_RENDERER_CONFIG.AI_ASSIST_URL, {

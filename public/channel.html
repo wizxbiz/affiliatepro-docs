@@ -1419,10 +1419,10 @@
             </div>
             <div class="pc-top-center">
                 <div class="pc-nav-icons">
-                    <div class="pc-nav-icon" data-pc-nav="home" title="หน้าหลัก"
+                    <div class="pc-nav-icon" data-pc-nav="home" title="ดูเพลิน"
                         onclick="_tnav('index.html')">
                         <i class="fas fa-home"></i>
-                        <span class="pc-nav-label">หน้าหลัก</span>
+                        <span class="pc-nav-label">ดูเพลิน</span>
                     </div>
                     <div class="pc-nav-icon" data-pc-nav="marketplace" title="ตลาดนัด"
                         onclick="_tnav('marketplace.html')">
@@ -1750,7 +1750,7 @@
                 <a href="/" class="setting-item">
                     <i class="fas fa-home"></i>
                     <div class="setting-info">
-                        <div class="setting-title">กลับหน้าหลัก</div>
+                        <div class="setting-title">กลับดูเพลิน</div>
                         <div class="setting-desc">ไปยังฟีดวิดีโอ TukTuk</div>
                     </div>
                 </a>
@@ -2438,7 +2438,7 @@
                     authorIds.push(lineId);
                 }
 
-                const snapshot = await db.collection('community_posts')
+                const snapshot = await db.collection('posts')
                     .where('authorId', 'in', authorIds)
                     .orderBy('createdAt', 'desc')
                     .get();
@@ -2770,7 +2770,7 @@
                         if (item.type === 'news') {
                             itemDoc = await db.collection('news_feed').doc(item.id).get();
                         } else if (item.type === 'post') {
-                            itemDoc = await db.collection('community_posts').doc(item.id).get();
+                            itemDoc = await db.collection('posts').doc(item.id).get();
                         } else if (item.type === 'product') {
                             itemDoc = await db.collection('marketplace_items').doc(item.id).get();
                         }
@@ -2872,7 +2872,7 @@
             sessionStorage.setItem(sessionViewKey, 'true');
 
             try {
-                await db.collection('community_posts').doc(postId).update({
+                await db.collection('posts').doc(postId).update({
                     views: firebase.firestore.FieldValue.increment(1)
                 });
 

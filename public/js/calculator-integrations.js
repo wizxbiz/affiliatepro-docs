@@ -12,9 +12,9 @@
 // =====================================================
 
 const CONFIG = {
-  FIREBASE_API_URL: 'https://linewebhook-47mhcx3iqq-uc.a.run.app',
+  CALCULATOR_API: '/api/calculator',
   LINE_LIFF_ID: 'YOUR_LIFF_ID', // Replace with actual LIFF ID
-  MARKETPLACE_API: 'https://marketplacegetproducts-47mhcx3iqq-uc.a.run.app',
+  MARKETPLACE_API: '/api/marketplace/products',
   VISION_AI_ENDPOINT: '/vision-analysis',
 };
 
@@ -55,11 +55,11 @@ class UserManager {
   }
 
   /**
-   * Load user data from Firebase
+   * Load user data from Cloudflare D1
    */
   async loadUserData() {
     try {
-      const response = await fetch(`${CONFIG.FIREBASE_API_URL}/getUserData`, {
+      const response = await fetch(`${CONFIG.CALCULATOR_API}/user`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({userId: this.userId}),
@@ -113,7 +113,7 @@ class UserManager {
     // Sync to server
     if (this.userId && !this.userId.startsWith('local_')) {
       try {
-        await fetch(`${CONFIG.FIREBASE_API_URL}/useTrialCredit`, {
+        await fetch(`${CONFIG.CALCULATOR_API}/trial/use`, {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({userId: this.userId}),
@@ -139,24 +139,24 @@ class UserManager {
 }
 
 // =====================================================
-// 💾 FIREBASE SYNC MANAGER
+// 💾 CLOUDFLARE SYNC MANAGER
 // =====================================================
 
 class FirebaseSync {
   /**
-   * Save calculation history to Firestore
+   * Save calculation history to Cloudflare D1
    * Falls back to localStorage if API fails
    */
   static async saveCalculation(userId, calcData) {
     // Always save to localStorage first
     this.saveToLocalStorage(calcData);
     
-    // Try to sync with Firebase (non-blocking)
+    // Try to sync with Cloudflare (non-blocking)
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
       
-      const response = await fetch(`${CONFIG.FIREBASE_API_URL}/saveCalculation`, {
+      const response = await fetch(`${CONFIG.CALCULATOR_API}/calculations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -181,7 +181,7 @@ class FirebaseSync {
       return false;
     } catch (error) {
       // Silently fail - data is already saved locally
-      console.log('Firebase sync skipped (offline or CORS):', error.message);
+      console.log('Cloudflare sync skipped (offline or CORS):', error.message);
       return false;
     }
   }
@@ -205,11 +205,11 @@ class FirebaseSync {
   }
 
   /**
-   * Load calculation history from Firestore
+   * Load calculation history from Cloudflare D1
    */
   static async loadHistory(userId, limit = 50) {
     try {
-      const response = await fetch(`${CONFIG.FIREBASE_API_URL}/getCalculationHistory`, {
+      const response = await fetch(`${CONFIG.CALCULATOR_API}/calculations/history`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({userId, limit}),
@@ -253,7 +253,8 @@ class MarketplaceIntegration {
 
       const tags = tagMapping[calcType] || [];
 
-      const response = await fetch(`${CONFIG.MARKETPLACE_API}?tags=${tags.join(',')}&limit=5`);
+      const search = encodeURIComponent(tags.join(' '));
+      const response = await fetch(`${CONFIG.MARKETPLACE_API}?search=${search}&limit=5`);
 
       const data = await response.json();
       return data.products || [];
@@ -302,7 +303,7 @@ class VisionAI {
       const formData = new FormData();
       formData.append('image', imageFile);
 
-      const response = await fetch(`${CONFIG.FIREBASE_API_URL}${CONFIG.VISION_AI_ENDPOINT}`, {
+      const response = await fetch(`${CONFIG.CALCULATOR_API}${CONFIG.VISION_AI_ENDPOINT}`, {
         method: 'POST',
         body: formData,
       });
@@ -391,7 +392,7 @@ class RealtimeSync {
    */
   static async sendToLineBot(userId, calcData) {
     try {
-      await fetch(`${CONFIG.FIREBASE_API_URL}/sendCalculationToLine`, {
+      await fetch(`${CONFIG.CALCULATOR_API}/line/send-calculation`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -431,7 +432,7 @@ class RealtimeSync {
    */
   static async exportToPDF(calcData) {
     try {
-      const response = await fetch(`${CONFIG.FIREBASE_API_URL}/generatePDF`, {
+      const response = await fetch(`${CONFIG.CALCULATOR_API}/pdf`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(calcData),

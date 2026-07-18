@@ -83,6 +83,11 @@ var WizmobizAuth = {
             sellerStatus = 'verified';
         }
 
+        // ✅ Admins are always sellers (mirror backend line-webhook.js: role === 'super_admin')
+        if (session.role === 'super_admin' || session.role === 'admin') {
+            sellerStatus = 'verified';
+        }
+
         return {
             uid: primaryUid, // Use LINE User ID if exists, otherwise fallback to uid
             lineUserId: lineUserId,
@@ -91,6 +96,7 @@ var WizmobizAuth = {
             pictureUrl: session.pictureUrl || session.photoURL || session.picture || session.avatar,
             isPremium: session.isPremium === true || session.subscriptionType === 'premium' || session.role === 'premium',
             sellerStatus: sellerStatus,
+            role: session.role || 'user',
             provider: session.provider || (session.lineUserId ? 'line' : 'unknown'),
             loginAt: session.loginAt || new Date().toISOString()
         };
@@ -813,7 +819,7 @@ var WizmobizAuth = {
         }
 
         const userId = user.uid; // lineUserId or Firebase UID
-        const API_BASE = 'https://us-central1-appinjproject.cloudfunctions.net';
+        const API_BASE = '';
         console.log('🔍 [V1.0.6] Checking shop access for:', user.displayName, 'ID:', userId, 'Status:', user.sellerStatus);
 
         // Try to refresh status from Firestore or API if not verified locally
@@ -822,11 +828,21 @@ var WizmobizAuth = {
 
             let isVerified = false;
 
-            // 1. Try Firestore first (if available and not already verified)
-            if (typeof db !== 'undefined' && !isVerified) {
+            // 1. Try the D1 shim (via db.collection) — skip entirely if storage is
+            //    blocked by Tracking Prevention (Edge/Safari), which makes all db
+            //    reads fail with 401 Unauthorized before even reaching the server.
+            let storageAvailable = false;
+            try {
+                localStorage.getItem('__tp_test__');
+                storageAvailable = true;
+            } catch (_) {
+                console.warn('⚠️ localStorage blocked (Tracking Prevention) — skipping Firestore, using API fallback');
+            }
+
+            if (storageAvailable && typeof db !== 'undefined' && !isVerified) {
                 try {
-                    console.log('📡 Fetching status from Firestore...');
-                    // 1.1 Check primary users collection
+                    console.log('📡 Fetching seller status from users collection...');
+                    // 1.1 Check primary users collection by document ID
                     const userDoc = await db.collection('users').doc(userId).get();
                     if (userDoc.exists) {
                         const data = userDoc.data();
@@ -848,28 +864,10 @@ var WizmobizAuth = {
                             }
                         }
                     }
-
-                    // 1.3 Check seller_profiles collection (sellers registered via Flutter app)
-                    // seller_profiles uses lineUserId as doc ID
-                    if (!isVerified) {
-                        const lookupId = user.lineUserId || userId;
-                        const profileDoc = await db.collection('seller_profiles').doc(lookupId).get();
-                        if (profileDoc.exists) {
-                            const data = profileDoc.data();
-                            const plan = data.subscriptionPlan || {};
-                            if (
-                                data.sellerStatus === 'verified' ||
-                                plan.paymentStatus === 'active' ||
-                                plan.tier === 'trial' ||
-                                plan.tier === 'starter'
-                            ) {
-                                isVerified = true;
-                                console.log('✅ Verified via seller_profiles:', lookupId);
-                            }
-                        }
-                    }
+                    // Note: seller_profiles is not queried here — that collection is not
+                    // registered in the D1 shim allowlist. All seller data lives in `users`.
                 } catch (e) {
-                    console.warn('⚠️ Firestore error (Offline or Permission):', e.message);
+                    console.warn('⚠️ Firestore/DB error (Offline or Permission):', e.message);
                 }
             }
 
@@ -877,9 +875,21 @@ var WizmobizAuth = {
             if (!isVerified) {
                 try {
                     console.log('🌐 Attempting API fallback for status check...');
+                    const statusToken = localStorage.getItem('tuktuk_jwt') ||
+                        localStorage.getItem('tuktuk_token') ||
+                        (() => {
+                            try {
+                                const keys = [this.SESSION_KEY, 'tuktuk_line_session', 'wizmobiz_session', 'wit_line_session'];
+                                for (const key of keys) {
+                                    const session = JSON.parse(localStorage.getItem(key) || 'null');
+                                    if (session?.token || session?.sessionToken) return session.token || session.sessionToken;
+                                }
+                            } catch (_) {}
+                            return null;
+                        })();
                     const response = await fetch(`${API_BASE}/marketplaceLineAuth`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 'Content-Type': 'application/json', ...(statusToken ? { Authorization: `Bearer ${statusToken}` } : {}) },
                         body: JSON.stringify({ lineUserId: user.lineUserId || userId })
                     });
                     const result = await response.json();
@@ -918,25 +928,21 @@ var WizmobizAuth = {
             }
         }
 
-        // Final decision
-        if (user.sellerStatus === 'verified') {
-            const defaultTarget = window.location.hostname === 'localhost' || window.location.pathname.includes('.html')
-                ? 'seller-dashboard.html'
-                : 'seller-dashboard';
+        // Final decision: ALL logged-in users can access the shop. 
+        // Verification is an optional upgrade inside the dashboard.
+        const defaultTarget = window.location.hostname === 'localhost' || window.location.pathname.includes('.html')
+            ? 'seller-dashboard.html'
+            : 'seller-dashboard';
 
-            const target = destination || defaultTarget;
-            console.log('🚀 Redirecting to:', target);
-            // SPA-aware navigation: if inside iframe, tell parent to navigate
-            if (window.self !== window.top) {
-                window.top.postMessage({ type: 'NAVIGATE', href: target }, window.location.origin);
-            } else if (typeof window.navigateToSPA === 'function') {
-                window.navigateToSPA(target);
-            } else {
-                window.location.href = target;
-            }
+        const target = destination || defaultTarget;
+        console.log('🚀 Redirecting to:', target);
+        // SPA-aware navigation: if inside iframe, tell parent to navigate
+        if (window.self !== window.top) {
+            window.top.postMessage({ type: 'NAVIGATE', href: target }, window.location.origin);
+        } else if (typeof window.navigateToSPA === 'function') {
+            window.navigateToSPA(target);
         } else {
-            console.log('🔓 Showing verification modal');
-            this.showVerificationModal();
+            window.location.href = target;
         }
     },
 
@@ -1009,37 +1015,125 @@ var WizmobizAuth = {
                     </div>
 
                     <div class="auth-modal-buttons" style="display: flex; flex-direction: column; gap: 15px;">
-                        <button onclick="WizmobizAuth.initLineLink()" class="auth-btn auth-btn-line" style="background: #00B900; color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 700; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                            <i class="fab fa-line"></i> เชื่อมต่อ LINE ทันที
-                        </button>
-                        <a href="https://lin.ee/1YJsw47" target="_blank" style="color: #666; font-size: 0.9rem; text-decoration: underline;">สอบถามขั้นตอนการยืนยัน</a>
+                        <div id="sellerVerifyStep1">
+                            <button onclick="WizmobizAuth.showLineOaInput()" class="auth-btn auth-btn-line" style="width: 100%; background: #00B900; color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 700; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                                <i class="fab fa-line"></i> เชื่อมต่อ LINE ทันที
+                            </button>
+                        </div>
+                        <div id="sellerVerifyStep2" style="display: none; text-align: left;">
+                            <label style="font-size: 0.85rem; color: #666; margin-bottom: 6px; display: block;">ระบุ LINE OA ID ของร้านค้า (เช่น @tuktukshop)</label>
+                            <input type="text" id="sellerLineOaInput" placeholder="@yourshop" style="width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #ddd; margin-bottom: 12px; font-size: 1rem;">
+                            <button onclick="WizmobizAuth.submitLineLink()" id="sellerVerifySubmitBtn" class="auth-btn" style="width: 100%; background: #059669; color: white; border: none; padding: 16px; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer;">
+                                ยืนยันตัวตน
+                            </button>
+                            <div id="sellerVerifyError" style="color: #dc2626; font-size: 0.85rem; margin-top: 10px; display: none;"></div>
+                        </div>
+                        <a href="javascript:void(0)" onclick="window.open('https://lin.ee/1YJsw47', '_blank'); return false;" style="color: #666; font-size: 0.9rem; text-decoration: underline; cursor: pointer;">สอบถามขั้นตอนการยืนยัน</a>
                     </div>
                 </div>
             </div>
         `;
     },
 
-    // Initialize LINE Linking Flow
-    async initLineLink() {
+    // Step 1 → Step 2: reveal LINE OA ID input inside the verify modal
+    showLineOaInput() {
         const user = this.getUser();
         if (!user) {
             this.showLoginModal('ยืนยันตัวตน');
             return;
         }
 
-        // Store target UID in session for linking back after redirect
-        sessionStorage.setItem('linking_uid', user.uid);
+        const isLineLinked = user.provider === 'line' || !!user.lineUserId;
+        if (!isLineLinked) {
+            alert("ระบบกำลังพาทุกท่านไปยังหน้าเข้าสู่ระบบ LINE เพื่อยืนยันตัวตน...");
+            const currentPath = window.location.pathname + window.location.search;
+            const redirectUrl = currentPath.includes('seller-dashboard') ? '/seller-dashboard.html?action=verify_seller' : currentPath;
+            window.location.href = '/login.html?mode=line_verify&redirectUrl=' + encodeURIComponent(redirectUrl);
+            return;
+        }
 
-        // Redirect to line login mock (or real one if configured)
-        // In real app: window.location.href = `https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=YOUR_CLIENT_ID&redirect_uri=YOUR_REDIRECT_URI&state=${user.uid}&scope=profile%20openid`;
+        const step1 = document.getElementById('sellerVerifyStep1');
+        const step2 = document.getElementById('sellerVerifyStep2');
+        if (step1) step1.style.display = 'none';
+        if (step2) step2.style.display = 'block';
+        const input = document.getElementById('sellerLineOaInput');
+        if (input) input.focus();
+    },
 
-        // For demonstration, we'll simulate the successful link
-        console.log('🔗 Initiating LINE Linking for:', user.uid);
+    // Step 2: submit LINE OA ID to the real verification API
+    async submitLineLink() {
+        const user = this.getUser();
+        if (!user) {
+            this.showLoginModal('ยืนยันตัวตน');
+            return;
+        }
 
-        alert('ระบบกำลังนำคุณไปยังหน้าเข้าสู่ระบบ LINE เพื่อยืนยันตัวตน...');
+        const input = document.getElementById('sellerLineOaInput');
+        const errEl = document.getElementById('sellerVerifyError');
+        const btn = document.getElementById('sellerVerifySubmitBtn');
+        const showErr = (msg) => {
+            if (errEl) { errEl.textContent = msg; errEl.style.display = 'block'; }
+            else { this._notify(msg, 'error'); }
+        };
 
-        // Redirecting to the login page with a specific mode could be one way
-        window.location.href = 'login.html?mode=line_verify&uid=' + user.uid;
+        let lineOaId = (input?.value || '').trim();
+        if (!lineOaId) { showErr('กรุณาระบุ LINE OA ID'); return; }
+        if (!lineOaId.startsWith('@')) lineOaId = '@' + lineOaId;
+
+        const token = localStorage.getItem('tuktuk_session_token') ||
+            localStorage.getItem('tuktuk_jwt') ||
+            localStorage.getItem('tuktuk_token');
+        if (!token) { showErr('ไม่พบ session — กรุณาเข้าสู่ระบบใหม่'); return; }
+
+        if (errEl) errEl.style.display = 'none';
+        const originalText = btn ? btn.innerHTML : '';
+        if (btn) { btn.innerHTML = 'กำลังตรวจสอบ...'; btn.disabled = true; }
+
+        try {
+            const res = await fetch('/api/auth/seller/verify', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ lineOaId }),
+            });
+            const data = await res.json();
+            if (!res.ok || !data.success) {
+                throw new Error(data.error || 'ยืนยันไม่สำเร็จ');
+            }
+
+            // Persist new verified session across all known keys
+            if (data.token) {
+                localStorage.setItem('tuktuk_session_token', data.token);
+            }
+            this._markSessionVerified(user, data.user);
+            this._notify('ยืนยันตัวตนสำเร็จ! ร้านค้าของคุณได้รับตราสัญลักษณ์สีทองแล้ว', 'success');
+
+            // Close modal then route to shop
+            const modal = document.getElementById('sellerVerifyModal');
+            if (modal) modal.innerHTML = '';
+            this.handleShopAccess();
+        } catch (err) {
+            showErr(err.message || 'เกิดข้อผิดพลาด');
+        } finally {
+            if (btn) { btn.innerHTML = originalText; btn.disabled = false; }
+        }
+    },
+
+    // Write sellerStatus: 'verified' back into every stored session key
+    _markSessionVerified(user, apiUser) {
+        const keys = [this.SESSION_KEY, 'tuktuk_line_session', 'wizmobiz_session', 'wit_line_session'];
+        keys.forEach(key => {
+            const raw = localStorage.getItem(key);
+            if (!raw) return;
+            try {
+                const session = JSON.parse(raw);
+                session.sellerStatus = 'verified';
+                if (apiUser && apiUser.token) session.token = apiUser.token;
+                localStorage.setItem(key, JSON.stringify(session));
+            } catch (_) {}
+        });
     },
 
     initHeaderUI(containerId = 'userBadgeContainer') {

@@ -8,20 +8,22 @@ window.uploadedYoutubeUrl = '';
 async function uploadToR2(file, folder = 'posts', onProgress = null) {
     const contentType = file.type || 'video/mp4';
     const safeFilename = file.name.replace(/\s+/g, '_');
-    const R2_PRESIGN_URL = 'https://us-central1-appinjproject.cloudfunctions.net/r2PresignedUrl';
+    const R2_PRESIGN_URL = '/api/v1/media/presign';
 
     let authHeaders = {};
     let lineUserId = null;
     try {
-        const fbUser = firebase.auth().currentUser;
-        if (fbUser) {
-            const token = await fbUser.getIdToken();
+        const token = localStorage.getItem('tuktuk_token');
+        if (token) {
             authHeaders['Authorization'] = `Bearer ${token}`;
         }
     } catch (_) { }
     if (!authHeaders['Authorization']) {
         const session = typeof WizmobizAuth !== 'undefined' ? WizmobizAuth.getSession() : null;
         lineUserId = session?.lineUserId || session?.uid || null;
+        if (session?.token || session?.sessionToken) {
+            authHeaders['Authorization'] = `Bearer ${session.token || session.sessionToken}`;
+        }
     }
 
     const cfRes = await fetch(R2_PRESIGN_URL, {
@@ -223,6 +225,11 @@ function dataURLtoBlob(dataurl) {
 }
 
 async function aiAssist(mode) {
+    if (typeof showToast === 'function') {
+        showToast('ปิดระบบ AI Assist แล้ว', 'info');
+    }
+    return { success: false, disabled: true, mode };
+
     const btn = document.getElementById('aiAssistantBtn');
     const titleEl = document.getElementById('postTitle');
     const categoryEl = document.getElementById('postCategory');
@@ -241,7 +248,7 @@ async function aiAssist(mode) {
 
     try {
         const cleanContent = content.replace(/<[^>]*>/g, '\n').trim();
-        const API_URL = 'https://aicontentassist-47mhcx3iqq-uc.a.run.app';
+        const API_URL = '/api/marketplace/ai-assist';
         const response = await fetch(API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -322,7 +329,7 @@ function resetUploadAreaMulti() {
 
 function toggleAiOptions() {
     const options = document.getElementById('aiOptions');
-    if (options) options.style.display = options.style.display === 'none' ? 'grid' : 'none';
+    if (options) options.style.display = 'none';
 }
 
 function getCurrentLocation(event) {

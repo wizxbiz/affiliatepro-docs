@@ -68,20 +68,49 @@
     }
 
     // Store session from LIFF profile
-    function storeSession(profile, lineToken) {
+    async function storeSession(profile, lineToken) {
+        let token = null;
+        try {
+            const API_BASE = (location.protocol === 'file:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+                ? 'https://tuktukfeed-api.imtthailand2019.workers.dev'
+                : '';
+            const r = await fetch(`${API_BASE}/api/auth/marketplace-line-auth`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    accessToken: lineToken,
+                    lineUserId: profile.userId,
+                    displayName: profile.displayName,
+                    pictureUrl: profile.pictureUrl || ''
+                })
+            });
+            const d = await r.json();
+            if (d.success && d.token) {
+                token = d.token;
+            }
+        } catch (e) {
+            console.error('[LiffAutoLogin] Token exchange failed:', e);
+        }
+
         const session = {
             lineUserId:  profile.userId,
+            uid:         profile.userId, // Ensure uid property exists
             displayName: profile.displayName,
             pictureUrl:  profile.pictureUrl || null,
             provider:    'liff',
             loginAt:     new Date().toISOString(),
             expiresAt:   Date.now() + TTL_MS,
             liffToken:   lineToken || null,
+            token:       token,
         };
         localStorage.setItem('wizmobiz_session', JSON.stringify(session));
         localStorage.setItem('tuktuk_line_session', JSON.stringify(session));
+        if (token) {
+            localStorage.setItem('tuktuk_jwt', token);
+            localStorage.setItem('tuktuk_token', token);
+        }
         sessionStorage.removeItem('_auth_redirect_in_progress');
-        console.log('[LiffAutoLogin] Session stored for', profile.displayName);
+        console.log('[LiffAutoLogin] Session stored for', profile.displayName, token ? 'with JWT' : 'without JWT');
         // Notify app that auth state changed
         window.dispatchEvent(new CustomEvent('tuktuk:autologin', { detail: session }));
     }
@@ -107,7 +136,7 @@
 
             const profile = await liff.getProfile();
             const lineToken = liff.getAccessToken();
-            storeSession(profile, lineToken);
+            await storeSession(profile, lineToken);
 
             // Optionally sync with Firestore (fire-and-forget)
             syncWithFirestore(profile).catch(() => {});
