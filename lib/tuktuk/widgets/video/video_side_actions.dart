@@ -118,7 +118,7 @@ class VideoSideActions extends StatelessWidget {
             // Like Button with real-time count
             StreamBuilder<DocumentSnapshot>(
               stream: FirebaseFirestore.instance
-                  .collection(postData['originCollection'] ?? 'community_posts')
+                  .collection(postData['originCollection'] ?? 'posts')
                   .doc(postData['id']?.toString())
                   .snapshots(),
               builder: (context, snapshot) {
@@ -178,7 +178,7 @@ class VideoSideActions extends StatelessWidget {
             // Comment Button
             StreamBuilder<DocumentSnapshot>(
               stream: FirebaseFirestore.instance
-                  .collection(postData['originCollection'] ?? 'community_posts')
+                  .collection(postData['originCollection'] ?? 'posts')
                   .doc(postData['id']?.toString())
                   .snapshots(),
               builder: (context, snapshot) {
@@ -202,7 +202,7 @@ class VideoSideActions extends StatelessWidget {
                       builder: (context) => CommentsSheet(
                         postId: postId,
                         collection:
-                            postData['originCollection'] ?? 'community_posts',
+                            postData['originCollection'] ?? 'posts',
                       ),
                     );
                   },

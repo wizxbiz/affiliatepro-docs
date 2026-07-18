@@ -10,7 +10,7 @@ class PollWidget extends StatefulWidget {
   const PollWidget({
     super.key,
     required this.postId,
-    this.collection = 'community_posts',
+    this.collection = 'posts',
     required this.pollData,
   });
 

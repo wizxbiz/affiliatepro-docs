@@ -156,7 +156,7 @@ class _CareerHubViewState extends State<CareerHubView> {
 
   Future<_LiveStats> _fetchCommunityStats() async {
     final snap = await FirebaseFirestore.instance
-        .collection('community_posts')
+        .collection('posts')
         .count()
         .get()
         .timeout(const Duration(seconds: 6));
@@ -166,7 +166,7 @@ class _CareerHubViewState extends State<CareerHubView> {
 
   Future<_LiveStats> _fetchProServiceStats() async {
     final snap = await FirebaseFirestore.instance
-        .collection('community_posts')
+        .collection('posts')
         .where('category', isEqualTo: 'eco_pros')
         .count()
         .get()

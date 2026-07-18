@@ -11,7 +11,6 @@ import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
@@ -96,6 +95,8 @@ class TukTukBridge {
   static const Duration CACHE_DURATION = Duration(minutes: 5);
   static const Duration CIRCUIT_BREAKER_TIMEOUT = Duration(minutes: 1);
   static const int CIRCUIT_BREAKER_THRESHOLD = 5;
+  static const String VERIFY_PIN_URL =
+      'https://tuktukfeed-api.imtthailand2019.workers.dev/api/auth/verify-pin';
 
   // ============================================================
   // DEPENDENCIES
@@ -172,8 +173,8 @@ class TukTukBridge {
   // INITIALIZATION
   // ============================================================
   Future<void> _initSdks() async {
-    // Redundant setup removed; main() now handles unified LineSDK setup from .env
-    // await LineSDK.instance.setup(dotenv.get('LINE_CHANNEL_ID', fallback: "2009082166"));
+    // Redundant setup removed; main() handles unified LineSDK setup.
+    // await LineSDK.instance.setup("2009159046");
 
     // Warm memory cache from disk (fire & forget — does not block startup)
     warmCacheFromDisk().ignore();
@@ -594,12 +595,9 @@ class TukTukBridge {
     return _withCircuitBreaker('verify_pin', () async {
       try {
         final deviceId = await _getDeviceId();
-        final functionUrl = dotenv.get('FIREBASE_FUNCTION_URL',
-            fallback:
-                'https://tuktukfeed-api.imtthailand2019.workers.dev/api/auth/verify-pin');
         final response = await http
             .post(
-              Uri.parse(functionUrl),
+              Uri.parse(VERIFY_PIN_URL),
               headers: {'Content-Type': 'application/json'},
               body: json.encode({'pin': pin, 'deviceId': deviceId}),
             )
@@ -1278,7 +1276,7 @@ class TukTukBridge {
 
     return _withCircuitBreaker('create_post', () async {
       try {
-        final docRef = await _firestore.collection('community_posts').add({
+        final docRef = await _firestore.collection('posts').add({
           ...postData,
           'authorId': user['uid'],
           'authorName': user['displayName'],
@@ -1309,7 +1307,7 @@ class TukTukBridge {
   }) async {
     return _withCircuitBreaker('delete_post', () async {
       try {
-        await _firestore.collection('community_posts').doc(postId).delete();
+        await _firestore.collection('posts').doc(postId).delete();
 
         if (mediaUrls != null && mediaUrls.isNotEmpty) {
           for (final url in mediaUrls) {
@@ -1336,7 +1334,7 @@ class TukTukBridge {
   ) async {
     return _withCircuitBreaker('update_post', () async {
       try {
-        await _firestore.collection('community_posts').doc(postId).update({
+        await _firestore.collection('posts').doc(postId).update({
           ...updates,
           'updatedAt': FieldValue.serverTimestamp(),
         });
@@ -1565,7 +1563,7 @@ class TukTukBridge {
       final callable = _functions.httpsCallable('awardPoints');
       final result = await callable.call<Map<String, dynamic>>({
         'missionType': type,
-        'refId':       refId,
+        'refId': refId,
         'description': description ?? _getPointsMessage(type),
       });
       final data = result.data;
@@ -1739,7 +1737,7 @@ class TukTukBridge {
   Future<List<Map<String, dynamic>>> searchCommunityPosts(String query) async {
     try {
       final snapshot = await _firestore
-          .collection('community_posts')
+          .collection('posts')
           .where('description', isGreaterThanOrEqualTo: query)
           .where('description', isLessThanOrEqualTo: '$query\uf8ff')
           .limit(20)
@@ -1842,7 +1840,7 @@ class TukTukBridge {
       final name = product['productName'] ?? product['name'] ?? 'สินค้า';
       final price = product['price'] ?? 0;
       final productId = product['id'] ?? 'unknown';
-      final shareUrl = 'https://tuktuk-app.web.app/product.html?id=$productId';
+      final shareUrl = 'https://tuktukfeed.com/product.html?id=$productId';
 
       final message = '🛒 เช็คสินค้านี้บน TukTuk Marketplace!\n'
           '🔥 $name\n'
@@ -2362,7 +2360,7 @@ class TukTukBridge {
     String? category,
     String? authorId,
   }) {
-    Query query = _firestore.collection('community_posts');
+    Query query = _firestore.collection('posts');
 
     if (category != null && category.isNotEmpty) {
       query = query.where('category', isEqualTo: category);

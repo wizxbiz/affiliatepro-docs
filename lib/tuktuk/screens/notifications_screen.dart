@@ -1172,7 +1172,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     final type = note['type'];
     final senderId = note['senderId'];
     final relatedId = note['relatedId'];
-    final relatedCollection = note['relatedCollection'] ?? 'community_posts';
+    final relatedCollection = note['relatedCollection'] ?? 'posts';
 
     if (type == 'follow' && senderId != null) {
       Navigator.push(

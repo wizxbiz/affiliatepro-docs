@@ -10,7 +10,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -27,19 +26,8 @@ void main() {
     debugPrint('Starting app within zone...');
     WidgetsFlutterBinding.ensureInitialized();
 
-    // 🛡️ Load environment variables
-    try {
-      await dotenv.load(fileName: ".env");
-      debugPrint('Environment variables loaded.');
-    } catch (e) {
-      debugPrint('Warning: .env file not found or failed to load: $e');
-    }
-
-    // Unify LINE Channel ID from .env or dart-define
-    final String finalLineId =
-        dotenv.get('LINE_CHANNEL_ID', fallback: _lineChannelId);
-
-    // Initialize LINE SDK (must run before any login() call)
+    // Initialize LINE SDK from dart-define/default before any login() call.
+    final String finalLineId = _lineChannelId;
     try {
       await LineSDK.instance.setup(finalLineId);
       debugPrint('LINE SDK initialized with channel: $finalLineId');

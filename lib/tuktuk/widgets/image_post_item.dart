@@ -74,7 +74,7 @@ class _ImagePostItemState extends State<ImagePostItem>
       final postId = widget.postData['id']?.toString();
       if (postId != null) {
         final collectionName =
-            widget.postData['originCollection'] ?? 'community_posts';
+            widget.postData['originCollection'] ?? 'posts';
         TukTukBridge().trackView(postId, collectionName);
         _viewTracked = true;
       }
@@ -139,7 +139,7 @@ class _ImagePostItemState extends State<ImagePostItem>
     // Check if liked
     final postId = widget.postData['id']?.toString() ?? '';
     final collectionName =
-        widget.postData['originCollection'] ?? 'community_posts';
+        widget.postData['originCollection'] ?? 'posts';
     if (postId.isNotEmpty) {
       final liked = await TukTukBridge().hasLiked(postId, collectionName);
       if (mounted) setState(() => _isLiked = liked);
@@ -151,7 +151,7 @@ class _ImagePostItemState extends State<ImagePostItem>
     if (postId == null) return;
 
     final collectionName =
-        widget.postData['originCollection'] ?? 'community_posts';
+        widget.postData['originCollection'] ?? 'posts';
 
     // Optimistic UI update
     setState(() => _isLiked = !_isLiked);
@@ -591,7 +591,7 @@ class _ImagePostItemState extends State<ImagePostItem>
         StreamBuilder<DocumentSnapshot>(
           stream: FirebaseFirestore.instance
               .collection(
-                widget.postData['originCollection'] ?? 'community_posts',
+                widget.postData['originCollection'] ?? 'posts',
               )
               .doc(widget.postData['id']?.toString())
               .snapshots(),
@@ -615,7 +615,7 @@ class _ImagePostItemState extends State<ImagePostItem>
         StreamBuilder<DocumentSnapshot>(
           stream: FirebaseFirestore.instance
               .collection(
-                widget.postData['originCollection'] ?? 'community_posts',
+                widget.postData['originCollection'] ?? 'posts',
               )
               .doc(widget.postData['id']?.toString())
               .snapshots(),
@@ -639,7 +639,7 @@ class _ImagePostItemState extends State<ImagePostItem>
                   return;
                 }
                 final collectionName =
-                    widget.postData['originCollection'] ?? 'community_posts';
+                    widget.postData['originCollection'] ?? 'posts';
                 showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,

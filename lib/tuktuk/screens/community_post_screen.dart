@@ -482,7 +482,7 @@ class _CommunityPostScreenState extends State<CommunityPostScreen>
       }
 
       await FirebaseFirestore.instance
-          .collection('community_posts')
+          .collection('posts')
           .add(postData);
 
       if (_currentLocation != null) {

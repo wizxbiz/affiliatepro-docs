@@ -281,7 +281,7 @@ class _TukTukFeedScreenState extends State<TukTukFeedScreen>
 
     // Listen for the very latest post to know if we should show "New Post" indicator
     _realtimeSubscription = FirebaseFirestore.instance
-        .collection('community_posts')
+        .collection('posts')
         .orderBy('createdAt', descending: true)
         .limit(1)
         .snapshots()
@@ -444,7 +444,7 @@ class _TukTukFeedScreenState extends State<TukTukFeedScreen>
     if (isRefresh && state.items.isEmpty && targetTabIndex == 0) {
       try {
         final cacheSnap = await FirebaseFirestore.instance
-            .collection('community_posts')
+            .collection('posts')
             .where('status', isEqualTo: 'active')
             .orderBy('createdAt', descending: true)
             .limit(20)
@@ -545,7 +545,7 @@ class _TukTukFeedScreenState extends State<TukTukFeedScreen>
                 .timeout(const Duration(seconds: 3), onTimeout: () => []);
             if (goPosts.isNotEmpty) {
               finalPosts = goPosts
-                  .map((m) => TukTukItem.fromMap(m, 'community_posts'))
+                  .map((m) => TukTukItem.fromMap(m, 'posts'))
                   .toList();
               usedGo = true;
               debugPrint('🚀 Go Engine: For You Powered');
@@ -572,7 +572,7 @@ class _TukTukFeedScreenState extends State<TukTukFeedScreen>
 
               // Also find community posts in this province
               Query cq = FirebaseFirestore.instance
-                  .collection('community_posts')
+                  .collection('posts')
                   .where('province', isEqualTo: _selectedProvince)
                   .orderBy('createdAt', descending: true)
                   .limit(15);
@@ -594,7 +594,7 @@ class _TukTukFeedScreenState extends State<TukTukFeedScreen>
                     .timeout(const Duration(seconds: 3), onTimeout: () => []);
                 if (goTrending.isNotEmpty) {
                   finalPosts = goTrending
-                      .map((m) => TukTukItem.fromMap(m, 'community_posts'))
+                      .map((m) => TukTukItem.fromMap(m, 'posts'))
                       .toList();
                   debugPrint(
                     '🔥 Go Engine: Nearby had no results, fallback to Trending',
@@ -608,7 +608,7 @@ class _TukTukFeedScreenState extends State<TukTukFeedScreen>
                   .timeout(const Duration(seconds: 3), onTimeout: () => []);
               if (goTrending.isNotEmpty) {
                 finalPosts = goTrending
-                    .map((m) => TukTukItem.fromMap(m, 'community_posts'))
+                    .map((m) => TukTukItem.fromMap(m, 'posts'))
                     .toList();
                 usedGo = true;
                 debugPrint(
@@ -626,7 +626,7 @@ class _TukTukFeedScreenState extends State<TukTukFeedScreen>
       if (!usedGo) {
         if (targetTabIndex == 0) {
           Query q = FirebaseFirestore.instance
-              .collection('community_posts')
+              .collection('posts')
               .where('status', isEqualTo: 'active')
               .orderBy('createdAt', descending: true)
               .limit(20);

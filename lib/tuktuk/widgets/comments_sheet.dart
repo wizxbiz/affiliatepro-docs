@@ -6,12 +6,12 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class CommentsSheet extends StatefulWidget {
   final String postId;
-  final String collection; // 'community_posts' or 'posts'
+  final String collection; // 'posts' or 'posts'
 
   const CommentsSheet({
     super.key,
     required this.postId,
-    this.collection = 'community_posts',
+    this.collection = 'posts',
   });
 
   @override

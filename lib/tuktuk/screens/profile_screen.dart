@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -473,7 +474,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       final distinctIds = idList.toSet().toList();
 
       var querySnapshot = await FirebaseFirestore.instance
-          .collection('community_posts')
+          .collection('posts')
           .where('authorId', whereIn: distinctIds)
           .orderBy('createdAt', descending: true)
           .limit(50)
@@ -481,7 +482,7 @@ class _ProfileScreenState extends State<ProfileScreen>
 
       if (querySnapshot.docs.isEmpty) {
         querySnapshot = await FirebaseFirestore.instance
-            .collection('community_posts')
+            .collection('posts')
             .where('authorId', whereIn: distinctIds)
             .limit(50)
             .get();
@@ -757,6 +758,28 @@ class _ProfileScreenState extends State<ProfileScreen>
             )
           : null,
       actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 8, top: 8),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.3),
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              icon: const Icon(
+                Icons.support_agent_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
+              onPressed: () async {
+                final url = Uri.parse('https://line.me/R/ti/p/@tuktukfeed');
+                if (await canLaunchUrl(url)) {
+                  await launchUrl(url, mode: LaunchMode.externalApplication);
+                }
+              },
+            ),
+          ),
+        ),
         Padding(
           padding: const EdgeInsets.only(right: 16, top: 8),
           child: Container(

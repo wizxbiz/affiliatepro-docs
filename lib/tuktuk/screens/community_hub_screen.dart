@@ -41,7 +41,7 @@ class _CommunityHubScreenState extends State<CommunityHubScreen> {
 
     try {
       Query q = FirebaseFirestore.instance
-          .collection('community_posts')
+          .collection('posts')
           .orderBy('createdAt', descending: true)
           .limit(20);
 

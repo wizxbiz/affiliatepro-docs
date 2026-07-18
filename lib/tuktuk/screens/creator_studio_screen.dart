@@ -65,14 +65,14 @@ class _CreatorStudioScreenState extends State<CreatorStudioScreen> {
       final distinctIds = idList.toSet().toList();
 
       var snapshot = await FirebaseFirestore.instance
-          .collection('community_posts')
+          .collection('posts')
           .where('authorId', whereIn: distinctIds)
           .orderBy('createdAt', descending: true)
           .get();
 
       if (snapshot.docs.isEmpty) {
         snapshot = await FirebaseFirestore.instance
-            .collection('community_posts')
+            .collection('posts')
             .where('authorId', whereIn: distinctIds)
             .get();
       }

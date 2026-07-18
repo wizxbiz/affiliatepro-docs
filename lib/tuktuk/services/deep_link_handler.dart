@@ -1,5 +1,6 @@
 import 'package:caculateapp/tuktuk/screens/profile_screen.dart';
 import 'package:caculateapp/tuktuk/screens/video_viewer_screen.dart';
+import 'package:caculateapp/tuktuk/screens/product_detail_screen.dart';
 import 'package:flutter/material.dart';
 
 /// Service สำหรับจัดการ Deep Links ของ TukTuk
@@ -35,6 +36,15 @@ class TukTukDeepLinkHandler {
       final postId = _extractPostId(uri);
       if (postId != null && postId.isNotEmpty) {
         _navigateToVideo(context, postId);
+        return true;
+      }
+    }
+
+    // 3. Handle marketplace product links
+    if (_isProductLink(uri)) {
+      final productId = _extractProductId(uri);
+      if (productId != null && productId.isNotEmpty) {
+        _navigateToProduct(context, productId);
         return true;
       }
     }
@@ -157,6 +167,54 @@ class TukTukDeepLinkHandler {
   }
 
   // ============================================================
+  // PRODUCT DEEP LINK
+  // ============================================================
+
+  /// ตรวจสอบว่าเป็นลิงก์สินค้าหรือไม่
+  bool _isProductLink(Uri uri) {
+    if ((uri.host == 'wizmobiz.com' || uri.host == 'tuktukfeed.com') &&
+        uri.path.contains('market')) {
+      return true;
+    }
+    if (uri.scheme == 'tuktuk' &&
+        uri.pathSegments.isNotEmpty &&
+        uri.pathSegments[0] == 'market') {
+      return true;
+    }
+    if (uri.queryParameters.containsKey('product') ||
+        uri.queryParameters.containsKey('productId')) {
+      return true;
+    }
+    return false;
+  }
+
+  /// ดึง productId จาก URI
+  String? _extractProductId(Uri uri) {
+    if (uri.pathSegments.length >= 3 &&
+        uri.pathSegments[0] == 'tuktuk' &&
+        uri.pathSegments[1] == 'market') {
+      return uri.pathSegments[2];
+    }
+    if (uri.scheme == 'tuktuk' &&
+        uri.pathSegments.isNotEmpty &&
+        uri.pathSegments[0] == 'market' &&
+        uri.pathSegments.length >= 2) {
+      return uri.pathSegments[1];
+    }
+    return uri.queryParameters['product'] ?? uri.queryParameters['productId'];
+  }
+
+  /// นำทางไปยังหน้าดูสินค้า
+  void _navigateToProduct(BuildContext context, String productId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProductDetailScreen(productId: productId),
+      ),
+    );
+  }
+
+  // ============================================================
   // CONVENIENCE METHODS
   // ============================================================
 
@@ -205,5 +263,10 @@ class TukTukDeepLinkHandler {
   /// สร้าง deep link สำหรับวิดีโอ
   static String buildVideoLink(String postId) {
     return 'tuktuk://video/$postId';
+  }
+
+  /// สร้าง deep link สำหรับสินค้า
+  static String buildProductLink(String productId) {
+    return 'tuktuk://market/$productId';
   }
 }

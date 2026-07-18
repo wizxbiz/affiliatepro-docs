@@ -610,7 +610,7 @@ class _CreatePostScreenState extends State<CreatePostScreen>
         'visibility': _isPublic ? 'public' : 'private',
         'privacy': _isPublic ? 'public' : 'private',
         'filter_id': _selectedFilter,
-        'originCollection': 'community_posts',
+        'originCollection': 'posts',
         'authorId': user['uid'],
         'authorName': user['displayName'],
         'authorAvatar': user['pictureUrl'],

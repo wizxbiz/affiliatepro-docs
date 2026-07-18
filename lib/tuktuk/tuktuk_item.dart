@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:caculateapp/tuktuk/services/tuktuk_video_parser.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -31,6 +32,7 @@ class TukTukItem {
 
   factory TukTukItem.fromPost(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
+    _normalizeMedia(data);
     TukTukItemType type = TukTukItemType.image; // Default to image
 
     // 🎥 Robust detection: Check top-level video fields first
@@ -62,7 +64,7 @@ class TukTukItem {
     }
 
     data['id'] = doc.id;
-    data['originCollection'] = 'community_posts';
+    data['originCollection'] = 'posts';
 
     // ✅ Pre-extract video URL for better performance in UI loops
     String videoUrl = data['videoUrl']?.toString() ??
@@ -97,12 +99,13 @@ class TukTukItem {
       id: doc.id,
       type: type,
       data: data,
-      collectionName: 'community_posts',
+      collectionName: 'posts',
     );
   }
 
   factory TukTukItem.fromProduct(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
+    _normalizeMedia(data);
     data['id'] = doc.id;
     data['originCollection'] = 'marketplace_items';
 
@@ -116,6 +119,7 @@ class TukTukItem {
 
   factory TukTukItem.fromInfoCard(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
+    _normalizeMedia(data);
     data['id'] = doc.id;
     data['originCollection'] = 'news_feed';
 
@@ -135,6 +139,7 @@ class TukTukItem {
   }) {
     final String finalId =
         id ?? data['id'] ?? data['ID'] ?? (doc != null ? doc.id : '');
+    _normalizeMedia(data);
     TukTukItemType type = TukTukItemType.image;
 
     if (collectionName == 'marketplace_items' ||
@@ -249,6 +254,7 @@ class TukTukItem {
   }
 
   factory TukTukItem.fromLive(Map<String, dynamic> data) {
+    _normalizeMedia(data);
     data['originCollection'] = 'live_sessions';
     return TukTukItem(
       id: data['sessionId'] ??
@@ -258,5 +264,22 @@ class TukTukItem {
       data: data,
       collectionName: 'live_sessions',
     );
+  }
+
+  /// Helper to normalize double-stringified JSON arrays (e.g. from legacy web clients)
+  static void _normalizeMedia(Map<String, dynamic> data) {
+    for (String key in ['images', 'mediaUrls', 'imageUrl']) {
+      if (data[key] is String) {
+        String val = (data[key] as String).trim();
+        if ((val.startsWith('[') && val.endsWith(']')) ||
+            (val.startsWith('{') && val.endsWith('}'))) {
+          try {
+            data[key] = jsonDecode(val);
+          } catch (e) {
+            // Leave as string if invalid JSON
+          }
+        }
+      }
+    }
   }
 }

@@ -52,7 +52,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     final user = await _bridge.getCurrentUser();
     if (user != null) {
       final collectionName =
-          widget.postData['originCollection'] ?? 'community_posts';
+          widget.postData['originCollection'] ?? 'posts';
       final liked = await _bridge.hasLiked(
           widget.postData['id']?.toString() ?? '', collectionName,);
       if (mounted) setState(() => _isLiked = liked);
@@ -77,7 +77,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     if (postId.isEmpty) return;
 
     final collectionName =
-        widget.postData['originCollection'] ?? 'community_posts';
+        widget.postData['originCollection'] ?? 'posts';
 
     // Optimistic Update
     final bool previouslyLiked = _isLiked;
@@ -278,7 +278,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               'unknown';
 
       final collectionName =
-          widget.postData['originCollection'] ?? 'community_posts';
+          widget.postData['originCollection'] ?? 'posts';
 
       await FirebaseFirestore.instance
           .collection(collectionName)
@@ -634,7 +634,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
   Widget _buildInteractionBar() {
     final collectionName =
-        widget.postData['originCollection'] ?? 'community_posts';
+        widget.postData['originCollection'] ?? 'posts';
     final String? postId = widget.postData['id']?.toString();
     if (postId == null || postId.isEmpty) return const SizedBox.shrink();
 
@@ -705,7 +705,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
   Widget _buildCommentsList() {
     final collectionName =
-        widget.postData['originCollection'] ?? 'community_posts';
+        widget.postData['originCollection'] ?? 'posts';
     final String? postId = widget.postData['id']?.toString();
     if (postId == null || postId.isEmpty) {
       return const SliverFillRemaining(

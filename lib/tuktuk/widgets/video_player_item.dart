@@ -376,7 +376,7 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
       final postId = widget.postData['id']?.toString();
       if (postId != null && postId.trim().isNotEmpty) {
         final collectionName =
-            widget.postData['originCollection'] ?? 'community_posts';
+            widget.postData['originCollection'] ?? 'posts';
         // ✅ OPTIMIZATION: Debounce view tracking
         _debounceTimer?.cancel();
         _debounceTimer = Timer(const Duration(milliseconds: 500), () {
@@ -444,7 +444,7 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
     if (postId.trim().isEmpty) return;
 
     final collectionName =
-        widget.postData['originCollection'] ?? 'community_posts';
+        widget.postData['originCollection'] ?? 'posts';
     final category = widget.postData['category']?.toString();
 
     debugPrint(
@@ -722,7 +722,7 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
 
       // 1. Check if liked
       final collectionName =
-          widget.postData['originCollection'] ?? 'community_posts';
+          widget.postData['originCollection'] ?? 'posts';
 
       bool liked = false;
       final postId = widget.postData['id']?.toString();
@@ -780,7 +780,7 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
     });
 
     final collectionName =
-        widget.postData['originCollection'] ?? 'community_posts';
+        widget.postData['originCollection'] ?? 'posts';
 
     final success = await TukTukBridge().toggleLike(postId, collectionName);
     if (!success && mounted) {
@@ -1069,7 +1069,7 @@ class _VideoPlayerItemState extends State<VideoPlayerItem>
       final postId = widget.postData['id']?.toString();
       if (postId != null) {
         final collectionName =
-            widget.postData['originCollection'] ?? 'community_posts';
+            widget.postData['originCollection'] ?? 'posts';
         TukTukBridge().trackView(postId, collectionName);
         _viewTracked = true;
         debugPrint("View tracked for $postId");

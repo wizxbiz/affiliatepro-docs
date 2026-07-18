@@ -60,7 +60,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
     super.initState();
     _liveProductData = Map.from(widget.productData);
     _fadeController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 600),);
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
     _fadeAnimation =
         CurvedAnimation(parent: _fadeController, curve: Curves.easeOut);
     _fadeController.forward();
@@ -104,10 +106,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
           _recommendedProducts = snapshot.docs
               .map((d) => d.data() as Map<String, dynamic>)
               .toList();
-          _recommendedProducts.removeWhere((p) =>
-              p['id'] == currentId ||
-              p['productId'] == currentId ||
-              p['uid'] == currentId,);
+          _recommendedProducts.removeWhere(
+            (p) =>
+                p['id'] == currentId ||
+                p['productId'] == currentId ||
+                p['uid'] == currentId,
+          );
           _isLoadingRecommended = false;
         });
       }
@@ -273,7 +277,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content: Text('ไม่สามารถเปิดลิงก์ได้ กรุณาตรวจสอบลิงก์อีกครั้ง'),),
+            content: Text('ไม่สามารถเปิดลิงก์ได้ กรุณาตรวจสอบลิงก์อีกครั้ง'),
+          ),
         );
       }
     }
@@ -400,9 +405,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   if (isService)
-                                    Text('เริ่มต้น',
-                                        style: GoogleFonts.kanit(
-                                            color: _textMid, fontSize: 12,),),
+                                    Text(
+                                      'เริ่มต้น',
+                                      style: GoogleFonts.kanit(
+                                        color: _textMid,
+                                        fontSize: 12,
+                                      ),
+                                    ),
                                   Text(
                                     '฿$price',
                                     style: GoogleFonts.outfit(
@@ -422,13 +431,18 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                 const SizedBox(height: 6),
                                 Row(
                                   children: [
-                                    const Icon(Icons.visibility_outlined,
-                                        color: _textLow, size: 13,),
+                                    const Icon(
+                                      Icons.visibility_outlined,
+                                      color: _textLow,
+                                      size: 13,
+                                    ),
                                     const SizedBox(width: 4),
                                     Text(
                                       '${productData['viewCount'] ?? 0} คนดู',
                                       style: GoogleFonts.kanit(
-                                          color: _textLow, fontSize: 11,),
+                                        color: _textLow,
+                                        fontSize: 11,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -453,28 +467,37 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                         const SizedBox(height: 10),
 
                         // ── Badges (OTOP / Organic / Stock / Sold) ──────
-                        Builder(builder: (context) {
-                          final badges = <Widget>[];
-                          if (productData['isOtop'] == true) {
-                            badges.add(_buildBadge('OTOP', _amber));
-                          }
-                          if (productData['isOrganic'] == true) {
-                            badges.add(_buildBadge('ออร์แกนิค', _green));
-                          }
-                          if (productData['stock'] != null) {
-                            badges.add(_buildBadge(
-                                'คงเหลือ ${productData['stock']}', _cyan,),);
-                          }
-                          if (isSold) {
-                            badges.add(_buildBadge('ขายแล้ว', Colors.red));
-                          }
-                          if (badges.isEmpty) return const SizedBox.shrink();
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: Wrap(
-                                spacing: 8, runSpacing: 6, children: badges,),
-                          );
-                        },),
+                        Builder(
+                          builder: (context) {
+                            final badges = <Widget>[];
+                            if (productData['isOtop'] == true) {
+                              badges.add(_buildBadge('OTOP', _amber));
+                            }
+                            if (productData['isOrganic'] == true) {
+                              badges.add(_buildBadge('ออร์แกนิค', _green));
+                            }
+                            if (productData['stock'] != null) {
+                              badges.add(
+                                _buildBadge(
+                                  'คงเหลือ ${productData['stock']}',
+                                  _cyan,
+                                ),
+                              );
+                            }
+                            if (isSold) {
+                              badges.add(_buildBadge('ขายแล้ว', Colors.red));
+                            }
+                            if (badges.isEmpty) return const SizedBox.shrink();
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: Wrap(
+                                spacing: 8,
+                                runSpacing: 6,
+                                children: badges,
+                              ),
+                            );
+                          },
+                        ),
 
                         const SizedBox(height: 4),
 
@@ -482,10 +505,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                         Row(
                           children: [
                             _buildMetaChip(
-                                Icons.location_on_rounded, location, _amber,),
+                              Icons.location_on_rounded,
+                              location,
+                              _amber,
+                            ),
                             const SizedBox(width: 8),
                             _buildMetaChip(
-                                Icons.category_rounded, category, _cyan,),
+                              Icons.category_rounded,
+                              category,
+                              _cyan,
+                            ),
                           ],
                         ),
 
@@ -493,14 +522,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                         if (isService) ...[
                           const SizedBox(height: 16),
                           _buildServiceInfoRow(
-                              Icons.access_time_rounded,
-                              'เวลาให้บริการ',
-                              productData['workingHours'] ?? '9:00 - 18:00',),
+                            Icons.access_time_rounded,
+                            'เวลาให้บริการ',
+                            productData['workingHours'] ?? '9:00 - 18:00',
+                          ),
                           const SizedBox(height: 8),
                           _buildServiceInfoRow(
-                              Icons.map_rounded,
-                              'พื้นที่บริการ',
-                              productData['serviceArea'] ?? 'ในพื้นที่',),
+                            Icons.map_rounded,
+                            'พื้นที่บริการ',
+                            productData['serviceArea'] ?? 'ในพื้นที่',
+                          ),
                         ],
 
                         const SizedBox(height: 24),
@@ -510,14 +541,20 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
 
                         // ── Seller Section ──────────────────────────────
                         _buildSellerSection(
-                            context, sellerName, sellerId, productData,),
+                          context,
+                          sellerName,
+                          sellerId,
+                          productData,
+                        ),
 
                         const SizedBox(height: 24),
                         _buildSectionDivider(),
 
                         // ── Description ─────────────────────────────────
                         _buildSectionHeader(
-                            'รายละเอียดสินค้า', Icons.description_rounded,),
+                          'รายละเอียดสินค้า',
+                          Icons.description_rounded,
+                        ),
                         const SizedBox(height: 12),
                         Container(
                           width: double.infinity,
@@ -530,7 +567,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                           child: Text(
                             description,
                             style: GoogleFonts.kanit(
-                                color: _textMid, fontSize: 14, height: 1.8,),
+                              color: _textMid,
+                              fontSize: 14,
+                              height: 1.8,
+                            ),
                           ),
                         ),
 
@@ -542,29 +582,40 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             _buildSectionHeader(
-                                'รีวิวจากลูกค้า', Icons.star_rounded,),
+                              'รีวิวจากลูกค้า',
+                              Icons.star_rounded,
+                            ),
                             GestureDetector(
                               onTap: _showReviewDialog,
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 14, vertical: 8,),
+                                  horizontal: 14,
+                                  vertical: 8,
+                                ),
                                 decoration: BoxDecoration(
                                   color: _cyan.withValues(alpha: 0.08),
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(
-                                      color: _cyan.withValues(alpha: 0.25),),
+                                    color: _cyan.withValues(alpha: 0.25),
+                                  ),
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Icon(Icons.rate_review_rounded,
-                                        size: 14, color: _cyan,),
+                                    const Icon(
+                                      Icons.rate_review_rounded,
+                                      size: 14,
+                                      color: _cyan,
+                                    ),
                                     const SizedBox(width: 6),
-                                    Text('เขียนรีวิว',
-                                        style: GoogleFonts.kanit(
-                                            color: _cyan,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600,),),
+                                    Text(
+                                      'เขียนรีวิว',
+                                      style: GoogleFonts.kanit(
+                                        color: _cyan,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -576,25 +627,33 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                         _isLoadingReviews
                             ? const Center(
                                 child: CircularProgressIndicator(
-                                    color: _cyan, strokeWidth: 2,),)
+                                  color: _cyan,
+                                  strokeWidth: 2,
+                                ),
+                              )
                             : _reviews.isEmpty
                                 ? _buildEmptyReviews()
                                 : Column(
-                                    children: _reviews
-                                        .map(_buildReviewCard)
-                                        .toList(),),
+                                    children:
+                                        _reviews.map(_buildReviewCard).toList(),
+                                  ),
 
                         const SizedBox(height: 28),
                         _buildSectionDivider(),
 
                         // ── Recommended ──────────────────────────────────
                         _buildSectionHeader(
-                            'สินค้าแนะนำสำหรับคุณ', Icons.auto_awesome_rounded,),
+                          'สินค้าแนะนำสำหรับคุณ',
+                          Icons.auto_awesome_rounded,
+                        ),
                         const SizedBox(height: 14),
                         _isLoadingRecommended
                             ? const Center(
                                 child: CircularProgressIndicator(
-                                    color: _textLow, strokeWidth: 2,),)
+                                  color: _textLow,
+                                  strokeWidth: 2,
+                                ),
+                              )
                             : SizedBox(
                                 height: 220,
                                 child: ListView.builder(
@@ -602,7 +661,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                   itemCount: _recommendedProducts.length,
                                   itemBuilder: (context, index) =>
                                       _buildRecommendedCard(
-                                          _recommendedProducts[index],),
+                                    _recommendedProducts[index],
+                                  ),
                                 ),
                               ),
 
@@ -628,8 +688,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
   }
 
   // ─── Sliver AppBar / Media Gallery ───────────────────────────────────────
-  Widget _buildSliverAppBar(BuildContext context, List<String> imageUrls,
-      Map<String, dynamic> productData,) {
+  Widget _buildSliverAppBar(
+    BuildContext context,
+    List<String> imageUrls,
+    Map<String, dynamic> productData,
+  ) {
     return SliverAppBar(
       expandedHeight: 420,
       backgroundColor: _bg,
@@ -645,8 +708,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
             ),
-            child: const Icon(Icons.arrow_back_ios_new_rounded,
-                color: Colors.white, size: 16,),
+            child: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: Colors.white,
+              size: 16,
+            ),
           ),
         ),
       ),
@@ -664,7 +730,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
               SharePlus.instance.share(
                 ShareParams(
                   text:
-                      '$name\n฿$price\nhttps://appinjproject.web.app/product.html?id=$id',
+                      '$name\n฿$price\nhttps://tuktukfeed.com/product.html?id=$id',
                 ),
               );
             },
@@ -675,8 +741,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                 border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
               ),
               padding: const EdgeInsets.all(8),
-              child: const Icon(Icons.share_rounded,
-                  color: Colors.white, size: 18,),
+              child: const Icon(
+                Icons.share_rounded,
+                color: Colors.white,
+                size: 18,
+              ),
             ),
           ),
         ),
@@ -686,8 +755,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
             ? Container(
                 color: _surface,
                 child: const Center(
-                  child: Icon(Icons.image_not_supported_rounded,
-                      size: 80, color: _textLow,),
+                  child: Icon(
+                    Icons.image_not_supported_rounded,
+                    size: 80,
+                    color: _textLow,
+                  ),
                 ),
               )
             : Stack(
@@ -719,8 +791,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                             }
                             // Show thumbnail or loading while disposing/inactive
                             return _buildUniversalImage(
-                                productData['videoThumbnail'] ??
-                                    imageUrls.first,);
+                              productData['videoThumbnail'] ?? imageUrls.first,
+                            );
                           },
                         );
                       }
@@ -801,9 +873,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
         children: [
           Icon(icon, size: 13, color: color),
           const SizedBox(width: 5),
-          Text(label,
-              style: GoogleFonts.kanit(
-                  color: color, fontSize: 12, fontWeight: FontWeight.w500,),),
+          Text(
+            label,
+            style: GoogleFonts.kanit(
+              color: color,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ],
       ),
     );
@@ -815,19 +892,26 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
         Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-              color: _cyan.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),),
+            color: _cyan.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
           child: Icon(icon, size: 14, color: _cyan),
         ),
         const SizedBox(width: 10),
-        Text('$label: ',
-            style: GoogleFonts.kanit(color: _textMid, fontSize: 13),),
+        Text(
+          '$label: ',
+          style: GoogleFonts.kanit(color: _textMid, fontSize: 13),
+        ),
         Expanded(
-            child: Text(value,
-                style: GoogleFonts.kanit(
-                    color: _textHi,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,),),),
+          child: Text(
+            value,
+            style: GoogleFonts.kanit(
+              color: _textHi,
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -851,9 +935,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
           child: Icon(icon, size: 15, color: Colors.black),
         ),
         const SizedBox(width: 10),
-        Text(title,
-            style: GoogleFonts.kanit(
-                color: _textHi, fontSize: 17, fontWeight: FontWeight.bold,),),
+        Text(
+          title,
+          style: GoogleFonts.kanit(
+            color: _textHi,
+            fontSize: 17,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ],
     );
   }
@@ -866,14 +955,23 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: color.withValues(alpha: 0.35)),
       ),
-      child: Text(label,
-          style: GoogleFonts.kanit(
-              color: color, fontWeight: FontWeight.bold, fontSize: 12,),),
+      child: Text(
+        label,
+        style: GoogleFonts.kanit(
+          color: color,
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+        ),
+      ),
     );
   }
 
-  Widget _buildContactInfoRow(IconData icon, String label, String value,
-      {VoidCallback? onTap,}) {
+  Widget _buildContactInfoRow(
+    IconData icon,
+    String label,
+    String value, {
+    VoidCallback? onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Padding(
@@ -883,19 +981,25 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
             Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                  color: _cyan.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),),
+                color: _cyan.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
               child: Icon(icon, size: 14, color: _cyan),
             ),
             const SizedBox(width: 10),
-            Text('$label: ',
-                style: GoogleFonts.kanit(color: _textMid, fontSize: 13),),
+            Text(
+              '$label: ',
+              style: GoogleFonts.kanit(color: _textMid, fontSize: 13),
+            ),
             Expanded(
-              child: Text(value,
-                  style: GoogleFonts.kanit(
-                      color: onTap != null ? _cyan : _textHi,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,),),
+              child: Text(
+                value,
+                style: GoogleFonts.kanit(
+                  color: onTap != null ? _cyan : _textHi,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
             if (onTap != null)
               const Icon(Icons.open_in_new_rounded, color: _textLow, size: 13),
@@ -915,16 +1019,25 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: color.withValues(alpha: 0.35)),
       ),
-      child: Text(cond,
-          style: GoogleFonts.kanit(
-              color: color, fontWeight: FontWeight.bold, fontSize: 12,),),
+      child: Text(
+        cond,
+        style: GoogleFonts.kanit(
+          color: color,
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+        ),
+      ),
     );
   }
 
   // Placeholder for any other widgets
 
-  Widget _buildSellerSection(BuildContext context, String sellerName,
-      String? sellerId, Map<String, dynamic> productData,) {
+  Widget _buildSellerSection(
+    BuildContext context,
+    String sellerName,
+    String? sellerId,
+    Map<String, dynamic> productData,
+  ) {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -963,20 +1076,27 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                     Row(
                       children: [
                         Flexible(
-                          child: Text(sellerName,
-                              style: GoogleFonts.kanit(
-                                  color: _textHi,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,),),
+                          child: Text(
+                            sellerName,
+                            style: GoogleFonts.kanit(
+                              color: _textHi,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                         const SizedBox(width: 5),
-                        const Icon(Icons.verified_rounded,
-                            color: Colors.blueAccent, size: 15,),
+                        const Icon(
+                          Icons.verified_rounded,
+                          color: Colors.blueAccent,
+                          size: 15,
+                        ),
                       ],
                     ),
-                    Text('ตอบกลับภายใน 1 ชม. • ส่งตรงเวลา 99%',
-                        style:
-                            GoogleFonts.kanit(color: _textLow, fontSize: 11),),
+                    Text(
+                      'ตอบกลับภายใน 1 ชม. • ส่งตรงเวลา 99%',
+                      style: GoogleFonts.kanit(color: _textLow, fontSize: 11),
+                    ),
                   ],
                 ),
               ),
@@ -1006,8 +1126,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                 Icons.account_balance_rounded,
                 _sellerProfile!['bankName'].toString(),
                 _sellerProfile!['bankAccount'].toString(),
-                onTap: () => Clipboard.setData(ClipboardData(
-                    text: _sellerProfile!['bankAccount'].toString(),),),
+                onTap: () => Clipboard.setData(
+                  ClipboardData(
+                    text: _sellerProfile!['bankAccount'].toString(),
+                  ),
+                ),
               ),
           ],
           const SizedBox(height: 16),
@@ -1018,22 +1141,27 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                   onPressed: () {
                     if (sellerId != null) {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => MarketplaceScreen(
-                                initialSellerId: sellerId,
-                                initialSellerName: sellerName,),
-                          ),);
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => MarketplaceScreen(
+                            initialSellerId: sellerId,
+                            initialSellerName: sellerName,
+                          ),
+                        ),
+                      );
                     }
                   },
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: _border),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  child: Text('ดูร้านค้า',
-                      style: GoogleFonts.kanit(color: _textHi, fontSize: 13),),
+                  child: Text(
+                    'ดูร้านค้า',
+                    style: GoogleFonts.kanit(color: _textHi, fontSize: 13),
+                  ),
                 ),
               ),
               const SizedBox(width: 10),
@@ -1045,7 +1173,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     elevation: 0,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   child: Text(
                     _isFollowing ? '✓ ติดตามแล้ว' : 'ติดตามร้าน',
@@ -1077,7 +1206,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
       children: [
         if (options != null && options.isNotEmpty) ...[
           _buildSectionHeader(
-              'รายการเลือกเพิ่มเติม', Icons.add_circle_outline_rounded,),
+            'รายการเลือกเพิ่มเติม',
+            Icons.add_circle_outline_rounded,
+          ),
           const SizedBox(height: 12),
           ...options.map((opt) {
             final name = opt['name'] ?? 'ไม่มีชื่อ';
@@ -1093,13 +1224,18 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(name,
-                      style: GoogleFonts.kanit(color: _textMid, fontSize: 13),),
-                  Text('+ ฿$price',
-                      style: GoogleFonts.outfit(
-                          color: _cyan,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,),),
+                  Text(
+                    name,
+                    style: GoogleFonts.kanit(color: _textMid, fontSize: 13),
+                  ),
+                  Text(
+                    '+ ฿$price',
+                    style: GoogleFonts.outfit(
+                      color: _cyan,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
                 ],
               ),
             );
@@ -1127,15 +1263,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(label,
-                        style:
-                            GoogleFonts.kanit(color: _textLow, fontSize: 11),),
+                    Text(
+                      label,
+                      style: GoogleFonts.kanit(color: _textLow, fontSize: 11),
+                    ),
                     const SizedBox(height: 2),
-                    Text(value,
-                        style: GoogleFonts.kanit(
-                            color: _textHi,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,),),
+                    Text(
+                      value,
+                      style: GoogleFonts.kanit(
+                        color: _textHi,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ],
                 ),
               );
@@ -1160,11 +1300,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
         children: [
           const Icon(Icons.rate_review_outlined, color: _textLow, size: 36),
           const SizedBox(height: 10),
-          Text('ยังไม่มีรีวิวสินค้านี้',
-              style: GoogleFonts.kanit(color: _textLow, fontSize: 14),),
+          Text(
+            'ยังไม่มีรีวิวสินค้านี้',
+            style: GoogleFonts.kanit(color: _textLow, fontSize: 14),
+          ),
           const SizedBox(height: 6),
-          Text('เป็นคนแรกที่รีวิว!',
-              style: GoogleFonts.kanit(color: _cyan, fontSize: 12),),
+          Text(
+            'เป็นคนแรกที่รีวิว!',
+            style: GoogleFonts.kanit(color: _cyan, fontSize: 12),
+          ),
         ],
       ),
     );
@@ -1206,11 +1350,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(authorName,
-                        style: GoogleFonts.kanit(
-                            color: _textHi,
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,),),
+                    Text(
+                      authorName,
+                      style: GoogleFonts.kanit(
+                        color: _textHi,
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     Text(
                       '${createdAt.day}/${createdAt.month}/${createdAt.year}',
                       style: GoogleFonts.kanit(color: _textLow, fontSize: 10),
@@ -1220,16 +1367,25 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
               ),
               Row(
                 children: List.generate(
-                    5,
-                    (i) => const Icon(Icons.star_rounded,
-                        color: _amber, size: 13,),),
+                  5,
+                  (i) => const Icon(
+                    Icons.star_rounded,
+                    color: _amber,
+                    size: 13,
+                  ),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 12),
-          Text(comment,
-              style: GoogleFonts.kanit(
-                  color: _textMid, fontSize: 13, height: 1.6,),),
+          Text(
+            comment,
+            style: GoogleFonts.kanit(
+              color: _textMid,
+              fontSize: 13,
+              height: 1.6,
+            ),
+          ),
           if (reviewLink.isNotEmpty) ...[
             const SizedBox(height: 10),
             GestureDetector(
@@ -1247,11 +1403,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                   children: [
                     const Icon(Icons.link_rounded, color: _cyan, size: 14),
                     const SizedBox(width: 6),
-                    Text('ดูรีวิวเพิ่มเติม',
-                        style: GoogleFonts.kanit(
-                            color: _cyan,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,),),
+                    Text(
+                      'ดูรีวิวเพิ่มเติม',
+                      style: GoogleFonts.kanit(
+                        color: _cyan,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -1271,7 +1430,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
       onTap: () => Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (_) => ProductDetailScreen(productData: product),),
+          builder: (_) => ProductDetailScreen(productData: product),
+        ),
       ),
       child: Container(
         width: 155,
@@ -1293,8 +1453,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                       height: 120,
                       color: _card,
                       child: const Center(
-                          child: Icon(Icons.shopping_bag_rounded,
-                              color: _textLow,),),
+                        child: Icon(
+                          Icons.shopping_bag_rounded,
+                          color: _textLow,
+                        ),
+                      ),
                     ),
             ),
             Padding(
@@ -1307,17 +1470,21 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.kanit(
-                        color: _textHi,
-                        fontSize: 13,
-                        height: 1.3,
-                        fontWeight: FontWeight.w500,),
+                      color: _textHi,
+                      fontSize: 13,
+                      height: 1.3,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   const SizedBox(height: 5),
-                  Text('฿$price',
-                      style: GoogleFonts.outfit(
-                          color: _cyan,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,),),
+                  Text(
+                    '฿$price',
+                    style: GoogleFonts.outfit(
+                      color: _cyan,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -1329,7 +1496,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
 
   // ─── Bottom Bar ───────────────────────────────────────────────────────────
   Widget _buildBottomBar(
-      BuildContext context, Map<String, dynamic> productData,) {
+    BuildContext context,
+    Map<String, dynamic> productData,
+  ) {
     final isSold = productData['status'] == 'sold';
     final isService = productData['type'] == 'service';
     final sellerId = productData['sellerId'] ?? productData['authorId'];
@@ -1344,9 +1513,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
         border: const Border(top: BorderSide(color: _border)),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withValues(alpha: 0.4),
-              blurRadius: 20,
-              offset: const Offset(0, -5),),
+            color: Colors.black.withValues(alpha: 0.4),
+            blurRadius: 20,
+            offset: const Offset(0, -5),
+          ),
         ],
       ),
       child: Row(
@@ -1355,13 +1525,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
           _buildIconBtn(Icons.storefront_rounded, 'ร้านค้า', () {
             if (sellerId != null) {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => MarketplaceScreen(
-                      initialSellerId: sellerId,
-                      initialSellerName: productData['sellerName'] ?? 'ผู้ขาย',
-                    ),
-                  ),);
+                context,
+                MaterialPageRoute(
+                  builder: (_) => MarketplaceScreen(
+                    initialSellerId: sellerId,
+                    initialSellerName: productData['sellerName'] ?? 'ผู้ขาย',
+                  ),
+                ),
+              );
             }
           }),
           const SizedBox(width: 10),
@@ -1375,7 +1546,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
             if (_currentUser!['uid'] == sellerId ||
                 _currentUser!['lineUserId'] == sellerId) {
               ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('คุณไม่สามารถแชทกับตัวเองได้')),);
+                const SnackBar(content: Text('คุณไม่สามารถแชทกับตัวเองได้')),
+              );
               return;
             }
             _incrementContactCount();
@@ -1429,9 +1601,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                               ? 'จองคิว / โทรหาช่าง'
                               : 'ขอซื้อ / เสนอราคา'),
                       style: GoogleFonts.kanit(
-                          color: ctaTextColor,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,),
+                        color: ctaTextColor,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -1458,8 +1631,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
           children: [
             Icon(icon, color: _textHi, size: 20),
             const SizedBox(height: 3),
-            Text(label,
-                style: GoogleFonts.kanit(color: _textMid, fontSize: 10),),
+            Text(
+              label,
+              style: GoogleFonts.kanit(color: _textMid, fontSize: 10),
+            ),
           ],
         ),
       ),
@@ -1468,12 +1643,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
 
   // ─── Dialogs / Sheets ─────────────────────────────────────────────────────
   void _showServiceActionSheet(
-      BuildContext context, Map<String, dynamic> productData,) {
+    BuildContext context,
+    Map<String, dynamic> productData,
+  ) {
     showModalBottomSheet(
       context: context,
       backgroundColor: _surface,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       builder: (context) {
         return Padding(
           padding: const EdgeInsets.all(24),
@@ -1481,16 +1659,22 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                      color: _textLow, borderRadius: BorderRadius.circular(2),),),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: _textLow,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
               const SizedBox(height: 20),
-              Text('เลือกช่องทางติดต่อ',
-                  style: GoogleFonts.kanit(
-                      color: _textHi,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,),),
+              Text(
+                'เลือกช่องทางติดต่อ',
+                style: GoogleFonts.kanit(
+                  color: _textHi,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(height: 20),
               _buildContactTile(
                 icon: Icons.phone_rounded,
@@ -1539,17 +1723,24 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
       leading: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(12),),
+          color: color.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Icon(icon, color: color, size: 20),
       ),
-      title: Text(title,
-          style:
-              GoogleFonts.kanit(color: _textHi, fontWeight: FontWeight.w600),),
-      subtitle: Text(subtitle,
-          style: GoogleFonts.kanit(color: _textMid, fontSize: 12),),
-      trailing: const Icon(Icons.arrow_forward_ios_rounded,
-          color: _textLow, size: 14,),
+      title: Text(
+        title,
+        style: GoogleFonts.kanit(color: _textHi, fontWeight: FontWeight.w600),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: GoogleFonts.kanit(color: _textMid, fontSize: 12),
+      ),
+      trailing: const Icon(
+        Icons.arrow_forward_ios_rounded,
+        color: _textLow,
+        size: 14,
+      ),
     );
   }
 
@@ -1567,7 +1758,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
       isScrollControlled: true,
       backgroundColor: _surface,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       builder: (context) {
         return Padding(
           padding: EdgeInsets.only(
@@ -1581,36 +1773,48 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                  width: 40,
-                  height: 4,
-                  margin: const EdgeInsets.only(bottom: 20),
-                  decoration: BoxDecoration(
-                      color: _textLow, borderRadius: BorderRadius.circular(2),),),
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                  color: _textLow,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('เขียนรีวิวสินค้า',
-                      style: GoogleFonts.kanit(
-                          color: _textHi,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,),),
+                  Text(
+                    'เขียนรีวิวสินค้า',
+                    style: GoogleFonts.kanit(
+                      color: _textHi,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: Container(
                       padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
-                          color: _card,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: _border),),
-                      child: const Icon(Icons.close_rounded,
-                          color: _textMid, size: 16,),
+                        color: _card,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: _border),
+                      ),
+                      child: const Icon(
+                        Icons.close_rounded,
+                        color: _textMid,
+                        size: 16,
+                      ),
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 20),
-              Text('ความคิดเห็นของคุณ',
-                  style: GoogleFonts.kanit(color: _textMid, fontSize: 13),),
+              Text(
+                'ความคิดเห็นของคุณ',
+                style: GoogleFonts.kanit(color: _textMid, fontSize: 13),
+              ),
               const SizedBox(height: 8),
               TextField(
                 controller: commentController,
@@ -1622,13 +1826,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                   hintText: 'สินค้านี้คุณภาพเป็นอย่างไร...',
                   hintStyle: GoogleFonts.kanit(color: _textLow),
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide.none,),
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
-              Text('ลิงก์รีวิวเพิ่มเติม (ถ้ามี)',
-                  style: GoogleFonts.kanit(color: _textMid, fontSize: 13),),
+              Text(
+                'ลิงก์รีวิวเพิ่มเติม (ถ้ามี)',
+                style: GoogleFonts.kanit(color: _textMid, fontSize: 13),
+              ),
               const SizedBox(height: 8),
               TextField(
                 controller: linkController,
@@ -1641,8 +1848,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                   prefixIcon:
                       const Icon(Icons.link_rounded, color: _textMid, size: 18),
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide.none,),
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
               ),
               const SizedBox(height: 24),
@@ -1653,7 +1861,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                   onPressed: () async {
                     if (commentController.text.trim().isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('กรุณาใส่ความคิดเห็น')),);
+                        const SnackBar(content: Text('กรุณาใส่ความคิดเห็น')),
+                      );
                       return;
                     }
                     try {
@@ -1674,14 +1883,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                         _fetchReviews();
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content: Text('บันทึกรีวิวของคุณแล้ว ขอบคุณครับ'),
-                              backgroundColor: Colors.green,),
+                            content: Text('บันทึกรีวิวของคุณแล้ว ขอบคุณครับ'),
+                            backgroundColor: Colors.green,
+                          ),
                         );
                       }
                     } catch (e) {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('เกิดข้อผิดพลาด: $e')),);
+                          SnackBar(content: Text('เกิดข้อผิดพลาด: $e')),
+                        );
                       }
                     }
                   },
@@ -1689,13 +1900,17 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                     backgroundColor: _cyan,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
                   ),
-                  child: Text('โพสต์รีวิว',
-                      style: GoogleFonts.kanit(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,),),
+                  child: Text(
+                    'โพสต์รีวิว',
+                    style: GoogleFonts.kanit(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 28),
@@ -1715,7 +1930,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
       isScrollControlled: true,
       backgroundColor: _surface,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       builder: (context) {
         return Padding(
           padding: EdgeInsets.only(
@@ -1729,19 +1945,27 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                  width: 40,
-                  height: 4,
-                  margin: const EdgeInsets.only(bottom: 20),
-                  decoration: BoxDecoration(
-                      color: _textLow, borderRadius: BorderRadius.circular(2),),),
-              Text('ส่งคำขอซื้อ',
-                  style: GoogleFonts.kanit(
-                      color: _textHi,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,),),
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                  color: _textLow,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              Text(
+                'ส่งคำขอซื้อ',
+                style: GoogleFonts.kanit(
+                  color: _textHi,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(height: 20),
-              Text('จำนวน',
-                  style: GoogleFonts.kanit(color: _textMid, fontSize: 13),),
+              Text(
+                'จำนวน',
+                style: GoogleFonts.kanit(color: _textMid, fontSize: 13),
+              ),
               const SizedBox(height: 8),
               TextField(
                 controller: qtyController,
@@ -1751,13 +1975,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                   filled: true,
                   fillColor: _card,
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide.none,),
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
-              Text('ข้อความถึงผู้ขาย (ถ้ามี)',
-                  style: GoogleFonts.kanit(color: _textMid, fontSize: 13),),
+              Text(
+                'ข้อความถึงผู้ขาย (ถ้ามี)',
+                style: GoogleFonts.kanit(color: _textMid, fontSize: 13),
+              ),
               const SizedBox(height: 8),
               TextField(
                 controller: noteController,
@@ -1767,8 +1994,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                   filled: true,
                   fillColor: _card,
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide.none,),
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide.none,
+                  ),
                   hintText: 'สนใจสินค้าชิ้นนี้ สะดวกนัดรับที่...',
                   hintStyle: GoogleFonts.kanit(color: _textLow),
                 ),
@@ -1784,8 +2012,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                            content: Text('กรุณาเข้าสู่ระบบก่อนทำรายการ'),
-                            backgroundColor: Colors.red,),
+                          content: Text('กรุณาเข้าสู่ระบบก่อนทำรายการ'),
+                          backgroundColor: Colors.red,
+                        ),
                       );
                       return;
                     }
@@ -1797,8 +2026,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                     if (sellerId == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                            content: Text('ไม่พบข้อมูลผู้ขาย'),
-                            backgroundColor: Colors.red,),
+                          content: Text('ไม่พบข้อมูลผู้ขาย'),
+                          backgroundColor: Colors.red,
+                        ),
                       );
                       return;
                     }
@@ -1841,9 +2071,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                            content: Text(
-                                'ส่งคำขอซื้อเรียบร้อยแล้ว! ผู้ขายจะติดต่อกลับ',),
-                            backgroundColor: Colors.green,),
+                          content: Text(
+                            'ส่งคำขอซื้อเรียบร้อยแล้ว! ผู้ขายจะติดต่อกลับ',
+                          ),
+                          backgroundColor: Colors.green,
+                        ),
                       );
                     }
                   },
@@ -1851,13 +2083,17 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                     backgroundColor: _cyan,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
                   ),
-                  child: Text('ยืนยันการขอซื้อ',
-                      style: GoogleFonts.kanit(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,),),
+                  child: Text(
+                    'ยืนยันการขอซื้อ',
+                    style: GoogleFonts.kanit(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 28),
@@ -1875,8 +2111,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
     return null;
   }
 
-  Future<void> _reportProfanity(String chatId, String senderId,
-      String senderName, String text, String word,) async {
+  Future<void> _reportProfanity(
+    String chatId,
+    String senderId,
+    String senderName,
+    String text,
+    String word,
+  ) async {
     try {
       await FirebaseFirestore.instance.collection('chat_reports').add({
         'chatId': chatId,
@@ -1893,7 +2134,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
 
   // ─── Product Chat (product_chats collection) ──────────────────────────────
   void _showProductChatSheet(
-      BuildContext context, Map<String, dynamic> productData, String sellerId,) {
+    BuildContext context,
+    Map<String, dynamic> productData,
+    String sellerId,
+  ) {
     final productId = productData['id'] ?? '';
     final buyerId = _currentUser?['lineUserId'] ??
         _currentUser?['uid'] ??
@@ -1905,21 +2149,24 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
     bool quickRepliesVisible = true;
 
     // Pre-create / merge chat document
-    FirebaseFirestore.instance.collection('product_chats').doc(chatId).set({
-      'productId': productId,
-      'productName': productData['productName'] ?? productData['title'] ?? '',
-      'productImageUrl':
-          productData['imageUrl'] ?? productData['coverImage'] ?? '',
-      'sellerId': sellerId,
-      'sellerName':
-          productData['sellerName'] ?? productData['authorName'] ?? '',
-      'lineUserId': sellerId,
-      'buyerId': buyerId,
-      'buyerName': buyerName,
-      'buyerPic': _currentUser?['pictureUrl'] ?? '',
-      'status': 'active',
-      'createdAt': FieldValue.serverTimestamp(),
-    }, SetOptions(merge: true),);
+    FirebaseFirestore.instance.collection('product_chats').doc(chatId).set(
+      {
+        'productId': productId,
+        'productName': productData['productName'] ?? productData['title'] ?? '',
+        'productImageUrl':
+            productData['imageUrl'] ?? productData['coverImage'] ?? '',
+        'sellerId': sellerId,
+        'sellerName':
+            productData['sellerName'] ?? productData['authorName'] ?? '',
+        'lineUserId': sellerId,
+        'buyerId': buyerId,
+        'buyerName': buyerName,
+        'buyerPic': _currentUser?['pictureUrl'] ?? '',
+        'status': 'active',
+        'createdAt': FieldValue.serverTimestamp(),
+      },
+      SetOptions(merge: true),
+    );
 
     final productName =
         productData['productName'] ?? productData['title'] ?? 'แชทสินค้า';
@@ -1945,7 +2192,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
       isScrollControlled: true,
       backgroundColor: _surface,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       builder: (ctx) {
         return StatefulBuilder(
           builder: (ctx, setSheetState) {
@@ -1956,11 +2204,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
               // Profanity check
               final badWord = _checkProfanity(text);
               if (badWord != null) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text('⚠️ กรุณาใช้คำสุภาพในการสนทนา',
-                      style: GoogleFonts.kanit(),),
-                  backgroundColor: Colors.orange,
-                ),);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      '⚠️ กรุณาใช้คำสุภาพในการสนทนา',
+                      style: GoogleFonts.kanit(),
+                    ),
+                    backgroundColor: Colors.orange,
+                  ),
+                );
                 _reportProfanity(chatId, buyerId, buyerName, text, badWord);
                 return;
               }
@@ -1998,12 +2250,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                       children: [
                         // Drag handle
                         Container(
-                            width: 40,
-                            height: 4,
-                            margin: const EdgeInsets.only(bottom: 12),
-                            decoration: BoxDecoration(
-                                color: _textLow,
-                                borderRadius: BorderRadius.circular(2),),),
+                          width: 40,
+                          height: 4,
+                          margin: const EdgeInsets.only(bottom: 12),
+                          decoration: BoxDecoration(
+                            color: _textLow,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
                         Row(
                           children: [
                             // Product thumbnail
@@ -2016,22 +2270,26 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                       height: 44,
                                       fit: BoxFit.cover,
                                       errorWidget: (_, __, ___) => Container(
-                                          width: 44,
-                                          height: 44,
-                                          color: _cardAlt,
-                                          child: const Icon(
-                                              Icons.broken_image_rounded,
-                                              color: _textLow,
-                                              size: 18,),),
+                                        width: 44,
+                                        height: 44,
+                                        color: _cardAlt,
+                                        child: const Icon(
+                                          Icons.broken_image_rounded,
+                                          color: _textLow,
+                                          size: 18,
+                                        ),
+                                      ),
                                     )
                                   : Container(
                                       width: 44,
                                       height: 44,
                                       color: _cardAlt,
                                       child: const Icon(
-                                          Icons.storefront_rounded,
-                                          color: _textLow,
-                                          size: 20,),),
+                                        Icons.storefront_rounded,
+                                        color: _textLow,
+                                        size: 20,
+                                      ),
+                                    ),
                             ),
                             const SizedBox(width: 10),
                             Expanded(
@@ -2041,18 +2299,20 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                   Text(
                                     productName,
                                     style: GoogleFonts.kanit(
-                                        color: _textHi,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,),
+                                      color: _textHi,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   Text(
                                     '฿${productPrice.toStringAsFixed(0)} / $productUnit',
                                     style: GoogleFonts.kanit(
-                                        color: _cyan,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,),
+                                      color: _cyan,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -2062,11 +2322,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                               child: Container(
                                 padding: const EdgeInsets.all(6),
                                 decoration: BoxDecoration(
-                                    color: _cardAlt,
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(color: _border),),
-                                child: const Icon(Icons.close_rounded,
-                                    color: _textMid, size: 16,),
+                                  color: _cardAlt,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: _border),
+                                ),
+                                child: const Icon(
+                                  Icons.close_rounded,
+                                  color: _textMid,
+                                  size: 16,
+                                ),
                               ),
                             ),
                           ],
@@ -2087,8 +2351,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                       builder: (_, snap) {
                         if (!snap.hasData) {
                           return const Center(
-                              child: CircularProgressIndicator(
-                                  color: _cyan, strokeWidth: 2,),);
+                            child: CircularProgressIndicator(
+                              color: _cyan,
+                              strokeWidth: 2,
+                            ),
+                          );
                         }
                         final docs = snap.data!.docs;
 
@@ -2098,7 +2365,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                         return ListView.builder(
                           controller: scrollController,
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12,),
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
                           itemCount: docs.isEmpty ? 1 : docs.length + 1,
                           itemBuilder: (_, i) {
                             // [0] = product context card
@@ -2117,10 +2386,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                     Text(
                                       'หัวข้อหลัก: สอบถามสินค้า',
                                       style: GoogleFonts.kanit(
-                                          color: _textLow,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w600,
-                                          letterSpacing: 0.5,),
+                                        color: _textLow,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 0.5,
+                                      ),
                                     ),
                                     const SizedBox(height: 8),
                                     Row(
@@ -2136,9 +2406,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                               fit: BoxFit.cover,
                                               errorWidget: (_, __, ___) =>
                                                   Container(
-                                                      width: 40,
-                                                      height: 40,
-                                                      color: _cardAlt,),
+                                                width: 40,
+                                                height: 40,
+                                                color: _cardAlt,
+                                              ),
                                             ),
                                           ),
                                         if (productImageUrl.isNotEmpty)
@@ -2151,20 +2422,20 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                               Text(
                                                 productName,
                                                 style: GoogleFonts.kanit(
-                                                    color: _textHi,
-                                                    fontSize: 13,
-                                                    fontWeight:
-                                                        FontWeight.w700,),
+                                                  color: _textHi,
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w700,
+                                                ),
                                                 maxLines: 2,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                               Text(
                                                 '฿${productPrice.toStringAsFixed(0)}',
                                                 style: GoogleFonts.kanit(
-                                                    color: _cyan,
-                                                    fontSize: 13,
-                                                    fontWeight:
-                                                        FontWeight.w600,),
+                                                  color: _cyan,
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
                                               ),
                                             ],
                                           ),
@@ -2200,35 +2471,46 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                     margin:
                                         const EdgeInsets.symmetric(vertical: 3),
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 14, vertical: 10,),
+                                      horizontal: 14,
+                                      vertical: 10,
+                                    ),
                                     constraints: BoxConstraints(
-                                        maxWidth:
-                                            MediaQuery.of(context).size.width *
-                                                0.72,),
+                                      maxWidth:
+                                          MediaQuery.of(context).size.width *
+                                              0.72,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: isMe
                                           ? _cyan.withValues(alpha: 0.18)
                                           : _cardAlt,
                                       borderRadius: BorderRadius.circular(14),
                                       border: Border.all(
-                                          color: isMe
-                                              ? _cyan.withValues(alpha: 0.3)
-                                              : _border,),
+                                        color: isMe
+                                            ? _cyan.withValues(alpha: 0.3)
+                                            : _border,
+                                      ),
                                     ),
                                     child: Text(
                                       msg['text'] ?? '',
                                       style: GoogleFonts.kanit(
-                                          color: _textHi, fontSize: 14,),
+                                        color: _textHi,
+                                        fontSize: 14,
+                                      ),
                                     ),
                                   ),
                                   if (timeStr.isNotEmpty)
                                     Padding(
                                       padding: const EdgeInsets.only(
-                                          bottom: 2, left: 4, right: 4,),
+                                        bottom: 2,
+                                        left: 4,
+                                        right: 4,
+                                      ),
                                       child: Text(
                                         timeStr,
                                         style: GoogleFonts.kanit(
-                                            color: _textLow, fontSize: 10,),
+                                          color: _textLow,
+                                          fontSize: 10,
+                                        ),
                                       ),
                                     ),
                                 ],
@@ -2245,7 +2527,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                     Container(
                       padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
                       decoration: const BoxDecoration(
-                          border: Border(top: BorderSide(color: _border)),),
+                        border: Border(top: BorderSide(color: _border)),
+                      ),
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
@@ -2256,24 +2539,32 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                             'จัดส่งพัสดุได้ไหมครับ/ค่ะ',
                             'ขอดูรูปเพิ่มเติมได้ไหมครับ/ค่ะ',
                           ]
-                              .map((t) => Padding(
-                                    padding: const EdgeInsets.only(right: 8),
-                                    child: GestureDetector(
-                                      onTap: () => sendMessage(t),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 14, vertical: 8,),
-                                        decoration: BoxDecoration(
-                                            color: _cardAlt,
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            border: Border.all(color: _border),),
-                                        child: Text(t,
-                                            style: GoogleFonts.kanit(
-                                                color: _textMid, fontSize: 12,),),
+                              .map(
+                                (t) => Padding(
+                                  padding: const EdgeInsets.only(right: 8),
+                                  child: GestureDetector(
+                                    onTap: () => sendMessage(t),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 14,
+                                        vertical: 8,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: _cardAlt,
+                                        borderRadius: BorderRadius.circular(20),
+                                        border: Border.all(color: _border),
+                                      ),
+                                      child: Text(
+                                        t,
+                                        style: GoogleFonts.kanit(
+                                          color: _textMid,
+                                          fontSize: 12,
+                                        ),
                                       ),
                                     ),
-                                  ),)
+                                  ),
+                                ),
+                              )
                               .toList(),
                         ),
                       ),
@@ -2288,7 +2579,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                       bottom: MediaQuery.of(ctx).viewInsets.bottom + 14,
                     ),
                     decoration: const BoxDecoration(
-                        border: Border(top: BorderSide(color: _border)),),
+                      border: Border(top: BorderSide(color: _border)),
+                    ),
                     child: Row(
                       children: [
                         Expanded(
@@ -2306,10 +2598,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                               hintText: 'พิมพ์ข้อความถึงผู้ขาย...',
                               hintStyle: GoogleFonts.kanit(color: _textLow),
                               contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 10,),
+                                horizontal: 16,
+                                vertical: 10,
+                              ),
                               border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                  borderSide: BorderSide.none,),
+                                borderRadius: BorderRadius.circular(14),
+                                borderSide: BorderSide.none,
+                              ),
                             ),
                           ),
                         ),
@@ -2320,11 +2615,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               gradient: const LinearGradient(
-                                  colors: [_cyan, _cyanDim],),
+                                colors: [_cyan, _cyanDim],
+                              ),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: const Icon(Icons.send_rounded,
-                                color: Colors.black, size: 20,),
+                            child: const Icon(
+                              Icons.send_rounded,
+                              color: Colors.black,
+                              size: 20,
+                            ),
                           ),
                         ),
                       ],
@@ -2403,8 +2702,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (_) =>
-              FullScreenImageGallery(images: images, initialIndex: index),),
+        builder: (_) =>
+            FullScreenImageGallery(images: images, initialIndex: index),
+      ),
     );
   }
 
@@ -2471,8 +2771,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
 class FullScreenImageGallery extends StatefulWidget {
   final List<String> images;
   final int initialIndex;
-  const FullScreenImageGallery(
-      {super.key, required this.images, required this.initialIndex,});
+  const FullScreenImageGallery({
+    super.key,
+    required this.images,
+    required this.initialIndex,
+  });
 
   @override
   State<FullScreenImageGallery> createState() => _FullScreenImageGalleryState();
@@ -2538,8 +2841,11 @@ class _FullScreenImageGalleryState extends State<FullScreenImageGallery> {
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: Colors.white12),
                 ),
-                child: const Icon(Icons.close_rounded,
-                    color: Colors.white, size: 20,),
+                child: const Icon(
+                  Icons.close_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
               ),
             ),
           ),
@@ -2557,9 +2863,10 @@ class _FullScreenImageGalleryState extends State<FullScreenImageGallery> {
               child: Text(
                 '${_currentIndex + 1} / ${widget.images.length}',
                 style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,),
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -2571,19 +2878,18 @@ class _FullScreenImageGalleryState extends State<FullScreenImageGallery> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
-                  widget.images.length,
-                  (i) => AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        margin: const EdgeInsets.symmetric(horizontal: 3),
-                        width: i == _currentIndex ? 20 : 6,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          color: i == _currentIndex
-                              ? Colors.white
-                              : Colors.white38,
-                          borderRadius: BorderRadius.circular(3),
-                        ),
-                      ),),
+                widget.images.length,
+                (i) => AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  margin: const EdgeInsets.symmetric(horizontal: 3),
+                  width: i == _currentIndex ? 20 : 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: i == _currentIndex ? Colors.white : Colors.white38,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+              ),
             ),
           ),
         ],
