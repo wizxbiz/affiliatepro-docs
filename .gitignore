@@ -108,6 +108,9 @@ migrate_working_dir/
 *.iws
 .idea/
 
+# ── Local-only handoff docs (contain live secrets — never commit) ──────────
+AI_PROJECT_HANDOFF_REPORT.md
+
 # ── Misc generated / temp files ────────────────────────────────────────────
 *.lnk
 *.pdf
