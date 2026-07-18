@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { api, getToken } from '../api/client.js'
 import ProductCard from '../components/ProductCard.jsx'
@@ -51,7 +51,8 @@ export default function MarketplacePage() {
   const [products, setProducts] = useState([])
   const [state, setState] = useState('loading') // loading | ready | error
   const [category, setCategory] = useState('')
-  const [search, setSearch] = useState('')
+  const [query, setQuery] = useState('')       // live input value
+  const [search, setSearch] = useState('')      // debounced value that drives the API
   const [offset, setOffset] = useState(0)
   const [hasMore, setHasMore] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
@@ -59,22 +60,34 @@ export default function MarketplacePage() {
   const [showOnboarding, setShowOnboarding] = useState(!getToken() && !sessionStorage.getItem('tuktuk_onboarding_dismissed'))
   const [searchParams, setSearchParams] = useSearchParams()
   const deepLinkedProduct = searchParams.get('product')
+  const loadSeq = useRef(0)          // guards against out-of-order responses
+  const debounceRef = useRef(null)
+
+  // Debounce live query → search (also apply immediately on Enter/clear via setSearch)
+  useEffect(() => {
+    clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => setSearch(query.trim()), 350)
+    return () => clearTimeout(debounceRef.current)
+  }, [query])
 
   const load = useCallback(async ({ reset = true, nextOffset = 0 } = {}) => {
+    const seq = ++loadSeq.current
     if (reset) setState('loading')
     else setLoadingMore(true)
     try {
       const data = await api.products.list({ category, search, limit: PAGE_SIZE, offset: nextOffset })
+      if (seq !== loadSeq.current) return   // a newer request superseded this one
       const batch = data.products || []
       setProducts((prev) => (reset ? batch : [...prev, ...batch]))
       setOffset(nextOffset + batch.length)
       setHasMore(batch.length === PAGE_SIZE)
       setState('ready')
     } catch (err) {
+      if (seq !== loadSeq.current) return
       console.warn('[Marketplace]', err)
       if (reset) setState('error')
     } finally {
-      setLoadingMore(false)
+      if (seq === loadSeq.current) setLoadingMore(false)
     }
   }, [category, search])
 
@@ -114,12 +127,23 @@ export default function MarketplacePage() {
   return (
     <div className="market-page">
       <div className="market-toolbar">
-        <input
-          type="search"
-          placeholder="ค้นหาสินค้า..."
-          defaultValue={search}
-          onKeyDown={(event) => { if (event.key === 'Enter') setSearch(event.target.value.trim()) }}
-        />
+        <div className="market-search-wrap">
+          <input
+            type="search"
+            placeholder="ค้นหาสินค้า หรือชื่อร้าน..."
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            onKeyDown={(event) => { if (event.key === 'Enter') setSearch(query.trim()) }}
+          />
+          {query && (
+            <button
+              type="button"
+              className="market-search-clear"
+              onClick={() => { setQuery(''); setSearch('') }}
+              aria-label="ล้างการค้นหา"
+            >×</button>
+          )}
+        </div>
       </div>
 
       <div className="market-cats">
@@ -152,7 +176,9 @@ export default function MarketplacePage() {
             ))}
           </div>
           {products.length === 0 && (
-            <div className="feed-status"><p>ยังไม่มีสินค้าในหมวดนี้</p></div>
+            <div className="feed-status">
+              <p>{search ? `ไม่พบสินค้าสำหรับ "${search}"` : 'ยังไม่มีสินค้าในหมวดนี้'}</p>
+            </div>
           )}
           {hasMore && products.length > 0 && (
             <button className="btn-load-more" disabled={loadingMore} onClick={() => load({ reset: false, nextOffset: offset })}>

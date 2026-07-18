@@ -164,7 +164,7 @@ export class DB {
     const binds = [];
 
     if (category) { query += ' AND p.category = ?'; binds.push(category); }
-    if (search)   { query += " AND (p.title LIKE ? OR p.description LIKE ?)"; binds.push(`%${search}%`, `%${search}%`); }
+    if (search)   { query += " AND (p.title LIKE ? OR p.description LIKE ? OR COALESCE(u.display_name,'') LIKE ?)"; binds.push(`%${search}%`, `%${search}%`, `%${search}%`); }
     if (province) { query += " AND COALESCE(p.seller_location, '') LIKE ?"; binds.push(`%${province}%`); }
     query += ' ORDER BY p.created_at DESC LIMIT ? OFFSET ?';
     binds.push(limit, offset);
