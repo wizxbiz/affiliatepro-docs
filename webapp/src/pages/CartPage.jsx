@@ -103,7 +103,8 @@ function SellerGroup({ group, onQty, onRemove }) {
 
       {open && (
         <div className="modal-backdrop" onClick={() => setOpen(false)}>
-          <div className="cart-contact-sheet" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-sheet cart-contact-sheet" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-drag-close" onClick={() => setOpen(false)} aria-label="ปิด" />
             <div className="modal-header">
               <h3>สั่งซื้อจาก {group.sellerName}</h3>
               <button className="modal-close" onClick={() => setOpen(false)} aria-label="ปิด">×</button>

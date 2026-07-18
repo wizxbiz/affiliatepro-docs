@@ -1,4 +1,6 @@
+import { useEffect, useRef } from 'react'
 import { parseImages, formatPrice, timeAgo } from '../lib/format.js'
+import { api } from '../api/client.js'
 
 export default function ProductCard({ product, onClick }) {
   const images = parseImages(product.images)
@@ -8,9 +10,37 @@ export default function ProductCard({ product, onClick }) {
   const when = timeAgo(product.created_at || product.createdAt)
   const stock = Number(product.productStock || product.product_stock || 0)
   const viewCount = Number(product.viewCount || product.views_count || 0)
+  const cardRef = useRef(null)
+  const timerRef = useRef(null)
+  const viewedRef = useRef(false)
+
+  useEffect(() => {
+    if (!product.id || viewedRef.current) return
+    const el = cardRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          timerRef.current = setTimeout(() => {
+            if (viewedRef.current) return
+            viewedRef.current = true
+            api.products.view(product.id).catch(() => {/* silent */})
+          }, 1500)
+        } else {
+          clearTimeout(timerRef.current)
+        }
+      },
+      { threshold: 0.6 },
+    )
+    observer.observe(el)
+    return () => {
+      observer.disconnect()
+      clearTimeout(timerRef.current)
+    }
+  }, [product.id])
 
   return (
-    <button className="product-card" onClick={() => onClick?.(product)}>
+    <button ref={cardRef} className="product-card" onClick={() => onClick?.(product)}>
       <div className="product-card-media">
         {cover ? (
           <img src={cover} alt={product.title || ''} loading="lazy" />
