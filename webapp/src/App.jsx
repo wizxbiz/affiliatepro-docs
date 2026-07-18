@@ -62,9 +62,9 @@ function Header() {
               ? <img src={user.pictureUrl} alt="" />
               : <span className="user-chip-initial">{(user.displayName || 'ผ')[0]}</span>}
           </button>
-        ) : (
+        ) : location.pathname !== '/login' ? (
           <Link className="btn-login-mini" to="/login">เข้าสู่ระบบ</Link>
-        )}
+        ) : null}
       </div>
     </header>
   )
@@ -72,6 +72,9 @@ function Header() {
 
 function BottomNav() {
   const { user } = useAuth()
+  const location = useLocation()
+  // Hide app tabs on the login screen (guest auth wall)
+  if (location.pathname === '/login') return null
   return (
     <nav className="bottom-nav">
       {/* ดูเพลิน */}

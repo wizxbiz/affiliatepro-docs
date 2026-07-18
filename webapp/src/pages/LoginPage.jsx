@@ -226,7 +226,13 @@ export default function LoginPage() {
   return (
     <div className="login-page">
       <div className="login-card">
-        <h2>เข้าสู่ระบบ TukTuk</h2>
+        <div className="login-brand">
+          <span className="login-brand-logo">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="26" height="26"><path fillRule="evenodd" clipRule="evenodd" d="M7 4.5h4.5a8 8 0 0 1 0 15H7a1.5 1.5 0 0 1-1.5-1.5V6A1.5 1.5 0 0 1 7 4.5zm2.5 4.7v5.6a.6.6 0 0 0 .9.5l4.5-2.8a.6.6 0 0 0 0-1l-4.5-2.8a.6.6 0 0 0-.9.5z"/></svg>
+          </span>
+          <h2 className="login-brand-name">TukTuk</h2>
+          <p className="login-brand-sub">ซื้อ-ขาย-แชร์ ในที่เดียว</p>
+        </div>
 
         <div className="login-tabs">
           <button className={tab === 'line' ? 'active' : ''} onClick={() => { setTab('line'); setError('') }}>LINE</button>
@@ -239,7 +245,10 @@ export default function LoginPage() {
 
         {tab === 'line' && !busy && (
           <div className="login-section">
-            <button className="btn-line" onClick={startLineLogin}>
+            <button className="login-line-btn" onClick={startLineLogin}>
+              <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20" aria-hidden="true">
+                <path d="M12 2C6.48 2 2 5.64 2 10.13c0 4.02 3.56 7.39 8.37 8.03.33.07.77.22.88.5.1.26.07.66.03.92l-.14.86c-.04.26-.2 1.02.89.56 1.1-.46 5.9-3.48 8.05-5.95C21.6 13.4 22 11.83 22 10.13 22 5.64 17.52 2 12 2z"/>
+              </svg>
               เข้าสู่ระบบด้วย LINE
             </button>
             <p className="login-hint">ใช้บัญชี LINE ของคุณ ปลอดภัยและรวดเร็ว</p>
