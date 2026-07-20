@@ -477,6 +477,10 @@ export default function ProfilePage() {
           danger
           busy={delBusy}
           onConfirm={handleDelete}
+          onClose={() => (delBusy ? null : setDeleting(null))}
+        />
+      )}
+
       {showEditModal && (
         <EditProfileModal
           profile={profile}
