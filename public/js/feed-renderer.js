@@ -4886,11 +4886,8 @@ async function checkAdminStatus() {
         const user = typeof WizmobizAuth !== 'undefined' ? WizmobizAuth.getUser() : null;
         if (!user) return;
         
-        const whitelistedIds = [
-            'Ud9bec6d2ea945cf4330a69cb74ac93cf'
-        ];
-        
-        if (user.role === 'admin' || user.role === 'super_admin' || whitelistedIds.includes(user.uid) || whitelistedIds.includes(user.lineUserId)) {
+        // Admin จาก server-verified role เท่านั้น (ไม่มี hardcoded ID list)
+        if (user.role === 'admin' || user.role === 'super_admin') {
             FeedRenderer.isAdmin = true;
             const fab = document.getElementById('adminFab');
             if (fab) fab.style.setProperty('display', 'flex', 'important');

@@ -13,11 +13,13 @@
   'use strict';
 
   // ── Config ─────────────────────────────────────────────────
-  // Same-origin by default: /api/* ถูก proxy ไป Worker ผ่าน _worker.js บน Pages
-  // fallback ยิงตรง Worker เฉพาะตอนเปิดนอกเว็บ (file:// หรือ localhost dev)
-  const WORKER_URL = (location.protocol === 'file:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-    ? 'https://tuktukfeed-api.imtthailand2019.workers.dev'
-    : '';
+  // tuktukthailand.com ใช้ openresty (ไม่ใช่ Cloudflare Pages) → ยิงตรง Worker
+  // *.pages.dev ใช้ _worker.js proxy → relative URL ได้เลย
+  const _NON_PAGES_HOSTS = ['tuktukthailand.com', 'localhost', '127.0.0.1'];
+  const WORKER_URL = (
+    location.protocol === 'file:' ||
+    _NON_PAGES_HOSTS.includes(location.hostname)
+  ) ? 'https://tuktukfeed-api.imtthailand2019.workers.dev' : '';
 
   // ── Internal: get JWT token จาก session ───────────────────
   function _getToken() {
@@ -372,12 +374,15 @@
     async get() {
       const fullPath = this.parentPath ? `${this.parentPath}/${this.name}` : this.name;
       const data = await _fetch(`/api/db/${fullPath}`);
+      const docs = (data.results || []).map(d => {
+        const wrapped = _wrapDocData(d);
+        return { id: d.id, data: () => wrapped, exists: true };
+      });
       return {
-        docs: (data.results || []).map(d => {
-          const wrapped = _wrapDocData(d);
-          return { id: d.id, data: () => wrapped, exists: true };
-        }),
-        empty: !(data.results?.length),
+        docs,
+        size: docs.length,          // Firestore-compat: snapshot.size
+        empty: docs.length === 0,
+        forEach: (cb) => docs.forEach(cb),
       };
     }
     onSnapshot(callback, onError) {
@@ -466,12 +471,15 @@
 
       const fullPath = this.parentPath ? `${this.parentPath}/${this.collection}` : this.collection;
       const data = await _fetch(`/api/db/${fullPath}?${params}`);
+      const docs = (data.results || []).map(d => {
+        const wrapped = _wrapDocData(d);
+        return { id: d.id, data: () => wrapped, exists: true };
+      });
       return {
-        docs: (data.results || []).map(d => {
-          const wrapped = _wrapDocData(d);
-          return { id: d.id, data: () => wrapped, exists: true };
-        }),
-        empty: !(data.results?.length),
+        docs,
+        size: docs.length,          // Firestore-compat: snapshot.size
+        empty: docs.length === 0,
+        forEach: (cb) => docs.forEach(cb),
       };
     }
     onSnapshot(callback, onError) {

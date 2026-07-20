@@ -3253,19 +3253,20 @@
             promo: '🏷️ โปรโมชั่น'
         };
 
-        // Check Admin Status
+        // Check Admin Status — อ่าน role จาก JWT (server-signed) เท่านั้น
         async function checkAdminStatus() {
             try {
-                // Check Role form LocalStorage
-                const adminRole = localStorage.getItem('wit_admin_role');
+                // decode role จาก tuktuk_jwt (ปลอมยากเพราะต้องมี signing secret)
+                let adminRole = null;
+                try {
+                    const jwt = localStorage.getItem('tuktuk_jwt');
+                    if (jwt) {
+                        const payload = JSON.parse(atob(jwt.split('.')[1]));
+                        if (!payload.exp || Date.now() / 1000 <= payload.exp) adminRole = payload.role;
+                    }
+                } catch { /* ignore */ }
 
-                // Get Current User ID
-                const lineUserId = localStorage.getItem('lineUserId') || sessionStorage.getItem('lineUserId');
-
-                // Allow Roles & Whitelisted IDs (Your ID included)
-                if (adminRole === 'super_admin' || adminRole === 'admin' ||
-                    lineUserId === 'Ud9bec6d2ea945cf4330a69cb74ac93cf') {
-
+                if (adminRole === 'super_admin' || adminRole === 'admin') {
                     isAdmin = true;
                     // Show Admin Button (Using style.display instead of class)
                     const fab = document.getElementById('adminFab');

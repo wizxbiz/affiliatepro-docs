@@ -245,6 +245,60 @@
         .back-link:hover {
             text-decoration: underline;
         }
+
+        /* AI Insights Panel */
+        .ai-insights-panel {
+            margin-top: 30px;
+            background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.1));
+            border: 1px solid rgba(99,102,241,0.3);
+            border-radius: 15px;
+            padding: 25px;
+        }
+        .ai-insights-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .ai-insights-header h3 {
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .btn-ai-analyze {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            padding: 8px 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            transition: opacity 0.2s;
+        }
+        .btn-ai-analyze:hover { opacity: 0.85; }
+        .btn-ai-analyze:disabled { opacity: 0.5; cursor: default; }
+        .ai-insights-body {
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: #d1d5db;
+            white-space: pre-wrap;
+        }
+        .ai-insights-body.loading {
+            color: #818cf8;
+            animation: pulse 1.5s infinite;
+        }
+        .ai-insight-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 12px;
+            border-left: 3px solid #6366f1;
+        }
     </style>
 </head>
 
@@ -276,13 +330,9 @@
         </div>
     </div>
 
-    <script src="/firebase-config.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-
     <script src="/js/auth-service.js"></script>
     <script src="/js/tuktuk-api.js"></script>
+    <script src="/js/cloudflare-client.js"></script>
 
     <script>
         const API_URL = 'https://us-central1-appinjproject.cloudfunctions.net/getAnalyticsStats';
@@ -424,6 +474,25 @@
 
             // Render chart
             renderChart(dailyStats);
+
+            // Inject AI Insights panel (reuse `content` var already declared above)
+            const aiPanel = document.createElement('div');
+            aiPanel.className = 'ai-insights-panel';
+            aiPanel.innerHTML = `
+                <div class="ai-insights-header">
+                    <h3><i class="fas fa-robot" style="margin-right:8px;"></i>AI วิเคราะห์ข้อมูล Analytics</h3>
+                    <button class="btn-ai-analyze" id="btnAiAnalyze" onclick="aiAnalyze()">
+                        <i class="fas fa-wand-magic-sparkles"></i> วิเคราะห์ด้วย AI
+                    </button>
+                </div>
+                <div class="ai-insights-body" id="aiInsightsBody" style="color:rgba(255,255,255,0.4); font-style:italic;">
+                    กด "วิเคราะห์ด้วย AI" เพื่อให้ AI สรุปผลและแนะนำแนวทางพัฒนา
+                </div>
+            `;
+            content.appendChild(aiPanel);
+
+            // Store for AI analysis
+            window._lastAnalyticsData = { summary, dailyStats, topPages };
         }
 
         function renderChart(dailyStats) {
@@ -498,6 +567,81 @@
 
         // Auto refresh every 5 minutes
         setInterval(loadAnalytics, 5 * 60 * 1000);
+
+        // ── AI Analytics Insights ─────────────────────────────────
+        async function aiAnalyze() {
+            const btn = document.getElementById('btnAiAnalyze');
+            const body = document.getElementById('aiInsightsBody');
+            if (!btn || !body) return;
+
+            const data = window._lastAnalyticsData;
+            if (!data) return;
+
+            btn.disabled = true;
+            body.className = 'ai-insights-body loading';
+            body.textContent = '🤖 AI กำลังวิเคราะห์ข้อมูล...';
+
+            const { summary, dailyStats, topPages } = data;
+            const trend = dailyStats.length > 1
+                ? (dailyStats[dailyStats.length - 1]?.pageViews || 0) - (dailyStats[0]?.pageViews || 0)
+                : 0;
+            const topPage = topPages?.[0]?.page || '/';
+
+            const prompt = `วิเคราะห์ข้อมูล Analytics ของ TukTuk Thailand Platform:\n` +
+                `- เข้าชมทั้งหมด: ${summary.totalPageViews} ครั้ง\n` +
+                `- ผู้เยี่ยมชมที่ไม่ซ้ำ: ${summary.uniqueVisitors} คน\n` +
+                `- หน้าต่อคน (เฉลี่ย): ${summary.avgPagesPerVisitor}\n` +
+                `- แนวโน้ม (ช่วงที่เลือก): ${trend >= 0 ? '+' : ''}${trend} views\n` +
+                `- หน้ายอดนิยม: ${topPage}\n` +
+                `- Top 3 หน้า: ${topPages.slice(0, 3).map(p => p.page).join(', ')}\n\n` +
+                `ตอบเป็น JSON: {"summary":"สรุป2-3ประโยค","insights":["insight1","insight2","insight3"],"recommendations":["แนะนำ1","แนะนำ2"]}`;
+
+            try {
+                const WORKER = location.hostname === 'tuktukthailand.com'
+                    ? 'https://tuktukfeed-api.imtthailand2019.workers.dev' : '';
+                const resp = await fetch(`${WORKER}/api/v1/ai/write-post`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topic: prompt, mode: 'post' }),
+                });
+                const result = await resp.json();
+                const raw = result.content || result.headline || '';
+                let parsed;
+                try {
+                    parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
+                } catch {
+                    // If not JSON, show as plain text
+                    body.className = 'ai-insights-body';
+                    body.innerHTML = `<div class="ai-insight-card">${raw}</div>`;
+                    btn.disabled = false;
+                    return;
+                }
+
+                body.className = 'ai-insights-body';
+                body.innerHTML = `
+                    <div class="ai-insight-card" style="border-left-color:#10b981;">
+                        <strong style="color:#10b981;">📊 สรุป</strong><br>
+                        <span>${parsed.summary || ''}</span>
+                    </div>
+                    ${(parsed.insights || []).map(ins => `
+                        <div class="ai-insight-card">
+                            <span>💡 ${ins}</span>
+                        </div>
+                    `).join('')}
+                    <div class="ai-insight-card" style="border-left-color:#f59e0b; margin-top:8px;">
+                        <strong style="color:#f59e0b;">🎯 แนะนำ</strong>
+                        <ul style="margin:8px 0 0 16px; padding:0;">
+                            ${(parsed.recommendations || []).map(r => `<li style="margin-bottom:4px;">${r}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            } catch (e) {
+                body.className = 'ai-insights-body';
+                body.innerHTML = `<span style="color:#ef4444;">❌ วิเคราะห์ไม่ได้: ${e.message}</span>`;
+            } finally {
+                btn.disabled = false;
+            }
+        }
     </script>
     <script src="js/persistent-ui.js"></script>
 </body>

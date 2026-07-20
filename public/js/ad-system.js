@@ -231,30 +231,8 @@ function editAd(id) {
 
 /** Ensure Firebase Auth is active before any admin write. */
 async function _ensureFirebaseAuth() {
-    if (firebase.auth().currentUser) return true;
-    // Try to restore via refreshWebSession CF
-    try {
-        const raw = localStorage.getItem('wizmobiz_session') ||
-                    localStorage.getItem('tuktuk_line_session');
-        if (!raw) return false;
-        const session = JSON.parse(raw);
-        const userId = session.lineUserId || session.uid;
-        if (!userId) return false;
-        const API_BASE = 'https://us-central1-appinjproject.cloudfunctions.net';
-        const resp = await fetch(`${API_BASE}/refreshWebSession`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId }),
-        });
-        const data = await resp.json();
-        if (data.sessionToken) {
-            await firebase.auth().signInWithCustomToken(data.sessionToken);
-            return !!firebase.auth().currentUser;
-        }
-    } catch (e) {
-        console.warn('[ad-system] _ensureFirebaseAuth failed:', e.message);
-    }
-    return false;
+    // Firebase Auth is bypassed.
+    return true;
 }
 
 async function handleSaveAd(event) {

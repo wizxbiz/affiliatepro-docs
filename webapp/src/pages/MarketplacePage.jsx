@@ -9,13 +9,13 @@ import { useCart } from '../cart/CartContext.jsx'
 const PAGE_SIZE = 20
 
 const CATEGORIES = [
-  { key: '', label: 'ทั้งหมด' },
-  { key: 'electronics', label: 'อิเล็กทรอนิกส์' },
-  { key: 'fashion', label: 'แฟชั่น' },
-  { key: 'food', label: 'อาหาร' },
-  { key: 'otop', label: 'OTOP' },
-  { key: 'services', label: 'บริการ' },
-  { key: 'general', label: 'อื่นๆ' },
+  { key: '', label: 'ทั้งหมด', icon: '🏪' },
+  { key: 'electronics', label: 'อิเล็กทรอนิกส์', icon: '📱' },
+  { key: 'fashion', label: 'แฟชั่น', icon: '👗' },
+  { key: 'food', label: 'อาหาร', icon: '🍜' },
+  { key: 'otop', label: 'OTOP', icon: '🎨' },
+  { key: 'services', label: 'บริการ', icon: '🛠️' },
+  { key: 'general', label: 'อื่นๆ', icon: '📦' },
 ]
 
 function firstDefined(...values) {
@@ -46,6 +46,52 @@ function productImages(product) {
   const images = parseImages(product.images)
   const imageUrl = product.imageUrl || product.image_url || product.thumbnailUrl
   return images.length > 0 ? images : [imageUrl].filter(Boolean)
+}
+
+function PromoSection({ products, onOpen }) {
+  const popular = [...products]
+    .sort((a, b) => (b.viewCount || b.views_count || 0) - (a.viewCount || a.views_count || 0))
+    .slice(0, 8)
+
+  return (
+    <div className="market-promo-section">
+      <div className="market-promo-banner">
+        <div className="promo-banner-content">
+          <div className="promo-badge">🔥 HOT DEAL</div>
+          <div className="promo-title">สินค้าคัดพิเศษ</div>
+          <div className="promo-sub">ช้อปสินค้าพรีเมียมจากผู้ขายในชุมชน</div>
+        </div>
+        <div className="promo-banner-deco">🛍️</div>
+      </div>
+
+      {popular.length > 0 && (
+        <div className="market-popular-row">
+          <div className="market-popular-header">
+            <span>🏆 ยอดนิยม</span>
+          </div>
+          <div className="market-popular-scroll">
+            {popular.map((product) => {
+              const imgs = product.images ? JSON.parse(typeof product.images === 'string' ? product.images : JSON.stringify(product.images)).filter(Boolean) : []
+              const img = imgs[0] || product.imageUrl || product.image_url || product.thumbnailUrl
+              const views = product.viewCount || product.views_count || 0
+              return (
+                <button key={product.id} className="popular-card" onClick={() => onOpen(product)}>
+                  <div className="popular-card-img">
+                    {img ? <img src={img} alt={product.title} loading="lazy" /> : <div className="popular-card-placeholder">📦</div>}
+                  </div>
+                  <div className="popular-card-body">
+                    <div className="popular-card-title">{product.title}</div>
+                    <div className="popular-card-price">฿{Number(product.price || 0).toLocaleString()}</div>
+                    {views > 0 && <div className="popular-card-views">👁 {views >= 1000 ? `${(views / 1000).toFixed(1)}k` : views}</div>}
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  )
 }
 
 export default function MarketplacePage() {
@@ -151,10 +197,11 @@ export default function MarketplacePage() {
         {CATEGORIES.map((item) => (
           <button
             key={item.key}
-            className={category === item.key ? 'active' : ''}
+            className={`cat-chip${category === item.key ? ' active' : ''}`}
             onClick={() => setCategory(item.key)}
           >
-            {item.label}
+            <span className="cat-chip-icon">{item.icon}</span>
+            <span className="cat-chip-label">{item.label}</span>
           </button>
         ))}
       </div>
@@ -167,6 +214,10 @@ export default function MarketplacePage() {
           <p>โหลดสินค้าไม่สำเร็จ</p>
           <button onClick={() => load()}>ลองใหม่</button>
         </div>
+      )}
+
+      {state === 'ready' && !search && !category && (
+        <PromoSection products={products} onOpen={openProduct} />
       )}
 
       {state === 'ready' && (

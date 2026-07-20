@@ -2602,6 +2602,10 @@
                     <i class="fas fa-chart-line"></i>
                     <span>สถิติ</span>
                 </a>
+                <a class="nav-item" data-section="my-posts">
+                    <i class="fas fa-newspaper"></i>
+                    <span>โพสต์ของฉัน</span>
+                </a>
                 <a class="nav-item" data-section="notifications">
                     <i class="fas fa-bell"></i>
                     <span>แจ้งเตือน</span>
@@ -3107,6 +3111,25 @@
                             <!-- Inventory items will be loaded here -->
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: MY POSTS -->
+        <section id="section-my-posts" class="dashboard-section">
+            <div class="page-header">
+                <h1 class="page-title"><i class="fas fa-newspaper me-2" style="color:var(--primary);"></i>โพสต์ของฉัน</h1>
+                <button class="btn btn-primary" onclick="openSmartPostModal()" style="border-radius:30px;">
+                    <i class="fas fa-plus me-1"></i> สร้างโพสต์ใหม่
+                </button>
+            </div>
+
+            <div class="content-card" style="padding:20px;">
+                <div id="myPostsList">
+                    <div style="text-align:center; padding:40px; color:rgba(255,255,255,0.4);">
+                        <i class="fas fa-spinner fa-spin fa-2x mb-3 d-block"></i>
+                        <p>กำลังโหลดโพสต์...</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -6074,8 +6097,24 @@
                     category: 'general'
                 };
 
-                // 3. Save to Firestore (community_products)
+                // 3. Save product to D1 via Cloudflare Workers
                 await db.collection('community_products').add(newProduct);
+
+                // 4. Also create a social post to the feed (fire-and-forget)
+                try {
+                    const WORKER = (location.hostname === 'tuktukthailand.com' || location.hostname === 'localhost')
+                        ? 'https://tuktukfeed-api.imtthailand2019.workers.dev' : '';
+                    const jwt = localStorage.getItem('tuktuk_jwt') || '';
+                    const postContent = `🛒 ${title}\n\n${desc || 'สินค้าใหม่จากร้านของเรา'}\n\n💰 ราคา: ฿${price.toLocaleString()}\n#TukTukThailand #ตลาดนัด #SmartPost`;
+                    const mediaUrls = uploadedUrls.map(u => u.url ? { url: u.url, type: u.type } : u);
+                    await fetch(`${WORKER}/api/v1/posts`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', ...(jwt ? { 'Authorization': `Bearer ${jwt}` } : {}) },
+                        body: JSON.stringify({ content: postContent, mediaUrls, category: 'general' }),
+                    });
+                } catch (postErr) {
+                    console.warn('[SmartPost] Social post creation failed (non-critical):', postErr.message);
+                }
 
                 showToast('✅ บันทึกแคมเปญอัจฉริยะสำเร็จ!', 'success');
                 closeSmartPostModal();
@@ -6093,33 +6132,60 @@
         // ========================================
         // AI ASSISTANT LOGIC
         // ========================================
+        async function _callWorkerAISeller(topic, mode = 'headline') {
+            const WORKER = (location.hostname === 'tuktukthailand.com' || location.hostname === 'localhost')
+                ? 'https://tuktukfeed-api.imtthailand2019.workers.dev' : '';
+            const jwt = localStorage.getItem('tuktuk_jwt') || '';
+            const resp = await fetch(`${WORKER}/api/v1/ai/write-post`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', ...(jwt ? { 'Authorization': `Bearer ${jwt}` } : {}) },
+                body: JSON.stringify({ topic, mode }),
+            });
+            if (!resp.ok) throw new Error(`AI ${resp.status}`);
+            return await resp.json();
+        }
+
         async function aiImproveTitle() {
             const titleInput = document.getElementById('smartTitle');
             if (!titleInput.value) return showToast('กรุณาระบุชื่อเริ่มต้นก่อนครับ', 'info');
-
             showToast('AI กำลังปรับแต่งชื่อ...', 'info');
-            setTimeout(() => {
+            try {
+                const res = await _callWorkerAISeller(
+                    `ชื่อสินค้า: "${titleInput.value}" — สร้าง headline ที่ดึงดูดคนซื้อ 1 บรรทัด ไม่เกิน 60 ตัวอักษร`,
+                    'headline'
+                );
+                const improved = (res.headline || res.content || titleInput.value).split('\n')[0].replace(/^["']|["']$/g, '').trim();
+                titleInput.value = improved;
+                showToast('AI ปรับชื่อสินค้าให้ดูน่าสนใจขึ้นแล้ว!', 'success');
+            } catch {
+                // Local fallback
                 const ideas = [
                     `[Rare Item] ${titleInput.value} - คัดเกรดคุณภาพพรีเมียม`,
-                    `${titleInput.value} รุ่นใหม่ล่าสุด (Limited Edition)`,
                     `ดีลพิเศษ! ${titleInput.value} สวยจบครบในชิ้นเดียว`,
-                    `${titleInput.value} - ยกระดับไลฟ์สไตล์ของคุณให้ดูแพง`
                 ];
                 titleInput.value = ideas[Math.floor(Math.random() * ideas.length)];
-                showToast('AI ปรับชื่อสินค้าให้ดูน่าสนใจขึ้นแล้ว!', 'success');
-            }, 800);
+                showToast('AI ปรับชื่อสินค้าแล้ว!', 'success');
+            }
         }
 
         async function aiImproveDesc() {
             const descInput = document.getElementById('smartDesc');
-            if (!descInput.value) return showToast('กรุณาระบุข้อมูลสินค้าเบื้องต้นก่อนครับ', 'info');
-
+            const title = document.getElementById('smartTitle').value;
+            const price = document.getElementById('smartPrice').value;
+            if (!descInput.value && !title) return showToast('กรุณาระบุข้อมูลสินค้าเบื้องต้นก่อนครับ', 'info');
             showToast('AI กำลังร่างแคปชั่นขายดี...', 'info');
-            setTimeout(() => {
-                const current = descInput.value;
-                descInput.value = `🌟 ทำไมต้องมีชิ้นนี้?\n- ${current}\n\n✅ สินค้าพร้อมส่ง/พรีออเดอร์\n✅ รับประกันคุณภาพความพอใจ\n✅ จัดส่งรวดเร็วทันใจ\n\n#SmartPost #SelectedByAI #QualityProduct`;
+            try {
+                const res = await _callWorkerAISeller(
+                    `สินค้า: "${title}" ราคา ${price}฿\nรายละเอียด: "${descInput.value || title}"\nสร้างแคปชั่นขายสินค้าบน TukTuk Thailand ภาษาไทย 3-5 ประโยค มี emoji และ hashtag ดึงดูดคนซื้อ`,
+                    'post'
+                );
+                descInput.value = res.content || descInput.value;
+                showToast('AI เขียนแคปชั่นขายดีให้แล้ว!', 'success');
+            } catch {
+                const current = descInput.value || title;
+                descInput.value = `🌟 ทำไมต้องมีชิ้นนี้?\n- ${current}\n\n✅ สินค้าพร้อมส่ง/พรีออเดอร์\n✅ รับประกันคุณภาพความพอใจ\n✅ จัดส่งรวดเร็วทันใจ\n\n#SmartPost #SelectedByAI #QualityProduct #TukTukThailand`;
                 showToast('AI เขียนรายละเอียดให้น่าอ่านขึ้นแล้ว!', 'success');
-            }, 1000);
+            }
         }
 
         function aiSuggestTime() {
@@ -7055,18 +7121,80 @@
         // loadAnalytics is triggered when user navigates to section-analytics
         const _origShowSection = typeof showSection === 'function' ? showSection : null;
         document.addEventListener('DOMContentLoaded', () => {
-            // Override showSection to lazy-load analytics
+            // Override showSection to lazy-load analytics and my-posts
             const origNav = document.querySelectorAll('.nav-item');
             origNav.forEach(item => {
                 item.addEventListener('click', () => {
                     const section = item.dataset.section;
                     if (section === 'analytics') setTimeout(loadAnalytics, 100);
+                    if (section === 'my-posts') setTimeout(loadMyPosts, 100);
                 });
             });
 
             // Init FCM after a short delay (let Firebase auth settle)
             setTimeout(initWebFCM, 3000);
         });
+
+        // ── My Posts: โพสต์ที่สร้างโดย seller นี้ ──────────────────────
+        async function loadMyPosts() {
+            const container = document.getElementById('myPostsList');
+            if (!container) return;
+            const session = WizmobizAuth?.getSession?.() || (() => {
+                try { return JSON.parse(localStorage.getItem('wizmobiz_session') || 'null'); } catch { return null; }
+            })();
+            const uid = session?.uid || session?.lineUserId;
+            const jwt = localStorage.getItem('tuktuk_jwt') || session?.token || '';
+            if (!uid) {
+                container.innerHTML = `<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.4);">กรุณาเข้าสู่ระบบเพื่อดูโพสต์</div>`;
+                return;
+            }
+
+            container.innerHTML = `<div style="text-align:center;padding:30px;color:rgba(255,255,255,0.4);"><i class="fas fa-spinner fa-spin fa-2x mb-2 d-block"></i>กำลังโหลด...</div>`;
+
+            try {
+                const WORKER = (location.hostname === 'tuktukthailand.com' || location.hostname === 'localhost')
+                    ? 'https://tuktukfeed-api.imtthailand2019.workers.dev' : '';
+                const resp = await fetch(`${WORKER}/api/v1/posts?userId=${uid}&limit=20`, {
+                    headers: jwt ? { 'Authorization': `Bearer ${jwt}` } : {},
+                });
+                const data = await resp.json();
+                const posts = data.data || data.posts || data.items || [];
+
+                if (!posts.length) {
+                    container.innerHTML = `
+                        <div style="text-align:center;padding:60px 20px;color:rgba(255,255,255,0.35);">
+                            <i class="fas fa-feather-alt fa-3x mb-3 d-block"></i>
+                            <p>ยังไม่มีโพสต์</p>
+                            <button class="btn btn-primary mt-3" onclick="openSmartPostModal()" style="border-radius:25px;">
+                                <i class="fas fa-plus me-1"></i> สร้างโพสต์แรก
+                            </button>
+                        </div>`;
+                    return;
+                }
+
+                container.innerHTML = posts.map(p => {
+                    const date = p.createdAt ? new Date(typeof p.createdAt === 'number' ? p.createdAt : p.createdAt?.seconds * 1000).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' }) : '';
+                    const preview = (p.content || '').slice(0, 120) + ((p.content?.length || 0) > 120 ? '…' : '');
+                    const img = p.mediaUrls?.[0]?.url || p.imageUrl || '';
+                    const views = p.viewCount || p.views || 0;
+                    const likes = p.likeCount || p.likes || 0;
+                    return `
+                    <div style="display:flex;gap:14px;padding:16px;border-bottom:1px solid rgba(255,255,255,0.07);align-items:flex-start;">
+                        ${img ? `<img src="${img}" style="width:72px;height:72px;object-fit:cover;border-radius:10px;flex-shrink:0;" onerror="this.style.display='none'">` : `<div style="width:72px;height:72px;background:rgba(99,102,241,0.15);border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;"><i class="fas fa-file-alt" style="color:#6366f1;"></i></div>`}
+                        <div style="flex:1;min-width:0;">
+                            <p style="color:#e5e7eb;font-size:0.9rem;margin:0 0 6px;word-break:break-word;">${preview || '(ไม่มีข้อความ)'}</p>
+                            <div style="display:flex;gap:16px;font-size:0.75rem;color:rgba(255,255,255,0.4);">
+                                <span><i class="fas fa-eye me-1"></i>${views}</span>
+                                <span><i class="fas fa-heart me-1"></i>${likes}</span>
+                                <span>${date}</span>
+                            </div>
+                        </div>
+                    </div>`;
+                }).join('');
+            } catch (e) {
+                container.innerHTML = `<div style="text-align:center;padding:40px;color:#ef4444;"><i class="fas fa-exclamation-circle me-2"></i>โหลดไม่สำเร็จ: ${e.message}</div>`;
+            }
+        }
 
         // 🚀 Detect Iframe / Embedded Mode to Prevent Duplicate Navbars
         (function () {

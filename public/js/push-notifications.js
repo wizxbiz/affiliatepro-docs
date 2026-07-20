@@ -106,33 +106,22 @@
 
   async function _saveSubscription(subscription, uid) {
     try {
+      const base = window.TUKTUK_API_BASE || 'https://tuktukfeed-api.imtthailand2019.workers.dev';
       const body = {
         data: {
           subscription: (typeof subscription.toJSON === 'function') ? subscription.toJSON() : subscription,
           uid
         }
       };
-      const resp = await fetch(`${CF_BASE}/saveWebPushSubscription`, {
+      const resp = await fetch(`${base}/api/v1/push/subscribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
-      if (!resp.ok) throw new Error('CF save failed');
-      console.log('[Push] Subscription saved to server');
+      if (!resp.ok) throw new Error('Worker save failed');
+      console.log('[Push] Subscription saved to Cloudflare Worker');
     } catch (e) {
-      // Fallback: save directly to Firestore via REST if Firebase SDK available
-      if (window.firebase?.firestore) {
-        const db = window.firebase.firestore();
-        const deviceId = btoa(subscription.endpoint).slice(-20);
-        await db.collection('push_subscriptions').doc(uid)
-          .collection('devices').doc(deviceId).set({
-            subscription: subscription.toJSON(),
-            userAgent: navigator.userAgent.slice(0, 120),
-            active: true,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          });
-        console.log('[Push] Subscription saved via Firestore SDK');
-      }
+      console.warn('[Push] Save subscription failed:', e.message);
     }
   }
 

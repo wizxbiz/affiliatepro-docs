@@ -379,7 +379,9 @@ const firebaseConfig = {
 };
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 
-const API_BASE = 'https://us-central1-appinjproject.cloudfunctions.net';
+const API_BASE = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1')
+    ? 'http://127.0.0.1:8787'
+    : 'https://tuktukfeed-api.imtthailand2019.workers.dev';
 let currentUid = null;
 
 // ── Auth: support Firebase auth OR LINE login session ─────────

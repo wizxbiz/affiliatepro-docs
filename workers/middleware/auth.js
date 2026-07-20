@@ -43,6 +43,14 @@ export async function requireAdmin(c, next) {
 }
 
 /**
+ * getSession — verify + return the JWT session (or null) without blocking.
+ * Reusable outside middleware chains (e.g. per-route guards).
+ */
+export async function getSession(c) {
+  return _extractSession(c);
+}
+
+/**
  * Internal: extract and verify JWT from Authorization header or cookie
  */
 async function _extractSession(c) {
@@ -70,7 +78,8 @@ async function _extractSession(c) {
 
   try {
     const secret = (c.env?.[JWT_SECRET_KEY] || 'dev-secret-change-me').trim();
-    const payload = await verify(token, secret);
+    // hono v4.12+ ต้องระบุ alg ให้ตรงกับตอน sign (default HS256) มิฉะนั้น verify ล้มเสมอ
+    const payload = await verify(token, secret, 'HS256');
 
     // Check expiry
     if (payload.exp && Date.now() / 1000 > payload.exp) {

@@ -119,13 +119,16 @@ export class DB {
     const youtube = mediaUrls.find((item) => item.type === 'youtube');
     const now = post.createdAt || Date.now();
     return this.d1.prepare(`
-      INSERT INTO posts (id, user_id, content, media_urls, category, status, youtube_url, video_embed, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO posts (id, user_id, title, content, media_urls, category, status, youtube_url, video_embed, linked_product_id, pinned, published, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(
-      post.id, post.userId, post.content,
+      post.id, post.userId, post.title || '', post.content,
       JSON.stringify(mediaUrls),
       post.category || (youtube ? 'video' : 'general'), post.status || 'active',
       post.youtubeUrl || youtube?.url || '', post.videoEmbed || youtube?.embedUrl || '',
+      post.linkedProductId || null,
+      post.pinned ? 1 : 0,
+      post.published !== false ? 1 : 0,
       now, post.updatedAt || now
     ).run();
   }
@@ -137,11 +140,15 @@ export class DB {
 
   // Owner-scoped edit. `fields` keys are camelCase; only whitelisted columns
   // should be passed in by the caller (the route enforces the whitelist).
-  async updatePost(id, userId, fields) {
+  async updatePost(id, userId, fields, isAdmin = false) {
     const keys = Object.keys(fields);
     if (keys.length === 0) return { meta: { changes: 0 } };
     const sets = keys.map(k => `${this._col(k)} = ?`).join(', ');
     const values = keys.map(k => fields[k]);
+    if (isAdmin) {
+      return this.d1.prepare(`UPDATE posts SET ${sets}, updated_at = ? WHERE id = ?`)
+        .bind(...values, Date.now(), id).run();
+    }
     return this.d1.prepare(`UPDATE posts SET ${sets}, updated_at = ? WHERE id = ? AND user_id = ?`)
       .bind(...values, Date.now(), id, userId).run();
   }
@@ -164,9 +171,37 @@ export class DB {
     const binds = [];
 
     if (category) { query += ' AND p.category = ?'; binds.push(category); }
-    if (search)   { query += " AND (p.title LIKE ? OR p.description LIKE ? OR COALESCE(u.display_name,'') LIKE ?)"; binds.push(`%${search}%`, `%${search}%`, `%${search}%`); }
+
+    if (search) {
+      // แยก search เป็นคำๆ แล้ว AND ทุกคำ — แม่นยำกว่า phrase LIKE
+      const terms = String(search).trim().split(/\s+/).filter(Boolean).slice(0, 6);
+      if (terms.length === 1) {
+        // คำเดียว: ค้นหาใน title, description, seller name, category
+        const q = `%${terms[0]}%`;
+        query += ` AND (p.title LIKE ? OR COALESCE(p.description,'') LIKE ? OR COALESCE(u.display_name,'') LIKE ? OR COALESCE(p.category,'') LIKE ?)`;
+        binds.push(q, q, q, q);
+      } else {
+        // หลายคำ: ทุกคำต้องตรงใน title+description+seller
+        for (const term of terms) {
+          const q = `%${term}%`;
+          query += ` AND (p.title LIKE ? OR COALESCE(p.description,'') LIKE ? OR COALESCE(u.display_name,'') LIKE ?)`;
+          binds.push(q, q, q);
+        }
+      }
+    }
+
     if (province) { query += " AND COALESCE(p.seller_location, '') LIKE ?"; binds.push(`%${province}%`); }
-    query += ' ORDER BY p.created_at DESC LIMIT ? OFFSET ?';
+
+    // เรียงลำดับ: ถ้า search ให้ title match ก่อน ตามด้วย views_count
+    if (search) {
+      const q1 = `%${String(search).trim().split(/\s+/)[0]}%`;
+      query += ` ORDER BY CASE WHEN p.title LIKE ? THEN 0 ELSE 1 END, p.views_count DESC, p.created_at DESC`;
+      binds.push(q1);
+    } else {
+      query += ' ORDER BY p.created_at DESC';
+    }
+
+    query += ' LIMIT ? OFFSET ?';
     binds.push(limit, offset);
 
     return this.d1.prepare(query).bind(...binds).all().then(r => r.results);

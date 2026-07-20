@@ -180,7 +180,7 @@ async function verifySessionBoundLineUser(c, requestedLineUserId) {
   const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : c.req.header('X-Auth-Token');
   if (!token) return null;
   try {
-    const payload = await verify(token, _getSecret(c));
+    const payload = await verify(token, _getSecret(c), 'HS256');
     const ids = [payload?.uid, payload?.lineUserId, payload?.id, payload?.firebaseUid].filter(Boolean);
     if (!ids.includes(requestedLineUserId)) return null;
     return {
@@ -198,6 +198,28 @@ function getSuperAdminIds(env) {
     ? env.SUPER_ADMIN_IDS.split(',').map((id) => id.trim()).filter(Boolean)
     : [];
   return envIds.length ? envIds : ['Ud9bec6d2ea945cf4330a69cb74ac93cf', 'U9b40807cbcc8182928a12e3b6b73330e'];
+}
+
+/**
+ * resolveAndSyncRole — คำนวณ role ที่แท้จริงจาก allowlist + D1
+ * ถ้า user อยู่ใน allowlist แต่ D1 role ยังเป็น 'user' → upsert เป็น super_admin
+ * ทำให้ users.role ใน D1 เป็น source of truth จริง (JWT claim เชื่อถือได้)
+ * เรียกได้จากทุก login path — คืน role ที่ควรใส่ใน JWT
+ */
+async function resolveAndSyncRole(c, lineUserId, currentDbRole) {
+  const isAllowlisted = getSuperAdminIds(c.env).includes(lineUserId);
+  const effectiveRole = isAllowlisted ? 'super_admin' : (currentDbRole || 'user');
+
+  // Sync ลง D1 เฉพาะเมื่อ allowlist บอกว่า admin แต่ DB ยังไม่ใช่
+  if (isAllowlisted && currentDbRole !== 'super_admin' && currentDbRole !== 'admin') {
+    try {
+      const db = new DB(c.env.DB);
+      await db.updateUser(lineUserId, { role: 'super_admin', updated_at: Date.now() });
+    } catch (e) {
+      console.warn('[Auth] role sync failed (non-fatal):', e.message);
+    }
+  }
+  return effectiveRole;
 }
 
 function mapUserRowToClient(user) {
@@ -306,6 +328,7 @@ authRoutes.post('/line-callback', async (c) => {
     }
 
     const mappedUser = mapUserRowToClient(user);
+    const resolvedRole = await resolveAndSyncRole(c, lineUserId, mappedUser.role);
 
     // ออก JWT token
     const payload = {
@@ -313,7 +336,7 @@ authRoutes.post('/line-callback', async (c) => {
       lineUserId: mappedUser.lineUserId,
       displayName: mappedUser.displayName,
       pictureUrl: mappedUser.pictureUrl,
-      role: mappedUser.role,
+      role: resolvedRole,
       isPremium: mappedUser.isPremium,
       sellerStatus: mappedUser.sellerStatus,
       provider: 'line',
@@ -755,12 +778,13 @@ authRoutes.post('/verify-pin', async (c) => {
     // สร้าง session token
     const user = await db.getUserById(targetLineUserId);
     const mappedUser = mapUserRowToClient(user);
+    const resolvedRole = await resolveAndSyncRole(c, targetLineUserId, mappedUser?.role);
     const payload = {
       uid: targetLineUserId,
       lineUserId: targetLineUserId,
       displayName: mappedUser?.displayName || '',
       pictureUrl: mappedUser?.pictureUrl || '',
-      role: getSuperAdminIds(c.env).includes(targetLineUserId) ? 'super_admin' : (mappedUser?.role || 'user'),
+      role: resolvedRole,
       isPremium: mappedUser?.isPremium || false,
       sellerStatus: mappedUser?.sellerStatus || 'none',
       provider: 'line',
