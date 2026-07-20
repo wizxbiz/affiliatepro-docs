@@ -33,10 +33,11 @@ window.TUKTUK_LIFF = {
     live:      "2009159046-X9TyhKqw",
 
     /**
-     * Go Backend base URL — tuktuk-engine on Fly.io (Singapore)
-     * Endpoints: /api/v1/feed, /news, /products, /leaderboard, /presign
+     * Cloudflare Worker API Base URL
      */
-    apiBase: "https://tuktuk-engine.fly.dev",
+    apiBase: (typeof window !== 'undefined' && window.TUKTUK_API_BASE)
+        ? window.TUKTUK_API_BASE
+        : "https://tuktukfeed-api.imtthailand2019.workers.dev",
 };
 
 /**
