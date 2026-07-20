@@ -1,51 +1,71 @@
 /**
- * 🖥️ PC Social Feed Engine 4.0
- * Improvements over v3:
+ * 🖥️ PC Social Feed Engine 5.0 — Firebase-Free Edition
+ * ───────────────────────────────────────────────────────
+ * All data sourced from Cloudflare Worker REST API (/api/v1/*)
+ * NO Firebase / Firestore dependencies.
+ * Improvements:
  *  - Unified rich card renderer (product / news / post types)
- *  - Infinite scroll via IntersectionObserver (no Load More button)
- *  - Real-time "new posts" banner via onSnapshot
- *  - News sidebar queries news_feed collection (no duplicate with main feed)
- *  - Contacts: recent active users with lastSeen fallback
- *  - Suggested users "Who to Follow" widget
- *  - Stories loaded from real Firestore authors
- *  - toggleLike uses showToast (no alert)
+ *  - Cursor-based infinite scroll (IntersectionObserver)
+ *  - Realtime "new posts" banner via polling (30s interval)
+ *  - Like toggle via POST /api/v1/posts/:id/like
+ *  - Sidebar: trending sellers, news, contacts, suggested users — all from D1
  */
 
 (function () {
     'use strict';
 
+    const API = (typeof window !== 'undefined' && window.TUKTUK_API_BASE)
+        ? window.TUKTUK_API_BASE
+        : 'https://tuktukfeed-api.imtthailand2019.workers.dev';
+
     /* ─── State ──────────────────────────────────────────────── */
-    let _pcLastDoc        = null;
+    let _pcCursor         = null;   // last post id for cursor pagination
     let _pcLoading        = false;
     let _pcEnded          = false;
     let _currentUserId    = null;
     let _userLikedIds     = [];
-    let _realtimeUnsub    = null;
     let _sentinelObserver = null;
     let _newPostsCount    = 0;
-    let _latestPostTs     = null;
+    let _latestPostTs     = null;   // ms timestamp for polling
+    let _pollTimer        = null;
 
     /* ─── Expose entry point ─────────────────────────────────── */
     window.pcEngine = {
         loadData() {
             _getUserData();
             _loadUserLikes();
-            _setupNotificationBadges();
-            _initSearch();
-            _buildStoriesFromFirestore();
+            _buildStoriesFromPosts();
         },
         renderGrid(container, items, append = false) {
             if (!container) return;
             if (!append) container.innerHTML = '';
-            items.forEach(item => {
-                container.appendChild(createPostCard(item));
-            });
+            items.forEach(item => container.appendChild(createPostCard(item)));
             _setupSentinel(container);
         },
-        createPostCard: function(item) {
-            return createPostCard(item);
-        }
+        createPostCard(item) { return createPostCard(item); }
     };
+
+    /* ─── API helper ─────────────────────────────────────────── */
+    async function _apiFetch(path, options = {}) {
+        try {
+            const r = await fetch(`${API}${path}`, {
+                headers: { 'Content-Type': 'application/json' },
+                ...options,
+            });
+            if (!r.ok) return null;
+            return await r.json();
+        } catch (e) {
+            console.warn('[pcEngine] fetch error:', path, e.message);
+            return null;
+        }
+    }
+
+    function _authHeaders() {
+        const token = localStorage.getItem('tuktuk_jwt') ||
+                      localStorage.getItem('wizmobiz_token') ||
+                      (() => { try { return JSON.parse(localStorage.getItem('tuktuk_session') || '{}').token; } catch(_) { return null; } })();
+        return token ? { 'Authorization': `Bearer ${token}` } : {};
+    }
 
     /* ─── Helpers ────────────────────────────────────────────── */
     function _esc(s) {
@@ -57,7 +77,7 @@
 
     function _fmtTime(ts) {
         if (!ts) return '';
-        const d    = ts.toDate ? ts.toDate() : new Date(ts);
+        const d    = new Date(typeof ts === 'object' && ts.seconds ? ts.seconds * 1000 : ts);
         const diff = Math.floor((Date.now() - d) / 1000);
         if (diff < 60)     return 'เพิ่งโพสต์';
         if (diff < 3600)   return Math.floor(diff / 60) + ' นาทีที่แล้ว';
@@ -121,75 +141,85 @@
     };
 
     function _typeBadge(type) {
-        const m = TYPE_META[type] || { icon: 'fa-file-alt', color: '#94a3b8', bg: 'rgba(148,163,184,0.1)', label: (type || 'โพสต์').toUpperCase() };
+        const m = TYPE_META[type] || { icon: 'fa-file-alt', color: '#94a3b8', bg: 'rgba(148,163,184,0.1)', label: (type || 'โพสต์') };
         return `<span class="pc4-type-badge" style="background:${m.bg};color:${m.color};border:1px solid ${m.color}33;"><i class="fas ${m.icon}"></i>${m.label}</span>`;
     }
 
     function _normalize(post) {
-        // Handle both Firestore raw data and normalized items from Go/Mobile logic
         const p = { ...post };
-        p.id      = post.id || post._id || (typeof post.id === 'string' ? post.id : null);
+        p.id      = post.id || '';
         p.title   = post.title   || post.displayTitle || post.productTitle || post.name || '';
         p.content = post.content || post.displayDesc  || post.description || post.text || post.detail || '';
-        p.author  = post.displayAuthor || post.authorName || post.sellerName || 'สมาชิก TukTuk';
-        p.avatar  = post.authorAvatar || post.authorPhotoURL || post.sellerAvatar || 'assets/images/logo.png';
-        p.aid     = post.authorId || post.sellerId || '';
+        p.author  = post.displayAuthor || post.authorName || post.display_name || post.sellerName || 'สมาชิก TukTuk';
+        p.avatar  = post.authorAvatar || post.authorPhotoURL || post.picture_url || post.author_picture || 'assets/images/logo.png';
+        p.aid     = post.authorId || post.userId || post.user_id || post.sellerId || '';
         
-        // Media mapping
-        p.videoUrl = post.videoUrl || post.displayVideo || post.video_url || null;
-        p.imageUrl = post.imageUrl || post.displayImage || post.image || post.thumbnail || post.videoThumbnail || post.displayThumbnail || null;
+        const isDirectVideoUrl = (url) => /\.(mp4|webm|mov|m4v|m3u8|avi|mkv)(\?|$)/i.test(url || '') || /youtube\.com|youtu\.be/i.test(url || '');
+        p.type    = post.type || post.category || (isDirectVideoUrl(post.videoUrl || post.displayVideo || post.video_url) ? 'video' : 'post');
+
+        // Media mapping — v1 API returns media as array of {type, url} objects
+        const mediaArr = Array.isArray(post.media) ? post.media
+                       : Array.isArray(post.mediaUrls) ? post.mediaUrls
+                       : [];
         
-        // Handle images array
-        if (!p.videoUrl && Array.isArray(post.images)) {
-             const v = post.images.find(m => {
-                 const u = (typeof m === 'string' ? m : m.url || '').toLowerCase();
-                 return u.endsWith('.mp4') || u.endsWith('.mov') || u.endsWith('.webm');
-             });
-             if (v) p.videoUrl = typeof v === 'string' ? v : v.url;
+        // Clean up: make sure media array items have correct types
+        const cleanedMedia = mediaArr.map(m => {
+            if (m && m.url) {
+                const isVid = isDirectVideoUrl(m.url);
+                return {
+                    ...m,
+                    type: isVid ? (m.type === 'youtube' ? 'youtube' : 'video') : 'image'
+                };
+            }
+            return m;
+        }).filter(Boolean);
+
+        const videoItem = cleanedMedia.find(m => m.type === 'video' || m.type === 'youtube');
+        const imageItem = cleanedMedia.find(m => m.type === 'image');
+        
+        // Prefer explicit videoUrl, then derive from media array
+        const derivedVideoUrl = videoItem ? videoItem.url : null;
+        p.videoUrl  = post.videoUrl || post.displayVideo || post.video_url || derivedVideoUrl || null;
+        p.embedUrl  = videoItem?.embedUrl || post.videoEmbed || post.video_embed || null;
+        
+        let rawImg = post.imageUrl || post.thumbnailUrl || post.displayImage || post.thumbnail || (imageItem ? imageItem.url : null);
+        if (rawImg && isDirectVideoUrl(rawImg)) {
+            rawImg = null; // Do not use video as poster/image
         }
-        if (!p.imageUrl && Array.isArray(post.images)) {
-             const img = post.images.find(m => {
-                 const u = (typeof m === 'string' ? m : m.url || '').toLowerCase();
-                 return !u.endsWith('.mp4') && !u.endsWith('.mov') && !u.endsWith('.webm');
-             });
-             if (img) p.imageUrl = typeof img === 'string' ? img : img.url;
-        }
+        p.imageUrl  = rawImg;
+        p.images    = cleanedMedia.filter(m => m.type === 'image').map(m => m.url);
 
         p.price   = post.price || post.displayPrice || null;
-        p.likes   = post.likes || post.likeCount || 0;
-        p.cmts    = post.comments || post.commentCount || 0;
-        p.views   = post.views || post.viewCount || 0;
-        p.time    = post.createdAt ? (typeof formatTimeAgo === 'function' ? formatTimeAgo(post.createdAt) : 'เมื่อสักครู่') : 'เมื่อสักครู่';
-        
+        p.likes   = post.likes || post.likes_count || post.likeCount || 0;
+        p.cmts    = post.commentsCount || post.comments_count || post.commentCount || 0;
+        p.views   = post.viewCount || post.views_count || post.views || 0;
+        p.time    = _fmtTime(post.createdAt || post.created_at);
         return p;
     }
 
     function _mediaBlock(post) {
         const p = _normalize(post);
-        if (post.youtubeUrl || post.youtube_url) {
-            const url = post.youtubeUrl || post.youtube_url;
-            const ytId = (url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=))([\w-]{11})/) || [])[1];
-            if (ytId) return `<div class="pc4-media"><iframe src="https://www.youtube.com/embed/${ytId}?autoplay=0&mute=1&modestbranding=1" allow="autoplay;encrypted-media" allowfullscreen loading="lazy"></iframe></div>`;
+        // YouTube embed
+        if (p.embedUrl) {
+            return `<div class="pc4-media"><iframe src="${p.embedUrl}?autoplay=0&mute=1&modestbranding=1" allow="autoplay;encrypted-media" allowfullscreen loading="lazy"></iframe></div>`;
         }
-        
         if (p.videoUrl) {
+            const ytId = (p.videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=))([\w-]{11})/) || [])[1];
+            if (ytId) {
+                return `<div class="pc4-media"><iframe src="https://www.youtube.com/embed/${ytId}?autoplay=0&mute=1&modestbranding=1" allow="autoplay;encrypted-media" allowfullscreen loading="lazy"></iframe></div>`;
+            }
             const posterAttr = p.imageUrl ? `poster="${p.imageUrl}"` : '';
-            return `<div class="pc4-media"><video src="${p.videoUrl}" controls muted loop playsinline preload="auto" ${posterAttr} style="background:#000;"></video></div>`;
+            return `<div class="pc4-media"><video src="${p.videoUrl}" controls muted loop playsinline preload="metadata" ${posterAttr} style="background:#000; width:100%; height:100%;"></video></div>`;
         }
 
-        if (!p.imageUrl && (!post.images || !post.images.length)) return '';
-        
-        const urls = Array.isArray(post.images) 
-            ? post.images.map(i => (typeof i === 'object' ? i.url : i)).filter(u => u && !u.toLowerCase().endsWith('.mp4'))
-            : [p.imageUrl].filter(Boolean);
+        const urls = p.images.length ? p.images : (p.imageUrl ? [p.imageUrl] : []);
+        if (!urls.length) return '';
 
         if (urls.length === 1) {
             return `<div class="pc4-media single" onclick="window.location.href='channel.html?postId=${_esc(p.id)}'">
                         <img src="${urls[0]}" loading="lazy" onerror="this.closest('.pc4-media').style.display='none'">
                     </div>`;
         }
-        if (urls.length === 0) return '';
-
         const cnt = Math.min(urls.length, 4);
         let g = `<div class="pc4-media-grid grid-${cnt}">`;
         urls.slice(0, cnt).forEach((u, i) => {
@@ -202,17 +232,9 @@
     function _productPanel(post) {
         if (!post.price && !post.productName) return '';
         const price = post.price ? `฿${Number(post.price).toLocaleString()}` : '';
-        const stars = post.rating ? Math.round(Math.min(post.rating, 5)) : 0;
-        const starsHtml = stars > 0
-            ? Array.from({length:5}, (_,i) => `<i class="fas fa-star" style="font-size:11px;color:${i<stars?'#facc15':'#d1d5db'};"></i>`).join('')
-              + `<span style="font-size:11px;color:#6b7280;margin-left:4px;">(${post.rating.toFixed(1)})</span>`
-            : '';
-        const stock = post.stock > 0 ? `<span class="pc4-stock-badge"><i class="fas fa-check-circle"></i> มีสินค้า</span>` : '';
         return `
             <div class="pc4-product-panel">
                 <div class="pc4-product-price">${price}</div>
-                ${starsHtml ? `<div class="pc4-product-stars">${starsHtml}</div>` : ''}
-                ${stock}
                 <button class="pc4-buy-btn" onclick="event.stopPropagation();window.location.href='marketplace.html?product=${_esc(post.id)}'">
                     <i class="fas fa-shopping-cart"></i> สั่งซื้อเลย
                 </button>
@@ -220,7 +242,7 @@
     }
 
     function createPostCard(post) {
-        const p = _normalize(post);
+        const p        = _normalize(post);
         const isLiked  = _userLikedIds.includes(p.id);
         const likedCls = isLiked ? 'liked' : '';
         const liIcon   = isLiked ? 'fas' : 'far';
@@ -237,19 +259,19 @@
                 </div>
                 <div class="pc4-meta">
                     <div class="pc4-author-row">
-                        <a class="pc4-author" href="channel.html?userId=${p.aid}">${p.author}</a>
+                        <a class="pc4-author" href="channel.html?userId=${p.aid}">${_esc(p.author)}</a>
                         ${post.verified || post.isVerified ? '<i class="fas fa-check-circle pc4-verified"></i>' : ''}
                         ${_typeBadge(p.type)}
                     </div>
-                    <div class="pc4-time"><i class="far fa-clock"></i> ${p.time} ${post.sellerProvince ? `<span class="pc4-loc">• <i class="fas fa-map-marker-alt"></i> ${post.sellerProvince}</span>` : ''}</div>
+                    <div class="pc4-time"><i class="far fa-clock"></i> ${p.time} ${post.sellerProvince ? `<span class="pc4-loc">• <i class="fas fa-map-marker-alt"></i> ${_esc(post.sellerProvince)}</span>` : ''}</div>
                 </div>
                 <button class="pc4-more" onclick="window.pcTogglePostMenu('${p.id}', event)">
                     <i class="fas fa-ellipsis-h"></i>
                 </button>
             </div>
             <div class="pc4-body">
-                ${p.title ? `<div class="pc4-title">${p.title}</div>` : ''}
-                ${p.content ? `<div class="pc4-content">${p.content}</div>` : ''}
+                ${p.title   ? `<div class="pc4-title">${_esc(p.title)}</div>` : ''}
+                ${p.content ? `<div class="pc4-content">${_esc(p.content)}</div>` : ''}
             </div>
 
             ${_mediaBlock(post)}
@@ -258,13 +280,13 @@
             <div class="pc4-stats">
                 <div class="pc4-stats-left">
                     <div class="pc4-react-icon"><i class="fas fa-thumbs-up"></i></div>
-                    <span class="pc4-stat-likes">${p.likes.toLocaleString()} ถูกใจ</span>
+                    <span class="pc4-stat-likes">${Number(p.likes).toLocaleString()} ถูกใจ</span>
                 </div>
                 <div class="pc4-stats-right">
                     <span class="pc4-stat-item" onclick="if(window.openComments)window.openComments('${p.id}')">
-                        <i class="fas fa-comment"></i> ${p.cmts.toLocaleString()}
+                        <i class="fas fa-comment"></i> ${Number(p.cmts).toLocaleString()}
                     </span>
-                    <span class="pc4-stat-item"><i class="fas fa-eye"></i> ${p.views.toLocaleString()}</span>
+                    <span class="pc4-stat-item"><i class="fas fa-eye"></i> ${Number(p.views).toLocaleString()}</span>
                 </div>
             </div>
 
@@ -291,7 +313,7 @@
         return card;
     }
 
-    /* ─── Social Feed ────────────────────────────────────────── */
+    /* ─── Social Feed — cursor-based pagination ──────────────── */
     window.pcLoadSocialFeed = async function (append = false) {
         if (_pcLoading) return;
         if (append && _pcEnded) return;
@@ -301,40 +323,39 @@
         if (!container) { _pcLoading = false; return; }
 
         if (!append) {
-            _pcLastDoc = null;
+            _pcCursor  = null;
             _pcEnded   = false;
             _newPostsCount = 0;
-            container.innerHTML = _genSkeletons(3);
             _stopRealtime();
+            container.innerHTML = _genSkeletons(3);
         }
 
         try {
-            let q = window.db.collection('posts')
-                .orderBy('createdAt', 'desc')
-                .limit(12);
-            if (append && _pcLastDoc) q = q.startAfter(_pcLastDoc);
+            const params = new URLSearchParams({ limit: 12 });
+            if (append && _pcCursor) params.set('cursor', _pcCursor);
 
-            const snap = await q.get();
+            const data = await _apiFetch(`/api/v1/posts?${params}`);
+            const posts = data?.posts || [];
 
-            if (snap.empty && !append) {
+            if (posts.length === 0 && !append) {
                 container.innerHTML = '<div class="pc4-empty"><i class="fas fa-rss fa-2x"></i><p>ยังไม่มีโพสต์ในขณะนี้</p></div>';
                 _pcLoading = false;
                 return;
             }
 
-            _pcLastDoc = snap.docs[snap.docs.length - 1] || null;
-            _pcEnded   = snap.docs.length < 12;
+            _pcEnded = posts.length < 12;
 
-            if (!append) {
-                const first = snap.docs[0];
-                if (first) _latestPostTs = first.data().createdAt;
-                container.innerHTML = '';
+            // Update cursor to last post id
+            if (posts.length > 0) {
+                _pcCursor    = posts[posts.length - 1].id;
+                const firstTs = append ? _latestPostTs : (posts[0].createdAt || posts[0].created_at);
+                if (!append) _latestPostTs = firstTs;
             }
 
-            snap.docs.forEach(doc => {
-                const p = { id: doc.id, ...doc.data() };
+            if (!append) container.innerHTML = '';
+
+            posts.forEach(p => {
                 if (p.status === 'draft' || p.status === 'scheduled') return;
-                if (p.privacy === 'private') return;
                 container.appendChild(createPostCard(p));
             });
 
@@ -368,27 +389,27 @@
         _sentinelObserver.observe(s);
     }
 
-    /* ─── Real-time New Posts Banner ─────────────────────────── */
+    /* ─── Realtime Poll (replaces onSnapshot) ────────────────── */
     function _startRealtime() {
-        if (!window.db || !_latestPostTs) return;
-        _realtimeUnsub = window.db.collection('posts')
-            .where('createdAt', '>', _latestPostTs)
-            .onSnapshot(snap => {
-                const n = snap.docs.filter(d => {
-                    const s = d.data().status;
-                    return s !== 'draft' && s !== 'scheduled';
-                }).length;
+        if (!_latestPostTs) return;
+        _pollTimer = setInterval(async () => {
+            try {
+                const params = new URLSearchParams({ since: _latestPostTs, limit: 10 });
+                const data = await _apiFetch(`/api/v1/posts?${params}`);
+                const n = (data?.posts || []).filter(p => p.status !== 'draft').length;
                 if (n > 0) {
                     _newPostsCount += n;
                     _showBanner(_newPostsCount);
-                    const last = snap.docs[snap.docs.length - 1];
-                    if (last) _latestPostTs = last.data().createdAt;
+                    // advance timestamp so next poll only gets newer posts
+                    const latest = data.posts[0];
+                    if (latest) _latestPostTs = latest.createdAt || latest.created_at || _latestPostTs;
                 }
-            }, () => {});
+            } catch (_) {}
+        }, 30000); // poll every 30 seconds
     }
 
     function _stopRealtime() {
-        if (_realtimeUnsub) { _realtimeUnsub(); _realtimeUnsub = null; }
+        if (_pollTimer) { clearInterval(_pollTimer); _pollTimer = null; }
         const b = document.getElementById('pcNewPostsBanner');
         if (b) b.remove();
         _newPostsCount = 0;
@@ -432,13 +453,28 @@
         return h;
     }
 
-    /* ─── Like / Unlike ─────────────────────────────────────── */
+    /* ─── Like / Unlike via REST API ────────────────────────── */
     window.pcToggleLike = async function (postId, btn) {
-        if (!_currentUserId) { _toast('กรุณาเข้าสู่ระบบก่อนกดถูกใจ', 'warning'); return; }
+        if (!_currentUserId) {
+            // Allow optimistic toggle but persist userId from localStorage guest key
+            const guestId = localStorage.getItem('tuktuk_guest_id') || (() => {
+                const id = 'guest_' + Math.random().toString(36).slice(2);
+                localStorage.setItem('tuktuk_guest_id', id);
+                return id;
+            })();
+            // Proceed with guestId so guests can like
+            _doLikeToggle(postId, btn, guestId);
+            return;
+        }
+        _doLikeToggle(postId, btn, _currentUserId);
+    };
+
+    async function _doLikeToggle(postId, btn, userId) {
         try {
             const isLiked = btn.classList.contains('liked');
             const delta   = isLiked ? -1 : 1;
 
+            // Optimistic UI
             btn.classList.toggle('liked', !isLiked);
             btn.querySelector('i').className = !isLiked ? 'fas fa-thumbs-up' : 'far fa-thumbs-up';
             btn.style.transform = 'scale(1.2)';
@@ -453,44 +489,57 @@
                 }
             }
 
-            if (window.db) {
-                const ref = window.db.collection('posts').doc(postId);
-                await ref.update({
-                    likes: firebase.firestore.FieldValue.increment(delta)
-                });
+            // Call REST API
+            const res = await fetch(`${API}/api/v1/posts/${postId}/like`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ..._authHeaders(),
+                },
+                body: JSON.stringify({ userId }),
+            });
+            const data = await res.json().catch(() => ({}));
+
+            // Sync real count from server
+            if (data?.likes !== undefined && card) {
+                const el = card.querySelector('.pc4-stat-likes');
+                if (el) el.textContent = Number(data.likes).toLocaleString() + ' ถูกใจ';
             }
 
+            // Update localStorage liked list
             if (!isLiked) { if (!_userLikedIds.includes(postId)) _userLikedIds.push(postId); }
             else { const i = _userLikedIds.indexOf(postId); if (i > -1) _userLikedIds.splice(i, 1); }
             localStorage.setItem('tuktuk_liked_posts', JSON.stringify(_userLikedIds));
             window.userLikedIds = _userLikedIds;
 
         } catch (e) { console.warn('[pcEngine] like:', e); }
-    };
+    }
 
     // Back-compat alias
     window.toggleLike = window.pcToggleLike;
 
-    /* ─── Stories from Firestore ─────────────────────────────── */
+    /* ─── Stories from recent posts ──────────────────────────── */
     window.pcLoadStories = async function () {
         const bar = document.getElementById('pcStoriesBar');
-        if (!bar || !window.db) return;
+        if (!bar) return;
         try {
-            const snap = await window.db.collection('posts')
-                .where('published', '==', true)
-                .orderBy('createdAt', 'desc')
-                .limit(15)
-                .get();
+            const data = await _apiFetch('/api/v1/posts?published=true&limit=20');
+            const posts = data?.posts || [];
 
-            const seen = new Set();
+            const seen  = new Set();
             const users = [];
-            snap.docs.forEach(doc => {
-                const d = doc.data();
-                if (d.authorId && !seen.has(d.authorId) && users.length < 8) {
-                    seen.add(d.authorId);
-                    users.push({ id: d.authorId, avatar: d.authorAvatar || d.authorPhotoURL || 'assets/images/logo.png', name: (d.authorName || 'ผู้ใช้').substring(0, 10), postId: doc.id });
+            for (const p of posts) {
+                const aid = p.authorId || p.userId || p.user_id;
+                if (aid && !seen.has(aid) && users.length < 8) {
+                    seen.add(aid);
+                    users.push({
+                        id:     aid,
+                        avatar: p.authorAvatar || p.authorPhotoURL || p.picture_url || 'assets/images/logo.png',
+                        name:   (p.authorName || p.display_name || 'ผู้ใช้').substring(0, 10),
+                        postId: p.id,
+                    });
                 }
-            });
+            }
             if (!users.length) return;
 
             bar.querySelectorAll('.story-item-v3.seed').forEach(el => el.remove());
@@ -512,28 +561,24 @@
         } catch (e) { console.warn('[pcEngine] stories:', e); }
     };
 
-    /* ─── Sidebar: Trending Sellers ─────────────────────────── */
+    /* ─── Sidebar: Trending Sellers (products) ───────────────── */
     window.pcLoadTrendingSellers = async function () {
         const el = document.getElementById('pcTrendingSellers');
-        if (!el || !window.db) return;
+        if (!el) return;
         try {
-            const snap = await window.db.collection('products')
-                .where('status', '==', 'active')
-                .orderBy('createdAt', 'desc')
-                .limit(5)
-                .get();
+            const data = await _apiFetch('/api/v1/products?status=active&limit=5');
+            const items = data?.items || data?.products || data?.data || [];
 
-            if (snap.empty) { el.innerHTML = '<div class="pc4-sidebar-empty">ยังไม่มีสินค้า</div>'; return; }
-            el.innerHTML = snap.docs.map(doc => {
-                const d    = doc.data();
-                const imgs = d.images || [];
-                const img  = imgs.length ? (typeof imgs[0] === 'object' ? imgs[0].url : imgs[0]) : (d.imageUrl || 'assets/images/logo.png');
-                const name = _esc((d.productName || 'สินค้า').substring(0, 32));
+            if (!items.length) { el.innerHTML = '<div class="pc4-sidebar-empty">ยังไม่มีสินค้า</div>'; return; }
+            el.innerHTML = items.map(d => {
+                const imgs = Array.isArray(d.images) ? d.images : [];
+                const img  = imgs.length ? (typeof imgs[0] === 'object' ? imgs[0].url : imgs[0]) : (d.imageUrl || d.thumbnailUrl || 'assets/images/logo.png');
+                const name = _esc((d.productName || d.title || 'สินค้า').substring(0, 32));
                 const price= d.price ? `<span class="pc4-price">฿${Number(d.price).toLocaleString()}</span>` : '';
                 const shop = _esc(d.shopName || d.sellerName || '');
                 const sold = d.soldCount ? `<span class="pc4-sold">${d.soldCount} ขายแล้ว</span>` : '';
                 return `
-                    <div class="pc4-seller-row" onclick="window.location.href='marketplace.html?product=${doc.id}'">
+                    <div class="pc4-seller-row" onclick="window.location.href='marketplace.html?product=${d.id}'">
                         <img class="pc4-seller-thumb" src="${img}" onerror="this.src='assets/images/logo.png'" loading="lazy">
                         <div class="pc4-seller-info">
                             <div class="pc4-seller-name">${name}</div>
@@ -545,122 +590,89 @@
         } catch (e) { el.innerHTML = '<div class="pc4-sidebar-empty">โหลดข้อมูลไม่สำเร็จ</div>'; }
     };
 
-    /* ─── Sidebar: News (queries news_feed first) ────────────── */
+    /* ─── Sidebar: News (type=news from posts table) ─────────── */
     window.pcLoadNewsSection = async function () {
         const el = document.getElementById('pcNewsSection');
-        if (!el || !window.db) return;
+        if (!el) return;
         try {
-            const threshold = new Date(Date.now() - 72 * 3600 * 1000);
-            let snap = await window.db.collection('news_feed')
-                .where('createdAt', '>=', firebase.firestore.Timestamp.fromDate(threshold))
-                .orderBy('createdAt', 'desc')
-                .limit(5)
-                .get();
+            const data = await _apiFetch('/api/v1/posts?type=news&limit=5');
+            const posts = data?.posts || [];
 
-            // Fallback: community_posts of type news
-            if (snap.empty) {
-                snap = await window.db.collection('posts')
-                    .where('type', '==', 'news')
-                    .orderBy('createdAt', 'desc')
-                    .limit(5)
-                    .get();
-            }
+            if (!posts.length) { el.innerHTML = '<div class="pc4-sidebar-empty">ยังไม่มีข่าวสาร</div>'; return; }
 
-            if (snap.empty) { el.innerHTML = '<div class="pc4-sidebar-empty">ยังไม่มีข่าวสาร</div>'; return; }
-
-            el.innerHTML = snap.docs.map(doc => {
-                const d     = doc.data();
-                const title = _esc((d.title || d.headline || 'ไม่มีหัวข้อ').substring(0, 60));
-                const time  = _fmtTime(d.createdAt);
-                const imgs  = d.images || (d.imageUrl ? [d.imageUrl] : []);
-                const img   = imgs.length ? (typeof imgs[0] === 'object' ? imgs[0].url : imgs[0]) : null;
-                const src   = _esc(d.sourceName || d.source || '');
-                const href  = d.link || `channel.html?postId=${doc.id}`;
+            el.innerHTML = posts.map(d => {
+                const p     = _normalize(d);
+                const title = _esc((p.title || p.content || 'ไม่มีหัวข้อ').substring(0, 60));
+                const time  = p.time;
+                const img   = p.imageUrl;
+                const href  = d.link || `channel.html?postId=${d.id}`;
                 return `
                     <div class="pc4-news-item" onclick="window.location.href='${href}'">
                         ${img ? `<img src="${img}" class="pc4-news-thumb" onerror="this.style.display='none'" loading="lazy">` : ''}
                         <div class="pc4-news-body">
                             <div class="pc4-news-title">${title}</div>
-                            <div class="pc4-news-meta">${src ? src + ' · ' : ''}<i class="far fa-clock"></i> ${time}</div>
+                            <div class="pc4-news-meta"><i class="far fa-clock"></i> ${time}</div>
                         </div>
                     </div>`;
             }).join('');
         } catch (e) { el.innerHTML = '<div class="pc4-sidebar-empty">โหลดข่าวไม่สำเร็จ</div>'; }
     };
 
-    /* ─── Sidebar: Contacts (recent active users) ───────────── */
+    /* ─── Sidebar: Contacts (recent active users from posts) ──── */
     window.pcLoadContacts = async function () {
         const el = document.getElementById('pcContactList');
-        if (!el || !window.db) return;
+        if (!el) return;
         try {
-            let snap;
-            try {
-                // Try users collection ordered by lastSeen
-                snap = await window.db.collection('users').orderBy('lastSeen', 'desc').limit(6).get();
-            } catch (_) {
-                snap = { docs: [] };
+            const data  = await _apiFetch('/api/v1/posts?limit=30');
+            const posts = data?.posts || [];
+
+            const seen  = new Set();
+            const users = [];
+            for (const p of posts) {
+                const aid = p.authorId || p.userId || p.user_id;
+                if (aid && !seen.has(aid) && users.length < 6) {
+                    seen.add(aid);
+                    users.push({
+                        id:     aid,
+                        avatar: p.authorAvatar || p.picture_url || 'assets/images/logo.png',
+                        name:   p.authorName || p.display_name || 'ผู้ใช้',
+                    });
+                }
             }
 
-            // Fallback: derive unique users from recent posts
-            if (!snap.docs.length) {
-                const pSnap = await window.db.collection('posts').orderBy('createdAt', 'desc').limit(30).get();
-                const seen  = new Set();
-                const fake  = [];
-                pSnap.docs.forEach(d => {
-                    const p = d.data();
-                    if (p.authorId && !seen.has(p.authorId) && fake.length < 6) {
-                        seen.add(p.authorId);
-                        fake.push({ id: p.authorId, data: () => ({ displayName: p.authorName, photoURL: p.authorAvatar || p.authorPhotoURL }) });
-                    }
-                });
-                snap = { docs: fake };
-            }
+            if (!users.length) { el.innerHTML = '<div class="pc4-sidebar-empty">ไม่พบผู้ใช้</div>'; return; }
 
-            if (!snap.docs.length) { el.innerHTML = '<div class="pc4-sidebar-empty">ไม่พบผู้ใช้</div>'; return; }
-
-            el.innerHTML = snap.docs.map(doc => {
-                const u      = doc.data();
-                const avatar = u.photoURL || u.profileImage || u.pictureUrl || 'assets/images/logo.png';
-                const name   = _esc(u.displayName || u.name || 'ผู้ใช้');
-                const uid    = doc.id;
-                const online = u.isOnline || (u.lastSeen?.toDate && (Date.now() - u.lastSeen.toDate() < 300000));
-                return `
-                    <div class="pc4-contact-row" onclick="window.pcStartChat('${uid}','${name.replace(/'/g,"\\'")}')">
-                        <div style="position:relative;flex-shrink:0;">
-                            <img class="pc4-contact-avatar" src="${avatar}" onerror="this.src='assets/images/logo.png'" loading="lazy">
-                            ${online ? '<div class="pc4-contact-online"></div>' : ''}
-                        </div>
-                        <span class="pc4-contact-name">${name}</span>
-                        <button class="pc4-contact-msg" onclick="event.stopPropagation();window.location.href='messages.html?uid=${uid}'" title="ส่งข้อความ">
-                            <i class="fas fa-comment-dots"></i>
-                        </button>
-                    </div>`;
-            }).join('');
+            el.innerHTML = users.map(u => `
+                <div class="pc4-contact-row" onclick="window.pcStartChat('${u.id}','${_esc(u.name).replace(/'/g,"\\'")}')" >
+                    <div style="position:relative;flex-shrink:0;">
+                        <img class="pc4-contact-avatar" src="${u.avatar}" onerror="this.src='assets/images/logo.png'" loading="lazy">
+                    </div>
+                    <span class="pc4-contact-name">${_esc(u.name)}</span>
+                    <button class="pc4-contact-msg" onclick="event.stopPropagation();window.location.href='messages.html?uid=${u.id}'" title="ส่งข้อความ">
+                        <i class="fas fa-comment-dots"></i>
+                    </button>
+                </div>`).join('');
         } catch (e) { el.innerHTML = '<div class="pc4-sidebar-empty">โหลดผู้ติดต่อไม่สำเร็จ</div>'; }
     };
 
     /* ─── Sidebar: Recommended Products ─────────────────────── */
     window.pcLoadRecommendedProducts = async function () {
         const el = document.getElementById('pcRecommendedProducts');
-        if (!el || !window.db) return;
+        if (!el) return;
         try {
-            const snap = await window.db.collection('products')
-                .where('status', '==', 'active')
-                .orderBy('createdAt', 'desc')
-                .limit(4)
-                .get();
+            const data  = await _apiFetch('/api/v1/products?status=active&limit=4');
+            const items = data?.items || data?.products || data?.data || [];
 
-            if (snap.empty) { el.innerHTML = '<div class="pc4-sidebar-empty">ยังไม่มีสินค้า</div>'; return; }
+            if (!items.length) { el.innerHTML = '<div class="pc4-sidebar-empty">ยังไม่มีสินค้า</div>'; return; }
 
             let g = '<div class="pc4-product-grid">';
-            snap.docs.forEach(doc => {
-                const d    = doc.data();
-                const imgs = d.images || [];
-                const img  = imgs.length ? (typeof imgs[0] === 'object' ? imgs[0].url : imgs[0]) : (d.imageUrl || 'assets/images/logo.png');
-                const name = _esc((d.productName || 'สินค้า').substring(0, 20));
+            items.forEach(d => {
+                const imgs = Array.isArray(d.images) ? d.images : [];
+                const img  = imgs.length ? (typeof imgs[0] === 'object' ? imgs[0].url : imgs[0]) : (d.imageUrl || d.thumbnailUrl || 'assets/images/logo.png');
+                const name = _esc((d.productName || d.title || 'สินค้า').substring(0, 20));
                 const price= d.price ? `฿${Number(d.price).toLocaleString()}` : '';
                 g += `
-                    <div class="pc4-product-cell" onclick="window.location.href='marketplace.html?product=${doc.id}'">
+                    <div class="pc4-product-cell" onclick="window.location.href='marketplace.html?product=${d.id}'">
                         <div class="pc4-product-img-wrap"><img src="${img}" onerror="this.src='assets/images/logo.png'" loading="lazy"></div>
                         <div class="pc4-product-cell-name">${name}</div>
                         ${price ? `<div class="pc4-product-cell-price">${price}</div>` : ''}
@@ -673,28 +685,27 @@
     /* ─── Sidebar: Suggested Users (Who to Follow) ──────────── */
     window.pcLoadSuggestedUsers = async function () {
         const el = document.getElementById('pcSuggestedUsers');
-        if (!el || !window.db) return;
+        if (!el) return;
         try {
-            // ⚠️ Single-field orderBy only — remove where('published') to avoid
-            //    FirebaseError: composite index required (published + likes).
-            //    Sort by likes client-side from recent 50 posts instead.
-            const snap = await window.db.collection('posts')
-                .orderBy('createdAt', 'desc')
-                .limit(50)
-                .get();
+            const data  = await _apiFetch('/api/v1/posts?limit=50');
+            const posts = data?.posts || [];
 
             const seen  = new Set([_currentUserId].filter(Boolean));
             const users = [];
-            const sorted = snap.docs
-                .map(d => ({ id: d.id, ...d.data() }))
-                .sort((a, b) => (b.likes || 0) - (a.likes || 0));
+            const sorted = [...posts].sort((a, b) => (b.likes || b.likes_count || 0) - (a.likes || a.likes_count || 0));
 
-            sorted.forEach(p => {
-                if (p.authorId && !seen.has(p.authorId) && users.length < 5) {
-                    seen.add(p.authorId);
-                    users.push({ id: p.authorId, name: p.authorName || 'สมาชิก TukTuk', avatar: p.authorAvatar || p.authorPhotoURL || 'assets/images/logo.png', likes: p.likes || 0 });
+            for (const p of sorted) {
+                const aid = p.authorId || p.userId || p.user_id;
+                if (aid && !seen.has(aid) && users.length < 5) {
+                    seen.add(aid);
+                    users.push({
+                        id:     aid,
+                        name:   p.authorName || p.display_name || 'สมาชิก TukTuk',
+                        avatar: p.authorAvatar || p.picture_url || 'assets/images/logo.png',
+                        likes:  p.likes || p.likes_count || 0,
+                    });
                 }
-            });
+            }
 
             if (!users.length) { el.closest?.('.pc-sidebar-card')?.remove(); return; }
 
@@ -714,35 +725,35 @@
 
     window._pcFollowUser = function (userId, btn) {
         if (!_currentUserId) { _toast('กรุณาเข้าสู่ระบบก่อน', 'warning'); return; }
-        btn.textContent  = 'ติดตามแล้ว';
+        btn.textContent = 'ติดตามแล้ว';
         btn.classList.add('following');
-        btn.disabled     = true;
-        if (window.db) {
-            window.db.collection('users').doc(_currentUserId).update({
-                following: firebase.firestore.FieldValue.arrayUnion(userId)
-            }).catch(() => {});
-        }
+        btn.disabled = true;
+        // Store locally; full follow system to be implemented via /api/v1/users/:id/follow
+        try {
+            const follows = JSON.parse(localStorage.getItem('tuktuk_following') || '[]');
+            if (!follows.includes(userId)) { follows.push(userId); localStorage.setItem('tuktuk_following', JSON.stringify(follows)); }
+        } catch (_) {}
         _toast('ติดตามแล้ว!', 'success');
     };
 
-    /* ─── Notification Badges ────────────────────────────────── */
-    function _setupNotificationBadges() {
-        if (!window.db || !_currentUserId) return;
-        window.db.collection('notifications')
-            .where('recipientId', '==', _currentUserId)
-            .where('read', '==', false)
-            .onSnapshot(snap => {
-                const n = snap.size;
-                const badge = document.getElementById('pcNotifBadge');
-                if (badge) { badge.textContent = n > 99 ? '99+' : n; badge.style.display = n > 0 ? 'flex' : 'none'; }
-                ['pillBadge','pillBadgeExp','mhPillNotifBadge'].forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) { el.textContent = n; el.style.display = n > 0 ? 'flex' : 'none'; }
-                });
-            }, () => {});
+    /* ─── Notification Badges (auth-gated) ───────────────────── */
+    async function _setupNotificationBadges() {
+        if (!_currentUserId) return;
+        try {
+            const data = await _apiFetch('/api/v1/notifications/unread-count', {
+                headers: { 'Content-Type': 'application/json', ..._authHeaders() },
+            });
+            const n = data?.unread || 0;
+            const badge = document.getElementById('pcNotifBadge');
+            if (badge) { badge.textContent = n > 99 ? '99+' : n; badge.style.display = n > 0 ? 'flex' : 'none'; }
+            ['pillBadge','pillBadgeExp','mhPillNotifBadge'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) { el.textContent = n; el.style.display = n > 0 ? 'flex' : 'none'; }
+            });
+        } catch (_) {}
     }
 
-    /* ─── Search ─────────────────────────────────────────────── */
+    /* ─── Search (client-side over loaded posts) ─────────────── */
     function _initSearch() {
         const input = document.getElementById('pcSearchInput');
         const sugg  = document.getElementById('pcSearchSuggestions');
@@ -752,71 +763,42 @@
             clearTimeout(timer);
             const q = input.value.trim();
             if (q.length < 2) { sugg.classList.remove('show'); return; }
-            timer = setTimeout(async () => {
-                try {
-                    // ⚠️ Single-field orderBy only — no where() to avoid composite index requirement
-                    const snap = await window.db.collection('posts')
-                        .orderBy('title').startAt(q).endAt(q + '\uf8ff').limit(5).get();
-                    if (snap.empty) { sugg.classList.remove('show'); return; }
-                    sugg.innerHTML = snap.docs.map(d => {
-                        const t = d.data().title;
-                        return t ? `<div class="pc4-sugg-item" onclick="window.doSearch('${_esc(t)}')"><i class="fas fa-search"></i><span>${_esc(t)}</span></div>` : '';
-                    }).join('');
-                    sugg.classList.add('show');
-                } catch (_) {}
-            }, 300);
+            timer = setTimeout(() => {
+                // Search over DOM-rendered cards (no extra API call)
+                const cards = document.querySelectorAll('.pc4-card .pc4-title, .pc4-card .pc4-content');
+                const matches = [];
+                cards.forEach(el => {
+                    const txt = el.textContent || '';
+                    if (txt.toLowerCase().includes(q.toLowerCase())) {
+                        matches.push(txt.trim().substring(0, 60));
+                    }
+                });
+                if (!matches.length) { sugg.classList.remove('show'); return; }
+                sugg.innerHTML = [...new Set(matches)].slice(0, 5).map(t =>
+                    `<div class="pc4-sugg-item" onclick="window.doSearch('${_esc(t)}')" ><i class="fas fa-search"></i><span>${_esc(t)}</span></div>`
+                ).join('');
+                sugg.classList.add('show');
+            }, 200);
         });
 
-        // Keyboard navigation for autocomplete suggestions
+        // Keyboard navigation
         input.addEventListener('keydown', e => {
             const items = sugg.querySelectorAll('.pc4-sugg-item');
-            if (!sugg.classList.contains('show') || items.length === 0) return;
-
-            let activeIdx = -1;
-            items.forEach((item, idx) => {
-                if (item.classList.contains('active')) {
-                    activeIdx = idx;
-                }
-            });
-
-            if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                if (activeIdx !== -1) items[activeIdx].classList.remove('active');
-                activeIdx = (activeIdx + 1) % items.length;
-                items[activeIdx].classList.add('active');
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                if (activeIdx !== -1) items[activeIdx].classList.remove('active');
-                activeIdx = (activeIdx - 1 + items.length) % items.length;
-                items[activeIdx].classList.add('active');
-            } else if (e.key === 'Enter') {
-                if (activeIdx !== -1) {
-                    e.preventDefault();
-                    items[activeIdx].click();
-                }
-            } else if (e.key === 'Escape') {
-                sugg.classList.remove('show');
-                input.blur();
-            }
+            if (!sugg.classList.contains('show') || !items.length) return;
+            let activeIdx = [...items].findIndex(i => i.classList.contains('active'));
+            if (e.key === 'ArrowDown')  { e.preventDefault(); if (activeIdx !== -1) items[activeIdx].classList.remove('active'); activeIdx = (activeIdx + 1) % items.length; items[activeIdx].classList.add('active'); }
+            else if (e.key === 'ArrowUp')   { e.preventDefault(); if (activeIdx !== -1) items[activeIdx].classList.remove('active'); activeIdx = (activeIdx - 1 + items.length) % items.length; items[activeIdx].classList.add('active'); }
+            else if (e.key === 'Enter'  && activeIdx !== -1) { e.preventDefault(); items[activeIdx].click(); }
+            else if (e.key === 'Escape') { sugg.classList.remove('show'); input.blur(); }
         });
 
-        // Global hotkey '/' to focus search input (with form element exclusion)
         document.addEventListener('keydown', e => {
             if (e.key === '/') {
                 const active = document.activeElement;
-                if (active && (
-                    active.tagName === 'INPUT' || 
-                    active.tagName === 'TEXTAREA' || 
-                    active.isContentEditable
-                )) {
-                    return; // Ignore when user is actively typing in a form field
-                }
-                e.preventDefault();
-                input.focus();
-                input.select();
+                if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) return;
+                e.preventDefault(); input.focus(); input.select();
             }
         });
-
         document.addEventListener('click', e => {
             if (!input.contains(e.target) && !sugg.contains(e.target)) sugg.classList.remove('show');
         });
@@ -825,17 +807,13 @@
     window.doSearch = function (term) {
         const input = document.getElementById('pcSearchInput');
         if (input) input.value = term;
-        const sugg = document.getElementById('pcSearchSuggestions');
-        if (sugg) sugg.classList.remove('show');
+        document.getElementById('pcSearchSuggestions')?.classList.remove('show');
         document.querySelectorAll('.pc4-card').forEach(card => {
             card.style.display = card.textContent.toLowerCase().includes(term.toLowerCase()) ? '' : 'none';
         });
     };
 
-    /* ─── Utilities ─────────────────────────────────────────── */
-    /* ─── Social Actions (Aliases) ──────────────────────────── */
-    window.toggleLike = window.pcToggleLike;
-
+    /* ─── Utilities ──────────────────────────────────────────── */
     window.pcTogglePostMenu = function (postId, event) {
         event?.stopPropagation();
         const id = `pcmenu-${postId}`;
@@ -874,13 +852,15 @@
         if (element) element.classList.add('active');
     };
 
-    /* ─── Stories init (waits for DB) ───────────────────────── */
-    function _buildStoriesFromFirestore() {
-        if (window.db) { window.pcLoadStories(); return; }
-        let tries = 0;
-        const t = setInterval(() => {
-            if (window.db || ++tries > 20) { clearInterval(t); if (window.db) window.pcLoadStories(); }
-        }, 300);
+    /* ─── Stories init ───────────────────────────────────────── */
+    function _buildStoriesFromPosts() {
+        // No longer depends on window.db — just call directly
+        window.pcLoadStories();
     }
+
+    /* ─── Notification badge init ────────────────────────────── */
+    // Expose for external callers too
+    window.pcSetupNotifications = _setupNotificationBadges;
+    _setupNotificationBadges();
 
 })();

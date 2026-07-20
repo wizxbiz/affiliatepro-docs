@@ -19,8 +19,53 @@ import { adminRoutes }        from './handlers/admin.js';
 import { utilityRoutes }      from './handlers/utility.js';
 import { v1Routes }        from './handlers/v1.js';
 import { rewriteRequest }   from './lib/request-rewrite.js';
+import { getSession }       from './middleware/auth.js';
+import { normalizeMediaUrls } from './lib/media-normalizer.js';
 
 const app = new Hono();
+
+// ── /api/db/* access control ──────────────────────────────────
+// Collections holding identity/secrets — admin only (read + write)
+const DB_ADMIN_COLLECTIONS = new Set([
+  'users', 'line_users', 'web_pins', 'admin_logs', 'push_subscriptions',
+  'sessions', 'user_usage', 'ai_post_usage', 'contacts',
+]);
+// Public feed content — anyone may GET; writes still require a valid session
+const DB_PUBLIC_READ_COLLECTIONS = new Set([
+  'products', 'marketplace_items', 'community_products',
+  'posts', 'community_posts', 'community_videos', 'news_feed', 'stories',
+]);
+
+function _isAdmin(session) {
+  return session && (session.role === 'admin' || session.role === 'super_admin');
+}
+
+// Returns a Response if access is denied, or null if allowed (and sets session).
+async function guardDbAccess(c) {
+  const collection = c.req.param('collection');
+  const isRead = c.req.method.toUpperCase() === 'GET';
+  const session = await getSession(c);
+  c.set('session', session || null);
+
+  // Admin-only collections: block all non-admin access
+  if (DB_ADMIN_COLLECTIONS.has(collection)) {
+    if (!session) return c.json({ error: 'Unauthorized' }, 401);
+    if (!_isAdmin(session)) return c.json({ error: 'Forbidden — admin only' }, 403);
+    return null;
+  }
+
+  // Public-read collections: GET open to all; writes need a session
+  if (DB_PUBLIC_READ_COLLECTIONS.has(collection)) {
+    if (isRead) return null;
+    if (!session) return c.json({ error: 'Unauthorized — login required to write' }, 401);
+    return null;
+  }
+
+  // Unknown collections (fail-safe): require session; writes require admin
+  if (!session) return c.json({ error: 'Unauthorized' }, 401);
+  if (!isRead && !_isAdmin(session)) return c.json({ error: 'Forbidden' }, 403);
+  return null;
+}
 
 
 // ── Global Middleware ─────────────────────────────────────────
@@ -31,6 +76,8 @@ app.use('*', cors({
     if (
       origin.endsWith('.pages.dev') ||
       origin.includes('tuktukfeed.pages.dev') ||
+      origin === 'https://tuktukfeed.com' ||
+      origin === 'https://www.tuktukfeed.com' ||
       origin === 'https://tuktukthailand.com' ||
       origin === 'https://appinjproject.web.app' ||
       origin.startsWith('http://localhost:') ||
@@ -38,7 +85,7 @@ app.use('*', cors({
     ) {
       return origin;
     }
-    return 'https://tuktukthailand.com';
+    return 'https://tuktukfeed.com';
   },
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization', 'X-Auth-Token', 'X-Line-Signature'],
@@ -97,17 +144,25 @@ app.post('/marketplaceAIGeneratePost',     (c) => marketplaceRoutes.request(rewr
 
 // Get collections (support nested paths like /api/db/conversations/:id/messages)
 app.get('/api/db/:collection', async (c) => {
+  const denied = await guardDbAccess(c);
+  if (denied) return denied;
   return handleDbQuery(c);
 });
 app.get('/api/db/:parent/:parentId/:collection', async (c) => {
+  const denied = await guardDbAccess(c);
+  if (denied) return denied;
   return handleDbQuery(c);
 });
 
 // Get/Modify documents (support nested paths)
 app.all('/api/db/:collection/:id', async (c) => {
+  const denied = await guardDbAccess(c);
+  if (denied) return denied;
   return handleDbDoc(c);
 });
 app.all('/api/db/:parent/:parentId/:collection/:id', async (c) => {
+  const denied = await guardDbAccess(c);
+  if (denied) return denied;
   return handleDbDoc(c);
 });
 
@@ -626,6 +681,41 @@ function mapRowToClient(row, tableName) {
     return {
       pinned,
       archived
+    };
+  }
+  if (tableName === 'posts' || tableName === 'community_posts') {
+    const media = normalizeMediaUrls(row.media_urls);
+    const youtube = media.find((item) => item.type === 'youtube');
+    const directVideo = media.find((item) => item.type === 'video');
+    const firstImage = media.find((item) => item.type === 'image');
+    const authorName = row.display_name || row.author_name || 'TukTuk Member';
+    return {
+      id: row.id,
+      userId: row.user_id,
+      authorId: row.user_id,
+      authorName,
+      displayName: authorName,
+      authorAvatar: row.author_picture || row.picture_url || '',
+      avatarUrl: row.author_picture || row.picture_url || '',
+      content: row.content || '',
+      title: row.title || '',
+      category: row.category || 'general',
+      type: directVideo ? 'video' : (youtube ? 'youtube' : (row.type || 'post')),
+      status: row.status || 'active',
+      published: row.published !== 0,
+      pinned: row.pinned === 1,
+      media,
+      mediaUrls: media,
+      images: media.filter((item) => item.type === 'image').map((item) => item.url),
+      youtubeUrl: youtube?.url || row.youtube_url || '',
+      videoEmbed: youtube?.embedUrl || row.video_embed || '',
+      videoUrl: directVideo?.url || row.video_url || youtube?.url || '',
+      thumbnailUrl: row.product_thumb || youtube?.thumbnailUrl || firstImage?.url || directVideo?.url || '',
+      likes: row.likes_count || 0,
+      commentsCount: row.comments_count || 0,
+      viewCount: row.views_count || 0,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
     };
   }
   return row;

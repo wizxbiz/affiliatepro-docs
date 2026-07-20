@@ -8,12 +8,9 @@ async function checkAdminStatus() {
         const user = WizmobizAuth.getUser();
         if (!user) return;
 
-        const whitelistedIds = [
-            'Ud9bec6d2ea945cf4330a69cb74ac93cf', // LINE ID
-            'google_uid_here'
-        ];
-
-        if (user.role === 'admin' || user.role === 'super_admin' || whitelistedIds.includes(user.uid) || whitelistedIds.includes(user.lineUserId)) {
+        // Admin จาก server-verified role เท่านั้น (ไม่มี hardcoded ID list)
+        // การบังคับสิทธิ์จริงอยู่ฝั่ง server (/api/db guard + requireAdmin)
+        if (user.role === 'admin' || user.role === 'super_admin') {
             window.isAdmin = true;
             const fab = document.getElementById('adminFab');
             if (fab) fab.style.setProperty('display', 'flex', 'important');

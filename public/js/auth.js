@@ -92,6 +92,9 @@ var WizmobizAuth = {
             isPremium: session.isPremium === true || session.subscriptionType === 'premium' || session.role === 'premium',
             sellerStatus: sellerStatus,
             provider: session.provider || (session.lineUserId ? 'line' : 'unknown'),
+            // ✅ เก็บ role + token ไว้ — จำเป็นสำหรับ admin check (server-verified role)
+            role: session.role || null,
+            token: session.token || session.sessionToken || null,
             loginAt: session.loginAt || new Date().toISOString()
         };
     },

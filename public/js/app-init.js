@@ -8,35 +8,8 @@
  * Calls the refreshWebSession CF to get a fresh custom token.
  */
 async function _restoreFirebaseAuth() {
-    try {
-        if (!firebase || !firebase.auth) return;
-        if (firebase.auth().currentUser) return; // already signed in
-
-        // Check if there's a WizmobizAuth / LINE session
-        const raw = localStorage.getItem('wizmobiz_session') ||
-                    localStorage.getItem('tuktuk_line_session');
-        if (!raw) return;
-
-        const session = JSON.parse(raw);
-        const userId = session.lineUserId || session.uid;
-        if (!userId) return;
-
-        // Request a fresh custom token from the server
-        const API_BASE = 'https://us-central1-appinjproject.cloudfunctions.net';
-        const resp = await fetch(`${API_BASE}/refreshWebSession`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId }),
-        });
-        if (!resp.ok) return;
-        const data = await resp.json();
-        if (data.sessionToken) {
-            await firebase.auth().signInWithCustomToken(data.sessionToken);
-            console.log('[app-init] Firebase Auth restored for', userId);
-        }
-    } catch (e) {
-        console.warn('[app-init] Firebase Auth restore skipped:', e.message);
-    }
+    // Firebase Auth is disabled. Session authentication is managed entirely via JWT tokens in localStorage.
+    return;
 }
 
 window.addEventListener('load', async () => {
@@ -188,9 +161,10 @@ function initAutoPlayObserver() {
                 }
 
                 // 2. Standard Feed Video (.news-video-container or .pc4-media)
-                if (video && (entry.target.classList.contains('news-video-container') || entry.target.classList.contains('pc4-media') || entry.target.classList.contains('pc4-card'))) {
+                if (video && (entry.target.classList.contains('news-video-container') || entry.target.classList.contains('pc4-media'))) {
                     video.muted = true;
-                    video.play().catch(e => console.warn("[Autoplay] Video Blocked:", e));
+                    video._playPromise = video.play();
+                    video._playPromise.catch(e => console.warn("[Autoplay] Video Blocked:", e));
                 }
 
                 // 3. YouTube Embeds
@@ -342,7 +316,7 @@ function initAutoPlayObserver() {
 
     const activeTargets = new Set();
     const track = () => {
-        const els = document.querySelectorAll('.news-video-container, .tuktuk-video-item, .community-post-media, .pc4-media, .pc4-card');
+        const els = document.querySelectorAll('.news-video-container, .tuktuk-video-item, .community-post-media, .pc4-media');
         els.forEach(el => {
             if (!activeTargets.has(el)) {
                 observer.observe(el);

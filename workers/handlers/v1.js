@@ -3,6 +3,7 @@ import { authRoutes } from './auth.js';
 import { marketplaceRoutes } from './marketplace.js';
 import { utilityRoutes } from './utility.js';
 import { normalizeJsonResponse } from '../lib/api-response.js';
+import { moderateAndNotify } from '../lib/ai-moderation.js';
 import { rewriteJsonRequest, rewriteRequest } from '../lib/request-rewrite.js';
 import { normalizeV1ProductResponse, normalizeV1Product } from '../lib/v1-normalizers.js';
 import { DB } from '../lib/db.js';
@@ -67,20 +68,45 @@ function mediaForPost(row, extra = []) {
   return media;
 }
 
+function isMediaVideoUrl(url) {
+  if (!url) return false;
+  const lower = String(url).toLowerCase().split('?')[0]; // Strip query params
+  // Check extensions
+  if (
+    lower.endsWith('.mp4') ||
+    lower.endsWith('.mov') ||
+    lower.endsWith('.webm') ||
+    lower.endsWith('.m3u8') ||
+    lower.endsWith('.avi') ||
+    lower.endsWith('.mkv')
+  ) {
+    return true;
+  }
+  // Check youtube
+  if (/youtube\.com|youtu\.be/.test(lower)) {
+    return true;
+  }
+  return false;
+}
+
 function postResponse(row) {
   const media = mediaForPost(row);
   const youtube = media.find((item) => item.type === 'youtube');
+  const directVideo = media.find((item) => item.type === 'video');
   const firstImage = media.find((item) => item.type === 'image');
+  const derivedType = directVideo ? 'video' : (youtube ? 'youtube' : (row?.type || 'post'));
   return {
     ...row,
+    type: derivedType,
     media,
     mediaUrls: media,
     youtubeUrl: youtube?.url || row?.youtube_url || '',
     videoEmbed: youtube?.embedUrl || row?.video_embed || '',
-    videoUrl: youtube?.url || row?.video_url || '',
+    videoUrl: directVideo?.url || row?.video_url || youtube?.url || '',
     thumbnailUrl: row?.product_thumb || youtube?.thumbnailUrl || firstImage?.url || '',
   };
 }
+
 async function proxyGoEngine(c, targetPath) {
   const baseUrl = (c.env.GO_ENGINE_URL || c.env.TUKTUK_GO_ENGINE_URL || 'https://tuktuk-engine.fly.dev').replace(/\/+$/, '');
   const sourceUrl = new URL(c.req.url);
@@ -104,40 +130,114 @@ async function proxyGoEngine(c, targetPath) {
   }
 }
 
+async function patchGoFeedResponse(c, response) {
+  if (response.status !== 200) return response;
+  const contentType = response.headers.get('Content-Type') || '';
+  if (!contentType.includes('application/json')) return response;
+
+  try {
+    const data = await response.json().catch(() => null);
+    if (data && Array.isArray(data.posts)) {
+      data.posts = data.posts.map(post => {
+        const p = { ...post };
+
+        // Normalize mediaUrls array
+        let media = Array.isArray(p.media) ? p.media
+                  : Array.isArray(p.mediaUrls) ? p.mediaUrls
+                  : Array.isArray(p.media_urls) ? p.media_urls
+                  : [];
+
+        let videoUrl = p.videoUrl || p.video_url || p.youtubeUrl || p.youtube_url;
+        let imageUrl = p.imageUrl || p.thumbnailUrl || p.thumbnail_url || p.product_thumb;
+
+        // 1. If imageUrl is actually a video URL, clear it
+        if (imageUrl && isMediaVideoUrl(imageUrl)) {
+          imageUrl = null;
+        }
+        // 2. If videoUrl is actually an image URL, move it to imageUrl
+        if (videoUrl && !isMediaVideoUrl(videoUrl)) {
+          if (!imageUrl) imageUrl = videoUrl;
+          videoUrl = null;
+        }
+
+        // Map and validate existing media array items
+        media = media.map(item => {
+          if (item && item.url) {
+            const isVid = isMediaVideoUrl(item.url);
+            return {
+              ...item,
+              type: isVid ? (item.type === 'youtube' ? 'youtube' : 'video') : 'image',
+            };
+          }
+          return item;
+        }).filter(Boolean);
+
+        // If media is empty but we have videoUrl or imageUrl, construct it
+        if (media.length === 0) {
+          if (videoUrl) {
+            const isYt = /youtube\.com|youtu\.be/.test(videoUrl);
+            media.push({ type: isYt ? 'youtube' : 'video', url: videoUrl });
+          }
+          if (imageUrl) {
+            media.push({ type: 'image', url: imageUrl });
+          }
+        }
+
+        // Standardize media field mapping
+        p.media = media;
+        p.mediaUrls = media;
+
+        // Standardize type field mapping (type: video if videoUrl exists in media)
+        const hasVideo = media.some(m => m.type === 'video' || m.type === 'youtube');
+        p.type = hasVideo ? 'video' : (p.type || p.category || 'post');
+
+        // Restore root-level fields
+        p.videoUrl = videoUrl || '';
+        p.imageUrl = imageUrl || '';
+        p.thumbnailUrl = imageUrl || '';
+
+        return p;
+      });
+    }
+    return c.json(data, response.status);
+  } catch (err) {
+    console.error('[patchGoFeedResponse] Failed to patch Go response:', err.message);
+    return response;
+  }
+}
+
 v1Routes.get('/feed', async (c) => {
   // Primary: Go Engine (real-time trending, personalisation).
   // Fallback: D1 posts table — used when Go Engine is cold-starting / unavailable.
   // Shape returned to app: { status:'success', posts:[...] }
   const goResult = await proxyGoEngine(c, '/api/v1/feed');
-  if (goResult.status !== 502) return goResult;          // 502 = Go Engine down
+  if (goResult.status !== 502) {
+    return patchGoFeedResponse(c, goResult);
+  }
 
-  // D1 fallback — build the same shape the app consumes
-  const { category, limit = 20, offset = 0, province, mode } = c.req.query();
+  // D1 fallback — reuse postResponse so media/type/videoUrl are derived correctly
+  const { category, limit = 20, offset = 0 } = c.req.query();
   const db = new DB(c.env.DB);
   try {
     const rows = await db.getPosts({ category, limit: +limit, offset: +offset });
     const posts = rows.map((row) => {
-      // Reuse the same mapRowToClient path used by GET /posts/:id
-      // (import not needed — call normalisation inline for this shape)
-      let mediaUrls = [];
-      try { mediaUrls = JSON.parse(row.media_urls || '[]'); } catch (_) {}
-      const video = mediaUrls.find(m => m?.type === 'video');
-      const image = mediaUrls.find(m => m?.type === 'image') || (typeof mediaUrls[0] === 'string' ? { url: mediaUrls[0] } : null);
+      const normalized = postResponse(row);
       return {
-        id: row.id,
-        authorId: row.user_id,
-        authorName: row.display_name || 'TukTuk Member',
-        authorAvatar: row.author_picture || '',
-        content: row.content || '',
-        videoUrl: video?.url || row.youtube_url || '',
-        thumbnailUrl: image?.url || row.product_thumb || '',
-        mediaUrls,
-        category: row.category || 'general',
-        type: video ? 'video' : 'post',
-        likes: row.likes_count || 0,
-        commentsCount: row.comments_count || 0,
-        viewCount: row.views_count || 0,
-        createdAt: row.created_at,
+        id: normalized.id,
+        authorId: normalized.userId,
+        authorName: normalized.authorName,
+        authorAvatar: normalized.authorAvatar,
+        content: normalized.content,
+        videoUrl: normalized.videoUrl,
+        thumbnailUrl: normalized.thumbnailUrl,
+        mediaUrls: normalized.mediaUrls,
+        media: normalized.media,
+        category: normalized.category,
+        type: normalized.type,
+        likes: normalized.likes,
+        commentsCount: normalized.commentsCount,
+        viewCount: normalized.viewCount,
+        createdAt: normalized.createdAt,
       };
     });
     return c.json({ status: 'success', posts, source: 'd1-fallback' });
@@ -145,7 +245,13 @@ v1Routes.get('/feed', async (c) => {
     return c.json({ status: 'error', error: { code: 'DB_ERROR', message: err.message } }, 500);
   }
 });
-v1Routes.get('/feed/trending', (c) => proxyGoEngine(c, '/api/v1/feed/trending'));
+
+v1Routes.get('/feed/trending', async (c) => {
+  const goResult = await proxyGoEngine(c, '/api/v1/feed/trending');
+  return patchGoFeedResponse(c, goResult);
+});
+
+
 
 v1Routes.get('/products', async (c) => {
   const response = await marketplaceRoutes.request(rewriteRequest(c, '/products'), undefined, c.env);
@@ -159,6 +265,22 @@ v1Routes.post('/products', async (c) => {
     title: body.title || body.productName,
   };
   const response = await marketplaceRoutes.request(rewriteJsonRequest(c, '/products', requestBody), undefined, c.env);
+
+  // ── AI Moderation: fire-and-forget ──────────────────────────
+  try {
+    const cloned = response.clone();
+    const resJson = await cloned.json().catch(() => ({}));
+    const productId = resJson?.data?.id || resJson?.id || body.id || '';
+    const optSession = c.get('session');
+    const modTask = moderateAndNotify(c.env, {
+      type: 'product',
+      item: { id: productId, title: body.title || body.productName || '', content: body.description || '' },
+      userId: optSession?.uid || body.sellerId || '',
+      userName: optSession?.displayName || '',
+    }).catch(e => console.warn('[Moderation] product error:', e.message));
+    if (c.executionCtx?.waitUntil) c.executionCtx.waitUntil(modTask);
+  } catch {}
+
   return normalizeV1ProductResponse(c, response);
 });
 
@@ -277,14 +399,63 @@ v1Routes.post('/auth/phone/verify-otp', async (c) => {
 });
 
 // ── Community posts (D1-backed, Phase 4) ────────────────────
+// Query params:
+//   category  — filter by category
+//   type      — filter by type column (e.g. 'news', 'video', 'product')
+//   since     — only return posts created after this ms timestamp (realtime poll)
+//   cursor    — cursor-based pagination: only posts with id != cursor and created_at <= cursor_ts
+//   limit     — default 20, max 50
+//   offset    — numeric offset fallback when cursor not supplied
+//   published — if 'true', filter published=1 only
+//   authorId  — filter by user_id
 v1Routes.get('/posts', async (c) => {
-  const { category, limit = 20, offset = 0 } = c.req.query();
+  const {
+    category, type, since, cursor, limit = 20, offset = 0,
+    published, authorId,
+  } = c.req.query();
   const db = new DB(c.env.DB);
   try {
-    const rows = await db.getPosts({ category, limit: +limit, offset: +offset });
-    const posts = rows.map(postResponse);
-    return c.json({ status: 'success', posts });
+    // Build dynamic WHERE clauses
+    const conditions = ['p.status != ?'];
+    const bindings   = ['deleted'];
+
+    if (category)   { conditions.push('p.category = ?'); bindings.push(category); }
+    if (type)       { conditions.push('(p.category = ? OR p.type = ?)'); bindings.push(type, type); }
+    if (published === 'true') { conditions.push('p.published = 1'); }
+    if (authorId)   { conditions.push('p.user_id = ?'); bindings.push(authorId); }
+    if (since)      { conditions.push('p.created_at > ?'); bindings.push(Number(since)); }
+
+    const pageLimit = Math.min(parseInt(limit) || 20, 50);
+    bindings.push(pageLimit);
+
+    let paginationClause = `LIMIT ?`;
+    if (cursor) {
+      // cursor = last seen post id; fetch posts created_at < that post's created_at (desc order)
+      conditions.push(`p.created_at < (SELECT created_at FROM posts WHERE id = ?)`);
+      bindings.splice(bindings.length - 1, 0, cursor); // insert before limit
+    } else if (parseInt(offset) > 0) {
+      paginationClause += ` OFFSET ?`;
+      bindings.push(parseInt(offset));
+    }
+
+    const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+    const sql = `
+      SELECT p.*, u.display_name, u.picture_url as author_picture
+      FROM posts p
+      LEFT JOIN users u ON u.id = p.user_id
+      ${where}
+      ORDER BY p.created_at DESC
+      ${paginationClause}
+    `;
+    const result = await c.env.DB.prepare(sql).bind(...bindings).all();
+    const rows   = result.results || [];
+    const posts  = rows.map(postResponse);
+
+    // For 'since' poll — return newCount too
+    const meta = since ? { newCount: posts.length } : { total: posts.length };
+    return c.json({ status: 'success', posts, meta });
   } catch (err) {
+    console.error('[v1 GET /posts]', err.message, err.stack);
     return c.json({ status: 'error', error: { code: 'DB_ERROR', message: err.message } }, 500);
   }
 });
@@ -446,12 +617,16 @@ v1Routes.post('/posts', requireAuthV1, async (c) => {
     await db.createPost({
       id: postId,
       userId: session.uid,
+      title: body.title || '',
       content,
       mediaUrls,
       youtubeUrl: primaryYoutube?.url || '',
       videoEmbed: primaryYoutube?.embedUrl || '',
       category: body.category || (mediaUrls.some((item) => item.type === 'youtube' || item.type === 'video') ? 'video' : 'general'),
       status: 'active',
+      published: body.published !== undefined ? body.published : true,
+      pinned: body.pinned !== undefined ? body.pinned : false,
+      linkedProductId: body.linkedProductId || '',
       createdAt: Date.now(),
     });
 
@@ -498,6 +673,15 @@ v1Routes.post('/posts', requireAuthV1, async (c) => {
       }).catch(() => {}); // silent — never blocks the response
       if (c.executionCtx?.waitUntil) c.executionCtx.waitUntil(push);
     }
+
+    // ── AI Moderation: fire-and-forget (ไม่ block response) ─────
+    const modTask = moderateAndNotify(c.env, {
+      type: 'post',
+      item: { id: postId, content, title: '' },
+      userId: session.uid,
+      userName: session.displayName || session.lineUserId || '',
+    }).catch(e => console.warn('[Moderation] post error:', e.message));
+    if (c.executionCtx?.waitUntil) c.executionCtx.waitUntil(modTask);
 
     return c.json({ status: 'success', postId }, 201);
   } catch (err) {
@@ -739,6 +923,7 @@ v1Routes.put('/posts/:id', requireAuthV1, async (c) => {
   const session = c.get('session');
   const body = await c.req.json().catch(() => ({}));
   const fields = {};
+  const isAdmin = session?.role === 'admin' || session?.role === 'super_admin';
 
   if (body.content !== undefined) {
     const content = String(body.content || '').trim();
@@ -747,8 +932,33 @@ v1Routes.put('/posts/:id', requireAuthV1, async (c) => {
     }
     fields.content = content;
   }
+  if (body.title !== undefined) {
+    fields.title = String(body.title || '').trim();
+  }
   if (body.category !== undefined) {
     fields.category = String(body.category || 'general').trim() || 'general';
+  }
+  if (body.status !== undefined) {
+    fields.status = String(body.status || 'active').trim();
+  }
+  if (body.published !== undefined) {
+    fields.published = body.published ? 1 : 0;
+  }
+  if (body.pinned !== undefined) {
+    fields.pinned = body.pinned ? 1 : 0;
+  }
+  if (body.linkedProductId !== undefined) {
+    fields.linkedProductId = String(body.linkedProductId || '').trim();
+  }
+  if (body.youtubeUrl !== undefined) {
+    fields.youtubeUrl = String(body.youtubeUrl || '').trim();
+  }
+  if (body.videoEmbed !== undefined) {
+    fields.videoEmbed = String(body.videoEmbed || '').trim();
+  }
+  if (body.mediaUrls !== undefined) {
+    const media = normalizeMediaUrls(Array.isArray(body.mediaUrls) ? body.mediaUrls : []);
+    fields.mediaUrls = JSON.stringify(media);
   }
 
   if (Object.keys(fields).length === 0) {
@@ -757,7 +967,7 @@ v1Routes.put('/posts/:id', requireAuthV1, async (c) => {
 
   const db = new DB(c.env.DB);
   try {
-    const result = await db.updatePost(id, session.uid, fields);
+    const result = await db.updatePost(id, session.uid, fields, isAdmin);
     if ((result?.meta?.changes || 0) === 0) {
       return c.json({ status: 'error', error: { code: 'FORBIDDEN', message: 'ไม่พบโพสต์นี้ หรือไม่ใช่โพสต์ของคุณ' } }, 403);
     }
@@ -845,6 +1055,40 @@ v1Routes.delete('/products/:id', requireAuthV1, async (c) => {
   }
 });
 
+// ── GET /api/v1/analytics/stats ───────────────────────────────
+// Frontend (super-admin traffic widget) expects { data: { summary, dailyStats, topPages } }
+v1Routes.get('/analytics/stats', requireAuthV1, async (c) => {
+  const session = c.get('session');
+  const isAdmin = session?.role === 'admin' || session?.role === 'super_admin';
+  if (!isAdmin) {
+    return c.json({ status: 'error', error: { code: 'FORBIDDEN', message: 'ต้องเป็น admin' } }, 403);
+  }
+  const { days = '7' } = c.req.query();
+  const db = new DB(c.env.DB);
+  try {
+    const now = Date.now();
+    const dayCount = Math.max(1, Math.min(90, parseInt(days) || 7));
+    const fromTs = now - dayCount * 86400000;
+    const stats = await db.getAnalyticsStats(fromTs, now);
+    return c.json({
+      status: 'success',
+      success: true,
+      data: {
+        summary: {
+          onlineNow: 0,
+          uniqueVisitors: stats.uniqueUsers || 0,
+          allTimeUniqueVisitors: stats.uniqueUsers || 0,
+          allTimePageViews: stats.pageViews || 0,
+        },
+        dailyStats: [],
+        topPages: [],
+      },
+    });
+  } catch (err) {
+    return c.json({ status: 'error', error: { code: 'DB_ERROR', message: err.message } }, 500);
+  }
+});
+
 // ── Media upload presign (R2) — optionalAuth (allows guests and LINE users) ─
 v1Routes.post('/media/presign', optionalAuth, async (c) => {
   const session = c.get('session');
@@ -898,6 +1142,205 @@ v1Routes.post('/push/subscribe', async (c) => {
     return c.json({ data: { success: true } });
   } catch (err) {
     return c.json({ status: 'error', error: { code: 'DB_ERROR', message: err.message } }, 500);
+  }
+});
+
+// ── POST /api/v1/ai/write-post ─────────────────────────────────
+// Cloudflare Workers AI สำหรับ AI ช่วยเขียนโพสต์ใน super-admin
+v1Routes.post('/ai/write-post', async (c) => {
+  const body = await c.req.json().catch(() => ({}));
+  const { topic, mode = 'post' } = body;
+  if (!topic) return c.json({ status: 'error', error: { code: 'MISSING_TOPIC', message: 'กรุณาระบุ topic' } }, 400);
+
+  const prompts = {
+    post: `สร้างโพสต์สำหรับ TukTuk Thailand เกี่ยวกับ: "${topic}"\nตอบเป็น JSON รูปแบบ: {"headline":"...","content":"..."}\nheadline: กระชับดึงดูดไม่เกิน 80 ตัวอักษร\ncontent: 3-5 ประโยค มี emoji และ hashtag #TukTukThailand`,
+    headline: `จากหัวข้อ: "${topic}"\nสร้าง headline ภาษาไทยที่ดึงดูดใจ 1 บรรทัด ไม่เกิน 80 ตัวอักษร ตอบแค่ headline เท่านั้น ไม่ต้องอธิบาย`,
+    refine: `ปรับปรุงเนื้อหาต่อไปนี้ให้ดีขึ้น:\n"${topic}"\nตอบเป็น JSON: {"headline":"...","content":"..."}`,
+    // ── บันเทิง: เน้นสนุก กระตุ้น engagement ───────────────
+    entertain: `สร้างโพสต์คอนเทนต์บันเทิงสำหรับ TukTuk Thailand (ฟีดดูเพลิน) เกี่ยวกับ: "${topic}"\n` +
+      `ตอบเป็น JSON: {"headline":"...","content":"..."}\n` +
+      `แนวทาง: สนุก เป็นกันเอง ดึงดูดให้อยากดู/มีส่วนร่วม, ตั้งคำถามหรือ hook เปิดเรื่อง, ` +
+      `มี emoji, ปิดท้ายชวน like/share/comment, hashtag บันเทิง เช่น #ดูเพลิน #TukTukThailand\n` +
+      `headline: ไม่เกิน 80 ตัวอักษร สะดุดตา, content: 3-5 ประโยค`,
+    // ── ขาย: เน้นจุดขาย + CTA ซื้อ ──────────────────────────
+    sell: `สร้างโพสต์ขายสินค้าสำหรับ TukTuk Thailand (ตลาดนัด) เกี่ยวกับ: "${topic}"\n` +
+      `ตอบเป็น JSON: {"headline":"...","content":"..."}\n` +
+      `แนวทาง: เน้นจุดเด่นสินค้า/ประโยชน์, ระบุราคาหรือโปรโมชั่นถ้ามี, สร้างความเร่งด่วน (ของมีจำกัด/ลดวันนี้), ` +
+      `มี call-to-action ชัดเจน เช่น "ทักแชทเลย" "สั่งซื้อวันนี้", hashtag สินค้า เช่น #OTOP #ของดีบอกต่อ #TukTukThailand\n` +
+      `headline: ไม่เกิน 80 ตัวอักษร กระตุ้นให้ซื้อ, content: 3-5 ประโยค`,
+  };
+
+  const systemPrompt = `คุณเป็น Content Creator ผู้เชี่ยวชาญของ TukTuk Thailand Platform
+
+## บริบท TukTuk Thailand:
+- **ดูเพลิน (Feed)**: ฟีดวิดีโอสั้น + โพสต์รูป สไตล์ Social Media — เนื้อหาต้องสนุก กระชับ ดึงดูด
+- **ตลาดนัด (Marketplace)**: ขายสินค้าออนไลน์ เน้น OTOP สินค้าท้องถิ่น สินค้าชุมชน ราคาเป็นธรรม
+- **LINE OA**: ระบบ Login ผ่าน LINE, แจ้งเตือน, PIN ยืนยันตัวตน, บอทตอบคำถามอัตโนมัติ
+- **กลุ่มเป้าหมาย**: คนไทยทุกวัย เจ้าของธุรกิจ SME/OTOP นักช้อป คนหางาน
+
+## หลักการเขียนโพสต์:
+- ภาษาไทยเป็นหลัก กระชับ อ่านง่าย
+- ใช้ emoji เหมาะสม ไม่มากเกินไป
+- มี hashtag ที่เกี่ยวข้อง #TukTukThailand #ตลาดนัด #ดูเพลิน หรือ topic-specific
+- เนื้อหา 3-5 ประโยค กระตุ้น engagement (like/share/comment)
+- ตอบเป็น JSON เสมอ`;
+
+  try {
+    let text = null;
+    let source = 'local';
+
+    // 1. ลองใช้ FORGE Gateway (server-side token)
+    if (c.env.FORGE_GATEWAY_TOKEN) {
+      try {
+        const baseUrl = (c.env.FORGE_GATEWAY_URL || 'https://api.forgework.app').replace(/\/+$/, '');
+        const resp = await fetch(`${baseUrl}/v1/chat/completions`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${c.env.FORGE_GATEWAY_TOKEN}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: c.env.FORGE_GATEWAY_MODEL || 'gpt-5.4-mini',
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: prompts[mode] || prompts.post },
+            ],
+            max_tokens: 600,
+            stream: false,
+          }),
+        });
+        if (resp.ok) {
+          const data = await resp.json();
+          text = data.choices?.[0]?.message?.content || null;
+          if (text) source = 'forge';
+        }
+      } catch (e) {
+        console.warn('[AI write-post] FORGE failed:', e.message);
+      }
+    }
+
+    // 2. Fallback: Cloudflare Workers AI
+    if (!text && c.env.AI) {
+      try {
+        const result = await c.env.AI.run(
+          c.env.WORKERS_AI_MODEL || '@cf/openai/gpt-oss-20b',
+          {
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: prompts[mode] || prompts.post },
+            ],
+            max_tokens: 600,
+          }
+        );
+        text = result?.response || result?.text || result?.content || null;
+        if (text) source = 'workers-ai';
+      } catch (e) {
+        console.warn('[AI write-post] Workers AI failed:', e.message);
+      }
+    }
+
+    if (!text) {
+      // 3. Local fallback template
+      return c.json({
+        status: 'ok',
+        source: 'local',
+        headline: `${topic} — ข่าวร้อนจาก TukTuk Thailand! 🔥`,
+        content: `📢 ${topic}\n\nมาร่วมเป็นส่วนหนึ่งของชุมชน TukTuk Thailand กัน! เราพร้อมสนับสนุนทุกธุรกิจท้องถิ่น ✨\n\n#TukTukThailand #LocalBusiness #OTOP`,
+      });
+    }
+
+    // Parse JSON response
+    try {
+      const parsed = JSON.parse(text.replace(/```json|```/g, '').trim());
+      return c.json({ status: 'ok', source, headline: parsed.headline || '', content: parsed.content || text });
+    } catch {
+      const lines = text.split('\n').filter(Boolean);
+      return c.json({ status: 'ok', source, headline: lines[0] || topic, content: lines.slice(1).join('\n') || text });
+    }
+  } catch (err) {
+    return c.json({ status: 'error', error: { code: 'AI_ERROR', message: err.message } }, 500);
+  }
+});
+
+// ── POST /api/v1/ai/chat ───────────────────────────────────────
+// Assistant แชททั่วไปสำหรับ ANTIGRAVITY (super-admin) — route ผ่าน FORGE Gateway
+// รับ { messages:[{role,content}], system?, model? } หรือ { message, system? }
+v1Routes.post('/ai/chat', async (c) => {
+  const body = await c.req.json().catch(() => ({}));
+  let messages = Array.isArray(body.messages) ? body.messages : null;
+  const singleMessage = (body.message || body.prompt || '').trim();
+
+  if (!messages && !singleMessage) {
+    return c.json({ status: 'error', error: { code: 'MISSING_INPUT', message: 'กรุณาระบุ message หรือ messages' } }, 400);
+  }
+
+  const systemPrompt = body.system || `คุณคือ FORGE — ผู้ช่วย AI อัจฉริยะของ Super Admin แห่ง TukTuk Thailand Platform
+คุณเชี่ยวชาญด้าน: การจัดการแพลตฟอร์ม, วิเคราะห์ข้อมูลผู้ใช้/ยอดขาย, ความปลอดภัยระบบ, การตลาดดิจิทัล
+ตอบภาษาไทยกระชับ ตรงประเด็น เป็นมืออาชีพ ใช้ emoji พอเหมาะ
+เมื่อผู้ดูแลถามเชิงเทคนิคหรือกลยุทธ์ ให้คำแนะนำที่นำไปใช้ได้จริง`;
+
+  if (!messages) {
+    messages = [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: singleMessage },
+    ];
+  } else if (messages[0]?.role !== 'system') {
+    messages = [{ role: 'system', content: systemPrompt }, ...messages];
+  }
+
+  try {
+    let text = null;
+    let source = 'local';
+
+    // 1. FORGE Gateway (server-side token — เชื่อมกับ E:\Forgework cloud brain)
+    if (c.env.FORGE_GATEWAY_TOKEN) {
+      try {
+        const baseUrl = (c.env.FORGE_GATEWAY_URL || 'https://api.forgework.app').replace(/\/+$/, '');
+        const resp = await fetch(`${baseUrl}/v1/chat/completions`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${c.env.FORGE_GATEWAY_TOKEN}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: body.model || c.env.FORGE_GATEWAY_MODEL || 'gpt-5.4-mini',
+            messages,
+            max_tokens: 1200,
+            temperature: 0.4,
+            stream: false,
+          }),
+        });
+        if (resp.ok) {
+          const data = await resp.json();
+          text = data.choices?.[0]?.message?.content || null;
+          if (text) source = 'forge';
+        }
+      } catch (e) {
+        console.warn('[AI chat] FORGE failed:', e.message);
+      }
+    }
+
+    // 2. Fallback: Cloudflare Workers AI
+    if (!text && c.env.AI) {
+      try {
+        const result = await c.env.AI.run(c.env.WORKERS_AI_MODEL || '@cf/openai/gpt-oss-20b', {
+          messages,
+          max_tokens: 1200,
+        });
+        text = result?.response || result?.text || result?.content || null;
+        if (text) source = 'workers-ai';
+      } catch (e) {
+        console.warn('[AI chat] Workers AI failed:', e.message);
+      }
+    }
+
+    if (!text) {
+      return c.json({ status: 'ok', source: 'local', reply: 'ขออภัยครับ ระบบ AI ไม่พร้อมใช้งานชั่วคราว กรุณาลองใหม่อีกครั้ง' });
+    }
+
+    return c.json({ status: 'ok', source, reply: text });
+  } catch (err) {
+    return c.json({ status: 'error', error: { code: 'AI_ERROR', message: err.message } }, 500);
   }
 });
 

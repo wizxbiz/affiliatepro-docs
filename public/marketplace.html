@@ -9328,10 +9328,22 @@
         }
 
         // Check if current user is owner or admin
+        // admin อ่านจาก JWT role (server-signed) — ไม่ใช่ flag ที่ client ตั้งเองได้
+        // หมายเหตุ: นี่ควบคุมแค่การแสดง UI — สิทธิ์จริงบังคับฝั่ง server
+        function _mktJwtRole() {
+            try {
+                const jwt = localStorage.getItem('tuktuk_jwt');
+                if (!jwt) return null;
+                const payload = JSON.parse(atob(jwt.split('.')[1]));
+                if (payload.exp && Date.now() / 1000 > payload.exp) return null;
+                return payload.role || null;
+            } catch { return null; }
+        }
         function canManageProduct(product) {
             const currentLineUserId = lineUserId || sessionStorage.getItem('lineUserId');
             const isOwner = currentLineUserId && product.lineUserId === currentLineUserId;
-            const isAdmin = localStorage.getItem('tuktuk_admin_role') === 'true';
+            const role = _mktJwtRole();
+            const isAdmin = role === 'admin' || role === 'super_admin';
             return { isOwner, isAdmin, canManage: isOwner || isAdmin };
         }
 

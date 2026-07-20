@@ -1216,6 +1216,75 @@
             border-color: var(--primary);
         }
 
+        .ai-send-btn {
+            width: 40px; height: 40px; flex-shrink: 0;
+            background: var(--primary); border: none; border-radius: 12px;
+            color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: opacity 0.2s;
+        }
+        .ai-send-btn:hover { opacity: 0.85; }
+        .ai-settings-btn {
+            width: 36px; height: 36px; flex-shrink: 0;
+            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px; color: white; cursor: pointer; font-size: 16px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .ai-settings-bar {
+            padding: 12px 20px; background: rgba(0,0,0,0.3);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .ai-settings-input {
+            background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 10px; color: white; padding: 8px 12px; font-size: 12px;
+        }
+        .ai-settings-input:focus { outline: none; border-color: var(--primary); }
+        .ai-settings-save {
+            background: var(--primary); border: none; border-radius: 10px;
+            color: white; padding: 7px 14px; font-size: 12px; cursor: pointer; align-self: flex-end;
+        }
+        .ai-mode-badge {
+            font-size: 0.6rem; padding: 2px 6px; border-radius: 6px; font-weight: 700; letter-spacing: 0.05em;
+        }
+        .ai-mode-forge { background: rgba(16,185,129,0.2); color: #10b981; }
+        .ai-mode-local { background: rgba(245,158,11,0.2); color: #f59e0b; }
+
+        /* ── Powerful Post AI Panel ──────────────────────────── */
+        .pp-ai-panel {
+            background: rgba(168,85,247,0.07);
+            border: 1px solid rgba(168,85,247,0.25);
+            border-radius: 14px; padding: 14px 16px;
+        }
+        .pp-ai-panel-header {
+            display: flex; align-items: center; justify-content: space-between;
+            font-size: 0.8rem; font-weight: 700; color: rgba(255,255,255,0.8);
+            margin-bottom: 10px;
+        }
+        .pp-ai-badge {
+            font-size: 0.62rem; padding: 2px 7px; border-radius: 6px;
+            font-weight: 700; letter-spacing: 0.04em;
+            background: rgba(245,158,11,0.2); color: #f59e0b;
+        }
+        .pp-ai-badge.forge { background: rgba(16,185,129,0.2); color: #10b981; }
+        .btn-ai-write {
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            color: white; border: none; font-weight: 700; font-size: 0.82rem;
+            padding: 8px 16px; white-space: nowrap;
+            transition: opacity 0.2s;
+        }
+        .btn-ai-write:hover { opacity: 0.85; color: white; }
+        .btn-ai-write:disabled { opacity: 0.5; }
+        .pp-ai-status {
+            font-size: 0.75rem; padding: 6px 4px 0;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .pp-ai-spinner {
+            width: 12px; height: 12px; border: 2px solid rgba(168,85,247,0.3);
+            border-top-color: #a855f7; border-radius: 50%;
+            animation: spin 0.7s linear infinite; flex-shrink: 0;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
         /* Section Antigravity */
         #section-antigravity .ai-feature-card {
             background: rgba(99, 102, 241, 0.05);
@@ -1681,14 +1750,14 @@
                 </div>
                 <div class="col-6 col-md-3">
                     <div class="data-card text-center p-3">
-                        <div class="text-secondary small mb-1"><i class="fas fa-baht-sign me-1"></i>Daily Sales</div>
-                        <div class="fs-3 fw-bold text-success" id="god-daily-sales">—</div>
+                        <div class="text-secondary small mb-1"><i class="fas fa-store me-1"></i>สินค้าทั้งหมด</div>
+                        <div class="fs-3 fw-bold text-success" id="god-total-products">—</div>
                     </div>
                 </div>
                 <div class="col-6 col-md-3">
                     <div class="data-card text-center p-3">
-                        <div class="text-secondary small mb-1"><i class="fas fa-brain me-1"></i>AI Tokens</div>
-                        <div class="fs-3 fw-bold text-warning" id="god-ai-tokens">—</div>
+                        <div class="text-secondary small mb-1"><i class="fas fa-bolt me-1"></i>โพสต์วันนี้</div>
+                        <div class="fs-3 fw-bold text-warning" id="god-posts-today">—</div>
                     </div>
                 </div>
             </div>
@@ -6481,35 +6550,33 @@
 
             <div class="data-card mb-4" style="border: 1px solid rgba(255, 193, 7, 0.3);">
                 <div class="data-card-header bg-warning bg-opacity-10 py-3 d-flex justify-content-between">
-                    <h5 class="mb-0 text-white fw-bold"><i class="fas fa-key text-warning me-2"></i>Broadcaster API Keys
-                        (Development Mode)</h5>
-                    <span class="badge bg-warning text-dark">LOCKED FOR PHASE 1</span>
+                    <h5 class="mb-0 text-white fw-bold"><i class="fas fa-key text-warning me-2"></i>Broadcaster API Keys</h5>
+                    <span class="badge bg-success">SERVER-MANAGED</span>
                 </div>
                 <div class="p-4">
-                    <p class="small text-secondary mb-3">The system is currently using the fixed development key. All
-                        official broadcasters must use this key to push real-time headlines.</p>
-                    <div
-                        class="d-flex align-items-center gap-3 bg-dark p-3 rounded border border-secondary border-opacity-25">
-                        <div class="text-info fw-bold">TukTuk Master Key:</div>
-                        <code class="fs-5 text-warning flex-grow-1 user-select-all"
-                            style="letter-spacing: 2px;">tuktuk_master_admin</code>
-                        <button class="btn btn-sm btn-outline-warning shadow-sm"
-                            onclick="navigator.clipboard.writeText('tuktuk_master_admin'); alert('Copied to clipboard!');"><i
-                                class="fas fa-copy me-1"></i> Copy Key</button>
-                    </div>
+                    <p class="small text-secondary mb-0">
+                        <i class="fas fa-shield-alt text-success me-1"></i>
+                        API key ถูกจัดการฝั่ง server แล้ว — การควบคุม live stream ทำผ่าน session (JWT role) ที่ตรวจสอบฝั่ง Worker
+                        ไม่มีการเปิดเผย master key ใน client อีกต่อไป
+                    </p>
                 </div>
             </div>
 
             <script>
                 // Go Engine Monitor Scripts
+                // Circuit breaker: หยุด poll หลัง Go engine fail ติดกัน 3 ครั้ง (กัน console spam)
+                let _goFailCount = 0;
+                let _goPollInterval = null;
+
                 async function fetchGoHealth() {
                     const term = document.getElementById('goEngineTerminal');
                     const ts = new Date().toLocaleTimeString('en-US', { hour12: false });
+                    const GO_URL = 'https://tuktuk-engine.fly.dev';
                     term.innerHTML += `<div class="terminal-line"><span class="terminal-timestamp">[${ts}]</span> Fetching Go engine health...</div>`;
 
                     try {
                         const start = performance.now();
-                        const res = await fetch('http://localhost:8080/health');
+                        const res = await fetch(`${GO_URL}/health`);
                         if (res.ok) {
                             const data = await res.json();
                             const latency = Math.round(performance.now() - start);
@@ -6517,23 +6584,32 @@
                             document.getElementById('goVersionStr').innerText = data.version || "1.21.x";
 
                             term.innerHTML += `<div class="terminal-line"><span class="terminal-timestamp">[${ts}]</span> <span class="text-success fw-bold">[OK]</span> Connected to TukTuk Go Engine (Latency: ${latency}ms)</div>`;
-                            term.innerHTML += `<div class="terminal-line"><span class="terminal-timestamp">[${ts}]</span> Node: ${data.nodeId || 'Fly.io (Local)'} - Uptime: ${data.uptime || 'OK'}</div>`;
+                            term.innerHTML += `<div class="terminal-line"><span class="terminal-timestamp">[${ts}]</span> Node: ${data.nodeId || 'Fly.io'} - Uptime: ${data.uptime || 'OK'}</div>`;
+                            _goFailCount = 0; // reset เมื่อสำเร็จ
                         } else {
                             throw new Error('Non-200 response');
                         }
                     } catch (e) {
+                        _goFailCount++;
                         term.innerHTML += `<div class="terminal-line"><span class="terminal-timestamp">[${ts}]</span> <span class="text-danger fw-bold">[ERR]</span> Connection failed: ${e.message}</div>`;
                         document.getElementById('goApiLatency').innerHTML = `--<span class="fs-4">ms</span>`;
+                        // หยุด poll ถ้า fail ติดกัน 3 ครั้ง
+                        if (_goFailCount >= 3 && _goPollInterval) {
+                            clearInterval(_goPollInterval);
+                            _goPollInterval = null;
+                            term.innerHTML += `<div class="terminal-line"><span class="terminal-timestamp">[${ts}]</span> <span class="text-warning fw-bold">[PAUSED]</span> Go Engine offline — หยุด auto-poll (กดรีเฟรชเพื่อลองใหม่)</div>`;
+                        }
                     }
                     term.scrollTop = term.scrollHeight;
 
-                    // Fetch active lives
-                    fetchActiveLives();
+                    // Fetch active lives เฉพาะเมื่อ engine ยังไม่ถูก mark offline
+                    if (_goFailCount < 3) fetchActiveLives();
                 }
 
                 async function fetchActiveLives() {
+                    const GO_URL = 'https://tuktuk-engine.fly.dev';
                     try {
-                        const res = await fetch('http://localhost:8080/api/v1/live');
+                        const res = await fetch(`${GO_URL}/api/v1/live`);
                         if (res.ok) {
                             const data = await res.json();
                             const lives = data.liveSessions || [];
@@ -6578,16 +6654,25 @@
                 }
 
                 async function terminateRuningLive(sessionId) {
-                    const pass = prompt('WARNING: Force terminating a transmission. Enter master key to confirm (tuktuk_master_admin):');
-                    if (pass !== 'tuktuk_master_admin') {
-                        alert('Unauthorized. Master key incorrect.');
-                        return;
-                    }
+                    if (!confirm('⚠️ ยืนยันบังคับปิด live stream นี้? (ตรวจสิทธิ์ผ่าน session ฝั่ง server)')) return;
+                    const jwt = localStorage.getItem('tuktuk_jwt');
+                    if (!jwt) { alert('กรุณาเข้าสู่ระบบใหม่'); return; }
                     try {
-                        const res = await fetch(`http://localhost:8080/api/v1/live/end/${sessionId}?apiKey=tuktuk_master_admin`, { method: 'POST' });
+                        // เรียกผ่าน Worker (requireAdmin) — master key อยู่ฝั่ง server เท่านั้น
+                        const res = await fetch(`${WORKER_BASE}/api/admin/live/end/${sessionId}`, {
+                            method: 'POST',
+                            headers: { 'Authorization': `Bearer ${jwt}` },
+                        });
+                        const data = await res.json().catch(() => ({}));
                         if (res.ok) {
-                            alert('Signal 15 sent successfully to Go Engine.');
+                            alert('✅ ส่งคำสั่งปิด live สำเร็จ');
                             fetchActiveLives();
+                        } else if (res.status === 403 || res.status === 401) {
+                            alert('🚫 ไม่มีสิทธิ์ดำเนินการ (ต้องเป็น admin)');
+                        } else if (res.status === 501) {
+                            alert('ℹ️ ฟีเจอร์นี้ยังไม่พร้อมใช้งาน (Go engine ยังไม่รองรับ)');
+                        } else {
+                            alert('❌ ' + (data.error || 'ปิด live ไม่สำเร็จ'));
                         }
                     } catch (e) { alert(e.message); }
                 }
@@ -6604,9 +6689,9 @@
                     });
                 });
 
-                // Initial background poll 
+                // Initial background poll
                 setTimeout(fetchGoHealth, 1500);
-                setInterval(fetchGoHealth, 12000);
+                _goPollInterval = setInterval(fetchGoHealth, 12000);
             </script>
         </section>
 
@@ -6890,6 +6975,36 @@
                             <div class="mb-4">
                                 <label class="form-label fw-bold text-secondary small text-uppercase ls-1">2. Content
                                     Details</label>
+
+                                <!-- AI Write Panel -->
+                                <div class="pp-ai-panel mb-3">
+                                    <div class="pp-ai-panel-header">
+                                        <span><i class="fas fa-robot me-2" style="color:#a855f7;"></i>ให้ AI ช่วยเขียน</span>
+                                        <span id="ppAiModeBadge" class="pp-ai-badge">⚡ FORGE AI</span>
+                                    </div>
+                                    <!-- เลือกประเภทคอนเทนต์ -->
+                                    <div class="d-flex gap-2 mb-2">
+                                        <input type="radio" class="btn-check" name="ppContentType" id="ppTypeEntertain" value="entertain" checked>
+                                        <label class="btn btn-sm btn-outline-info rounded-pill flex-fill" for="ppTypeEntertain">
+                                            <i class="fas fa-film me-1"></i> บันเทิง
+                                        </label>
+                                        <input type="radio" class="btn-check" name="ppContentType" id="ppTypeSell" value="sell">
+                                        <label class="btn btn-sm btn-outline-success rounded-pill flex-fill" for="ppTypeSell">
+                                            <i class="fas fa-shopping-bag me-1"></i> ขายสินค้า
+                                        </label>
+                                    </div>
+                                    <div class="input-group">
+                                        <input type="text" id="ppAiTopic" class="form-control bg-dark text-white border-secondary"
+                                            placeholder="บอก topic เช่น: โปรโมชั่นสินค้า OTOP ลดราคา 50%"
+                                            onkeydown="if(event.key==='Enter'){event.preventDefault();aiHelper.writePost()}" />
+                                        <button class="btn btn-ai-write" type="button" id="ppAiWriteBtn"
+                                            onclick="aiHelper.writePost()">
+                                            <i class="fas fa-wand-magic-sparkles me-1"></i> สร้างโพสต์
+                                        </button>
+                                    </div>
+                                    <div id="ppAiStatus" class="pp-ai-status" style="display:none;"></div>
+                                </div>
+
                                 <div class="mb-3">
                                     <div class="input-group">
                                         <span class="input-group-text bg-dark border-secondary text-secondary"><i
@@ -6912,7 +7027,7 @@
                                         <button type="button"
                                             class="btn btn-link btn-sm text-info p-0 text-decoration-none"
                                             onclick="aiHelper.refineContent()">
-                                            <i class="fas fa-magic me-1"></i> AI Refine & Polish Content
+                                            <i class="fas fa-magic me-1"></i> AI Refine & Polish
                                         </button>
                                     </div>
                                 </div>
@@ -7023,6 +7138,30 @@
         </div>
     </div>
 
+    <!-- Modal: อนุมัติก่อนเผยแพร่ (Approve step) -->
+    <div class="modal fade" id="ppApproveModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-white border border-secondary border-opacity-25">
+                <div class="modal-header border-secondary border-opacity-25">
+                    <h5 class="modal-title"><i class="fas fa-shield-check text-success me-2"></i>ตรวจทานก่อนเผยแพร่</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-secondary small mb-3">โพสต์นี้จะถูกเผยแพร่ลงฟีดจริง (ดูเพลิน) ทันทีที่กดอนุมัติ ตรวจทานความถูกต้องก่อนนะครับ</p>
+                    <div id="ppApprovePreview" style="border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:16px;background:rgba(0,0,0,0.3);"></div>
+                </div>
+                <div class="modal-footer border-secondary border-opacity-25">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">
+                        <i class="fas fa-pen me-1"></i> กลับไปแก้
+                    </button>
+                    <button type="button" class="btn btn-success rounded-pill" id="ppApproveBtn" onclick="confirmPublishPost()">
+                        <i class="fas fa-check me-1"></i> อนุมัติ & เผยแพร่
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal: Add New Admin -->
     <div class="modal fade" id="addAdminModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
@@ -7125,29 +7264,32 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/js/cloudflare-client.js"></script>
 
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
-
     <script>
-        // Firebase Config
-        const firebaseConfig = {
-            apiKey: "AIzaSyBKL6HBLEndDX4LYo7APFNQ0IVICLJtaIE",
-            authDomain: "appinjproject.firebaseapp.com",
-            databaseURL: "https://appinjproject-default-rtdb.firebaseio.com",
-            projectId: "appinjproject",
-            storageBucket: "appinjproject.firebasestorage.app",
-            messagingSenderId: "408718656984",
-            appId: "1:408718656984:web:08bd8f084769d428251ead",
-            measurementId: "G-7ZM9H01D6E"
+        // Firebase polyfill — SDK removed, using Cloudflare Workers only
+        window.firebase = {
+            firestore: {
+                FieldValue: {
+                    serverTimestamp: () => new Date().toISOString(),
+                    increment: (n) => ({ __increment: n }),
+                    arrayUnion: (...items) => ({ __arrayUnion: items }),
+                    arrayRemove: (...items) => ({ __arrayRemove: items }),
+                },
+                Timestamp: {
+                    fromDate: (d) => ({ toDate: () => d, seconds: Math.floor(d.getTime() / 1000) }),
+                    now: () => { const d = new Date(); return { toDate: () => d, seconds: Math.floor(d.getTime() / 1000) }; },
+                },
+            },
+            auth: () => ({
+                currentUser: (() => { try { return JSON.parse(localStorage.getItem('wizmobiz_session') || 'null'); } catch { return null; } })(),
+            }),
         };
 
-        // ── Cloudflare-only mode: ไม่ใช้ Firebase เลย ──
-        // firebase.initializeApp(firebaseConfig); // ❌ ปิดการใช้งาน
-        const auth = window.auth; // ✅ ใช้ Cloudflare Auth Shim
-        const db = window.db;     // ✅ ใช้ Cloudflare D1 Database Shim
+        const auth = window.auth;
+        const db = window.db;
+
+        // Worker API base — ใช้ร่วมทั้ง upload, God's Eye stats, AI chat
+        const WORKER_BASE = (location.hostname === 'tuktukthailand.com' || location.hostname === 'localhost')
+            ? 'https://tuktukfeed-api.imtthailand2019.workers.dev' : '';
 
         // ===== Global Variables =====
         let lineUserId = null;
@@ -7157,10 +7299,8 @@
         let currentPage = 1;
         const perPage = 20;
 
-        // Super Admin LINE User IDs
-        const SUPER_ADMIN_IDS = [
-            'Ud9bec6d2ea945cf4330a69cb74ac93cf'
-        ];
+        // Admin authorization มาจาก server (JWT role ผ่าน /api/auth/me) เท่านั้น
+        // ไม่มี hardcoded ID list ใน client อีกต่อไป — allowlist อยู่ที่ Worker env SUPER_ADMIN_IDS
 
         // ===== Utility Functions =====
         function showAlert(message, type = 'info') {
@@ -7240,58 +7380,83 @@
         }
 
         // ===== Auth Functions (Cloudflare) =====
-        async function checkAuth() {
-            // ✅ ใช้ Cloudflare Auth แทน Firebase
-            const session = window.WizmobizAuth?.getSession?.();
+        function _getLocalSession() {
+            const keys = ['wizmobiz_session', 'tuktuk_line_session', 'wit_line_session'];
+            for (const k of keys) {
+                try {
+                    const raw = localStorage.getItem(k);
+                    if (!raw) continue;
+                    const s = JSON.parse(raw);
+                    const uid = s.uid || s.lineUserId || s.id;
+                    const token = s.token || s.sessionToken || localStorage.getItem('tuktuk_jwt');
+                    if (uid && token) return { ...s, uid, token };
+                } catch {}
+            }
+            // tuktuk_jwt อาจถูก save แยกต่างหาก
+            const jwt = localStorage.getItem('tuktuk_jwt');
+            if (jwt) {
+                try {
+                    const payload = JSON.parse(atob(jwt.split('.')[1]));
+                    if (payload.uid && payload.exp * 1000 > Date.now())
+                        return { uid: payload.uid, lineUserId: payload.lineUserId, displayName: payload.displayName,
+                                 pictureUrl: payload.pictureUrl, role: payload.role, token: jwt };
+                } catch {}
+            }
+            return null;
+        }
 
-            if (!session || !session.uid) {
+        async function checkAuth() {
+            // ✅ Server-verified auth: role มาจาก JWT ที่ signature ถูก verify ฝั่ง Worker
+            // ไม่ใช้ hardcoded ID list หรือ client-decoded role อีกต่อไป (กัน privilege escalation)
+            const jwt = localStorage.getItem('tuktuk_jwt')
+                || (window.WizmobizAuth?.getSession?.()?.token)
+                || _getLocalSession()?.token;
+
+            if (!jwt) {
                 showLoginModal();
                 return;
             }
 
-            const uid = session.uid;
-            lineUserId = uid;
-
-            // Check authorization: hardcoded super-admin IDs first, then D1 users table
-            let isAuthorized = SUPER_ADMIN_IDS.includes(uid);
-
-            if (!isAuthorized) {
-                try {
-                    // ✅ เช็คจาก D1 users table (role = 'admin' or 'super_admin')
-                    const userDoc = await db.collection('users').doc(uid).get();
-                    if (userDoc.exists) {
-                        const userData = userDoc.data();
-                        if (userData.role === 'admin' || userData.role === 'super_admin') {
-                            isAuthorized = true;
-                        }
-                    }
-                } catch (e) {
-                    console.error('Admin check error:', e);
+            let me = null;
+            let status = 0;
+            try {
+                const res = await fetch(`${WORKER_BASE}/api/auth/me`, {
+                    headers: { 'Authorization': `Bearer ${jwt}` },
+                });
+                status = res.status;
+                if (res.ok) {
+                    const data = await res.json();
+                    me = data.user || null;
                 }
+            } catch (e) {
+                console.warn('[Auth] /me failed:', e.message);
             }
 
-            if (!isAuthorized) {
+            // Token หมดอายุ/ไม่ valid (401) → ล้าง token เก่าทิ้ง แล้วให้ล็อกอินใหม่แบบเงียบ
+            if (status === 401 || !me) {
+                localStorage.removeItem('tuktuk_jwt');
+                showLoginModal();
+                return;
+            }
+
+            // มี session จริงแต่ role ไม่พอ → เตือน ACCESS DENIED
+            const role = me?.role;
+            if (role !== 'admin' && role !== 'super_admin') {
                 showAlert('🚫 ACCESS DENIED: Insufficient Permissions.', 'error');
                 showLoginModal();
                 return;
             }
 
             hasAccess = true;
+            lineUserId = me.uid || me.lineUserId;
+            currentUserData = me;
 
-            // โหลดข้อมูล user จาก D1
-            try {
-                const userDoc = await db.collection('users').doc(uid).get();
-                currentUserData = userDoc.exists ? userDoc.data() : {};
-                const name = currentUserData.display_name || session.displayName || 'Admin';
-                const avatar = currentUserData.picture_url || session.pictureUrl || 'https://placehold.co/40/6366f1/white?text=A';
-
-                if (document.getElementById('adminDisplayName'))
-                    document.getElementById('adminDisplayName').textContent = name;
-                if (document.getElementById('adminAvatar'))
-                    document.getElementById('adminAvatar').src = avatar;
-            } catch (err) {
-                console.warn('User data load error:', err);
-            }
+            const name = me.displayName || me.display_name || 'Admin';
+            const avatar = me.pictureUrl || me.picture_url || 'https://placehold.co/40/6366f1/white?text=A';
+            if (document.getElementById('adminDisplayName'))
+                document.getElementById('adminDisplayName').textContent = name;
+            if (document.getElementById('adminAvatar'))
+                document.getElementById('adminAvatar').src = avatar;
 
             document.getElementById('loadingOverlay').style.display = 'none';
             initDashboard();
@@ -7299,18 +7464,9 @@
 
         function showLoginModal() {
             document.getElementById('loadingOverlay').innerHTML = `
-                    < div class="text-center" style = "background: var(--bg-card); padding: 40px; border-radius: 20px; max-width: 420px; border: 1px solid var(--border-color);" >
+                    <div class="text-center" style="background: var(--bg-card); padding: 40px; border-radius: 20px; max-width: 420px; border: 1px solid var(--border-color);">
                     <i class="fas fa-shield-alt" style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;"></i>
                     <h4 class="mb-2">🔐 Super Admin Login</h4>
-
-                    <button onclick="signInWithGoogle()" class="btn w-100 mb-3" style="border: 1px solid #dadce0; background:#fff; color:#3c4043; font-weight:500;">
-                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="height:18px; margin-right:8px; vertical-align:middle;">
-                        Sign in with Google
-                    </button>
-
-                    <div class="d-flex align-items-center mb-3">
-                        <hr style="flex:1; margin:0;"><span class="px-2 text-secondary small">หรือ</span><hr style="flex:1; margin:0;">
-                    </div>
 
                     <p class="text-secondary mb-3">กรอก PIN 6 หลักจาก LINE OA</p>
 
@@ -7333,22 +7489,6 @@
                 `;
 
             setupPINInputs();
-        }
-
-        async function signInWithGoogle() {
-            const errEl = document.getElementById('loginError');
-            try {
-                // ✅ ใช้ Cloudflare Auth แทน Firebase
-                await window.auth.signInWithPopup();
-                // Session จะถูก set ใน localStorage โดย cloudflare-client.js
-                // Reload เพื่อให้ checkAuth() ทำงาน
-                window.location.reload();
-            } catch (err) {
-                if (errEl) {
-                    errEl.textContent = err.message || 'Google Sign-in failed';
-                    errEl.style.display = 'block';
-                }
-            }
         }
 
         function setupPINInputs() {
@@ -7456,10 +7596,12 @@
                 const result = await window.cfApi.verifyPin(null, pin);
 
                 if (result.success || result.token) {
-                    // ตรวจสอบสิทธิ์ Super Admin
-                    const userId = result.user?.id || result.user?.lineUserId || result.userId;
+                    // ตรวจสอบสิทธิ์ Super Admin — เชื่อ server role เท่านั้น
+                    const userId = result.user?.uid || result.user?.lineUserId || result.user?.id || result.userId;
+                    const serverRole = result.user?.role;
+                    const isAdmin = serverRole === 'super_admin' || serverRole === 'admin';
 
-                    if (!SUPER_ADMIN_IDS.includes(userId)) {
+                    if (!isAdmin) {
                         errorDiv.textContent = '❌ คุณไม่มีสิทธิ์ Super Admin';
                         errorDiv.style.display = 'block';
                         return;
@@ -7478,8 +7620,14 @@
                 }
             } catch (error) {
                 console.error('PIN error:', error);
-                errorDiv.textContent = 'เกิดข้อผิดพลาด: ' + error.message;
+                // 404 = PIN ไม่พบ/หมดอายุ, 401 = หมดอายุ — แสดงข้อความเป็นมิตร
+                const msg = /404|not found/i.test(error.message)
+                    ? '❌ PIN ไม่ถูกต้องหรือหมดอายุ — พิมพ์ "ขอรหัส" ใน LINE เพื่อรับ PIN ใหม่'
+                    : 'เกิดข้อผิดพลาด: ' + error.message;
+                errorDiv.textContent = msg;
                 errorDiv.style.display = 'block';
+                inputs.forEach(i => i.value = '');
+                inputs[0]?.focus();
             }
         }
 
@@ -7527,7 +7675,7 @@
             ]);
 
             initCharts();
-            initRevenueCharts();
+            initRevenueTrendCharts();
             loadRecentActivity();
             initControlCenter();
             showSection('dashboard');
@@ -7577,7 +7725,7 @@
             if (sectionId === 'premium-users') loadPremiumUsers();
             if (sectionId === 'ai-prompts') loadAIPrompts();
             if (sectionId === 'site-pages') loadSitePages();
-            if (sectionId === 'system-health') updateSystemHealth();
+            if (sectionId === 'system-health') loadSystemHealth();
             if (sectionId === 'tokenomics') refreshTokenomics();
             if (sectionId === 'functions-files') loadFunctionsFiles();
             if (sectionId === 'site-traffic') loadTrafficData();
@@ -7875,9 +8023,25 @@
         let trafficChart = null;
 
         async function loadTrafficData() {
+            const setTraffic = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
             try {
                 const days = document.getElementById('trafficPeriod')?.value || 7;
-                const response = await fetch(`https://us-central1-appinjproject.cloudfunctions.net/getAnalyticsStats?days=${days}`);
+                // Analytics ย้ายไป Worker แล้ว — Firebase function เดิมถูกปิด (CORS)
+                // ลองเรียก Worker analytics ก่อน, ถ้าไม่มีให้แสดง placeholder แบบเงียบ
+                let response;
+                try {
+                    response = await fetch(`${WORKER_BASE}/api/v1/analytics/stats?days=${days}`, {
+                        headers: { ...(jwt ? { 'Authorization': `Bearer ${jwt}` } : {}) }
+                    });
+                    if (!response.ok) throw new Error('worker analytics unavailable');
+                } catch (workerErr) {
+                    // ไม่มี analytics endpoint — แสดง placeholder ไม่ต้อง spam error
+                    setTraffic('trafficOnline', '—');
+                    setTraffic('trafficUnique', '—');
+                    setTraffic('trafficAllUnique', '—');
+                    setTraffic('trafficAllViews', '—');
+                    return;
+                }
                 const result = await response.json();
 
                 if (result.success && result.data) {
@@ -8470,39 +8634,39 @@
             if (!feed) return;
             feed.innerHTML = '';
 
-            // Listen to various streams
-            // 1. Community Posts
-            db.collection('posts').orderBy('createdAt', 'desc').limit(5).onSnapshot(snap => {
-                snap.docChanges().forEach(change => {
-                    if (change.type === 'added') {
-                        const data = change.doc.data();
-                        addGodEyeEvent('video', `User uploaded a new video: ${data.description?.substring(0, 30)}...`, change.doc.id);
-                    }
+            // shim onSnapshot ส่ง snapshot เต็ม (ไม่มี docChanges) — เราจึง diff เอง
+            // seenIds ต่อ stream, ครั้งแรกถือว่า "เห็นแล้ว" ไม่ spam feed ย้อนหลัง
+            function watchStream(collection, seenIds, handler) {
+                let primed = false;
+                db.collection(collection).orderBy('createdAt', 'desc').limit(8).onSnapshot(snap => {
+                    const docs = snap.docs || [];
+                    docs.forEach(doc => {
+                        if (seenIds.has(doc.id)) return;
+                        seenIds.add(doc.id);
+                        if (primed) handler(doc.data() || {}, doc.id); // เฉพาะของใหม่หลัง prime
+                    });
+                    primed = true;
                 });
+            }
+
+            // 1. โพสต์/วิดีโอใหม่
+            watchStream('posts', new Set(), (data, id) => {
+                const desc = (data.description || data.content || '').substring(0, 30);
+                addGodEyeEvent('video', `มีโพสต์ใหม่: ${desc}${desc.length >= 30 ? '…' : ''}`, id);
+                _triggerMapPulse();
             });
 
-            // 2. Marketplace Items
-            db.collection('products').orderBy('createdAt', 'desc').limit(5).onSnapshot(snap => {
-                snap.docChanges().forEach(change => {
-                    if (change.type === 'added') {
-                        const data = change.doc.data();
-                        addGodEyeEvent('product', `New listing: ${data.productName} (฿${data.price})`, change.doc.id);
-                    }
-                });
+            // 2. สินค้าใหม่ในตลาด
+            watchStream('products', new Set(), (data, id) => {
+                addGodEyeEvent('product', `สินค้าใหม่: ${data.productName || data.title || ''} (฿${data.price || 0})`, id);
+                _triggerMapPulse();
             });
 
-            // 3. User Likes (from global context fetch or dedicated log)
-            // For now, let's mock some live interactions
-            setInterval(() => {
-                const mocks = [
-                    { type: 'like', text: 'Someone liked a post' },
-                    { type: 'view', text: 'New view on marketplace item' },
-                    { type: 'app', text: 'New session started in Mobile App' },
-                    { type: 'ai', text: 'AI generated a business response' }
-                ];
-                const mock = mocks[Math.floor(Math.random() * mocks.length)];
-                addGodEyeEvent(mock.type, mock.text);
-            }, 3000);
+            // 3. ผู้ซื้อทักผู้ขาย (contacts)
+            watchStream('contacts', new Set(), (data, id) => {
+                addGodEyeEvent('view', `มีผู้สนใจสินค้าติดต่อผู้ขาย`, id);
+            });
+            // event ทั้งหมดมาจาก Firestore/D1 listener จริง — ไม่มี mock data
         }
 
         function addGodEyeEvent(type, message, id) {
@@ -8576,22 +8740,36 @@
         }
 
         async function _initGodEyeMetrics() {
-            // Real counters from Firestore
-            db.collection('users').get().then(snap => {
-                const el = document.getElementById('god-active-users');
-                if (el) el.textContent = snap.size.toLocaleString();
-            }).catch(() => { });
+            const setMetric = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = (typeof val === 'number' ? val.toLocaleString() : val);
+            };
 
-            db.collection('community_posts').get().then(snap => {
-                const el = document.getElementById('god-total-posts');
-                if (el) el.textContent = snap.size.toLocaleString();
-            }).catch(() => { });
+            // นับจริงจาก D1 ผ่าน shim (window.db → /api/db/*) — .size ใช้งานได้แล้ว
+            db.collection('users').get()
+                .then(snap => setMetric('god-active-users', snap.size))
+                .catch(e => console.warn('[GodEye] users:', e.message));
 
-            // Mock revenue/ai for now
-            const sales = document.getElementById('god-daily-sales');
-            const tokens = document.getElementById('god-ai-tokens');
-            if (sales) sales.textContent = '฿84,200';
-            if (tokens) tokens.textContent = '1.4M';
+            db.collection('products').get()
+                .then(snap => setMetric('god-total-products', snap.size))
+                .catch(e => console.warn('[GodEye] products:', e.message));
+
+            // posts: ใช้นับทั้งหมด + กรองเฉพาะวันนี้ในรอบเดียว
+            try {
+                const startOfDay = new Date(); startOfDay.setHours(0, 0, 0, 0);
+                const snap = await db.collection('posts').get();
+                setMetric('god-total-posts', snap.size);
+                const todayCount = snap.docs.filter(d => {
+                    const data = d.data() || {};
+                    const ts = data.createdAt?.seconds ? data.createdAt.seconds * 1000
+                        : (typeof data.createdAt === 'number' ? data.createdAt : Date.parse(data.createdAt || 0));
+                    return ts >= startOfDay.getTime();
+                }).length;
+                setMetric('god-posts-today', todayCount);
+            } catch (e) {
+                console.warn('[GodEye] posts:', e.message);
+                setMetric('god-posts-today', 0);
+            }
         }
 
         // Add CSS for God Eye pulse + Leaflet dark theme overrides
@@ -9391,43 +9569,91 @@
         async function savePostEdit() {
             const postId = document.getElementById('editPostId').value;
             const collection = document.getElementById('editPostCollection').value;
+            const isPostsCollection = collection === 'posts' || collection === 'community_posts';
 
-            const updateData = {
+            // Build media list from image/video inputs
+            const imageUrl = document.getElementById('editPostImageUrl').value.trim();
+            const videoLink = document.getElementById('editPostVideo').value.trim();
+            const mediaUrls = [];
+            if (imageUrl) mediaUrls.push({ type: 'image', url: imageUrl });
+            if (videoLink) {
+                const isYoutube = /(?:youtube\.com\/watch|youtu\.be\/|youtube\.com\/embed\/)/i.test(videoLink);
+                if (isYoutube) {
+                    mediaUrls.push({ type: 'youtube', url: videoLink });
+                } else {
+                    mediaUrls.push({ type: 'video', url: videoLink });
+                }
+            }
+
+            const basePayload = {
                 title: document.getElementById('editPostTitle').value,
                 content: document.getElementById('editPostContent').value,
                 category: document.getElementById('editPostCategory').value,
                 published: document.getElementById('editPostPublished').checked,
                 pinned: document.getElementById('editPostPinned').checked,
                 linkedProductId: document.getElementById('editPostProductId').value,
-                imageUrl: document.getElementById('editPostImageUrl').value,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                mediaUrls: mediaUrls
             };
 
-            const videoLink = document.getElementById('editPostVideo').value;
-            if (videoLink) {
-                if (collection === 'posts' || collection === 'community_posts') {
-                    updateData.videoUrl = videoLink;
-                } else {
-                    updateData.youtubeUrl = videoLink;
-                }
-            }
-
             try {
-                if (postId) {
-                    await db.collection(collection).doc(postId).update(updateData);
-                    showAlert('✅ Post updated successfully!', 'success');
+                if (isPostsCollection) {
+                    // Use v1 API for posts/community_posts (maps to D1 posts table)
+                    const headers = {
+                        'Content-Type': 'application/json',
+                        ...(jwt ? { 'Authorization': `Bearer ${jwt}` } : {})
+                    };
+                    if (postId) {
+                        const res = await fetch(`${WORKER_BASE}/api/v1/posts/${postId}`, {
+                            method: 'PUT',
+                            headers,
+                            body: JSON.stringify(basePayload)
+                        });
+                        const result = await res.json();
+                        if (!res.ok || result.status === 'error') {
+                            throw new Error(result.error?.message || `HTTP ${res.status}`);
+                        }
+                        showAlert('✅ Post updated successfully!', 'success');
+                    } else {
+                        const res = await fetch(`${WORKER_BASE}/api/v1/posts`, {
+                            method: 'POST',
+                            headers,
+                            body: JSON.stringify(basePayload)
+                        });
+                        const result = await res.json();
+                        if (!res.ok || result.status === 'error') {
+                            throw new Error(result.error?.message || `HTTP ${res.status}`);
+                        }
+                        showAlert('✅ New post created successfully!', 'success');
+                    }
                 } else {
-                    // Create new post
-                    updateData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-                    updateData.authorId = lineUserId;
-                    updateData.authorName = currentUserData.displayName || 'Admin';
-                    updateData.authorAvatar = currentUserData.pictureUrl || '';
-                    updateData.likes = 0;
-                    updateData.views = 0;
-                    updateData.commentsCount = 0;
+                    // Legacy Firestore shim for other collections
+                    const updateData = {
+                        title: basePayload.title,
+                        content: basePayload.content,
+                        category: basePayload.category,
+                        published: basePayload.published,
+                        pinned: basePayload.pinned,
+                        linkedProductId: basePayload.linkedProductId,
+                        imageUrl: imageUrl,
+                        updatedAt: new Date().toISOString()
+                    };
+                    if (videoLink) updateData.youtubeUrl = videoLink;
 
-                    await db.collection(collection).add(updateData);
-                    showAlert('✅ New post created successfully!', 'success');
+                    if (postId) {
+                        await db.collection(collection).doc(postId).update(updateData);
+                        showAlert('✅ Post updated successfully!', 'success');
+                    } else {
+                        updateData.createdAt = new Date().toISOString();
+                        updateData.authorId = lineUserId;
+                        updateData.authorName = currentUserData.displayName || 'Admin';
+                        updateData.authorAvatar = currentUserData.pictureUrl || '';
+                        updateData.likes = 0;
+                        updateData.views = 0;
+                        updateData.commentsCount = 0;
+
+                        await db.collection(collection).add(updateData);
+                        showAlert('✅ New post created successfully!', 'success');
+                    }
                 }
 
                 // Close modal
@@ -9436,7 +9662,7 @@
                 modal.hide();
 
                 // Refresh data
-                if (collection === 'posts' || collection === 'community_posts') loadCommunityPosts();
+                if (isPostsCollection) loadCommunityPosts();
                 else loadStandardPosts();
             } catch (error) {
                 console.error('Error saving post:', error);
@@ -9470,7 +9696,7 @@
 
         function openNewPostModal() {
             document.getElementById('editPostId').value = '';
-            document.getElementById('editPostCollection').value = 'community_posts';
+            document.getElementById('editPostCollection').value = 'posts';
             document.getElementById('editPostTitle').value = '';
             document.getElementById('editPostContent').value = '';
             document.getElementById('editPostCategory').value = 'news';
@@ -10171,14 +10397,6 @@
         }
 
         // ===== AI Usage =====
-        async function loadNewsManager() {
-            // Re-use standard feed loader but maybe filter later
-            // For now just load generic feed
-            loadStandardPosts();
-            // Also refresh table in news manager section if separate
-            // TODO: Implement specific news manager load if different from standard feed
-        }
-
         // ===== Weather Feature =====
         let currentWeatherData = null;
 
@@ -10506,10 +10724,6 @@
             a.click();
         }
 
-        function exportData() {
-            exportLineUsers();
-        }
-
         // ===== Search Handlers =====
         document.getElementById('searchLineUsers')?.addEventListener('input', () => renderLineUsersTable(1));
         document.getElementById('filterLineUserStatus')?.addEventListener('change', () => renderLineUsersTable(1));
@@ -10646,28 +10860,6 @@
         }
 
         // ===== System Health =====
-        async function loadSystemHealth() {
-            const startTime = Date.now();
-
-            try {
-                // Test Firebase latency
-                await db.collection('line_users').limit(1).get();
-                const latency = Date.now() - startTime;
-                document.getElementById('firebaseLatency').textContent = latency;
-
-                // Update status indicators
-                document.getElementById('systemStatus').textContent = '●';
-                document.getElementById('systemStatus').className = 'badge bg-success';
-
-            } catch (error) {
-                document.getElementById('overallHealth').innerHTML = '<i class="fas fa-exclamation-circle me-1"></i> Issues Detected';
-                document.getElementById('overallHealth').className = 'badge bg-danger fs-6';
-            }
-
-            // Init uptime chart
-            initUptimeChart();
-        }
-
         function initUptimeChart() {
             const ctx = document.getElementById('uptimeChart')?.getContext('2d');
             if (!ctx) return;
@@ -12447,7 +12639,7 @@ ${COMPANY_INFO.name}`;
         // Global object to store chart instances
         window.revenueCharts = window.revenueCharts || {};
 
-        function initRevenueCharts() {
+        function initRevenueTrendCharts() {
             // Destroy existing Revenue Trend Chart
             const trendCanvas = document.getElementById('revenueTrendChart');
             if (trendCanvas) {
@@ -12886,9 +13078,10 @@ ${COMPANY_INFO.name}`;
             const statusElem = document.getElementById('goLatency');
             const logElem = document.getElementById('goLog');
             const start = Date.now();
+            const GO_URL = 'https://tuktuk-engine.fly.dev';
             if (!statusElem || !logElem) return;
             try {
-                const response = await fetch('http://localhost:8080/health');
+                const response = await fetch(`${GO_URL}/health`);
                 const data = await response.json();
                 const latency = Date.now() - start;
                 statusElem.textContent = latency + 'ms';
@@ -12910,7 +13103,7 @@ ${COMPANY_INFO.name}`;
 
             try {
                 const start = Date.now();
-                const response = await fetch('http://localhost:8080/api/v1/feed?userId=AdminMonitor');
+                const response = await fetch('https://tuktuk-engine.fly.dev/api/v1/feed?userId=AdminMonitor');
                 const data = await response.json();
                 const latency = Date.now() - start;
 
@@ -12983,6 +13176,43 @@ ${COMPANY_INFO.name}`;
                 };
             },
 
+            loadSettings: function () {
+                this.gatewayUrl = localStorage.getItem('forge_gateway_url') || '';
+                this.gatewayToken = localStorage.getItem('forge_gateway_token') || '';
+                const urlEl = document.getElementById('aiGatewayUrl');
+                const tokEl = document.getElementById('aiGatewayToken');
+                if (urlEl) urlEl.value = this.gatewayUrl;
+                if (tokEl) tokEl.value = this.gatewayToken;
+                this._updateModeBadge();
+            },
+
+            saveSettings: function () {
+                const url = document.getElementById('aiGatewayUrl')?.value.trim() || '';
+                const tok = document.getElementById('aiGatewayToken')?.value.trim() || '';
+                this.gatewayUrl = url;
+                this.gatewayToken = tok;
+                localStorage.setItem('forge_gateway_url', url);
+                localStorage.setItem('forge_gateway_token', tok);
+                document.getElementById('aiSettingsBar').style.display = 'none';
+                this._updateModeBadge();
+                this.addMessage(url ? `✅ เชื่อมต่อ FORGE Gateway: <code>${url}</code>` : '⚠️ ล้างการตั้งค่า Gateway แล้ว', 'assistant');
+            },
+
+            toggleSettings: function () {
+                const bar = document.getElementById('aiSettingsBar');
+                if (!bar) return;
+                bar.style.display = bar.style.display === 'none' ? 'flex' : 'none';
+                if (bar.style.display !== 'none') bar.style.flexDirection = 'column';
+            },
+
+            _updateModeBadge: function () {
+                const badge = document.getElementById('aiModeBadge');
+                if (!badge) return;
+                // Default route ผ่าน Worker → FORGE Gateway (server-side) เสมอ
+                badge.textContent = '⚡ FORGE AI';
+                badge.className = 'ai-mode-badge ai-mode-forge';
+            },
+
             sendMessage: async function () {
                 const input = document.getElementById('aiInputField');
                 const message = input.value.trim();
@@ -12992,21 +13222,59 @@ ${COMPANY_INFO.name}`;
                 input.value = '';
                 this.showTyping();
 
-                // Simulate processing time for realism
-                await new Promise(resolve => setTimeout(resolve, 1000));
-
                 try {
                     const context = this.getSystemContext();
-                    // Use Local Intelligence for guaranteed principled answers
-                    const responseText = this.localIntelligence(message, context);
 
+                    // 1. System action commands (maintenance/cleanup ฯลฯ) — ต้องรันฝั่ง local เสมอ
+                    //    เพราะมี side-effect จริง localIntelligence จะ trigger การทำงาน
+                    if (this._isActionCommand(message)) {
+                        await new Promise(resolve => setTimeout(resolve, 400));
+                        const responseText = this.localIntelligence(message, context);
+                        this.hideTyping();
+                        this.addMessage(this.formatResponse(responseText), 'assistant');
+                        return;
+                    }
+
+                    // 2. เรียก FORGE ผ่าน Worker /api/v1/ai/chat (server-side gateway → E:\Forgework brain)
+                    const systemPrompt = `คุณคือ FORGE ผู้ช่วย AI ระดับ Super Admin สำหรับ TukTuk Thailand Platform.
+ข้อมูลระบบปัจจุบัน: Users=${context.totalUsers}, Revenue=${context.revenue}, Premium=${context.premiumSubs}, Status=${context.systemStatus}, Latency=${context.latency}, หน้าปัจจุบัน=${context.activePage}, เวลา=${context.timestamp}
+ตอบเป็นภาษาไทย กระชับ เชิงวิเคราะห์ และให้คำแนะนำที่ปฏิบัติได้จริง`;
+                    const jwt = localStorage.getItem('tuktuk_jwt');
+                    const resp = await fetch(`${WORKER_BASE}/api/v1/ai/chat`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...(jwt ? { 'Authorization': `Bearer ${jwt}` } : {}),
+                        },
+                        body: JSON.stringify({
+                            message,
+                            system: systemPrompt,
+                        }),
+                    });
+                    if (!resp.ok) throw new Error(`Worker ${resp.status}`);
+                    const data = await resp.json();
+                    const text = data.reply || '(ไม่มีคำตอบ)';
                     this.hideTyping();
-                    this.addMessage(this.formatResponse(responseText), 'assistant');
+                    // แสดง badge ว่ามาจาก Forge หรือ fallback
+                    const srcTag = data.source === 'forge' ? '' : (data.source === 'workers-ai' ? ' <span class="text-info small">(Workers AI)</span>' : '');
+                    this.addMessage(this.formatResponse(text) + srcTag, 'assistant');
                 } catch (e) {
                     this.hideTyping();
-                    console.error("AI Error:", e);
-                    this.addMessage("❌ **System Error:** ระบบประมวลผลขัดข้อง", 'assistant');
+                    console.error('AI Error:', e);
+                    // Fallback: local intelligence เมื่อ network/worker ขัดข้อง
+                    const fallback = this.localIntelligence(message, this.getSystemContext());
+                    this.addMessage(this.formatResponse(`⚠️ AI Gateway ไม่ตอบสนอง — ใช้ Local AI สำรอง\n\n${fallback}`), 'assistant');
                 }
+            },
+
+            // ตรวจว่าเป็นคำสั่งควบคุมระบบที่มี side-effect จริงหรือไม่
+            _isActionCommand: function (message) {
+                const q = message.toLowerCase();
+                const triggers = [
+                    'โหมดซ่อมบำรุง', 'maintenance', 'ล้างข้อมูล', 'cleanup', 'ระเบียบ',
+                    "god's eye", 'god eye', 'ตาพระเจ้า', 'security audit', 'ตรวจสอบความปลอดภัย',
+                ];
+                return triggers.some(t => q.includes(t));
             },
 
             localIntelligence: function (query, ctx) {
@@ -13201,6 +13469,9 @@ ${COMPANY_INFO.name}`;
         function toggleAIPanel() {
             aiAssistant.togglePanel();
         }
+
+        // Init FORGE gateway settings from localStorage
+        aiAssistant.loadSettings();
 
         // ===== Tokenomics Logic =====
         let wealthChartInstance = null;
@@ -13545,7 +13816,7 @@ ${COMPANY_INFO.name}`;
                 <i class="fas fa-brain text-white"></i>
             </div>
             <div class="flex-grow-1">
-                <div class="text-white fw-bold">ANTIGRAVITY</div>
+                <div class="text-white fw-bold">ANTIGRAVITY <span id="aiModeBadge" class="ai-mode-badge ai-mode-local">🔧 LOCAL</span></div>
                 <div class="text-info small" style="font-size: 0.65rem;"><span class="live-pulse"
                         style="width: 6px; height: 6px;"></span> ONLINE | CO-PILOT MODE</div>
             </div>
@@ -13561,7 +13832,17 @@ ${COMPANY_INFO.name}`;
             </div>
         </div>
 
+        <div class="ai-settings-bar" id="aiSettingsBar" style="display:none;">
+            <input id="aiGatewayUrl" class="ai-settings-input" type="text" placeholder="Gateway URL (e.g. http://localhost:8910)" />
+            <input id="aiGatewayToken" class="ai-settings-input" type="password" placeholder="FORGE Token" />
+            <button class="ai-settings-save" onclick="aiAssistant.saveSettings()">บันทึก</button>
+        </div>
         <div class="ai-input-area">
+            <button class="ai-settings-btn" onclick="aiAssistant.toggleSettings()" title="ตั้งค่า Gateway">⚙️</button>
+            <input id="aiInputField" class="ai-input" type="text" placeholder="พิมพ์คำถาม..." autocomplete="off"
+                onkeydown="if(event.key==='Enter') aiAssistant.sendMessage()" />
+            <button class="ai-send-btn" onclick="aiAssistant.sendMessage()" title="ส่ง">
+                <i class="fas fa-paper-plane"></i>
             </button>
         </div>
     </div>
@@ -13586,6 +13867,10 @@ ${COMPANY_INFO.name}`;
             }
             // Reset form
             document.getElementById('powerfulPostForm').reset();
+            const topicEl = document.getElementById('ppAiTopic');
+            if (topicEl) topicEl.value = '';
+            aiHelper._setStatus(null);
+            aiHelper._updateBadge();
             updatePPPreview();
             ppModal.show();
         }
@@ -13616,35 +13901,54 @@ ${COMPANY_INFO.name}`;
             }
         }
 
-        // ========== Cloudflare R2 Upload Service (Server-Side SigV4) ==========
-        // Credentials are NOT stored here — signing is done by the Cloud Function.
-        const R2_PRESIGN_URL = 'https://us-central1-appinjproject.cloudfunctions.net/r2PresignedUrl';
+        // ========== Cloudflare R2 Upload Service (Worker SigV4) ==========
+        // ใช้ Worker endpoint /api/v1/media/presign (ย้ายจาก Firebase Function แล้ว)
+        // WORKER_BASE ประกาศไว้ด้านบนแล้ว (ใช้ร่วมกับ God's Eye + AI chat)
+        const R2_PRESIGN_URL = `${WORKER_BASE}/api/v1/media/presign`;
+
+        // Map folder ที่โค้ดเดิมใช้ → folder ที่ Worker อนุญาต
+        // (community_posts, posts, products, avatars, stories +/thumbs)
+        const R2_FOLDER_MAP = {
+            videos: 'posts',
+            news_images: 'posts',
+            community_images: 'community_posts',
+            posts: 'posts',
+            community_posts: 'community_posts',
+            products: 'products',
+            avatars: 'avatars',
+            stories: 'stories',
+        };
 
         async function uploadToR2(file, folder = 'posts', onProgress = null) {
             const contentType = file.type || 'video/mp4';
             const safeFilename = file.name.replace(/\s+/g, '_');
+            const mappedFolder = R2_FOLDER_MAP[folder] || 'posts';
 
-            // Super Admin uses Firebase auth — always get ID token
-            let authHeaders = {};
-            try {
-                const fbUser = firebase.auth().currentUser;
-                if (fbUser) {
-                    const token = await fbUser.getIdToken();
-                    authHeaders['Authorization'] = `Bearer ${token}`;
-                }
-            } catch (_) { }
+            // Worker /r2-presigned-url ต้องมี JWT valid (requireAuth) — แนบเสมอ
+            const jwt = localStorage.getItem('tuktuk_jwt');
+            if (!jwt) {
+                throw new Error('กรุณาเข้าสู่ระบบใหม่ก่อนอัปโหลด (ไม่พบ session)');
+            }
+            const authHeaders = { 'Authorization': `Bearer ${jwt}` };
 
-            // Step 1: Get pre-signed URL from Cloud Function
+            // Step 1: Get pre-signed URL from Worker
             const cfRes = await fetch(R2_PRESIGN_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', ...authHeaders },
-                body: JSON.stringify({ folder, filename: safeFilename, contentType })
+                body: JSON.stringify({ folder: mappedFolder, filename: safeFilename, contentType })
             });
+            if (cfRes.status === 401 || cfRes.status === 403) {
+                // token หมดอายุ → เคลียร์แล้วบอกให้ล็อกอินใหม่
+                localStorage.removeItem('tuktuk_jwt');
+                throw new Error('Session หมดอายุ — กรุณารีเฟรชหน้าและเข้าสู่ระบบใหม่ด้วย PIN');
+            }
             if (!cfRes.ok) {
                 const err = await cfRes.json().catch(() => ({ error: cfRes.statusText }));
-                throw new Error(`R2 presign failed: ${err.error || cfRes.status}`);
+                throw new Error(`R2 presign failed: ${err.error?.message || err.error || cfRes.status}`);
             }
-            const { uploadUrl, publicUrl } = await cfRes.json();
+            const presignResp = await cfRes.json();
+            // Worker อาจ wrap ใน {data:{...}} หรือ return ตรง
+            const { uploadUrl, publicUrl } = presignResp.data || presignResp;
 
             // Step 2: PUT directly to R2 using the pre-signed URL
             return new Promise((resolve, reject) => {
@@ -13684,83 +13988,223 @@ ${COMPANY_INFO.name}`;
         }
 
         const aiHelper = {
-            suggestHeadline: async function () {
-                const content = document.getElementById('ppContent').value;
-                if (!content) return showAlert('Please write some content first!', 'warning');
-
-                showAlert('AI is thinking...', 'info');
-
-                // Real implementation would call Gemini
-                // Simulating for now
-                setTimeout(() => {
-                    const suggestions = [
-                        'Hot Opportunity: Your business path starts here!',
-                        'TukTuk Insights: Market trends you need to know',
-                        'Grow your local shop with these simple steps'
-                    ];
-                    const selected = suggestions[Math.floor(Math.random() * suggestions.length)];
-                    document.getElementById('ppHeadline').value = selected;
-                    updatePPPreview();
-                    showAlert('Headline suggested by AI!', 'success');
-                }, 1500);
+            _setStatus: function(msg, loading = true) {
+                const el = document.getElementById('ppAiStatus');
+                if (!el) return;
+                if (!msg) { el.style.display = 'none'; return; }
+                el.style.display = 'flex';
+                el.innerHTML = loading
+                    ? `<div class="pp-ai-spinner"></div><span style="color:rgba(255,255,255,0.6);">${msg}</span>`
+                    : `<span style="color:#10b981;">${msg}</span>`;
             },
 
-            refineContent: async function () {
-                const content = document.getElementById('ppContent').value;
-                if (!content) return showAlert('Content is empty!', 'warning');
+            // ── เรียก Worker AI endpoint (FORGE + Workers AI server-side) ──
+            _callWorkerAI: async function(topic, mode = 'post') {
+                const WORKER_URL = (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname === 'tuktukthailand.com')
+                    ? 'https://tuktukfeed-api.imtthailand2019.workers.dev' : '';
+                const jwt = localStorage.getItem('tuktuk_jwt') || '';
+                const resp = await fetch(`${WORKER_URL}/api/v1/ai/write-post`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...(jwt ? { 'Authorization': `Bearer ${jwt}` } : {}) },
+                    body: JSON.stringify({ topic, mode }),
+                });
+                if (!resp.ok) throw new Error(`AI API ${resp.status}`);
+                return await resp.json();
+            },
 
-                showAlert('AI is polishing your content...', 'info');
+            _callForge: async function(prompt) {
+                const url = aiAssistant.gatewayUrl;
+                const token = aiAssistant.gatewayToken;
+                if (!url) return null;
+                const resp = await fetch(`${url}/v1/chat/completions`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({
+                        model: 'gpt-5.5',
+                        messages: [
+                            { role: 'system', content: 'คุณเป็น Content Creator ผู้เชี่ยวชาญสำหรับ TukTuk Thailand Platform ช่วยเขียนเนื้อหาโพสต์ภาษาไทยที่น่าสนใจ กระชับ และกระตุ้น engagement ตอบเป็น JSON เสมอ' },
+                            { role: 'user', content: prompt }
+                        ],
+                        max_tokens: 600,
+                        stream: false
+                    })
+                });
+                if (!resp.ok) throw new Error(`${resp.status}`);
+                const data = await resp.json();
+                return data.choices?.[0]?.message?.content || null;
+            },
 
-                // Simulating AI expansion
-                setTimeout(() => {
-                    const refined = content + "\n\n🚀 Join the community now! #TukTukThailand #LocalPower #DigitalEconomy";
+            _updateBadge: function() {
+                const badge = document.getElementById('ppAiModeBadge');
+                if (!badge) return;
+                if (aiAssistant.gatewayUrl) {
+                    badge.textContent = '⚡ FORGE AI';
+                    badge.className = 'pp-ai-badge forge';
+                } else {
+                    badge.textContent = '🔧 LOCAL';
+                    badge.className = 'pp-ai-badge';
+                }
+            },
+
+            writePost: async function() {
+                const topic = document.getElementById('ppAiTopic')?.value.trim();
+                if (!topic) return showAlert('กรุณาระบุ topic ก่อน', 'warning');
+                // ประเภทคอนเทนต์: entertain (บันเทิง) หรือ sell (ขาย)
+                const contentType = document.querySelector('input[name="ppContentType"]:checked')?.value || 'entertain';
+                const typeLabel = contentType === 'sell' ? 'ขายสินค้า' : 'บันเทิง';
+                const btn = document.getElementById('ppAiWriteBtn');
+                btn.disabled = true;
+                this._setStatus(`AI กำลังสร้างโพสต์แนว${typeLabel}...`);
+                try {
+                    let headline = '', content = '', source = 'local';
+                    try {
+                        const res = await this._callWorkerAI(topic, contentType);
+                        headline = res.headline || '';
+                        content = res.content || '';
+                        source = res.source || 'worker-ai';
+                    } catch (workerErr) {
+                        // Worker AI ล้มเหลว — fallback local template ตามประเภท
+                        console.warn('Worker AI failed, using local:', workerErr.message);
+                        if (contentType === 'sell') {
+                            headline = `🛍️ ${topic} — ดีลพิเศษวันนี้!`;
+                            content = `✨ ${topic}\n\nของดีคุณภาพ ราคาโดนใจ ทักแชทสั่งซื้อได้เลย! มีจำนวนจำกัด 🔥\n\n#TukTukThailand #OTOP #ของดีบอกต่อ`;
+                        } else {
+                            headline = `${topic} — เรื่องน่าสนใจจาก TukTuk! 🎬`;
+                            content = `📢 ${topic}\n\nมาร่วมเป็นส่วนหนึ่งของชุมชน TukTuk Thailand กัน! ✨\n\n#ดูเพลิน #TukTukThailand`;
+                        }
+                        source = 'local';
+                    }
+                    document.getElementById('ppHeadline').value = headline;
+                    document.getElementById('ppContent').value = content;
+                    updatePPPreview();
+                    const label = source === 'forge' ? 'FORGE AI' : source === 'workers-ai' ? 'Workers AI' : 'Local';
+                    this._setStatus(`✅ สร้างโพสต์แนว${typeLabel}สำเร็จ (${label}) — ตรวจทาน+ใส่รูป แล้วกดเผยแพร่`, false);
+                    setTimeout(() => this._setStatus(null), 4000);
+                } catch(e) {
+                    console.error('aiHelper.writePost', e);
+                    this._setStatus(`❌ ${e.message} — ลองใหม่อีกครั้ง`, false);
+                } finally {
+                    btn.disabled = false;
+                }
+            },
+
+            suggestHeadline: async function() {
+                const content = document.getElementById('ppContent').value.trim();
+                if (!content) return showAlert('เขียนเนื้อหาก่อนแล้วค่อยให้ AI แนะนำ headline', 'warning');
+                showAlert('AI กำลังแนะนำ headline...', 'info');
+                try {
+                    let headline;
+                    try {
+                        const res = await this._callWorkerAI(content.slice(0, 400), 'headline');
+                        headline = res.headline || res.content || '';
+                        headline = headline.replace(/^["']|["']$/g, '').trim().split('\n')[0];
+                    } catch {
+                        const opts = ['📣 ข่าวร้อน! สิ่งที่คุณต้องรู้วันนี้', '💡 เคล็ดลับที่ชุมชน TukTuk แนะนำ', '🚀 โอกาสทองสำหรับธุรกิจท้องถิ่น'];
+                        headline = opts[Math.floor(Math.random() * opts.length)];
+                    }
+                    document.getElementById('ppHeadline').value = headline;
+                    updatePPPreview();
+                    showAlert('AI แนะนำ headline แล้ว!', 'success');
+                } catch(e) {
+                    showAlert(`AI error: ${e.message}`, 'error');
+                }
+            },
+
+            refineContent: async function() {
+                const content = document.getElementById('ppContent').value.trim();
+                if (!content) return showAlert('ยังไม่มีเนื้อหา', 'warning');
+                showAlert('AI กำลังปรับปรุงเนื้อหา...', 'info');
+                try {
+                    let refined = content;
+                    try {
+                        const res = await this._callWorkerAI(content.slice(0, 600), 'refine');
+                        refined = res.content || res.headline || content;
+                        refined = refined.replace(/^["']|["']$/g, '').trim();
+                    } catch {
+                        refined = content + '\n\n🚀 ร่วมเป็นส่วนหนึ่งกับเรา! #TukTukThailand #LocalPower #DigitalEconomy';
+                    }
                     document.getElementById('ppContent').value = refined;
                     updatePPPreview();
-                    showAlert('Content refined by AI!', 'success');
-                }, 2000);
+                    showAlert('ปรับปรุงเนื้อหาเรียบร้อย!', 'success');
+                } catch(e) {
+                    showAlert(`Gateway error: ${e.message}`, 'error');
+                }
             }
         };
 
+        // ขั้นที่ 1: กด "เผยแพร่" → เปิด confirm dialog ให้ตรวจทานก่อน (approve step)
         async function publishPowerfulPost() {
-            const headline = document.getElementById('ppHeadline').value;
-            const content = document.getElementById('ppContent').value;
-            const mediaUrl = document.getElementById('ppMediaUrl').value;
+            const headline = document.getElementById('ppHeadline').value.trim();
+            const content = document.getElementById('ppContent').value.trim();
+            const mediaUrl = document.getElementById('ppMediaUrl').value.trim();
+
+            if (!headline || !content) return showAlert('ต้องมี Headline และ Content', 'error');
+
+            // สร้าง preview ใน confirm modal
+            const previewImg = mediaUrl
+                ? `<img src="${mediaUrl}" style="width:100%;max-height:200px;object-fit:cover;border-radius:12px;margin-bottom:12px;" onerror="this.style.display='none'">`
+                : `<div style="padding:20px;text-align:center;background:rgba(255,255,255,0.05);border-radius:12px;margin-bottom:12px;color:#94a3b8;"><i class="fas fa-image me-2"></i>ยังไม่ได้ใส่รูป (ใส่ได้ในช่อง Media URL หรืออัปโหลด)</div>`;
+
+            document.getElementById('ppApprovePreview').innerHTML = `
+                ${previewImg}
+                <div style="font-weight:700;font-size:1.05rem;margin-bottom:6px;color:#fff;">${headline}</div>
+                <div style="color:#cbd5e1;font-size:0.9rem;white-space:pre-wrap;">${content}</div>
+            `;
+            new bootstrap.Modal(document.getElementById('ppApproveModal')).show();
+        }
+
+        // ขั้นที่ 2: กด "อนุมัติ & เผยแพร่" ใน confirm modal → เขียนลงตาราง posts จริงผ่าน Worker
+        async function confirmPublishPost() {
+            const headline = document.getElementById('ppHeadline').value.trim();
+            const content = document.getElementById('ppContent').value.trim();
+            const mediaUrl = document.getElementById('ppMediaUrl').value.trim();
             const target = document.querySelector('input[name="ppTarget"]:checked').value;
-            const productId = document.getElementById('ppProductId').value;
+            const productId = document.getElementById('ppProductId').value.trim();
+            const contentType = document.querySelector('input[name="ppContentType"]:checked')?.value || 'entertain';
 
-            if (!headline || !content) return showAlert('Headline and Content are required!', 'error');
-
-            showAlert(`Publishing to ${target}...`, 'info');
+            const approveModal = bootstrap.Modal.getInstance(document.getElementById('ppApproveModal'));
+            const btn = document.getElementById('ppApproveBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>กำลังเผยแพร่...';
 
             try {
-                const postData = {
-                    title: headline,
-                    content: content,
-                    imageUrl: mediaUrl || '',
-                    category: target === 'news_feed' ? 'news' : 'update',
-                    productId: productId || '',
-                    published: true,
-                    pinned: false,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    createdBy: lineUserId,
-                    views: 0,
-                    likes: 0
-                };
+                // รวม headline เป็นบรรทัดแรกของ content (feed แสดง content เป็นหลัก)
+                const fullContent = `${headline}\n\n${content}`;
+                const mediaUrls = mediaUrl ? [{ url: mediaUrl, type: 'image' }] : [];
+                // target → category: news_feed=news, video=video, อื่นๆ=general
+                const category = target === 'news_feed' ? 'news'
+                    : target === 'community_videos' ? 'video'
+                    : (contentType === 'sell' ? 'sell' : 'general');
 
-                // Use the bridge or direct Firestore
-                const collection = target; // target matches collection name usually
-                await db.collection(collection).add(postData);
+                const jwt = localStorage.getItem('tuktuk_jwt');
+                const resp = await fetch(`${WORKER_BASE}/api/v1/posts`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...(jwt ? { 'Authorization': `Bearer ${jwt}` } : {}) },
+                    body: JSON.stringify({ content: fullContent, mediaUrls, category }),
+                });
+                const data = await resp.json().catch(() => ({}));
 
-                showAlert('✅ Post Published Successfully!', 'success');
-                ppModal.hide();
-
-                // Refresh relevant lists
-                if (target === 'community_posts') loadStandardPosts();
-                if (target === 'community_videos') loadCommunityPosts();
-
+                if (resp.ok && (data.status === 'success' || data.postId)) {
+                    approveModal?.hide();
+                    ppModal.hide();
+                    showAlert('✅ เผยแพร่โพสต์ลงฟีดจริงสำเร็จ! เปิดดูเพลินเพื่อดูได้เลย', 'success');
+                    // reset ฟอร์ม
+                    document.getElementById('ppHeadline').value = '';
+                    document.getElementById('ppContent').value = '';
+                    document.getElementById('ppMediaUrl').value = '';
+                    document.getElementById('ppProductId').value = '';
+                    if (typeof loadStandardPosts === 'function') loadStandardPosts();
+                } else if (resp.status === 401 || resp.status === 403) {
+                    showAlert('🚫 ไม่มีสิทธิ์เผยแพร่ (session หมดอายุ?)', 'error');
+                } else {
+                    showAlert('❌ เผยแพร่ไม่สำเร็จ: ' + (data.error?.message || data.error || resp.status), 'error');
+                }
             } catch (error) {
                 console.error('Publish error:', error);
-                showAlert('Publish failed: ' + error.message, 'error');
+                showAlert('❌ เผยแพร่ไม่สำเร็จ: ' + error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check me-1"></i> อนุมัติ & เผยแพร่';
             }
         }
 

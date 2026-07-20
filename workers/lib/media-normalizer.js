@@ -25,7 +25,8 @@ export function normalizeMediaEntry(entry) {
     return { type: classify(entry), url: entry };
   }
   if (typeof entry === 'object' && entry.url) {
-    return { type: entry.type || classify(entry.url), url: entry.url };
+    const detected = classify(entry.url);
+    return { type: (detected === 'video' || detected === 'youtube') ? detected : (entry.type || 'image'), url: entry.url };
   }
   return null;
 }
