@@ -2328,7 +2328,7 @@
                         const thumb = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
                         mediaHtml = `<img class="post-media" src="${thumb}" onerror="this.src='/assets/images/logo.png'">`;
                     } else if (post.videoUrl) {
-                        mediaHtml = `<video class="post-media" muted preload="metadata" crossorigin="anonymous"><source src="${post.videoUrl}#t=0.5" type="video/mp4"></video>`;
+                        mediaHtml = `<video class="post-media" muted preload="metadata"><source src="${post.videoUrl}#t=0.5" type="video/mp4"></video>`;
                     } else {
                         const img = post.imageUrl || post.thumbnailUrl || '/assets/images/logo.png';
                         mediaHtml = `<img class="post-media" src="${img}" onerror="this.src='/assets/images/logo.png'">`;
@@ -2934,6 +2934,10 @@
                 if (overlay) overlay.style.display = 'none';
             }, 400);
         };
+
+        function toggleFollowPrivacy(type, isPublic) {
+            showToast('อัปเดตความเป็นส่วนตัวเรียบร้อย', 'success');
+        }
 
         // Expose functions globally
         window.switchTab = switchTab;
