@@ -21,11 +21,7 @@
     <!-- AOS Animation -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    <!-- Auth & Worker API Services -->
     <script src="/js/auth.js"></script>
     <script src="/js/auth-service.js"></script>
     <script src="/js/tuktuk-api.js"></script>
@@ -1879,73 +1875,19 @@
     </div>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https:        // Worker REST API Endpoint Configuration
+        const TUKTUK_API = (typeof window !== 'undefined' && window.TUKTUK_API_BASE)
+            ? window.TUKTUK_API_BASE
+            : 'https://tuktukfeed-api.imtthailand2019.workers.dev';
 
-    <script>
-        // SPA-aware navigation helper — postMessage to parent if inside iframe
-        function _tnav(href) {
-            if (window.self !== window.top) {
-                window.top.postMessage({ type: 'NAVIGATE', href: href }, window.location.origin);
-            } else if (typeof window.navigateToSPA === 'function') {
-                window.navigateToSPA(href);
-            } else {
-                window.location.href = href;
+        async function apiFetch(path, options = {}) {
+            const headers = options.headers || {};
+            if (window.AuthService) {
+                const token = await window.AuthService.getIDToken();
+                if (token) headers['Authorization'] = `Bearer ${token}`;
             }
+            return fetch(`${TUKTUK_API}${path}`, { ...options, headers });
         }
-
-        // Detect Iframe / Embedded Mode — hide all navbars (runs once)
-        (function () {
-            const isEmbedded = window.self !== window.top || window.location.search.includes('embedded=true');
-            if (isEmbedded) {
-                document.body.classList.add('embedded-mode');
-                const navStyle = document.createElement('style');
-                navStyle.textContent = `
-                    #bottomNav, .bottom-nav { display: none !important; visibility: hidden !important; height: 0 !important; overflow: hidden !important; pointer-events: none !important; }
-                    #pcTopNav, .pc-top-nav { display: none !important; }
-                    body { padding-bottom: 0 !important; margin-top: 0 !important; }
-                    .center-btn { display: none !important; }
-                `;
-                document.head.appendChild(navStyle);
-            } else if (window.innerWidth >= 992) {
-                // Standalone PC mode — show pcTopNav + adjust body offset
-                document.body.classList.add('pc-standalone');
-                // Pre-fill nav with session data immediately (before Firestore loads)
-                const sess = (typeof WizmobizAuth !== 'undefined') ? WizmobizAuth.getUser() : null;
-                if (sess) {
-                    const navAvatar = document.getElementById('channelNavAvatar');
-                    const navName   = document.getElementById('channelNavName');
-                    if (navAvatar && (sess.pictureUrl || sess.photoURL)) {
-                        navAvatar.src = sess.pictureUrl || sess.photoURL;
-                    }
-                    if (navName && sess.displayName) {
-                        navName.textContent = sess.displayName;
-                    }
-                }
-            }
-        })();
-
-        // Initialize AOS
-        AOS.init({
-            duration: 800,
-            once: true,
-            offset: 50
-        });
-
-        // Firebase Config
-        const firebaseConfig = {
-            apiKey: "AIzaSyBKL6HBLEndDX4LYo7APFNQ0IVICLJtaIE",
-            authDomain: "appinjproject.firebaseapp.com",
-            projectId: "appinjproject",
-            storageBucket: "appinjproject.firebasestorage.app",
-            messagingSenderId: "408718656984",
-            appId: "1:408718656984:web:08bd8f084769d428251ead"
-        };
-
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        const db = firebase.firestore();
 
         // Global Variables
         let currentTargetUserId = null;
@@ -1958,7 +1900,7 @@
         // TOAST NOTIFICATION
         // ========================================
         function showToast(message, type = 'info') {
-            const container = document.getElementById('toastContainer');
+            const container = document.getElementById('toastContainer') || document.body;
             const toast = document.createElement('div');
             toast.className = `toast-message ${type}`;
             let icon = 'info-circle';
@@ -1972,7 +1914,6 @@
         // ========================================
         // INIT
         // ========================================
-        // Safe redirect — uses postMessage if inside SPA iframe
         function safeRedirectToLogin(returnPath) {
             if (window.self !== window.top) {
                 window.top.postMessage({ type: 'NAVIGATE', href: 'login.html' }, window.location.origin);
@@ -1998,7 +1939,7 @@
                 return;
             }
 
-            // ✅ แสดงข้อมูลจาก session ทันที (ไม่ต้องรอ Firestore)
+            // Display fast session info first
             if (!queryUserId && currentUser) {
                 const sessionName = currentUser.displayName || currentUser.name || 'TukTuk User';
                 document.getElementById('userName').textContent = sessionName;
@@ -2008,34 +1949,6 @@
                 avatarImg.onerror = function() {
                     this.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(sessionName)}&background=00D2FF&color=fff&size=160`;
                 };
-            }
-
-            if (currentUser) {
-                try {
-                    const myId = currentUser.uid || currentUser.lineUserId;
-                    const myDoc = await db.collection('users').doc(myId).get();
-                    if (myDoc.exists) {
-                        myFollowingIds = myDoc.data().following || [];
-                        updateBottomNavProfile(myDoc.data());
-                    } else {
-                        // Firestore doc ไม่มี — ลอง firebaseUid เป็น fallback
-                        if (currentUser.firebaseUid && currentUser.firebaseUid !== myId) {
-                            const fbDoc = await db.collection('users').doc(currentUser.firebaseUid).get();
-                            if (fbDoc.exists) {
-                                myFollowingIds = fbDoc.data().following || [];
-                                // ใช้ firebaseUid เป็น targetId จริง
-                                if (!queryUserId) currentTargetUserId = currentUser.firebaseUid;
-                                updateBottomNavProfile(fbDoc.data());
-                            } else {
-                                updateBottomNavProfile(currentUser);
-                            }
-                        } else {
-                            updateBottomNavProfile(currentUser);
-                        }
-                    }
-                } catch (e) {
-                    console.error('Error loading user data:', e);
-                }
             }
 
             // Show back button if visiting someone else
@@ -2050,56 +1963,46 @@
                 header.prepend(backBtn);
             }
 
-            // Load Profile Data with Real-time Listener
-            db.collection('users').doc(currentTargetUserId).onSnapshot(doc => {
-                if (doc.exists) {
-                    currentUserData = doc.data();
-                    currentUserData.uid = doc.id;
-                    updateProfileUI(currentUserData);
-                } else {
-                    // ลอง firebaseUid หาก lineUserId ไม่เจอใน users collection
-                    const fbUid = currentUser?.firebaseUid;
-                    if (fbUid && fbUid !== currentTargetUserId) {
-                        currentTargetUserId = fbUid;
-                        db.collection('users').doc(fbUid).onSnapshot(d2 => {
-                            if (d2.exists) {
-                                currentUserData = d2.data();
-                                currentUserData.uid = d2.id;
-                                updateProfileUI(currentUserData);
-                            } else {
-                                document.getElementById('userName').textContent =
-                                    currentUser?.displayName || 'TukTuk User';
-                            }
-                        });
-                    } else {
-                        document.getElementById('userName').textContent =
-                            currentUser?.displayName || 'TukTuk User';
-                    }
-                }
-            }, err => {
-                console.error('Snapshot error:', err);
-                if (err.code === 'permission-denied') {
-                    showToast('ไม่มีสิทธิ์เข้าถึงข้อมูล', 'error');
-                }
-            });
+            // Load user profile from Worker API (D1)
+            await loadUserProfile(currentTargetUserId);
 
+            // Load user posts and products from Worker API (D1)
             loadUserPosts(currentTargetUserId);
             checkHasProducts(currentTargetUserId);
         });
 
-        async function checkHasProducts(userId) {
-            const collections = ['marketplace_items', 'community_products', 'consignment_products'];
-            for (const coll of collections) {
-                try {
-                    const snap = await db.collection(coll).where('sellerId', '==', userId).limit(1).get();
-                    if (!snap.empty) {
-                        document.getElementById('productsTabBtn').style.display = 'block';
-                        return;
+        async function loadUserProfile(userId) {
+            try {
+                const res = await apiFetch(`/api/v1/users/${userId}`);
+                const data = await res.json();
+                if (data.status === 'success' && data.user) {
+                    currentUserData = data.user;
+                    updateProfileUI(data.user);
+                } else {
+                    const currentUser = WizmobizAuth.getUser();
+                    if (currentUser && (currentUser.uid === userId || currentUser.lineUserId === userId)) {
+                        currentUserData = currentUser;
+                        updateProfileUI(currentUser);
                     }
-                } catch (e) { console.warn('Product check error:', e); }
+                }
+            } catch (e) {
+                console.error('Error loading user profile:', e);
+                const currentUser = WizmobizAuth.getUser();
+                if (currentUser) updateProfileUI(currentUser);
             }
         }
 
+        async function checkHasProducts(userId) {
+            try {
+                const res = await apiFetch(`/api/v1/users/${userId}/products?limit=1`);
+                const data = await res.json();
+                if (data.status === 'success' && data.items && data.items.length > 0) {
+                    document.getElementById('productsTabBtn').style.display = 'block';
+                }
+            } catch (e) {
+                console.warn('Product check error:', e);
+            }
+        }
 
         // ========================================
         // UPDATE PROFILE UI
@@ -2109,12 +2012,10 @@
             const currentUid = currentUser?.uid || currentUser?.lineUserId;
             const isOwnProfile = (currentUid === currentTargetUserId);
 
-            // ชื่อ: Firestore → session → fallback
             const displayName = user.displayName || user.name || user.username
                 || currentUser?.displayName || 'TukTuk User';
             document.getElementById('userName').textContent = displayName;
 
-            // รูป: Firestore → session → fallback ui-avatars
             const avatarImg = document.getElementById('userAvatar');
             const rawPic = user.pictureUrl || user.photoURL || user.picture || user.avatar
                 || currentUser?.pictureUrl || currentUser?.photoURL;
@@ -2123,42 +2024,15 @@
             avatarImg.src = validPic ? rawPic : fallbackAvatar;
             avatarImg.onerror = () => { avatarImg.onerror = null; avatarImg.src = fallbackAvatar; };
 
-            // Sync pcTopNav avatar/name (standalone PC mode)
             const navAvatar = document.getElementById('channelNavAvatar');
             const navName   = document.getElementById('channelNavName');
             if (navAvatar) { navAvatar.src = validPic ? rawPic : fallbackAvatar; }
             if (navName)   { navName.textContent = displayName; }
 
-            // Last resort: ถ้ายังไม่มีรูป/ชื่อ → ลอง line_users collection
-            if (!validPic || displayName === 'TukTuk User') {
-                const lookupId = user.lineUserId || user.uid || currentTargetUserId;
-                if (lookupId) {
-                    db.collection('line_users').doc(lookupId).get().then(d => {
-                        if (!d.exists) return;
-                        const ld = d.data();
-                        if (!validPic) {
-                            const lp = ld.pictureUrl || ld.picture || ld.photoURL || ld.avatar;
-                            if (lp) {
-                                avatarImg.src = lp;
-                                if (navAvatar) navAvatar.src = lp;
-                            }
-                        }
-                        if (displayName === 'TukTuk User') {
-                            const ln = ld.displayName || ld.name;
-                            if (ln) {
-                                document.getElementById('userName').textContent = ln;
-                                if (navName) navName.textContent = ln;
-                            }
-                        }
-                    }).catch(() => {});
-                }
-            }
-
             if (document.getElementById('editAvatarBtn')) document.getElementById('editAvatarBtn').style.display = isOwnProfile ? 'flex' : 'none';
             if (document.getElementById('editNameBtn')) document.getElementById('editNameBtn').style.display = isOwnProfile ? 'flex' : 'none';
             if (document.getElementById('settingsBtn')) document.getElementById('settingsBtn').style.display = isOwnProfile ? 'flex' : 'none';
 
-            // Handle @username display
             const handleEl = document.getElementById('channelHandle');
             if (user.handle) {
                 handleEl.textContent = `@${user.handle}`;
@@ -2167,15 +2041,13 @@
                 handleEl.style.display = 'none';
             }
 
-            // Show follow button if NOT own profile
             const authorActions = document.getElementById('authorActions');
             if (!isOwnProfile && currentUser) {
                 authorActions.style.display = 'block';
-                isFollowingTarget = myFollowingIds.includes(currentTargetUserId);
+                isFollowingTarget = Boolean(user.isFollowing);
                 updateFollowButton();
             }
 
-            // Show own-profile action row + cover edit + mission card
             const ownActions = document.getElementById('ownActions');
             const coverOverlay = document.getElementById('coverEditOverlay');
             const rewardCard = document.getElementById('rewardCard');
@@ -2194,8 +2066,7 @@
                 rewardCard.style.display = 'none';
             }
 
-            // Update Stats
-            document.getElementById('followingCount').textContent = (user.followingCount || user.following?.length || 0).toLocaleString();
+            document.getElementById('followingCount').textContent = (user.followingCount || 0).toLocaleString();
             document.getElementById('followerCount').textContent = (user.followerCount || 0).toLocaleString();
             document.getElementById('totalViewsHeader').textContent = (user.totalViews || 0).toLocaleString();
 
@@ -2208,7 +2079,6 @@
                 roleEl.textContent = 'Member';
             }
 
-            // Update Bio
             const bioEl = document.getElementById('userBio');
             if (user.bio) {
                 bioEl.textContent = user.bio;
@@ -2217,7 +2087,6 @@
                 bioEl.style.display = 'none';
             }
 
-            // Update Cover
             const banner = document.getElementById('channelBanner');
             if (user.coverUrl) {
                 banner.style.backgroundImage = `url(${user.coverUrl})`;
@@ -2225,15 +2094,7 @@
                 banner.style.backgroundPosition = 'center';
             }
 
-            // Update Achievements (Simulated from ProfileScreen)
             updateAchievements(user);
-
-            // Update Privacy Switches (if own profile)
-            if (isOwnProfile) {
-                const privacy = user.privacySettings || { following: 'public', followers: 'public' };
-                document.getElementById('privacyFollowing').checked = (privacy.following !== 'private');
-                document.getElementById('privacyFollowers').checked = (privacy.followers !== 'private');
-            }
         }
 
         function updateAchievements(user) {
@@ -2264,7 +2125,7 @@
         }
 
         // ========================================
-        // FOLLOW FUNCTIONS
+        // FOLLOW FUNCTIONS (D1 API)
         // ========================================
         function updateFollowButton() {
             const btn = document.getElementById('mainFollowBtn');
@@ -2285,7 +2146,6 @@
                 return;
             }
 
-            const myUid = currentUser.uid || currentUser.lineUserId;
             const targetUid = currentTargetUserId;
 
             // Optimistic UI
@@ -2297,35 +2157,22 @@
             countEl.textContent = (isFollowingTarget ? currentCount + 1 : Math.max(0, currentCount - 1)).toLocaleString();
 
             try {
-                const myRef = db.collection('users').doc(myUid);
-                const targetRef = db.collection('users').doc(targetUid);
+                const method = isFollowingTarget ? 'POST' : 'DELETE';
+                const res = await apiFetch(`/api/v1/users/${targetUid}/follow`, { method });
+                const data = await res.json();
 
-                if (isFollowingTarget) {
-                    await myRef.set({
-                        following: firebase.firestore.FieldValue.arrayUnion(targetUid),
-                        followingCount: firebase.firestore.FieldValue.increment(1)
-                    }, { merge: true });
-
-                    await targetRef.set({
-                        followerCount: firebase.firestore.FieldValue.increment(1)
-                    }, { merge: true });
-
-                    showToast('ติดตามสำเร็จ', 'success');
+                if (data.status === 'success') {
+                    isFollowingTarget = data.isFollowing;
+                    updateFollowButton();
+                    if (typeof data.followerCount === 'number') {
+                        countEl.textContent = data.followerCount.toLocaleString();
+                    }
+                    showToast(isFollowingTarget ? 'ติดตามสำเร็จ' : 'เลิกติดตามแล้ว', isFollowingTarget ? 'success' : 'info');
                 } else {
-                    await myRef.set({
-                        following: firebase.firestore.FieldValue.arrayRemove(targetUid),
-                        followingCount: firebase.firestore.FieldValue.increment(-1)
-                    }, { merge: true });
-
-                    await targetRef.set({
-                        followerCount: firebase.firestore.FieldValue.increment(-1)
-                    }, { merge: true });
-
-                    showToast('เลิกติดตามแล้ว', 'info');
+                    throw new Error(data.error?.message || 'Failed');
                 }
             } catch (e) {
                 console.error('Follow failed:', e);
-                // Revert
                 isFollowingTarget = !isFollowingTarget;
                 updateFollowButton();
                 countEl.textContent = currentCount.toLocaleString();
@@ -2340,10 +2187,9 @@
                 return;
             }
 
-            const myUid = currentUser.uid || currentUser.lineUserId;
             const isFollowing = btn.classList.contains('following');
+            const method = isFollowing ? 'DELETE' : 'POST';
 
-            // UI update
             if (isFollowing) {
                 btn.classList.remove('following');
                 btn.innerHTML = '<i class="fas fa-user-plus me-1"></i>ติดตาม';
@@ -2353,50 +2199,19 @@
             }
 
             try {
-                const myRef = db.collection('users').doc(myUid);
-                const targetRef = db.collection('users').doc(targetUid);
-
-                if (!isFollowing) {
-                    await myRef.update({
-                        following: firebase.firestore.FieldValue.arrayUnion(targetUid),
-                        followingCount: firebase.firestore.FieldValue.increment(1)
-                    });
-                    await targetRef.update({
-                        followerCount: firebase.firestore.FieldValue.increment(1)
-                    });
-                } else {
-                    await myRef.update({
-                        following: firebase.firestore.FieldValue.arrayRemove(targetUid),
-                        followingCount: firebase.firestore.FieldValue.increment(-1)
-                    });
-                    await targetRef.update({
-                        followerCount: firebase.firestore.FieldValue.increment(-1)
-                    });
-                }
+                const res = await apiFetch(`/api/v1/users/${targetUid}/follow`, { method });
+                const data = await res.json();
+                if (data.status !== 'success') throw new Error(data.error?.message);
             } catch (e) {
                 console.error(e);
                 showToast('เกิดข้อผิดพลาด', 'error');
-            }
-        }
-
-        // ========================================
-        // PRIVACY SETTINGS
-        // ========================================
-        async function toggleFollowPrivacy(type, isPublic) {
-            const currentUser = WizmobizAuth.getUser();
-            const uid = currentUser?.uid || currentUser?.lineUserId;
-            if (!uid) return;
-
-            try {
-                const value = isPublic ? 'public' : 'private';
-                const updateData = {};
-                updateData[`privacySettings.${type}`] = value;
-
-                await db.collection('users').doc(uid).update(updateData);
-                showToast(`อัปเดตความเป็นส่วนตัวเรียบร้อย`, 'success');
-            } catch (e) {
-                console.error('Privacy update failed:', e);
-                showToast('อัปเดตไม่สำเร็จ', 'error');
+                if (isFollowing) {
+                    btn.classList.add('following');
+                    btn.innerHTML = '<i class="fas fa-check me-1"></i>กำลังติดตาม';
+                } else {
+                    btn.classList.remove('following');
+                    btn.innerHTML = '<i class="fas fa-user-plus me-1"></i>ติดตาม';
+                }
             }
         }
 
@@ -2407,7 +2222,6 @@
             document.querySelectorAll('.channel-tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            // Find matching button by onclick attr (safe for both tab-click and stat-click callers)
             const activeBtn = Array.from(document.querySelectorAll('.channel-tab-btn'))
                 .find(b => (b.getAttribute('onclick') || '').includes(`'${tabName}'`));
             if (activeBtn) activeBtn.classList.add('active');
@@ -2424,34 +2238,25 @@
         }
 
         // ========================================
-        // LOAD USER POSTS
+        // LOAD USER POSTS (D1 REST API)
         // ========================================
         async function loadUserPosts(userId) {
             const grid = document.getElementById('postGrid');
             const loading = document.getElementById('feedLoading');
 
             try {
-                // Build author ID list — include lineUserId fallback if available
-                const authorIds = [userId];
-                const lineId = currentUserData?.lineUserId;
-                if (lineId && lineId !== userId && !authorIds.includes(lineId)) {
-                    authorIds.push(lineId);
-                }
-
-                const snapshot = await db.collection('community_posts')
-                    .where('authorId', 'in', authorIds)
-                    .orderBy('createdAt', 'desc')
-                    .get();
+                const res = await apiFetch(`/api/v1/users/${userId}/posts?limit=50`);
+                const data = await res.json();
 
                 loading.style.display = 'none';
 
-                if (snapshot.empty) {
+                if (data.status !== 'success' || !data.posts || data.posts.length === 0) {
                     grid.innerHTML = `
                         <div class="empty-state w-100">
                             <i class="fas fa-photo-video"></i>
                             <h3>ยังไม่มีวิดีโอ</h3>
                             <p>มาเริ่มแชร์วิดีโอแรกของคุณกัน</p>
-                            <a href="/" class="btn">สร้างวิดีโอแรก</a>
+                            <a href="/app" class="btn">สร้างวิดีโอแรก</a>
                         </div>
                     `;
                     return;
@@ -2461,50 +2266,49 @@
                 let totalViewsSum = 0;
                 grid.innerHTML = '';
 
-                snapshot.forEach(doc => {
-                    const post = doc.data();
-                    totalLikes += (post.likes || 0);
-                    totalViewsSum += (post.views || 0);
+                data.posts.forEach((post, index) => {
+                    totalLikes += (post.likes || post.likesCount || 0);
+                    totalViewsSum += (post.views || post.viewCount || 0);
 
-                    const postMedia = post.images && post.images.length > 0 ? post.images[0] : null;
-                    const isLocalVideo = (postMedia && typeof postMedia === 'object' && postMedia.type === 'video') || (typeof postMedia === 'string' && postMedia.endsWith('.mp4'));
-                    const mediaUrl = (postMedia && typeof postMedia === 'object') ? postMedia.url : postMedia;
-                    const isYoutube = !!post.videoEmbed;
+                    // YouTube / Media Resolution
+                    const ytUrl = post.youtubeUrl || post.videoEmbed;
+                    const ytMatch = ytUrl ? ytUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/|live\/))([\w-]{11})/) : null;
+                    const ytId = ytMatch ? ytMatch[1] : null;
 
                     let mediaHtml = '';
-                    if (isYoutube) {
-                        const ytId = post.videoEmbed.match(/embed\/([^"?]+)/)?.[1];
-                        const thumb = ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : '/images/logo.png';
-                        mediaHtml = `<img class="post-media" src="${thumb}">`;
-                    } else if (isLocalVideo) {
-                        mediaHtml = `<video class="post-media" muted preload="metadata" crossorigin="anonymous"><source src="${mediaUrl}#t=0.5" type="video/mp4"></video>`;
-                    } else if (mediaUrl) {
-                        mediaHtml = `<img class="post-media" src="${mediaUrl}">`;
+                    if (ytId) {
+                        const thumb = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
+                        mediaHtml = `<img class="post-media" src="${thumb}" onerror="this.src='/assets/images/logo.png'">`;
+                    } else if (post.videoUrl) {
+                        mediaHtml = `<video class="post-media" muted preload="metadata" crossorigin="anonymous"><source src="${post.videoUrl}#t=0.5" type="video/mp4"></video>`;
+                    } else {
+                        const img = post.imageUrl || post.thumbnailUrl || '/assets/images/logo.png';
+                        mediaHtml = `<img class="post-media" src="${img}" onerror="this.src='/assets/images/logo.png'">`;
                     }
 
                     const card = document.createElement('div');
                     card.className = 'post-card';
                     card.setAttribute('data-aos', 'fade-up');
-                    card.setAttribute('data-aos-delay', (snapshot.docs.indexOf(doc) * 50).toString());
+                    card.setAttribute('data-aos-delay', (index * 40).toString());
                     card.innerHTML = `
                         ${mediaHtml}
                         <div class="post-overlay">
                             <div class="post-stats-overlay">
-                                <span><i class="fas fa-play"></i> ${post.views || 0}</span>
-                                <span><i class="fas fa-heart"></i> ${post.likes || 0}</span>
+                                <span><i class="fas fa-play"></i> ${post.views || post.viewCount || 0}</span>
+                                <span><i class="fas fa-heart"></i> ${post.likes || post.likesCount || 0}</span>
                             </div>
                         </div>
                     `;
 
-                    if (isLocalVideo || isYoutube) {
+                    if (ytId || post.videoUrl) {
                         card.onclick = () => {
-                            playVideoInModal(mediaUrl, isYoutube, post.videoEmbed);
-                            trackView(doc.id, post.authorId);
+                            playVideoInModal(post.videoUrl || ytUrl, Boolean(ytId), ytUrl);
+                            trackView(post.id, post.authorId || userId);
                         };
                     } else {
                         card.onclick = () => {
-                            window.location.href = `/?postId=${doc.id}`;
-                            trackView(doc.id, post.authorId);
+                            _tnav(`index.html?postId=${post.id}`);
+                            trackView(post.id, post.authorId || userId);
                         };
                     }
 
@@ -2521,51 +2325,23 @@
         }
 
         // ========================================
-        // LOAD FOLLOWING
+        // LOAD FOLLOWING (D1 API)
         // ========================================
         async function loadFollowing() {
             const list = document.getElementById('followingList');
             list.innerHTML = '<div class="loading-spinner"><div class="spinner-border text-primary"></div><p>กำลังโหลด...</p></div>';
 
             try {
-                const userDoc = await db.collection('users').doc(currentTargetUserId).get();
-                if (!userDoc.exists) {
-                    list.innerHTML = '<div class="empty-state"><i class="fas fa-user-slash"></i><p>ไม่พบข้อมูลผู้ใช้งาน</p></div>';
-                    return;
-                }
+                const res = await apiFetch(`/api/v1/users/${currentTargetUserId}/following`);
+                const data = await res.json();
 
-                const userData = userDoc.data();
-                const currentUser = WizmobizAuth.getUser();
-                const currentUid = currentUser?.uid || currentUser?.lineUserId;
-                const isOwner = (currentUid === currentTargetUserId);
-                const privacy = (userData.privacySettings && userData.privacySettings.following) || 'public';
-
-                if (!isOwner && privacy === 'private') {
-                    list.innerHTML = '<div class="empty-state"><i class="fas fa-lock"></i><p>ผู้ใช้งานตั้งค่ารายการนี้เป็นส่วนตัว</p></div>';
-                    return;
-                }
-
-                const followingIds = userData.following || [];
-
-                if (!followingIds || followingIds.length === 0) {
+                if (data.status === 'success' && data.following && data.following.length > 0) {
+                    list.innerHTML = data.following.map(user => renderUserItem(user.id, user)).join('');
+                } else {
+                    const currentUser = WizmobizAuth.getUser();
+                    const isOwner = currentUser && (currentUser.uid === currentTargetUserId || currentUser.lineUserId === currentTargetUserId);
                     list.innerHTML = `<div class="empty-state"><i class="fas fa-user-plus"></i><p>${isOwner ? 'คุณ' : 'ผู้ใช้งาน'} ยังไม่ได้ติดตามใคร</p></div>`;
-                    return;
                 }
-
-                const chunks = [];
-                for (let i = 0; i < followingIds.length; i += 10) {
-                    chunks.push(followingIds.slice(i, i + 10));
-                }
-
-                let html = '';
-                for (const chunk of chunks) {
-                    const snap = await db.collection('users').where(firebase.firestore.FieldPath.documentId(), 'in', chunk).get();
-                    snap.forEach(doc => {
-                        html += renderUserItem(doc.id, doc.data());
-                    });
-                }
-
-                list.innerHTML = html || '<div class="empty-state"><p>ไม่พบรายชื่อผู้ใช้</p></div>';
             } catch (e) {
                 console.error('Load following failed:', e);
                 list.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>เกิดข้อผิดพลาด</p><button class="btn btn-outline-primary btn-sm mt-3" onclick="loadFollowing()">ลองใหม่</button></div>`;
@@ -2573,30 +2349,21 @@
         }
 
         // ========================================
-        // LOAD FOLLOWERS
+        // LOAD FOLLOWERS (D1 API)
         // ========================================
         async function loadFollowers() {
             const list = document.getElementById('followersList');
             list.innerHTML = '<div class="loading-spinner"><div class="spinner-border text-primary"></div><p>กำลังโหลด...</p></div>';
 
             try {
-                const snap = await db.collection('users')
-                    .where('following', 'array-contains', currentTargetUserId)
-                    .limit(50)
-                    .get();
+                const res = await apiFetch(`/api/v1/users/${currentTargetUserId}/followers`);
+                const data = await res.json();
 
-                if (snap.empty) {
-                    list.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>ยังไม่มีผู้ติดตาม</p></div>';
+                if (data.status === 'success' && data.followers && data.followers.length > 0) {
+                    list.innerHTML = data.followers.map(user => renderUserItem(user.id, user)).join('');
                 } else {
-                    let html = '';
-                    snap.forEach(doc => {
-                        html += renderUserItem(doc.id, doc.data());
-                    });
-                    list.innerHTML = html;
+                    list.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>ยังไม่มีผู้ติดตาม</p></div>';
                 }
-
-                // Load suggestions
-                loadSuggestedFriends();
             } catch (e) {
                 console.error('Load followers failed:', e);
                 list.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>เกิดข้อผิดพลาด</p><button class="btn btn-outline-primary btn-sm mt-3" onclick="loadFollowers()">ลองใหม่</button></div>`;
@@ -2604,67 +2371,85 @@
         }
 
         // ========================================
-        // LOAD SUGGESTED FRIENDS
-        // ========================================
-        async function loadSuggestedFriends() {
-            const suggestedBox = document.getElementById('suggestedSection');
-            const currentUser = WizmobizAuth.getUser();
-            const myId = currentUser?.uid || currentUser?.lineUserId;
-
-            if (!myId || myId !== currentTargetUserId) return;
-
-            try {
-                const snap = await db.collection('users')
-                    .where('role', 'in', ['verified_creator', 'admin'])
-                    .limit(5)
-                    .get();
-
-                const candidates = [];
-                snap.forEach(doc => {
-                    if (doc.id !== myId && !myFollowingIds.includes(doc.id)) {
-                        candidates.push({ id: doc.id, ...doc.data(), reason: 'Verified Creator' });
-                    }
-                });
-
-                if (candidates.length > 0) {
-                    suggestedBox.innerHTML = `
-                        <div class="setting-label mb-3" style="color: var(--primary);">แนะนำสำหรับคุณ</div>
-                        ${candidates.map(c => renderUserItem(c.id, c, c.reason)).join('')}
-                    `;
-                } else {
-                    suggestedBox.innerHTML = '';
-                }
-            } catch (e) {
-                console.warn('Suggestions error:', e);
-            }
-        }
-
-        // ========================================
         // RENDER USER ITEM
         // ========================================
-        function renderUserItem(userId, user, badgeText = null) {
+        function renderUserItem(userId, user) {
             const currentUser = WizmobizAuth.getUser();
             const myId = currentUser?.uid || currentUser?.lineUserId;
             const isMe = myId === userId;
-            const amIFollowing = myFollowingIds.includes(userId);
-            const displayName = user.displayName || user.name || user.username || 'TukTuk User';
-            const pic = user.pictureUrl || user.photoURL || user.picture || user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=00D2FF&color=fff&size=60`;
+            const amIFollowing = Boolean(user.isFollowing);
+            const displayName = user.displayName || user.display_name || user.name || 'TukTuk User';
+            const pic = user.pictureUrl || user.picture_url || user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=00D2FF&color=fff&size=60`;
 
             return `
-                <div class="user-item" onclick="window.location.href='channel.html?userId=${userId}'">
-                    <img src="${pic}" alt="${displayName}" onerror="this.src='/images/logo.png'">
+                <div class="user-item" onclick="_tnav('channel.html?userId=${userId}')">
+                    <img src="${pic}" alt="${displayName}" onerror="this.src='/assets/images/logo.png'">
                     <div class="user-item-info">
                         <div class="user-item-name">
                             ${escapeHtml(displayName)}
                             ${user.role === 'admin' ? '<i class="fas fa-check-circle text-primary ms-1" style="font-size: 0.8rem;"></i>' : ''}
                         </div>
                         <div class="user-item-sub">
-                            ${badgeText ? `<span class="badge bg-primary-subtle text-primary border border-primary-subtle me-1" style="font-size: 0.6rem;">${badgeText}</span>` : ''}
                             ${(user.followerCount || 0).toLocaleString()} ผู้ติดตาม
                         </div>
                     </div>
                     ${!isMe ? `
                         <button class="user-item-btn ${amIFollowing ? 'following' : ''}" onclick="event.stopPropagation(); toggleFollowListItem(this, '${userId}')">
+                            ${amIFollowing ? '<i class="fas fa-check me-1"></i>กำลังติดตาม' : '<i class="fas fa-user-plus me-1"></i>ติดตาม'}
+                        </button>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // ========================================
+        // LOAD USER PRODUCTS (D1 REST API)
+        // ========================================
+        async function loadUserProducts(userId) {
+            const grid = document.getElementById('productsGrid');
+            const loading = document.getElementById('productsLoading');
+            const tabBtn = document.getElementById('productsTabBtn');
+
+            try {
+                const res = await apiFetch(`/api/v1/users/${userId}/products`);
+                const data = await res.json();
+
+                loading.style.display = 'none';
+
+                if (data.status === 'success' && data.items && data.items.length > 0) {
+                    tabBtn.style.display = 'block';
+                    grid.innerHTML = '';
+
+                    data.items.forEach(item => {
+                        const col = document.createElement('div');
+                        col.className = 'col-6 col-md-4';
+                        const img = item.imageUrl || item.thumbnailUrl || (item.images && item.images[0]) || '/assets/images/logo.png';
+
+                        col.innerHTML = `
+                            <div class="product-card post-card" onclick="_tnav('marketplace.html?id=${item.id}')">
+                                <img class="post-media" src="${img}" alt="${escapeHtml(item.title || 'สินค้า')}" onerror="this.src='/assets/images/logo.png'">
+                                <div class="post-overlay" style="opacity: 1; background: linear-gradient(0deg, rgba(0,0,0,0.8), transparent);">
+                                    <div style="font-size: 0.8rem; font-weight: 700; margin-bottom: 2px;">฿${(item.price || 0).toLocaleString()}</div>
+                                    <div style="font-size: 0.65rem; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(item.title || 'ไม่มีชื่อสินค้า')}</div>
+                                </div>
+                            </div>
+                        `;
+                        grid.appendChild(col);
+                    });
+                } else {
+                    grid.innerHTML = `
+                        <div class="empty-state w-100">
+                            <i class="fas fa-shopping-bag"></i>
+                            <h3>ยังไม่มีสินค้า</h3>
+                            <p>ผู้ใช้นี้ยังไม่ได้ลงขายสินค้า</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading products:', error);
+                loading.innerHTML = `<p class="text-danger">ผิดพลาด: ${error.message}</p>`;
+            }
+        }on class="user-item-btn ${amIFollowing ? 'following' : ''}" onclick="event.stopPropagation(); toggleFollowListItem(this, '${userId}')">
                             ${amIFollowing ? '<i class="fas fa-check me-1"></i>กำลังติดตาม' : '<i class="fas fa-user-plus me-1"></i>ติดตาม'}
                         </button>
                     ` : ''}

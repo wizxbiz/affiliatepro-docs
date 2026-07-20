@@ -76,6 +76,78 @@ export class DB {
     `).bind(lineOaId, Date.now(), userId).run();
   }
 
+  // ─────────────────────────────────────────────────────────────
+  // FOLLOWS
+  // ─────────────────────────────────────────────────────────────
+
+  async ensureFollowsTable() {
+    return this.d1.prepare(`
+      CREATE TABLE IF NOT EXISTS follows (
+        follower_id TEXT NOT NULL,
+        following_id TEXT NOT NULL,
+        created_at INTEGER NOT NULL,
+        PRIMARY KEY (follower_id, following_id)
+      )
+    `).run().catch(() => {});
+  }
+
+  async followUser(followerId, followingId) {
+    await this.ensureFollowsTable();
+    return this.d1.prepare(`
+      INSERT OR IGNORE INTO follows (follower_id, following_id, created_at)
+      VALUES (?, ?, ?)
+    `).bind(followerId, followingId, Date.now()).run();
+  }
+
+  async unfollowUser(followerId, followingId) {
+    await this.ensureFollowsTable();
+    return this.d1.prepare(`
+      DELETE FROM follows WHERE follower_id = ? AND following_id = ?
+    `).bind(followerId, followingId).run();
+  }
+
+  async isFollowing(followerId, followingId) {
+    await this.ensureFollowsTable();
+    const row = await this.d1.prepare(`
+      SELECT 1 FROM follows WHERE follower_id = ? AND following_id = ? LIMIT 1
+    `).bind(followerId, followingId).first();
+    return Boolean(row);
+  }
+
+  async getFollowers(userId, { limit = 30, offset = 0 } = {}) {
+    await this.ensureFollowsTable();
+    return this.d1.prepare(`
+      SELECT u.id, u.display_name, u.picture_url, u.role, u.seller_status
+      FROM follows f JOIN users u ON f.follower_id = u.id
+      WHERE f.following_id = ?
+      ORDER BY f.created_at DESC
+      LIMIT ? OFFSET ?
+    `).bind(userId, limit, offset).all().then(r => r.results || []);
+  }
+
+  async getFollowing(userId, { limit = 30, offset = 0 } = {}) {
+    await this.ensureFollowsTable();
+    return this.d1.prepare(`
+      SELECT u.id, u.display_name, u.picture_url, u.role, u.seller_status
+      FROM follows f JOIN users u ON f.following_id = u.id
+      WHERE f.follower_id = ?
+      ORDER BY f.created_at DESC
+      LIMIT ? OFFSET ?
+    `).bind(userId, limit, offset).all().then(r => r.results || []);
+  }
+
+  async getFollowCounts(userId) {
+    await this.ensureFollowsTable();
+    const [followers, following] = await Promise.all([
+      this.d1.prepare('SELECT COUNT(*) as count FROM follows WHERE following_id = ?').bind(userId).first(),
+      this.d1.prepare('SELECT COUNT(*) as count FROM follows WHERE follower_id = ?').bind(userId).first(),
+    ]);
+    return {
+      followerCount: followers?.count || 0,
+      followingCount: following?.count || 0,
+    };
+  }
+
   // โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
   // POSTS
   // โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•

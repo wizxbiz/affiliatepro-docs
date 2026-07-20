@@ -776,13 +776,19 @@ v1Routes.post('/posts/:id/comments', optionalAuth, async (c) => {
 });
 
 
-v1Routes.get('/users/:id', async (c) => {
+v1Routes.get('/users/:id', optionalAuth, async (c) => {
   const id = c.req.param('id');
+  const session = c.get('session');
   const db = new DB(c.env.DB);
   try {
     const user = await db.getUserById(id);
     if (!user) {
       return c.json({ status: 'error', error: { code: 'NOT_FOUND', message: 'ไม่พบผู้ใช้นี้' } }, 404);
+    }
+    const counts = await db.getFollowCounts(id);
+    let isFollowing = false;
+    if (session?.uid && session.uid !== id) {
+      isFollowing = await db.isFollowing(session.uid, id);
     }
     return c.json({
       status: 'success',
@@ -791,10 +797,68 @@ v1Routes.get('/users/:id', async (c) => {
         displayName: user.display_name || 'TukTuk User',
         pictureUrl: user.picture_url || '',
         sellerStatus: user.seller_status || 'none',
+        role: user.role || 'user',
         isPremium: user.is_premium === 1,
+        followerCount: counts.followerCount,
+        followingCount: counts.followingCount,
+        isFollowing,
         createdAt: user.created_at
       }
     });
+  } catch (err) {
+    return c.json({ status: 'error', error: { code: 'DB_ERROR', message: err.message } }, 500);
+  }
+});
+
+// ── Follow / Unfollow ────────────────────────────────────────
+v1Routes.post('/users/:id/follow', requireAuthV1, async (c) => {
+  const targetId = c.req.param('id');
+  const session = c.get('session');
+  if (session.uid === targetId) {
+    return c.json({ status: 'error', error: { code: 'BAD_REQUEST', message: 'ไม่สามารถติดตามตัวเองได้' } }, 400);
+  }
+  const db = new DB(c.env.DB);
+  try {
+    await db.followUser(session.uid, targetId);
+    const counts = await db.getFollowCounts(targetId);
+    return c.json({ status: 'success', isFollowing: true, followerCount: counts.followerCount });
+  } catch (err) {
+    return c.json({ status: 'error', error: { code: 'DB_ERROR', message: err.message } }, 500);
+  }
+});
+
+v1Routes.delete('/users/:id/follow', requireAuthV1, async (c) => {
+  const targetId = c.req.param('id');
+  const session = c.get('session');
+  const db = new DB(c.env.DB);
+  try {
+    await db.unfollowUser(session.uid, targetId);
+    const counts = await db.getFollowCounts(targetId);
+    return c.json({ status: 'success', isFollowing: false, followerCount: counts.followerCount });
+  } catch (err) {
+    return c.json({ status: 'error', error: { code: 'DB_ERROR', message: err.message } }, 500);
+  }
+});
+
+v1Routes.get('/users/:id/followers', async (c) => {
+  const id = c.req.param('id');
+  const { limit = 30, offset = 0 } = c.req.query();
+  const db = new DB(c.env.DB);
+  try {
+    const followers = await db.getFollowers(id, { limit: +limit, offset: +offset });
+    return c.json({ status: 'success', followers });
+  } catch (err) {
+    return c.json({ status: 'error', error: { code: 'DB_ERROR', message: err.message } }, 500);
+  }
+});
+
+v1Routes.get('/users/:id/following', async (c) => {
+  const id = c.req.param('id');
+  const { limit = 30, offset = 0 } = c.req.query();
+  const db = new DB(c.env.DB);
+  try {
+    const following = await db.getFollowing(id, { limit: +limit, offset: +offset });
+    return c.json({ status: 'success', following });
   } catch (err) {
     return c.json({ status: 'error', error: { code: 'DB_ERROR', message: err.message } }, 500);
   }
