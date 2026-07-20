@@ -13,7 +13,7 @@ function joinDate(ts) {
   return new Date(t).toLocaleDateString('th-TH', { year: 'numeric', month: 'long' })
 }
 
-// การ์ดโพสต์สำหรับแสดงในหน้าโปรไฟล์
+// การ์ดโพสต์สำหรับแสดงในหน้าโปรไฟล์ (3-column grid)
 function PostTile({ post, onClick }) {
   const media = post.mediaUrls || post.media || []
   const ytUrl = post.youtubeUrl || post.videoEmbed || (typeof post.videoUrl === 'string' && post.videoUrl.includes('youtube') ? post.videoUrl : null)
@@ -38,51 +38,43 @@ function PostTile({ post, onClick }) {
   const directVideo = (post.videoUrl && !ytMatch) ? post.videoUrl : null
 
   return (
-    <div className="profile-tile-wrap" style={{ position: 'relative', width: '100%', aspectRatio: '9/16' }}>
-      <button className="profile-tile" onClick={() => onClick?.(post)} style={{ width: '100%', height: '100%' }}>
-        {thumb ? (
-          <img src={thumb} alt="" loading="lazy" onError={(e) => { e.target.style.display = 'none' }} />
-        ) : directVideo ? (
-          <video src={`${directVideo}#t=0.5`} muted preload="metadata" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-        ) : (
-          <div className="profile-tile-text">{post.content || post.title || 'โพสต์'}</div>
-        )}
-        {(ytMatch || directVideo) && (
-          <span className="profile-tile-play">▶</span>
-        )}
-        {post.status === 'private' && (
-          <span className="profile-tile-private-badge" style={{ position: 'absolute', bottom: '8px', left: '8px', background: 'rgba(0,0,0,0.7)', color: '#ffc107', padding: '2px 6px', borderRadius: '10px', fontSize: '0.7rem' }}>
-            🔒 ส่วนตัว
-          </span>
-        )}
-      </button>
-      <button
-        type="button"
-        className="profile-tile-menu-btn"
-        title="ตัวเลือกโพสต์"
-        onClick={(e) => { e.stopPropagation(); onClick?.(post); }}
+    <button className="profile-tile" onClick={() => onClick?.(post)} style={{ position: 'relative', width: '100%', aspectRatio: '1/1', borderRadius: '10px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
+      {thumb ? (
+        <img src={thumb} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none' }} />
+      ) : directVideo ? (
+        <video src={`${directVideo}#t=0.5`} muted preload="metadata" style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }} />
+      ) : (
+        <div className="profile-tile-text">{post.content || post.title || 'โพสต์'}</div>
+      )}
+      {(ytMatch || directVideo) && (
+        <span className="profile-tile-play" style={{ position: 'absolute', top: '6px', left: '6px', fontSize: '0.65rem', background: 'rgba(0,0,0,0.6)', padding: '2px 6px', borderRadius: '4px', color: '#fff' }}>▶</span>
+      )}
+      {post.status === 'private' && (
+        <span className="profile-tile-private-badge" style={{ position: 'absolute', bottom: '4px', left: '4px', background: 'rgba(0,0,0,0.7)', color: '#ffc107', padding: '1px 5px', borderRadius: '4px', fontSize: '0.6rem' }}>
+          🔒
+        </span>
+      )}
+      <span
+        className="profile-tile-more-dots"
         style={{
           position: 'absolute',
-          top: '6px',
-          right: '6px',
-          zIndex: 10,
-          width: '28px',
-          height: '28px',
-          borderRadius: '50%',
+          top: '4px',
+          right: '4px',
           background: 'rgba(0,0,0,0.6)',
           backdropFilter: 'blur(4px)',
           color: '#fff',
-          border: '1px solid rgba(255,255,255,0.3)',
+          width: '22px',
+          height: '22px',
+          borderRadius: '50%',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: '0.8rem',
-          cursor: 'pointer'
+          fontSize: '0.75rem'
         }}
       >
         ⋮
-      </button>
-    </div>
+      </span>
+    </button>
   )
 }
 
