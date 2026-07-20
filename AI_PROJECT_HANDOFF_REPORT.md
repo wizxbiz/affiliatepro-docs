@@ -737,6 +737,25 @@ curl -sL https://tuktukfeed.com/app/sw.js | grep tuktuk-app-v3
 - **TikTok-style Feed Iframe:** เปลี่ยน Inline CSS ของ YouTube iframe ใน `FeedItem.jsx` และ `tuktuk_feed_logic.js` จาก `100vw`/`100vh` มาเป็น CSS Trick ที่อ้างอิง Container → `min-width: 100%; min-height: 100%; aspect-ratio: 16/9;` ควบคู่กับ `overflow: hidden;` ทำให้ iframe ขยายเติมกรอบ 9:16 ได้พอดีเป๊ะโดยไม่ล้นออกนอกจอ
 - บังคับ Refresh Client ด้วยการ Bump Cache-Buster (`v=20260720c`, `d`) ใน `index.html`
 
+## 25. ⚡ Feed Coordinator & D1 Channel Migration (No Firestore)
+
+**ไฟล์:** `public/channel.html`, `public/js/feed-coordinator.js`, `public/js/app-init.js`, `public/js/tuktuk_feed_logic.js`, `public/js/pc-feed-engine.js`, `workers/lib/db.js`, `workers/handlers/v1.js`, `webapp/src/pages/DuPlenFeed.jsx`, `webapp/src/lib/videoManager.js`
+
+### 1. DuPlenFeed & YouTube Pausing:
+- ปรับปรุง `IntersectionObserver` ใน `DuPlenFeed.jsx` โดยใช้ `requestAnimationFrame` debounce เลือกการ์ดที่มี intersection ratio สูงสุด (>35%) เพื่อป้องกันปัญหาวิดีโอสลับมั่วขณะ scroll
+- เพิ่ม `enablejsapi=1` ให้ YouTube iframe และปรับ `videoManager.js` ให้ส่ง `postMessage({ func: 'pauseVideo' })` ไปหยุดวิดีโอ YouTube ทั้งหมดใน DOM เมื่อเปิด `CommentSheet`
+
+### 2. Global Feed Coordinator:
+- สร้าง `public/js/feed-coordinator.js` (`TukTukFeedCoordinator`) เป็นตัวกลางสั่งหยุดวิดีโอข้าม Engine (Mobile Feed / PC Feed) ป้องกันปัญหาเสียงวิดีโอเล่นซ้อนกันเวลาสลับมุมมองหรือปรับขนาดหน้าจอ
+
+### 3. Channel.html Migration to D1 (100% Firestore-Free):
+- ยกเลิกการใช้งาน Firebase Firestore ใน `channel.html` ทั้งหมด 100%
+- โหลดข้อมูลโปรไฟล์ (`GET /api/v1/users/:id`), โพสต์วิดีโอ (`GET /api/v1/users/:id/posts`), สินค้า (`GET /api/v1/users/:id/products`) จาก **Cloudflare D1 REST API**
+- สร้างระบบ **Follow / Unfollow / Followers / Following** บน D1:
+  - Table SQL: `follows (follower_id, following_id, created_at)`
+  - Endpoints: `POST /api/v1/users/:id/follow`, `DELETE /api/v1/users/:id/follow`, `GET /api/v1/users/:id/followers`, `GET /api/v1/users/:id/following`
+- Deploy ทั้ง Worker Backend และ Pages Client เรียบร้อยแล้ว
+
 ---
 
 ## 🎯 สถานะปัจจุบัน & งานค้าง (อัปเดต)
