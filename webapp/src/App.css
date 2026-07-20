@@ -1271,6 +1271,33 @@
   display: block;
 }
 
+/* ปุ่ม play กลางจอเมื่อวิดีโอถูกหยุด (แตะเพื่อเล่นต่อ) */
+.feed-play-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  animation: fadeIn 0.15s ease-out;
+}
+.feed-play-overlay svg {
+  width: 34px;
+  height: 34px;
+  margin-left: 3px; /* จัดสามเหลี่ยม play ให้ดูกึ่งกลาง */
+}
+
 .feed-action-icon {
   width: 42px;
   height: 42px;
@@ -1521,18 +1548,25 @@
 
 .profile-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
 }
 .profile-tile {
   position: relative;
-  aspect-ratio: 1 / 1;
-  border: 0;
+  aspect-ratio: 3 / 4;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   padding: 0;
-  border-radius: 8px;
+  border-radius: 16px;
   overflow: hidden;
   background: #16161e;
   cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.profile-tile:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 210, 255, 0.3);
+  border-color: rgba(0, 210, 255, 0.5);
 }
 .profile-tile img { width: 100%; height: 100%; object-fit: cover; }
 .profile-tile-text {

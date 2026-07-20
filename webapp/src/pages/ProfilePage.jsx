@@ -13,8 +13,8 @@ function joinDate(ts) {
   return new Date(t).toLocaleDateString('th-TH', { year: 'numeric', month: 'long' })
 }
 
-// การ์ดโพสต์สำหรับแสดงในหน้าโปรไฟล์ (3-column grid)
-function PostTile({ post, onClick }) {
+// การ์ดโพสต์สำหรับแสดงในหน้าโปรไฟล์ (2-column card layout)
+function PostTile({ post, onClick, onOptionsClick, isSelf }) {
   const media = post.mediaUrls || post.media || []
   const ytUrl = post.youtubeUrl || post.videoEmbed || (typeof post.videoUrl === 'string' && post.videoUrl.includes('youtube') ? post.videoUrl : null)
   const ytMatch = ytUrl ? ytUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/|live\/))([\w-]{11})/) : null
@@ -38,43 +38,65 @@ function PostTile({ post, onClick }) {
   const directVideo = (post.videoUrl && !ytMatch) ? post.videoUrl : null
 
   return (
-    <button className="profile-tile" onClick={() => onClick?.(post)} style={{ position: 'relative', width: '100%', aspectRatio: '1/1', borderRadius: '10px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
-      {thumb ? (
-        <img src={thumb} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none' }} />
-      ) : directVideo ? (
-        <video src={`${directVideo}#t=0.5`} muted preload="metadata" style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }} />
-      ) : (
-        <div className="profile-tile-text">{post.content || post.title || 'โพสต์'}</div>
+    <div className="profile-tile-item" style={{ position: 'relative', width: '100%' }}>
+      <button className="profile-tile" onClick={() => onClick?.(post)} style={{ width: '100%', aspectRatio: '3/4', borderRadius: '16px', overflow: 'hidden', position: 'relative', display: 'block' }}>
+        {thumb ? (
+          <img src={thumb} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={(e) => { e.target.style.display = 'none' }} />
+        ) : directVideo ? (
+          <video src={`${directVideo}#t=0.5`} muted preload="metadata" style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }} />
+        ) : (
+          <div className="profile-tile-text">{post.content || post.title || 'โพสต์'}</div>
+        )}
+
+        {/* Gradient overlay on bottom for play icon & text */}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0.2) 0%, transparent 40%, rgba(0,0,0,0.85) 100%)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '10px', pointerEvents: 'none' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            {(ytMatch || directVideo) && (
+              <span style={{ fontSize: '0.65rem', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', padding: '3px 8px', borderRadius: '12px', color: '#fff', fontWeight: 600 }}>▶ เล่นวิดีโอ</span>
+            )}
+            {post.status === 'private' && (
+              <span style={{ fontSize: '0.65rem', background: 'rgba(255,193,7,0.9)', color: '#000', padding: '2px 6px', borderRadius: '10px', fontWeight: 700 }}>🔒 เฉพาะฉัน</span>
+            )}
+          </div>
+          {post.content || post.title ? (
+            <div style={{ fontSize: '0.75rem', color: '#fff', fontWeight: 600, textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {post.title || post.content}
+            </div>
+          ) : null}
+        </div>
+      </button>
+
+      {/* Dedicated 3-Dots Button */}
+      {isSelf && (
+        <button
+          type="button"
+          className="profile-tile-menu-btn"
+          title="ตัวเลือกโพสต์"
+          onClick={(e) => { e.stopPropagation(); onOptionsClick?.(post); }}
+          style={{
+            position: 'absolute',
+            top: '8px',
+            right: '8px',
+            zIndex: 20,
+            width: '30px',
+            height: '30px',
+            borderRadius: '50%',
+            background: 'rgba(10, 14, 33, 0.8)',
+            backdropFilter: 'blur(8px)',
+            color: '#fff',
+            border: '1px solid rgba(255,255,255,0.3)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '0.9rem',
+            cursor: 'pointer',
+            boxShadow: '0 4px 10px rgba(0,0,0,0.4)'
+          }}
+        >
+          ⋮
+        </button>
       )}
-      {(ytMatch || directVideo) && (
-        <span className="profile-tile-play" style={{ position: 'absolute', top: '6px', left: '6px', fontSize: '0.65rem', background: 'rgba(0,0,0,0.6)', padding: '2px 6px', borderRadius: '4px', color: '#fff' }}>▶</span>
-      )}
-      {post.status === 'private' && (
-        <span className="profile-tile-private-badge" style={{ position: 'absolute', bottom: '4px', left: '4px', background: 'rgba(0,0,0,0.7)', color: '#ffc107', padding: '1px 5px', borderRadius: '4px', fontSize: '0.6rem' }}>
-          🔒
-        </span>
-      )}
-      <span
-        className="profile-tile-more-dots"
-        style={{
-          position: 'absolute',
-          top: '4px',
-          right: '4px',
-          background: 'rgba(0,0,0,0.6)',
-          backdropFilter: 'blur(4px)',
-          color: '#fff',
-          width: '22px',
-          height: '22px',
-          borderRadius: '50%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '0.75rem'
-        }}
-      >
-        ⋮
-      </span>
-    </button>
+    </div>
   )
 }
 
@@ -128,10 +150,14 @@ export default function ProfilePage() {
     navigate('/', { replace: true })
   }
 
-  // แตะโพสต์ตัวเอง → action sheet; โพสต์คนอื่น → ไปดูในฟีด
+  // แตะการ์ดโพสต์ → เล่นวิดีโอทันที!
   function handleTilePress(post) {
-    if (isSelf) setSheetPost(post)
-    else navigate(`/?post=${encodeURIComponent(post.id)}`)
+    navigate(`/?post=${encodeURIComponent(post.id)}`)
+  }
+
+  // แตะปุ่มจุด 3 จุด (⋮) → เปิดเมนูตัวเลือกโพสต์ (แก้ไข / ความเป็นส่วนตัว / ลบ)
+  function handleOptionsPress(post) {
+    setSheetPost(post)
   }
 
   async function handleTogglePrivacy(post) {
@@ -225,6 +251,8 @@ export default function ProfilePage() {
                 key={post.id}
                 post={post}
                 onClick={handleTilePress}
+                onOptionsClick={handleOptionsPress}
+                isSelf={isSelf}
               />
             ))}
           </div>
