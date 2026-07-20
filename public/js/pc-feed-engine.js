@@ -179,7 +179,7 @@
         
         // Prefer explicit videoUrl, then derive from media array
         const derivedVideoUrl = videoItem ? videoItem.url : null;
-        p.videoUrl  = post.videoUrl || post.displayVideo || post.video_url || derivedVideoUrl || null;
+        p.videoUrl  = post.videoUrl || post.youtubeUrl || post.displayVideo || post.video_url || derivedVideoUrl || null;
         p.embedUrl  = videoItem?.embedUrl || post.videoEmbed || post.video_embed || null;
         
         let rawImg = post.imageUrl || post.thumbnailUrl || post.displayImage || post.thumbnail || (imageItem ? imageItem.url : null);
@@ -204,7 +204,7 @@
             return `<div class="pc4-media"><iframe src="${p.embedUrl}?autoplay=0&mute=1&modestbranding=1" allow="autoplay;encrypted-media" allowfullscreen loading="lazy"></iframe></div>`;
         }
         if (p.videoUrl) {
-            const ytId = (p.videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=))([\w-]{11})/) || [])[1];
+            const ytId = (p.videoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/|live\/))([\w-]{11})/) || [])[1];
             if (ytId) {
                 return `<div class="pc4-media"><iframe src="https://www.youtube.com/embed/${ytId}?autoplay=0&mute=1&modestbranding=1" allow="autoplay;encrypted-media" allowfullscreen loading="lazy"></iframe></div>`;
             }
