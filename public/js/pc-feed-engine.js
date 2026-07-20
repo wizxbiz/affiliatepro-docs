@@ -42,8 +42,27 @@
             items.forEach(item => container.appendChild(createPostCard(item)));
             _setupSentinel(container);
         },
-        createPostCard(item) { return createPostCard(item); }
+        createPostCard(item) { return createPostCard(item); },
+        pauseAll() {
+            // หยุด HTML5 video ใน PC grid cards
+            document.querySelectorAll('.pc4-media video, .pc4-card video').forEach((v) => {
+                try { if (!v.paused) v.pause(); } catch (_) {}
+            });
+            // หยุด YouTube iframes ใน PC grid cards
+            document.querySelectorAll('.pc4-media iframe[src*="youtube.com"]').forEach((frame) => {
+                try {
+                    frame.contentWindow?.postMessage(
+                        JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] }),
+                        'https://www.youtube.com'
+                    );
+                } catch (_) {}
+            });
+        },
     };
+
+    // เปิดให้ TukTukFeedCoordinator เรียกใช้ได้จากภายนอก
+    window._pcFeedPauseAll = () => window.pcEngine?.pauseAll?.();
+
 
     /* ─── API helper ─────────────────────────────────────────── */
     async function _apiFetch(path, options = {}) {

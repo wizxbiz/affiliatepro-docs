@@ -35,6 +35,8 @@ window.addEventListener('load', async () => {
             window.TukTukFeed = window.TukTukFeed || {};
             if (!window.TukTukFeed.didAutoInit) {
                 window.TukTukFeed.didAutoInit = true;
+                // แจ้ง coordinator ว่า mobile engine กำลังจะเริ่ม
+                if (window.TukTukFeedCoordinator) window.TukTukFeedCoordinator.registerEngine('mobile');
                 window.initTukTukFeed(initialCat, false);
             }
         } else if (typeof loadPosts === 'function') {
@@ -1605,7 +1607,11 @@ if ('serviceWorker' in navigator) {
         });
 
         // 5. Load all PC data and specialized engines
-        if (window.pcEngine && window.pcEngine.loadData) window.pcEngine.loadData();
+        if (window.pcEngine && window.pcEngine.loadData) {
+            // แจ้ง coordinator ว่า PC engine กำลังจะเริ่ม
+            if (window.TukTukFeedCoordinator) window.TukTukFeedCoordinator.registerEngine('pc');
+            window.pcEngine.loadData();
+        }
 
         Promise.all([
             window.pcLoadSocialFeed ? window.pcLoadSocialFeed() : Promise.resolve(),

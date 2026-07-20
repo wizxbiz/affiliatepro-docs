@@ -6,6 +6,7 @@ import ProvincePicker from '../components/ProvincePicker.jsx'
 import OnboardingOverlay from '../components/OnboardingOverlay.jsx'
 import CommentSheet from '../components/CommentSheet.jsx'
 import { useNearMe } from '../hooks/useNearMe.js'
+import { pauseAll } from '../lib/videoManager.js'
 
 function provinceParams(province) {
   if (!province) return { code: '', name: '', label: '' }
@@ -234,21 +235,52 @@ export default function DuPlenFeed() {
 
   useEffect(() => {
     if (state !== 'ready' || !containerRef.current) return
+
+    // รวบ ratio ของทุกการ์ดไว้ใน Map แล้วใช้ debounce 80ms
+    // เพื่อให้ scroll เร็วๆ ก็ยังเลือก "ตัวที่อยู่กลางจอจริง" ได้ถูก
+    const ratios = new Map()
+    let rafId = null
+
+    function pickBest() {
+      let bestId = null
+      let bestRatio = 0.35 // threshold ขั้นต่ำ (ต้องเห็นอย่างน้อย 35%)
+      ratios.forEach((ratio, id) => {
+        if (ratio > bestRatio) { bestRatio = ratio; bestId = id }
+      })
+      if (bestId) {
+        setActiveId((prev) => {
+          if (prev !== bestId) countView(bestId)
+          return bestId
+        })
+      }
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
-            const id = entry.target.dataset.id
-            setActiveId(id)
-            countView(id)
-          }
+          ratios.set(entry.target.dataset.id, entry.isIntersecting ? entry.intersectionRatio : 0)
         })
+        // debounce: รอให้ scroll หยุดสักครู่ก่อนตัดสินใจ
+        if (rafId) cancelAnimationFrame(rafId)
+        rafId = requestAnimationFrame(pickBest)
       },
-      { root: containerRef.current, threshold: [0.6] }
+      {
+        root: containerRef.current,
+        // ใช้ threshold ละเอียดขึ้นเพื่อ track ว่ากี่เปอร์เซ็นต์ที่เห็น
+        threshold: [0, 0.1, 0.25, 0.4, 0.5, 0.6, 0.75, 0.9, 1],
+      }
     )
     containerRef.current.querySelectorAll('.feed-item').forEach((el) => observer.observe(el))
-    return () => observer.disconnect()
+    return () => {
+      observer.disconnect()
+      if (rafId) cancelAnimationFrame(rafId)
+    }
   }, [state, items, countView])
+
+  // เปิด CommentSheet ทับ → หยุดวิดีโอทุกตัว (กันเสียงเล่นหลังชีต)
+  useEffect(() => {
+    if (activeCommentPostId) pauseAll()
+  }, [activeCommentPostId])
 
   return (
     <div className="duplen-wrap">

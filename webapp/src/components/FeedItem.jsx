@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { formatPrice } from '../lib/format.js'
 import { parseYouTube } from '../lib/youtube.js'
 import { api, getToken } from '../api/client.js'
 import { useAuth } from '../auth/AuthContext.jsx'
+import { useVideoPlayback } from '../hooks/useVideoPlayback.js'
 
 function parseList(value) {
   if (!value) return []
@@ -114,8 +115,7 @@ function VolumeIcon({ muted = false }) {
 
 export default function FeedItem({ item, active, onCommentClick }) {
   const { user } = useAuth()
-  const videoRef = useRef(null)
-  const [muted, setMuted] = useState(true)
+  const { videoRef, playing, muted, togglePlay, toggleMute, onVideoEvents } = useVideoPlayback(active)
   const [liked, setLiked] = useState(false)
   const [likeBusy, setLikeBusy] = useState(false)
   const [likeCount, setLikeCount] = useState(item.likes ?? item.likes_count ?? 0)
@@ -128,17 +128,7 @@ export default function FeedItem({ item, active, onCommentClick }) {
     ? `พร้อมขาย ${Number(item.productStock).toLocaleString('th-TH')}${item.productUnit ? ` ${item.productUnit}` : ''}`
     : ''
 
-  useEffect(() => {
-    const video = videoRef.current
-    if (!video) return
-    if (active) {
-      video.play().catch(() => {})
-    } else {
-      video.pause()
-      video.currentTime = 0
-    }
-  }, [active])
-
+  // การเล่น/หยุดวิดีโอจัดการโดย useVideoPlayback (ผ่าน videoManager — เล่นทีละตัวทั้งแอป)
   const currentUserId = user?.uid || user?.lineUserId
 
   // Fetch initial liked state on mount if logged in
@@ -224,7 +214,7 @@ export default function FeedItem({ item, active, onCommentClick }) {
 
         {resolved?.kind === 'youtube' && active && (
           <iframe
-            src={`${resolved.embedUrl}?autoplay=1&mute=${muted ? 1 : 0}&playsinline=1${resolved.ytId ? `&loop=1&playlist=${resolved.ytId}` : ''}&rel=0&modestbranding=1`}
+            src={`${resolved.embedUrl}?enablejsapi=1&autoplay=1&mute=${muted ? 1 : 0}&playsinline=1${resolved.ytId ? `&loop=1&playlist=${resolved.ytId}` : ''}&rel=0&modestbranding=1`}
             title={item.content?.slice(0, 40) || 'video'}
             allow="autoplay; encrypted-media; picture-in-picture"
             allowFullScreen
@@ -249,16 +239,27 @@ export default function FeedItem({ item, active, onCommentClick }) {
         )}
 
         {resolved?.kind === 'video' && (
-          <video
-            ref={videoRef}
-            src={resolved.src}
-            poster={resolved.poster || undefined}
-            muted={muted}
-            loop
-            playsInline
-            preload={active ? 'auto' : 'none'}
-            onClick={() => setMuted((v) => !v)}
-          />
+          <>
+            <video
+              ref={videoRef}
+              src={resolved.src}
+              poster={resolved.poster || undefined}
+              muted={muted}
+              loop
+              playsInline
+              preload={active ? 'auto' : 'none'}
+              onClick={togglePlay}
+              {...onVideoEvents}
+            />
+            {/* ปุ่ม play กลางจอเมื่อหยุด — บอกชัดว่าแตะเพื่อเล่นต่อ */}
+            {!playing && (
+              <button className="feed-play-overlay" onClick={togglePlay} aria-label="เล่น">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </button>
+            )}
+          </>
         )}
 
         {resolved?.kind === 'image' && (
@@ -332,7 +333,7 @@ export default function FeedItem({ item, active, onCommentClick }) {
       {showMuteBtn && (
         <button
           className="feed-mute-btn"
-          onClick={() => setMuted((v) => !v)}
+          onClick={toggleMute}
           aria-label={muted ? 'เปิดเสียง' : 'ปิดเสียง'}
         >
           <VolumeIcon muted={muted} />

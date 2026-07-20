@@ -2828,6 +2828,25 @@ window.renderTukTukSlides = renderTukTukSlides;
 window.createPCGridCard = createPCGridCard;
 window.renderGrid = renderGrid;
 
+// --- Global pauseAll helper สำหรับ TukTukFeedCoordinator ---
+// coordinator จะเรียก window._pauseAllTukTukVideos() เมื่อ engine อื่นเริ่มทำงาน
+// หรือเมื่อมีการเปิด overlay/modal ทับ
+window._pauseAllTukTukVideos = function () {
+    // 1. HTML5 video ทั้งหมดใน feed container
+    document.querySelectorAll('#tuktukFeed video, #tuktukFeedNearMe video, .tuktuk-video-item video').forEach(function (v) {
+        try { if (!v.paused) v.pause(); } catch (_) {}
+    });
+    // 2. YouTube iframes ใน feed container
+    document.querySelectorAll('#tuktukFeed iframe[src*="youtube.com"], #tuktukFeedNearMe iframe[src*="youtube.com"]').forEach(function (frame) {
+        try {
+            frame.contentWindow?.postMessage(
+                JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] }),
+                'https://www.youtube.com'
+            );
+        } catch (_) {}
+    });
+};
+
 // Province picker
 window.showProvincePicker = window.showProvincePicker || showProvincePicker;
 window.selectProvince = window.selectProvince || selectProvince;
