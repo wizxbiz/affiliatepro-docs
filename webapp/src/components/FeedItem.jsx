@@ -229,10 +229,9 @@ export default function FeedItem({ item, active, onCommentClick }) {
             allow="autoplay; encrypted-media; picture-in-picture"
             allowFullScreen
             style={{
-              width: '100vw',
-              height: '56.25vw',
-              minHeight: '100vh',
-              minWidth: '177.77vh',
+              minWidth: '100%',
+              minHeight: '100%',
+              aspectRatio: '16/9',
               position: 'absolute',
               top: '50%',
               left: '50%',

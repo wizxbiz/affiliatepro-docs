@@ -1143,7 +1143,7 @@ function renderTukTukSlides(container, items) {
                     <iframe 
                         id="yt-player-${item.id}"
                         src="https://www.youtube.com/embed/${item.youtubeId}?enablejsapi=1&autoplay=0&mute=${(isMuted || _isMobileFeedViewport()) ? 1 : 0}&modestbranding=1&rel=0&loop=1&playlist=${item.youtubeId}" 
-                        style="width:100vw; height:56.25vw; min-height:100vh; min-width:177.77vh; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); border:none; pointer-events:none; transition: opacity 0.5s;"
+                        style="min-width: 100%; min-height: 100%; aspect-ratio: 16/9; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: none; pointer-events: none; transition: opacity 0.5s;"
                         allow="autoplay; encrypted-media" 
                         loading="lazy"
                         class="tuktuk-slide-video youtube-iframe"
