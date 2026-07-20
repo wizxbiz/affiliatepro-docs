@@ -3102,10 +3102,21 @@
                     if (coverUrl) updateData.coverUrl = coverUrl;
                 }
 
-                if (displayName) WizmobizAuth.updateSession({ displayName });
-
-                bootstrap.Modal.getInstance(document.getElementById('editProfileModal'))?.hide();
-                showToast('บันทึกโปรไฟล์สำเร็จ', 'success');
+                // Call D1 Worker API PUT /users/profile
+                const res = await apiFetch('/api/v1/users/profile', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updateData)
+                });
+                const apiResult = await res.json();
+                if (apiResult.status === 'success') {
+                    if (displayName) WizmobizAuth.updateSession({ displayName });
+                    loadChannelInfo();
+                    bootstrap.Modal.getInstance(document.getElementById('editProfileModal'))?.hide();
+                    showToast('บันทึกโปรไฟล์สำเร็จ', 'success');
+                } else {
+                    throw new Error(apiResult.error?.message || 'บันทึกไม่สำเร็จ');
+                }
             } catch (e) {
                 console.error('saveProfile error:', e);
                 showToast('บันทึกไม่สำเร็จ', 'error');

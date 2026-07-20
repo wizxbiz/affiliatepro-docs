@@ -121,6 +121,7 @@ export const api = {
       request(`/users/${id}/posts`, { params: { limit, offset } }),
     products: (id, { limit = 30 } = {}) =>
       request(`/users/${id}/products`, { params: { limit } }),
+    updateProfile: (data) => request('/users/profile', { method: 'PUT', body: data }),
   },
   seller: {
     products: ({ limit = 50 } = {}) =>

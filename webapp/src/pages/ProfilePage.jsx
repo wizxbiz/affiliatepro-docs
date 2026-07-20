@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
-import { api, getToken } from '../api/client.js'
+import { api, getToken, uploadToR2 } from '../api/client.js'
 import { useAuth } from '../auth/AuthContext.jsx'
 import ProductCard from '../components/ProductCard.jsx'
 import EditModal from '../components/EditModal.jsx'
@@ -100,6 +100,145 @@ function PostTile({ post, onClick, onOptionsClick, isSelf }) {
   )
 }
 
+function EditProfileModal({ profile, onSave, onClose }) {
+  const [displayName, setDisplayName] = useState(profile?.displayName || profile?.display_name || '')
+  const [handle, setHandle] = useState(profile?.handle || '')
+  const [bio, setBio] = useState(profile?.bio || '')
+  const [isPrivate, setIsPrivate] = useState(Boolean(profile?.isPrivate || profile?.is_private))
+  const [avatarUrl, setAvatarUrl] = useState(profile?.pictureUrl || profile?.picture_url || '')
+  const [coverUrl, setCoverUrl] = useState(profile?.coverUrl || profile?.cover_url || '')
+  const [uploading, setUploading] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+
+  async function handleFileChange(e, folder, setter) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    setError('')
+    try {
+      const url = await uploadToR2(file, folder)
+      setter(url)
+    } catch (err) {
+      setError(err.message || 'อัปโหลดรูปภาพล้มเหลว')
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    setBusy(true)
+    setError('')
+    try {
+      const payload = {
+        displayName: displayName.trim(),
+        handle: handle.trim().replace(/^@/, ''),
+        bio: bio.trim(),
+        isPrivate,
+        pictureUrl: avatarUrl,
+        coverUrl,
+      }
+      await api.users.updateProfile(payload)
+      onSave(payload)
+      onClose()
+    } catch (err) {
+      setError(err.message || 'ไม่สามารถบันทึกโปรไฟล์ได้')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal-sheet edit-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '440px', padding: '20px' }}>
+        <div className="modal-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+          <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700 }}>⚙️ แก้ไขและตั้งค่าโปรไฟล์</h3>
+          <button type="button" className="modal-close" onClick={onClose} aria-label="ปิด" style={{ background: 'none', border: 'none', color: '#fff', fontSize: '1.2rem', cursor: 'pointer' }}>✕</button>
+        </div>
+
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          {/* Avatar Upload */}
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center', justifyContent: 'center', margin: '6px 0' }}>
+            <label style={{ cursor: 'pointer', textAlign: 'center' }}>
+              <div style={{ width: '70px', height: '70px', borderRadius: '50%', overflow: 'hidden', background: '#222', border: '2px solid #7c3aed', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {avatarUrl ? <img src={avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontSize: '1.5rem' }}>📷</span>}
+              </div>
+              <span style={{ fontSize: '0.75rem', color: '#a78bfa', display: 'block', marginTop: '4px' }}>เปลี่ยนรูปโปรไฟล์</span>
+              <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleFileChange(e, 'avatars', setAvatarUrl)} />
+            </label>
+          </div>
+
+          {/* Display Name */}
+          <div>
+            <label style={{ fontSize: '0.8rem', color: '#aaa', display: 'block', marginBottom: '4px' }}>ชื่อที่แสดง (Display Name)</label>
+            <input
+              type="text"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              placeholder="ระบุชื่อ..."
+              required
+              style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', background: '#161622', border: '1px solid rgba(255,255,255,0.15)', color: '#fff' }}
+            />
+          </div>
+
+          {/* Handle */}
+          <div>
+            <label style={{ fontSize: '0.8rem', color: '#aaa', display: 'block', marginBottom: '4px' }}>ชื่อผู้ใช้ (@handle)</label>
+            <input
+              type="text"
+              value={handle}
+              onChange={(e) => setHandle(e.target.value)}
+              placeholder="เช่น @wizsuper3"
+              style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', background: '#161622', border: '1px solid rgba(255,255,255,0.15)', color: '#fff' }}
+            />
+          </div>
+
+          {/* Bio */}
+          <div>
+            <label style={{ fontSize: '0.8rem', color: '#aaa', display: 'block', marginBottom: '4px' }}>คำอธิบายตัวเอง (Bio)</label>
+            <textarea
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              rows={3}
+              placeholder="เขียนแนะนำตัวเอง..."
+              style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', background: '#161622', border: '1px solid rgba(255,255,255,0.15)', color: '#fff' }}
+            />
+          </div>
+
+          {/* Lock Profile Privacy Toggle */}
+          <div style={{ background: '#1a1d2e', padding: '12px 14px', borderRadius: '12px', border: '1px solid rgba(124, 58, 237, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#fff' }}>
+                {isPrivate ? '🔒 โปรไฟล์ส่วนตัว (Locked)' : '🌐 โปรไฟล์สาธารณะ (Public)'}
+              </div>
+              <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
+                {isPrivate ? 'ผู้ใช้ทั่วไปจะไม่เห็นโพสต์ของคุณ' : 'ทุกคนสามารถเข้าชมโปรไฟล์ได้'}
+              </div>
+            </div>
+            <input
+              type="checkbox"
+              checked={isPrivate}
+              onChange={(e) => setIsPrivate(e.target.checked)}
+              style={{ width: '20px', height: '20px', accentColor: '#7c3aed', cursor: 'pointer' }}
+            />
+          </div>
+
+          {error && <p style={{ color: '#ef4444', fontSize: '0.8rem', margin: 0 }}>{error}</p>}
+
+          <button
+            type="submit"
+            disabled={busy || uploading}
+            style={{ width: '100%', padding: '12px', borderRadius: '24px', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', color: '#fff', fontWeight: 700, border: 'none', cursor: 'pointer', marginTop: '4px' }}
+          >
+            {busy ? 'กำลังบันทึก...' : uploading ? 'กำลังอัปโหลด...' : '💾 บันทึกการเปลี่ยนแปลง'}
+          </button>
+        </form>
+      </div>
+    </div>
+  )
+}
+
 export default function ProfilePage() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -113,6 +252,7 @@ export default function ProfilePage() {
   const [posts, setPosts] = useState([])
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
+  const [showEditModal, setShowEditModal] = useState(false) // edit profile modal
   const [sheetPost, setSheetPost] = useState(null)  // own post tapped → action sheet
   const [editing, setEditing] = useState(null)       // post being edited
   const [deleting, setDeleting] = useState(null)      // post pending delete confirm
@@ -225,8 +365,20 @@ export default function ProfilePage() {
           {isSeller && (
             <Link className="profile-btn primary" to="/seller">แผงร้านค้า</Link>
           )}
-          <button className="profile-btn" disabled title="เร็วๆ นี้">แก้ไขโปรไฟล์</button>
+          <button className="profile-btn" onClick={() => setShowEditModal(true)}>⚙️ แก้ไขโปรไฟล์</button>
           <button className="profile-btn danger" onClick={handleLogout}>ออกจากระบบ</button>
+        </div>
+      )}
+
+      {profile?.bio && (
+        <div style={{ padding: '0 16px 12px 16px', fontSize: '0.85rem', color: '#cbd5e1', textAlign: 'center' }}>
+          {profile.bio}
+        </div>
+      )}
+
+      {profile?.isPrivate && (
+        <div style={{ margin: '0 16px 12px 16px', padding: '8px 14px', background: 'rgba(255, 193, 7, 0.15)', border: '1px solid rgba(255, 193, 7, 0.4)', borderRadius: '12px', color: '#ffc107', fontSize: '0.8rem', textAlign: 'center', fontWeight: 600 }}>
+          🔒 โปรไฟล์นี้เป็นส่วนตัว (Locked Profile)
         </div>
       )}
 
@@ -325,7 +477,11 @@ export default function ProfilePage() {
           danger
           busy={delBusy}
           onConfirm={handleDelete}
-          onClose={() => (delBusy ? null : setDeleting(null))}
+      {showEditModal && (
+        <EditProfileModal
+          profile={profile}
+          onSave={(p) => setProfile((prev) => ({ ...prev, ...p }))}
+          onClose={() => setShowEditModal(false)}
         />
       )}
     </div>

@@ -16,7 +16,15 @@ export class DB {
   // USERS
   // โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
+  async ensureUsersColumns() {
+    await this.d1.prepare("ALTER TABLE users ADD COLUMN bio TEXT;").run().catch(() => {});
+    await this.d1.prepare("ALTER TABLE users ADD COLUMN handle TEXT;").run().catch(() => {});
+    await this.d1.prepare("ALTER TABLE users ADD COLUMN cover_url TEXT;").run().catch(() => {});
+    await this.d1.prepare("ALTER TABLE users ADD COLUMN is_private INTEGER DEFAULT 0;").run().catch(() => {});
+  }
+
   async getUserById(id) {
+    await this.ensureUsersColumns();
     return this.d1.prepare('SELECT * FROM users WHERE id = ?').bind(id).first();
   }
 

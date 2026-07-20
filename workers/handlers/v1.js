@@ -796,13 +796,53 @@ v1Routes.get('/users/:id', optionalAuth, async (c) => {
         id: user.id,
         displayName: user.display_name || 'TukTuk User',
         pictureUrl: user.picture_url || '',
+        coverUrl: user.cover_url || '',
+        bio: user.bio || '',
+        handle: user.handle || '',
         sellerStatus: user.seller_status || 'none',
         role: user.role || 'user',
         isPremium: user.is_premium === 1,
+        isPrivate: user.is_private === 1,
         followerCount: counts.followerCount,
         followingCount: counts.followingCount,
         isFollowing,
         createdAt: user.created_at
+      }
+    });
+  } catch (err) {
+    return c.json({ status: 'error', error: { code: 'DB_ERROR', message: err.message } }, 500);
+  }
+});
+
+// ── Update Profile & Lock/Privacy (PUT /api/v1/users/profile) ────────
+v1Routes.put('/users/profile', requireAuthV1, async (c) => {
+  const session = c.get('session');
+  const body = await c.req.json().catch(() => ({}));
+  const db = new DB(c.env.DB);
+  await db.ensureUsersColumns();
+
+  const fields = {};
+  if (body.displayName !== undefined) fields.display_name = String(body.displayName || '').trim();
+  if (body.handle !== undefined) fields.handle = String(body.handle || '').trim().replace(/^@/, '');
+  if (body.bio !== undefined) fields.bio = String(body.bio || '').trim();
+  if (body.pictureUrl !== undefined) fields.picture_url = String(body.pictureUrl || '').trim();
+  if (body.coverUrl !== undefined) fields.cover_url = String(body.coverUrl || '').trim();
+  if (body.isPrivate !== undefined) fields.is_private = body.isPrivate ? 1 : 0;
+  fields.updated_at = Date.now();
+
+  try {
+    await db.updateUser(session.uid, fields);
+    const updatedUser = await db.getUserById(session.uid);
+    return c.json({
+      status: 'success',
+      user: {
+        id: updatedUser.id,
+        displayName: updatedUser.display_name,
+        pictureUrl: updatedUser.picture_url,
+        coverUrl: updatedUser.cover_url,
+        bio: updatedUser.bio,
+        handle: updatedUser.handle,
+        isPrivate: updatedUser.is_private === 1,
       }
     });
   } catch (err) {
