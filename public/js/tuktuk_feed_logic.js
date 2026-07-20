@@ -852,10 +852,11 @@ function normalizeFeedItem(item, type, location) {
         image = item.imageUrl || item.image || item.thumbnailUrl;
     }
     
-    // Handle case where image is actually video
-    if (!videoUrl && typeof image === 'string' && 
-        (image.endsWith('.mp4') || image.endsWith('.mov') || image.endsWith('.webm'))) {
-        videoUrl = image;
+    const isDirectVideo = (url) => /\.(mp4|webm|mov|m4v|m3u8|avi|mkv)(\?|$)/i.test(url || '') || /youtube\.com|youtu\.be/i.test(url || '');
+
+    // Handle case where image is actually video, or cleanup poster image if it is a video URL
+    if (typeof image === 'string' && isDirectVideo(image)) {
+        if (!videoUrl) videoUrl = image;
         image = 'assets/images/logo.png';
     }
     

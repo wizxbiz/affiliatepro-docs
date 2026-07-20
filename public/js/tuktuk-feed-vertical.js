@@ -732,7 +732,11 @@ const TukTukFeed = (function () {
   // ===== Helper: Create Video HTML =====
   function createVideoHtml(post) {
     const videoUrl = post.videoUrl || (post.images?.find(img => img.type === 'video')?.url || '');
-    const poster = post.displayImage || post.images?.[0]?.url || 'assets/images/logo.png';
+    let poster = post.displayImage || post.images?.[0]?.url || 'assets/images/logo.png';
+    const isDirectVideoUrl = (url) => /\.(mp4|webm|mov|m4v|m3u8|avi|mkv)(\?|$)/i.test(url || '') || /youtube\.com|youtu\.be/i.test(url || '');
+    if (poster && isDirectVideoUrl(poster)) {
+      poster = 'assets/images/logo.png';
+    }
 
     return `
       <video class="tuktuk-video-player" 

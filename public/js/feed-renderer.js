@@ -2564,9 +2564,14 @@ function renderTukTukFeed(posts, append = false) {
             }) || post.videoUrl;
             
             const videoUrl = typeof videoFile === 'object' ? videoFile.url : videoFile;
-            const videoPoster = (typeof videoFile === 'object' && videoFile.thumbnailUrl)
+            let videoPoster = (typeof videoFile === 'object' && videoFile.thumbnailUrl)
                 ? videoFile.thumbnailUrl
                 : (post.thumbnailUrl || '');
+
+            const isDirectVideoUrl = (url) => /\.(mp4|webm|mov|m4v|m3u8|avi|mkv)(\?|$)/i.test(url || '') || /youtube\.com|youtu\.be/i.test(url || '');
+            if (videoPoster && isDirectVideoUrl(videoPoster)) {
+                videoPoster = '';
+            }
             
             if (videoUrl) {
                 mediaHtml = `
