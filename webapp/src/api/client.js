@@ -110,8 +110,8 @@ export const api = {
       request(`/posts/${postId}/comments`, { params: { limit, ...(cursor ? { cursor } : {}) } }),
     addComment: (postId, content) =>
       request(`/posts/${postId}/comments`, { method: 'POST', body: { content } }),
-    update: (postId, { content, category }) =>
-      request(`/posts/${postId}`, { method: 'PUT', body: { content, category } }),
+    update: (postId, fields) =>
+      request(`/posts/${postId}`, { method: 'PUT', body: typeof fields === 'string' ? { content: fields } : fields }),
     remove: (postId) =>
       request(`/posts/${postId}`, { method: 'DELETE' }),
   },

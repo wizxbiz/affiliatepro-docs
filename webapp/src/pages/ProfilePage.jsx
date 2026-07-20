@@ -13,25 +13,76 @@ function joinDate(ts) {
   return new Date(t).toLocaleDateString('th-TH', { year: 'numeric', month: 'long' })
 }
 
-// การ์ดโพสต์แบบเรียบ (ไม่ใช้ FeedItem เพราะนั่นเป็น full-screen reel)
+// การ์ดโพสต์สำหรับแสดงในหน้าโปรไฟล์
 function PostTile({ post, onClick }) {
   const media = post.mediaUrls || post.media || []
-  const thumb = post.thumbnailUrl
-    || media.find((m) => m?.type === 'image')?.url
-    || media.find((m) => m?.type === 'youtube')?.thumbnailUrl
-    || parseImages(post.media_urls)[0]
-    || ''
+  const ytUrl = post.youtubeUrl || post.videoEmbed || (typeof post.videoUrl === 'string' && post.videoUrl.includes('youtube') ? post.videoUrl : null)
+  const ytMatch = ytUrl ? ytUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/|live\/))([\w-]{11})/) : null
+
+  let thumb = null
+  if (ytMatch) {
+    thumb = `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg`
+  } else {
+    const raw = post.thumbnailUrl
+      || post.imageUrl
+      || media.find((m) => m?.type === 'image')?.url
+      || media.find((m) => m?.type === 'youtube')?.thumbnailUrl
+      || parseImages(post.media_urls)[0]
+      || ''
+    
+    if (raw && typeof raw === 'string' && !raw.endsWith('.mp4') && !raw.endsWith('.mov') && !raw.endsWith('.webm')) {
+      thumb = raw
+    }
+  }
+
+  const directVideo = (post.videoUrl && !ytMatch) ? post.videoUrl : null
+
   return (
-    <button className="profile-tile" onClick={() => onClick?.(post)}>
-      {thumb ? (
-        <img src={thumb} alt="" loading="lazy" />
-      ) : (
-        <div className="profile-tile-text">{post.content || post.title || 'โพสต์'}</div>
-      )}
-      {media.some((m) => m?.type === 'youtube' || m?.type === 'video') && (
-        <span className="profile-tile-play">▶</span>
-      )}
-    </button>
+    <div className="profile-tile-wrap" style={{ position: 'relative', width: '100%', aspectRatio: '9/16' }}>
+      <button className="profile-tile" onClick={() => onClick?.(post)} style={{ width: '100%', height: '100%' }}>
+        {thumb ? (
+          <img src={thumb} alt="" loading="lazy" onError={(e) => { e.target.style.display = 'none' }} />
+        ) : directVideo ? (
+          <video src={`${directVideo}#t=0.5`} muted preload="metadata" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        ) : (
+          <div className="profile-tile-text">{post.content || post.title || 'โพสต์'}</div>
+        )}
+        {(ytMatch || directVideo) && (
+          <span className="profile-tile-play">▶</span>
+        )}
+        {post.status === 'private' && (
+          <span className="profile-tile-private-badge" style={{ position: 'absolute', bottom: '8px', left: '8px', background: 'rgba(0,0,0,0.7)', color: '#ffc107', padding: '2px 6px', borderRadius: '10px', fontSize: '0.7rem' }}>
+            🔒 ส่วนตัว
+          </span>
+        )}
+      </button>
+      <button
+        type="button"
+        className="profile-tile-menu-btn"
+        title="ตัวเลือกโพสต์"
+        onClick={(e) => { e.stopPropagation(); onClick?.(post); }}
+        style={{
+          position: 'absolute',
+          top: '6px',
+          right: '6px',
+          zIndex: 10,
+          width: '28px',
+          height: '28px',
+          borderRadius: '50%',
+          background: 'rgba(0,0,0,0.6)',
+          backdropFilter: 'blur(4px)',
+          color: '#fff',
+          border: '1px solid rgba(255,255,255,0.3)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '0.8rem',
+          cursor: 'pointer'
+        }}
+      >
+        ⋮
+      </button>
+    </div>
   )
 }
 
@@ -89,6 +140,18 @@ export default function ProfilePage() {
   function handleTilePress(post) {
     if (isSelf) setSheetPost(post)
     else navigate(`/?post=${encodeURIComponent(post.id)}`)
+  }
+
+  async function handleTogglePrivacy(post) {
+    if (!post) return
+    const nextStatus = post.status === 'private' ? 'active' : 'private'
+    try {
+      await api.posts.update(post.id, { status: nextStatus })
+      setPosts((prev) => prev.map((p) => (p.id === post.id ? { ...p, status: nextStatus } : p)))
+      setSheetPost(null)
+    } catch (err) {
+      alert(err.message || 'ไม่สามารถเปลี่ยนความเป็นส่วนตัวได้')
+    }
   }
 
   function handlePostSaved(fields) {
@@ -198,19 +261,25 @@ export default function ProfilePage() {
               className="action-sheet-item"
               onClick={() => { const p = sheetPost; setSheetPost(null); navigate(`/?post=${encodeURIComponent(p.id)}`) }}
             >
-              ดูโพสต์
+              👁️ ดูโพสต์
             </button>
             <button
               className="action-sheet-item"
               onClick={() => { setEditing(sheetPost); setSheetPost(null) }}
             >
-              แก้ไข
+              ✏️ แก้ไขข้อความ
+            </button>
+            <button
+              className="action-sheet-item"
+              onClick={() => handleTogglePrivacy(sheetPost)}
+            >
+              {sheetPost.status === 'private' ? '🌐 เปลี่ยนเป็น สาธารณะ' : '🔒 เปลี่ยนเป็น เฉพาะฉัน (ส่วนตัว)'}
             </button>
             <button
               className="action-sheet-item danger"
               onClick={() => { setDeleting(sheetPost); setSheetPost(null) }}
             >
-              ลบ
+              🗑️ ลบโพสต์
             </button>
             <button className="action-sheet-item cancel" onClick={() => setSheetPost(null)}>
               ยกเลิก
