@@ -219,7 +219,7 @@ export default function FeedItem({ item, active, onCommentClick }) {
 
   return (
     <article className="feed-item" data-id={item.id}>
-      <div className="feed-media">
+      <div className="feed-media" style={{ overflow: 'hidden' }}>
         {!resolved && <div className="feed-media-placeholder">TukTuk</div>}
 
         {resolved?.kind === 'youtube' && active && (
@@ -228,6 +228,18 @@ export default function FeedItem({ item, active, onCommentClick }) {
             title={item.content?.slice(0, 40) || 'video'}
             allow="autoplay; encrypted-media; picture-in-picture"
             allowFullScreen
+            style={{
+              width: '100vw',
+              height: '56.25vw',
+              minHeight: '100vh',
+              minWidth: '177.77vh',
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              border: 'none',
+              pointerEvents: 'none' // Prevent interactions from breaking scroll
+            }}
           />
         )}
         {resolved?.kind === 'youtube' && !active && resolved.poster && (
