@@ -184,7 +184,7 @@ export default function FeedItem({ item, active, onCommentClick }) {
       navigator.share({ title: 'TukTuk Feed', text, url }).catch(() => {})
     } else {
       navigator.clipboard?.writeText(url).then(() => {
-        // brief visual feedback handled by button active state
+        alert('คัดลอกลิงก์เรียบร้อย')
       }).catch(() => {
         prompt('คัดลอกลิงก์:', url)
       })

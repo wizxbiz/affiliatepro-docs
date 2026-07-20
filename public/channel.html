@@ -1850,6 +1850,9 @@
                         <button class="btn btn-dark text-start border-secondary py-2 rounded-3 d-flex align-items-center gap-3" onclick="copyCurrentPostLink();">
                             <i class="fas fa-link text-primary" style="font-size: 1.1rem;"></i> คัดลอกลิงก์โพสต์
                         </button>
+                        <button class="btn btn-dark text-start border-secondary py-2 rounded-3 d-flex align-items-center gap-3" onclick="shareCurrentPostAction();">
+                            <i class="fas fa-share-nodes text-success" style="font-size: 1.1rem;"></i> แชร์โพสต์นี้
+                        </button>
                         <button class="btn btn-dark text-start border-secondary py-2 rounded-3 d-flex align-items-center gap-3" id="btnReportPost" onclick="reportCurrentPostAction();">
                             <i class="fas fa-flag text-secondary" style="font-size: 1.1rem;"></i> รายงานโพสต์นี้
                         </button>
@@ -2827,6 +2830,20 @@
             });
         }
 
+        function shareCurrentPostAction() {
+            if (!selectedPostId) return;
+            const url = `${window.location.origin}/index.html?postId=${selectedPostId}`;
+            if (navigator.share) {
+                navigator.share({
+                    title: 'TukTuk Feed',
+                    text: 'ดูโพสต์นี้บน TukTuk Feed',
+                    url: url
+                }).catch((error) => console.log('Error sharing', error));
+            } else {
+                copyCurrentPostLink();
+            }
+        }
+
         function reportCurrentPostAction() {
             showToast('ส่งรายงานเรียบร้อยแล้ว ขอบคุณครับ', 'info');
             bootstrap.Modal.getInstance(document.getElementById('postActionModal'))?.hide();
@@ -2958,7 +2975,7 @@
                 navigator.share({
                     title: `ติดตาม ${currentUserData?.displayName || 'TukTuk Thailand'}`,
                     url: url
-                });
+                }).catch((err) => console.log('Share error:', err));
             } else {
                 navigator.clipboard.writeText(url);
                 showToast('คัดลอกลิงก์แล้ว', 'success');
@@ -3246,6 +3263,7 @@
         window.setPostPrivacyAction = setPostPrivacyAction;
         window.deleteCurrentPostAction = deleteCurrentPostAction;
         window.copyCurrentPostLink = copyCurrentPostLink;
+        window.shareCurrentPostAction = shareCurrentPostAction;
         window.reportCurrentPostAction = reportCurrentPostAction;
         window.switchTab = switchTab;
         window.handleMainFollow = handleMainFollow;

@@ -437,6 +437,21 @@ export default function ProfilePage() {
             </button>
             <button
               className="action-sheet-item"
+              onClick={() => {
+                const url = `${window.location.origin}/?post=${encodeURIComponent(sheetPost.id)}`
+                if (navigator.share) {
+                  navigator.share({ title: 'TukTuk Feed', text: 'ดูโพสต์นี้บน TukTuk Feed', url }).catch(() => {})
+                } else {
+                  navigator.clipboard.writeText(url)
+                  alert('คัดลอกลิงก์เรียบร้อย')
+                }
+                setSheetPost(null)
+              }}
+            >
+              🔗 แชร์ / คัดลอกลิงก์
+            </button>
+            <button
+              className="action-sheet-item"
               onClick={() => { setEditing(sheetPost); setSheetPost(null) }}
             >
               ✏️ แก้ไขข้อความ
