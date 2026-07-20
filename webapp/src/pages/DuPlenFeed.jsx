@@ -100,36 +100,59 @@ export default function DuPlenFeed() {
     setNotice('')
 
     try {
-      let merged = []
+      let posts = []
+      let products = []
       let nearmeMeta = null
 
-      try {
-        const nearme = await api.nearme.list({
+      // Fetch social feed (videos/posts) and ranked products in parallel
+      const [feedRes, nearmeRes] = await Promise.allSettled([
+        api.feed.list({
+          limit: 30,
+          mode: feedMode === 'near_me' ? 'near_me' : 'default',
+          province: province.code || province.name,
+        }),
+        api.nearme.list({
           mode: feedMode === 'near_me' ? 'near_me' : 'default',
           province: province.code,
           provinceName: province.name,
-          limit: feedMode === 'near_me' ? 40 : 34,
+          limit: feedMode === 'near_me' ? 24 : 16,
         })
-        // /nearme returns products normalized by the Worker (normalizeV1Product),
-        // whose field names differ from what FeedItem reads. Route them through
-        // productToFeedItem so cards get type/productId/ctaUrl/authorAvatar/price/
-        // stock (buyScore + nearmeReason are preserved). Real posts (which carry
-        // `content`) are passed through untouched in case the feed ever mixes them.
-        const rawItems = Array.isArray(nearme.items) ? nearme.items : []
-        merged = rawItems.map((it) => (it && it.content ? it : productToFeedItem(it)))
-        nearmeMeta = nearme.meta || null
-      } catch (err) {
-        console.warn('[DuPlenFeed] Nearme fallback', err)
+      ])
+
+      if (feedRes.status === 'fulfilled') {
+        const feedData = feedRes.value || {}
+        posts = feedData.posts || feedData.items || []
       }
 
-      if (merged.length === 0) {
-        merged = await loadFallback(feedMode, selectedProvince)
-        if (!shouldApply()) return
-        if (feedMode === 'near_me' && merged.length > 0) {
-          setNotice('ยังไม่มี Nearme feed จากระบบจัดอันดับ แสดงข้อมูลสำรองในพื้นที่แทน')
+      if (nearmeRes.status === 'fulfilled') {
+        const nearmeData = nearmeRes.value || {}
+        products = nearmeData.items || []
+        nearmeMeta = nearmeData.meta || null
+      } else {
+        // Fallback to basic products list if nearme endpoint failed
+        try {
+          const productsData = await api.products.list({
+            limit: 20,
+            province: feedMode === 'near_me' ? province.name : '',
+          })
+          products = productsData.products || []
+        } catch (err) {
+          console.warn('[DuPlenFeed] Products fallback failed:', err)
         }
-      } else if (feedMode === 'near_me' && nearmeMeta?.fallback) {
-        setNotice(`ยังไม่มีสินค้าตรงพื้นที่${province.label ? ` ${province.label}` : ''} แสดงสินค้าน่าสนใจทั้งหมดแทน`)
+      }
+
+      // Merge posts (videos/images) and products (interleaving)
+      let merged = mergeFallbackFeed(posts, products)
+
+      if (feedMode === 'near_me') {
+        if (posts.length === 0 && products.length === 0) {
+          // If completely empty in near_me mode, load global fallback
+          merged = await loadFallback('all', null)
+          if (!shouldApply()) return
+          setNotice('ยังไม่มีโพสต์และสินค้าในจังหวัดของคุณ แสดงฟีดทั้งหมดแทน')
+        } else if (nearmeMeta?.fallback) {
+          setNotice(`ยังไม่มีสินค้าตรงพื้นที่${province.label ? ` ${province.label}` : ''} แสดงสินค้าน่าสนใจทั้งหมดแทน`)
+        }
       }
 
       if (targetPostId && !merged.some((item) => String(item.id) === String(targetPostId))) {
