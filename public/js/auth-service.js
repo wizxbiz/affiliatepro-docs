@@ -64,7 +64,8 @@ class AuthService {
                     console.log('⏳ AuthService: Waiting for Firebase initialization...');
                     setTimeout(doInit, 100);
                 } else {
-                    console.error('❌ Firebase not loaded');
+                    // Firebase is intentionally omitted in Worker REST API mode
+                    this.initialized = true;
                 }
             }
         };
@@ -221,8 +222,9 @@ class AuthService {
     }
 
     getBackendUrl() {
-        // Fly.io Go Engine URL
-        return "https://tuktuk-engine.fly.dev/api/v1";
+        return (typeof window !== 'undefined' && window.TUKTUK_API_BASE)
+            ? window.TUKTUK_API_BASE
+            : "https://tuktukfeed-api.imtthailand2019.workers.dev";
     }
 
     isAuthenticated() {
