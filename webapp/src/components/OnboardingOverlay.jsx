@@ -76,12 +76,16 @@ export default function OnboardingOverlay({ onClose }) {
               {posts.map((post) => {
                 const mediaUrl = getMediaUrl(post.mediaUrls)
                 const isVid = isVideoEntry(post.mediaUrls)
+                const isYT = mediaUrl && /youtube\.com|youtu\.be/i.test(mediaUrl)
+                const poster = post.imageUrl || post.thumbnailUrl || ''
                 return (
                   <div key={post.id} className="onboarding-card" onClick={handleRedirect}>
                     <div className="onboarding-card-media">
-                      {isVid ? (
-                        <div className="onboarding-video-fallback">🎥 วิดีโอสั้น</div>
-                      ) : mediaUrl ? (
+                      {isVid && !isYT ? (
+                        <video src={mediaUrl} poster={poster} muted loop autoPlay playsInline style={{width: '100%', height: '100%', objectFit: 'cover', display: 'block', backgroundColor: '#000'}} />
+                      ) : isYT && poster ? (
+                        <img src={poster} alt="" loading="lazy" />
+                      ) : mediaUrl && !isVid ? (
                         <img src={mediaUrl} alt="" loading="lazy" />
                       ) : (
                         <div className="onboarding-text-fallback">📝 โพสต์</div>
