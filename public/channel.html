@@ -1460,10 +1460,18 @@
             </label>
             <input type="file" id="coverInput" hidden accept="image/*" onchange="handleCoverChange(this)">
         </div>
-        <button id="settingsBtn" class="settings-btn" style="display: none;" data-bs-toggle="offcanvas"
-            data-bs-target="#settingsMenu">
-            <i class="fas fa-cog"></i>
-        </button>
+        <div class="channel-top-actions position-absolute top-0 end-0 m-3 d-flex gap-2" style="z-index: 100;">
+            <button id="settingsBtn" class="btn btn-dark rounded-circle border-0 shadow-lg text-white d-flex align-items-center justify-content-center"
+                style="width: 42px; height: 42px; background: rgba(10, 14, 33, 0.7); backdrop-filter: blur(10px); font-size: 1.1rem; cursor: pointer;"
+                onclick="openSettingsModal()" title="การตั้งค่า">
+                <i class="fas fa-cog"></i>
+            </button>
+            <button id="moreOptionsBtn" class="btn btn-dark rounded-circle border-0 shadow-lg text-white d-flex align-items-center justify-content-center"
+                style="width: 42px; height: 42px; background: rgba(10, 14, 33, 0.7); backdrop-filter: blur(10px); font-size: 1.1rem; cursor: pointer;"
+                onclick="openMoreOptionsModal()" title="ตัวเลือกเพิ่มเติม">
+                <i class="fas fa-ellipsis-v"></i>
+            </button>
+        </div>
         <div class="channel-header">
             <div class="profile-container">
                 <img id="userAvatar" src="/images/logo.png" class="profile-pic" alt="Profile">
@@ -2057,8 +2065,9 @@
         // ========================================
         function updateProfileUI(user) {
             const currentUser = WizmobizAuth.getUser();
-            const currentUid = currentUser?.uid || currentUser?.lineUserId;
-            const isOwnProfile = (currentUid === currentTargetUserId);
+            const myIds = [currentUser?.uid, currentUser?.lineUserId, currentUser?.id].filter(Boolean).map(id => String(id).toLowerCase().trim());
+            const target = (currentTargetUserId || '').toLowerCase().trim();
+            const isOwnProfile = !currentTargetUserId || myIds.includes(target);
 
             const displayName = user.displayName || user.name || user.username
                 || currentUser?.displayName || 'TukTuk User';
@@ -2935,11 +2944,23 @@
             }, 400);
         };
 
-        function toggleFollowPrivacy(type, isPublic) {
-            showToast('อัปเดตความเป็นส่วนตัวเรียบร้อย', 'success');
+        function openSettingsModal() {
+            new bootstrap.Modal(document.getElementById('settingsModal')).show();
+        }
+
+        function openMoreOptionsModal() {
+            const currentUser = WizmobizAuth.getUser();
+            const myIds = [currentUser?.uid, currentUser?.lineUserId, currentUser?.id].filter(Boolean).map(id => String(id).toLowerCase().trim());
+            const target = (currentTargetUserId || '').toLowerCase().trim();
+            const isOwn = !currentTargetUserId || myIds.includes(target);
+            const ownOptions = document.getElementById('ownMoreOptions');
+            if (ownOptions) ownOptions.style.display = isOwn ? 'flex' : 'none';
+            new bootstrap.Modal(document.getElementById('moreOptionsModal')).show();
         }
 
         // Expose functions globally
+        window.openSettingsModal = openSettingsModal;
+        window.openMoreOptionsModal = openMoreOptionsModal;
         window.switchTab = switchTab;
         window.handleMainFollow = handleMainFollow;
         window.shareChannel = shareChannel;
@@ -3009,6 +3030,92 @@
                     <i class="fas fa-chart-line"
                         style="color:#6366f1;font-size:1.8rem;display:block;margin-bottom:8px;"></i>
                     <span style="color:white;font-weight:700;">ข้อมูลเชิงลึก</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal fade" id="settingsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.15); color: white; border-radius: 24px;">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title font-weight-bold d-flex align-items-center gap-2">
+                        <i class="fas fa-cog text-primary"></i> การตั้งค่าช่อง &amp; บัญชี
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="list-group list-group-flush bg-transparent">
+                        <a href="javascript:void(0)" onclick="bootstrap.Modal.getInstance(document.getElementById('settingsModal'))?.hide(); openEditProfileModal();" class="list-group-item list-group-item-action bg-transparent text-white border-bottom border-secondary d-flex align-items-center gap-3 py-3">
+                            <i class="fas fa-user-edit text-info" style="font-size: 1.3rem;"></i>
+                            <div>
+                                <div class="font-weight-bold">แก้ไขข้อมูลส่วนตัว</div>
+                                <small class="text-secondary">ชื่อ, รูปโปรไฟล์, รูปปก, Bio</small>
+                            </div>
+                        </a>
+                        <a href="javascript:void(0)" onclick="_tnav('seller-dashboard.html')" class="list-group-item list-group-item-action bg-transparent text-white border-bottom border-secondary d-flex align-items-center gap-3 py-3">
+                            <i class="fas fa-store text-warning" style="font-size: 1.3rem;"></i>
+                            <div>
+                                <div class="font-weight-bold">สตูดิโอผู้สร้าง &amp; ร้านค้า</div>
+                                <small class="text-secondary">จัดการสินค้าและการขายของคุณ</small>
+                            </div>
+                        </a>
+                        <a href="javascript:void(0)" onclick="showWallet()" class="list-group-item list-group-item-action bg-transparent text-white border-bottom border-secondary d-flex align-items-center gap-3 py-3">
+                            <i class="fas fa-wallet text-success" style="font-size: 1.3rem;"></i>
+                            <div>
+                                <div class="font-weight-bold">กระเป๋าเงิน &amp; คอยน์</div>
+                                <small class="text-secondary">ตรวจสอบเหรียญและสถิติยอดชม</small>
+                            </div>
+                        </a>
+                        <a href="javascript:void(0)" onclick="showQRCode()" class="list-group-item list-group-item-action bg-transparent text-white border-bottom border-secondary d-flex align-items-center gap-3 py-3">
+                            <i class="fas fa-qrcode" style="color: #a855f7; font-size: 1.3rem;"></i>
+                            <div>
+                                <div class="font-weight-bold">สแกน QR Code ช่อง</div>
+                                <small class="text-secondary">แชร์ช่องของคุณให้เพื่อนสแกน</small>
+                            </div>
+                        </a>
+                        <a href="javascript:void(0)" onclick="handleLogout()" class="list-group-item list-group-item-action bg-transparent text-danger d-flex align-items-center gap-3 py-3">
+                            <i class="fas fa-sign-out-alt" style="font-size: 1.3rem;"></i>
+                            <div>
+                                <div class="font-weight-bold">ออกจากระบบ</div>
+                                <small class="text-danger-50">ออกจากบัญชีบนอุปกรณ์นี้</small>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- More Options (3 Dots) Modal -->
+    <div class="modal fade" id="moreOptionsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content" style="background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.15); color: white; border-radius: 24px;">
+                <div class="modal-header border-0 pb-0">
+                    <h6 class="modal-title font-weight-bold">ตัวเลือกช่อง</h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-3">
+                    <div class="d-flex flex-column gap-2">
+                        <button class="btn btn-dark text-start border-secondary py-2 rounded-3 d-flex align-items-center gap-2" onclick="shareChannel(); bootstrap.Modal.getInstance(document.getElementById('moreOptionsModal'))?.hide();">
+                            <i class="fas fa-share-alt text-primary"></i> แชร์ช่องนี้
+                        </button>
+                        <button class="btn btn-dark text-start border-secondary py-2 rounded-3 d-flex align-items-center gap-2" onclick="copyProfileUrl(); bootstrap.Modal.getInstance(document.getElementById('moreOptionsModal'))?.hide();">
+                            <i class="fas fa-link text-info"></i> คัดลอกลิงก์ช่อง
+                        </button>
+                        <button class="btn btn-dark text-start border-secondary py-2 rounded-3 d-flex align-items-center gap-2" onclick="showQRCode(); bootstrap.Modal.getInstance(document.getElementById('moreOptionsModal'))?.hide();">
+                            <i class="fas fa-qrcode text-warning"></i> QR Code ช่อง
+                        </button>
+                        <div id="ownMoreOptions" style="display:none;" class="flex-column gap-2">
+                            <button class="btn btn-dark text-start border-secondary py-2 rounded-3 d-flex align-items-center gap-2" onclick="openEditProfileModal(); bootstrap.Modal.getInstance(document.getElementById('moreOptionsModal'))?.hide();">
+                                <i class="fas fa-pen text-success"></i> แก้ไขโปรไฟล์
+                            </button>
+                            <button class="btn btn-dark text-start border-secondary py-2 rounded-3 d-flex align-items-center gap-2" onclick="openSettingsModal(); bootstrap.Modal.getInstance(document.getElementById('moreOptionsModal'))?.hide();">
+                                <i class="fas fa-cog text-light"></i> ตั้งค่าช่อง
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
