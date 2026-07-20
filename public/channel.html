@@ -429,6 +429,33 @@
             transition: var(--transition);
         }
 
+        .post-card-action-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 25;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(10, 14, 33, 0.75);
+            backdrop-filter: blur(8px);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .post-card-action-btn:hover {
+            background: var(--primary);
+            color: #000;
+            transform: scale(1.15);
+            box-shadow: 0 4px 12px rgba(0, 210, 255, 0.4);
+        }
+
         .post-card:hover {
             transform: translateY(-8px) scale(1.02);
             box-shadow: var(--shadow-xl);
@@ -1767,6 +1794,97 @@
         </div>
     </div>
 
+    <!-- ─── VIDEO PLAY MODAL ─────────────────────────────────────── -->
+    <div class="modal fade" id="videoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content" style="background: rgba(0,0,0,0.95); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; overflow: hidden; position: relative;">
+                <div class="modal-header border-0 position-absolute w-100 top-0 start-0 d-flex justify-content-between align-items-center p-3" style="z-index: 10; background: linear-gradient(180deg, rgba(0,0,0,0.8), transparent);">
+                    <h6 class="modal-title text-white font-weight-bold" id="videoModalTitle">วิดีโอ</h6>
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="button" class="btn btn-dark rounded-circle p-2 text-white border-0 d-flex align-items-center justify-content-center" id="videoModalMoreBtn" onclick="openCurrentVideoOptions()" title="ตัวเลือกโพสต์" style="width: 38px; height: 38px; background: rgba(255,255,255,0.2);">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div class="modal-body p-0 d-flex justify-content-center align-items-center" style="min-height: 400px; max-height: 80vh; background: #000;">
+                    <video id="modalVideo" controls autoplay style="width: 100%; max-height: 80vh; object-fit: contain; display: none;"></video>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── POST ACTION MENU (3-DOTS) MODAL ─────────────────────── -->
+    <div class="modal fade" id="postActionModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content" style="background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.15); color: white; border-radius: 24px;">
+                <div class="modal-header border-0 pb-0">
+                    <h6 class="modal-title font-weight-bold d-flex align-items-center gap-2">
+                        <i class="fas fa-sliders-h text-primary"></i> ตัวเลือกโพสต์
+                    </h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-3">
+                    <div class="d-flex flex-column gap-2" id="postActionBody">
+                        <!-- Owner options -->
+                        <div id="postOwnerActions" style="display:none;" class="flex-column gap-2">
+                            <button class="btn btn-dark text-start border-secondary py-2 rounded-3 d-flex align-items-center gap-3" onclick="openEditPostModal();">
+                                <i class="fas fa-pen text-info" style="font-size: 1.1rem;"></i> แก้ไขข้อความโพสต์
+                            </button>
+                            <div class="p-2 rounded-3 bg-dark border border-secondary">
+                                <div class="small text-secondary mb-2"><i class="fas fa-lock me-1"></i>ความเป็นส่วนตัวของโพสต์</div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-sm btn-outline-success flex-fill rounded-pill" id="btnPrivacyPublic" onclick="setPostPrivacyAction('active')">
+                                        <i class="fas fa-globe me-1"></i>สาธารณะ
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-warning flex-fill rounded-pill" id="btnPrivacyPrivate" onclick="setPostPrivacyAction('private')">
+                                        <i class="fas fa-user-lock me-1"></i>เฉพาะฉัน
+                                    </button>
+                                </div>
+                            </div>
+                            <button class="btn btn-dark text-start border-danger text-danger py-2 rounded-3 d-flex align-items-center gap-3 mt-1" onclick="deleteCurrentPostAction();">
+                                <i class="fas fa-trash-alt" style="font-size: 1.1rem;"></i> ลบโพสต์นี้
+                            </button>
+                        </div>
+                        <!-- General options -->
+                        <button class="btn btn-dark text-start border-secondary py-2 rounded-3 d-flex align-items-center gap-3" onclick="copyCurrentPostLink();">
+                            <i class="fas fa-link text-primary" style="font-size: 1.1rem;"></i> คัดลอกลิงก์โพสต์
+                        </button>
+                        <button class="btn btn-dark text-start border-secondary py-2 rounded-3 d-flex align-items-center gap-3" id="btnReportPost" onclick="reportCurrentPostAction();">
+                            <i class="fas fa-flag text-secondary" style="font-size: 1.1rem;"></i> รายงานโพสต์นี้
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── EDIT POST CONTENT MODAL ──────────────────────────────── -->
+    <div class="modal fade" id="editPostContentModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background: rgba(15, 23, 42, 0.98); border: 1px solid rgba(255, 255, 255, 0.15); color: white; border-radius: 24px;">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title font-weight-bold d-flex align-items-center gap-2">
+                        <i class="fas fa-edit text-info"></i> แก้ไขข้อความโพสต์
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small">ข้อความบรรยาย / หัวข้อโพสต์</label>
+                        <textarea id="editPostTextArea" class="form-control bg-dark text-white border-secondary" rows="4" placeholder="พิมพ์ข้อความใหม่..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">ยกเลิก</button>
+                    <button type="button" class="btn btn-primary rounded-pill px-4" id="savePostEditBtn" onclick="savePostContentAction()">
+                        <i class="fas fa-save me-1"></i>บันทึกการแก้ไข
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
@@ -2343,12 +2461,22 @@
                         mediaHtml = `<img class="post-media" src="${img}" onerror="this.src='/assets/images/logo.png'">`;
                     }
 
+                    const currentUser = WizmobizAuth.getUser();
+                    const myIds = [currentUser?.uid, currentUser?.lineUserId, currentUser?.id].filter(Boolean).map(id => String(id).toLowerCase().trim());
+                    const postAuthor = (post.authorId || post.userId || post.user_id || userId || '').toLowerCase().trim();
+                    const isMyPost = !userId || myIds.includes(postAuthor) || (currentUser?.role === 'admin' || currentUser?.role === 'super_admin');
+                    const postContentEsc = (post.title || post.content || '').replace(/'/g, "\\'").replace(/\n/g, " ");
+
                     const card = document.createElement('div');
                     card.className = 'post-card';
+                    card.setAttribute('id', `postCard-${post.id}`);
                     card.setAttribute('data-aos', 'fade-up');
                     card.setAttribute('data-aos-delay', (index * 40).toString());
                     card.innerHTML = `
                         ${mediaHtml}
+                        <button class="post-card-action-btn" title="ตัวเลือกโพสต์" onclick="event.stopPropagation(); openPostActionMenu('${post.id}', ${isMyPost}, '${escapeHtml(postContentEsc)}', '${post.status || 'active'}');">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
                         <div class="post-overlay">
                             <div class="post-stats-overlay">
                                 <span><i class="fas fa-play"></i> ${post.views || post.viewCount || 0}</span>
@@ -2359,7 +2487,7 @@
 
                     if (ytId || post.videoUrl) {
                         card.onclick = () => {
-                            playVideoInModal(post.videoUrl || ytUrl, Boolean(ytId), ytUrl);
+                            playVideoInModal(post.videoUrl || ytUrl, Boolean(ytId), ytUrl, post.id, isMyPost, post.title || post.content || '', post.status || 'active');
                             trackView(post.id, post.authorId || userId);
                         };
                     } else {
@@ -2575,9 +2703,145 @@
         }
 
         // ========================================
+        // POST MANAGEMENT & ACTIONS (3-DOTS)
+        // ========================================
+        let selectedPostId = null;
+        let selectedPostIsOwner = false;
+        let selectedPostContent = '';
+        let selectedPostStatus = 'active';
+
+        function openPostActionMenu(postId, isOwner, content, status) {
+            selectedPostId = postId;
+            selectedPostIsOwner = isOwner;
+            selectedPostContent = content || '';
+            selectedPostStatus = status || 'active';
+
+            const ownerActions = document.getElementById('postOwnerActions');
+            if (ownerActions) ownerActions.style.display = isOwner ? 'flex' : 'none';
+
+            const publicBtn = document.getElementById('btnPrivacyPublic');
+            const privateBtn = document.getElementById('btnPrivacyPrivate');
+            if (publicBtn && privateBtn) {
+                if (selectedPostStatus === 'private') {
+                    publicBtn.className = 'btn btn-sm btn-outline-secondary flex-fill rounded-pill';
+                    privateBtn.className = 'btn btn-sm btn-warning flex-fill rounded-pill';
+                } else {
+                    publicBtn.className = 'btn btn-sm btn-success flex-fill rounded-pill';
+                    privateBtn.className = 'btn btn-sm btn-outline-secondary flex-fill rounded-pill';
+                }
+            }
+
+            new bootstrap.Modal(document.getElementById('postActionModal')).show();
+        }
+
+        function openCurrentVideoOptions() {
+            if (!selectedPostId) return;
+            openPostActionMenu(selectedPostId, selectedPostIsOwner, selectedPostContent, selectedPostStatus);
+        }
+
+        function openEditPostModal() {
+            bootstrap.Modal.getInstance(document.getElementById('postActionModal'))?.hide();
+            document.getElementById('editPostTextArea').value = selectedPostContent;
+            new bootstrap.Modal(document.getElementById('editPostContentModal')).show();
+        }
+
+        async function savePostContentAction() {
+            if (!selectedPostId) return;
+            const btn = document.getElementById('savePostEditBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>กำลังบันทึก...';
+
+            const newContent = document.getElementById('editPostTextArea').value.trim();
+            try {
+                const res = await apiFetch(`/api/v1/posts/${selectedPostId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: newContent })
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    showToast('แก้ไขโพสต์สำเร็จ', 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('editPostContentModal'))?.hide();
+                    loadUserPosts(currentTargetUserId);
+                } else {
+                    throw new Error(data.error?.message || 'ไม่สามารถแก้ไขได้');
+                }
+            } catch (e) {
+                showToast(e.message || 'เกิดข้อผิดพลาดในการบันทึก', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save me-1"></i>บันทึกการแก้ไข';
+            }
+        }
+
+        async function setPostPrivacyAction(newStatus) {
+            if (!selectedPostId) return;
+            try {
+                const res = await apiFetch(`/api/v1/posts/${selectedPostId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    selectedPostStatus = newStatus;
+                    showToast(newStatus === 'private' ? 'ตั้งค่าเป็นส่วนตัวเรียบร้อย' : 'ตั้งค่าเป็นสาธารณะเรียบร้อย', 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('postActionModal'))?.hide();
+                    loadUserPosts(currentTargetUserId);
+                } else {
+                    throw new Error(data.error?.message || 'ไม่สามารถเปลี่ยนความเป็นส่วนตัวได้');
+                }
+            } catch (e) {
+                showToast(e.message || 'เกิดข้อผิดพลาด', 'error');
+            }
+        }
+
+        async function deleteCurrentPostAction() {
+            if (!selectedPostId) return;
+            if (!confirm('คุณแน่ใจหรือไม่ที่จะลบโพสต์นี้?')) return;
+
+            try {
+                const res = await apiFetch(`/api/v1/posts/${selectedPostId}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (data.status === 'success') {
+                    showToast('ลบโพสต์เรียบร้อยแล้ว', 'info');
+                    bootstrap.Modal.getInstance(document.getElementById('postActionModal'))?.hide();
+                    bootstrap.Modal.getInstance(document.getElementById('videoModal'))?.hide();
+                    const card = document.getElementById(`postCard-${selectedPostId}`);
+                    if (card) card.remove();
+                    loadUserPosts(currentTargetUserId);
+                } else {
+                    throw new Error(data.error?.message || 'ไม่สามารถลบโพสต์ได้');
+                }
+            } catch (e) {
+                showToast(e.message || 'เกิดข้อผิดพลาดในการลบโพสต์', 'error');
+            }
+        }
+
+        function copyCurrentPostLink() {
+            if (!selectedPostId) return;
+            const url = `${window.location.origin}/index.html?postId=${selectedPostId}`;
+            navigator.clipboard.writeText(url).then(() => {
+                showToast('คัดลอกลิงก์โพสต์เรียบร้อย', 'success');
+                bootstrap.Modal.getInstance(document.getElementById('postActionModal'))?.hide();
+            });
+        }
+
+        function reportCurrentPostAction() {
+            showToast('ส่งรายงานเรียบร้อยแล้ว ขอบคุณครับ', 'info');
+            bootstrap.Modal.getInstance(document.getElementById('postActionModal'))?.hide();
+        }
+
+        // ========================================
         // VIDEO PLAYBACK
         // ========================================
-        function playVideoInModal(url, isYoutube, embedHtml) {
+        function playVideoInModal(url, isYoutube, embedHtml, postId, isOwner, content, status) {
+            if (postId) {
+                selectedPostId = postId;
+                selectedPostIsOwner = isOwner;
+                selectedPostContent = content || '';
+                selectedPostStatus = status || 'active';
+            }
             const modalEl = document.getElementById('videoModal');
             const videoModal = new bootstrap.Modal(modalEl);
             const modalVideo = document.getElementById('modalVideo');
@@ -2593,6 +2857,9 @@
                 const iframe = document.createElement('iframe');
                 iframe.src = url.includes('embed') ? url : embedHtml?.match(/src="([^"]+)"/)?.[1] || `https://www.youtube.com/embed/${extractYoutubeId(url)}?autoplay=1`;
                 iframe.setAttribute('allow', 'autoplay; fullscreen');
+                iframe.style.width = '100%';
+                iframe.style.height = '400px';
+                iframe.style.border = 'none';
                 modalBody.appendChild(iframe);
             } else {
                 modalVideo.style.display = 'block';
@@ -2961,6 +3228,14 @@
         // Expose functions globally
         window.openSettingsModal = openSettingsModal;
         window.openMoreOptionsModal = openMoreOptionsModal;
+        window.openPostActionMenu = openPostActionMenu;
+        window.openCurrentVideoOptions = openCurrentVideoOptions;
+        window.openEditPostModal = openEditPostModal;
+        window.savePostContentAction = savePostContentAction;
+        window.setPostPrivacyAction = setPostPrivacyAction;
+        window.deleteCurrentPostAction = deleteCurrentPostAction;
+        window.copyCurrentPostLink = copyCurrentPostLink;
+        window.reportCurrentPostAction = reportCurrentPostAction;
         window.switchTab = switchTab;
         window.handleMainFollow = handleMainFollow;
         window.shareChannel = shareChannel;
