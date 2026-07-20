@@ -1634,26 +1634,23 @@ if ('serviceWorker' in navigator) {
             const targetPostId = urlParams.get('post') || urlParams.get('postId') || urlParams.get('id');
             const forceExplore = urlParams.get('category') === 'all' || urlParams.get('cat') === 'all';
 
-            if (window.innerWidth >= PC_BREAKPOINT && !targetPostId && !forceExplore) {
+            if (window.innerWidth >= PC_BREAKPOINT) {
                 window.pcInit();
+                if (targetPostId) {
+                    // Desktop deep-linked to video
+                    window.pcSwitchToVideoFeed('all');
+                }
             } else {
-                // Shared post ID OR forced Explore
+                // Mobile
                 if (targetPostId || forceExplore) {
-                    if (window.innerWidth >= PC_BREAKPOINT) {
-                        // Desktop deep-linked to video -> Ensure layout wrapper exists, then switch to video panel
-                        window.pcInit();
-                        window.pcSwitchToVideoFeed('all');
-                    } else {
-                        // Mobile deep-linked to video -> Remove any residual desktop classes
-                        const tf = document.getElementById('tuktukFeed');
-                        const sf = document.getElementById('standardFeed');
-                        const pc = document.getElementById('pcSocialContent');
-                        if (tf) tf.style.display = 'block';
-                        if (sf) sf.style.display = 'none';
-                        if (pc) pc.style.display = 'none';
-                        document.documentElement.classList.remove('pc-mode');
-                        document.body.classList.remove('pc-mode');
-                    }
+                    const tf = document.getElementById('tuktukFeed');
+                    const sf = document.getElementById('standardFeed');
+                    const pc = document.getElementById('pcSocialContent');
+                    if (tf) tf.style.display = 'block';
+                    if (sf) sf.style.display = 'none';
+                    if (pc) pc.style.display = 'none';
+                    document.documentElement.classList.remove('pc-mode');
+                    document.body.classList.remove('pc-mode');
                 }
                 mobileInit();
             }
