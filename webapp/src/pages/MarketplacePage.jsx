@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { api, getToken } from '../api/client.js'
 import ProductCard from '../components/ProductCard.jsx'
+import ImageCarousel from '../components/ImageCarousel.jsx'
 import OnboardingOverlay from '../components/OnboardingOverlay.jsx'
 import { parseImages, formatPrice, timeAgo } from '../lib/format.js'
 import { useCart } from '../cart/CartContext.jsx'
@@ -256,7 +257,6 @@ export default function MarketplacePage() {
 
 function ProductDetail({ product, onClose }) {
   const images = productImages(product)
-  const [imgIndex, setImgIndex] = useState(0)
   const [qty, setQty] = useState(1)
   const [viewCount, setViewCount] = useState(Number(firstDefined(product.viewCount, product.views_count, 0) || 0))
   const { addItem } = useCart()
@@ -284,20 +284,7 @@ function ProductDetail({ product, onClose }) {
         </div>
         {images.length > 0 && (
           <div className="product-detail-media">
-            <img src={images[Math.min(imgIndex, images.length - 1)]} alt="" />
-            {images.length > 1 && (
-              <div className="product-detail-thumbs">
-                {images.map((src, index) => (
-                  <img
-                    key={src}
-                    src={src}
-                    alt=""
-                    className={index === imgIndex ? 'active' : ''}
-                    onClick={() => setImgIndex(index)}
-                  />
-                ))}
-              </div>
-            )}
+            <ImageCarousel images={images} alt={product.title || product.productName || ''} fit="contain" className="product-carousel" />
           </div>
         )}
         <p className="product-detail-price">{formatPrice(product.price)}</p>
