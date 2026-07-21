@@ -19,6 +19,35 @@ function getLineAccessToken(env, isTuktuk) {
     : (env.INJECTION_CHANNEL_ACCESS_TOKEN || env.LINE_CHANNEL_ACCESS_TOKEN);
 }
 
+function getLineChannelSecret(env, isTuktuk) {
+  return isTuktuk
+    ? env.TUKTUK_CHANNEL_SECRET
+    : (env.LINE_CHANNEL_SECRET || env.INJECTION_CHANNEL_SECRET);
+}
+
+// ตรวจลายเซ็น X-Line-Signature = base64( HMAC-SHA256(channelSecret, rawBody) )
+// คืน true ถ้าถูกต้อง, false ถ้าผิด (ป้องกัน webhook ปลอม)
+async function verifyLineSignature(rawBody, signature, channelSecret) {
+  if (!signature || !channelSecret) return false;
+  try {
+    const enc = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      'raw', enc.encode(channelSecret),
+      { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+    );
+    const mac = await crypto.subtle.sign('HMAC', key, enc.encode(rawBody));
+    const expected = btoa(String.fromCharCode(...new Uint8Array(mac)));
+    // เทียบแบบ constant-time เท่าที่ทำได้
+    if (expected.length !== signature.length) return false;
+    let diff = 0;
+    for (let i = 0; i < expected.length; i++) diff |= expected.charCodeAt(i) ^ signature.charCodeAt(i);
+    return diff === 0;
+  } catch (e) {
+    console.error('[LINE Webhook] signature verify error:', e.message);
+    return false;
+  }
+}
+
 async function replyToLine(lineAccessToken, replyToken, messages) {
   return fetch('https://api.line.me/v2/bot/message/reply', {
     method: 'POST',
@@ -33,7 +62,21 @@ async function replyToLine(lineAccessToken, replyToken, messages) {
 // ── หัวใจ: จัดการ webhook event ────────────────────────────
 async function handleWebhookEvent(c, isTuktuk = false) {
   try {
-    const body = await c.req.json();
+    // ต้องอ่าน raw body ก่อน parse — ใช้คำนวณลายเซ็น HMAC
+    const rawBody = await c.req.text();
+
+    // ตรวจลายเซ็น: ถ้ามี channel secret ตั้งไว้ = บังคับตรวจ (กัน event ปลอม)
+    const channelSecret = getLineChannelSecret(c.env, isTuktuk);
+    if (channelSecret) {
+      const signature = c.req.header('X-Line-Signature') || c.req.header('x-line-signature');
+      const valid = await verifyLineSignature(rawBody, signature, channelSecret);
+      if (!valid) {
+        console.warn('[LINE Webhook] Invalid signature — rejected');
+        return c.json({ error: 'Invalid signature' }, 401);
+      }
+    }
+
+    const body = JSON.parse(rawBody || '{}');
     const events = body.events || [];
 
     if (events.length === 0) {
