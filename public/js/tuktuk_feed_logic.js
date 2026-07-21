@@ -2270,7 +2270,7 @@ async function loadMixedFeed(container, mode, forceRefresh = false) {
             .then(value => ({ status: 'fulfilled', value }))
             .catch(reason => ({ status: 'rejected', reason }));
 
-        const goData = goResult.status === 'fulfilled' && goResult.value
+        let goData = goResult.status === 'fulfilled' && goResult.value
             && ((goResult.value.posts || []).length > 0 || (goResult.value.news || []).length > 0 || (goResult.value.products || []).length > 0)
             ? goResult.value : null;
 
@@ -2280,6 +2280,20 @@ async function loadMixedFeed(container, mode, forceRefresh = false) {
                 mode,
                 message: goResult.reason?.message || String(goResult.reason),
             });
+        }
+
+        // Auto-widen: near_me + เลือกจังหวัด แล้วได้ 0 รายการ → ลองใหม่แบบไม่กรองจังหวัด
+        // (โพสต์/สินค้าที่ยังไม่ระบุจังหวัดจะได้แสดง แทนที่จะเจอฟีดว่าง)
+        if (!goData && mode === 'near_me' && province) {
+            recordFeedDiagnostic('near_me_auto_widen', { mode, province });
+            const wideResult = await fetchGoEngineFeed(userId, '', mode)
+                .then(value => ({ status: 'fulfilled', value }))
+                .catch(reason => ({ status: 'rejected', reason }));
+            if (wideResult.status === 'fulfilled' && wideResult.value
+                && ((wideResult.value.posts || []).length > 0 || (wideResult.value.news || []).length > 0 || (wideResult.value.products || []).length > 0)) {
+                goData = wideResult.value;
+                console.log('[TukTukFeed] near_me auto-widen: แสดงฟีดทั้งหมด (จังหวัดที่เลือกไม่มีรายการ)');
+            }
         }
 
         let fbData = null;
