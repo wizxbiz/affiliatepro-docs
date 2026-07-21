@@ -756,6 +756,22 @@ curl -sL https://tuktukfeed.com/app/sw.js | grep tuktuk-app-v3
   - Endpoints: `POST /api/v1/users/:id/follow`, `DELETE /api/v1/users/:id/follow`, `GET /api/v1/users/:id/followers`, `GET /api/v1/users/:id/following`
 - Deploy ทั้ง Worker Backend และ Pages Client เรียบร้อยแล้ว
 
+## 26. 📌 Post Management & Share Enhancements
+
+**ไฟล์:** `public/channel.html`, `webapp/src/pages/ProfilePage.jsx`, `webapp/src/components/FeedItem.jsx`, `webapp/src/api/client.js`
+
+### 1. ระบบจัดการโพสต์ (3-dots Action Menu)
+- **ProfilePage (App) & Channel (Legacy):** เพิ่มปุ่มจุด 3 จุด (⋮) ในแต่ละการ์ดโพสต์และใน Modal เล่นวิดีโอ เพื่อให้เจ้าของโพสต์จัดการโพสต์ตัวเองได้
+- **แก้ไขข้อความโพสต์:** เชื่อมต่อกับ `PUT /api/v1/posts/:id` เพื่ออัปเดตเนื้อหาโพสต์ โดยส่ง payload `{ content: ... }`
+- **ซ่อน/แสดงโพสต์ (Privacy Toggle):** กดปุ่มเปลี่ยนสถานะโพสต์ระหว่าง `active` (สาธารณะ) และ `private` (ส่วนตัว)
+- **ลบโพสต์:** เพิ่มการยืนยันก่อนลบและเรียก `DELETE /api/v1/posts/:id`
+- **ระบบสำรอง (Fallback) ใน API Client:** ปรับให้ `api.posts.update` รองรับทั้ง payload แบบ object ปกติ และแบบ string เดิมที่เคยส่งไปเป็น `{ content }`
+
+### 2. ยกระดับการแชร์ (Share Integration)
+- **Web Share API (`navigator.share`):** นำระบบ Native Share มาใช้กับทุกจุดที่มีการแชร์ (หน้า Channel, หน้า Profile, หน้า FeedItem) เพื่อให้แชร์เข้าแอปอื่นบนมือถือได้ลื่นไหลที่สุด
+- **Fallback to Clipboard:** ปรับปรุงระบบรองรับเมื่อเบราว์เซอร์ไม่รองรับ `navigator.share` หรือผู้ใช้กดยกเลิก โดยสลับไปคัดลอกลิงก์อัตโนมัติ (Copy to Clipboard) พร้อมแสดง `alert()` แจ้งเตือนอย่างชัดเจนแทนที่จะเงียบหายไป
+- **Export Window Functions:** แก้บั๊กที่ปุ่มแชร์ใน `channel.html` เรียกใช้งานฟังก์ชันไม่ได้เพราะติด Scope โดยทำการ map เข้า `window.shareCurrentPostAction` 
+
 ---
 
 ## 🎯 สถานะปัจจุบัน & งานค้าง (อัปเดต)
@@ -767,6 +783,8 @@ curl -sL https://tuktukfeed.com/app/sw.js | grep tuktuk-app-v3
 - LINE Flex เมนูทุกคำสั่ง
 - live_sessions table, dashboard fixes
 - **UI & Video Feed Fixes** (YouTube Iframe 9:16 CSS trick, Desktop Feed regex, OnboardingOverlay CSS)
+- **Post Management (Edit/Privacy/Delete)** ในช่องและโปรไฟล์
+- **Share Enhancements** อัปเกรดระบบแชร์ทุกมิติ (Native Share + Fallback Clipboard)
 
 ### ⚠️ งานค้าง / ต้องทำต่อ
 1. **LINE: เปลี่ยนโหมดแชท → บอท** ใน manager.line.biz (สำคัญสุด — ไม่งั้น webhook ไม่ทำงาน)
