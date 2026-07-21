@@ -177,6 +177,10 @@ async function handleDbQuery(c) {
   else if (collection === 'community_products') tableName = 'products';
   else if (collection === 'line_users') tableName = 'users';
   else if (collection === 'ai_post_usage') tableName = 'user_usage';
+  // กัน injection ทางชื่อตาราง (collection มาจาก URL) — อนุญาตเฉพาะ a-z0-9_
+  if (!/^[a-z_][a-z0-9_]*$/.test(tableName)) {
+    return c.json({ results: [] });
+  }
   let sql = `SELECT * FROM ${tableName}`;
   let binds = [];
   let whereClauses = [];
@@ -189,6 +193,12 @@ async function handleDbQuery(c) {
     binds.push(parentId);
   }
 
+  // ตรวจชื่อคอลัมน์: อนุญาตเฉพาะ a-z 0-9 _ (กัน SQL injection ทางชื่อ field/order)
+  const safeCol = (name) => {
+    const col = String(name).replace(/[A-Z]/g, c => `_${c.toLowerCase()}`);
+    return /^[a-z_][a-z0-9_]*$/.test(col) ? col : null;
+  };
+
   // Parse filters: filter=status:==:active
   const filters = c.req.queries('filter') || [];
   for (const f of filters) {
@@ -198,8 +208,8 @@ async function handleDbQuery(c) {
       const op = parts[1];
       const val = parts.slice(2).join(':');
 
-      let dbField = field.replace(/[A-Z]/g, c => `_${c.toLowerCase()}`);
-      if (dbField === 'created_at' && tableName === 'products') dbField = 'created_at';
+      const dbField = safeCol(field);
+      if (!dbField) continue; // ชื่อคอลัมน์ไม่ปลอดภัย → ข้าม
 
       if (op === 'array-contains') {
         whereClauses.push(`${dbField} LIKE ?`);
@@ -226,8 +236,10 @@ async function handleDbQuery(c) {
   let orderClauses = [];
   for (const o of orders) {
     const [field, dir] = o.split(':');
-    let dbField = field.replace(/[A-Z]/g, c => `_${c.toLowerCase()}`);
-    orderClauses.push(`${dbField} ${dir.toUpperCase()}`);
+    const dbField = safeCol(field);
+    if (!dbField) continue; // ชื่อคอลัมน์ไม่ปลอดภัย → ข้าม
+    const dbDir = String(dir).toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
+    orderClauses.push(`${dbField} ${dbDir}`);
   }
   if (orderClauses.length > 0) {
     sql += ` ORDER BY ${orderClauses.join(', ')}`;
@@ -274,6 +286,31 @@ async function handleDbDoc(c) {
   else if (collection === 'ai_post_usage') tableName = 'user_usage';
   if (collection === 'messages' && parentId) {
     tableName = 'chat_messages';
+  }
+
+  // กัน injection ทางชื่อตาราง (collection มาจาก URL) — อนุญาตเฉพาะ a-z0-9_
+  if (!/^[a-z_][a-z0-9_]*$/.test(tableName)) {
+    return c.json({ error: 'Invalid collection' }, 400);
+  }
+
+  const session = c.get('session');
+  const isAdmin = _isAdmin(session);
+  // ตารางที่ต้องเช็คความเป็นเจ้าของก่อนแก้/ลบ (คอลัมน์ที่ระบุ = เจ้าของ)
+  const OWNER_COLUMN = { products: 'seller_id' };
+  const ownerCol = OWNER_COLUMN[tableName];
+
+  // เช็คความเป็นเจ้าของสำหรับ PATCH/PUT(update)/DELETE บนตารางที่มีเจ้าของ
+  // (PUT ที่เป็น insert ใหม่จัดการแยกด้านล่าง — บังคับ owner = ผู้ใช้ปัจจุบัน)
+  if (ownerCol && !isAdmin && (method === 'DELETE' || method === 'PATCH' || method === 'PUT')) {
+    const existingRow = await db.prepare(`SELECT ${ownerCol} FROM ${tableName} WHERE id = ?`).bind(id).first();
+    if (existingRow) {
+      // แถวมีอยู่แล้ว → ต้องเป็นเจ้าของเท่านั้น
+      if (!session || existingRow[ownerCol] !== session.uid) {
+        return c.json({ error: 'Forbidden — ไม่ใช่เจ้าของรายการนี้' }, 403);
+      }
+    } else if (!session) {
+      return c.json({ error: 'Unauthorized' }, 401);
+    }
   }
 
   if (method === 'GET') {
@@ -332,6 +369,10 @@ async function handleDbDoc(c) {
 
 
       const insertBody = mapDocumentForTable(tableName, normalizedBody, id, parentId);
+      // กันสวมรอย: บังคับ owner = ผู้ใช้ปัจจุบัน (ไม่เชื่อค่าจาก body) ยกเว้น admin
+      if (ownerCol && session && !isAdmin) {
+        insertBody[ownerCol] = session.uid;
+      }
       await ensureRelatedRows(db, tableName, insertBody);
       for (const [dbField, val] of Object.entries(insertBody)) {
         if (dbField === 'id') continue;
@@ -377,6 +418,8 @@ async function handleDbDoc(c) {
       }
 
       const updateBody = mapDocumentForTable(tableName, normalizedBody, id, parentId, true);
+      // กันสวมรอย: ห้ามเปลี่ยนเจ้าของผ่าน PATCH/PUT (non-admin)
+      if (ownerCol && !isAdmin) delete updateBody[ownerCol];
       await ensureRelatedRows(db, tableName, updateBody);
       for (const [dbField, v] of Object.entries(updateBody)) {
         if (dbField === 'id') continue;

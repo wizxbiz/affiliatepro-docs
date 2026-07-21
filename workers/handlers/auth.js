@@ -743,8 +743,39 @@ authRoutes.post('/verify-pin', async (c) => {
   const { lineUserId, pin } = body;
 
   if (!pin) return c.json({ error: 'Missing pin' }, 400);
+  // PIN ต้องเป็นตัวเลข 6 หลักเท่านั้น (กันการยิงค่าแปลกๆ)
+  if (!/^\d{4,8}$/.test(String(pin))) {
+    return c.json({ success: false, message: 'Invalid PIN format' }, 400);
+  }
 
   const db = new DB(c.env.DB);
+
+  // ── Rate limiting กัน brute-force (KV) — ล็อคทั้งราย IP และราย target ──
+  const kv = c.env.SESSIONS;
+  const ip = c.req.header('CF-Connecting-IP') || c.req.header('X-Forwarded-For') || 'unknown';
+  const PIN_LOCK_MS = 15 * 60_000;   // ล็อค 15 นาที
+  const PIN_MAX_TRIES = 8;           // ผิดเกิน 8 ครั้ง → ล็อค
+  const ipLockKey = `pin_lock:ip:${ip}`;
+  const ipTryKey = `pin_try:ip:${ip}`;
+
+  if (kv) {
+    const locked = await kv.get(ipLockKey);
+    if (locked) {
+      return rateLimited(c, 'พยายามหลายครั้งเกินไป กรุณารอสักครู่', 900);
+    }
+  }
+
+  // เพิ่มตัวนับความพยายามที่ล้มเหลว + ล็อคถ้าเกิน
+  const bumpFail = async () => {
+    if (!kv) return;
+    const cur = parseInt(await kv.get(ipTryKey) || '0', 10) + 1;
+    if (cur >= PIN_MAX_TRIES) {
+      await kv.put(ipLockKey, '1', { expirationTtl: Math.floor(PIN_LOCK_MS / 1000) });
+      await kv.delete(ipTryKey);
+    } else {
+      await kv.put(ipTryKey, String(cur), { expirationTtl: 900 });
+    }
+  };
 
   try {
     let pinRecord;
@@ -760,19 +791,22 @@ authRoutes.post('/verify-pin', async (c) => {
       }
     }
 
-    if (!pinRecord) return c.json({ success: false, message: 'PIN not found' }, 404);
+    if (!pinRecord) { await bumpFail(); return c.json({ success: false, message: 'PIN not found' }, 404); }
 
     // ตรวจสอบ PIN expired
     if (Date.now() > pinRecord.expires_at) {
+      await bumpFail();
       return c.json({ success: false, message: 'PIN expired' }, 401);
     }
 
     // ตรวจสอบ PIN ถูกต้อง
     if (pinRecord.pin !== pin) {
+      await bumpFail();
       return c.json({ success: false, message: 'Invalid PIN' }, 401);
     }
 
-    // ลบ PIN หลังใช้งาน (one-time)
+    // สำเร็จ → ล้างตัวนับความพยายาม + ลบ PIN (one-time)
+    if (kv) await kv.delete(ipTryKey);
     await db.deleteWebPin(targetLineUserId);
 
     // สร้าง session token
