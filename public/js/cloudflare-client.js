@@ -568,6 +568,14 @@
       return db;
     },
     storage() { return window.storage; },
+    // Firebase Cloud Messaging stub — push ยังไม่ย้ายมา CF, ทำ no-op กัน crash
+    messaging() {
+      return {
+        getToken() { return Promise.resolve(null); },
+        onMessage() { return () => {}; },
+        deleteToken() { return Promise.resolve(true); },
+      };
+    },
     analytics() {
       return {
         logEvent(name, params) {
