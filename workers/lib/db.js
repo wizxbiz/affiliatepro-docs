@@ -33,6 +33,18 @@ export class DB {
     await this.d1.prepare("ALTER TABLE users ADD COLUMN seller_tier TEXT;").run().catch(() => {});
   }
 
+  // ตลาดใกล้บ้าน — location columns (idempotent, กัน prod ยังไม่มี)
+  // เฟส 1 ใช้ seller_location (text) + province_code (TIS-1099); amphoe/tambon เผื่อเฟสหน้า
+  async ensureProductsColumns() {
+    if (this._productsColsEnsured) return;      // ทำครั้งเดียวต่อ worker instance
+    this._productsColsEnsured = true;
+    await this.d1.prepare("ALTER TABLE products ADD COLUMN seller_location TEXT;").run().catch(() => {});
+    await this.d1.prepare("ALTER TABLE products ADD COLUMN province_code TEXT;").run().catch(() => {});
+    await this.d1.prepare("ALTER TABLE products ADD COLUMN amphoe_code TEXT;").run().catch(() => {});
+    await this.d1.prepare("ALTER TABLE products ADD COLUMN tambon_code TEXT;").run().catch(() => {});
+    await this.d1.prepare("CREATE INDEX IF NOT EXISTS idx_products_province_code ON products(province_code);").run().catch(() => {});
+  }
+
   async getUserById(id) {
     await this.ensureUsersColumns();
     return this.d1.prepare('SELECT * FROM users WHERE id = ?').bind(id).first();
@@ -313,7 +325,8 @@ export class DB {
   // PRODUCTS (Marketplace)
   // โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
-  async getProducts({ category, limit = 20, offset = 0, search, province } = {}) {
+  async getProducts({ category, limit = 20, offset = 0, search, province, provinceCode } = {}) {
+    await this.ensureProductsColumns();
     let query = `
       SELECT p.*, u.display_name as seller_name, u.picture_url as seller_picture
       FROM products p LEFT JOIN users u ON p.seller_id = u.id
@@ -341,7 +354,9 @@ export class DB {
       }
     }
 
-    if (province) { query += " AND COALESCE(p.seller_location, '') LIKE ?"; binds.push(`%${province}%`); }
+    // เฟส 1: province_code เป็นตัวกรองหลัก (แม่นกว่า text); fallback text ผ่าน seller_location LIKE
+    if (provinceCode) { query += " AND p.province_code = ?"; binds.push(String(provinceCode)); }
+    else if (province) { query += " AND COALESCE(p.seller_location, '') LIKE ?"; binds.push(`%${province}%`); }
 
     // เรียงลำดับ: ถ้า search ให้ title match ก่อน ตามด้วย views_count
     if (search) {
@@ -462,21 +477,23 @@ export class DB {
   }
 
   async createProduct(product) {
+    await this.ensureProductsColumns();
     return this.d1.prepare(`
       INSERT INTO products (
         id, seller_id, title, description, price, images, category, status,
-        seller_phone, seller_line_id, seller_facebook, seller_location,
+        seller_phone, seller_line_id, seller_facebook, seller_location, province_code,
         product_unit, product_stock, is_otop, is_organic, video_url,
         created_at
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(
       product.id, product.sellerId, product.title,
       product.description, product.price,
       typeof product.images === 'string' ? product.images : JSON.stringify(product.images || []),
       product.category || 'general', product.status || 'active',
       product.sellerPhone || '', product.sellerLineId || '', product.sellerFacebook || '',
-      product.sellerLocation || '', product.productUnit || '', Number(product.productStock || 0),
+      product.sellerLocation || '', product.provinceCode || product.province_code || '',
+      product.productUnit || '', Number(product.productStock || 0),
       product.isOTOP ? 1 : 0, product.isOrganic ? 1 : 0, product.videoUrl || '',
       product.createdAt || Date.now()
     ).run();

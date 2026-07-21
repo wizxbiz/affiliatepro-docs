@@ -6199,25 +6199,9 @@
                     <!-- Province -->
                     <div class="filter-pill" id="provincePill">
                         <i class="fas fa-map-marker-alt filter-pill-icon"></i>
+                        <!-- ตัวเลือกจังหวัดถูก populate จาก /data/provinces.json (77 จังหวัด) ตอนโหลดหน้า -->
                         <select id="provinceSelect" class="filter-select" onchange="onProvinceChange()">
                             <option value="">ทุกจังหวัด</option>
-                            <option value="กรุงเทพมหานคร">กรุงเทพมหานคร</option>
-                            <option value="นนทบุรี">นนทบุรี</option>
-                            <option value="ปทุมธานี">ปทุมธานี</option>
-                            <option value="สมุทรปราการ">สมุทรปราการ</option>
-                            <option value="เชียงใหม่">เชียงใหม่</option>
-                            <option value="เชียงราย">เชียงราย</option>
-                            <option value="ชลบุรี">ชลบุรี</option>
-                            <option value="ระยอง">ระยอง</option>
-                            <option value="ภูเก็ต">ภูเก็ต</option>
-                            <option value="สงขลา">สงขลา</option>
-                            <option value="ขอนแก่น">ขอนแก่น</option>
-                            <option value="นครราชสีมา">นครราชสีมา</option>
-                            <option value="พระนครศรีอยุธยา">พระนครศรีอยุธยา</option>
-                            <option value="สุราษฎร์ธานี">สุราษฎร์ธานี</option>
-                            <option value="อุดรธานี">อุดรธานี</option>
-                            <option value="เชียงใหม่">เชียงใหม่</option>
-                            <option value="นครศรีธรรมราช">นครศรีธรรมราช</option>
                         </select>
                         <i class="fas fa-chevron-down filter-arrow"></i>
                     </div>
@@ -9179,7 +9163,9 @@
         let searchQuery = '';
         let currentSort = 'newest';
         let currentPriceFilter = 'all';
-        let currentProvince = '';
+        let currentProvince = '';       // ชื่อจังหวัด (text) — ใช้กับ card/legacy filter
+        let currentProvinceCode = '';   // TIS-1099 code — ใช้เป็นตัวกรองหลัก (server-side)
+        let PROVINCES = [];             // โหลดจาก /data/provinces.json
         let isOtopToggle = false;
         let currentSellerId = null; // Filter logic for seller shops
         let wishlist = JSON.parse(localStorage.getItem('tuktuk_wishlist') || '[]');
@@ -9676,7 +9662,9 @@
             const filters = {
                 query: searchQuery,
                 category: currentCategory,
-                province: currentProvince,
+                // จังหวัดกรอง server-side ด้วย province_code แล้ว (allProducts มีเฉพาะจังหวัดที่เลือก)
+                // จึงไม่กรองซ้ำ client-side เพื่อกัน text mismatch (seller_location != ชื่อจังหวัดเป๊ะ)
+                province: '',
                 minPrice: minP,
                 maxPrice: maxP,
                 isOtop: isOtopToggle,
@@ -9766,9 +9754,37 @@
             filterProducts();
         }
 
+        // โหลด 77 จังหวัดจาก JSON แล้ว populate dropdown (value = code, label = ชื่อไทย)
+        async function populateProvinceDropdown() {
+            try {
+                const res = await fetch('/data/provinces.json', { cache: 'force-cache' });
+                if (!res.ok) return;
+                PROVINCES = await res.json();
+                const sel = document.getElementById('provinceSelect');
+                if (!sel) return;
+                // เก็บ option "ทุกจังหวัด" ตัวแรกไว้ แล้วต่อ 77 จังหวัด (เรียงตามชื่อไทย)
+                const sorted = [...PROVINCES].sort((a, b) => a.name_th.localeCompare(b.name_th, 'th'));
+                const frag = document.createDocumentFragment();
+                sorted.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p.code;              // ส่ง code ไป server (province_code)
+                    opt.dataset.nameTh = p.name_th;
+                    opt.textContent = p.name_th;
+                    frag.appendChild(opt);
+                });
+                sel.appendChild(frag);
+            } catch (e) {
+                console.warn('[marketplace] โหลด provinces.json ไม่สำเร็จ:', e.message);
+            }
+        }
+
         function onProvinceChange() {
-            currentProvince = document.getElementById('provinceSelect').value;
-            filterProducts();
+            const sel = document.getElementById('provinceSelect');
+            currentProvinceCode = sel.value || '';
+            const opt = sel.options[sel.selectedIndex];
+            currentProvince = (opt && opt.dataset && opt.dataset.nameTh) ? opt.dataset.nameTh : '';
+            // โหลดใหม่จาก server พร้อมกรอง province_code (server-side) — ไม่ใช่ filter ใน memory
+            loadProducts();
         }
 
         function onOtopToggleChange() {
@@ -10911,8 +10927,14 @@
 
                 // Main Query: Active Status + Sorted by Date
                 let query = db.collection('marketplace_items')
-                    .where('status', '==', 'active')
-                    .orderBy('createdAt', 'desc');
+                    .where('status', '==', 'active');
+
+                // ตลาดใกล้บ้าน — กรองจังหวัด server-side ด้วย province_code (TIS-1099)
+                if (currentProvinceCode) {
+                    query = query.where('province_code', '==', currentProvinceCode);
+                }
+
+                query = query.orderBy('createdAt', 'desc');
 
                 if (lastProductDoc) {
                     query = query.startAfter(lastProductDoc);
@@ -10924,6 +10946,16 @@
 
                 if (snapshot.empty) {
                     if (!isLoadMore) {
+                        // ตลาดใกล้บ้าน — cold-start auto-widen: เลือกจังหวัดแล้วไม่เจอ → ถอยไปแสดงทั้งหมด
+                        if (currentProvinceCode) {
+                            const pName = currentProvince || 'จังหวัดที่เลือก';
+                            currentProvinceCode = '';
+                            currentProvince = '';
+                            const selEl = document.getElementById('provinceSelect');
+                            if (selEl) selEl.value = '';
+                            showToast(`ยังไม่มีสินค้าใน${pName} — แสดงสินค้าทั้งหมดแทน`, 'info');
+                            return loadProducts(); // โหลดใหม่แบบไม่กรองจังหวัด
+                        }
                         // Diagnostic: Check if ANY products exist at all (ignoring status)
                         const checkAny = await db.collection('marketplace_items').limit(1).get();
                         if (checkAny.empty) {
@@ -12314,6 +12346,9 @@
         // Check on page load
         document.addEventListener('DOMContentLoaded', async function () {
             console.log('🚀 Marketplace Initializing...');
+
+            // 0. ตลาดใกล้บ้าน — populate dropdown 77 จังหวัดจาก JSON (ไม่บล็อกการโหลดสินค้า)
+            populateProvinceDropdown();
 
             // 1. Try to load from cache for INSTANT UI (Optimistic Rendering)
             try {

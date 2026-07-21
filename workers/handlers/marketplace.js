@@ -17,11 +17,11 @@ export const marketplaceRoutes = new Hono();
 // ── GET /api/marketplace/products ─────────────────────────────
 // แทน marketplaceGetProducts Firebase function
 marketplaceRoutes.get('/products', optionalAuth, async (c) => {
-  const { category, limit = 20, offset = 0, search } = c.req.query();
+  const { category, limit = 20, offset = 0, search, province, provinceCode, province_code } = c.req.query();
   const db = new DB(c.env.DB);
 
   try {
-    const products = await db.getProducts({ category, limit: +limit, offset: +offset, search });
+    const products = await db.getProducts({ category, limit: +limit, offset: +offset, search, province, provinceCode: provinceCode || province_code });
     return c.json({ success: true, products });
   } catch (err) {
     return c.json({ error: err.message }, 500);
