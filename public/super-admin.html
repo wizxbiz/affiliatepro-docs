@@ -13375,7 +13375,8 @@ System Status=${context.systemStatus}, CPU=${context.cpuUsage}, RAM=${context.me
             startGuardian: function (intervalMs = 60000) {
                 if(this._guardianTimer) clearInterval(this._guardianTimer);
                 this._guardianTimer = setInterval(() => {
-                    if (!this.isOpen && !document.getElementById('aiChatPanel').classList.contains('active')) return; // Check only if active or open? Better to check always and pop open if critical.
+                    const _panel = document.getElementById('aiPanel');
+                    if (!this.isOpen && !(_panel && _panel.classList.contains('active'))) return; // ตรวจเฉพาะตอนเปิด/active
                     
                     const ctx = this.getSystemContext();
                     let triggerPrompt = null;
