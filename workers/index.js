@@ -18,6 +18,7 @@ import { analyticsRoutes }    from './handlers/analytics.js';
 import { adminRoutes }        from './handlers/admin.js';
 import { utilityRoutes }      from './handlers/utility.js';
 import { v1Routes }        from './handlers/v1.js';
+import { shareRoutes }     from './handlers/share.js';
 import { rewriteRequest }   from './lib/request-rewrite.js';
 import { getSession }       from './middleware/auth.js';
 import { normalizeMediaUrls } from './lib/media-normalizer.js';
@@ -122,6 +123,9 @@ app.route('/api/v1', v1Routes);
 // Marketplace share (OG preview)
 app.get('/share',           (c) => marketplaceRoutes.request(rewriteRequest(c, '/share'), undefined, c.env));
 app.get('/community-share', (c) => marketplaceRoutes.request(rewriteRequest(c, '/community-share'), undefined, c.env));
+
+// Share hub เดียว — /s/:type/:id (OG preview + redirect ไปเนื้อหาจริง)
+app.route('/s', shareRoutes);
 
 // Auth callbacks
 app.all('/lineLoginCallback',    (c) => authRoutes.request(rewriteRequest(c, '/line-callback'), undefined, c.env));
