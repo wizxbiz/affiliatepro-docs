@@ -17,7 +17,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-messaging-compat.js"></script>
     <script src="/js/firebase-init.js"></script>
-    <script src="/js/auth.js"></script>
+    <script src="/js/auth.js?v=20260720d"></script>
     <!-- Chart.js for analytics charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
@@ -4161,8 +4161,33 @@
         }
 
         async function syncSellerProfile(userId) {
+            // 1. อ่านข้อมูลร้านจาก D1 (source of truth) ผ่าน Worker
             try {
-                // 1. Fetch from seller_profiles
+                const token = localStorage.getItem('tuktuk_jwt');
+                if (token) {
+                    const resp = await fetch('/api/auth/seller/profile', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (resp.ok) {
+                        const { profile } = await resp.json();
+                        if (profile) {
+                            if (profile.shopName) localStorage.setItem('wit_shop_name', profile.shopName);
+                            if (profile.province) localStorage.setItem('wit_shop_location', profile.province);
+                            if (profile.logo) localStorage.setItem('wit_shop_banner', profile.logo);
+                            if (profile.tier) localStorage.setItem('wit_membership_tier', profile.tier);
+                            if (profile.sellerStatus === 'verified') {
+                                WizmobizAuth.updateSession({ sellerStatus: 'verified' });
+                            }
+                            return; // ได้ข้อมูลจาก D1 แล้ว ไม่ต้องพึ่ง Firestore
+                        }
+                    }
+                }
+            } catch (error) {
+                console.warn('⚠️ โหลดข้อมูลร้านจาก D1 ไม่สำเร็จ, ลอง Firestore:', error.message);
+            }
+
+            // 2. Fallback: Firestore เดิม (เผื่อ D1 ยังไม่มีข้อมูล)
+            try {
                 const profileDoc = await db.collection('seller_profiles').doc(userId).get();
                 if (profileDoc.exists) {
                     const data = profileDoc.data();
@@ -4170,25 +4195,8 @@
                     if (data.location) localStorage.setItem('wit_shop_location', data.location);
                     if (data.bannerUrl) localStorage.setItem('wit_shop_banner', data.bannerUrl);
                     if (data.tier) localStorage.setItem('wit_membership_tier', data.tier);
-
-                    // If seller is explicitly verified in profile
                     if (data.sellerStatus === 'verified') {
                         WizmobizAuth.updateSession({ sellerStatus: 'verified' });
-                    }
-                }
-
-                // 2. Cross-check with line_users for global premium/subscription status
-                const userDoc = await db.collection('line_users').doc(userId).get();
-                if (userDoc.exists) {
-                    const userData = userDoc.data();
-                    const isGlobalPremium = userData.subscriptionStatus === 'active' ||
-                        userData.role === 'premium' ||
-                        userData.isPremium === true;
-
-                    if (isGlobalPremium) {
-                        // Upgrade session and local tier
-                        WizmobizAuth.updateSession({ isPremium: true, sellerStatus: 'verified' });
-                        localStorage.setItem('wit_membership_tier', 'pro');
                     }
                 }
             } catch (error) {

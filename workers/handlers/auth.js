@@ -947,3 +947,86 @@ authRoutes.post('/seller/verify', requireAuth, async (c) => {
     return c.json({ error: err.message }, 500);
   }
 });
+
+// ── POST /api/auth/seller/register ─────────────────────────────
+// ลงทะเบียนเปิดร้าน — persist verified + ข้อมูลร้านลง D1 (ครั้งเดียว ไม่ต้องเช็คซ้ำ)
+authRoutes.post('/seller/register', requireAuth, async (c) => {
+  const session = c.get('session');
+  const db = new DB(c.env.DB);
+  try {
+    const body = await c.req.json().catch(() => ({}));
+    const shopName = (body.shopName || '').trim();
+    const phone = (body.phone || '').trim();
+
+    if (!shopName) return c.json({ error: 'กรุณาระบุชื่อร้าน', code: 'SHOP_NAME_REQUIRED' }, 400);
+    if (!phone) return c.json({ error: 'กรุณาระบุเบอร์ติดต่อ', code: 'PHONE_REQUIRED' }, 400);
+
+    await db.registerSeller(session.uid, {
+      shopName,
+      category: body.category || '',
+      province: body.province || '',
+      phone,
+      description: body.description || '',
+      logo: body.logo || null,
+      lineOaId: body.lineOaId || null,
+      tier: body.planTier || null,   // แพ็คเกจที่เลือก (starter/pro) — ถ้าไม่ส่งจะ default 'trial'
+      plan: body.plan || null,       // 3m/6m/12m
+    });
+
+    const user = await db.getUserById(session.uid);
+    const mappedUser = mapUserRowToClient(user);
+
+    // ออก JWT ใหม่สะท้อนสถานะ verified (persist ใน KV ด้วย)
+    const payload = {
+      ...session,
+      sellerStatus: 'verified',
+      shopName,
+      exp: Math.floor(Date.now() / 1000) + SESSION_TTL_SECONDS,
+    };
+    const token = await sign(payload, _getSecret(c));
+    if (c.env.SESSIONS) {
+      await c.env.SESSIONS.put(`session:${session.uid}`, JSON.stringify({ ...payload, token }), {
+        expirationTtl: SESSION_TTL_SECONDS,
+      });
+    }
+
+    return c.json({
+      success: true,
+      message: 'เปิดร้านสำเร็จ',
+      token,
+      user: { ...payload, ...mappedUser, sellerStatus: 'verified' },
+    });
+  } catch (err) {
+    console.error('[Auth] seller/register error:', err);
+    return c.json({ error: err.message }, 500);
+  }
+});
+
+// ── GET /api/auth/seller/profile ───────────────────────────────
+authRoutes.get('/seller/profile', requireAuth, async (c) => {
+  const session = c.get('session');
+  const db = new DB(c.env.DB);
+  try {
+    const p = await db.getSellerProfile(session.uid);
+    if (!p) return c.json({ error: 'ไม่พบผู้ใช้' }, 404);
+    return c.json({
+      success: true,
+      profile: {
+        uid: p.id,
+        sellerStatus: p.seller_status || 'none',
+        tier: p.seller_tier || null,
+        sellerSince: p.seller_since || null,
+        shopName: p.shop_name || '',
+        category: p.shop_category || '',
+        province: p.shop_province || '',
+        phone: p.shop_phone || '',
+        description: p.shop_description || '',
+        logo: p.shop_logo || '',
+        lineOaId: p.line_oa_id || '',
+      },
+    });
+  } catch (err) {
+    console.error('[Auth] seller/profile error:', err);
+    return c.json({ error: err.message }, 500);
+  }
+});

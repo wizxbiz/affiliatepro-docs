@@ -8,7 +8,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
-    <script src="/js/auth.js"></script>
+    <script src="/js/auth.js?v=20260720d"></script>
 
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -220,11 +220,22 @@
 <div class="container" id="registration-form">
     <div class="header">
         <div class="logo"><i class="fas fa-store"></i></div>
-        <h1>เปิดร้านค้าของคุณ</h1>
-        <p class="subtitle">กรอกข้อมูลเบื้องต้นเพื่อเริ่มต้นธุรกิจใน TukTuk</p>
+        <h1>อัปเกรดเป็นร้านเต็มรูปแบบ</h1>
+        <p class="subtitle">ลงขายฟรีได้อยู่แล้ว — อัปเกรดเพื่อรับป้ายร้าน แดชบอร์ด และบูสต์สินค้า</p>
     </div>
 
     <div id="error-alert" class="alert alert-error"></div>
+
+    <!-- แพ็คเกจที่เลือก (แสดงเมื่อมาจากหน้าราคา) -->
+    <div id="selected-plan-banner" style="display:none;background:linear-gradient(135deg,rgba(236,72,153,0.15),rgba(139,92,246,0.15));border:1px solid rgba(236,72,153,0.4);border-radius:14px;padding:14px 18px;margin-bottom:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+            <div>
+                <div style="color:rgba(255,255,255,0.6);font-size:0.8rem;">แพ็คเกจที่เลือก</div>
+                <div id="selected-plan-name" style="color:#fff;font-weight:800;font-size:1.1rem;"></div>
+            </div>
+            <a href="/marketplace" style="color:#ec4899;font-size:0.85rem;text-decoration:underline;white-space:nowrap;">เปลี่ยน</a>
+        </div>
+    </div>
 
     <form id="seller-form">
         <div class="form-group">
@@ -384,6 +395,30 @@ const API_BASE = window.location.origin.includes('localhost') || window.location
     : 'https://tuktukfeed-api.imtthailand2019.workers.dev';
 let currentUid = null;
 
+// ── แพ็คเกจ ───────────────────────────────────────────────────
+const PLANS = {
+    '3m':  { name: '3 เดือน — 899฿', tier: 'starter', months: 3,  price: 899 },
+    '6m':  { name: '6 เดือน — 1,599฿ (ยอดนิยม)', tier: 'pro', months: 6, price: 1599 },
+    '12m': { name: 'รายปี 12 เดือน — 2,899฿', tier: 'pro', months: 12, price: 2899 },
+};
+let selectedPlan = null;
+
+function initSelectedPlan() {
+    const param = new URLSearchParams(window.location.search).get('plan');
+    const stored = (() => { try { return localStorage.getItem('tuktuk_selected_plan'); } catch (e) { return null; } })();
+    const key = param || stored;
+    if (key && PLANS[key]) {
+        selectedPlan = key;
+        const banner = document.getElementById('selected-plan-banner');
+        const nameEl = document.getElementById('selected-plan-name');
+        if (banner && nameEl) {
+            nameEl.textContent = PLANS[key].name;
+            banner.style.display = 'block';
+        }
+    }
+}
+initSelectedPlan();
+
 // ── Auth: support Firebase auth OR LINE login session ─────────
 function getCurrentSession() {
     // Priority 1: Firebase Auth
@@ -438,46 +473,38 @@ document.getElementById('seller-form').addEventListener('submit', async (e) => {
             throw new Error('กรุณากรอกข้อมูลที่จำเป็นให้ครบ');
         }
 
-        const now = new Date();
-        const shopData = {
-            uid: currentUid,
-            shopName,
-            category,
-            location: province,
-            phone,
-            description: document.getElementById('description').value.trim(),
-            isConsignmentReady: document.getElementById('consignment').checked,
-            sellerStatus: 'pending',
-            tier: 'trial',
-            subscriptionPlan: {
-                tier: 'trial',
-                trialStartDate: now.toISOString(),
-                trialEndDate: new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-                paymentStatus: 'pending',
-            },
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-        };
+        // ลงทะเบียนเปิดร้าน → Cloudflare Worker (persist ลง D1, verified ทันที)
+        const token = localStorage.getItem('tuktuk_jwt');
+        if (!token) throw new Error('ไม่พบ session กรุณาเข้าสู่ระบบใหม่');
 
-        // Save to seller_profiles
-        await firebase.firestore().collection('seller_profiles').doc(currentUid).set(shopData);
-
-        // Update line_users (for LINE users) and users (for Google users)
-        const updateData = { isSeller: true, shopName, sellerStatus: 'pending', updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
-        await Promise.allSettled([
-            firebase.firestore().collection('line_users').doc(currentUid).set(updateData, { merge: true }),
-            firebase.firestore().collection('users').doc(currentUid).set(updateData, { merge: true }),
-        ]);
-
-        // Update localStorage session
-        if (typeof WizmobizAuth !== 'undefined') {
-            try { WizmobizAuth.updateSession({ isSeller: true, sellerStatus: 'pending' }); } catch (_) {}
+        const resp = await fetch('/api/auth/seller/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({
+                shopName,
+                category,
+                province,
+                phone,
+                description: document.getElementById('description').value.trim(),
+                plan: selectedPlan || null,
+                planTier: selectedPlan && PLANS[selectedPlan] ? PLANS[selectedPlan].tier : null,
+            }),
+        });
+        const result = await resp.json();
+        if (!resp.ok || !result.success) {
+            throw new Error(result.error || 'ลงทะเบียนไม่สำเร็จ');
         }
 
-        // Show activation screen
-        document.getElementById('registration-form').style.display = 'none';
-        document.getElementById('activation-screen').style.display = 'block';
-        initPinInputs();
+        // เก็บ JWT ใหม่ (สะท้อนสถานะ verified) + อัปเดต session ท้องถิ่น
+        if (result.token) localStorage.setItem('tuktuk_jwt', result.token);
+        if (typeof WizmobizAuth !== 'undefined') {
+            try { WizmobizAuth.updateSession({ isSeller: true, sellerStatus: 'verified', shopName }); } catch (_) {}
+        }
+
+        // เปิดร้านสำเร็จทันที → ไปหน้าจัดการร้าน
+        alertEl.style.display = 'none';
+        window.location.href = '/seller-dashboard';
+        return;
 
     } catch (err) {
         alertEl.textContent = err.message;

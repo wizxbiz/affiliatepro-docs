@@ -21,6 +21,16 @@ export class DB {
     await this.d1.prepare("ALTER TABLE users ADD COLUMN handle TEXT;").run().catch(() => {});
     await this.d1.prepare("ALTER TABLE users ADD COLUMN cover_url TEXT;").run().catch(() => {});
     await this.d1.prepare("ALTER TABLE users ADD COLUMN is_private INTEGER DEFAULT 0;").run().catch(() => {});
+    // seller / shop registration (persist ครั้งเดียว — แหล่งข้อมูลจริงของสถานะผู้ขาย)
+    await this.d1.prepare("ALTER TABLE users ADD COLUMN line_oa_id TEXT;").run().catch(() => {});
+    await this.d1.prepare("ALTER TABLE users ADD COLUMN shop_name TEXT;").run().catch(() => {});
+    await this.d1.prepare("ALTER TABLE users ADD COLUMN shop_category TEXT;").run().catch(() => {});
+    await this.d1.prepare("ALTER TABLE users ADD COLUMN shop_province TEXT;").run().catch(() => {});
+    await this.d1.prepare("ALTER TABLE users ADD COLUMN shop_phone TEXT;").run().catch(() => {});
+    await this.d1.prepare("ALTER TABLE users ADD COLUMN shop_description TEXT;").run().catch(() => {});
+    await this.d1.prepare("ALTER TABLE users ADD COLUMN shop_logo TEXT;").run().catch(() => {});
+    await this.d1.prepare("ALTER TABLE users ADD COLUMN seller_since INTEGER;").run().catch(() => {});
+    await this.d1.prepare("ALTER TABLE users ADD COLUMN seller_tier TEXT;").run().catch(() => {});
   }
 
   async getUserById(id) {
@@ -77,11 +87,72 @@ export class DB {
   }
 
   async updateSellerVerification(userId, lineOaId) {
+    await this.ensureUsersColumns();
     return this.d1.prepare(`
-      UPDATE users 
+      UPDATE users
       SET seller_status = 'verified', line_oa_id = ?, updated_at = ?
       WHERE id = ?
-    `).bind(lineOaId, Date.now(), userId).run();
+    `).bind(lineOaId || null, Date.now(), userId).run();
+  }
+
+  // ลงทะเบียนเปิดร้าน — persist สถานะ verified + ข้อมูลร้านลง D1 (source of truth)
+  async registerSeller(userId, profile = {}) {
+    await this.ensureUsersColumns();
+    const now = Date.now();
+    const tier = profile.tier || 'trial';   // แพ็คเกจที่เลือก หรือ trial ถ้าไม่ระบุ
+    return this.d1.prepare(`
+      UPDATE users SET
+        seller_status = 'verified',
+        seller_tier = ?,
+        seller_since = COALESCE(seller_since, ?),
+        shop_name = ?,
+        shop_category = ?,
+        shop_province = ?,
+        shop_phone = ?,
+        shop_description = ?,
+        shop_logo = COALESCE(?, shop_logo),
+        line_oa_id = COALESCE(?, line_oa_id),
+        updated_at = ?
+      WHERE id = ?
+    `).bind(
+      tier,
+      now,
+      profile.shopName || '',
+      profile.category || '',
+      profile.province || '',
+      profile.phone || '',
+      profile.description || '',
+      profile.logo || null,
+      profile.lineOaId || null,
+      now,
+      userId
+    ).run();
+  }
+
+  // ตลาดนัดชั้นฟรี — ตั้งสถานะ 'free' อัตโนมัติเมื่อโพสต์ครั้งแรก (ถ้ายัง 'none')
+  // ไม่แตะคนที่ verified แล้ว (เปิดร้านเต็มรูปแบบ)
+  async ensureFreeSeller(userId) {
+    await this.ensureUsersColumns();
+    const now = Date.now();
+    return this.d1.prepare(`
+      UPDATE users SET
+        seller_status = 'free',
+        seller_since = COALESCE(seller_since, ?),
+        shop_name = COALESCE(NULLIF(shop_name, ''), display_name),
+        updated_at = ?
+      WHERE id = ? AND (seller_status IS NULL OR seller_status = 'none')
+    `).bind(now, now, userId).run();
+  }
+
+  // อ่านข้อมูลร้านจาก D1
+  async getSellerProfile(userId) {
+    await this.ensureUsersColumns();
+    return this.d1.prepare(`
+      SELECT id, display_name, seller_status, seller_tier, seller_since,
+             shop_name, shop_category, shop_province, shop_phone,
+             shop_description, shop_logo, line_oa_id
+      FROM users WHERE id = ?
+    `).bind(userId).first();
   }
 
   // ─────────────────────────────────────────────────────────────
