@@ -3243,6 +3243,12 @@
         const postModal = new bootstrap.Modal(document.getElementById('postModal'));
         const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
 
+        // ลิงก์แชร์ที่ตกมาที่ community.html?post=ID → ส่งไปฟีดจริงใน /app ที่ deep-link ได้
+        (function () {
+            const sharedPost = new URLSearchParams(window.location.search).get('post');
+            if (sharedPost) window.location.replace('/app?post=' + encodeURIComponent(sharedPost));
+        })();
+
         // Category Labels
         const categoryLabels = {
             news: '📰 ข่าวสาร',
@@ -4389,20 +4395,14 @@
             }
         }
 
-        // Share Post
+        // Share Post — ผ่าน share hub มาตรฐาน (/s/community/:id)
         function sharePost(postId, title) {
-            const url = `https://wizmobiz.com/community-share?id=${postId}`;
-
-            if (navigator.share) {
-                navigator.share({
-                    title: title,
-                    text: `${title} - Wizmobiz Community`,
-                    url: url
-                });
+            if (window.tuktukShare) {
+                window.tuktukShare({ type: 'community', id: postId, title: title || 'TukTuk Community', text: title })
+                    .then((r) => { if (r === 'copied') alert('📋 คัดลอกลิงก์แล้ว!'); });
             } else {
-                navigator.clipboard.writeText(url).then(() => {
-                    alert('📋 คัดลอกลิงก์แล้ว!');
-                });
+                const url = `https://tuktukfeed.com/s/community/${encodeURIComponent(postId)}`;
+                navigator.clipboard?.writeText(url).then(() => alert('📋 คัดลอกลิงก์แล้ว!'));
             }
         }
 
@@ -5341,6 +5341,7 @@
         }
     </script>
     <script src="js/persistent-ui.js"></script>
+    <script src="js/share-util.js"></script>
 </body>
 
 </html>

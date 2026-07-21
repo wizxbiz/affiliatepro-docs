@@ -463,6 +463,11 @@
     limitToLast(n) {
       return new CloudflareQuery(this.collection, this.filters, this.orders, n, this.parentPath);
     }
+    // Firestore cursor pagination — D1 shim ยังไม่รองรับ cursor จริง, ทำเป็น chainable no-op กัน error
+    startAfter() { return this; }
+    startAt() { return this; }
+    endBefore() { return this; }
+    endAt() { return this; }
     async get() {
       const params = new URLSearchParams();
       this.filters.forEach(f => params.append('filter', `${f.field}:${f.op}:${f.value}`));

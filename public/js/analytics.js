@@ -11,11 +11,11 @@ console.log('📊 analytics.js script loaded');
         // Google Analytics 4 Measurement ID (เปลี่ยนเป็น ID ของคุณ)
         GA4_ID: 'G-PK2GQ4HERC',
 
-        // Direct Cloud Run URLs (Firebase Gen 2)
+        // Cloudflare Worker endpoints (same-origin → ไม่มี CORS)
         TRACKING_URLS: {
-            pageView: 'https://trackpageview-47mhcx3iqq-uc.a.run.app/',
-            event: 'https://trackevent-47mhcx3iqq-uc.a.run.app/',
-            stats: 'https://getanalyticsstats-47mhcx3iqq-uc.a.run.app/'
+            pageView: '/api/analytics/trackPageView',
+            event: '/api/analytics/trackEvent',
+            stats: '/api/analytics/getStats'
         },
 
         // Enable/Disable tracking
@@ -230,10 +230,21 @@ console.log('📊 analytics.js script loaded');
         // 📊 VISITOR STATS FETCHING (Global)
         // =====================================================
 
+        let _statsStop = false; // หยุด poll ถ้าไม่มีสิทธิ์ (ไม่ใช่ admin)
         window.tuktukFetchVisitorStats = async function () {
+            if (_statsStop) return;
             try {
                 log('Fetching visitor stats...');
-                const response = await fetch(`${CONFIG.TRACKING_URLS.stats}?days=1`);
+                const token = localStorage.getItem('tuktuk_jwt');
+                if (!token) { _statsStop = true; return; } // ไม่ล็อกอิน → ไม่ต้องยิง (stats เป็น admin-only)
+                const response = await fetch(`${CONFIG.TRACKING_URLS.stats}?days=1`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (response.status === 401 || response.status === 403) {
+                    _statsStop = true; // ไม่ใช่ admin → เลิก poll ถาวร
+                    if (_statsTimer) clearInterval(_statsTimer);
+                    return;
+                }
                 const result = await response.json();
 
                 if (result.success && result.data && result.data.summary) {
@@ -283,9 +294,10 @@ console.log('📊 analytics.js script loaded');
         };
 
         // Initialize stats if banner or mini-stats exists
+        let _statsTimer = null;
         if (document.querySelector('.stats-banner') || document.querySelector('.mini-stats')) {
             setTimeout(window.tuktukFetchVisitorStats, 1000);
-            setInterval(window.tuktukFetchVisitorStats, 120000); // 2 mins
+            _statsTimer = setInterval(window.tuktukFetchVisitorStats, 120000); // 2 mins
         }
 
         log('Tuktuk Analytics initialized');

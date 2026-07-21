@@ -3737,20 +3737,20 @@
         // Share functions
         function shareToLine() {
             if (!currentProductId) return;
-            const shareUrl = `https://tuktukfeed.com/share?id=${currentProductId}`;
+            const shareUrl = `https://tuktukfeed.com/s/product/${currentProductId}`;
             const text = encodeURIComponent(document.title + '\n' + shareUrl);
             window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(shareUrl)}&text=${text}`, '_blank');
         }
 
         function shareToFacebook() {
             if (!currentProductId) return;
-            const shareUrl = `https://tuktukfeed.com/share?id=${currentProductId}`;
+            const shareUrl = `https://tuktukfeed.com/s/product/${currentProductId}`;
             window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
         }
 
         function copyProductLink() {
             if (!currentProductId) return;
-            const shareUrl = `https://tuktukfeed.com/share?id=${currentProductId}`;
+            const shareUrl = `https://tuktukfeed.com/s/product/${currentProductId}`;
             navigator.clipboard.writeText(shareUrl).then(() => {
                 showToast('📋 คัดลอกลิงก์สำเร็จ!', 'success');
             }).catch(() => {
