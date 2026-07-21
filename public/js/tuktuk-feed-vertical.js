@@ -9,8 +9,14 @@ const TukTukFeed = (function () {
   // ===== Private Variables =====
   let feedContainer = null;
   let currentItems = [];
-  let isMuted = localStorage.getItem('tuktuk_muted') !== 'false';
-  let autoScrollEnabled = localStorage.getItem('tuktuk_autoscroll') !== 'false';
+  let isMuted = true;
+  let autoScrollEnabled = true;
+  try {
+    isMuted = localStorage.getItem('tuktuk_muted') !== 'false';
+    autoScrollEnabled = localStorage.getItem('tuktuk_autoscroll') !== 'false';
+  } catch(e) {
+    console.warn('localStorage access blocked by tracking prevention');
+  }
   let isDragging = false;
   let startY = 0;
   let currentScrollTop = 0;

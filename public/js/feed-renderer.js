@@ -4472,7 +4472,6 @@ async function loadPosts(append = false) {
     
     if (!append) {
         if (container) container.innerHTML = '';
-        // Don't clear #tuktukFeed — tuktuk_feed_logic.js (new system) owns it on mobile
         if (tuktukContainer && typeof window.renderTukTukSlides !== 'function') {
             tuktukContainer.innerHTML = '';
         }
@@ -4484,69 +4483,27 @@ async function loadPosts(append = false) {
     if (loadingSpinner) loadingSpinner.style.display = 'block';
     
     try {
-        // Load news in parallel
-        if (!append) await loadNewsFeed();
-        
-        let query = db.collection(FEED_RENDERER_CONFIG.COLLECTIONS.POSTS)
-            .where('published', '==', true);
-        
-        // Category filtering
-        if (FeedRenderer.currentCategory === 'trending') {
-            query = query.orderBy('views', 'desc').orderBy('createdAt', 'desc');
-        } else if (FeedRenderer.currentCategory === 'liked') {
-            if (!FeedRenderer.currentUserId) {
-                if (loadingSpinner) loadingSpinner.style.display = 'none';
-                if (container) container.innerHTML = renderEmptyState('เข้าสู่ระบบเพื่อดูโพสต์ที่คุณชอบ');
-                isLoadingMore = false;
-                return;
-            }
-            
-            const targetIds = FeedRenderer.userLikedIds || [];
-            if (targetIds.length === 0) {
-                if (loadingSpinner) loadingSpinner.style.display = 'none';
-                if (container) container.innerHTML = renderEmptyState('คุณยังไม่มีโพสต์ที่ชอบ');
-                isLoadingMore = false;
-                return;
-            }
-            
-            query = db.collection(FEED_RENDERER_CONFIG.COLLECTIONS.POSTS)
-                .where(firebase.firestore.FieldPath.documentId(), 'in', targetIds.slice(0, 10));
-                
-        } else if (FeedRenderer.currentCategory === 'following') {
-            if (!FeedRenderer.currentUserId) {
-                if (loadingSpinner) loadingSpinner.style.display = 'none';
-                if (container) container.innerHTML = renderEmptyState('เข้าสู่ระบบเพื่อดูสิ่งที่คุณติดตาม');
-                isLoadingMore = false;
-                return;
-            }
-            
-            const targetIds = FeedRenderer.userFollowingIds || [];
-            if (targetIds.length === 0) {
-                if (loadingSpinner) loadingSpinner.style.display = 'none';
-                if (container) container.innerHTML = renderEmptyState('คุณยังไม่ได้ติดตามใคร');
-                isLoadingMore = false;
-                return;
-            }
-            
-            query = query.where('authorId', 'in', targetIds.slice(0, 30)).orderBy('createdAt', 'desc');
-            
-        } else if (FeedRenderer.currentCategory !== 'all') {
-            query = query.where('category', '==', FeedRenderer.currentCategory).orderBy('createdAt', 'desc');
-        } else {
-            query = query.orderBy('createdAt', 'desc');
+        if (!window.TukTukAPI || !window.TukTukAPI.feed) {
+            throw new Error('TukTukAPI is not ready');
         }
         
-        if (lastVisibleDoc && !append) {
-            query = query.startAfter(lastVisibleDoc);
-        }
+        const category = FeedRenderer.currentCategory || 'all';
+        const userId = FeedRenderer.currentUserId || 'guest';
         
-        query = query.limit(PAGE_SIZE);
-        
-        const snapshot = await query.get();
+        // Fetch from REST API
+        const data = await window.TukTukAPI.feed.list({
+            mode: category,
+            userId: userId,
+            limit: PAGE_SIZE,
+            offset: append ? allPostsData.length : 0
+        });
         
         if (loadingSpinner) loadingSpinner.style.display = 'none';
         
-        if (snapshot.empty && !append) {
+        const batchPosts = data.posts || data.items || [];
+        FeedRenderer.latestNewsFeed = data.news || [];
+        
+        if (batchPosts.length === 0 && !append) {
             if (emptyState) emptyState.style.display = 'block';
             updateStats([]);
             isLoadingMore = false;
@@ -4554,19 +4511,8 @@ async function loadPosts(append = false) {
         }
         
         if (emptyState) emptyState.style.display = 'none';
-        lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
         
-        const batchPosts = [];
-        
-        snapshot.forEach(doc => {
-            const post = { id: doc.id, ...doc.data() };
-            
-            if (post.privacy === 'private' && post.authorId !== FeedRenderer.currentUserId) {
-                return;
-            }
-            
-            batchPosts.push(post);
-            
+        batchPosts.forEach(post => {
             if (!allPostsData.find(p => p.id === post.id)) {
                 allPostsData.push(post);
                 FeedRenderer.allPostsData.push(post);
@@ -4582,7 +4528,7 @@ async function loadPosts(append = false) {
         setupInfiniteScroll();
         
     } catch (error) {
-        console.error('[FeedRenderer] Error loading posts:', error);
+        console.error('[FeedRenderer] Error loading posts via REST API:', error);
         if (loadingSpinner) loadingSpinner.innerHTML = '<p class="text-white">เชื่อมต่อล้มเหลว กรุณาลองใหม่</p>';
     } finally {
         isLoadingMore = false;
@@ -4821,28 +4767,23 @@ async function handleAdClick(adId, targetUrl) {
 // ================================================
 
 async function loadInterleavedData() {
-    // firebase-init.js sets window.db after defer execution; guard against early call
-    const _db = window.db || (typeof db !== 'undefined' ? db : null);
-    if (!_db) { console.warn('Interleaved data fetch skipped: db not ready'); return; }
     try {
-        const prodSnapshot = await _db.collection(FEED_RENDERER_CONFIG.COLLECTIONS.PRODUCTS)
-            .where('status', '==', 'active')
-            .limit(20)
-            .get();
-
-        FeedRenderer.marketplaceProducts = prodSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        let products = [];
+        if (window.TukTukAPI?.products?.list) {
+            const data = await window.TukTukAPI.products.list({ limit: 20 });
+            products = data.products || data.items || [];
+        } else {
+            const res = await fetch('/api/v1/products?limit=20');
+            if (res.ok) {
+                const data = await res.json();
+                products = data.products || data.items || [];
+            }
+        }
+        FeedRenderer.marketplaceProducts = products;
         FeedRenderer.marketplaceProducts.sort(() => Math.random() - 0.5);
-
-        const groupSnapshot = await _db.collection('community_groups')
-            .where('status', '==', 'active')
-            .where('privacy', '==', 'public')
-            .limit(10)
-            .get();
-
-        FeedRenderer.communityGroups = groupSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
+        FeedRenderer.communityGroups = [];
     } catch (e) {
-        console.warn('Interleaved data fetch failed:', e);
+        console.warn('Interleaved REST data fetch failed:', e);
     }
 }
 
@@ -4858,27 +4799,7 @@ window.addEventListener('load', () => {
 
 async function loadNewsFeed() {
     return new Promise((resolve) => {
-        const timeout = setTimeout(() => {
-            console.warn('News feed fetch timed out');
-            resolve([]);
-        }, 5000);
-        
-        db.collection(FEED_RENDERER_CONFIG.COLLECTIONS.NEWS)
-            .orderBy('createdAt', 'desc')
-            .limit(5)
-            .get()
-            .then(snapshot => {
-                clearTimeout(timeout);
-                FeedRenderer.latestNewsFeed = [];
-                snapshot.forEach(doc => FeedRenderer.latestNewsFeed.push({ id: doc.id, ...doc.data() }));
-                console.log('News feed loaded:', FeedRenderer.latestNewsFeed.length);
-                resolve(FeedRenderer.latestNewsFeed);
-            })
-            .catch(err => {
-                clearTimeout(timeout);
-                console.error('Error fetching news:', err);
-                resolve([]);
-            });
+        resolve(FeedRenderer.latestNewsFeed || []);
     });
 }
 
