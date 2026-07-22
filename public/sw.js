@@ -3,7 +3,7 @@
  * Strategy: Cache-first for static assets, Network-first for HTML/API
  */
 
-const CACHE_VERSION = 'v35';
+const CACHE_VERSION = 'v36';
 const CACHE_NAME = 'tuktuk-cache-' + CACHE_VERSION;
 const STATIC_CACHE = 'tuktuk-static-' + CACHE_VERSION;
 const OFFLINE_URL = '/offline.html';
