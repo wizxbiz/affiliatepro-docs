@@ -1832,6 +1832,15 @@ async function fetchGoEngineFeed(userId, province, mode) {
             .filter(Boolean);
         const products = feedProducts.length > 0 ? feedProducts : endpointProducts;
 
+        // DIAG (ชั่วคราว): เผยรูปร่าง response จริงจาก browser เพื่อหาเหตุฟีดว่าง
+        console.log('[TukTukFeed][DIAG] fetchGoEngineFeed', {
+            hasRestClient,
+            feedDataKeys: feedData && typeof feedData === 'object' ? Object.keys(feedData) : typeof feedData,
+            productsDataKeys: productsData && typeof productsData === 'object' ? Object.keys(productsData) : typeof productsData,
+            postsLen: posts.length, newsLen: news.length, productsLen: products.length,
+            feedDataSample: JSON.stringify(feedData).slice(0, 300),
+        });
+
         if (posts.length === 0 && news.length === 0 && products.length === 0) return null;
 
         return { posts, news, products, source: hasRestClient ? 'REST API v1' : 'Go Engine direct' };
