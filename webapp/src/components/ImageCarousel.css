@@ -1,0 +1,130 @@
+/* ImageCarousel — เฟรมเลื่อนดูรูปหลายรูป */
+.carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: pan-y;
+}
+.carousel-single { display: flex; align-items: center; justify-content: center; }
+.carousel-single img,
+.carousel-slide img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.carousel-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
+.carousel-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.carousel-slide img { pointer-events: none; }
+
+/* ปุ่มลูกศร */
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  font-size: 24px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 3;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transition: background 0.2s;
+}
+.carousel-arrow:hover { background: rgba(0, 0, 0, 0.65); }
+.carousel-arrow-prev { left: 10px; }
+.carousel-arrow-next { right: 10px; }
+
+/* ตัวนับรูป มุมขวาบน */
+.carousel-counter {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  z-index: 3;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+/* จุดบอกตำแหน่ง ล่างกลาง */
+.carousel-dots {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 3;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.3);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+.carousel-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 0;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.carousel-dot.active {
+  background: #fff;
+  width: 20px;
+  border-radius: 999px;
+}
+
+/* ── ในฟีดหลัก: carousel เต็มเฟรม (feed-media ใช้ absolute) ── */
+.feed-media .carousel.feed-carousel,
+.feed-media .carousel-single.feed-carousel {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── ในการ์ดสินค้า: กำหนดความสูงเฟรม + มุมโค้ง ── */
+.product-detail-media .product-carousel {
+  height: 46svh;
+  border-radius: 14px;
+  background: #111;
+}
+.product-detail-media .product-carousel.carousel-single {
+  height: auto;
+  max-height: 46svh;
+}
+.product-detail-media .product-carousel.carousel-single img {
+  max-height: 46svh;
+}

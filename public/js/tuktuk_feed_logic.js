@@ -56,7 +56,7 @@ window.TukTukFeed = window.TukTukFeed || {
     feedEnded: {},  // true when Firestore returned fewer rows than limit
 
     // Audio / playback state
-    isMuted: localStorage.getItem('tuktuk_muted') !== 'false', // default muted
+    isMuted: (function(){ try { return localStorage.getItem('tuktuk_muted') !== 'false'; } catch(e){ return true; } })(), // default muted
     slideIndex: 0,
 
     // Flags
@@ -943,7 +943,10 @@ function toggleFeedMute() {
             }
         } else if (v.tagName === 'IFRAME') {
             const cmd = newMuted ? 'mute' : 'unMute';
-            v.contentWindow.postMessage(`{"event":"command","func":"${cmd}","args":""}`, '*');
+            // iframe อาจยังโหลดไม่เสร็จ (contentWindow = null) → กัน crash
+            if (v.contentWindow) {
+                v.contentWindow.postMessage(`{"event":"command","func":"${cmd}","args":""}`, '*');
+            }
         }
     });
     const iconClass = newMuted ? 'fa-volume-mute' : 'fa-volume-up';
@@ -1143,7 +1146,7 @@ function renderTukTukSlides(container, items) {
                     <iframe 
                         id="yt-player-${item.id}"
                         src="https://www.youtube.com/embed/${item.youtubeId}?enablejsapi=1&autoplay=0&mute=${(isMuted || _isMobileFeedViewport()) ? 1 : 0}&modestbranding=1&rel=0&loop=1&playlist=${item.youtubeId}" 
-                        style="min-width: 100%; min-height: 100%; aspect-ratio: 16/9; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: none; pointer-events: none; transition: opacity 0.5s;"
+                        style="width: 100vw; height: 56.25vw; min-width: 177.77vh; min-height: 100vh; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: none; pointer-events: none; transition: opacity 0.5s; max-width: none; max-height: none;"
                         allow="autoplay; encrypted-media" 
                         loading="lazy"
                         class="tuktuk-slide-video youtube-iframe"
@@ -1391,7 +1394,7 @@ function activateSlideByIndex(container, idx) {
                 video.preload = 'auto';
                 _playFeedVideo(video);
             }
-            if (iframe) {
+            if (iframe && iframe.contentWindow) {
                 if (_isMobileFeedViewport() && !TukTukFeed.isMuted) _forceMutedAutoplayState();
                 const muteCmd = TukTukFeed.isMuted ? 'mute' : 'unMute';
                 iframe.contentWindow.postMessage(`{"event":"command","func":"${muteCmd}","args":""}`, '*');
@@ -1408,7 +1411,7 @@ function activateSlideByIndex(container, idx) {
                 if (p) { p.then(() => { try { video.pause(); } catch (_) {} }).catch(() => {}); }
                 else { try { video.pause(); } catch (_) {} }
             }
-            if (iframe) {
+            if (iframe && iframe.contentWindow) {
                 // Pause YouTube
                 iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
             }
@@ -1437,7 +1440,7 @@ function initTukTukSlideObserver(container) {
                     video.preload = 'auto';
                     _playFeedVideo(video);
                 }
-                if (iframe) {
+                if (iframe && iframe.contentWindow) {
                     if (_isMobileFeedViewport() && !TukTukFeed.isMuted) _forceMutedAutoplayState();
                     const muteCmd = TukTukFeed.isMuted ? 'mute' : 'unMute';
                     iframe.contentWindow.postMessage(`{"event":"command","func":"${muteCmd}","args":""}`, '*');
@@ -1465,7 +1468,7 @@ function initTukTukSlideObserver(container) {
                     if (p) { p.then(() => { try { video.pause(); } catch (_) {} }).catch(() => {}); }
                     else { try { video.pause(); } catch (_) {} }
                 }
-                if (iframe) {
+                if (iframe && iframe.contentWindow) {
                     iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
                 }
             }
@@ -1905,10 +1908,12 @@ async function fetchProductOnlyFeed(province, location) {
  * @returns {{ posts, news, products, lastDocs, hasMore }}
  */
 async function fetchFirebaseFeedData(mode, location, cursors = {}) {
+    console.warn('[TukTukFeed] fetchFirebaseFeedData bypassed. Firestore is no longer used.');
+    return { posts: [], news: [], products: [], lastDocs: {}, hasMore: false };
+}
+/* Bypassed Firestore implementation below */
+async function _bypassed_fetchFirebaseFeedData(mode, location, cursors = {}) {
     const feedDb = getFeedFirestore();
-    const fb = getFeedFirebase();
-    if (!feedDb) throw new Error('Firestore is not ready');
-    if (!fb || !fb.firestore || !fb.firestore.Timestamp) throw new Error('Firebase SDK is not ready');
 
     // Query without status/published filter — covers posts from both Flutter screens
     // ✅ Cloudflare D1 collections
@@ -2265,7 +2270,7 @@ async function loadMixedFeed(container, mode, forceRefresh = false) {
             .then(value => ({ status: 'fulfilled', value }))
             .catch(reason => ({ status: 'rejected', reason }));
 
-        const goData = goResult.status === 'fulfilled' && goResult.value
+        let goData = goResult.status === 'fulfilled' && goResult.value
             && ((goResult.value.posts || []).length > 0 || (goResult.value.news || []).length > 0 || (goResult.value.products || []).length > 0)
             ? goResult.value : null;
 
@@ -2275,6 +2280,20 @@ async function loadMixedFeed(container, mode, forceRefresh = false) {
                 mode,
                 message: goResult.reason?.message || String(goResult.reason),
             });
+        }
+
+        // Auto-widen: near_me + เลือกจังหวัด แล้วได้ 0 รายการ → ลองใหม่แบบไม่กรองจังหวัด
+        // (โพสต์/สินค้าที่ยังไม่ระบุจังหวัดจะได้แสดง แทนที่จะเจอฟีดว่าง)
+        if (!goData && mode === 'near_me' && province) {
+            recordFeedDiagnostic('near_me_auto_widen', { mode, province });
+            const wideResult = await fetchGoEngineFeed(userId, '', mode)
+                .then(value => ({ status: 'fulfilled', value }))
+                .catch(reason => ({ status: 'rejected', reason }));
+            if (wideResult.status === 'fulfilled' && wideResult.value
+                && ((wideResult.value.posts || []).length > 0 || (wideResult.value.news || []).length > 0 || (wideResult.value.products || []).length > 0)) {
+                goData = wideResult.value;
+                console.log('[TukTukFeed] near_me auto-widen: แสดงฟีดทั้งหมด (จังหวัดที่เลือกไม่มีรายการ)');
+            }
         }
 
         let fbData = null;

@@ -21,6 +21,28 @@ export class DB {
     await this.d1.prepare("ALTER TABLE users ADD COLUMN handle TEXT;").run().catch(() => {});
     await this.d1.prepare("ALTER TABLE users ADD COLUMN cover_url TEXT;").run().catch(() => {});
     await this.d1.prepare("ALTER TABLE users ADD COLUMN is_private INTEGER DEFAULT 0;").run().catch(() => {});
+    // seller / shop registration (persist ครั้งเดียว — แหล่งข้อมูลจริงของสถานะผู้ขาย)
+    await this.d1.prepare("ALTER TABLE users ADD COLUMN line_oa_id TEXT;").run().catch(() => {});
+    await this.d1.prepare("ALTER TABLE users ADD COLUMN shop_name TEXT;").run().catch(() => {});
+    await this.d1.prepare("ALTER TABLE users ADD COLUMN shop_category TEXT;").run().catch(() => {});
+    await this.d1.prepare("ALTER TABLE users ADD COLUMN shop_province TEXT;").run().catch(() => {});
+    await this.d1.prepare("ALTER TABLE users ADD COLUMN shop_phone TEXT;").run().catch(() => {});
+    await this.d1.prepare("ALTER TABLE users ADD COLUMN shop_description TEXT;").run().catch(() => {});
+    await this.d1.prepare("ALTER TABLE users ADD COLUMN shop_logo TEXT;").run().catch(() => {});
+    await this.d1.prepare("ALTER TABLE users ADD COLUMN seller_since INTEGER;").run().catch(() => {});
+    await this.d1.prepare("ALTER TABLE users ADD COLUMN seller_tier TEXT;").run().catch(() => {});
+  }
+
+  // ตลาดใกล้บ้าน — location columns (idempotent, กัน prod ยังไม่มี)
+  // เฟส 1 ใช้ seller_location (text) + province_code (TIS-1099); amphoe/tambon เผื่อเฟสหน้า
+  async ensureProductsColumns() {
+    if (this._productsColsEnsured) return;      // ทำครั้งเดียวต่อ worker instance
+    this._productsColsEnsured = true;
+    await this.d1.prepare("ALTER TABLE products ADD COLUMN seller_location TEXT;").run().catch(() => {});
+    await this.d1.prepare("ALTER TABLE products ADD COLUMN province_code TEXT;").run().catch(() => {});
+    await this.d1.prepare("ALTER TABLE products ADD COLUMN amphoe_code TEXT;").run().catch(() => {});
+    await this.d1.prepare("ALTER TABLE products ADD COLUMN tambon_code TEXT;").run().catch(() => {});
+    await this.d1.prepare("CREATE INDEX IF NOT EXISTS idx_products_province_code ON products(province_code);").run().catch(() => {});
   }
 
   async getUserById(id) {
@@ -77,11 +99,72 @@ export class DB {
   }
 
   async updateSellerVerification(userId, lineOaId) {
+    await this.ensureUsersColumns();
     return this.d1.prepare(`
-      UPDATE users 
+      UPDATE users
       SET seller_status = 'verified', line_oa_id = ?, updated_at = ?
       WHERE id = ?
-    `).bind(lineOaId, Date.now(), userId).run();
+    `).bind(lineOaId || null, Date.now(), userId).run();
+  }
+
+  // ลงทะเบียนเปิดร้าน — persist สถานะ verified + ข้อมูลร้านลง D1 (source of truth)
+  async registerSeller(userId, profile = {}) {
+    await this.ensureUsersColumns();
+    const now = Date.now();
+    const tier = profile.tier || 'trial';   // แพ็คเกจที่เลือก หรือ trial ถ้าไม่ระบุ
+    return this.d1.prepare(`
+      UPDATE users SET
+        seller_status = 'verified',
+        seller_tier = ?,
+        seller_since = COALESCE(seller_since, ?),
+        shop_name = ?,
+        shop_category = ?,
+        shop_province = ?,
+        shop_phone = ?,
+        shop_description = ?,
+        shop_logo = COALESCE(?, shop_logo),
+        line_oa_id = COALESCE(?, line_oa_id),
+        updated_at = ?
+      WHERE id = ?
+    `).bind(
+      tier,
+      now,
+      profile.shopName || '',
+      profile.category || '',
+      profile.province || '',
+      profile.phone || '',
+      profile.description || '',
+      profile.logo || null,
+      profile.lineOaId || null,
+      now,
+      userId
+    ).run();
+  }
+
+  // ตลาดนัดชั้นฟรี — ตั้งสถานะ 'free' อัตโนมัติเมื่อโพสต์ครั้งแรก (ถ้ายัง 'none')
+  // ไม่แตะคนที่ verified แล้ว (เปิดร้านเต็มรูปแบบ)
+  async ensureFreeSeller(userId) {
+    await this.ensureUsersColumns();
+    const now = Date.now();
+    return this.d1.prepare(`
+      UPDATE users SET
+        seller_status = 'free',
+        seller_since = COALESCE(seller_since, ?),
+        shop_name = COALESCE(NULLIF(shop_name, ''), display_name),
+        updated_at = ?
+      WHERE id = ? AND (seller_status IS NULL OR seller_status = 'none')
+    `).bind(now, now, userId).run();
+  }
+
+  // อ่านข้อมูลร้านจาก D1
+  async getSellerProfile(userId) {
+    await this.ensureUsersColumns();
+    return this.d1.prepare(`
+      SELECT id, display_name, seller_status, seller_tier, seller_since,
+             shop_name, shop_category, shop_province, shop_phone,
+             shop_description, shop_logo, line_oa_id
+      FROM users WHERE id = ?
+    `).bind(userId).first();
   }
 
   // ─────────────────────────────────────────────────────────────
@@ -242,7 +325,8 @@ export class DB {
   // PRODUCTS (Marketplace)
   // โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•
 
-  async getProducts({ category, limit = 20, offset = 0, search, province } = {}) {
+  async getProducts({ category, limit = 20, offset = 0, search, province, provinceCode } = {}) {
+    await this.ensureProductsColumns();
     let query = `
       SELECT p.*, u.display_name as seller_name, u.picture_url as seller_picture
       FROM products p LEFT JOIN users u ON p.seller_id = u.id
@@ -270,7 +354,9 @@ export class DB {
       }
     }
 
-    if (province) { query += " AND COALESCE(p.seller_location, '') LIKE ?"; binds.push(`%${province}%`); }
+    // เฟส 1: province_code เป็นตัวกรองหลัก (แม่นกว่า text); fallback text ผ่าน seller_location LIKE
+    if (provinceCode) { query += " AND p.province_code = ?"; binds.push(String(provinceCode)); }
+    else if (province) { query += " AND COALESCE(p.seller_location, '') LIKE ?"; binds.push(`%${province}%`); }
 
     // เรียงลำดับ: ถ้า search ให้ title match ก่อน ตามด้วย views_count
     if (search) {
@@ -391,21 +477,23 @@ export class DB {
   }
 
   async createProduct(product) {
+    await this.ensureProductsColumns();
     return this.d1.prepare(`
       INSERT INTO products (
         id, seller_id, title, description, price, images, category, status,
-        seller_phone, seller_line_id, seller_facebook, seller_location,
+        seller_phone, seller_line_id, seller_facebook, seller_location, province_code,
         product_unit, product_stock, is_otop, is_organic, video_url,
         created_at
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).bind(
       product.id, product.sellerId, product.title,
       product.description, product.price,
       typeof product.images === 'string' ? product.images : JSON.stringify(product.images || []),
       product.category || 'general', product.status || 'active',
       product.sellerPhone || '', product.sellerLineId || '', product.sellerFacebook || '',
-      product.sellerLocation || '', product.productUnit || '', Number(product.productStock || 0),
+      product.sellerLocation || '', product.provinceCode || product.province_code || '',
+      product.productUnit || '', Number(product.productStock || 0),
       product.isOTOP ? 1 : 0, product.isOrganic ? 1 : 0, product.videoUrl || '',
       product.createdAt || Date.now()
     ).run();

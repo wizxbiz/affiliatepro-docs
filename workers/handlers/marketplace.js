@@ -17,11 +17,11 @@ export const marketplaceRoutes = new Hono();
 // ── GET /api/marketplace/products ─────────────────────────────
 // แทน marketplaceGetProducts Firebase function
 marketplaceRoutes.get('/products', optionalAuth, async (c) => {
-  const { category, limit = 20, offset = 0, search } = c.req.query();
+  const { category, limit = 20, offset = 0, search, province, provinceCode, province_code } = c.req.query();
   const db = new DB(c.env.DB);
 
   try {
-    const products = await db.getProducts({ category, limit: +limit, offset: +offset, search });
+    const products = await db.getProducts({ category, limit: +limit, offset: +offset, search, province, provinceCode: provinceCode || province_code });
     return c.json({ success: true, products });
   } catch (err) {
     return c.json({ error: err.message }, 500);
@@ -49,6 +49,10 @@ marketplaceRoutes.post('/products', requireAuth, async (c) => {
   const session = c.get('session');
   const body = await c.req.json();
   const db = new DB(c.env.DB);
+
+  // ตลาดนัด: ใครที่ login ก็ลงขายได้ทันที — ตั้งชั้นฟรีอัตโนมัติถ้ายังไม่เคยขาย
+  // (การเปิดร้านเต็มรูปแบบ = verified เป็น upsell ทีหลัง ไม่ใช่ประตูกั้น)
+  await db.ensureFreeSeller(session.uid).catch(() => {});
 
   try {
     const productId = crypto.randomUUID();
@@ -115,61 +119,16 @@ marketplaceRoutes.post('/contact', requireAuth, async (c) => {
   }
 });
 
-// ── GET /api/marketplace/share — OG Preview ──────────────────
-// แทน marketplaceShare Firebase function
-marketplaceRoutes.get('/share', async (c) => {
+// ── GET /share, /community-share — backward-compat ───────────
+// ลิงก์เก่าที่แชร์ไปแล้ว → redirect เข้า share hub /s/:type/:id (OG + escape จัดที่เดียว)
+marketplaceRoutes.get('/share', (c) => {
   const { id } = c.req.query();
-  const db = new DB(c.env.DB);
-  try {
-    const product = id ? await db.getProductById(id) : null;
-    const title   = product?.title   || 'TukTuk Marketplace';
-    const desc    = product?.description || 'สินค้าและบริการบน TukTuk Thailand';
-    const image   = product?.images ? JSON.parse(product.images)[0] : 'https://tuktukthailand.com/assets/images/tuktuk.png';
-
-    return c.html(`<!DOCTYPE html>
-<html lang="th">
-<head>
-  <meta charset="UTF-8">
-  <meta property="og:title" content="${title}">
-  <meta property="og:description" content="${desc}">
-  <meta property="og:image" content="${image}">
-  <meta property="og:url" content="${c.req.url}">
-  <meta property="og:type" content="product">
-  <meta http-equiv="refresh" content="0;url=/marketplace.html?id=${id || ''}">
-</head>
-<body><script>window.location="/marketplace.html?id=${id || ''}"</script></body>
-</html>`);
-  } catch (err) {
-    return c.redirect('/marketplace.html', 302);
-  }
+  return c.redirect(id ? `/s/product/${encodeURIComponent(id)}` : '/marketplace.html', 302);
 });
 
-// ── GET /api/marketplace/community-share ─────────────────────
-// แทน communityShare Firebase function
-marketplaceRoutes.get('/community-share', async (c) => {
+marketplaceRoutes.get('/community-share', (c) => {
   const { id } = c.req.query();
-  const db = new DB(c.env.DB);
-  try {
-    const post  = id ? await db.getPostById(id) : null;
-    const title = post?.content?.substring(0, 60) || 'TukTuk Community';
-    const desc  = 'ชุมชน TukTuk Thailand — แบ่งปัน แลกเปลี่ยน';
-    const image = 'https://tuktukthailand.com/assets/images/tuktuk.png';
-
-    return c.html(`<!DOCTYPE html>
-<html lang="th">
-<head>
-  <meta charset="UTF-8">
-  <meta property="og:title" content="${title}">
-  <meta property="og:description" content="${desc}">
-  <meta property="og:image" content="${image}">
-  <meta property="og:url" content="${c.req.url}">
-  <meta http-equiv="refresh" content="0;url=/community.html?post=${id || ''}">
-</head>
-<body><script>window.location="/community.html?post=${id || ''}"</script></body>
-</html>`);
-  } catch (err) {
-    return c.redirect('/community.html', 302);
-  }
+  return c.redirect(id ? `/s/community/${encodeURIComponent(id)}` : '/app', 302);
 });
 
 // ── POST /api/marketplace/ai-generate ────────────────────────

@@ -1257,21 +1257,25 @@ v1Routes.post('/ai/write-post', async (c) => {
   if (!topic) return c.json({ status: 'error', error: { code: 'MISSING_TOPIC', message: 'กรุณาระบุ topic' } }, 400);
 
   const prompts = {
-    post: `สร้างโพสต์สำหรับ TukTuk Thailand เกี่ยวกับ: "${topic}"\nตอบเป็น JSON รูปแบบ: {"headline":"...","content":"..."}\nheadline: กระชับดึงดูดไม่เกิน 80 ตัวอักษร\ncontent: 3-5 ประโยค มี emoji และ hashtag #TukTukThailand`,
+    post: `สร้างโพสต์สำหรับ TukTuk Thailand เกี่ยวกับ: "${topic}"\nตอบเป็น JSON รูปแบบ: {"headline":"...","content":"...","image_prompt":"...","optimal_time":"..."}\nheadline: กระชับดึงดูดไม่เกิน 80 ตัวอักษร\ncontent: 3-5 ประโยค มี emoji และ hashtag #TukTukThailand\nimage_prompt: ภาษาอังกฤษสำหรับ AI วาดรูป (Midjourney/DALL-E) อธิบายภาพประกอบ\noptimal_time: เวลาที่แนะนำในการโพสต์ (เช่น "19:00 น. วันศุกร์")`,
     headline: `จากหัวข้อ: "${topic}"\nสร้าง headline ภาษาไทยที่ดึงดูดใจ 1 บรรทัด ไม่เกิน 80 ตัวอักษร ตอบแค่ headline เท่านั้น ไม่ต้องอธิบาย`,
     refine: `ปรับปรุงเนื้อหาต่อไปนี้ให้ดีขึ้น:\n"${topic}"\nตอบเป็น JSON: {"headline":"...","content":"..."}`,
     // ── บันเทิง: เน้นสนุก กระตุ้น engagement ───────────────
     entertain: `สร้างโพสต์คอนเทนต์บันเทิงสำหรับ TukTuk Thailand (ฟีดดูเพลิน) เกี่ยวกับ: "${topic}"\n` +
-      `ตอบเป็น JSON: {"headline":"...","content":"..."}\n` +
+      `ตอบเป็น JSON: {"headline":"...","content":"...","image_prompt":"...","optimal_time":"..."}\n` +
       `แนวทาง: สนุก เป็นกันเอง ดึงดูดให้อยากดู/มีส่วนร่วม, ตั้งคำถามหรือ hook เปิดเรื่อง, ` +
       `มี emoji, ปิดท้ายชวน like/share/comment, hashtag บันเทิง เช่น #ดูเพลิน #TukTukThailand\n` +
-      `headline: ไม่เกิน 80 ตัวอักษร สะดุดตา, content: 3-5 ประโยค`,
+      `headline: ไม่เกิน 80 ตัวอักษร สะดุดตา, content: 3-5 ประโยค\n` +
+      `image_prompt: ภาษาอังกฤษอธิบายภาพสไตล์บันเทิง สดใส สำหรับ AI วาดภาพ\n` +
+      `optimal_time: เวลาที่แนะนำให้โพสต์สำหรับสายบันเทิง`,
     // ── ขาย: เน้นจุดขาย + CTA ซื้อ ──────────────────────────
     sell: `สร้างโพสต์ขายสินค้าสำหรับ TukTuk Thailand (ตลาดนัด) เกี่ยวกับ: "${topic}"\n` +
-      `ตอบเป็น JSON: {"headline":"...","content":"..."}\n` +
+      `ตอบเป็น JSON: {"headline":"...","content":"...","image_prompt":"...","optimal_time":"..."}\n` +
       `แนวทาง: เน้นจุดเด่นสินค้า/ประโยชน์, ระบุราคาหรือโปรโมชั่นถ้ามี, สร้างความเร่งด่วน (ของมีจำกัด/ลดวันนี้), ` +
       `มี call-to-action ชัดเจน เช่น "ทักแชทเลย" "สั่งซื้อวันนี้", hashtag สินค้า เช่น #OTOP #ของดีบอกต่อ #TukTukThailand\n` +
-      `headline: ไม่เกิน 80 ตัวอักษร กระตุ้นให้ซื้อ, content: 3-5 ประโยค`,
+      `headline: ไม่เกิน 80 ตัวอักษร กระตุ้นให้ซื้อ, content: 3-5 ประโยค\n` +
+      `image_prompt: ภาษาอังกฤษอธิบายภาพสินค้าหรือโปรโมชั่นให้สวยงามน่าซื้อ สำหรับ AI วาดภาพ\n` +
+      `optimal_time: เวลาที่แนะนำให้โพสต์สำหรับนักช้อป`,
   };
 
   const systemPrompt = `คุณเป็น Content Creator ผู้เชี่ยวชาญของ TukTuk Thailand Platform
@@ -1356,7 +1360,14 @@ v1Routes.post('/ai/write-post', async (c) => {
     // Parse JSON response
     try {
       const parsed = JSON.parse(text.replace(/```json|```/g, '').trim());
-      return c.json({ status: 'ok', source, headline: parsed.headline || '', content: parsed.content || text });
+      return c.json({ 
+        status: 'ok', 
+        source, 
+        headline: parsed.headline || '', 
+        content: parsed.content || text,
+        image_prompt: parsed.image_prompt || '',
+        optimal_time: parsed.optimal_time || ''
+      });
     } catch {
       const lines = text.split('\n').filter(Boolean);
       return c.json({ status: 'ok', source, headline: lines[0] || topic, content: lines.slice(1).join('\n') || text });
@@ -1394,30 +1405,46 @@ v1Routes.post('/ai/chat', async (c) => {
 
   try {
     let text = null;
+    let tool_calls = null;
     let source = 'local';
 
     // 1. FORGE Gateway (server-side token — เชื่อมกับ E:\Forgework cloud brain)
     if (c.env.FORGE_GATEWAY_TOKEN) {
       try {
         const baseUrl = (c.env.FORGE_GATEWAY_URL || 'https://api.forgework.app').replace(/\/+$/, '');
+        
+        const payload = {
+          model: body.model || c.env.FORGE_GATEWAY_MODEL || 'gpt-5.4-mini',
+          messages,
+          max_tokens: 1200,
+          temperature: 0.4,
+          stream: false,
+        };
+        
+        if (body.tools && Array.isArray(body.tools)) {
+          payload.tools = body.tools;
+        }
+
         const resp = await fetch(`${baseUrl}/v1/chat/completions`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${c.env.FORGE_GATEWAY_TOKEN}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            model: body.model || c.env.FORGE_GATEWAY_MODEL || 'gpt-5.4-mini',
-            messages,
-            max_tokens: 1200,
-            temperature: 0.4,
-            stream: false,
-          }),
+          body: JSON.stringify(payload),
         });
+        
         if (resp.ok) {
           const data = await resp.json();
-          text = data.choices?.[0]?.message?.content || null;
-          if (text) source = 'forge';
+          const msg = data.choices?.[0]?.message;
+          text = msg?.content || null;
+          
+          if (msg?.tool_calls) {
+            tool_calls = msg.tool_calls;
+            source = 'forge';
+          } else if (text) {
+            source = 'forge';
+          }
         }
       } catch (e) {
         console.warn('[AI chat] FORGE failed:', e.message);
@@ -1425,7 +1452,7 @@ v1Routes.post('/ai/chat', async (c) => {
     }
 
     // 2. Fallback: Cloudflare Workers AI
-    if (!text && c.env.AI) {
+    if (!text && !tool_calls && c.env.AI) {
       try {
         const result = await c.env.AI.run(c.env.WORKERS_AI_MODEL || '@cf/openai/gpt-oss-20b', {
           messages,
@@ -1438,11 +1465,11 @@ v1Routes.post('/ai/chat', async (c) => {
       }
     }
 
-    if (!text) {
+    if (!text && !tool_calls) {
       return c.json({ status: 'ok', source: 'local', reply: 'ขออภัยครับ ระบบ AI ไม่พร้อมใช้งานชั่วคราว กรุณาลองใหม่อีกครั้ง' });
     }
 
-    return c.json({ status: 'ok', source, reply: text });
+    return c.json({ status: 'ok', source, reply: text, tool_calls });
   } catch (err) {
     return c.json({ status: 'error', error: { code: 'AI_ERROR', message: err.message } }, 500);
   }

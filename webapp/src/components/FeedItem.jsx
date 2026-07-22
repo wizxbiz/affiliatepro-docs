@@ -4,6 +4,8 @@ import { parseYouTube } from '../lib/youtube.js'
 import { api, getToken } from '../api/client.js'
 import { useAuth } from '../auth/AuthContext.jsx'
 import { useVideoPlayback } from '../hooks/useVideoPlayback.js'
+import { shareContent } from '../lib/share.js'
+import ImageCarousel from './ImageCarousel.jsx'
 
 function parseList(value) {
   if (!value) return []
@@ -69,7 +71,13 @@ function resolveMedia(item) {
   })
   if (directVideo) return { kind: 'video', src: entryUrl(directVideo) || directVideo, poster: imgUrl }
 
-  if (imgUrl) return { kind: 'image', src: imgUrl }
+  if (imgUrl) {
+    // รวมรูปทั้งหมด (cover มาก่อน) สำหรับ carousel — ตัดวิดีโอ/ซ้ำออก
+    const allImages = [imgUrl, ...images, ...media.map(entryUrl)]
+      .filter((u) => u && !parseYouTube(u) && !/\.(mp4|webm|mov|m4v)(\?|$)/i.test(u))
+    const gallery = [...new Set(allImages)]
+    return { kind: 'image', src: imgUrl, images: gallery }
+  }
   return null
 }
 
@@ -178,17 +186,12 @@ export default function FeedItem({ item, active, onCommentClick }) {
   }
 
   function handleShare() {
-    const url = `${window.location.origin}/app?post=${encodeURIComponent(item.id)}&comments=1`
     const text = (item.content || item.title || item.productName || 'TukTuk Feed').slice(0, 120)
-    if (navigator.share) {
-      navigator.share({ title: 'TukTuk Feed', text, url }).catch(() => {})
-    } else {
-      navigator.clipboard?.writeText(url).then(() => {
-        alert('คัดลอกลิงก์เรียบร้อย')
-      }).catch(() => {
-        prompt('คัดลอกลิงก์:', url)
-      })
-    }
+    const type = isProduct ? 'product' : 'post'
+    const shareId = isProduct ? (item.productId || item.id) : item.id
+    shareContent({ type, id: shareId, title: 'TukTuk Feed', text }).then((result) => {
+      if (result === 'copied') alert('คัดลอกลิงก์แชร์เรียบร้อย')
+    })
   }
 
   function handleComment() {
@@ -263,7 +266,9 @@ export default function FeedItem({ item, active, onCommentClick }) {
         )}
 
         {resolved?.kind === 'image' && (
-          <img src={resolved.src} alt="" loading="lazy" />
+          resolved.images && resolved.images.length > 1
+            ? <ImageCarousel images={resolved.images} alt={item.content?.slice(0, 40) || ''} fit="cover" className="feed-carousel" />
+            : <img src={resolved.src} alt="" loading="lazy" />
         )}
       </div>
 

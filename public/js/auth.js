@@ -809,137 +809,26 @@ var WizmobizAuth = {
 
     // Handle Shop Access - Requirement: Verified Seller via LINE
     async handleShopAccess(destination = null) {
-        let user = this.getUser();
+        // ตลาดนัด: ใครที่ login แล้วเข้าร้าน/ลงขายได้ทันที (ชั้นฟรี)
+        // การเปิดร้านเต็มรูปแบบ (verified + แพ็คเกจ) = อัปเกรดทีหลัง ไม่ใช่ประตูกั้น
+        const user = this.getUser();
         if (!user) {
             this.showShopAccessModal();
             return;
         }
 
-        const userId = user.uid; // lineUserId or Firebase UID
-        const API_BASE = 'https://us-central1-appinjproject.cloudfunctions.net';
-        console.log('🔍 [V1.0.6] Checking shop access for:', user.displayName, 'ID:', userId, 'Status:', user.sellerStatus);
+        const defaultTarget = window.location.pathname.includes('.html')
+            ? 'seller-dashboard.html'
+            : 'seller-dashboard';
+        const target = destination || defaultTarget;
+        console.log('🚀 [V3 ตลาดนัด] เข้าร้าน/ลงขาย →', target, '| สถานะ:', user.sellerStatus || 'free');
 
-        // Try to refresh status from Firestore or API if not verified locally
-        if (user.sellerStatus !== 'verified') {
-            this._notify('กำลังตรวจสอบสิทธิ์ผู้ขาย...', 'info');
-
-            let isVerified = false;
-
-            // 1. Try Firestore first (if available and not already verified)
-            if (typeof db !== 'undefined' && !isVerified) {
-                try {
-                    console.log('📡 Fetching status from Firestore...');
-                    // 1.1 Check primary users collection
-                    const userDoc = await db.collection('users').doc(userId).get();
-                    if (userDoc.exists) {
-                        const data = userDoc.data();
-                        if (data.sellerStatus === 'verified' || data.isSeller === true || data.isSeller === 'true' || data.subscriptionType === 'premium') {
-                            isVerified = true;
-                        }
-                    }
-
-                    // 1.2 Try searching users collection by lineUserId field
-                    if (!isVerified && user.lineUserId) {
-                        const userQuery = await db.collection('users')
-                            .where('lineUserId', '==', user.lineUserId)
-                            .limit(1)
-                            .get();
-                        if (!userQuery.empty) {
-                            const data = userQuery.docs[0].data();
-                            if (data.sellerStatus === 'verified' || data.isSeller === true || data.subscriptionType === 'premium') {
-                                isVerified = true;
-                            }
-                        }
-                    }
-
-                    // 1.3 Check seller_profiles collection (sellers registered via Flutter app)
-                    // seller_profiles uses lineUserId as doc ID
-                    if (!isVerified) {
-                        const lookupId = user.lineUserId || userId;
-                        const profileDoc = await db.collection('seller_profiles').doc(lookupId).get();
-                        if (profileDoc.exists) {
-                            const data = profileDoc.data();
-                            const plan = data.subscriptionPlan || {};
-                            if (
-                                data.sellerStatus === 'verified' ||
-                                plan.paymentStatus === 'active' ||
-                                plan.tier === 'trial' ||
-                                plan.tier === 'starter'
-                            ) {
-                                isVerified = true;
-                                console.log('✅ Verified via seller_profiles:', lookupId);
-                            }
-                        }
-                    }
-                } catch (e) {
-                    console.warn('⚠️ Firestore error (Offline or Permission):', e.message);
-                }
-            }
-
-            // 2. API Fallback (Use fetch to bypass Firestore offline issues)
-            if (!isVerified) {
-                try {
-                    console.log('🌐 Attempting API fallback for status check...');
-                    const response = await fetch(`${API_BASE}/marketplaceLineAuth`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ lineUserId: user.lineUserId || userId })
-                    });
-                    const result = await response.json();
-                    if (result.success && result.user) {
-                        const s = result.user.sellerStatus;
-                        const p = result.user.isPremium || result.user.subscriptionType === 'premium';
-                        if (s === 'verified' || result.user.isSeller === true || p) {
-                            isVerified = true;
-                        }
-                    }
-                } catch (apiErr) {
-                    console.warn('❌ API fallback failed:', apiErr.message);
-                }
-            }
-
-            // Sync status if verified
-            if (isVerified) {
-                console.log('✅ Seller verified successfully!');
-                user.sellerStatus = 'verified';
-                const sessionKeys = [this.SESSION_KEY, 'tuktuk_line_session', 'wizmobiz_session'];
-                sessionKeys.forEach(key => {
-                    const sessionRaw = localStorage.getItem(key);
-                    if (sessionRaw) {
-                        try {
-                            const session = JSON.parse(sessionRaw);
-                            if (session.lineUserId === user.lineUserId || session.uid === user.uid) {
-                                session.sellerStatus = 'verified';
-                                localStorage.setItem(key, JSON.stringify(session));
-                            }
-                        } catch (e) { }
-                    }
-                });
-                this._notify('อนุมัติสิทธิ์ผู้ขายเรียบร้อย', 'success');
-            } else {
-                console.log('❌ Seller NOT verified through any channel');
-            }
-        }
-
-        // Final decision
-        if (user.sellerStatus === 'verified') {
-            const defaultTarget = window.location.hostname === 'localhost' || window.location.pathname.includes('.html')
-                ? 'seller-dashboard.html'
-                : 'seller-dashboard';
-
-            const target = destination || defaultTarget;
-            console.log('🚀 Redirecting to:', target);
-            // SPA-aware navigation: if inside iframe, tell parent to navigate
-            if (window.self !== window.top) {
-                window.top.postMessage({ type: 'NAVIGATE', href: target }, window.location.origin);
-            } else if (typeof window.navigateToSPA === 'function') {
-                window.navigateToSPA(target);
-            } else {
-                window.location.href = target;
-            }
+        if (window.self !== window.top) {
+            window.top.postMessage({ type: 'NAVIGATE', href: target }, window.location.origin);
+        } else if (typeof window.navigateToSPA === 'function') {
+            window.navigateToSPA(target);
         } else {
-            console.log('🔓 Showing verification modal');
-            this.showVerificationModal();
+            window.location.href = target.startsWith('http') || target.includes('.html') ? target : '/' + target;
         }
     },
 

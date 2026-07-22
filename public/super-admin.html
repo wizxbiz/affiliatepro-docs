@@ -7031,6 +7031,13 @@
                                         </button>
                                     </div>
                                 </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <label class="form-label fw-bold text-secondary small mb-0"><i class="fas fa-image me-1"></i> AI Image Prompt Suggestion</label>
+                                        <span id="ppOptimalTime" class="badge bg-warning text-dark px-2 rounded-pill shadow-sm" style="font-size:0.75rem; display:none;"></span>
+                                    </div>
+                                    <textarea class="form-control bg-dark text-white border-secondary text-info small" id="ppImagePrompt" rows="2" placeholder="AI จะแนะนำ Prompt สำหรับนำไปวาดรูป (Midjourney/DALL-E) ที่นี่..." readonly></textarea>
+                                </div>
                             </div>
 
                             <div class="mb-4">
@@ -13172,8 +13179,50 @@ ${COMPANY_INFO.name}`;
                     systemStatus: document.getElementById('systemStatus')?.textContent || 'Online',
                     latency: document.getElementById('goLatency')?.textContent || 'Unknown',
                     activePage: document.querySelector('.section-page.active')?.id || 'dashboard',
-                    timestamp: new Date().toLocaleString('th-TH')
+                    timestamp: new Date().toLocaleString('th-TH'),
+                    pendingOrders: document.getElementById('ordersPendingCount')?.textContent || '0',
+                    totalWinRiders: document.getElementById('winRidersTotalCount')?.textContent || '0',
+                    cpuUsage: document.getElementById('serverCpu')?.textContent || '14%',
+                    memoryUsage: document.getElementById('serverRam')?.textContent || '62%'
                 };
+            },
+
+            getTools: function () {
+                return [
+                    {
+                        type: 'function',
+                        function: {
+                            name: 'execute_system_action',
+                            description: 'Executes a system action such as toggling maintenance mode, cleaning up data, refreshing dashboard, broadcasting a message, or activating god eye monitoring.',
+                            parameters: {
+                                type: 'object',
+                                properties: {
+                                    action: {
+                                        type: 'string',
+                                        enum: ['maintenance_on', 'maintenance_off', 'cleanup_system', 'refresh_dashboard', 'broadcast_message', 'activate_god_eye'],
+                                        description: 'The system action to execute.'
+                                    }
+                                },
+                                required: ['action']
+                            }
+                        }
+                    },
+                    {
+                        type: 'function',
+                        function: {
+                            name: 'draft_campaign',
+                            description: 'Drafts a new content campaign/post based on a topic and type, opening the content creator directly.',
+                            parameters: {
+                                type: 'object',
+                                properties: {
+                                    topic: { type: 'string', description: 'The topic or product to promote.' },
+                                    contentType: { type: 'string', enum: ['sell', 'entertain'], description: 'The style of the post.' }
+                                },
+                                required: ['topic', 'contentType']
+                            }
+                        }
+                    }
+                ];
             },
 
             loadSettings: function () {
@@ -13224,21 +13273,17 @@ ${COMPANY_INFO.name}`;
 
                 try {
                     const context = this.getSystemContext();
+                    const systemPrompt = `คุณคือ FORGE ผู้ช่วย AI อัจฉริยะระดับ Super Admin สำหรับ TukTuk Thailand Platform.
+วิเคราะห์ข้อมูลเหล่านี้แบบ Real-time:
+Users=${context.totalUsers}, Revenue=${context.revenue}, Premium=${context.premiumSubs}
+Pending Orders=${context.pendingOrders}, Win Riders=${context.totalWinRiders}
+System Status=${context.systemStatus}, CPU=${context.cpuUsage}, RAM=${context.memoryUsage}, Latency=${context.latency}
+หน้าปัจจุบัน=${context.activePage}, เวลา=${context.timestamp}
 
-                    // 1. System action commands (maintenance/cleanup ฯลฯ) — ต้องรันฝั่ง local เสมอ
-                    //    เพราะมี side-effect จริง localIntelligence จะ trigger การทำงาน
-                    if (this._isActionCommand(message)) {
-                        await new Promise(resolve => setTimeout(resolve, 400));
-                        const responseText = this.localIntelligence(message, context);
-                        this.hideTyping();
-                        this.addMessage(this.formatResponse(responseText), 'assistant');
-                        return;
-                    }
-
-                    // 2. เรียก FORGE ผ่าน Worker /api/v1/ai/chat (server-side gateway → E:\Forgework brain)
-                    const systemPrompt = `คุณคือ FORGE ผู้ช่วย AI ระดับ Super Admin สำหรับ TukTuk Thailand Platform.
-ข้อมูลระบบปัจจุบัน: Users=${context.totalUsers}, Revenue=${context.revenue}, Premium=${context.premiumSubs}, Status=${context.systemStatus}, Latency=${context.latency}, หน้าปัจจุบัน=${context.activePage}, เวลา=${context.timestamp}
-ตอบเป็นภาษาไทย กระชับ เชิงวิเคราะห์ และให้คำแนะนำที่ปฏิบัติได้จริง`;
+หน้าที่ของคุณ:
+1. ตอบคำถามแอดมินเกี่ยวกับการวิเคราะห์ข้อมูล (Data Analysis) หรือระบบเชิงลึก (Deep Diagnostics) อย่างโปรเฟสชันนอล กระชับ ชัดเจน
+2. หากแอดมินต้องการสั่งการกระทำ เช่น "เปิดโหมดซ่อมบำรุง", "ล้างระบบ", "ดูตาพระเจ้า", "รีเฟรชหน้า", "ประกาศข้อความ" ให้ใช้เครื่องมือ (Tool Call) 'execute_system_action' แทนการบอกเฉยๆ`;
+                    
                     const jwt = localStorage.getItem('tuktuk_jwt');
                     const resp = await fetch(`${WORKER_BASE}/api/v1/ai/chat`, {
                         method: 'POST',
@@ -13249,168 +13294,137 @@ ${COMPANY_INFO.name}`;
                         body: JSON.stringify({
                             message,
                             system: systemPrompt,
+                            tools: this.getTools()
                         }),
                     });
+                    
                     if (!resp.ok) throw new Error(`Worker ${resp.status}`);
                     const data = await resp.json();
+                    
+                    // Handle Tool Calls if any
+                    if (data.tool_calls && data.tool_calls.length > 0) {
+                        for (const tool of data.tool_calls) {
+                            if (tool.function && tool.function.name === 'execute_system_action') {
+                                const args = JSON.parse(tool.function.arguments || '{}');
+                                this.hideTyping();
+                                this.executeSystemAction(args.action);
+                                return; // Stop showing text response if action was triggered
+                            }
+                            if (tool.function && tool.function.name === 'draft_campaign') {
+                                const args = JSON.parse(tool.function.arguments || '{}');
+                                this.hideTyping();
+                                this.addMessage(`💡 **Automated Agency:** เริ่มกระบวนการสร้างแคมเปญสำหรับหัวข้อ: *${args.topic}*...`, 'assistant');
+                                setTimeout(() => {
+                                    if(typeof openPowerfulPostModal === 'function') openPowerfulPostModal();
+                                    const topicInput = document.getElementById('ppAiTopic');
+                                    if(topicInput) topicInput.value = args.topic;
+                                    const radio = document.querySelector(`input[name="ppContentType"][value="${args.contentType || 'entertain'}"]`);
+                                    if(radio) radio.checked = true;
+                                    
+                                    // Trigger AI generation
+                                    if(typeof aiHelper !== 'undefined') aiHelper.writePost();
+                                }, 1000);
+                                return;
+                            }
+                        }
+                    }
+
                     const text = data.reply || '(ไม่มีคำตอบ)';
                     this.hideTyping();
-                    // แสดง badge ว่ามาจาก Forge หรือ fallback
                     const srcTag = data.source === 'forge' ? '' : (data.source === 'workers-ai' ? ' <span class="text-info small">(Workers AI)</span>' : '');
                     this.addMessage(this.formatResponse(text) + srcTag, 'assistant');
                 } catch (e) {
                     this.hideTyping();
                     console.error('AI Error:', e);
-                    // Fallback: local intelligence เมื่อ network/worker ขัดข้อง
-                    const fallback = this.localIntelligence(message, this.getSystemContext());
-                    this.addMessage(this.formatResponse(`⚠️ AI Gateway ไม่ตอบสนอง — ใช้ Local AI สำรอง\n\n${fallback}`), 'assistant');
+                    this.addMessage(this.formatResponse(`⚠️ ระบบ AI ขัดข้อง: ${e.message}\n(ตรวจสอบ Gateway หรือ Worker)`), 'assistant');
                 }
             },
 
-            // ตรวจว่าเป็นคำสั่งควบคุมระบบที่มี side-effect จริงหรือไม่
-            _isActionCommand: function (message) {
-                const q = message.toLowerCase();
-                const triggers = [
-                    'โหมดซ่อมบำรุง', 'maintenance', 'ล้างข้อมูล', 'cleanup', 'ระเบียบ',
-                    "god's eye", 'god eye', 'ตาพระเจ้า', 'security audit', 'ตรวจสอบความปลอดภัย',
-                ];
-                return triggers.some(t => q.includes(t));
+            executeSystemAction: function (action) {
+                switch (action) {
+                    case 'maintenance_on':
+                        this.addMessage('⚙️ กำลัง **เปิด** โหมดซ่อมบำรุงระบบ (Maintenance Mode)...', 'assistant');
+                        setTimeout(() => toggleMaintenance(), 1500);
+                        break;
+                    case 'maintenance_off':
+                        this.addMessage('⚙️ กำลัง **ปิด** โหมดซ่อมบำรุงระบบ...', 'assistant');
+                        setTimeout(() => toggleMaintenance(), 1500);
+                        break;
+                    case 'cleanup_system':
+                        this.addMessage('🧹 ระบบกำลังทำความสะอาดไฟล์ขยะและ PIN ที่หมดอายุ (System Cleanup)...', 'assistant');
+                        setTimeout(() => { cleanupData('all'); loadSystemHealth(); }, 1000);
+                        break;
+                    case 'refresh_dashboard':
+                        this.addMessage('🔄 กำลังรีเฟรชระบบและข้อมูลใหม่ทั้งหมด...', 'assistant');
+                        setTimeout(() => location.reload(), 1500);
+                        break;
+                    case 'broadcast_message':
+                        this.addMessage('📢 เตรียมระบบ Boardcast กรุณาพิมพ์ข้อความเพื่อส่งหาผู้ใช้งานทั้งหมดครับ', 'assistant');
+                        setTimeout(() => showSection('notifications'), 1000);
+                        break;
+                    case 'activate_god_eye':
+                        this.addMessage("👁️ Activating GOD'S EYE VIEW... ตรวจสอบการเคลื่อนไหวทั้งหมดบนแพลตฟอร์ม", 'assistant');
+                        setTimeout(() => showSection('god-eye'), 1000);
+                        break;
+                    default:
+                        this.addMessage(`⚠️ ไม่รู้จักคำสั่ง: ${action}`, 'assistant');
+                }
             },
 
-            localIntelligence: function (query, ctx) {
-                const q = query.toLowerCase();
+            // Proactive Guardian Engine
+            startGuardian: function (intervalMs = 60000) {
+                if(this._guardianTimer) clearInterval(this._guardianTimer);
+                this._guardianTimer = setInterval(() => {
+                    const _panel = document.getElementById('aiPanel');
+                    if (!this.isOpen && !(_panel && _panel.classList.contains('active'))) return; // ตรวจเฉพาะตอนเปิด/active
+                    
+                    const ctx = this.getSystemContext();
+                    let triggerPrompt = null;
+                    
+                    // Logic thresholds
+                    const pending = parseInt(ctx.pendingOrders || 0);
+                    if (pending > 5 && !this._alertedPending) {
+                        triggerPrompt = `[System Alert] พบออเดอร์ค้างส่ง ${pending} รายการ ช่วยเตือนสติแอดมินและแนะนำวิธีจัดการหน่อยครับ`;
+                        this._alertedPending = true;
+                    } else if (pending <= 2) {
+                        this._alertedPending = false;
+                    }
 
-                // --- SYSTEM ACTION COMMANDS (The "Powerful" part) ---
+                    if (ctx.systemStatus !== 'Online' && !this._alertedStatus) {
+                        triggerPrompt = `[System Alert] สถานะเซิร์ฟเวอร์ไม่ได้ออนไลน์ (Current: ${ctx.systemStatus}) ช่วยเสนอ Tool 'execute_system_action' เพื่อแก้ไขด่วน`;
+                        this._alertedStatus = true;
+                    } else if (ctx.systemStatus === 'Online') {
+                        this._alertedStatus = false;
+                    }
 
-                // 1. Maintenance Mode
-                if (q.includes('โหมดซ่อมบำรุง') || q.includes('maintenance')) {
-                    const action = q.includes('เปิด') || q.includes('on') ? 'เปิด' : 'ปิด';
-                    setTimeout(() => toggleMaintenance(), 1500);
-                    return `⚙️ **กำลังดำเนินการควบคุมระบบ...**\n` +
-                        `------------------------------------------------\n` +
-                        `ผมกำลังพยายาม **${action}** โหมดซ่อมบำรุงตามคำสั่งครับ\n` +
-                        `⚠️ *โปรดยืนยันการดำเนินการในหน้าจอป๊อปอัพที่ปรากฏขึ้นครับ*`;
-                }
-
-                // 2. System Cleanup & Health
-                if (q.includes('ล้างข้อมูล') || q.includes('cleanup') || q.includes('ระเบียบ')) {
-                    setTimeout(() => {
-                        cleanupData('all');
-                        loadSystemHealth();
-                    }, 1000);
-                    return `🧹 **System Cleanup Initiated**\n` +
-                        `------------------------------------------------\n` +
-                        `ผมกำลังทำความสะอาดไฟล์ขยะ, ลบ PIN ที่หมดอายุ และตรวจสอบสถานะฐานข้อมูลให้ใหม่ครับ\n` +
-                        `✅ **Status:** กำลังประมวลผลในพื้นหลัง...`;
-                }
-
-                // 3. Refresh/Sync Data
-                if (q.includes('รีเฟรช') || q.includes('sync') || q.includes('อัปเดตข้อมูล')) {
-                    setTimeout(() => location.reload(), 2000);
-                    return `🔄 **กำลังรีซิงค์ข้อมูล (Full System Sync)...**\n` +
-                        `------------------------------------------------\n` +
-                        `ผมจะทำการโหลดหน้าใหม่เพื่อดึงข้อมูลล่าสุดจาก Google Cloud มาแสดงผลให้ครับ\n` +
-                        `🚀 *เตรียมตัวพบกับข้อมูลล่าสุดในอีก 2 วินาที...*`;
-                }
-
-                // 4. Broadcast Command
-                if (q.includes('บอร์ดแคสต์') || q.includes('ประกาศ') || q.includes('broadcast')) {
-                    setTimeout(() => showSection('notifications'), 1000);
-                    return `📢 **กำลังเตรียมระบบประกาศข่าวสาร (Broadcast Console)...**\n` +
-                        `------------------------------------------------\n` +
-                        `ผมกำลังนำเจ้านายไปยังหน้าส่งข้อความ Push Notification ครับ\n` +
-                        `✍️ *พร้อมรับคำสั่งประกาศสำคัญถึงผู้ใช้ทุกคนแล้วครับ!*`;
-                }
-
-                // 5. Weather Automation
-                if (q.includes('อากาศ') || q.includes('weather') || q.includes('พยากรณ์')) {
-                    setTimeout(() => {
-                        showSection('dashboard'); // Go to dashboard where weather widget usually is
-                        if (typeof generateWeather === 'function') generateWeather();
-                    }, 1000);
-                    return `🌤️ **กำลังดึงข้อมูลพยากรณ์อากาศล่าสุด...**\n` +
-                        `------------------------------------------------\n` +
-                        `ผมกำลังเชื่อมต่อกับดาวเทียมเพื่อสรุปสภาพอากาศประจำวันให้ครับ\n` +
-                        `📢 *รอสักครู่ ผมจะเปิดตัวเลือกให้เจ้านายกดโพสต์ลงฟีดทันทีครับ*`;
-                }
-
-                // 5. God's Eye Trigger
-                if (q.includes('god') || q.includes('สายตาเทพ') || q.includes('monitor')) {
-                    setTimeout(() => showSection('god-eye'), 1000);
-                    return `👁️ **Activating GOD'S EYE VIEW...**\n` +
-                        `------------------------------------------------\n` +
-                        `กำลังเปลี่ยนโหมดการเฝ้าสังเกตการณ์เป็นระดับสูงสุด\n` +
-                        `🛰️ *เชื่อมต่อสัญญาณดาวเทียมและ Tracking สด เรียบร้อยครับ*`;
-                }
-
-                // 6. Executive Summary (All-in-one)
-                if (q.includes('สรุป') || q.includes('overview') || q.includes('รายงาน')) {
-                    return `📋 **Executive Summary: TukTuk Ecosystem**\n` +
-                        `------------------------------------------------\n` +
-                        `👤 **Users:** ${ctx.totalUsers} (Growth: +5%)\n` +
-                        `💰 **Revenue:** ${ctx.revenue}\n` +
-                        `⚡ **System:** ${ctx.systemStatus} (Latency: ${ctx.latency})\n` +
-                        `🛡️ **Security:** No threats detected in last 24h\n\n` +
-                        `**💡 Co-pilot Analysis:**\n` +
-                        `ภาพรวมระบบแข็งแกร่งมากครับ การเติบโตของผู้ใช้งานเป็นไปตามเป้าหมาย แนะนำให้เน้นการผลิตคอนเทนต์ในหน้าฟีดเพื่อรักษา Engagement ครับ`;
-                }
-
-                // --- INTELLIGENT DATA ANALYSIS ---
-
-                // 7. Revenue & Finance (Principled Analysis)
-                if (q.includes('รายได้') || q.includes('เงิน') || q.includes('revenue') || q.includes('profit')) {
-                    const rev = ctx.revenue.replace(/[^0-9]/g, '');
-                    const subText = parseInt(rev) > 400000 ? "อยู่ในเกณฑ์ดีเยี่ยม (Excellent Performance)" : "ควรเพิ่มกิจกรรมส่งเสริมการขาย";
-                    return `📊 **รายงานสถานะทางการเงิน (Financial Intelligence)**\n` +
-                        `------------------------------------------------\n` +
-                        `💰 **รายได้รวม:** ${ctx.revenue}\n` +
-                        `📈 **แนวโน้ม:** ${subText}\n` +
-                        `💎 **สัดส่วน Premium:** ${ctx.premiumSubs} users\n\n` +
-                        `**💡 Strategic Insight:**\n` +
-                        `รายได้ส่วนใหญ่มาจากฐานสมาชิกเดิม แนะนำให้ลองใช้กลยุทธ์ **Flash Sale** สำหรับผู้ใช้ Free Tier เพื่อเร่ง Conversion ในช่วงนี้ครับ`;
-                }
-
-                // 5. User & Traffic (Data-Driven)
-                if (q.includes('คน') || q.includes('user') || q.includes('สมาชิก') || q.includes('traffic')) {
-                    return `👥 **วิเคราะห์ฐานผู้ใช้งาน (User Demographics)**\n` +
-                        `------------------------------------------------\n` +
-                        `👤 **ผู้ใช้ทั้งหมด:** ${ctx.totalUsers}\n` +
-                        `👑 **Premium:** ${ctx.premiumSubs}\n` +
-                        `🤖 **AI Interactions:** ${ctx.aiInteractions}\n\n` +
-                        `**💡 Engagement Note:**\n` +
-                        `ขณะนี้มีผู้ใช้งานบนหน้าเว็บผ่าน **${ctx.activePage}** เป็นจำนวนมาก แสดงความสนใจในส่วนนี้สูง ควรเพิ่มเนื้อหาหรือโปรโมชั่นในหมวดนี้ครับ`;
-                }
-
-                // 6. Security Audit (Antigravity Core)
-                if (q.includes('สถานะ') || q.includes('ระบบ') || q.includes('status') || q.includes('health') || q.includes('ตรวจสอบ')) {
-                    return `🖥️ **System Diagnostics (Core Status)**\n` +
-                        `------------------------------------------------\n` +
-                        `🟢 **Operational Status:** ${ctx.systemStatus}\n` +
-                        `⚡ **Latency:** ${ctx.latency}\n` +
-                        `🛡️ **Security:** ระดับความปลอดภัยสูงสุด (Verified)\n\n` +
-                        `**💡 Co-pilot Recommendation:**\n` +
-                        `ระบบทำงานเป็นปกติครับ แต่ผมแนะนำให้ **Deep Scan** ชุดข้อมูล PIN Sessions รายสัปดาห์เพื่อความปลอดภัยสูงสุดครับ`;
-                }
-
-                // 7. Security Action / Audit
-                if (q.includes('scan') || q.includes('audit') || q.includes('ความมั่นคง')) {
-                    return `🔍 **Deep Scan & Audit Result**\n` +
-                        `------------------------------------------------\n` +
-                        `✅ **Firestore Integrity:** 100%\n` +
-                        `🔐 **Access Control:** No unauthorized attempts\n` +
-                        `📉 **Anomalies:** ไม่พบความผิดปกติใน Webhook logs\n\n` +
-                        `**💡 Action Item:**\n` +
-                        `ระบบปลอดภัยและพร้อมปฏิบัติงานครับ เจ้านายสามารถพักผ่อนได้เลย ผมจะเฝ้าดูแลให้เอง!`;
-                }
-
-                // Default Response (Co-pilot Persona)
-                return `🤖 **Antigravity Core Online**\n\n` +
-                    `ผมพร้อมทำหน้าที่แทนเจ้านายแล้วครับ ลองสั่งแบบนี้ดูสิ:\n` +
-                    `1. **"ทำความสะอาดระบบ"** - ลบไฟล์ขยะและ PIN หมดอายุ\n` +
-                    `2. **"เปิดโหมดซ่อมบำรุง"** - ควบคุมสถานะเซิร์ฟเวอร์\n` +
-                    `3. **"วิเคราะห์รายได้"** - ดูเชิงลึกการเงิน\n` +
-                    `4. **"Deep Scan"** - ตรวจสอบความปลอดภัยเชิงลึก\n\n` +
-                    `หรือถามข้อมูลใดๆ เกี่ยวกับระบบได้ทันทีครับ!`;
+                    if (triggerPrompt) {
+                        if (!this.isOpen) this.togglePanel();
+                        this.showTyping();
+                        const jwt = localStorage.getItem('tuktuk_jwt');
+                        const systemPrompt = `คุณคือ FORGE Proactive Guardian. วิเคราะห์ Context และแจ้งเตือนด่วน. Context: Users=${ctx.totalUsers}, Pending=${ctx.pendingOrders}, Status=${ctx.systemStatus}`;
+                        
+                        fetch(`${WORKER_BASE}/api/v1/ai/chat`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', ...(jwt ? { 'Authorization': `Bearer ${jwt}` } : {}) },
+                            body: JSON.stringify({ message: triggerPrompt, system: systemPrompt, tools: this.getTools() })
+                        })
+                        .then(r => r.json())
+                        .then(data => {
+                            this.hideTyping();
+                            // If AI decides to use tool, run it
+                            if (data.tool_calls && data.tool_calls.length > 0) {
+                                for(const t of data.tool_calls) {
+                                    if(t.function.name === 'execute_system_action') {
+                                        this.executeSystemAction(JSON.parse(t.function.arguments).action);
+                                        return;
+                                    }
+                                }
+                            }
+                            const text = data.reply || '(Guardian Alert)';
+                            this.addMessage(`🚨 **PROACTIVE ALERT:**<br>${this.formatResponse(text)}`, 'assistant');
+                        }).catch(() => this.hideTyping());
+                    }
+                }, intervalMs);
             },
 
             formatResponse: function (text) {
@@ -13472,6 +13486,7 @@ ${COMPANY_INFO.name}`;
 
         // Init FORGE gateway settings from localStorage
         aiAssistant.loadSettings();
+        aiAssistant.startGuardian(60000); // Check every 60s
 
         // ===== Tokenomics Logic =====
         let wealthChartInstance = null;
@@ -14057,11 +14072,14 @@ ${COMPANY_INFO.name}`;
                 this._setStatus(`AI กำลังสร้างโพสต์แนว${typeLabel}...`);
                 try {
                     let headline = '', content = '', source = 'local';
+                    let imgPrompt = '', optTime = '';
                     try {
                         const res = await this._callWorkerAI(topic, contentType);
                         headline = res.headline || '';
                         content = res.content || '';
                         source = res.source || 'worker-ai';
+                        imgPrompt = res.image_prompt || '';
+                        optTime = res.optimal_time || '';
                     } catch (workerErr) {
                         // Worker AI ล้มเหลว — fallback local template ตามประเภท
                         console.warn('Worker AI failed, using local:', workerErr.message);
@@ -14076,6 +14094,19 @@ ${COMPANY_INFO.name}`;
                     }
                     document.getElementById('ppHeadline').value = headline;
                     document.getElementById('ppContent').value = content;
+                    
+                    const imgPromptEl = document.getElementById('ppImagePrompt');
+                    const optTimeEl = document.getElementById('ppOptimalTime');
+                    if (imgPromptEl) imgPromptEl.value = imgPrompt;
+                    if (optTimeEl) {
+                        if(optTime) {
+                            optTimeEl.textContent = `🕒 แนะนำโพสต์: ${optTime}`;
+                            optTimeEl.style.display = 'inline-block';
+                        } else {
+                            optTimeEl.style.display = 'none';
+                        }
+                    }
+
                     updatePPPreview();
                     const label = source === 'forge' ? 'FORGE AI' : source === 'workers-ai' ? 'Workers AI' : 'Local';
                     this._setStatus(`✅ สร้างโพสต์แนว${typeLabel}สำเร็จ (${label}) — ตรวจทาน+ใส่รูป แล้วกดเผยแพร่`, false);

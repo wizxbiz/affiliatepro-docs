@@ -121,3 +121,6 @@ AI_PROJECT_HANDOFF_REPORT.md
 !ARCHITECTURAL_OVERVIEW.md
 !walkthrough.md
 claude design/*.exe
+
+# Claude Code local files
+.claude/

@@ -18,6 +18,7 @@ import { analyticsRoutes }    from './handlers/analytics.js';
 import { adminRoutes }        from './handlers/admin.js';
 import { utilityRoutes }      from './handlers/utility.js';
 import { v1Routes }        from './handlers/v1.js';
+import { shareRoutes }     from './handlers/share.js';
 import { rewriteRequest }   from './lib/request-rewrite.js';
 import { getSession }       from './middleware/auth.js';
 import { normalizeMediaUrls } from './lib/media-normalizer.js';
@@ -123,6 +124,9 @@ app.route('/api/v1', v1Routes);
 app.get('/share',           (c) => marketplaceRoutes.request(rewriteRequest(c, '/share'), undefined, c.env));
 app.get('/community-share', (c) => marketplaceRoutes.request(rewriteRequest(c, '/community-share'), undefined, c.env));
 
+// Share hub เดียว — /s/:type/:id (OG preview + redirect ไปเนื้อหาจริง)
+app.route('/s', shareRoutes);
+
 // Auth callbacks
 app.all('/lineLoginCallback',    (c) => authRoutes.request(rewriteRequest(c, '/line-callback'), undefined, c.env));
 app.post('/marketplaceLineAuth', (c) => authRoutes.request(rewriteRequest(c, '/marketplace-line-auth'), undefined, c.env));
@@ -181,6 +185,7 @@ async function handleDbQuery(c) {
   if (!/^[a-z_][a-z0-9_]*$/.test(tableName)) {
     return c.json({ results: [] });
   }
+  if (tableName === 'products') await ensureProductsLocationColumns(db);
   let sql = `SELECT * FROM ${tableName}`;
   let binds = [];
   let whereClauses = [];
@@ -295,6 +300,7 @@ async function handleDbDoc(c) {
 
   const session = c.get('session');
   const isAdmin = _isAdmin(session);
+  if (tableName === 'products') await ensureProductsLocationColumns(db);
   // ตารางที่ต้องเช็คความเป็นเจ้าของก่อนแก้/ลบ (คอลัมน์ที่ระบุ = เจ้าของ)
   const OWNER_COLUMN = { products: 'seller_id' };
   const ownerCol = OWNER_COLUMN[tableName];
@@ -514,6 +520,18 @@ function setIfPresent(target, key, value, include) {
   if (include) target[key] = value;
 }
 
+// ตลาดใกล้บ้าน — กัน products table ยังไม่มี location columns (idempotent, ครั้งเดียวต่อ worker instance)
+let _productsColsEnsured = false;
+async function ensureProductsLocationColumns(db) {
+  if (_productsColsEnsured) return;
+  _productsColsEnsured = true;
+  await db.prepare("ALTER TABLE products ADD COLUMN seller_location TEXT;").run().catch(() => {});
+  await db.prepare("ALTER TABLE products ADD COLUMN province_code TEXT;").run().catch(() => {});
+  await db.prepare("ALTER TABLE products ADD COLUMN amphoe_code TEXT;").run().catch(() => {});
+  await db.prepare("ALTER TABLE products ADD COLUMN tambon_code TEXT;").run().catch(() => {});
+  await db.prepare("CREATE INDEX IF NOT EXISTS idx_products_province_code ON products(province_code);").run().catch(() => {});
+}
+
 function mapDocumentForTable(tableName, body, id, parentId, partial = false) {
   if (tableName === 'products') {
     const mapped = {};
@@ -530,6 +548,11 @@ function mapDocumentForTable(tableName, body, id, parentId, partial = false) {
     setIfPresent(mapped, 'category', body.category || 'general', !partial || body.category !== undefined);
     setIfPresent(mapped, 'status', body.status || 'active', !partial || body.status !== undefined);
     setIfPresent(mapped, 'views_count', Number(body.viewCount || body.viewsCount || body.views_count || 0), !partial || body.viewCount !== undefined || body.viewsCount !== undefined || body.views_count !== undefined);
+    // ตลาดใกล้บ้าน — location (เดิม shim ทำหาย): เก็บ text จังหวัด + province_code
+    setIfPresent(mapped, 'seller_location', body.sellerLocation || body.seller_location || body.province || body.location || '', !partial || body.sellerLocation !== undefined || body.seller_location !== undefined || body.province !== undefined || body.location !== undefined);
+    setIfPresent(mapped, 'province_code', body.provinceCode || body.province_code || '', !partial || body.provinceCode !== undefined || body.province_code !== undefined);
+    setIfPresent(mapped, 'amphoe_code', body.amphoeCode || body.amphoe_code || '', !partial || body.amphoeCode !== undefined || body.amphoe_code !== undefined);
+    setIfPresent(mapped, 'tambon_code', body.tambonCode || body.tambon_code || '', !partial || body.tambonCode !== undefined || body.tambon_code !== undefined);
     setIfPresent(mapped, 'created_at', normalizeTimestamp(body.createdAt), !partial || body.createdAt !== undefined);
     setIfPresent(mapped, 'updated_at', normalizeTimestamp(body.updatedAt), !partial || body.updatedAt !== undefined);
     return mapped;

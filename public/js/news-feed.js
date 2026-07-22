@@ -76,9 +76,9 @@ async function likePost(postId) {
 }
 
 function sharePost(postId, title) {
-    const url = `https://tuktukfeed.com/community-share?id=${postId}`;
+    const url = `https://tuktukfeed.com/s/community/${encodeURIComponent(postId)}`;
     if (navigator.share) {
-        navigator.share({ title: title, text: `${title} - Wizmobiz Community`, url: url });
+        navigator.share({ title: title, text: `${title} - TukTuk Community`, url: url });
     } else {
         navigator.clipboard.writeText(url).then(() => {
             alert('📋 คัดลอกลิงก์แล้ว!');

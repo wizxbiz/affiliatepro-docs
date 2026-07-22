@@ -94,6 +94,14 @@
                 credentials: options.credentials || 'same-origin',
             });
             const data = await response.json().catch(() => null);
+            // ok=200 แต่ body ไม่ใช่ JSON (เช่น service worker เก่าเสิร์ฟ app-shell HTML ให้ /api/)
+            // เดิม return {status:'success'} → feed เห็นเป็น "สำเร็จแต่ว่าง" (bug เงียบ) → โยน error ให้ชัด
+            if (response.ok && data === null) {
+                const parseErr = new Error('API returned non-JSON response (possible stale service worker serving HTML for /api/)');
+                parseErr.status = response.status;
+                parseErr.code = 'NON_JSON_RESPONSE';
+                throw parseErr;
+            }
             if (!response.ok || data?.status === 'error') {
                 const error = normalizeError(response.status, data);
                 error.__diagnosticRecorded = true;

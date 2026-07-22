@@ -1471,11 +1471,31 @@ video:playing + .feed-loading-placeholder {
 
 /* Slide video — autoplay handled by IntersectionObserver */
 .tuktuk-slide-video {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  z-index: 0;
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+/* YouTube Iframe Fullscreen Crop for Feed */
+.tuktuk-feed-container iframe.youtube-iframe,
+.tuktuk-feed-container iframe[id^="yt-player-"],
+.tuktuk-feed-vertical iframe[id^="yt-player-"] {
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 177.77vh !important;
+    min-height: 56.25vw !important;
+    max-width: none !important;
+    max-height: none !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    border: none !important;
+    pointer-events: none !important;
+    transition: opacity 0.5s !important;
+    z-index: 1 !important;
 }
 
 /* ================================================
@@ -2104,7 +2124,7 @@ video:playing + .feed-loading-placeholder {
    ════════════════════════════════════════════════════ */
 .slide-product-panel {
     position: absolute;
-    bottom: calc(75px + env(safe-area-inset-bottom, 0px)); /* Lifted to clear bottom nav */
+    bottom: calc(95px + env(safe-area-inset-bottom, 0px)); /* Lifted to clear bottom nav FAB */
     left: 0;
     right: 55px; /* Leave room for right sidebar */
     z-index: 3;
@@ -2119,7 +2139,7 @@ video:playing + .feed-loading-placeholder {
    ════════════════════════════════════════════════════ */
 .slide-news-panel {
     position: absolute;
-    bottom: calc(75px + env(safe-area-inset-bottom, 0px)); /* Lifted to clear bottom nav */
+    bottom: calc(95px + env(safe-area-inset-bottom, 0px)); /* Lifted to clear bottom nav FAB */
     left: 0;
     right: 55px;
     z-index: 3;

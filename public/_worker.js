@@ -12,7 +12,9 @@ const API_PATHS = new Set([
 ]);
 
 function shouldProxyToWorker(pathname) {
-  return pathname === '/api' || pathname.startsWith('/api/') || API_PATHS.has(pathname);
+  return pathname === '/api' || pathname.startsWith('/api/')
+    || pathname.startsWith('/s/')   // share hub — OG preview + redirect
+    || API_PATHS.has(pathname);
 }
 
 function spaRewritePath(pathname) {

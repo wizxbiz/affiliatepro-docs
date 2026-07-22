@@ -6,6 +6,7 @@ import ProductCard from '../components/ProductCard.jsx'
 import EditModal from '../components/EditModal.jsx'
 import ConfirmDialog from '../components/ConfirmDialog.jsx'
 import { parseImages } from '../lib/format.js'
+import { shareContent } from '../lib/share.js'
 
 function joinDate(ts) {
   const t = Number(ts)
@@ -438,13 +439,8 @@ export default function ProfilePage() {
             <button
               className="action-sheet-item"
               onClick={() => {
-                const url = `${window.location.origin}/?post=${encodeURIComponent(sheetPost.id)}`
-                if (navigator.share) {
-                  navigator.share({ title: 'TukTuk Feed', text: 'ดูโพสต์นี้บน TukTuk Feed', url }).catch(() => {})
-                } else {
-                  navigator.clipboard.writeText(url)
-                  alert('คัดลอกลิงก์เรียบร้อย')
-                }
+                shareContent({ type: 'post', id: sheetPost.id, title: 'TukTuk Feed', text: 'ดูโพสต์นี้บน TukTuk Feed' })
+                  .then((r) => { if (r === 'copied') alert('คัดลอกลิงก์แชร์เรียบร้อย') })
                 setSheetPost(null)
               }}
             >

@@ -268,6 +268,30 @@
   function _wrapDocData(data) {
     if (!data) return data;
     const wrapped = { ...data };
+    // D1 คืน snake_case แต่ UI เดิมอ่าน camelCase (productName/sellerLocation/imageUrl)
+    // เติม alias แบบไม่ทับของเดิม เพื่อให้ทั้ง card เดิมและ filter ทำงานได้โดยไม่ต้องไล่แก้ทุกจุด
+    const _addAlias = (aliasKey, sourceKey, transform) => {
+      if (wrapped[aliasKey] === undefined && wrapped[sourceKey] !== undefined && wrapped[sourceKey] !== null) {
+        wrapped[aliasKey] = transform ? transform(wrapped[sourceKey]) : wrapped[sourceKey];
+      }
+    };
+    _addAlias('productName', 'title');
+    _addAlias('sellerLocation', 'seller_location');
+    _addAlias('province', 'seller_location');      // filter เดิมอ่าน p.province (text)
+    _addAlias('provinceCode', 'province_code');
+    _addAlias('sellerId', 'seller_id');
+    _addAlias('lineUserId', 'seller_id');
+    _addAlias('viewCount', 'views_count');
+    _addAlias('createdAt', 'created_at');
+    // images (JSON string หรือ array) → imageUrl (รูปแรก)
+    if (wrapped.imageUrl === undefined && wrapped.images !== undefined && wrapped.images !== null) {
+      let imgs = wrapped.images;
+      if (typeof imgs === 'string') { try { imgs = JSON.parse(imgs); } catch (_) { imgs = imgs ? [imgs] : []; } }
+      if (Array.isArray(imgs) && imgs.length) {
+        const first = imgs[0];
+        wrapped.imageUrl = (first && typeof first === 'object') ? (first.url || first.src || '') : first;
+      }
+    }
     for (const [key, val] of Object.entries(wrapped)) {
       if ((key.toLowerCase().endsWith('at') || key.toLowerCase().endsWith('timestamp') || key === 'sentAt') && typeof val === 'number') {
         wrapped[key] = {
@@ -463,6 +487,11 @@
     limitToLast(n) {
       return new CloudflareQuery(this.collection, this.filters, this.orders, n, this.parentPath);
     }
+    // Firestore cursor pagination — D1 shim ยังไม่รองรับ cursor จริง, ทำเป็น chainable no-op กัน error
+    startAfter() { return this; }
+    startAt() { return this; }
+    endBefore() { return this; }
+    endAt() { return this; }
     async get() {
       const params = new URLSearchParams();
       this.filters.forEach(f => params.append('filter', `${f.field}:${f.op}:${f.value}`));
@@ -563,6 +592,14 @@
       return db;
     },
     storage() { return window.storage; },
+    // Firebase Cloud Messaging stub — push ยังไม่ย้ายมา CF, ทำ no-op กัน crash
+    messaging() {
+      return {
+        getToken() { return Promise.resolve(null); },
+        onMessage() { return () => {}; },
+        deleteToken() { return Promise.resolve(true); },
+      };
+    },
     analytics() {
       return {
         logEvent(name, params) {
